@@ -1,3 +1,10 @@
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/greppane.tcl (ExecGrep, finish_grep): Disable the Serach
+	button along with other widgets as soon as the user clicks.
+	Snap the horizontal scrollbar to the left side after the
+	grep has completed.
+
 2002-05-16  Mo DeJong  <supermo@bayarea.net>
 
 	* mkdist.sh: Add script to create source

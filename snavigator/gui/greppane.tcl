@@ -454,9 +454,12 @@ itcl::class Grep {
         global sn_options sn_path
         global errorInfo errorCode
 
-        # A grep process is already running, close it down and start a new one
-        if {${Proceed} != 0} {
-            ${this} close_grep
+        # When the user click on the Search button, the very first thing
+        # we want to do is disable search and related widgets.
+        if {${Proceed} == 0} {
+            handle_proceed disabled
+            after idle [list $this ExecGrep]
+            return
         }
 
         set pat ${pattern}
@@ -493,6 +496,8 @@ itcl::class Grep {
         # The actual count is off by one because we update the % done meter
         # based on the match read back from grep
         incr files_Count -1
+
+        $itk_component(progressbar) configure -maxvalue ${files_Count}
 
         # If there is a pattern filter, substitute the current
         # value of ${pat} into the %s in the filter
@@ -582,14 +587,11 @@ itcl::class Grep {
 
         sn_log "GREP: detach horizontal scroll"
 
-        $itk_component(progressbar) configure -maxvalue ${files_Count}
         set scalevalue 0
         set max_search_reached 0
         set errorInfo ""
         set counter 0
         set grep_canceled 0
-
-        handle_proceed disabled
 
         for {set groupindex 0} {$groupindex <= $groupcount} {incr groupindex} {
             sn_log "grouploop $groupindex : will run $cmd"
@@ -809,6 +811,9 @@ itcl::class Grep {
         $itk_component(hscroll) configure -command "$itk_component(results) xview"
         $itk_component(results) configure \
             -xscrollcommand "$itk_component(hscroll) set"
+
+        # Make sure horizontal scrollbar is against the left edge
+        $itk_component(results) xview moveto 0
 
         # Release the GUI block
         tixBusy $itk_component(results) off
