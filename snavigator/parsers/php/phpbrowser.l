@@ -99,6 +99,13 @@ typedef struct Token {
     struct Token* next;
 } Token;
 
+typedef struct NestedBracket {
+    int count;
+    int prefix_incr;
+    struct Token* var;
+    struct NestedBracket* next;
+} NestedBracket;
+
 /* Uncomment this to see debug output in token parsing stage */
 /* #define TOKEN_DEBUG */
 
@@ -144,6 +151,12 @@ static int  current_function_column_end;
 
 static int  current_function_brace_count;
 
+static int current_array_bracket_count = 0;
+static Token* current_array_token = NULL;
+static int current_array_prefix_incr = 0;
+static NestedBracket* array_nest_head = NULL;
+static NestedBracket* array_nest_tail = NULL;
+
 static int result;
 
 static SearchTable * global_var_table = (SearchTable *) NULL;
@@ -180,7 +193,10 @@ static char* modestring();
 static void FreeGlobalEntry(SearchEntry *entry);
 
 void FreeToken(Token* tok);
+Token* pop_head_token();
 void free_head_token();
+void push_bracket_counter();
+void pop_bracket_counter();
 void append_token(TokenType type,
                   char* strval,
                   long start_line,
@@ -1435,47 +1451,33 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* OPEN_PAREN */
 }
 
-<TOKEN>"VARIABLE"{var-array-tokens}"ASSIGNMENT_OPERATOR" {
+<TOKEN>"VARIABLE ASSIGNMENT_OPERATOR" {
   int offset;
-  
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
 #endif
 
   emit_var_access(tokens_head, VAR_WRITE);
 
-  /* Eat the variable token and send the rest of the tokens
-   * back for further matching. This is needed so that
-   * expressions like "$var[$one] = 1;" generate both
-   * a write xref for $var and a read xref for $one.
-   */
-
   free_head_token(); /* VARIABLE */
-  offset = strlen("VARIABLE");
-  yyless(offset); /* send back everything after the VARIABLE token */
+  free_head_token(); /* ASSIGNMENT_OPERATOR */
 }
 
-<TOKEN>"VARIABLE"{var-array-tokens}"ASSIGNMENT_OPERATORS" {
+<TOKEN>"VARIABLE ASSIGNMENT_OPERATORS" {
   int offset;
-  
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
 #endif
 
   emit_var_access(tokens_head, VAR_READWRITE);
 
-  /* Eat the variable token and send the rest of the tokens
-   * back for further matching. This is needed so that
-   * expressions like "$var[$one] += 1;" generate both
-   * a read/write xref for $var and a read xref for $one.
-   */
-
   free_head_token(); /* VARIABLE */
-  offset = strlen("VARIABLE");
-  yyless(offset); /* send back everything after the VARIABLE token */
+  free_head_token(); /* ASSIGNMENT_OPERATORS */
 }
 
-<TOKEN>("INCREMENT_OPERATORS VARIABLE"{var-array-tokens}|"VARIABLE"{var-array-tokens}"INCREMENT_OPERATORS") {
+<TOKEN>("INCREMENT_OPERATORS VARIABLE"|"VARIABLE INCREMENT_OPERATORS") {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable increment at token %d\n", token_index);
@@ -1488,20 +1490,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   emit_var_access(tokens_head, VAR_READWRITE);
 
-  /* Eat the variable token and send the rest of the tokens
-   * back for further matching. This is needed so that
-   * expressions like "$var[$one]++;" generate both
-   * a read/write xref for $var and a read xref for $one.
-   */
-
   free_head_token(); /* VARIABLE */
-
-  if (pre) {
-    offset = strlen("INCREMENT_OPERATORS VARIABLE");
-  } else {
-    offset = strlen("VARIABLE");
+  if (!pre) {
+    free_head_token(); /* INCREMENT_OPERATORS */
   }
-  yyless(offset); /* send back everything after the VARIABLE token */
 }
 
 <TOKEN>"VARIABLE" {
@@ -1512,6 +1504,184 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   emit_var_access(tokens_head, VAR_READ);
 
   free_head_token(); /* VARIABLE */
+}
+
+<TOKEN>"INCREMENT_OPERATORS VARIABLE OPEN_BRACKET" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "increment array variable start token %d\n", token_index);
+#endif
+
+  /* This is the start of a prefix incremented array variable
+   *
+   *   ++$arr[0]
+   */
+
+  if (current_array_bracket_count > 0) {
+    /* Nested brackets : $arr1[++$arr2[0]] */
+    push_bracket_counter();
+  }
+  current_array_bracket_count = 1;
+  current_array_prefix_incr = 1;
+
+  free_head_token(); /* INCREMENT_OPERATORS */
+  current_array_token = pop_head_token(); /* VARIABLE */
+  free_head_token(); /* OPEN_BRACKET */
+}
+
+<TOKEN>"VARIABLE OPEN_BRACKET" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable start token %d\n", token_index);
+#endif
+
+  /* This is the start of an array variable.
+   *
+   *   $arr[0]
+   */
+
+  if (current_array_bracket_count > 0) {
+    /* Nested brackets : $arr1[$arr2[0]] */
+    push_bracket_counter();
+  }
+  current_array_bracket_count = 1;
+  current_array_token = pop_head_token(); /* VARIABLE */
+  free_head_token(); /* OPEN_BRACKET */
+}
+
+<TOKEN>"CLOSE_BRACKET OPEN_BRACKET" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable array dimension tokens %d\n", token_index);
+#endif
+
+  /* This rule matches the "][" tokens in the following statement:
+   *
+   * array["one"]["two"] = 1;
+   *
+   * Note that we don't change the current_array_bracket_count here.
+   */
+
+  free_head_token(); /* CLOSE_BRACKET */
+  free_head_token(); /* OPEN_BRACKET */
+}
+
+<TOKEN>"CLOSE_BRACKET ASSIGNMENT_OPERATOR" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable assignment end token %d\n", token_index);
+#endif
+
+  /* This could be the end of an array variable.
+   *
+   *   $arr["num"] = 2;
+   */
+
+  if (current_array_bracket_count > 0) {
+    if (--current_array_bracket_count == 0) {
+        emit_var_access(current_array_token, VAR_WRITE);
+        FreeToken(current_array_token);
+        current_array_prefix_incr = 0;
+
+        pop_bracket_counter();
+
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "assignment operator end of array variable\n");
+#endif
+    }
+  }
+
+  free_head_token(); /* CLOSE_BRACKET */
+  free_head_token(); /* ASSIGNMENT_OPERATOR */
+}
+
+<TOKEN>"CLOSE_BRACKET ASSIGNMENT_OPERATORS" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable read/write assignment end token %d\n", token_index);
+#endif
+
+  /* This could be the end of an array variable.
+   *
+   *   $arr["num"] += 2;
+   */
+
+  if (current_array_bracket_count > 0) {
+    if (--current_array_bracket_count == 0) {
+        emit_var_access(current_array_token, VAR_READWRITE);
+        FreeToken(current_array_token);
+        current_array_prefix_incr = 0;
+        pop_bracket_counter();
+
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "assignment operators end of array variable\n");
+#endif
+    }
+  }
+
+  free_head_token(); /* CLOSE_BRACKET */
+  free_head_token(); /* ASSIGNMENT_OPERATORS */
+}
+
+<TOKEN>"CLOSE_BRACKET INCREMENT_OPERATORS" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable post increment end token %d\n", token_index);
+#endif
+
+  /* This could be the end of an array variable increment
+   *
+   *   $arr[0]++
+   */
+
+  if (current_array_bracket_count > 0) {
+    if (--current_array_bracket_count == 0) {
+        emit_var_access(current_array_token, VAR_READWRITE);
+        current_array_prefix_incr = 0;
+        FreeToken(current_array_token);
+
+        pop_bracket_counter();
+
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "end of array variable post increment\n");
+#endif
+    }
+  }
+
+  free_head_token(); /* CLOSE_BRACKET */
+  free_head_token(); /* INCREMENT_OPERATORS */
+}
+
+<TOKEN>"CLOSE_BRACKET" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array variable read end token %d\n", token_index);
+#endif
+
+  /* This could be the end of an array variable
+   *
+   *   $arr[0] = 2;
+   *
+   * Or the end of an array variable that has
+   * a prefix increment.
+   *
+   *   ++$arr[0]
+   */
+
+  if (current_array_bracket_count > 0) {
+    if (--current_array_bracket_count == 0) {
+        if (current_array_prefix_incr) {
+          emit_var_access(current_array_token, VAR_READWRITE);
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "read/write end of array variable\n");
+#endif
+        } else {
+          emit_var_access(current_array_token, VAR_READ);
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "read end of array variable\n");
+#endif
+        }
+        current_array_prefix_incr = 0;
+        FreeToken(current_array_token);
+
+        pop_bracket_counter();
+    }
+  }
+
+  free_head_token(); /* CLOSE_BRACKET */
 }
 
 <TOKEN>"VDOUBLE_QUOTED_STRING" {
@@ -1875,7 +2045,7 @@ void append_token(TokenType type,
     }
 }
 
-void free_head_token() {
+Token* pop_head_token() {
     Token* tok;
     assert(tokens_head);
     tok = tokens_head;
@@ -1884,8 +2054,46 @@ void free_head_token() {
     } else {
         tokens_head = tokens_head->next;
     }
-    FreeToken(tok);
     token_index++;
+    return tok;
+}
+
+void free_head_token() {
+    FreeToken(pop_head_token());
+}
+
+/*
+ * This method is invoked when nested brackets within an
+ * array name are encountered. For example: $arr1[++$arr2[0]]
+ */
+
+void push_bracket_counter() {
+    NestedBracket* nbp = (NestedBracket*) ckalloc(sizeof(NestedBracket));
+    nbp->var = current_array_token;
+    nbp->count = current_array_bracket_count;
+    nbp->prefix_incr = current_array_prefix_incr;
+
+    if (array_nest_head == NULL) {
+        array_nest_head = array_nest_tail = nbp;
+    } else {
+        nbp->next = array_nest_head;
+        array_nest_head = nbp;
+    }
+}
+
+void pop_bracket_counter() {
+    if (array_nest_head != NULL) {
+        NestedBracket* nbp = array_nest_head;
+        if (array_nest_head == array_nest_tail) {
+            array_nest_head = array_nest_tail = (NestedBracket*) NULL;
+        } else {
+            array_nest_head = array_nest_head->next;
+        }
+        current_array_token = nbp->var;
+        current_array_bracket_count = nbp->count;
+        current_array_prefix_incr = nbp->prefix_incr;
+        ckfree((char*) nbp);
+    }
 }
 
 char * TokenTypeToString(Token *tok) {

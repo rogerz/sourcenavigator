@@ -1,3 +1,25 @@
+2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Reimplement array
+	variables to support arrays with complex
+	subexpressions. The previous implementation
+	did not work with arrays like $arr["one"."two"],
+	it only matched known index values like literals,
+	strings, variables, and so on. Split the rules
+	so that plain variables are handled separately
+	from array variables. Support nested array
+	variables with a stack based approach. Add a
+	pop_head_token helper so that the token can
+	be pulled off the queue without being freed.
+	* tests/parsers/php.test: Add a series of
+	highlight tests to check for nested arrays
+	and arrays with complex subexpressions as
+	the index value. Invert the xref order for
+	tests that change as a result of the new
+	way that arrays are processed. Remove knownbug
+	constraint from tests that now pass.
+
 2003-06-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbutils.c (db_insert_entry, db_key_in_table):
