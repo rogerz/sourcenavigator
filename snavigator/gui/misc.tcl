@@ -1016,6 +1016,7 @@ proc load_xref_pipe {xreffd xfer_file} {
 
         if {$status &&
                 ([string match "*child killed*" $err] ||
+                 [string match "*abnormal program termination*" $err] ||
                  [string match "*child process exited abnormally*" $err])} {
             set crashed 1
         } else {
@@ -3646,6 +3647,7 @@ proc event_LoadPipeInput {eventfd sc} {
             # just continuing.
 
             if {[string match "*child killed*" $err] ||
+                    [string match "*abnormal program termination*" $err] ||
                     [string match "*child process exited abnormally*" $err]} {
                 set crashed 1
             } else {

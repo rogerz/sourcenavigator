@@ -1,7 +1,14 @@
+2003-08-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (load_xref_pipe, event_LoadPipeInput):
+	Add check for the err "abnormal program termination"
+	since this seems to be included when a Win32
+	child process crashes.
+
 2003-07-25  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* mkdist.txt: Add short description of steps
-	on must take to create a SN dist file.
+	one must take to create a SN dist file.
 
 2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
