@@ -1132,6 +1132,7 @@ proc tkTextInsert {w ndx args} {
     set ndx [${w} index ${ndx}]
     ${w} mark set insert ${ndx}
 
+    eval "SyncEditors $w insert insert ${args}"
     eval "${w} insert insert ${args}"
     synch_highlight ${w} ${ndx}
 
