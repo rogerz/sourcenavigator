@@ -610,31 +610,31 @@ itcl::class XRef& {
             return
         }
 
-        if {$itk_option(-symbols) != ""} {
-            upvar #0 $itk_option(-symbols)-related related
+        if {$itk_option(-symbols_filter) != ""} {
+            upvar #0 $itk_option(-symbols_filter)-related related
             set qry ""
             foreach s [array names combobox_editor_scopes] {
-                upvar #0 $itk_option(-symbols)-${s} value
+                upvar #0 $itk_option(-symbols_filter)-${s} value
                 if {${all} == -1} {
-                    uplevel #0 "set $itk_option(-symbols)-${s} off"
+                    uplevel #0 "set $itk_option(-symbols_filter)-${s} off"
                     continue
                 }
                 if {${all} ||([info exists value] && ${value} != "off")} {
                     foreach db $combobox_editor_scopes(${s}) {
                         if {[::info commands paf_db_${db}] != ""} {
-                            uplevel #0 "set $itk_option(-symbols)-${s} ${s}"
+                            uplevel #0 "set $itk_option(-symbols_filter)-${s} ${s}"
                             lappend qry ${db}
                         }
                     }
                 }
             }
             #undefined scopes
-            upvar #0 $itk_option(-symbols)-ud value
+            upvar #0 $itk_option(-symbols_filter)-ud value
             if {${all} == -1} {
-                uplevel #0 "set $itk_option(-symbols)-ud off"
+                uplevel #0 "set $itk_option(-symbols_filter)-ud off"
             }\
             elseif {${all}} {
-                uplevel #0 "set $itk_option(-symbols)-ud ud"
+                uplevel #0 "set $itk_option(-symbols_filter)-ud ud"
                 lappend qry ud
             }\
             elseif {[info exists value] && ${value} != "off"} {

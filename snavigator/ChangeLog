@@ -1,3 +1,15 @@
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/multiview.tcl (toolbar_post_scope_menu):
+	Fix state of Related, All, All, and None buttons
+	inside the symbol combo to match the comments
+	and the documentation.
+	* gui/xrefpane.tcl (fill): Use variables
+	prefixed by $itk_option(-symbols_filter) not
+	$itk_option(-symbols) when setting values
+	for the combobox. This fixes symbol filtering
+	while the xref tab is active.
+
 2002-11-20  Mo DeJong  <mdejong@uncounted.org>
 
 	* INSTALL.TXT: Inform users that GNU tools
