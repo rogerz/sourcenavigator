@@ -189,18 +189,18 @@ bin_PROGRAMS = cbrowser cbrowser2
 
 cbrowser_SOURCES = cparser.c cpdefines.h skeleton.c
 
-cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(OBJEXT) cpplib/macread.$(OBJEXT) 	cpplib/token.$(OBJEXT) cpplib/process.$(OBJEXT) 	cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(OBJEXT) cpplib/macread.$(OBJEXT) 	cpplib/token.$(OBJEXT) cpplib/process.$(OBJEXT) 	cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(top_builddir)/db/libdbckalloc.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
+cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(top_builddir)/db/libdbckalloc.a
 
 
 cbrowser2_SOURCES = cbrowser2.c
 
-cbrowser2_LDADD = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+cbrowser2_LDADD = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(top_builddir)/db/libdbckalloc.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-cbrowser2_DEPENDENCIES = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
+cbrowser2_DEPENDENCIES = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(top_builddir)/db/libdbckalloc.a
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h

@@ -41,6 +41,7 @@ cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a \
+	$(top_builddir)/db/libdbckalloc.a \
 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) \
@@ -50,7 +51,8 @@ cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) \
 	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
-	$(DB_LIBDIR)/libdb.a
+	$(DB_LIBDIR)/libdb.a \
+	$(top_builddir)/db/libdbckalloc.a
 
 cbrowser2_SOURCES = cbrowser2.c
 
@@ -59,10 +61,12 @@ cbrowser2_LDADD = cpplib/libcpp2.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a \
+	$(top_builddir)/db/libdbckalloc.a \
 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 cbrowser2_DEPENDENCIES = cpplib/libcpp2.a \
 	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
-	$(DB_LIBDIR)/libdb.a
+	$(DB_LIBDIR)/libdb.a \
+	$(top_builddir)/db/libdbckalloc.a

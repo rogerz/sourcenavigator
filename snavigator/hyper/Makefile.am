@@ -62,6 +62,7 @@ hyper_LDFLAGS = $(WIN32LDAPP)
 if MSVC
 hyper_LDADD = @HYPER_MAIN@ \
 $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a \
+$(DBUtilsLibDir)/libdbckalloc.a \
 $(LibUtils) \
 $(top_builddir)/../libgui/src/libgui.a \
 $(WIN32LIBS) \
@@ -71,6 +72,7 @@ $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
 else
 hyper_LDADD = @HYPER_MAIN@ \
 -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb \
+-ldbckalloc \
 -L$(LibUtilsDir) -lutils \
 -L$(top_builddir)/../libgui/src -lgui \
 $(WIN32LIBS) \
@@ -80,6 +82,7 @@ $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
 endif
 hyper_DEPENDENCIES = @HYPER_MAIN@ \
 $(DBUtilsLib) $(DB_LIBDIR)/libdb.a \
+$(DBUtilsLibDir)/libdbckalloc.a \
 $(LibUtils) \
 $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) \
 $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)

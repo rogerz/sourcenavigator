@@ -126,3 +126,23 @@ at D:/Cygwin/opt/sourcenav would be passed.
 % ../sourcenav-5.2.0/configure --host=windows32 --prefix=D:/Cygwin/opt/sourcenav
 % make
 % make install
+
+
+Debug Build:
+
+If you encounter a crashing bug in Source-Navigator and would like
+to investigate the cause, there are a couple of debug build options
+that could be useful. The first option is to pass the --enable-symbols
+option to the configure script. This option will compile the
+Source-Navigator executables with debug symbols. Debug symbols
+can help to track down the exact cause of a crashing problem
+inside a debugger.
+
+One can also pass the --enable-symbols=mem option to the configure
+script to compile with symbols and memory checking enabled. In this
+mode, each allocation and deallocation is checked to make sure
+the correct amount of memory is being returned to the system. Guard
+regions are also placed at the front and end of each memory region
+to check for memory overwriting problems. This memory debug mode
+will slow down normal execution so it is only advised when
+investigating a specific memory allocation problem.

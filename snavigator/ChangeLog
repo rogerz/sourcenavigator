@@ -1,3 +1,27 @@
+2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Create a libdbckalloc.a in the db subdir and
+	use it when linking the db functions in an
+	executable that makes use of the Tcl runtime.
+	This allows tracking of db mamory allocations
+	and deallocations via the ckalloc/ckfree macros
+	from Tcl.
+
+	* INSTALL.TXT: Add note about --enable-symbols
+	flag for debug builds.
+	* db/Makefile.am: Build libdbckalloc.a from
+	new dbckalloc.c file.
+	* db/Makefile.in: Regen.
+	* db/dbckalloc.c (db_malloc, db_free, db_realloc,
+	db_calloc): Define set of db_malloc functions
+	that make use of ckalloc/ckfree when the
+	TCL_MEM_DEBUG symbol is defined.
+	* hyper/Makefile.am: Link in libdbckalloc.a.
+	* hyper/Makefile.in: Regen.
+	* parsers/cpp/Makefile.am: Link in
+	libdbckalloc.a.
+	* parsers/cpp/Makefile.in: Regen.
+
 2003-08-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* hyper/tkTreeTable.c (DisplayRecursive):

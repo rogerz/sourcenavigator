@@ -186,25 +186,26 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper 		-I$
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
 bin_PROGRAMS = dbcp dbdump dbimp
-sdk_LIBRARIES = libdbutils.a
+sdk_LIBRARIES = libdbutils.a libdbckalloc.a
 
 dbcp_SOURCES = dbcp.c
-dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
-dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a
+dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
+dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
 
 dbdump_SOURCES = dbdump.c
-dbdump_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+dbdump_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(DB_LIBDIR)/libdbmalloc.a 		$(top_builddir)/misc/libutils/libutils.a $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
-dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a
+dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(DB_LIBDIR)/libdbmalloc.a 		$(top_builddir)/misc/libutils/libutils.a
 
 
 dbimp_SOURCES = dbimp.c
-@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
-@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
-dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a
+@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a libdbckalloc.a 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
+@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb -ldbckalloc 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
+dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a 		libdbckalloc.a 		$(top_builddir)/misc/libutils/libutils.a
 
 
 libdbutils_a_SOURCES = dbutils.c dbutils.h
+libdbckalloc_a_SOURCES = dbckalloc.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -217,6 +218,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libdbutils_a_LIBADD = 
 libdbutils_a_OBJECTS =  dbutils.$(OBJEXT)
+libdbckalloc_a_LIBADD = 
+libdbckalloc_a_OBJECTS =  dbckalloc.$(OBJEXT)
 AR = ar
 bin_PROGRAMS =  dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)
@@ -236,8 +239,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(libdbutils_a_SOURCES) $(dbcp_SOURCES) $(dbdump_SOURCES) $(dbimp_SOURCES)
-OBJECTS = $(libdbutils_a_OBJECTS) $(dbcp_OBJECTS) $(dbdump_OBJECTS) $(dbimp_OBJECTS)
+SOURCES = $(libdbutils_a_SOURCES) $(libdbckalloc_a_SOURCES) $(dbcp_SOURCES) $(dbdump_SOURCES) $(dbimp_SOURCES)
+OBJECTS = $(libdbutils_a_OBJECTS) $(libdbckalloc_a_OBJECTS) $(dbcp_OBJECTS) $(dbdump_OBJECTS) $(dbimp_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -311,6 +314,11 @@ libdbutils.a: $(libdbutils_a_OBJECTS) $(libdbutils_a_DEPENDENCIES)
 	-rm -f libdbutils.a
 	$(AR) cru libdbutils.a $(libdbutils_a_OBJECTS) $(libdbutils_a_LIBADD)
 	$(RANLIB) libdbutils.a
+
+libdbckalloc.a: $(libdbckalloc_a_OBJECTS) $(libdbckalloc_a_DEPENDENCIES)
+	-rm -f libdbckalloc.a
+	$(AR) cru libdbckalloc.a $(libdbckalloc_a_OBJECTS) $(libdbckalloc_a_LIBADD)
+	$(RANLIB) libdbckalloc.a
 
 mostlyclean-binPROGRAMS:
 
