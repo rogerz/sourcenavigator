@@ -23,6 +23,7 @@ WINDRES = @WINDRES@
 OBJEXT = @OBJEXT@
 CYGWIN = @CYGWIN@
 GCC = @GCC@
+TCL_DBGX = @TCL_DBGX@
 
 # makefile.vc --
 #
@@ -229,15 +230,15 @@ TIXDLL  = $(TMPDIR)/cygtix4183.dll
 TIXDLLNAME = cygtix4183.dll
 else
 ifeq ($(GCC),yes)
-TCLLIB  = librhtcl83.a
-TKLIB   = librhtk83.a
+TCLLIB  = librhtcl83$(TCL_DBGX).a
+TKLIB   = librhtk83$(TCL_DBGX).a
 TIXLIB  = $(TMPDIR)/libtix4183.a
 TIXLIBNAME = libtix4183.a
 TIXDLL  = $(TMPDIR)/tix4183.dll
 TIXDLLNAME = tix4183.dll
 else
-TCLLIB  = rhtcl83.lib
-TKLIB   = rhtk83.lib
+TCLLIB  = rhtcl83$(TCL_DBGX).lib
+TKLIB   = rhtk83$(TCL_DBGX).lib
 TIXRAWLIBNAME = $(TMPDIR)/tix4183.lib
 TIXLIB  = $(TMPDIR)/libtix4183.a
 TIXLIBNAME = libtix4183.a

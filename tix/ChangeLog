@@ -1,3 +1,9 @@
+2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/Makefile.in: Use TCL_DBGX when setting
+	Tcl and Tk lib names to fix the build when
+	--enable-symbols flag is passed to configure.
+
 2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/tk8.3/configure:
