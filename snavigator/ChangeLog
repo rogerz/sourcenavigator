@@ -1,3 +1,10 @@
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* INSTALL.TXT: Update install notes to include
+	text about broken Cygwin grep and binmode mount
+	points. This should be enough to get the 5.1
+ 	branch building with a newer Cygwin.
+
 2003-02-13  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/multiview.tcl (AddStatusbar): Anchor the
