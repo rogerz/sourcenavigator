@@ -512,9 +512,9 @@ main(int argc, char **argv)
 
 	if (!db_prefix)
 	{
-		printf("Usage: %s ?-c cache_size? ?-C cross_cache_size? ?-l? ?-f file? ?-m macrofile? db_prefix\n",
+		fprintf(stderr, "Usage: %s ?-c cache_size? ?-C cross_cache_size? ?-l? ?-f file? ?-m macrofile? db_prefix\n",
 			argv[0]);
-
+		fflush(stderr);
 		exit(2);
 	}
 
@@ -531,11 +531,13 @@ main(int argc, char **argv)
 		{
 		case -1:
 			fprintf(stderr,"Could not create lock,%s\n",strerror(errno));
+			fflush(stderr);
 			exit(2);
 			break;
 
 		case FALSE:
 			fprintf(stderr,"The database is in an inconsistent state.\n");
+			fflush(stderr);
 			exit(2);
 			break;
 		}
@@ -648,7 +650,7 @@ main(int argc, char **argv)
 
 		if (!key || !data)
 		{
-			fprintf(stderr,"dbimp Error: %s\n",bufp);
+			fprintf(stderr,"dbimp: Error: unrecognized input \"%s\"\n",bufp);
 			fflush(stderr);
 			continue;
 		}
@@ -660,7 +662,7 @@ main(int argc, char **argv)
 
 		if (type < -3)
 		{
-			fprintf(stderr,"dbimp invalid type: %ld, %s\n",type,bufp);
+			fprintf(stderr,"dbimp: Error: invalid type: %ld, %s\n",type,bufp);
 			fflush(stderr);
 			continue;
 		}

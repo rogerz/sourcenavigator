@@ -77,9 +77,9 @@ log_symbol_filename(FILE *fp,char *fname)
       yyfd = open(fname,OPEN_MODE);
       if (yyfd == -1)
       {
-         printf("Error: unable to open file \"%s\",errno: %d\n",
+         fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",
             fname,errno);
-         fflush(stdout);
+         fflush(stderr);
          return 1;
       }
    }
@@ -166,7 +166,7 @@ main(int argc, char *argv[])
       case 'e':
 	if ((encoding = Tcl_GetEncoding(NULL, optarg)) == NULL)
 	{
-		printf("Unable to locate `%s' encoding\n", optarg);
+		fprintf(stderr, "Unable to locate `%s' encoding\n", optarg);
 		return 1;
 	}
 	break;
@@ -233,7 +233,7 @@ main(int argc, char *argv[])
    {
       if (!(cross_ref_fp = fopen(cross_ref_file,"a")))
       {
-         printf("Error: (open) \"%s, errno: %d\"\n",
+         fprintf(stderr, "Error: (open) \"%s, errno: %d\"\n",
             cross_ref_file,errno);
          exit(1);
       }
@@ -246,7 +246,7 @@ main(int argc, char *argv[])
          if (Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
             cachesize,sn_host,sn_pid) < 0)
          {
-            printf("Error: (PIPE) \"%s\",%d\n",pipe_cmd,errno);
+            fprintf(stderr, "Error: (PIPE) \"%s\",%d\n",pipe_cmd,errno);
             fflush(stdout);
             exit(2);
          }

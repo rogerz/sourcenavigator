@@ -1031,7 +1031,7 @@ db_remove_file_def(int softdel,char *file)
 	int     del;
 	int     del_fil;
 
-	printf("Deleting %s\n",file);	/* Informs SN which files is being deleted. */
+	fprintf(stdout, "Deleting %s\n",file);	/* Informs SN which files is being deleted. */
 	fflush(stdout);
 
 	if (!dbp)
@@ -1252,7 +1252,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 		fn = file_del_key.field_value[3];
 		if (strcmp(last_del_fname, fn) != 0)
 		{
-			printf("Deleting %s\n", fn);
+			fprintf(stdout, "Deleting %s\n", fn);
 			fflush(stdout);
 			strcpy(last_del_fname, fn);
 		}
@@ -1316,7 +1316,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 
 					if (dbp_by->del(dbp_by,&by_key,0) != 0)
 					{
-						fprintf(stdout,"Delete (BY) not found <%s>\n",(char *)by_key.data);
+						fprintf(stderr,"Delete (BY) not found <%s>\n",(char *)by_key.data);
 					}
 				}
 
@@ -2956,8 +2956,8 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 	if (!CreatePipe(&read_handle, &pipe_handle, &secAtts, 0))
 	{
 		errno = GetLastError();
-		printf("Error: (CreatePipe) error: %d\n",errno);
-		fflush(stdout);
+		fprintf(stderr, "Error: (CreatePipe) error: %s\n", errno);
+		fflush(stderr);
 		return -1;
 	}
 	startInfo.cb = sizeof(startInfo);
@@ -3039,15 +3039,17 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 	if (err)
 	{
 		errno = err;
-		printf("Error: (CreateProcess) \"%s\", error: %d\n",tmp,errno);
-		fflush(stdout);
+		fprintf(stderr, "Error: (CreateProcess) \"%s\", error: %d\n",
+		        tmp,errno);
+		fflush(stderr);
 		return -1;
 	}
 #else /* WIN32 */
 	if (pipe(pfd) == -1)
 	{
-		printf("Error: (pipe) \"%s\", errno: %d\n",pipe_cmd,errno);
-		fflush(stdout);
+		fprintf(stderr, "Error: (pipe) \"%s\", error: %d\n",
+		        pipe_cmd,errno);
+		fflush(stderr);
 		return -1;
 	}
 	pid = fork();
@@ -3094,14 +3096,15 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 		break;
 
 	case -1:
-		printf("Error: fork error: %d\n",errno);
+		fprintf(stderr, "Error: fork error: \"%s\"\n", strerror(errno));
+		fflush(stderr);
 		exit(1);
 		break;
 	}
 
 	if ((pipe_handle = fdopen(pfd[1],"w")) == NULL)
 	{
-		printf("Error:fdopen error, errno: %d\n",errno);
+		fprintf(stderr, "Error: fdopen error: \"%s\"\n", strerror(errno));
 		exit(1);
 	}
 	close(pfd[0]);
@@ -3113,8 +3116,9 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 
 		if ((ifp = fopen(incl_to_pipe,"r")) == NULL)
 		{
-			fprintf(stderr,"Error:couldn't load \"%s\",errno: %d\n",
-				incl_to_pipe,errno);
+			fprintf(stderr,"Error: couldn't load \"%s\", error: \"%s\"\n",
+				incl_to_pipe, strerror(errno));
+			fflush(stderr);
 			exit(1);
 		}
 		while (fgets(tmp,sizeof(tmp) -1,ifp))

@@ -1,3 +1,30 @@
+2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbimp.c (main): Print error message to
+	stderr instead of stdout. Slight change to
+	a couple of error messages.
+	* db/dbutils.c (db_remove_file_def,
+	db_remove_file_xfer_using_keys,
+	Paf_Pipe_Create):
+	Use fprintf instead of printf when printing
+	status message to stdout. Print error msg
+	to stderr instead of stdout in a couple
+	of functions.
+	* parsers/cobol/skeleton.c (log_symbol_filename,
+	main):
+	Print error messages to stderr instead of stdout.
+	This is critical for parsers since we are going
+	to be redirecting the stdout of parsers into
+	dbimp later on.
+	* parsers/cpp/skeleton.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/java/skeleton.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/tcl/skeleton.c (log_symbol_filename,
+	main): Ditto.
+
 2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/cobol/skeleton.c (main):
