@@ -1,3 +1,15 @@
+2003-12-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in:
+	* itk/configure: Regen.
+	* itk/configure.in: Add LDFLAGS_OPTIMIZE and
+	LDFLAGS_DEBUG to list of vars that are
+	included in AC_SUBST list. This is needed
+	to fix the build because the change on
+	2003-11-29 changed how the variables
+	were substituted.
+
 2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen.
