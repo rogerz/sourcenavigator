@@ -1,5 +1,14 @@
 2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Set the report_local_vars
+	global variable defined in the libcommon.a
+	when the -l option is passed to a SN parser.
+	This allows xrefs to global variables to
+	be written by a toolbox based parser.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/cpp/cbrowser2.c (main): Fix the -l
 	option so that it does not require an
 	argument. This fixes a problem when xref

@@ -64,8 +64,8 @@ static char currentFilename[MAXPATHLEN];
 static int case_sensitive = 1;
 extern int comment_database;
 static int dialect = 0;
+extern int report_local_vars;
 static int drop_usr_headers = 0;
-static int local_vars = 0;
 static int treat_as_cplusplus = 0;
 
 static FILE * listfp = NULL;
@@ -207,7 +207,7 @@ sn_getopt(enum sn_options opt)
     case SN_OPT_INCLUDE_LIST:
       return (void *) includename;
     case SN_OPT_LOCAL_VARS:
-      return (void *) local_vars;
+      return (void *) report_local_vars;
     case SN_OPT_LISTFILE:
       return listfp;
     case SN_OPT_TREAT_AS_CPLUSPLUS:
@@ -274,7 +274,7 @@ sn_process_options(int argc, char *argv[])
         break;
 
       case 'l':
-        local_vars = 1;
+        report_local_vars = 1;
         break;
 
       case 'n':
