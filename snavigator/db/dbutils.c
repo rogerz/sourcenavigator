@@ -80,27 +80,10 @@ static	DB	*db_cached_classes;
 
 #define	INH_AC_TYPE	(PAF_PRIVATE|PAF_PROTECTED|PAF_PUBLIC)
 
-#ifndef WIN32
-typedef FILE*   HANDLE;
-#define INVALID_HANDLE_VALUE    (FILE *)0
-#else
-static  HANDLE  process_handle;
-#endif /* WIN32 */
-
-static  HANDLE  pipe_handle = INVALID_HANDLE_VALUE;
-
 static DB *db_include;
 static	char	**include_array;
 
-int	Paf_dbimp_running = FALSE;
 int	xref_fastupdate = FALSE;
-
-int	 report_local_vars = FALSE;
-FILE *cross_ref_fp;
-int  comment_database = FALSE;
-
-static int Paf_Pipe_Write MX_VARARGS(char *,str);
-static int Paf_Pipe_Flush ();
 
 static DB *db_syms[50];           /* Keep enough space */
 
@@ -118,18 +101,6 @@ int db_action_is_fetching = 0; /* marks if we are in a fetching routine */
 
 char *SN_StrDup(char*);
 
-static  char    *acc_strings[] = {
-	"r","w","p","u"
-};
-
-/* See paf.h for definitions! */
-static char *SN_symbol_types[] = {
-	"f", "t", "cl", "mi", "iv", "e", "con", "ma", "fu", "su",
-	"gv", "com", "cov", "in", "fil", "by", "to","md","fd","ec",
-	"un","fr","na","ex","lv","vd","iu","rem","cpp","ud",
-	"xfi",NULL,NULL,NULL,NULL,NULL,NULL
-};
-
 static  DB      *db_scopes;
 
 /*
@@ -145,31 +116,6 @@ int get_db_permission()
 		sscanf (p, "%o", &perm);
 	}
 	return perm;
-}
-
-/*
- *      We have to conver '\\' to '/'. That's all.
- */
-char *
-Paf_tempnam(char *dir,char *pref)
-{
-	static	char	tmpnm[MAXPATHLEN + 1];
-	char    *nm;
-
-	nm = tempnam(dir,pref);
-
-	if (!nm)
-		return nm;
-
-	unlink(nm);     /* Just to be very sure !!! */
-
-	strcpy (tmpnm, nm);
-	sn_internal_convert_path (tmpnm, SN_PATH_UNIX);
-	
-	/* DON'T USE ckfree */
-	free(nm);
-
-	return tmpnm;
 }
 
 /*
@@ -365,7 +311,7 @@ create_table(int type,int mode,int cachesize)
 
 	db_inf = (void *)&db_btree_info;
 
-	sprintf(fname,"%s.%s",db_project_dir,SN_symbol_types[type]);
+	sprintf(fname,"%s.%s",db_project_dir,SN_GetSymbolType(type));
 
 	dbp = dbopen(fname, mode, get_db_permission(),db_type,db_inf);
 	
@@ -404,7 +350,7 @@ create_table(int type,int mode,int cachesize)
 		db_inf = (void *)&db_btree_info;
 	}
 
-	sprintf(fname,"%s.%s",db_project_dir,SN_symbol_types[type]);
+	sprintf(fname,"%s.%s",db_project_dir,SN_GetSymbolType(type));
 
 	dbp = dbopen (fname, mode, get_db_permission(), db_type, db_inf);
 #endif
@@ -533,370 +479,6 @@ put_file_db(char *file_name,char *group,char *highlight_file)
 		return ret;
 	}
 	return found;
-}
-
-/*
- * This functions prints data for a file to the output pipe.
- * This function is only called by the parsers.
- */
-
-int
-put_file(char *file_name,char *group,char *highlight_file)
-{
-	if (!file_name)
-	{
-		fprintf(stderr,"put_file: empty file name\n");
-		return -1;
-	}
-
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-	{
-		panic("put_file called when pipe is not open");
-	}
-
-	Paf_Pipe_Write("%d%c%s%c%s%c%s\n",
-		PAF_FILE,      KEY_DATA_SEP_CHR,
-		file_name,     KEY_DATA_SEP_CHR,
-		group,         DB_FLDSEP_CHR,
-		highlight_file ? highlight_file : "");
-
-	return Paf_Pipe_Flush();       /* 'dbimp' can start deleting. */
-}
-
-/*
- * This functions prints comment info to the xref file.
- * This function is only called by the parsers.
- */
-
-int
-put_comment(char *classn,char *func,char *filename,char *comment,int beg_line,int beg_char)
-{
-	register unsigned char  *p;
-
-	if (!comment_database || !comment || !cross_ref_fp)
-	{
-		return 0;
-	}
-
-	/* We use cross_ref_fp because the comments should be inserted
-	 * only during the second phase with the cross reference together.
-	 */
-	for (p = (unsigned char *)comment; *p; p++)
-	{
-		if (*p == '\n')
-		{
-			*p = 0xff;
-		}
-	}
-
-	MY_DEBUG((Output, "put comment into file <%s>\n", filename));
-
-	fprintf(cross_ref_fp,
-		"%d%c%s%c%06d.%03d%c%s%c%s%c%s\n",
-		PAF_COMMENT_DEF,                  KEY_DATA_SEP_CHR,
-		filename,                         DB_FLDSEP_CHR,
-		beg_line, beg_char,               DB_FLDSEP_CHR,
-		classn && *classn ? classn : "#", DB_FLDSEP_CHR,
-		func && *func ? func : "#",       KEY_DATA_SEP_CHR,
-		comment);
-
-	return 0;
-}
-
-/*
- * This functions prints symbol data to the output pipe.
- * This function is only called by the parsers.
- */
-
-int
-put_symbol(
-int     sym_type,
-char    *scope_name,
-char    *symbol_name,
-char    *file_name,
-int     start_lineno,
-int     start_colpos,
-int     end_lineno,
-int     end_colpos,
-unsigned long   attr,
-char    *ret,
-char    *arg_types,
-char    *args,
-char    *comment,
-int     high_start_lineno,
-int     high_start_colpos,
-int     high_end_lineno,
-int     high_end_colpos)
-{
-	char	*sym_str_type = SN_symbol_types[sym_type];
-
-	if (!file_name)
-	{
-		fprintf(stderr,"Error: put_symbol argument file_name must not be NULL\n");
-		fflush(stderr);
-		return -1;
-	}
-	for (; isspace(*file_name); file_name++);
-
-	if (!sym_str_type)
-	{
-		fprintf(stderr,"Error: put_symbol unknown type: %d file: %s\n",
-			sym_type,file_name);
-		fflush(stderr);
-		return -1;
-	}
-
-	if (!symbol_name || !*symbol_name)
-	{
-		fprintf(stderr,
-			"Error: put_symbol argument #3 must not be empty, type: (%s), line: %d file: %s\n",
-			sym_str_type,start_lineno,file_name);
-		fflush(stderr);
-		return -1;
-	}
-
-	for (; isspace(*symbol_name); symbol_name++);
-
-	/* If args is just a string we take a special name. */
-	if (args && *args == '"')
-	{
-		args = "%STRING%";
-	}
-
-	if (comment_database && comment && *comment)
-	{
-		register char *p;
-
-		for (p = comment; *p; p++)
-		{
-			switch (*p)
-			{
-			case    '\n':
-				*p = (char )0xff;
-				break;
-
-			case    '{':
-			case    '}':
-				*p = DB_FLDSEP_CHR;
-				break;
-			}
-		}
-	}
-	else
-		comment = "";
-
-	switch (sym_type)
-	{
-	case	PAF_TYPE_DEF:
-	case	PAF_CLASS_DEF:
-	case	PAF_ENUM_DEF:
-	case	PAF_CONS_DEF:
-	case	PAF_MACRO_DEF:
-	case	PAF_FUNC_DEF:
-	case	PAF_GLOB_VAR_DEF:
-	case	PAF_FUNC_DCL:
-	case	PAF_UNION_DEF:
-	case	PAF_ENUM_CONST_DEF:
-		scope_name = NULL;
-		break;
-	}
-
-	/* Skip leading blanks */
-	for (;scope_name && isspace(*scope_name); scope_name++);
-
-	if (!scope_name || *scope_name == '\0')
-	{
-		scope_name = NULL;
-
-		switch (sym_type)
-		{
-		case PAF_MBR_FUNC_DEF:
-		case PAF_MBR_VAR_DEF:
-		case PAF_COMMON_MBR_VAR_DEF:
-		case PAF_CLASS_INHERIT:
-		case PAF_MBR_FUNC_DCL:
-/*		case PAF_ENUM_CONST_DEF: */
-			fprintf(stderr,
-				"Error: put_symbol argument #2 must not be empty, type: (%s), line: %d file: %s\n",
-				sym_str_type,start_lineno,file_name);
-			fflush(stderr);
-			return -1;
-			break;
-		}
-	}
-
-	if (high_start_lineno == 0)	/* Take the symbol definition. */
-	{
-		high_start_lineno = start_lineno;
-		high_start_colpos = start_colpos;
-		high_end_lineno = start_lineno;
-		high_end_colpos = start_colpos + strlen(symbol_name);
-	}
-
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-	{
-		panic("put_symbol called when pipe is not open");
-	}
-
-	Paf_Pipe_Write("%d%c%s%s%s%c%06d.%03d%c%s%c%d.%d%c0x%x%c{%s}%c{%s}%c{%s}%c{%s}\n",
-		sym_type,                        KEY_DATA_SEP_CHR,
-		scope_name ? scope_name : "",
-		scope_name ? DB_FLDSEP_STR : "",
-		symbol_name,                     DB_FLDSEP_CHR,
-		start_lineno, start_colpos,      DB_FLDSEP_CHR,
-		file_name,                       KEY_DATA_SEP_CHR,
-		end_lineno, end_colpos,          DB_FLDSEP_CHR,
-		attr,                            DB_FLDSEP_CHR,
-		ret ? ret : "",                  DB_FLDSEP_CHR,
-		arg_types ? arg_types : "",      DB_FLDSEP_CHR,
-		args ? args : "",                DB_FLDSEP_CHR,
-		comment
-		);
-
-	Paf_Pipe_Write("%d%c%s%c%06d.%03d%c%s%c%s%c%s%c%d.%d%c%d.%d%c%d.%d%c{%s}\n",
-		PAF_FILE_SYMBOLS,                     KEY_DATA_SEP_CHR,
-		file_name,                            DB_FLDSEP_CHR,
-		start_lineno, start_colpos,           DB_FLDSEP_CHR,
-		scope_name ? scope_name : "#",        DB_FLDSEP_CHR,
-		symbol_name,                          DB_FLDSEP_CHR,
-		sym_str_type,                         KEY_DATA_SEP_CHR,
-		end_lineno,        end_colpos,        DB_FLDSEP_CHR,
-		high_start_lineno, high_start_colpos, DB_FLDSEP_CHR,
-		high_end_lineno,   high_end_colpos,   DB_FLDSEP_CHR,
-		arg_types ? arg_types : ""
-		);
-
-	return 0;
-}
-
-int
-put_cross_ref(
-int     type,
-int     scope_type,
-int     scope_lev,
-char    *fnc_cls,              /* caller class */
-char    *fnc,                   /* caller function/method */
-char	*fnc_arg_types,         /* caller function/method argument types */
-char    *scope,                 /* referenced class */
-char	*what,                  /* referenced member */
-char	*arg_types,		/* referenced function/method argument types */
-char	*file,
-int	lineno,
-int	acc)
-{
-	LongString	key_value;
-	LongString	data_value;
-	char	lineno_buf[10];
-
-	if ((!cross_ref_fp && !Paf_dbimp_running) || !fnc || *fnc == '\0' ||
-		(scope_lev == PAF_REF_SCOPE_LOCAL && !report_local_vars))
-	{
-		return -1;
-	}
-
-	MY_DEBUG2 ((Output, "put_cross_ref (%i, %i, %i, %s, %s, %s, %s, %s, %s, %s, %i, %i)\n",
-					type, scope_type, scope_lev,
-					fnc_cls?fnc_cls:"?",
-					fnc?fnc:"?",
-					fnc_arg_types?fnc_arg_types:"?", scope?scope:"?", what?what:"?",
-					arg_types?arg_types:"?",	file?file:"?", lineno, acc));
-
-	if (scope && *scope == '\0')
-		scope = NULL;
-	else if (scope)
-	{
-		char *_p;
-		for (; isspace(*scope); scope++);
-		
-		/*
-		 * It can happen, that the scope contains "class fld ",
-		 * so then terminate the rest after "class" */
-		if ((_p=strchr (scope, DB_FLDSEP_CHR)))
-		{
-			*_p = 0;
-		}
-		/**/
-		if (*scope == '\0')
-			scope = NULL;
-	}
-	if (fnc_cls && *fnc_cls == '\0')
-		fnc_cls = NULL;
-	else if (fnc_cls)
-	{
-		for (; isspace(*fnc_cls); fnc_cls++);
-	}
-
-	if (!file)
-	{
-		fprintf(stderr,"Filename must not be NULL\n");
-		return -1;
-	}
-	if (!what || !*what)
-	{
-		fprintf(stderr,"Input parameter (#8) must not be NULL file: %s line: %d\n",
-				file,lineno);
-		abort();
-		return -1;
-	}
-
-	for (; isspace(*what); what++);
-	for (; isspace(*file); file++);
-
-	if (type <= 0 || type > PAF_REF_UNDEFINED)
-	{
-		fprintf(stderr,"Input parameter (#1) %d is not allowed\n",
-			type);
-		return -1;
-	}
-
-	if (scope_type <= 0 || scope_type >= PAF_VAR_DCL)
-	{
-		fprintf(stderr,"Input parameter (#2) %d is not allowed\n",
-			scope_type);
-		return -1;
-	}
-
-	LongStringInit(&key_value,0);
-	LongStringInit(&data_value,0);
-
-	if (type == PAF_MBR_FUNC_DCL)
-		type = PAF_MBR_FUNC_DEF;
-
-	sprintf(lineno_buf,"%06d",lineno);
-	key_value.copystrings(&key_value,
-		fnc_cls ? fnc_cls : "#",            DB_FLDSEP_STR,
-		fnc,                                DB_FLDSEP_STR,
-		SN_symbol_types[scope_type],       DB_FLDSEP_STR,
-		scope ? scope : "#",                DB_FLDSEP_STR,
-		what,                               DB_FLDSEP_STR,
-		SN_symbol_types[type],             DB_FLDSEP_STR,
-		acc_strings[acc],                   DB_FLDSEP_STR,
-		lineno_buf,                         DB_FLDSEP_STR,
-		file,
-		NULL);
-	data_value.copystrings(&data_value,
-		fnc_arg_types ? fnc_arg_types : "", DB_FLDSEP_STR,
-		arg_types ? arg_types : NULL,
-		NULL);
-
-	if (Paf_dbimp_running)
-	{
-		MY_DEBUG2((Output, "xref entry <%s> <%s>\n", key_value.buf, data_value.buf));
-	
-		db_insert_entry(PAF_CROSS_REF, key_value.buf, data_value.buf);
-	}
-	else if (!scope || *scope != '?')
-	{
-		fprintf(cross_ref_fp, "%d%c%s%c%s\n",
-			PAF_CROSS_REF, KEY_DATA_SEP_CHR,
-			key_value.buf, KEY_DATA_SEP_CHR,
-			data_value.buf);
-	}
-
-	key_value.free(&key_value);
-	data_value.free(&data_value);
-
-	return 0;
 }
 
 void Paf_Close_Include_Dirs()
@@ -1056,15 +638,12 @@ db_remove_file_def(int softdel,char *file)
 
 	if (!db_scopes)
 	{
-		char	**scopep;
-
 		db_scopes = dbopen (NULL, O_RDWR|O_CREAT, get_db_permission(), DB_HASH, NULL);
 		data.data = (char *)&scope_val;
 		data.size = sizeof(scope_val);
-		for (scope_val = PAF_FILE, scopep = SN_symbol_types; *scopep;
-			scopep++,scope_val++)
+		for (scope_val = PAF_FILE; scope_val < PAF_SYMBOL_TYPE_MAX; scope_val++)
 		{
-			key.data = *scopep;
+			key.data = SN_GetSymbolType(scope_val);
 			key.size = strlen(key.data);
 			if (key.size > 0)
 			{
@@ -1186,7 +765,7 @@ db_remove_file_def(int softdel,char *file)
 			fprintf(stderr,"DELETING of <%s> with size: %d type <%s> returned: %d,%d\n",
 				(char *)sc_key.data,
 				sc_key.size,
-				SN_symbol_types[scope_val],
+				SN_GetSymbolType(scope_val),
 				del_fil,
 				del);
 		}
@@ -1544,8 +1123,8 @@ db_insert_entry(int type,char *key_buf,char *data_buf)
 
 	tmp.split (&tmp,key.data, key.size -1, FALSE, DB_FLDSEP_CHR, -1);
 
-	if (tmp.field_value[5][0] != SN_symbol_types[PAF_REF_TO_LOCAL_VAR][0] ||
-		tmp.field_value[5][1] != SN_symbol_types[PAF_REF_TO_LOCAL_VAR][1])
+	if (tmp.field_value[5][0] != SN_GetSymbolType(PAF_REF_TO_LOCAL_VAR)[0] ||
+		tmp.field_value[5][1] != SN_GetSymbolType(PAF_REF_TO_LOCAL_VAR)[1])
 	{
 		dbp = db_syms[PAF_CROSS_REF_BY];
 		if (!dbp)
@@ -1944,7 +1523,7 @@ inherit_members(char *class_name,char *inherited_class, char *inh_buf)
 
 #if OPT_CLASS_TREE
 		/* Don't load members of base classes that exist in the superclass . */
-		if (inh_symbol_type[0] == SN_symbol_types[PAF_MBR_FUNC_DCL][0]
+		if (inh_symbol_type[0] == SN_GetSymbolType(PAF_MBR_FUNC_DCL)[0]
 			&& db_mbr)		/* Search for method of the superclass. */
 		{
 			/* We load (inherit) the member only if the superclass
@@ -2005,7 +1584,7 @@ load_class_members(int type, char *class_name)
 	DBT	data;
 	DBT	mbr_key;
 	DBT	mbr_data;
-	char	*symbol_type = SN_symbol_types[type];
+	char	*symbol_type = SN_GetSymbolType(type);
 	char	*mbr_type;
 	int	mbr_type_len;
 	char	*mbr_pars;
@@ -2678,7 +2257,7 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 
 		pars.free(&pars);
 
-		if (sym_type[0] == SN_symbol_types[PAF_MBR_VAR_DEF][0])		/* "iv" ? */
+		if (sym_type[0] == SN_GetSymbolType(PAF_MBR_VAR_DEF)[0])		/* "iv" ? */
 		{
 			RETURN_FROM_SEARCH(PAF_MBR_VAR_DEF);
 		}
@@ -2920,39 +2499,6 @@ Paf_db_init_tables(const char *proj_dir,const char *cache,const char *cross_cach
 	}
 }
 
-void
-Paf_Pipe_Create(char *incl_to_pipe)
-{
-#ifdef WIN32
-	pipe_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-#else
-	pipe_handle = stdout;
-#endif /* WIN32 */
-
-	if (incl_to_pipe)
-	{
-		FILE    *ifp;
-		char    tmp[1024];
-
-		if ((ifp = fopen(incl_to_pipe,"r")) == NULL)
-		{
-			fprintf(stderr,"Error: couldn't load \"%s\", error: \"%s\"\n",
-				incl_to_pipe, strerror(errno));
-			fflush(stderr);
-			exit(1);
-		}
-		while (fgets(tmp,sizeof(tmp)-1,ifp))
-		{
-			Paf_Pipe_Write(tmp);
-		}
-		Paf_Pipe_Flush();
-
-		fclose(ifp);
-
-		unlink(incl_to_pipe);   /* Nobody needs it. */
-	}
-}
-
 #if DB_NO_CASE_COMPARE
 /*
  * Database (without case) comparison routine.
@@ -3041,78 +2587,6 @@ Paf_panic(int level)
 	longjmp(BAD_IMPL_jmp_buf,level);
 }
 
-static int
-Paf_Pipe_Flush()
-{
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-		return -1;
-#ifdef  WIN32
-	return (int)FlushFileBuffers(pipe_handle);
-#else
-	return fflush(pipe_handle);
-#endif /* __MSVC__ */
-}
-
-int
-Paf_Pipe_Close()
-{
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-		panic("pipe was not opened before Paf_Pipe_Close call");
-
-	pipe_handle = INVALID_HANDLE_VALUE;
-
-	return 0;
-}
-
-static int
-Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
-{
-	va_list args;
-	char    *fmt;
-	char    tmp[10000];
-	int     len;
-#ifdef WIN32
-	DWORD     cou;
-#else
-	int     cou;
-#endif
-	Tcl_DString utfBuffer;
-
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-		return -1;
-
-	fmt = (char *)MX_VARARGS_START(char *,arg1,args);
-
-	len = vsprintf(tmp,fmt, args);
-	for (fmt = tmp; len > 0;)
-	{
-		cou = 0;
-		Tcl_ExternalToUtfDString(NULL, tmp, len, &utfBuffer);
-#ifdef _WINDOWS
-		if (WriteFile(pipe_handle,Tcl_DStringValue(&utfBuffer),
-		    Tcl_DStringLength(&utfBuffer),&cou,NULL) == FALSE)
-		{
-			Tcl_DStringFree(&utfBuffer);
-			return FALSE;
-		}
-#else
-		cou = fprintf(pipe_handle,"%s",Tcl_DStringValue(&utfBuffer));
-		if (cou == -1) {
-			Tcl_DStringFree(&utfBuffer);
-			return FALSE;
-		}
-#endif
-
-		if (cou > 0)
-		{
-			fmt += cou;
-			len -= cou;
-		}
-		Tcl_DStringFree(&utfBuffer);
-	}
-	return TRUE;
-}
-
 #if defined(__MSVC__) || defined(__MINGW32__)
 /* This function checks for a process (with pid - proc_id).
    Returns:
@@ -3144,18 +2618,3 @@ int kill(pid_t pid, int dummy) /*sn_win32_ping*/
         }
 }
 #endif
-
-
-
-/* This functions writes out a file parsing status line.
- * It is invoked by the various parser routines to write
- * out a line of input that is parsed by the
- * Source-Navigator procudure event_LoadPipeInput.
- */
-
-void
-put_status_parsing_file(char *fname) {
-    Paf_Pipe_Write("Status: Parsing: %s\n", fname);
-    Paf_Pipe_Flush();
-}
-

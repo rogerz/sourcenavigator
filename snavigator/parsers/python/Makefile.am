@@ -30,14 +30,14 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper \
 	-I$(top_srcdir)/parsers/toolbox \
 	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
-pybrowser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a \
-		 $(common)/libcommon.a $(DB_LIBDIR)/libdb.a \
+pybrowser_LDADD = $(toolbox)/libsnptools.a \
+		 $(common)/libcommon.a \
 		 $(top_builddir)/misc/libutils/libutils.a \
 		 $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 pybrowser_SOURCES = pybrowser.c
 
-pybrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
+pybrowser_DEPENDENCIES = \
 			$(toolbox)/libsnptools.a $(common)/libcommon.a \
 			$(top_builddir)/misc/libutils/libutils.a
 

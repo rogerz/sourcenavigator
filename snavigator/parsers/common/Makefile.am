@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 noinst_LIBRARIES = libcommon.a
 
-INCLUDES = $(TCLHDIR)
+INCLUDES = $(WINFLAGS) $(TCLHDIR) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper
 
-libcommon_a_SOURCES = lexinput.h lexinput.c
+libcommon_a_SOURCES = lexinput.h lexinput.c parser.h parser.c
 

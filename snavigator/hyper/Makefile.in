@@ -200,9 +200,9 @@ hyper_SOURCES = compare.h compare.c dbsym.c exint.c recudir.c services.c sninit.
 
 
 hyper_LDFLAGS = $(WIN32LDAPP)
-@MSVC_TRUE@hyper_LDADD = @HYPER_MAIN@ $(LibUtilsDir)/libutils.a $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
-@MSVC_FALSE@hyper_LDADD = @HYPER_MAIN@ -L$(LibUtilsDir) -lutils -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
-hyper_DEPENDENCIES = @HYPER_MAIN@ $(LibUtils) $(DBUtilsLib) $(DB_LIBDIR)/libdb.a $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
+@MSVC_TRUE@hyper_LDADD = @HYPER_MAIN@ $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(LibUtils) $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
+@MSVC_FALSE@hyper_LDADD = @HYPER_MAIN@ -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(LibUtilsDir) -lutils -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
+hyper_DEPENDENCIES = @HYPER_MAIN@ $(DBUtilsLib) $(DB_LIBDIR)/libdb.a $(LibUtils) $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h

@@ -36,6 +36,7 @@ MA 02111-1307, USA.
 #include <tcl.h>
 
 #include "sn.h"
+#include "parser.h"
 
 #include <compat.h>
 

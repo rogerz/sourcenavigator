@@ -36,6 +36,7 @@ MA 02111-1307, USA.
 #include <stdlib.h>
 #include <tcl.h>
 #include "dbutils.h"
+#include "parser.h"
 
 #ifdef WIN32
 #define  OPEN_MODE   O_RDONLY|O_BINARY

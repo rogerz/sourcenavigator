@@ -62,5 +62,5 @@ endif
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
-libdbutils_a_SOURCES = dbutils.c dbutils.h longstr.c srchtbl.c
+libdbutils_a_SOURCES = dbutils.c dbutils.h srchtbl.c
 

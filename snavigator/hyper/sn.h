@@ -71,6 +71,7 @@ MA 02111-1307, USA.
 #define PAF_CROSS_REF_CPP  28
 #define  PAF_REF_UNDEFINED 29
 #define PAF_CROSS_REF_FILE 30
+#define PAF_SYMBOL_TYPE_MAX 31 /* Must be index of sizeof(SN_symbol_types) */
 
 
 /* Cross reference values. */
@@ -168,46 +169,24 @@ MA 02111-1307, USA.
 extern "C" {
 #endif /* (__cplusplus) */
 
-extern int put_symbol _ANSI_ARGS_((int type,char *scope,char *sym_name,char *file,
-   int start_lineno,int start_colpos,int end_lineno,int end_colpos,unsigned long attr,
-   char *ret,char *arg_types,char *args, char *comment,
-   int high_start_lineno,int high_start_colpos,int high_end_lineno, int high_end_colpos));
-
 extern int get_symbol _ANSI_ARGS_((char *class_name,char *exp_scope,
    char *name,char *arg_types, char *scope,
    char *ret_type, char *ret_define, int exact));
 
 extern int get_class_or_typedef _ANSI_ARGS_((char *name,char *origin));
 
-extern int put_cross_ref _ANSI_ARGS_((int type,int scope_type,int scope_lev,
-   char *fnc_cls,char *fnc,char *fnc_arg_types,char *scope,char *what,
-   char *arg_types,char *file,int lineno,int acc));
-
-extern int put_file _ANSI_ARGS_((char *file_name,char *group, char *highlight_file));
-
-extern int put_comment _ANSI_ARGS_((char *classn,char *func,char *filename,
-   char *comment,int beg_line,int beg_char));
-
-extern void put_status_parsing_file _ANSI_ARGS_((char *fname));
-
-extern void Paf_Pipe_Create _ANSI_ARGS_((char *incl_to_pipe));
-
 extern void Paf_Open_Include_Dirs _ANSI_ARGS_((char *file_name,char *db_prefix));
 extern void Paf_Close_Include_Dirs _ANSI_ARGS_(());
 
 extern char *Paf_Search_Include_dir _ANSI_ARGS_((char *dir));
-
-extern int Paf_Pipe_Close _ANSI_ARGS_ (());
-
-extern char *Paf_tempnam _ANSI_ARGS_((char *dir,char *pref));
-
-extern int (*Paf_Macro) _ANSI_ARGS_ ((char *word,int len,char **parameter_list,char **macro));
 
 extern void Paf_db_init_tables _ANSI_ARGS_((const char *arg,const char *cache,const char *cross_cache));
 
 extern void Paf_insert_cross_ref_qry _ANSI_ARGS_ ((char *pcLine));
 
 extern void Paf_panic (int level);
+
+extern char * SN_GetSymbolType(int type);
 
 #if WIN32
 extern int getopt _ANSI_ARGS_((int argc,char **argv,char *opt));

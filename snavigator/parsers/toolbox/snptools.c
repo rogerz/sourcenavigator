@@ -32,6 +32,7 @@
 
 #include <tcl.h> 
 #include "snptools.h"
+#include "parser.h"
 
 /* For platforms that do not have getopt globals in their headers. */
 extern char *optarg;

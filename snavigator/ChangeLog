@@ -1,3 +1,117 @@
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Split parser functionality out of db/dbutils.c
+	and move it into parsers/common/parser.c.
+	With this change, a parser need only be linked
+	to libcommon.a. Parsers will no longer need
+	to link to libdbutils.a and libdb.a, with the
+	exception of the evil C/C++ parser which does
+	things its own way.
+
+	* db/Makefile.am: Remove longstr.c in
+	libdbutils_a_SOURCES.
+	* db/Makefile.in: Regen.
+	* db/dbutils.c (pipe_handle, Paf_dbimp_running,
+	report_local_vars, cross_ref_fp, comment_database,
+	acc_strings, SN_symbol_types, Paf_tempnam,
+	create_table, put_file, put_comment, put_symbol,
+	put_cross_ref, db_remove_file_def, db_insert_entry,
+	inherit_members, load_class_members,
+	search_for_symbol, Paf_Pipe_Create, Paf_Pipe_Flush,
+	Paf_Pipe_Close, Paf_Pipe_Write, put_status_parsing_file):
+	Move all parser related functionality into
+	misc/libutils/longstr.c. Move the SN_symbol_types
+	into strs.c and turn it into an access function
+	called SN_GetSymbolType since it is needed in
+	both the db and parser layers. Remove the
+	Paf_dbimp_running logic since it is never used.
+	* db/longstr.c: Moved to misc/libutils.
+	* db/longstr.h: Moved to misc/libutils.
+	* hyper/Makefile.am: Reorder the libutils.a
+	link since it must appear after libdbutils.a.
+	* hyper/Makefile.in: Regen.
+	* hyper/sn.h: Define new PAF_SYMBOL_TYPE_MAX
+	value used when iterating over members with
+	the SN_GetSymbolType functions. Move declarations
+	for put_symbol, put_cross_ref, put_file, put_comment,
+	put_status_parsing_file, Paf_Pipe_Create,
+	Paf_Pipe_Close, and Paf_tempnam into parser.h.
+	Remove unused Paf_Macro decl and add a decl
+	for SN_GetSymbolType.
+	* misc/libutils/Makefile.am: Add longstr.h and
+	longstr.c to libutils_a_SOURCES.
+	* misc/libutils/Makefile.in: Regen.
+	* misc/libutils/longstr.c:
+	* misc/libutils/longstr.h: Moved longstr functions
+	from db subdir since these functions are used in
+	both the database and parser layers.
+	* misc/libutils/strs.c (SN_GetSymbolType):
+	Move SN_symbol_types here and create a access
+	method called SN_GetSymbolType for it.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Don't
+	link with libdbutils.a and libdb.a, libcommon.a
+	is all that is needed now.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/cobol/Makefile.am: Add parsers/common
+	to the include dirs so we can find parser.h.
+	Link with libcommon.a and not with libdbutils.a
+	and libdb.a.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/cobol/skeleton.c: Include parser.h.
+	* parsers/common/Makefile.am: Add misc/libutils
+	and hyper the the include search dirs. Add
+	parser.h and parser.c to libcommon_a_SOURCES.
+	Add $(WINFLAGS) to INCLUDES to match db/Makefile.am
+	so that things compile with VC++.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/common/parser.c (acc_strings, pipe_handle,
+	comment_database, cross_ref_fp, report_local_vars,
+	Paf_Pipe_Create, Paf_Pipe_Close, Paf_Pipe_Write,
+	Paf_Pipe_Flush, put_status_parsing_file, put_file,
+	put_symbol, put_comment, put_cross_ref, Paf_tempnam):
+	Move parser support functions from dbutils.c over
+	to this file. Remove unused Paf_dbimp_running logic
+	from put_cross_ref so that there are no dependencies
+	on the database layer.
+	* parsers/common/parser.h: Declare Paf_Pipe_Create,
+	Paf_Pipe_Close, put_status_parsing_file, put_file,
+	put_symbol, put_comment, put_cross_ref, and Paf_tempnam.
+	* parsers/cpp/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/skeleton.c: Include parser.h.
+	* parsers/cpp/cpplib/Makefile.am: Add misc/libutils
+	to the include search dir so that longstr.h can
+	be found.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/fortran/ftnchek.c: Include parser.h.
+	* parsers/java/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	Don't link to libdbutils.a and libdb.a.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/java/skeleton.c: Include parser.h.
+	* parsers/m4/Makefile.am: Link libcommon.a before
+	libutils.a.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.am: Don't link with
+	libdbutils.a or libdb.a.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.am: Don't link with
+	libdbutils.a or libdb.a.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.am: Add parsers/common
+	to include search dir. Link to libcommon.a
+	and not libdbutils.a or libdb.a.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/tcl/skeleton.c: Include parser.h.
+	* parsers/toolbox/Makefile.am: Add parsers/common
+	to the include search dirs.
+	* parsers/toolbox/Makefile.in: Regen.
+	* parsers/toolbox/snptools.c: Include parser.h
+
 2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Tear the C/C++ xref generation code out of

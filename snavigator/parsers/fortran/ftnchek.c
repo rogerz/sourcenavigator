@@ -223,6 +223,7 @@ int      highlight;
 
 #include <tcl.h>
 #include "sn.h"
+#include "parser.h"
 
 /* Tcl encoding to translate from. The default (when equal to NULL) is
    to do no translation. */

@@ -178,18 +178,20 @@ YACC = @YACC@
 
 AUTOMAKE_OPTIONS = cygnus
 
+common = $(top_builddir)/parsers/common
+
 bin_PROGRAMS = obrowser
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc 	-I$(top_srcdir)/misc/libutils -I$(top_srcdir)/parsers/libjcreuse 	$(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc 	-I$(top_srcdir)/parsers/libjcreuse 	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 
 obrowser_SOURCES = Scanner.c cobol.h deftab.h keywords.h statdef.h                    Scanner.h copy_pars.c def.h Source.h Source.c copy_pars.h 		   keywdef.h skeleton.c Parser.h Parser.c cobol.c deftab.c 		   keywords.c directives.c
 
 
-obrowser_LDADD = ../libjcreuse/libjcreuse.a $(top_builddir)/db/libdbutils.a 	$(DB_LIBDIR)/libdb.a $(top_builddir)/misc/libutils/libutils.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+obrowser_LDADD = ../libjcreuse/libjcreuse.a 	$(common)/libcommon.a 	$(top_builddir)/misc/libutils/libutils.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-obrowser_DEPENDENCIES = ../libjcreuse/libjcreuse.a 	$(top_builddir)/misc/libutils/libutils.a 	$(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a
+obrowser_DEPENDENCIES = ../libjcreuse/libjcreuse.a 	$(common)/libcommon.a 	$(top_builddir)/misc/libutils/libutils.a
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h

@@ -30,14 +30,12 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/parsers/toolbox \
 	-I$(top_srcdir)/parsers/common
 
 m4browser_SOURCES = m4browser.c
-m4browser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a \
-		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a \
+m4browser_LDADD = $(toolbox)/libsnptools.a \
+		$(common)/libcommon.a \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
-m4browser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a \
-			$(top_builddir)/db/libdbutils.a \
-			$(common)/libcommon.a \
+m4browser_DEPENDENCIES = $(common)/libcommon.a \
 			$(toolbox)/libsnptools.a \
 			$(top_builddir)/misc/libutils/libutils.a
 

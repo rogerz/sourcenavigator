@@ -21,21 +21,23 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
+common = $(top_builddir)/parsers/common
+
 bin_PROGRAMS = jbrowser
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
+	-I$(top_srcdir)/parsers/common \
 	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
 
 jbrowser_SOURCES = Eval.c Eval.h Parser.c Parser.h Scanner.c Scanner.h \
 Trafo.c Trafo.h Tree.c Tree.h deftab.c deftab.h yyTrafo.h yyTree.h \
 skeleton.c
 
-jbrowser_LDADD = ../libjcreuse/libjcreuse.a $(top_builddir)/db/libdbutils.a \
-		$(DB_LIBDIR)/libdb.a $(top_builddir)/misc/libutils/libutils.a \
+jbrowser_LDADD = ../libjcreuse/libjcreuse.a \
+		$(common)/libcommon.a \
+		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 jbrowser_DEPENDENCIES = ../libjcreuse/libjcreuse.a \
-		$(top_builddir)/misc/libutils/libutils.a \
-		$(top_builddir)/db/libdbutils.a \
-		$(DB_LIBDIR)/libdb.a
-
+		$(common)/libcommon.a \
+		$(top_builddir)/misc/libutils/libutils.a

@@ -60,24 +60,27 @@ c_high.c py_high.c ch_high.c j_high.c highlight.c tclfileutils.c
 
 hyper_LDFLAGS = $(WIN32LDAPP)
 if MSVC
-hyper_LDADD = @HYPER_MAIN@ $(LibUtilsDir)/libutils.a \
+hyper_LDADD = @HYPER_MAIN@ \
 $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a \
+$(LibUtils) \
 $(top_builddir)/../libgui/src/libgui.a \
 $(WIN32LIBS) \
 $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) \
 $(TIX_BUILD_LIB_SPEC) \
 $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
 else
-hyper_LDADD = @HYPER_MAIN@ -L$(LibUtilsDir) -lutils \
+hyper_LDADD = @HYPER_MAIN@ \
 -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb \
+-L$(LibUtilsDir) -lutils \
 -L$(top_builddir)/../libgui/src -lgui \
 $(WIN32LIBS) \
 $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) \
 $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) \
 $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
 endif
-hyper_DEPENDENCIES = @HYPER_MAIN@ $(LibUtils) \
+hyper_DEPENDENCIES = @HYPER_MAIN@ \
 $(DBUtilsLib) $(DB_LIBDIR)/libdb.a \
+$(LibUtils) \
 $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) \
 $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
 

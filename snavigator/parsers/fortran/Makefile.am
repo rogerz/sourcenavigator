@@ -21,10 +21,12 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
+common = $(top_builddir)/parsers/common
+
 bin_PROGRAMS = fbrowser
 
 INCLUDES = $(WINFLAGS) -DALLOW_INCLUDE -I$(top_srcdir)/hyper \
-	$(TCLHDIR)
+	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 YFLAGS = -d
 
@@ -32,10 +34,12 @@ fbrowser_SOURCES = fortran.c exprtype.c forlex.c ftnchek.c ftnchek.h \
 intrinsics.h iokeywds.h keywords.h pgsymtab.c plsymtab.c project.c \
 symtab.c symtab.h
 
-fbrowser_LDADD = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
+fbrowser_LDADD = \
+		$(common)/libcommon.a \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
-fbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
+fbrowser_DEPENDENCIES = \
+		$(common)/libcommon.a
 		$(top_builddir)/misc/libutils/libutils.a
 fbrowser_DEFS = -DALLOW_INCLUDE
 

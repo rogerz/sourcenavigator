@@ -204,7 +204,7 @@ dbimp_SOURCES = dbimp.c
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a
 
 
-libdbutils_a_SOURCES = dbutils.c dbutils.h longstr.c srchtbl.c
+libdbutils_a_SOURCES = dbutils.c dbutils.h srchtbl.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -216,8 +216,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libdbutils_a_LIBADD = 
-libdbutils_a_OBJECTS =  dbutils.$(OBJEXT) longstr.$(OBJEXT) \
-srchtbl.$(OBJEXT)
+libdbutils_a_OBJECTS =  dbutils.$(OBJEXT) srchtbl.$(OBJEXT)
 AR = ar
 bin_PROGRAMS =  dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)

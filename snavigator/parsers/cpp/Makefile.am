@@ -21,11 +21,13 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
+common = $(top_builddir)/parsers/common
+
 SUBDIRS = cpplib
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib \
 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) \
-	$(TCLHDIR)
+	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 bin_PROGRAMS = cbrowser cbrowser2
 
@@ -35,6 +37,7 @@ cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) \
 	cpplib/macro.$(OBJEXT) cpplib/macread.$(OBJEXT) \
 	cpplib/token.$(OBJEXT) cpplib/process.$(OBJEXT) \
 	cpplib/expr.$(OBJEXT) \
+	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a \
@@ -44,6 +47,7 @@ cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) \
 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) \
 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) \
 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) \
+	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a
@@ -51,12 +55,14 @@ cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) \
 cbrowser2_SOURCES = cbrowser2.c
 
 cbrowser2_LDADD = cpplib/libcpp2.a \
+	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a \
 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 cbrowser2_DEPENDENCIES = cpplib/libcpp2.a \
+	$(common)/libcommon.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a

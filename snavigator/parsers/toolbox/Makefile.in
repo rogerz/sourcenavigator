@@ -158,7 +158,8 @@ YACC = @YACC@
 
 AUTOMAKE_OPTIONS = cygnus
 
-INCLUDES = $(WINFLAGS) $(TCLHDIR) -I$(top_srcdir)/hyper
+INCLUDES = $(WINFLAGS) $(TCLHDIR) -I$(top_srcdir)/hyper 	-I$(top_srcdir)/parsers/common
+
 
 libsnptools_a_SOURCES = snptools.c snptools.h
 
