@@ -25,14 +25,6 @@
 ##
 ################################################
 
-# FIXME: see if this is working now!
-#This hack will be removed when the build
-#automatically takes care of the libgui tcl files
-
-if {![info exists combobox::combobox]} {
-    source ${sn_home}/share/cygnus/gui/combobox.tcl
-}
-
 itcl::class snEditTarget {
     inherit sourcenav::Dialog
 

@@ -1,3 +1,12 @@
+2002-05-02  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl: Remove hack at top of file
+	that sources combobox.tcl. This is not needed
+	since this procedure is auto-loaded from libgui.
+	This command has become broken because the
+	.../share/cygnus install directory in libgui was
+	renamed to .../share/redhat recently.
+
 2002-04-29  Mo DeJong  <supermo@bayarea.net>
 
 	* configure: Regen.
