@@ -1,5 +1,10 @@
 2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* INSTALL.TXT: Add note about the requirement
+	of having GNU tar on the path before installing.
+
+2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Create a libdbckalloc.a in the db subdir and
 	use it when linking the db functions in an
 	executable that makes use of the Tcl runtime.

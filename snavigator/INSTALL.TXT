@@ -33,6 +33,8 @@ GNU tools must be on the PATH before the configure script
 is run. GNU make and gcc are required to build Source-Navigator.
 If the GNU make executable on your system is installed as
 gmake, type gmake instead of make in the following instructions.
+GNU tar is also required to run the "make install" command,
+so please make sure it is on the path before you begin. 
 
 To build under a UNIX system, simply create a build directory
 and run the configure script. The following commands assume
