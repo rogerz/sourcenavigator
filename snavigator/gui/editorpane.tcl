@@ -3312,6 +3312,7 @@ itcl::class Editor& {
 
 	#if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
 	#    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
+	#    sn_delete_editor_tags $itk_component(editor)
 	#    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
 	#	bgerror ${err}
 	#    }
@@ -3326,7 +3327,7 @@ itcl::class Editor& {
             # When the source code browser does not support highlighting
             # the symbols parsed from the file are still highlighted, so
             # just delete any tags currently in the editor.
-	    Sn_Highlight_Text -delete $itk_component(editor) ""
+	    sn_delete_editor_tags $itk_component(editor)
 
 	    sn_log "Empty highlighter command for \"$itk_option(-filename)\""
 	    return
@@ -3384,7 +3385,8 @@ itcl::class Editor& {
 	sn_log "Loading Highlight File: ${highfile}"
 
 	if {${highfile} != ""} {
-	    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
+	    sn_delete_editor_tags $itk_component(editor)
+	    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
 		bgerror ${err}
 	    }
 	}
@@ -3608,7 +3610,9 @@ itcl::class Editor& {
 
 	#verify if we stay on a symbol declaration/implementaion
 	set pos_tags ""
-	foreach tg [$itk_component(editor) tag names ${idx}] {
+	set tmp_tags [$itk_component(editor) tag names ${idx}]
+	#sn_log "insert cursor tags : $tmp_tags"
+	foreach tg $tmp_tags {
 	    if {[string first " " ${tg}] != -1} {
 		#tags like "symbol scope"
 		lappend pos_tags ${tg}
@@ -4725,4 +4729,22 @@ proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
     $textwidget tag delete name_point
 
     return
+}
+
+# Delete all the symbol tags in the editor.
+# Tags liks "gv" are not deleted, the
+# ranges that they apply to are removed.
+
+proc sn_delete_editor_tags { textwidget } {
+    foreach tag [$textwidget tag names] {
+        if {[string first " " $tag] != -1} {
+            # A symbol tag like "global1 gv"
+            $textwidget tag delete $tag
+        } elseif {$tag == "sel"} {
+            # Ignore the sel tag
+        } else {
+            # A tag like "gv"
+            $textwidget tag remove $tag 1.0 end
+        }
+    }
 }

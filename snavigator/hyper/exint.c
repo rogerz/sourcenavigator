@@ -142,23 +142,16 @@ Sn_Highlight_Text(ClientData clientData,
     Tcl_CmdInfo     infoPtr;
     char	**tags;
     int	tag_cou;
-    int	del = FALSE;
     int	num;
     char	**fields;
 
     Tcl_DString argString;
     char *filename;
 
-    if (argc == 4 && argv[1][0] == '-')
-    {
-	del = TRUE;
-	argc--;
-	argv++;
-    }
-    else if (argc != 3)
+    if (argc != 3)
     {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-	    " ?-delete? text_widget highlight_file",(char *) NULL);
+	    " text_widget highlight_file",(char *) NULL);
 	return TCL_ERROR;
     }
 
@@ -170,62 +163,29 @@ Sn_Highlight_Text(ClientData clientData,
 	return TCL_ERROR;
     }
 
-    if (del && strlen(argv[2]) == 0) {
-        filename = NULL;
-    } else {
-        Tcl_UtfToExternalDString(NULL, argv[2], -1, &argString);
-        filename = Tcl_DStringValue(&argString);
+    Tcl_UtfToExternalDString(NULL, argv[2], -1, &argString);
+    filename = Tcl_DStringValue(&argString);
 
-        fp = fopen(filename,"r");
-        if (fp == NULL)
-        {
-	    Tcl_AppendResult(interp, "could not open ", filename,
+    fp = fopen(filename,"r");
+    if (fp == NULL)
+    {
+	Tcl_AppendResult(interp, "could not open ", filename,
 	        " ", Tcl_PosixError(interp), (char *) NULL);
 
-	    return TCL_ERROR;
-        }
-        Tcl_DStringFree(&argString);
+	return TCL_ERROR;
     }
+    Tcl_DStringFree(&argString);
 
     textPtr = (TkText *)infoPtr.clientData;
-    if (del)
-    {
-	wargc = 0;
-	wargv[wargc++] = text_widget;
-	wargv[wargc++] = "tag";
-	wargv[wargc++] = "names";
-	tag_cou = TkTextTagCmd(textPtr, interp, wargc, wargv);
-    }
-
     wargc = 0;
     wargv[wargc++] = text_widget;
     wargv[wargc++] = "tag";
-    wargv[wargc++] = "remove";
+    wargv[wargc++] = "add";
     tag_name_idx   = wargc++;
     begpos_idx     = wargc++;
     endpos_idx     = wargc++;
 
-    if (del && tag_cou == TCL_OK &&
-	Tcl_SplitList(interp,interp->result,&tag_cou,&tags) == TCL_OK)
-    {
-	char    **tagp;
-
-	wargv [begpos_idx] = "1.0";
-	wargv [endpos_idx] = "end";
-	for (tagp = tags; tag_cou-- > 0; tagp++)
-	{
-	    wargv[3] = *tagp;
-	    TkTextTagCmd(textPtr, interp, wargc, wargv);
-	}
-	ckfree ((char *)tags);
-    }
-    Tcl_ResetResult(interp);
-
-    if (del && (filename == NULL)) {
-        return TCL_OK;
-    }
-
-    for (wargv[2] = "add"; fgets(buf, sizeof(buf), fp); )
+    while (fgets(buf, sizeof(buf), fp))
     {
 	/*
 	 * format <num tag beg_pos end_pos>

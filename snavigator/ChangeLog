@@ -1,3 +1,25 @@
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights,
+	sn_delete_editor_tags):
+	Add a new helper method that will delete
+	symbols tags from the editor. Use this new
+	helper to clear out old tags before calling
+	Sn_Highlight_Text instead of passing a
+	special -delete option. The sn_delete_editor_tags
+	operates a little bit differently than
+	the -delete option to Sn_Highlight_Text,
+	when symbol tags like "global1 gv" are
+	found, they are actually deleted instead
+	of just removing the valid ranges. This is
+	needed so that tags are added in the proper
+	stacking order when symbols are inserted
+	into the editor a second time.
+	* hyper/exint.c (Sn_Highlight_Text): Remove
+	code for -delete option. It is not at all
+	clear why a C impl of code to delete
+	text tags was needed.
+
 2003-06-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (sn_db_create_symbol_tags):
