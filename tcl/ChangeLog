@@ -1,3 +1,17 @@
+2003-12-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure: Regen.
+	* win/configure.in: Test for lack of SEH support
+	in the compiler and check for an alloca function
+	that we need to invoke via asm.
+	* win/tclWin32Dll.c (TclpCheckStackSpace):
+	Check for stack space by invoking an asm
+	call to alloca, this is needed since just
+	calling alloca does not pass the size argument
+	because of a function prototype mismatch in
+	Mingw. Also, setup an asm exception handler
+	that could be invoked we go over the stack.
+
 2003-12-25  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/configure:

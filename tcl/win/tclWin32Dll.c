@@ -37,6 +37,15 @@ typedef VOID (WINAPI UTUNREGISTER)(HANDLE hModule);
 static HINSTANCE hInstance;	/* HINSTANCE of this DLL. */
 static int platformId;		/* Running under NT, or 95/98? */
 
+#if defined(HAVE_NO_SEH) && defined(TCL_MEM_DEBUG)
+static void *INITIAL_ESP,
+            *INITIAL_EBP,
+            *INITIAL_HANDLER,
+            *RESTORED_ESP,
+            *RESTORED_EBP,
+            *RESTORED_HANDLER;
+#endif /* HAVE_NO_SEH && TCL_MEM_DEBUG */
+
 /*
  * The following function tables are used to dispatch to either the
  * wide-character or multi-byte versions of the operating system calls,
@@ -354,6 +363,8 @@ TclWinNoBackslash(
 int
 TclpCheckStackSpace()
 {
+    int retval = 0;
+
     /*
      * We can recurse only if there is at least TCL_WIN_STACK_THRESHOLD
      * bytes of stack space left.  alloca() is cheap on windows; basically
@@ -361,19 +372,94 @@ TclpCheckStackSpace()
      * exception if the stack pointer is set below the bottom of the stack.
      */
 
-#ifndef __GNUC__
-    __try {
-	alloca(TCL_WIN_STACK_THRESHOLD);
-	return 1;
-    /* CYGNUS LOCAL */
-    } __except (1) {}
+#ifdef HAVE_NO_SEH
+# ifdef TCL_MEM_DEBUG
+    __asm__ __volatile__ (
+            "movl %%esp,  %0" "\n\t"
+            "movl %%ebp,  %1" "\n\t"
+            "movl %%fs:0, %2" "\n\t"
+            : "=m"(INITIAL_ESP),
+              "=m"(INITIAL_EBP),
+              "=r"(INITIAL_HANDLER) );
+# endif /* TCL_MEM_DEBUG */
+
+    __asm__ __volatile__ (
+            "pushl %ebp" "\n\t"
+            "pushl $__except_checkstackspace_handler" "\n\t"
+            "pushl %fs:0" "\n\t"
+            "movl  %esp, %fs:0");
 #else
-    return alloca(TCL_WIN_STACK_THRESHOLD) != NULL;
-#endif
+    __try {
+#endif /* HAVE_NO_SEH */
+#ifdef HAVE_ALLOCA_GCC_INLINE
+    __asm__ __volatile__ (
+            "movl  %0, %%eax" "\n\t"
+            "call  __alloca" "\n\t"
+            :
+            : "i"(TCL_WIN_STACK_THRESHOLD)
+            : "%eax");
+#else
+	alloca(TCL_WIN_STACK_THRESHOLD);
+#endif /* HAVE_ALLOCA_GCC_INLINE */
+	retval = 1;
+#ifdef HAVE_NO_SEH
+    __asm__ __volatile__ (
+            "movl %%fs:0, %%esp" "\n\t"
+            "jmp  checkstackspace_pop" "\n"
+        "checkstackspace_reentry:" "\n\t"
+            "movl %%fs:0, %%eax" "\n\t"
+            "movl 0x8(%%eax), %%esp" "\n\t"
+            "movl 0x8(%%esp), %%ebp" "\n"
+        "checkstackspace_pop:" "\n\t"
+            "movl (%%esp), %%eax" "\n\t"
+            "movl %%eax, %%fs:0" "\n\t"
+            "add  $12, %%esp" "\n\t"
+            :
+            :
+            : "%eax");
 
-    return 0;
+# ifdef TCL_MEM_DEBUG
+    __asm__ __volatile__ (
+            "movl  %%esp,  %0" "\n\t"
+            "movl  %%ebp,  %1" "\n\t"
+            "movl  %%fs:0, %2" "\n\t"
+            : "=m"(RESTORED_ESP),
+              "=m"(RESTORED_EBP),
+              "=r"(RESTORED_HANDLER) );
+
+    if (INITIAL_ESP != RESTORED_ESP)
+        Tcl_Panic("ESP restored incorrectly");
+    if (INITIAL_EBP != RESTORED_EBP)
+        Tcl_Panic("EBP restored incorrectly");
+    if (INITIAL_HANDLER != RESTORED_HANDLER)
+        Tcl_Panic("HANDLER restored incorrectly");
+# endif /* TCL_MEM_DEBUG */
+#else
+    } __except (EXCEPTION_EXECUTE_HANDLER) {}
+#endif /* HAVE_NO_SEH */
+
+    /*
+     * Avoid using control flow statements in the SEH guarded block!
+     */
+    return retval;
 }
-
+#ifdef HAVE_NO_SEH
+static
+__attribute__ ((cdecl))
+EXCEPTION_DISPOSITION
+_except_checkstackspace_handler(
+    struct _EXCEPTION_RECORD *ExceptionRecord,
+    void *EstablisherFrame,
+    struct _CONTEXT *ContextRecord,
+    void *DispatcherContext)
+{
+    __asm__ __volatile__ (
+            "jmp checkstackspace_reentry");
+    /* Nuke compiler warning about unused static function */
+    _except_checkstackspace_handler(NULL, NULL, NULL, NULL);
+    return 0; /* Function does not return */
+}
+#endif /* HAVE_NO_SEH */
 
 /*
  *----------------------------------------------------------------------

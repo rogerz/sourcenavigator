@@ -49,7 +49,7 @@ AC_CHECK_TOOL(RC, windres, :)
 AC_PROG_MAKE_SET
 
 #--------------------------------------------------------------------
-# These two macros perform additinal compiler test.
+# These two macros perform additional compiler test.
 #--------------------------------------------------------------------
 
 AC_CYGWIN
@@ -73,6 +73,88 @@ esac
 
 AC_OBJEXT
 AC_EXEEXT
+
+
+AC_CACHE_CHECK(for SEH support in compiler,
+    tcl_cv_seh,
+AC_TRY_RUN([
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
+int main(int argc, char** argv) {
+    int a, b = 0;
+    __try {
+        a = 666 / b;
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        return 0;
+    }
+    return 1;
+}
+],
+        tcl_cv_seh=yes,
+        tcl_cv_seh=no,
+        tcl_cv_seh=no)
+)
+if test "$tcl_cv_seh" = "no" ; then
+    AC_DEFINE(HAVE_NO_SEH, 1,
+            [Defined when mingw does not support SEH])
+fi
+
+#
+# Check to see if the excpt.h include file provided contains the
+# definition for EXCEPTION_DISPOSITION; if not, which is the case
+# with Cygwin's version as of 2002-04-10, define it to be int, 
+# sufficient for getting the current code to work.
+#
+AC_CACHE_CHECK(for EXCEPTION_DISPOSITION support in include files,
+    tcl_cv_eh_disposition,
+AC_TRY_COMPILE([
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+],
+[
+  EXCEPTION_DISPOSITION x;
+],
+        tcl_cv_eh_disposition=yes,
+        tcl_cv_eh_disposition=no)
+)
+if test "$tcl_cv_eh_disposition" = "no" ; then
+    AC_DEFINE(EXCEPTION_DISPOSITION, int,
+            [Defined when cygwin/mingw does not support EXCEPTION DISPOSITION])
+fi
+
+# Check to see if malloc.h is missing the alloca function
+# declaration. This is known to be a problem with Mingw.
+# If we compiled without the function declaration, it
+# would work but we would get a warning message from gcc.
+# If we add the function declaration ourselves, it
+# would not compile correctly because the _alloca
+# function expects the argument to be passed in a
+# register and not on the stack. Instead, we just
+# call it from inline asm code.
+
+AC_CACHE_CHECK(for alloca declaration in malloc.h,
+    tcl_cv_malloc_decl_alloca,
+AC_TRY_COMPILE([
+#include <malloc.h>
+],
+[
+  size_t arg = 0;
+  void* ptr;
+  ptr = alloca;
+  ptr = alloca(arg);
+],
+        tcl_cv_malloc_decl_alloca=yes,
+        tcl_cv_malloc_decl_alloca=no)
+)
+if test "$tcl_cv_malloc_decl_alloca" = "no" &&
+   test "${GCC}" = "yes" ; then
+    AC_DEFINE(HAVE_ALLOCA_GCC_INLINE, 1,
+            [Defined when gcc should use inline ASM to call alloca.])
+fi
 
 #--------------------------------------------------------------------
 # Check whether --enable-threads or --disable-threads was given.
