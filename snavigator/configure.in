@@ -74,6 +74,18 @@ AC_ARG_ENABLE(assembly-parser, [  --enable-assembly-parser  Change the default a
 
 echo $ASSEMBLER_DIRS
 
+dnl We can't use AC_CONFIG_SUBDIRS(parsers/assembly/$ASSEMBLER_DIRS)
+dnl because AC_CONFIG_SUBDIRS in 2.5X does not allow a variable argument.
+
+case "$ASSEMBLER_DIRS" in
+    ppc601-eabi)
+        AC_CONFIG_SUBDIRS(parsers/assembly/ppc601-eabi)
+        ;;
+    *)
+        AC_MSG_ERROR([Unknow assembly parser $ASSEMBLER_DIRS.])
+        ;;
+esac
+
 dnl The address to send bug reports to.
 AC_ARG_ENABLE(bug-address, [  --enable-bug-address    Specify a non-default address to send bug reports to],
 BUG_ADDRESS=$enableval,)
@@ -402,8 +414,6 @@ AC_CACHE_CHECK([whether we need to build grep], ac_build_grep,
 
 AM_CONDITIONAL(BUILD_GREP, test $ac_build_grep = yes)
 AC_SUBST(BUILD_GREP)
-
-AC_CONFIG_SUBDIRS(parsers/assembly/$ASSEMBLER_DIRS)
 
 AC_OUTPUT([Makefile
 install/Makefile
