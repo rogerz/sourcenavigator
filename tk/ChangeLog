@@ -1,3 +1,14 @@
+2003-12-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/tkWinMenu.c (TkWinHandleMenuEvent,
+	RecursivelyClearActiveMenu, TkpSetWindowMenuBar,
+	DrawMenuEntryBackground): Back port a couple
+	of menu fixes from the Tk CVS. This patch fixes
+	a problem with Win32 menus where a menu entry
+	that is disabled was not being highlighted
+	when the mouse is over the item. This matches
+	the native Win32 behavior.
+
 2003-12-25  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/configure:

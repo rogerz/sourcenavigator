@@ -912,6 +912,7 @@ TkWinHandleMenuEvent(phwnd, pMessage, pwParam, plParam, plResult)
 			    (ClientData) menuPtr);
 		    ReconfigureWindowsMenu((ClientData) menuPtr);
 		}
+		RecursivelyClearActiveMenu(menuPtr);
 		if (!tsdPtr->inPostMenu) {
 		    Tcl_Interp *interp;
 		    int code;
@@ -1077,6 +1078,18 @@ TkWinHandleMenuEvent(phwnd, pMessage, pwParam, plParam, plResult)
 		    } else {
 			TkActivateMenuEntry(menuPtr, -1);
 		    }
+		} else {
+		    /* On windows, menu entries should highlight even if they
+		    ** are disabled. (I know this seems dumb, but it is the way
+		    ** native windows menus works so we ought to mimic it.)
+		    ** The ENTRY_PLATFORM_FLAG1 flag will indicate that the
+		    ** entry should be highlighted even though it is disabled.
+		    */
+		    if (itemPtr->itemState & ODS_SELECTED) {
+			mePtr->entryFlags |= ENTRY_PLATFORM_FLAG1;
+		    } else {
+			mePtr->entryFlags &= ~ENTRY_PLATFORM_FLAG1;
+		    }
 		}
 
 		tkfont = Tk_GetFontFromObj(menuPtr->tkwin, menuPtr->fontPtr);
@@ -1139,6 +1152,7 @@ TkWinHandleMenuEvent(phwnd, pMessage, pwParam, plParam, plResult)
 		    Tcl_ServiceAll();
 		}
 	    }
+	    break;
 	}
     }
     return returnResult;
@@ -1171,6 +1185,10 @@ RecursivelyClearActiveMenu(
     MenuSelectEvent(menuPtr);
     for (i = 0; i < menuPtr->numEntries; i++) {
     	mePtr = menuPtr->entries[i];
+	if (mePtr->state == ENTRY_ACTIVE) {
+	    mePtr->state = ENTRY_NORMAL;
+	}
+	mePtr->entryFlags &= ~ENTRY_PLATFORM_FLAG1;
     	if (mePtr->type == CASCADE_ENTRY) {
     	    if ((mePtr->childMenuRefPtr != NULL)
     	    	    && (mePtr->childMenuRefPtr->menuPtr != NULL)) {
@@ -1221,16 +1239,15 @@ TkpSetWindowMenuBar(tkwin, menuPtr)
 	Tcl_SetHashValue(hashEntryPtr, (char *) menuPtr);
 	menuPtr->platformData = (TkMenuPlatformData) winMenuHdl;
 	TkWinSetMenu(tkwin, winMenuHdl);
-	if (menuPtr->menuFlags & MENU_RECONFIGURE_PENDING) {
-	    Tcl_DoWhenIdle(ReconfigureWindowsMenu, (ClientData) menuPtr);
+	if (!(menuPtr->menuFlags & MENU_RECONFIGURE_PENDING)) {
 	    menuPtr->menuFlags |= MENU_RECONFIGURE_PENDING;
+	    Tcl_DoWhenIdle(ReconfigureWindowsMenu, (ClientData) menuPtr);
 	}
     } else {
 	TkWinSetMenu(tkwin, NULL);
     }
 }
 
-
 /*
  *----------------------------------------------------------------------
  *
@@ -2348,7 +2365,8 @@ DrawMenuEntryBackground(
     int width,				/* width of rectangle to draw */
     int height)				/* height of rectangle to draw */
 {
-    if (mePtr->state == ENTRY_ACTIVE) {
+    if (mePtr->state == ENTRY_ACTIVE 
+		|| (mePtr->entryFlags & ENTRY_PLATFORM_FLAG1)!=0 ) {
 	bgBorder = activeBorder;
     }
     Tk_Fill3DRectangle(menuPtr->tkwin, d, bgBorder,
