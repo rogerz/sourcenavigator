@@ -604,18 +604,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     matched_pattern("${varname}", yytext);
     #endif
 
-    sn_advance_column(1);
-
     append_dqstring_var_token(yytext+1,
             sn_line(),
             sn_column(),
             sn_line(),
-            sn_column() + yyleng - 1);
+            sn_column() + yyleng);
 
     mode_buff.append( &mode_buff,
         yytext, yyleng );
 
-    sn_advance_column(yyleng-1);
+    sn_advance_column(yyleng);
   }
   \$ {
     #if MATCH_DUMP
@@ -857,18 +855,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     fprintf(stderr, "hdstring(4) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    sn_advance_column(1);
-
     append_dqstring_var_token(yytext+1,
             sn_line(),
             sn_column(),
             sn_line(),
-            sn_column() + yyleng - 1);
+            sn_column() + yyleng);
 
     mode_buff.append( &mode_buff,
         yytext, yyleng );
 
-    sn_advance_column(yyleng-1);
+    sn_advance_column(yyleng);
   }
   \$ {
     #if MATCH_DUMP
@@ -1396,6 +1392,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 <TOKEN>"SOMEWORD OPEN_PAREN" {
   char* fname;
   int line;
+  int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "found function call tokens at %d\n", token_index);
@@ -1408,11 +1405,22 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   line = tokens_head->start_line;
 
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 SN_FUNC_DEF,
+                 ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 current_function,
                  NULL,
                  NULL,
                  fname,
@@ -2125,7 +2133,8 @@ void emit_var_access_for_dqstring(Token* tok) {
 void emit_var_access(Token *tok, VarAccess acc) {
   char* varname = tok->strval;
   SearchEntry entry;
-  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
+  int ref_to_symbol_type, ref_to_symbol_scope;
+  int ref_from_scope_type;
   int line_start, line_end, column_start, column_end;
 
   line_start = tok->start_line;
@@ -2146,53 +2155,27 @@ void emit_var_access(Token *tok, VarAccess acc) {
         (global_var_table->search( &global_var_table, entry ) != NULL))) {
     ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
     ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-    symbol_def_type = SN_GLOB_VAR_DEF;
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "global var \"%s\"\n", varname);
 #endif
   } else {
     ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
     ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-    symbol_def_type = SN_LOCAL_VAR_DEF;
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "local var \"%s\"\n", varname);
 #endif
   }
 
-  if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
-    /*
-     I think setting a global variable should emit
-     a symbol declaration. I am not really
-     sure if we should emit just one symbol
-     declaration, or multiple ones. Multiple
-     ones breaks xref but it does present
-     the symbol multiple times in the
-     file's symbol list which would be
-     nice if it worked correctly.
-     */
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
 
-    result = sn_insert_symbol(symbol_def_type,
-                            NULL,
-			    varname,
-			    sn_current_file(),
-			    line_start, column_start,
-			    line_end, column_end,
-			    0,
-			    NULL,
-			    NULL,
-			    NULL,
-			    NULL,
-			    line_start, column_start,
-			    line_end, column_end
-                            );
-    assert(result == 0);
+  if (current_function == NULL) {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
   }
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
 
   if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
       ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
@@ -2200,10 +2183,10 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
     if ((acc == VAR_READ) || (acc == VAR_READWRITE)) {
         result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_from_scope_type,
                  ref_to_symbol_scope,
                  NULL,
-                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 current_function,
                  NULL,
                  NULL,
                  varname,
@@ -2217,10 +2200,10 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
     if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
         result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_from_scope_type,
                  ref_to_symbol_scope,
                  NULL,
-                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 current_function,
                  NULL,
                  NULL,
                  varname,
@@ -2235,11 +2218,11 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
   if (ref_to_symbol_type == SN_REF_TO_GLOB_VAR) {
       sn_highlight(SN_HIGH_VAR_GLOBAL,
-          line_start, column_start-1,
+          line_start, column_start,
           line_end, column_end);
   } else {
       sn_highlight(SN_HIGH_VAR_LOCAL,
-          line_start, column_start-1,
+          line_start, column_start,
           line_end, column_end);
   }
 }

@@ -98,6 +98,7 @@ int	db_case_compare (const DBT *, const DBT *);
 int db_no_case_compare(const DBT *a,const DBT *b);
 int db_compare_nocase = 0;
 int db_action_is_fetching = 0; /* marks if we are in a fetching routine */
+static int db_key_in_table(int type, char* key);
 
 char *SN_StrDup(char*);
 
@@ -1188,6 +1189,92 @@ db_insert_entry(int type,char *key_buf,char *data_buf)
 			Paf_panic(PAF_PANIC_EMERGENCY);
 		}
 	}
+
+        /* If the ref from scope is the global namespace and
+         * the symbol is a global variable, then insert a
+         * special symbol that will act as the definition
+         * for the global variable. Use the GLOBAL file
+         * name and a function named GLOBAL as the special
+         * global namespace identifiers. We can't define
+         * a global variable multiple times in one file or
+         * in multiple files since the IDE would not see
+         * them as the same variable. A single variable
+         * definition will be emitted for each global var
+         * with the same name.
+         */
+        if ((strncmp(tmp.field_value[1], "GLOBAL\001fu\001", 10) == 0) &&
+            (strncmp(tmp.field_value[5], "gv\001", 3) == 0)) {
+            char * field, *end;
+            char * varname;
+            LongString var_key, data_key;
+            int result;
+
+            end = field = tmp.field_value[4];
+            while (*end != '\1') {
+              end++;
+            }
+            *end = '\0';
+            varname = SN_StrDup(field);
+            *end = '\1';
+
+            /* See if this symbols already exists in the special
+             * file name GLOBAL, and insert it if not.
+             */
+
+            LongStringInit(&var_key,0);
+            LongStringInit(&data_key,0);
+
+            var_key.copystrings(&var_key,
+                varname, DB_FLDSEP_STR,
+                "000000.000", DB_FLDSEP_STR,
+                "GLOBAL",
+                NULL);
+            data_key.copystrings(&data_key,
+                "0.0", DB_FLDSEP_STR,
+                "0x0", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}",
+                NULL);
+
+            if (!db_key_in_table(PAF_GLOB_VAR_DEF, var_key.buf)) {
+                /* Insert special global variable symbol */
+
+                db_insert_entry(PAF_GLOB_VAR_DEF,
+                    var_key.buf,
+                    data_key.buf);
+
+                var_key.free(&var_key);
+                data_key.free(&data_key);
+
+                LongStringInit(&var_key,0);
+                LongStringInit(&data_key,0);
+
+                var_key.copystrings(&var_key,
+                    "GLOBAL", DB_FLDSEP_STR,
+                    "000000.000", DB_FLDSEP_STR,
+                    "#", DB_FLDSEP_STR,
+                    varname, DB_FLDSEP_STR,
+                    "gv",
+                    NULL);
+                data_key.copystrings(&data_key,
+                    "0.0", DB_FLDSEP_STR,
+                    "0.0", DB_FLDSEP_STR,
+                    "0.0", DB_FLDSEP_STR,
+                    "{}",
+                    NULL);
+
+                db_insert_entry(PAF_FILE_SYMBOLS,
+                    var_key.buf,
+                    data_key.buf);
+	    }
+
+            var_key.free(&var_key);
+            data_key.free(&data_key);
+            ckfree((char*) varname);
+        }
+
 	xref_data_fields.free(&xref_data_fields);
 	xref_data.free(&xref_data);
 	xref.free(&xref);
@@ -2589,6 +2676,42 @@ db_case_compare(register const DBT *a,register const DBT *b)
 		return cmp;
 	}
 	return ((int)a->size - (int)b->size);
+}
+
+/*
+ * Return true if the given key exists in the table.
+ */
+
+static
+int
+db_key_in_table(int type, char* key) {
+    DB *dbp = db_syms[type];
+    DBT     dbkey;
+    int csize;
+    int result;
+
+    if (type == PAF_CROSS_REF) {
+      csize = db_cross_cachesize;
+    } else {
+      csize = db_cachesize;
+    }
+
+    if (!dbp)
+        dbp = create_table(type, O_RDWR|O_CREAT, csize);
+
+    if (dbp == NULL)
+        return 0;
+
+    dbkey.data = key;
+    dbkey.size = strlen(dbkey.data) + 1;
+    result = dbp->get(dbp, &dbkey, NULL, 0);
+    if (result < 0) {
+        Paf_panic(PAF_PANIC_EMERGENCY);
+    } else if (result == 0) {
+      return 1; /* key in table */
+    } else {
+      return 0; /* key not in table */
+    }
 }
 
 /* very bad solution for error handling */

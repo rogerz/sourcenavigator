@@ -7,28 +7,6 @@ var=1
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_GLOB_VAR_DEF;var<>000002.000<>f.m4;2.3<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>var<>gv;2.3<>2.0<>2.3<>{}
-}
-
-tcltest::test var-1.1 { var write } {
-    browse [save_file f.m4 {
-my_var="two"
-}]
-} {Status: Parsing: f.m4
-PAF_FILE;f.m4;m4<>
-PAF_GLOB_VAR_DEF;my_var<>000002.000<>f.m4;2.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>my_var<>gv;2.6<>2.0<>2.6<>{}
-}
-
-tcltest::test var-1.2 { var write } {
-    browse [save_file f.m4 {
-my_var=
-}]
-} {Status: Parsing: f.m4
-PAF_FILE;f.m4;m4<>
-PAF_GLOB_VAR_DEF;my_var<>000002.000<>f.m4;2.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>my_var<>gv;2.6<>2.0<>2.6<>{}
 }
 
 tcltest::test var-2.1 { var write xref } {
@@ -38,6 +16,26 @@ var=value
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
 }
 
+tcltest::test var-2.2 { var write xref } {
+    browse_xref [save_file f.m4 {
+var=1
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
+}
+
+tcltest::test var-2.3 { var write xref } {
+    browse_xref [save_file f.m4 {
+var="two"
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
+}
+
+tcltest::test var-2.4 { var write xref } {
+    browse_xref [save_file f.m4 {
+var=
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
+}
 
 tcltest::test var-3.0 { var read } {
     # Parser generates only a read xref
@@ -48,7 +46,6 @@ $var
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
 }
-
 
 tcltest::test var-4.0 { var read xref } {
     browse_xref [save_file f.m4 {
@@ -62,6 +59,13 @@ tcltest::test var-4.1 { not a var read } {
 \$var
 }]
 } {}
+
+tcltest::test var-4.2 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>
+}
 
 tcltest::test var-5.0 { var read xref in macro } {
     browse_xref [save_file f.m4 {
@@ -306,13 +310,11 @@ PAF_FILE;f.m4;m4<>
 }
 
 tcltest::test comment-2.2 { not a comment } {
-    browse [save_file f.m4 {
+    browse_xref [save_file f.m4 {
 dnlvar=1
 }]
-} {Status: Parsing: f.m4
-PAF_FILE;f.m4;m4<>
-PAF_GLOB_VAR_DEF;dnlvar<>000002.000<>f.m4;2.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>dnlvar<>gv;2.6<>2.0<>2.6<>{}
+
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>dnlvar<>gv<>w<>000002<>f.m4;<>
 }
 
 tcltest::test comment-3.0 { comment xref } {

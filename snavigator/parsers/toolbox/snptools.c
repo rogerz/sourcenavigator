@@ -800,6 +800,18 @@ int sn_insert_xref(int type, int scope_type, int scope_level,
 {
   if (sn_cross_referencing())
   {
+    /* Use special "GLOBAL" namespace, funcname should be NULL.
+     * Currently, scope_type is changed to a "fu" but it really
+     * should be "na". Namespace support in the IDE needs to
+     * be fixed up so that xrefs in namespaces work before
+     * "na" can be passed.
+     */
+    if (scope_type == SN_GLOBAL_NAMESPACE) {
+        assert(funcname == NULL);
+        funcname = "GLOBAL";
+        scope_type = SN_FUNC_DEF;
+    }
+
     return put_cross_ref(type, scope_type, scope_level, classname, funcname, 
                          argtypes, refclass, refsymbol, ref_arg_types, 
                          filename, lineno, acc);

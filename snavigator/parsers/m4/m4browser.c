@@ -491,7 +491,7 @@ static char group[] = "m4";
 
 #define MAX_SIZE 512
 
-static char current_function[MAX_SIZE] = {"GLOBAL"}; /* "" causes assert core dump */
+static char current_function[MAX_SIZE] = {""};
 
 /* line number where highlight starts and ends */
 static int  current_function_highlight_line;
@@ -877,6 +877,7 @@ YY_RULE_SETUP
 #line 185 "m4browser.l"
 {
   char * x = (char *) yytext;
+  int ref_from_scope_type;
 
   matched_pattern("${symbol}", yytext);
 
@@ -886,22 +887,27 @@ YY_RULE_SETUP
       sn_line(), sn_column(),
       sn_line(), sn_column() + yyleng);
 
-  /* Trim leading $ off the front of the symbol */
+  /* Trim leading $ off the front of the symbol
+   * and ignore '{' and '}' characters if there */
 
   assert(*x == '$');
   x++;
+  if (*x == '{') {
+    x++;
+    *(yytext + yyleng - 1) = '\0';
+  }
 
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 current_function,
+                 (current_function[0] == '\0') ? NULL : current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -917,10 +923,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 225 "m4browser.l"
+#line 231 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
+  int ref_from_scope_type;
   
   matched_pattern("{symbol}=", yytext);
 
@@ -939,42 +946,17 @@ YY_RULE_SETUP
       }
   }
 
-  /* Setting a global variable should emit
-     a symbol declaration. I am not really
-     sure if we should emit just one symbol
-     declaration, or multiple ones. Multiple
-     ones breaks xref but it does present
-     the symbol multiple times in the
-     file's symbol list which would be
-     nice if it worked correctly */
-
-  result = sn_insert_symbol(SN_GLOB_VAR_DEF,
-                            NULL,
-			    x,
-			    sn_current_file(),
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x),
-			    0,
-			    NULL,
-			    NULL,
-			    NULL,
-			    NULL,
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x));
-
-  assert(result == 0);
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 current_function,
+                 (current_function[0] == '\0') ? NULL : current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -989,7 +971,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 294 "m4browser.l"
+#line 276 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -1051,10 +1033,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 354 "m4browser.l"
+#line 336 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
+  int ref_from_scope_type;
 
   matched_pattern("{symbol}(", yytext);
 
@@ -1067,11 +1050,17 @@ YY_RULE_SETUP
 
   /* x is now the name of the macro to be invoked */
 
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 SN_FUNC_DEF,
+                 ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 current_function,
+                 (current_function[0] == '\0') ? NULL : current_function,
                  NULL,
                  NULL,
                  x,
@@ -1089,7 +1078,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 389 "m4browser.l"
+#line 378 "m4browser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1980,7 +1969,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 389 "m4browser.l"
+#line 378 "m4browser.l"
 
 
 void dump_function_definition() {
@@ -2001,7 +1990,7 @@ void dump_function_definition() {
 
     assert(result == 0);
 
-    strcpy(current_function, "GLOBAL");
+    current_function[0] = '\0';
 }
 
 /* Helper method that will print matches as they are made */

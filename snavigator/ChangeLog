@@ -1,3 +1,56 @@
+2003-06-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_insert_entry, db_key_in_table):
+	If the special GLOBAL ref from scope is used
+	and a global variable xref is getting inserted
+	for the first time, then emit a symbol that
+	will act like the declaration for the global
+	variable. The variable is defined in a fake
+	file named GLOBAL and the ref from scope is
+	actually a function named GLOBAL. This
+	implementation should be reworked later on
+	when namespace support has been implemented.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass the new
+	SN_GLOBAL_NAMESPACE flag to sn_insert_xref
+	when a var or func ref is found in the global
+	scope. Trim the { and } chars off the var
+	name for a var like ${foo}. Don't emit a
+	variable declaration when a global variable
+	is written. Reset current_function to ""
+	instead of "GLOBAL".
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Include the $
+	in the variable name for variables in
+	double quoted strings and heredoc strings.
+	Pass new SN_GLOBAL_NAMESPACE flag to
+	sn_insert_xref when a var or func ref
+	is found in the global scope. Don't emit a
+	variable declaration when a global variable
+	is written. Fixup highlight range for vars,
+	it was highlighting one column too many.
+	* parsers/toolbox/snptools.c (sn_insert_xref):
+	Check for special SN_GLOBAL_NAMESPACE and
+	NULL funcname values and convert them to
+	a fu type with the function name GLOBAL.
+	In dbimp, these xref values will be dealt
+	with by inserting a global variable symbol.
+	* parsers/toolbox/snptools.h: Define
+	SN_GLOBAL_NAMESPACE.
+	* tests/parsers/m4.test: Rework m4 tests
+	to account for the fact that a variable
+	write no longer defines a variable symbol.
+	Also check that {} symbols are removed
+	from a var name.
+	* tests/parsers/php.test: Add some highlight
+	range checks for global and local variables.
+	Rework many tests to account for the fact
+	that a variable write no longer emits
+	a variable symbol. It seems the only reason
+	to do that was so that the variable would
+	be highlighted, but we now have a better
+	way to handle that.
+
 2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbutils.c (db_remove_file_xfer_using_keys):
