@@ -1,5 +1,10 @@
 2003-01-26  Earnie Boyd  <earnie@users.sf.net>
 
+	* btree/bt_seq.c (__bt_first): Cosmetic change,
+	use RET_SUCCESS instead of NULL for return value.
+
+2003-01-26  Earnie Boyd  <earnie@users.sf.net>
+
 	* include/cdefs.h: Correct the filter
 	checking for GCC versions less than 2.5.
 
