@@ -158,7 +158,7 @@ itcl_class Tree {
 	    ::bind $tree <Control-r> [::bind $tree <Control-u>]
 	
 	    pack $lframe.filter.label -side left
-	    pack $entry -side left -fill x -expand y -padx 3
+	    pack $entry -side left -fill x -expand y
 
 	    if {$filter_window} {
 		pack $lframe.filter\
