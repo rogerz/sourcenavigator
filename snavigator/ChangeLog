@@ -1,6 +1,18 @@
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Implement array vars.
+	This matching approach works with empty indexes,
+	constants, single and double quoted strings,
+	and other variables. It fails to match array
+	variables that have complex subexpressions as
+	the index.
+	* tests/parsers/php.test: Add a series of tests
+	for reading and writing of array variables.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Rework line comment
 	rule so that line comments can be started
 	with // or #. If ?> is found before the newline

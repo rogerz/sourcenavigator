@@ -210,6 +210,14 @@ function-argument-tokens (" "|" "{function-argument-token}" "({function-argument
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 
+
+var-array-index-token ("SOMEWORD"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
+var-array-empty-tokens "OPEN_BRACKET CLOSE_BRACKET"
+var-array-index-tokens "OPEN_BRACKET "{var-array-index-token}" CLOSE_BRACKET")
+var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
+
+var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
+
 %%
 
 <INITIAL>"<?" { /* HTML -> PHP mode */
@@ -963,11 +971,12 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   free_head_token(); /* OPEN_PAREN */
 }
 
-<TOKEN>"VARIABLE "("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
+<TOKEN>"VARIABLE"{var-array-tokens}("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
   char* varname = tokens_head->strval;
   SearchEntry entry;
   int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
   int line_start, line_end, column_start, column_end;
+  int offset;
 
   line_start = tokens_head->start_line;
   column_start = tokens_head->start_column;
@@ -975,7 +984,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   column_end = tokens_head->end_column;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable assignment at token %d\n", token_index);
+  fprintf(tokenout, "variable write at token %d\n", token_index);
 #endif
 
   /*
@@ -1055,8 +1064,15 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     assert(result == 0);
   }
 
+  /* Eat the variable token and send the rest of the tokens
+   * back for further matching. This is needed so that
+   * expressions like "$var[$one] = 1;" generate both
+   * a write xref for $var and a read xref for $one.
+   */
+
   free_head_token(); /* VARIABLE */
-  free_head_token(); /* ASSIGNMENT_OPERATOR || ASSIGNMENT_OPERATORS */
+  offset = strlen("VARIABLE"); /* send back everything after the VARIABLE token */
+  yyless(offset);
 }
 
 <TOKEN>"VARIABLE" {
@@ -1066,7 +1082,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   int ref_to_symbol_type, ref_to_symbol_scope;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable access at token %d\n", token_index);
+  fprintf(tokenout, "variable read at token %d\n", token_index);
 #endif
 
   /*
@@ -1118,6 +1134,12 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 
     assert(result == 0);
   }
+
+  /* FIXME: Could add {var-array-tokens} to this match but it is not
+   * clear why this is needed right now. Also, a handy way to count
+   * the number of tokens in a match (given yytext) would make it
+   * easy to know the number of tokens to free.
+   */
 
   free_head_token(); /* VARIABLE */
 }

@@ -329,6 +329,228 @@ print $var;
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000005<>f.php;<>
 }
 
+tcltest::test var-2.11 { multiple vars in global statement } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+global $var1, $var2;
+print $var1;
+print $var2;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>
+PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
+}
+
+
+tcltest::test var-3.0 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var[]=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.1 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var[0]=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.2 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var['name']=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.3 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var["name"]=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.4 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var[1][]=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.5 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var[1][0]=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-3.6 { array var write } {
+    php_parse [save_file f.php {
+<?
+$var["hello"]['there']=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+
+tcltest::test var-4.0 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var[];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.1 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var[0];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.2 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var['one'];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.3 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var["one"];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.4 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var[0][];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.5 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var["hello"][0];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-4.6 { array var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+print $var["hello"]["mello"]["fellow"];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+
+
+tcltest::test var-5.0 { read and write xrefs } {
+    php_parse_xref [save_file f.php {
+<?
+$var[$one] = 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-5.1 { read and write xrefs } {
+    php_parse_xref [save_file f.php {
+<?
+$var[$one];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test var-5.2 { read and write xrefs } {
+    php_parse_xref [save_file f.php {
+<?
+$var[$one=0];
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
+}
+
+# FIXME: Complex subexpressions are not currently supported
+# because we can't match any expression without generating
+# a longest possible match. Might look into improve this in
+# the future by matching and then using yyless(), not clear
+# if that would work properly. Currently, we fail to generate
+# a write xref and generate a read xref instead.
+
+tcltest::test var-5.3 { read and write xrefs } {knownbug} {
+    php_parse_xref [save_file f.php {
+<?
+$var[$one=0] = 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
+}
+
+tcltest::test var-5.4 { read and write xrefs } {knownbug} {
+    php_parse_xref [save_file f.php {
+<?
+$var["one"."two"] = 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+}
+
+
 
 tcltest::test comment-1.0 { comment } {
     php_parse [save_file f.php {
@@ -1391,8 +1613,6 @@ PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
-
-
 # Need to add tests for string processing. Some variable
 # recognition works inside strings but I don't think
 # function calls should be seen in string literals.
@@ -1415,8 +1635,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 # Test "foo(foo());" to make sure tokens in a function
 # call are being processed and not ignored.
-
-# Test global statement with more than one variable.
 
 # Should we create a token for commas and include them in the
 # parse rules for things like function declarations and global statements?
