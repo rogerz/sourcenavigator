@@ -54,6 +54,7 @@ static char * group = NULL;
 static char * incl_to_pipe = NULL;
 static char * includename = NULL;
 static char * xref_filename = NULL;
+static char * dump_tokens_file = NULL;
 
 static char includebuf[512];
 static char currentFilename[MAXPATHLEN];
@@ -198,6 +199,8 @@ sn_getopt(enum sn_options opt)
       return (void *) comment_database;
     case SN_OPT_DIALECT:
       return (void *) dialect;
+    case SN_OPT_DUMP_TOKENS:
+      return (void *) dump_tokens_file;
     case SN_OPT_DROP_USR_HEADERS:
       return (void *) drop_usr_headers;
     case SN_OPT_GROUP:
@@ -234,7 +237,7 @@ sn_process_options(int argc, char *argv[])
   /* Character set encoding (as defined by Tcl). */
   Tcl_FindExecutable(argv[0]);
 
-  while ((opt = getopt(argc, argv, "I:n:s:hy:g:x:i:luB:e:tCrDS:O:")) != EOF)
+  while ((opt = getopt(argc, argv, "I:n:s:hy:g:x:i:luB:e:tCrDS:O:T:")) != EOF)
   {
     switch (opt)
     {
@@ -295,6 +298,11 @@ sn_process_options(int argc, char *argv[])
 
       case 'S':
         /* silently ignore according to zkoppany */
+        break;
+
+      case 'T':
+        /* Dump tokens to a file and exit */
+        dump_tokens_file = optarg;
         break;
 
       case 't':

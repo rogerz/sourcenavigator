@@ -1,5 +1,41 @@
 2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a special
+	token dump mode that will parse all input,
+	including HTML and COMMENT blocks, into
+	tokens and dump the to the file name passed
+	as the value of the -T command line option.
+	Conditionally compile matched_pattern
+	calls. Fix minor line command bug,
+	a line can end with \n or ?>.
+	Add a special mode for HTML text that
+	should be more efficient since whole
+	regions of HTML text are now matched.
+	Match <? and <?php as HTML text.
+	Rename COMMENT mode to COMMEN_MODE since
+	COMMENT is now use as a token id.
+	Emit HTML token if dumping tokens and
+	parser hits EOF.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Add support for
+	"-T tokenfile" option to dump tokens
+	to a file.
+	* parsers/toolbox/snptools.h: Add 
+	SN_OPT_DUMP_TOKENS enum.
+	* tests/parsers/php.test: Add a series
+	of token tests. Make use of new helper
+	browse_tokens which passes -T to the
+	browser. Directly reading the token
+	values has uncovered a number of
+	bugs that were not detectable
+	previously.
+	* tests/parsers/testutil.tcl: Add
+	browse_tokens and filter_tokens
+	helper methods.
+
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* tests/parsers/m4.test: Use browse instead
 	of m4_parse and use browse_xref instead of
 	m4_parse_xref. Remove m4_parse_comment_xref

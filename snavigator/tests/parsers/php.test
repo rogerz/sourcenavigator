@@ -1,5 +1,130 @@
 source testutil.tcl
 
+# ---------------------------------------------
+# The first series of token tests check to make
+# sure the browser is properly splitting the
+# text input into tokens and dumping them
+# to a file in a known format.
+# ---------------------------------------------
+
+tcltest::test tokens-1.0 { parse into tokens } {
+    browse_tokens [save_file f.php {
+<HTML>
+My HTML is $cash=money.
+</HTML>
+}]
+} {0 HTML "
+<HTML>
+My HTML is $cash=money.
+</HTML>
+" 1.0 5.0}
+
+tcltest::test tokens-1.1 { parse into tokens } {
+    browse_tokens [save_file f.php {HTML
+<?//COMMENT?>
+HTML}]
+} {0 HTML "HTML
+<?" 1.0 2.2
+1 COMMENT "COMMENT" 2.2 2.11
+2 HTML "?>
+HTML" 2.11 3.4}
+
+tcltest::test tokens-1.2 { parse into tokens } {
+    browse_tokens [save_file f.php {HTML
+<?//COMMENT?>}]
+} {0 HTML "HTML
+<?" 1.0 2.2
+1 COMMENT "COMMENT" 2.2 2.11
+2 HTML "?>" 2.11 2.13}
+
+tcltest::test tokens-1.3 { parse into tokens } {
+    browse_tokens [save_file f.php {HTML
+<?php//COMMENT?>
+HTML}]
+} {0 HTML "HTML
+<?php" 1.0 2.5
+1 COMMENT "COMMENT" 2.5 2.14
+2 HTML "?>
+HTML" 2.14 3.4}
+
+tcltest::test tokens-1.4 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+#My Comment
+?>
+}]]
+} {1 COMMENT "My Comment" 3.0 3.11}
+
+tcltest::test tokens-1.5 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+//My Comment
+?>
+}]]
+} {1 COMMENT "My Comment" 3.0 3.12}
+
+tcltest::test tokens-1.6 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+/*My Comment*/
+?>
+}]]
+} {1 COMMENT "My Comment" 3.0 3.14}
+
+tcltest::test tokens-1.7 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+/*Another
+Comment*/
+?>
+}]]
+} {1 COMMENT "Another
+Comment" 3.0 4.9}
+
+
+
+tcltest::test tokens-2.0 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$var
+?>
+}]]
+} {1 VARIABLE "var" 3.1 3.4}
+
+tcltest::test tokens-2.1 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$var=1
+?>
+}]]
+} {1 VARIABLE "var" 3.1 3.4
+2 ASSIGNMENT_OPERATOR "" 3.4 3.5
+3 SOMEWORD "1" 3.5 3.6}
+
+tcltest::test tokens-2.2 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$var[]=1
+?>
+}]]
+} {1 VARIABLE "var" 3.1 3.4
+2 OPEN_BRACKET "" 3.4 3.5
+3 CLOSE_BRACKET "" 3.5 3.6
+4 ASSIGNMENT_OPERATOR "" 3.6 3.7
+5 SOMEWORD "1" 3.7 3.8}
+
+
+
+
+
+
+# ---------------------------------------------
+# The rest of the tests check for output that
+# can be understood by dbimp. Generated tokens
+# are processed and matched to known constructs
+# like function and variable assignments.
+# ---------------------------------------------
+
 
 tcltest::test mode-1.0 { skip html code } {
     browse [save_file f.php {
@@ -1760,5 +1885,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # cleanup
 file delete f.php
 file delete xout
+file delete tout
 ::tcltest::cleanupTests
 return

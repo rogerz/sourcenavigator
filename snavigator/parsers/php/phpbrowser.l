@@ -74,7 +74,9 @@ typedef enum {
     DOUBLE_QUOTED_STRING, /* "I am a double quoted string" */
     SINGLE_QUOTED_STRING,  /* 'I am a double quoted string' */
 
-    UNKNOWN        /* Some unknown or unimportant text */
+    UNKNOWN,        /* Token that parser does not know about */
+    COMMENT,        /* Emit COMMENT token only when debugging */
+    HTML            /* Emit HTML token only when debugging */
 } TokenType;
 
 typedef struct Token {
@@ -93,6 +95,8 @@ typedef struct Token {
 #ifdef TOKEN_DEBUG
 FILE* tokenout = NULL;
 #endif
+
+char * token_dump_file = NULL;
 
 Token* tokens_head = NULL;
 Token* tokens_tail = NULL;
@@ -144,12 +148,18 @@ int mode_start_column;
 #define DQSTRING_DUMP 0
 #define SQSTRING_DUMP 0
 #define HDSTRING_DUMP 0
+#define HTML_DUMP 0
+#define MATCH_DUMP 0
 
 static YY_BUFFER_STATE original_buffer;
 
 static char* heredoc_id = (char *) NULL; /* End marker for a heredoc string */
 
+#if MATCH_DUMP
 static void matched_pattern(char * pattern, char * text);
+#endif
+
+void enter_html_mode();
 
 static char* modestring();
 
@@ -171,12 +181,14 @@ void emit_comment();
 void emit_dqstring();
 void emit_sqstring();
 void emit_hdstring();
+void emit_html();
 
 int yywrap() { return 1; }
 
 %}
 
-%x COMMENT
+%x COMMENT_MODE
+%x HTML_MODE
 %x DQSTRING
 %s SQSTRING
 %s HDSTRING
@@ -221,25 +233,101 @@ var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
 var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 %%
-
-<INITIAL>"<?" { /* HTML -> PHP mode */
-    matched_pattern("<?", yytext);
-    BEGIN(PHP);
-    sn_advance_column(2);
-}
+    /* Start in HTML mode */
+    enter_html_mode();
 
 <PHP>"?>" { /* PHP -> HTML mode */
+    #if MATCH_DUMP
     matched_pattern("?>", yytext);
-    BEGIN(INITIAL);
+    #endif
+
+    enter_html_mode();
+
+    if (token_dump_file) {
+      mode_buff.append( &mode_buff,
+          yytext, yyleng );
+    }
+
     sn_advance_column(2);
 }
 
-<PHP>{ws}*("//"|"#").*\n {
+<HTML_MODE>{
+  [^\<\n]* {
+    #if MATCH_DUMP
+    matched_pattern("[^\\<\\n]*", yytext);
+    #endif
+
+    #if HTML_DUMP
+    fprintf(stderr, "html(1) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    if (token_dump_file) {
+      mode_buff.append( &mode_buff,
+          yytext, yyleng );
+    }
+    sn_advance_column(yyleng);
+  }
+  [^\<\n]*\n {
+    #if MATCH_DUMP
+    matched_pattern("[^\\<\\n]*\\n", yytext);
+    #endif
+
+    #if HTML_DUMP
+    fprintf(stderr, "html(2) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    if (token_dump_file) {
+      mode_buff.append( &mode_buff,
+          yytext, yyleng );
+    }
+    sn_advance_line();
+    sn_reset_column();
+  }
+  "<" {
+    #if MATCH_DUMP
+    matched_pattern("<", yytext);
+    #endif
+
+    #if HTML_DUMP
+    fprintf(stderr, "html(3) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    if (token_dump_file) {
+      mode_buff.append( &mode_buff,
+          yytext, yyleng );
+    }
+    sn_advance_column(yyleng);
+  }
+  ("<?"|"<?php") {
+    /* HTML -> PHP mode switch */
+    #if MATCH_DUMP
+    matched_pattern("(<?|<php)", yytext);
+    #endif
+    sn_advance_column(yyleng);
+
+    if (token_dump_file) {
+      mode_buff.append( &mode_buff,
+          yytext, yyleng );
+    }
+
+    emit_html();
+    BEGIN(PHP);
+  }
+  /* Uncomment the next rule if you want to check to make sure
+   * the above rules cover all possible input. A warning
+   * "rule cannot be matched" should be printed by flex.
+   */
+  /*. {}*/
+}
+
+<PHP>{ws}*("//"|"#").*("\n"|"?>") {
   char * x = (char *) yytext;
   char * y;
   int newline = 0;
 
+#if MATCH_DUMP
   matched_pattern("{ws}*(//|#).*\\n", yytext);
+#endif
 
   while (*x == ' ' || *x == '\t') { x++; }
   assert(*x == '#' || (*x == '/' && *(x+1) == '/'));
@@ -269,13 +357,24 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     *y = 0;
   }
 
-  sn_insert_comment(
-    /* classname */ NULL,
-    /* funcname */ NULL,
-    sn_current_file(),
-    x,
-    sn_line(),
-    sn_column());
+  /* If dumping tokens, emit a special COMMENT token.
+   * Otherwise, insert a comment symbol.
+   */
+  if (token_dump_file) {
+    append_token(COMMENT, x,
+            sn_line(),
+            sn_column() - (x - yytext),
+            sn_line(),
+            sn_column() + strlen(x));
+  } else {
+    sn_insert_comment(
+      /* classname */ NULL,
+      /* funcname */ NULL,
+      sn_current_file(),
+      x,
+      sn_line(),
+      sn_column());
+  }
 
   if (newline) {
     sn_advance_line();
@@ -286,17 +385,21 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"/*"		{ /* A C style multi-line comment, just like this! */
+#if MATCH_DUMP
     matched_pattern("/*", yytext);
-    BEGIN(COMMENT);
+#endif
+    BEGIN(COMMENT_MODE);
     sn_advance_column(2);
     LongStringInit(&mode_buff,0);
     mode_start_line = sn_line();
     mode_start_column = sn_column();
 }
 
-<COMMENT>{
+<COMMENT_MODE>{
   [^\*\n]* {
+    #if MATCH_DUMP
     matched_pattern("[^\\*\\n]*", yytext);
+    #endif
 
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
@@ -306,7 +409,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   [^\*\n]*\n {
+    #if MATCH_DUMP
     matched_pattern("[^\\*\\n]*\\n", yytext);
+    #endif
 
     #if COMMENT_DUMP
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
@@ -318,7 +423,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   \*+[^\*/\n]* {
+    #if MATCH_DUMP
     matched_pattern("\\*+[^\\*/\\n]*", yytext);
+    #endif
 
     #if COMMENT_DUMP
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
@@ -329,7 +436,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   \*+[^\*/\n]*\n {
+    #if MATCH_DUMP
     matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
+    #endif
 
     #if COMMENT_DUMP
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
@@ -341,7 +450,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   "*"+"/" {
+    #if MATCH_DUMP
     matched_pattern("\\*+/", yytext);
+    #endif
 
     /* Include multiple '*' characters in the comment */
     if (yyleng > 2) {
@@ -360,10 +471,17 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
     BEGIN(PHP);
   }
+  /* Uncomment the next rule if you want to check to make sure
+   * the above rules cover all possible input. A warning
+   * "rule cannot be matched" should be printed by flex.
+   */
+  /*. {}*/
 }
 
 <PHP>\"\" {
+#if MATCH_DUMP
   matched_pattern("\\\"\\\"", yytext);
+#endif
   /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
   append_token(DOUBLE_QUOTED_STRING, "",
           sn_line(),
@@ -374,7 +492,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>\" {
+#if MATCH_DUMP
   matched_pattern("\\\"", yytext);
+#endif
+
 #if DQSTRING_DUMP
   fprintf(stderr, "dqstring started at (%d.%d)\n", sn_line(), sn_column());
 #endif
@@ -387,7 +508,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 <DQSTRING>{
   [^\"\n\\]* {
+    #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*", yytext);
+    #endif
 
     #if DQSTRING_DUMP
     fprintf(stderr, "dqstring(1) \"%s\", %d\n", yytext, yyleng);
@@ -397,7 +520,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   [^\"\n\\]*\n {
+    #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
+    #endif
 
     #if DQSTRING_DUMP
     fprintf(stderr, "dqstring(2) \"%s\", %d\n", yytext, yyleng);
@@ -408,7 +533,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   (\\\")+[^\"/\n\\]* {
+    #if MATCH_DUMP
     matched_pattern("\\\"+[^\\\"/\\n\\\\]*", yytext);
+    #endif
 
     #if DQSTRING_DUMP
     fprintf(stderr, "dqstring(3) \"%s\", %d\n", yytext, yyleng);
@@ -419,7 +546,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   (\\\")+[^\"\n\\]*\n {
+    #if MATCH_DUMP
     matched_pattern("\\\"+[^\\\"\\n\\\\]*\\n", yytext);
+    #endif
 
     #if DQSTRING_DUMP
     fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
@@ -431,7 +560,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   \\ {
+    #if MATCH_DUMP
     matched_pattern("\\\\", yytext);
+    #endif
 
     #if DQSTRING_DUMP
     fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
@@ -442,15 +573,26 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   \" {
+    #if MATCH_DUMP
     matched_pattern("\\\"", yytext);
+    #endif
+
     sn_advance_column(yyleng);
     emit_dqstring();
     BEGIN(PHP);
   }
+  /* Uncomment the next rule if you want to check to make sure
+   * the above rules cover all possible input. A warning
+   * "rule cannot be matched" should be printed by flex.
+   */
+  /*. {}*/
 }
 
 <PHP>\'\' {
+#if MATCH_DUMP
   matched_pattern("\\\'\\\'", yytext);
+#endif
+
   /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
   append_token(SINGLE_QUOTED_STRING, "",
           sn_line(),
@@ -461,7 +603,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>\' {
+#if MATCH_DUMP
   matched_pattern("\\\'", yytext);
+#endif
+
 #if SQSTRING_DUMP
   fprintf(stderr, "sqstring started at (%d.%d)\n", sn_line(), sn_column());
 #endif
@@ -474,7 +619,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 <SQSTRING>{
   [^\'\n\\]* {
+    #if MATCH_DUMP
     matched_pattern("[^\\\'\\n\\\\]*", yytext);
+    #endif
 
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(1) \"%s\", %d\n", yytext, yyleng);
@@ -484,7 +631,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   [^\'\n\\]*\n {
+    #if MATCH_DUMP
     matched_pattern("[^\\\'\\n\\\\]*\\n", yytext);
+    #endif
 
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(2) \"%s\", %d\n", yytext, yyleng);
@@ -496,7 +645,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   (\\\')+[^\'/\n\\]* {
+    #if MATCH_DUMP
     matched_pattern("\\\'+[^\\\'/\\n\\\\]*", yytext);
+    #endif
 
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(3) \"%s\", %d\n", yytext, yyleng);
@@ -507,7 +658,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   (\\\')+[^\'\n\\]*\n {
+    #if MATCH_DUMP
     matched_pattern("\\\'+[^\\\'\\n\\\\]*\\n", yytext);
+    #endif
 
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(4) \"%s\", %d\n", yytext, yyleng);
@@ -519,7 +672,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_reset_column();
   }
   \\ {
+    #if MATCH_DUMP
     matched_pattern("\\\\", yytext);
+    #endif
 
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(5) \"%s\", %d\n", yytext, yyleng);
@@ -530,18 +685,28 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_column(yyleng);
   }
   \' {
+    #if MATCH_DUMP
     matched_pattern("\\\'", yytext);
+    #endif
+
     sn_advance_column(yyleng);
     emit_sqstring();
     BEGIN(PHP);
   }
+  /* Uncomment the next rule if you want to check to make sure
+   * the above rules cover all possible input. A warning
+   * "rule cannot be matched" should be printed by flex.
+   */
+  /*. {}*/
 }
 
 <PHP>"<<<"{ws}*{heredoc-id}\n {
   char *x = yytext;
   char *y;
 
+#if MATCH_DUMP
   matched_pattern("<<<{ws}*{heredoc-id}\\n", yytext);
+#endif
 
   mode_start_line = sn_line();
   mode_start_column = sn_column();
@@ -574,7 +739,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <HDSTRING>.*\n {
+#if MATCH_DUMP
   matched_pattern(".*\n", yytext);
+#endif
+
   #if HDSTRING_DUMP
   fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
   #endif
@@ -601,7 +769,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"(" {
+#if MATCH_DUMP
   matched_pattern("(", yytext);
+#endif
+
   append_token(OPEN_PAREN, NULL,
           sn_line(),
           sn_column(),
@@ -611,7 +782,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>")" {
+#if MATCH_DUMP
   matched_pattern(")", yytext);
+#endif
   append_token(CLOSE_PAREN, NULL,
           sn_line(),
           sn_column(),
@@ -621,7 +794,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"[" {
+#if MATCH_DUMP
   matched_pattern("[", yytext);
+#endif
   append_token(OPEN_BRACKET, NULL,
           sn_line(),
           sn_column(),
@@ -631,7 +806,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"]" {
+#if MATCH_DUMP
   matched_pattern("]", yytext);
+#endif
   append_token(CLOSE_BRACKET, NULL,
           sn_line(),
           sn_column(),
@@ -641,7 +818,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"{" {
+#if MATCH_DUMP
   matched_pattern("{", yytext);
+#endif
   append_token(OPEN_BRACE, NULL,
           sn_line(),
           sn_column(),
@@ -651,7 +830,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"}" {
+#if MATCH_DUMP
   matched_pattern("}", yytext);
+#endif
   append_token(CLOSE_BRACE, NULL,
           sn_line(),
           sn_column(),
@@ -661,7 +842,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>";" {
+#if MATCH_DUMP
   matched_pattern("}", yytext);
+#endif
   append_token(SEMICOLON, NULL,
           sn_line(),
           sn_column(),
@@ -671,7 +854,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"." {
+#if MATCH_DUMP
   matched_pattern(".", yytext);
+#endif
   append_token(PERIOD, NULL,
           sn_line(),
           sn_column(),
@@ -681,7 +866,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"," {
+#if MATCH_DUMP
   matched_pattern(",", yytext);
+#endif
   append_token(COMMA, NULL,
           sn_line(),
           sn_column(),
@@ -691,7 +878,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"=" {
+#if MATCH_DUMP
   matched_pattern("=", yytext);
+#endif
   append_token(ASSIGNMENT_OPERATOR, NULL,
           sn_line(),
           sn_column(),
@@ -701,7 +890,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>{comparison-operators} {
+#if MATCH_DUMP
   matched_pattern("{comparison-operators}", yytext);
+#endif
+
   append_token(COMPARISON_OPERATORS, yytext,
           sn_line(),
           sn_column(),
@@ -711,7 +903,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>{assignment-operators} {
+#if MATCH_DUMP
   matched_pattern("{assignment-operators}", yytext);
+#endif
+
   append_token(ASSIGNMENT_OPERATORS, yytext,
           sn_line(),
           sn_column(),
@@ -721,7 +916,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"function" {
+#if MATCH_DUMP
   matched_pattern("function", yytext);
+#endif
+
   append_token(FUNCTION_KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -731,7 +929,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>"global" {
+#if MATCH_DUMP
   matched_pattern("global", yytext);
+#endif
   append_token(GLOBAL_KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -741,7 +941,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>{include-keywords} {
+#if MATCH_DUMP
   matched_pattern("{include-keywords}", yytext);
+#endif
   append_token(INCLUDE_KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -751,7 +953,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>{keywords} {
+#if MATCH_DUMP
   matched_pattern("{keywords}", yytext);
+#endif
+
   append_token(KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -761,7 +966,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <PHP>{someword} {
+#if MATCH_DUMP
   matched_pattern("{someword}", yytext);
+#endif
+
   append_token(SOMEWORD, yytext,
           sn_line(),
           sn_column(),
@@ -770,13 +978,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
-<PHP>\\\$		{
-  matched_pattern("\\$", yytext);
-  sn_advance_column(yyleng); /* ignore \$ */
-}
-
 <PHP>\${varname} {
+#if MATCH_DUMP
   matched_pattern("${varname}", yytext);
+#endif
   sn_advance_column(1);
   append_token(VARIABLE, yytext+1,
           sn_line(),
@@ -786,14 +991,25 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng-1);
 }
 
-<INITIAL,PHP>\n		{
+<PHP>\n		{
+#if MATCH_DUMP
   matched_pattern("\\n", yytext);
+#endif
   sn_advance_line();
   sn_reset_column();
 }
 
-<INITIAL,PHP>.		{
+<PHP>\\\$		{
+#if MATCH_DUMP
+  matched_pattern("\\$", yytext);
+#endif
+  sn_advance_column(yyleng); /* ignore \$ */
+}
+
+<PHP>.		{
+#if MATCH_DUMP
   matched_pattern(".", yytext);
+#endif
   sn_advance_column(yyleng); /* eat text */
 }
 
@@ -1218,11 +1434,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
     yy_delete_buffer( YY_CURRENT_BUFFER );
     yy_switch_to_buffer( original_buffer );
-    BEGIN(INITIAL);
+    enter_html_mode();
     yyterminate();
 }
 
-<INITIAL,PHP,COMMENT,DQSTRING,SQSTRING,HDSTRING><<EOF>> {
+<HTML_MODE,PHP,COMMENT_MODE,DQSTRING,SQSTRING,HDSTRING><<EOF>> {
   LongString token_buffer;
   char *base;
   int i;
@@ -1237,7 +1453,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   /* See if we ran off the end of the lex input buffer in a special mode */
   switch (YY_START) {
-    case COMMENT:
+    case COMMENT_MODE:
       emit_comment();
       break;
     case DQSTRING:
@@ -1249,6 +1465,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     case HDSTRING: 
       emit_hdstring();
       break;
+    case HTML_MODE:
+      emit_html();
+      break;
   }
 
   /* If no tokens were generated, then quit now */
@@ -1256,6 +1475,34 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "no TOKENs generated\n");
 #endif
+    enter_html_mode();
+    yyterminate();
+  }
+
+  /*
+   * If the -T command line option was passed,
+   * dump all tokens to a file, skip the token
+   * matching phase and go on to the next file.
+   */
+
+  if (token_dump_file) {
+    FILE * dump_tokens = fopen(token_dump_file, "a");
+    
+    for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
+        fprintf(dump_tokens, "%d %s", i, TokenTypeToString(tok));
+        fprintf(dump_tokens, " \"%s\"", (tok->strval) ? tok->strval : "");
+        fprintf(dump_tokens, " %d.%d %d.%d",
+            tok->start_line,
+            tok->start_column,
+            tok->end_line,
+            tok->end_column
+        );
+        fprintf(dump_tokens, "\n");
+    }
+
+    fclose(dump_tokens);
+
+    enter_html_mode();
     yyterminate();
   }
 
@@ -1313,8 +1560,8 @@ static char* modestring() {
         case PHP:
             mode = "PHP";
             break;
-        case COMMENT:
-            mode = "COMMENT";
+        case COMMENT_MODE:
+            mode = "COMMENT_MODE";
             break;
         case DQSTRING:
             mode = "DQSTRING";
@@ -1328,20 +1575,27 @@ static char* modestring() {
         case TOKEN:
             mode = "TOKEN";
             break;
+        case HTML_MODE:
+            mode = "HTML_MODE";
+            break;
     }
     return mode;
 }
 
-/* Helper method that will print matches as they are made */
+#if MATCH_DUMP
+
+/* Helper method that will print matches as they are made.
+ * This method is typically used in the token generation phase.
+ */
 
 static void matched_pattern(char * pattern, char * text) {
     char * mode = modestring();
 
-    if (0) {
     fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
         pattern, text, mode, sn_line(), sn_column());
-    }
 }
+
+#endif /* MATCH_DUMP */
 
 static void FreeGlobalEntry(SearchEntry *entry) {}
 
@@ -1441,6 +1695,10 @@ char * TokenTypeToString(Token *tok) {
             return "SINGLE_QUOTED_STRING";
         case UNKNOWN:
             return "UNKNOWN";
+        case COMMENT:
+            return "COMMENT";
+        case HTML:
+            return "HTML";
         default:
             return "TOKEN_NOT_MATCHED";
     }
@@ -1488,6 +1746,16 @@ void emit_comment() {
     fprintf(stderr, "emit comment \"%s\"\n", comment);
 #endif
 
+  /* If dumping tokens, emit a special COMMENT token.
+   * Otherwise, insert a comment symbol.
+   */
+  if (token_dump_file) {
+    append_token(COMMENT, comment,
+            mode_start_line,
+            mode_start_column - 2,
+            sn_line(),
+            sn_column() + 2);
+  } else {
     sn_insert_comment(
         /* classname */ NULL,
         /* funcname */ NULL,
@@ -1495,8 +1763,9 @@ void emit_comment() {
         comment,
         mode_start_line,
         mode_start_column);
+  }
 
-    mode_buff.free(&mode_buff);
+  mode_buff.free(&mode_buff);
 }
 
 void emit_dqstring() {
@@ -1555,6 +1824,39 @@ void emit_hdstring() {
             sn_column()+1);
 
     mode_buff.free(&mode_buff);
+}
+
+
+/* Helper method to enter HTML mode.
+ * Should be called in place of BEGIN(HTML_MODE) */
+
+void enter_html_mode() {
+    token_dump_file = (char *) sn_getopt(SN_OPT_DUMP_TOKENS);
+    if (token_dump_file) {
+      LongStringInit(&mode_buff,0);
+      mode_start_line = sn_line();
+      mode_start_column = sn_column();
+    }
+    BEGIN(HTML_MODE);
+}
+
+
+void emit_html() {
+    if (token_dump_file) {
+      char * html_text = mode_buff.buf;
+
+#if HTML_DUMP
+      fprintf(stderr, "creating html token \"%s\"\n", html_text);
+#endif
+
+      append_token(HTML, html_text,
+            mode_start_line,
+            mode_start_column,
+            sn_line(),
+            sn_column());
+
+      mode_buff.free(&mode_buff);
+    }
 }
  
 void
