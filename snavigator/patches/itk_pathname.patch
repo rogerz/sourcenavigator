@@ -1,0 +1,73 @@
+2002-02-25  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* generic/itk_archetype.c (ArchComponent, Itk_ArchCompDeleteCmd,
+	Itk_CreateArchComponent, Itk_DelArchComponent): Save a copy
+	of the window path name in the ArchComponent struct and use
+	it in the Itk_ArchCompDeleteCmd method. The old code was
+	invoking Tk_PathName(tkwin) on a Tk_Window which lead to
+	a memory access on memory that has already been free'd
+	when the widget was destroyed.
+	* library/itk.tcl (itk::remove_destroy_hook): Don't attempt
+	to remove the widget binding if the widget has already been
+	destroyed.
+
+Index: itcl/itk/generic/itk_archetype.c
+===================================================================
+RCS file: /cvs/src/src/itcl/itk/generic/itk_archetype.c,v
+retrieving revision 1.1.1.2
+diff -u -r1.1.1.2 itk_archetype.c
+--- itcl/itk/generic/itk_archetype.c	9 Sep 2001 19:49:05 -0000	1.1.1.2
++++ itcl/itk/generic/itk_archetype.c	31 May 2002 23:37:04 -0000
+@@ -54,6 +54,11 @@
+     ItclMember *member;         /* contains protection level for this comp */
+     Tcl_Command accessCmd;      /* access command for component widget */
+     Tk_Window tkwin;            /* Tk window for this component widget */
++    char *pathName;             /* Tk path name for this component widget.
++                                   We can't use the tkwin pointer after
++                                   the window has been destroyed so we
++                                   need to save a copy for use in
++                                   Itk_ArchCompDeleteCmd() */
+ } ArchComponent;
+ 
+ /*
+@@ -1153,7 +1158,7 @@
+         */
+         Tcl_DStringInit(&buffer);
+         Tcl_DStringAppend(&buffer, "itk::remove_destroy_hook ", -1);
+-        Tcl_DStringAppend(&buffer, Tk_PathName(archComp->tkwin), -1);
++        Tcl_DStringAppend(&buffer, archComp->pathName, -1);
+         (void) Tcl_Eval(interp, Tcl_DStringValue(&buffer));
+         Tcl_ResetResult(interp);
+         Tcl_DStringFree(&buffer);
+@@ -3171,6 +3176,8 @@
+     archComp->member     = memPtr;
+     archComp->accessCmd  = accessCmd;
+     archComp->tkwin      = tkwin;
++    archComp->pathName   = (char *) ckalloc((unsigned)(strlen(wname)+1));
++    strcpy(archComp->pathName, wname);
+ 
+     return archComp;
+ }
+@@ -3189,6 +3196,7 @@
+     ArchComponent *archComp;  /* pointer to component data */
+ {
+     ckfree((char*)archComp->member);
++    ckfree((char*)archComp->pathName);
+     ckfree((char*)archComp);
+ }
+ 
+Index: itcl/itk/library/itk.tcl
+===================================================================
+RCS file: /cvs/src/src/itcl/itk/library/itk.tcl,v
+retrieving revision 1.1.1.2
+diff -u -r1.1.1.2 itk.tcl
+--- itcl/itk/library/itk.tcl	9 Sep 2001 19:49:05 -0000	1.1.1.2
++++ itcl/itk/library/itk.tcl	31 May 2002 23:37:04 -0000
+@@ -37,6 +37,7 @@
+ #  Tcl than C.
+ # ----------------------------------------------------------------------
+ proc ::itk::remove_destroy_hook {widget} {
++    if {![winfo exists $widget]} {return}
+     set tags [bindtags $widget]
+     set i [lsearch $tags "itk-destroy-$widget"]
+     if {$i >= 0} {

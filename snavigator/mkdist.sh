@@ -15,6 +15,13 @@ if test `basename $PWD` != "src" ; then
     exit 1
 fi
 
+# Apply any needed patches to Tcl CVS modules
+rm -f patch.out
+PATCHES=`ls snavigator/patches/*.patch`
+for file in $PATCHES ; do
+    patch -p 0 < $file >> patch.out
+done
+
 if test -d $DIR ; then
     rm -rf $DIR
 fi

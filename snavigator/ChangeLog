@@ -1,3 +1,15 @@
+2002-05-31  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Automatically apply patches
+	from src/snavigator/patches to clean CVS
+	checkout before making dist file.
+	* patches/README.TXT:
+	* patches/itk_component.patch:
+	* patches/itk_pathname.patch:
+	* patches/tcl_configure.patch:
+	* patches/tk_select.patch: Add patch
+	files that need to be applied to sources CVS.
+
 2002-05-31  John Lash  <jlash@speakeasy.net>
 
 	* gui/retrieverpane.tcl (handle_all_none): Fix broken

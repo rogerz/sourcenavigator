@@ -1,0 +1,19 @@
+2002-05-31  Mo DeJong  <supermo@bayarea.net>
+
+	* win/configure.in: Don't generate ../unix/tclConfig.sh
+	since this breaks Itcl.
+
+Index: tcl/win/configure.in
+===================================================================
+RCS file: /cvs/src/src/tcl/win/configure.in,v
+retrieving revision 1.7
+diff -u -r1.7 configure.in
+--- tcl/win/configure.in	28 Oct 2001 16:26:29 -0000	1.7
++++ tcl/win/configure.in	31 May 2002 23:38:01 -0000
+@@ -247,5 +247,5 @@
+ AC_SUBST(MAKE_DLL)
+ AC_SUBST(MAKE_EXE)
+ 
+-AC_OUTPUT(Makefile tclConfig.sh tcl.hpj ../unix/tclConfig.sh)
++AC_OUTPUT(Makefile tclConfig.sh tcl.hpj)
+ 
