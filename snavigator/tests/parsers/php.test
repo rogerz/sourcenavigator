@@ -57,6 +57,22 @@ PAF_GLOB_VAR_DEF;mode2<>000003.004<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.004<>#<>mode2<>gv;3.9<>3.4<>3.9<>{}
 }
 
+tcltest::test mode-2.3 { html->php->html->php mode } {
+    php_parse [save_file f.php {
+$mode1="html";
+<? $mode2="php"; ?>
+$mode3="html";
+<? $mode4="php"; ?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;mode2<>000003.004<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.004<>#<>mode2<>gv;3.9<>3.4<>3.9<>{}
+PAF_GLOB_VAR_DEF;mode4<>000005.004<>f.php;5.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.004<>#<>mode4<>gv;5.9<>5.4<>5.9<>{}
+}
+
+
 
 tcltest::test var-1.0 { var write } {
     php_parse [save_file f.php {
@@ -179,9 +195,89 @@ tcltest::test comment-1.10 { insert comment xref } {
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;********\xFF * Hello *\xFF ********\n"
 
 
+
+tcltest::test comment-2.0 { function with a comment } {
+    php_parse [save_file f.php {
+<?
+function foo() { /* no-op */ }
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.30<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.30<>3.9<>3.12<>{}
+}
+
+tcltest::test comment-2.1 { insert comment xref in a function } {
+    php_parse_comment_xref [save_file f.php {
+<?
+function foo() {
+//no-op
+    return;
+}
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000004.002<>#<>#;no-op
+}
+
+tcltest::test comment-2.2 { insert comment xref in a function } {
+    php_parse_comment_xref [save_file f.php {
+<?
+function foo() {
+/*no-op*/
+    return;
+}
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000004.002<>#<>#;no-op
+}
+
+tcltest::test comment-2.3 { insert comment xref in a function } {
+    php_parse_comment_xref [save_file f.php {
+<?
+function foo() {
+    /*no-op*/
+    bar();
+}
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000004.006<>#<>#;no-op
+PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
+}
+
+tcltest::test comment-2.4 { insert comment xref in a function } {
+    php_parse_comment_xref [save_file f.php {
+<?
+function foo() {
+    bar();
+    /*no-op*/
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
+PAF_COMMENT_DEF;f.php<>000005.006<>#<>#;no-op
+}
+
+
+
+
+
 # FIXME: Should we declare and define at the same time like the Java parser?
 
+
 tcltest::test function-1.0 { function definition } {
+    php_parse [save_file f.php {
+<?
+function foo() {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
+}
+
+tcltest::test function-1.1 { function definition } {
     php_parse [save_file f.php {
 <?
 function foo() {
@@ -190,26 +286,181 @@ function foo() {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>foo<>fu;3.12<>3.9<>3.12<>{}
+PAF_FUNC_DEF;foo<>000003.000<>f.php;4.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.1<>3.9<>3.12<>{}
 }
 
-# FIXME: Scope of function should extend from start to end of function,
-# it should not just include the symbol name.
-
-tcltest::test function-1.1 { function definition } {
+tcltest::test function-1.2 { function definition } {
     php_parse [save_file f.php {
 <?
-  function	stop_go()
+function
+foo() {
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>4.0<>4.3<>{}
+}
+
+tcltest::test function-1.3 { function definition } {
+    php_parse [save_file f.php {
+<?
+function
+foo()
 {
 }
 ?>
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;stop_go<>000003.011<>f.php;3.18<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.011<>#<>stop_go<>fu;3.18<>3.11<>3.18<>{}
+PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>4.0<>4.3<>{}
 }
+
+tcltest::test function-1.4 { function definition } {
+    php_parse [save_file f.php {
+<?
+function foo 
+() {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.5<>3.9<>3.12<>{}
+}
+
+tcltest::test function-1.5 { function definition } {
+    php_parse [save_file f.php {
+<?
+  function	stop_go()	{} 
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;stop_go<>000003.000<>f.php;3.23<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>stop_go<>fu;3.23<>3.11<>3.18<>{}
+}
+
+
+
+tcltest::test function-2.0 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
+function foo($arg1) {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.22<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.22<>3.9<>3.12<>{}
+}
+
+tcltest::test function-2.1 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
+function foo($arg1,$arg2) {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.28<>0x0<>{}<>{}<>{arg1,arg2}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.28<>3.9<>3.12<>{}
+}
+
+tcltest::test function-2.2 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
+function foo($arg1 = "default") {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.34<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.34<>3.9<>3.12<>{}
+}
+
+tcltest::test function-2.3 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
+function foo(&$arg1) {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.23<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.23<>3.9<>3.12<>{}
+}
+
+tcltest::test function-2.4 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
+function foo(
+	$arg1,
+	$arg2,
+	$arg3) {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;6.10<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.10<>3.9<>3.12<>{}
+}
+
+
+
+
+tcltest::test function-3.0 { xref to function in function } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+    bar();
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
+}
+
+tcltest::test function-3.1 { xref to function in function } {
+    php_parse_xref [save_file f.php {
+<?
+bar
+();
+function foo() {
+    bar();
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000003<>f.php;<>
+PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000006<>f.php;<>
+}
+
+tcltest::test function-3.2 { reset current function name } {
+    php_parse_xref [save_file f.php {
+<?
+function foo_one() {bar();}
+bar();
+function foo_two() {bar ();}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo_one<>fu<>#<>bar<>fu<>p<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
+PAF_CROSS_REF;#<>foo_two<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
+}
+
+
+# Need to add test that jumps out of FUNCTION mode
+# and back into INITIAL mode, then back to FUNCTION.
+
+# Need to add tests for string processing. Some variable
+# recognition works inside strings but I don't think
+# function calls should be seen in string literals.
+
+# Need to fix array variable setting and reading.
+
+ 
 
 
 # cleanup

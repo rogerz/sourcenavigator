@@ -1,3 +1,17 @@
+2003-05-20  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add code to parse
+	function bodies and generate xrefs for
+	function calls inside a function declaration.
+	Add new FUNCTION state and use parser state
+	stacks so that we can push a mode like COMMENT
+	and then pop back into a mode like FUNCTION.
+	Handle newlines in addition to spaces and
+	tabs as a separator character.
+	* tests/parsers/php.test: Add tests for
+	functions and comments in functions.
+
 2003-05-17  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/cobol/skeleton.c (main):

@@ -48,7 +48,33 @@ MA 02111-1307, USA.
 
 static char group[] = "php";
 
-static char current_function[512] = {"GLOBAL"}; /* "" causes assert core dump */
+#define MAX_SIZE 512
+
+/* FIXME: Can't pass NULL or "" as current function (core dump) */
+static char current_function[MAX_SIZE] = {"GLOBAL"};
+static char current_function_args[MAX_SIZE] = {""};
+static int  current_function_highlight_line;
+
+/* in "function fog() {}" column of 'f' in "fog" */
+static int  current_function_highlight_column_start;
+
+/* in "function fog() {}" column of 'g' in "fog" */
+static int  current_function_highlight_column_end;
+
+/* line where "function" appears */
+static int  current_function_line_start;
+
+/* line where closing brace of function appears */
+static int  current_function_line_end;
+
+/* in "function fog() {}" column of 'f' in "function" */
+static int  current_function_column_start;
+
+/* in "function fog() {}" column of '}' in "{}" */
+static int  current_function_column_end;
+
+static int  current_function_brace_count;
+
 static int result;
 
 /* Stores a comment buffer that could be built over multiple lines/rules. */
@@ -74,41 +100,79 @@ yywrap()
 
 %}
 
+%option stack
 %x COMMENT
 %x PHP
+%x FUNCTION
 
 ws		[ \t]
+wsn		[ \t\n]
 symbol		[a-zA-Z0-9_]+
 array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
 %%
 
-<INITIAL,PHP>.		{ sn_advance_column(yyleng); /* eat text */ }
+<FUNCTION>\{ {
+  sn_advance_column(yyleng);
+  current_function_brace_count++;
+}
 
-<PHP>\\\$		{ sn_advance_column(yyleng); /* ignore \$ */ }
+<FUNCTION>\} {
+  sn_advance_column(yyleng);
+  current_function_brace_count--;
+  if (current_function_brace_count == 0) {
+    current_function_line_end = sn_line();
+    current_function_column_end = sn_column();
+
+    result = sn_insert_symbol(SN_FUNC_DEF, NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+
+    assert(result == 0);
+
+    strcpy(current_function, "GLOBAL");
+
+    yy_pop_state(); /*BEGIN(PHP);*/
+  }
+}
+
+<INITIAL,PHP,FUNCTION>.		{ sn_advance_column(yyleng); /* eat text */ }
+
+<PHP,FUNCTION>\\\$		{ sn_advance_column(yyleng); /* ignore \$ */ }
 
 
-<INITIAL,PHP>\n		{ sn_advance_line(); sn_reset_column(); }
+<INITIAL,PHP,FUNCTION>\n		{ sn_advance_line(); sn_reset_column(); }
 
 <INITIAL>"<?" { /* HTML -> PHP mode */
-    BEGIN(PHP);
+    yy_push_state(PHP); /*BEGIN(PHP);*/
     sn_advance_column(2);
 }
 
-<PHP>"?>" { /* PHP -> HTML mode */
-    BEGIN(INITIAL);
+<PHP,FUNCTION>"?>" { /* PHP -> HTML mode */
+    yy_pop_state(); /*BEGIN(INITIAL);*/
     sn_advance_column(2);
 }
 
-<PHP>"/*"		{ /* A C style multi-line comment, just like this! */
-    BEGIN(COMMENT);
+<PHP,FUNCTION>"/*"		{ /* A C style multi-line comment, just like this! */
+    yy_push_state(COMMENT); /*BEGIN(COMMENT);*/
     sn_advance_column(2);
     LongStringInit(&cbuff,0);
     cbuff_start_line = sn_line();
     cbuff_start_column = sn_column();
 }
 
-<PHP>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
+<PHP,FUNCTION>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
 
@@ -234,58 +298,123 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   sn_advance_column(yyleng);
 }
 
-<PHP>^{ws}*"function"{ws}+{symbol}\( {
+<PHP>^{ws}*"function"{wsn}+{symbol}{wsn}*\([^\)]*\){wsn}+\{ {
   char * x = (char *) yytext;
   char * y;
+  char * tmp1, * tmp2;
 
-  /* Skip ahead to the '(' character */
+  current_function_line_start = sn_line();
+  current_function_column_start = sn_column();
 
-  for ( ; *x ; x++) {
-      if (*x == '(') {
-          *x = 0;
-          y = x;
-          x--;
-          break;
-      }
-  }
+  /* Skip {ws} leading up to function token */
+  for ( ; *x == ' ' || *x == '\t' ; x++) {}
 
-  /* Walk back to the start of the function name */
-
-  for ( ; 1 ; x--) {
-      if (*x == ' ' ||
-          *x == '\t') {
-          x++;
-          break;
-      }
-  }
-
-  /* x now points to the start of the function name */
-
+  /* Skip the "function" token */
+  assert(*x == 'f');
+  x += strlen("function");
   sn_advance_column(x - yytext);
 
-  result = sn_insert_symbol(SN_FUNC_DEF, NULL, x, sn_current_file(), 
-		   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x),
-                   0 /* attribute */, NULL /* return type */,
-                   NULL /* argument types */, NULL /* argument names */,
-                   NULL /* comment */,
-                   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x) );
+  /* Skip any {wsn} chars leading up to the function name */
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == ' ' || *x == '\t') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
 
-  assert(result == 0);
+  /* x now points to the start of the function name, point
+   * y at the char just after the function name
+   */
 
-  /* FIXME : need to declare function too, can that be done at the
-     same time or is this a bug in SN ?? */
+  for (y=x ; *y ; y++) {
+      if (*y == '(' || *y == '\t' || *y == ' ' || *y == '\n') {
+          break;
+      }
+  }
 
-  sn_advance_column(y - x);
+  assert((y - x) < MAX_SIZE);
+  strncpy(current_function, x, (y - x));
+  current_function[y - x] = 0;
+
+  current_function_highlight_line = sn_line();
+  current_function_highlight_column_start = sn_column();
+  current_function_highlight_column_end = sn_column() + (y - x);
+
+  /* Save function arguments in current_function_args */
+
+  for ( ; *y != '(' ; y++) {}
+  tmp1 = y + 1;
+  tmp2 = current_function_args;
+
+  for (; *tmp1 != ')'; ) {
+    /* Start argument variable name */
+    if (*tmp1 == '$') {
+        for (tmp1++; *tmp1 != ')'; tmp1++) {
+            /*fprintf(stderr, "var loop '%s'\n", tmp1);*/
+            if (*tmp1 == ',' || *tmp1 == '=' || *tmp1 == ' ' ||
+                    *tmp1 == '\t' || *tmp1 == '\n') {
+                break;
+            } else {
+                /*fprintf(stderr, "appended '%c'\n", *tmp1);*/
+                *tmp2++ = *tmp1;
+            }
+
+            assert((tmp2 - current_function_args) < MAX_SIZE);
+        }
+    } else if (*tmp1 == ',') {
+        /*fprintf(stderr, "append ',' in outer loop '%s'\n", tmp1);*/
+        *tmp2++ = ',';
+        tmp1++;
+    } else {
+        /*fprintf(stderr, "skip '%s'\n", tmp1);*/
+        tmp1++;
+    }
+  }
+  *tmp2 = 0;
+  /*fprintf(stderr, "current_function args are \"%s\"\n", current_function_args);*/
+
+  /* Advance from function name up to just past the '{' character */
+  for (; *x; x++) {
+    if (*x == '\n') {
+        sn_advance_line();
+        sn_reset_column();
+    } else {
+        sn_advance_column(1);
+    }
+  }
+
+  /*fprintf(stderr, "advanced to end of match at %d.%d\n", sn_line(), sn_column());*/
+
+  current_function_brace_count = 1;
+
+  yy_push_state(FUNCTION); /*BEGIN(FUNCTION);*/
 }
 
-<PHP>{symbol}\( {
+<PHP,FUNCTION>{wsn}*{symbol}{wsn}*\( {
   char * x = (char *) yytext;
   char * y;
+  char saved;
+
+  /* Skip {wsn} leading up to symbol */
+
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == ' ' || *x == '\t') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
 
   for (y=x; *y ; y++) {
-      if (*y == '(') {
+      if (*y == '(' || *y == ' ' || *y == '\t' || *y == '\n') {
+          saved = *y;
           *y = 0;
           break;
       }
@@ -308,7 +437,16 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
   assert(result == 0);
 
-  sn_advance_column(yyleng);
+  *y = saved;
+
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else {
+          sn_advance_column(1);
+      }
+  }
 }
 
 <COMMENT>{
@@ -380,7 +518,7 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
     cbuff.free(&cbuff);
     sn_advance_column(yyleng);
-    BEGIN(INITIAL);
+    yy_pop_state(); /* BEGIN(INITIAL); */
   }
 }
 
