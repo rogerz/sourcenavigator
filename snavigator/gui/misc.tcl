@@ -1550,6 +1550,20 @@ proc sn_create_new_project {{import_file ""}} {
         return 0
     }
 
+    # Bail out if an import directory does not exist
+    foreach aname [array names sn_newargs "add,*"] {
+        if {$sn_newargs(${aname}) == ""} {
+            continue
+        }
+	# Bail out if import dir does not exist!
+	if {![file isdirectory $sn_newargs(${aname})]} {		     
+	    sn_error_dialog [format [get_indep String UnknownDir]\
+	        $sn_newargs(${aname})]
+	    set ProcessingCancelled 1
+	    return 0
+	}
+    }
+
     #the files are already predefined
     if {$sn_newargs(have-import-file) == "disabled"} {
         if {${answer} == 0} {
@@ -1573,12 +1587,9 @@ proc sn_create_new_project {{import_file ""}} {
                 set i 0
                 set ff ""
                 foreach aname [array names sn_newargs "add,*"] {
-                    if {$sn_newargs(${aname}) == "" || ![file isdirectory\
-                      $sn_newargs(${aname})]} {
-                        #skip unusable directories
+                    if {$sn_newargs(${aname}) == ""} {
                         continue
                     }
-
                     set dir [realpath -pwd $sn_options(sys,project-dir)\
                       $sn_newargs(${aname})]
                     set ffiles [sn_glob -match ${glob_expr}\

@@ -1,3 +1,12 @@
+2003-05-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_create_new_project): Check each
+	import directory to see if it exists and generate
+	an error if it does not. This avoids a problem
+	where a typo in a directory name will create
+	an empty project instead of telling you that the
+	import dir does not exist.
+
 2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* etc/sn_prop.cfg.in: Remove empty -brow_switch
