@@ -30,7 +30,8 @@ INCLUDES = $(WINFLAGS) \
 	-I$(top_srcdir)/hyper \
 	-I$(top_srcdir)/parsers/toolbox \
 	-I$(top_srcdir)/parsers/common \
-	-I$(top_srcdir)/misc/libutils
+	-I$(top_srcdir)/misc/libutils \
+	$(TCLHDIR)
 
 phpbrowser_SOURCES = phpbrowser.c
 phpbrowser_LDADD = $(toolbox)/libsnptools.a \

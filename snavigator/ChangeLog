@@ -1,3 +1,11 @@
+2003-06-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/Makefile.am: Add Tcl include dir
+	to include list so that tcl.h is found. This
+	was compiling on my machine only because a
+	tcl.h was in /usr/include.
+	* parsers/php/Makefile.in: Regen.
+
 2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* etc/sn_prop.cfg.in: Enable text highlighting
