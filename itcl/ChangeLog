@@ -1,3 +1,18 @@
+2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/Makefile.in: Install .a lib after installing .dll.
+	Don't run ranlib under Win32.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Define library prefix and suffix
+	under Windows so that install target works properly
+	for mingw.
+	* itk/Makefile.in: Install .a lib after installing .dll.
+	Don't run ranlib under Win32.
+	* itk/configure: Regen.
+	* itk/configure.in: Define library prefix and suffix
+	under Windows so that install target works properly
+	for mingw.
+
 2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itcl/Makefile.in:

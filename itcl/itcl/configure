@@ -1417,23 +1417,41 @@ echo "configure:1365: checking for Tcl private include files" >&5
 #--------------------------------------------------------------------
 
 case "${host}" in
-    *cygwin*| *mingw32* | *windows32*)
+    *cygwin*| *mingw32*)
 	cat >> confdefs.h <<\EOF
 #define BUILD_itcl 1
 EOF
 
+	WINLIBPRE=lib
+	WINLIBEXT=.a
+	CLEANFILES="*.a *.dll"
+	PLATFORM_SOURCES='$(WIN_SOURCES)'
+	PLATFORM_OBJECTS='$(WIN_OBJECTS)'
+	PLATFORM_DIR='$(WIN_DIR)'
+    ;;
+    *windows32*)
+	cat >> confdefs.h <<\EOF
+#define BUILD_itcl 1
+EOF
+
+	WINLIBPRE=
+	WINLIBEXT=.lib
 	CLEANFILES="*.lib *.dll *.exp *.ilk *.pdb vc50.pch"
 	PLATFORM_SOURCES='$(WIN_SOURCES)'
 	PLATFORM_OBJECTS='$(WIN_OBJECTS)'
 	PLATFORM_DIR='$(WIN_DIR)'
     ;;
     *)
+	WINLIBPRE=
+	WINLIBEXT=
 	CLEANFILES=
 	PLATFORM_SOURCES='$(UNIX_SOURCES)'
 	PLATFORM_OBJECTS='$(UNIX_OBJECTS)'
 	PLATFORM_DIR='$(UNIX_DIR)'
     ;;
 esac
+
+
 
 
 
@@ -1447,7 +1465,7 @@ esac
 
 
     echo $ac_n "checking for building with threads""... $ac_c" 1>&6
-echo "configure:1451: checking for building with threads" >&5
+echo "configure:1469: checking for building with threads" >&5
     # Check whether --enable-threads or --disable-threads was given.
 if test "${enable_threads+set}" = set; then
   enableval="$enable_threads"
@@ -1474,7 +1492,7 @@ EOF
 		;;
 	    *)
 		echo $ac_n "checking for pthread_mutex_init in -lpthread""... $ac_c" 1>&6
-echo "configure:1478: checking for pthread_mutex_init in -lpthread" >&5
+echo "configure:1496: checking for pthread_mutex_init in -lpthread" >&5
 ac_lib_var=`echo pthread'_'pthread_mutex_init | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1482,7 +1500,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lpthread  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1486 "configure"
+#line 1504 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -1493,7 +1511,7 @@ int main() {
 pthread_mutex_init()
 ; return 0; }
 EOF
-if { (eval echo configure:1497: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1515: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1539,7 +1557,7 @@ fi
 
 
     echo $ac_n "checking how to build libraries""... $ac_c" 1>&6
-echo "configure:1543: checking how to build libraries" >&5
+echo "configure:1561: checking how to build libraries" >&5
     # Check whether --enable-shared or --disable-shared was given.
 if test "${enable_shared+set}" = set; then
   enableval="$enable_shared"
@@ -1612,7 +1630,7 @@ SHLIB_CFLAGS=${TCL_SHLIB_CFLAGS}
     esac
 
     echo $ac_n "checking for build with symbols""... $ac_c" 1>&6
-echo "configure:1616: checking for build with symbols" >&5
+echo "configure:1634: checking for build with symbols" >&5
     # Check whether --enable-symbols or --disable-symbols was given.
 if test "${enable_symbols+set}" = set; then
   enableval="$enable_symbols"
@@ -2550,6 +2568,8 @@ s%@CLEANFILES@%$CLEANFILES%g
 s%@PLATFORM_SOURCES@%$PLATFORM_SOURCES%g
 s%@PLATFORM_OBJECTS@%$PLATFORM_OBJECTS%g
 s%@PLATFORM_DIR@%$PLATFORM_DIR%g
+s%@WINLIBPRE@%$WINLIBPRE%g
+s%@WINLIBEXT@%$WINLIBEXT%g
 s%@CFLAGS_DEBUG@%$CFLAGS_DEBUG%g
 s%@CFLAGS_OPTIMIZE@%$CFLAGS_OPTIMIZE%g
 s%@LDFLAGS_OPTIMIZE@%$LDFLAGS_OPTIMIZE%g

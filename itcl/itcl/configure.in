@@ -207,14 +207,27 @@ SC_PRIVATE_TCL_HEADERS
 #--------------------------------------------------------------------
 
 case "${host}" in
-    *cygwin*| *mingw32* | *windows32*)
+    *cygwin*| *mingw32*)
 	AC_DEFINE(BUILD_itcl)
+	WINLIBPRE=lib
+	WINLIBEXT=.a
+	CLEANFILES="*.a *.dll"
+	PLATFORM_SOURCES='$(WIN_SOURCES)'
+	PLATFORM_OBJECTS='$(WIN_OBJECTS)'
+	PLATFORM_DIR='$(WIN_DIR)'
+    ;;
+    *windows32*)
+	AC_DEFINE(BUILD_itcl)
+	WINLIBPRE=
+	WINLIBEXT=.lib
 	CLEANFILES="*.lib *.dll *.exp *.ilk *.pdb vc50.pch"
 	PLATFORM_SOURCES='$(WIN_SOURCES)'
 	PLATFORM_OBJECTS='$(WIN_OBJECTS)'
 	PLATFORM_DIR='$(WIN_DIR)'
     ;;
     *)
+	WINLIBPRE=
+	WINLIBEXT=
 	CLEANFILES=
 	PLATFORM_SOURCES='$(UNIX_SOURCES)'
 	PLATFORM_OBJECTS='$(UNIX_OBJECTS)'
@@ -226,6 +239,8 @@ AC_SUBST(CLEANFILES)
 AC_SUBST(PLATFORM_SOURCES)
 AC_SUBST(PLATFORM_OBJECTS)
 AC_SUBST(PLATFORM_DIR)
+AC_SUBST(WINLIBPRE)
+AC_SUBST(WINLIBEXT)
 
 #--------------------------------------------------------------------
 # Check whether --enable-threads or --disable-threads was given.

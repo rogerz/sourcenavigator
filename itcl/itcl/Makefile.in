@@ -181,6 +181,8 @@ CFLAGS_DEFAULT = @CFLAGS_DEFAULT@
 CFLAGS_OPTIMIZE = @CFLAGS_OPTIMIZE@
 CLEANFILES = @CLEANFILES@
 EXEEXT = @EXEEXT@
+WINLIBPRE = @WINLIBPRE@
+WINLIBEXT = @WINLIBEXT@
 LDFLAGS_DEBUG = @LDFLAGS_DEBUG@
 LDFLAGS_DEFAULT = @LDFLAGS_DEFAULT@
 LDFLAGS_OPTIMIZE = @LDFLAGS_OPTIMIZE@
@@ -415,8 +417,7 @@ distclean: clean
 # we need to deduce their existence from the .dll file of the same name.
 # Additionally, the .dll files go into the bin directory, but the .lib
 # files go into the lib directory.  On Unix platforms, all library files
-# go into the lib directory.  In addition, this will generate the pkgIndex.tcl
-# file in the install location (assuming it can find a usable tclsh8.2 shell)
+# go into the lib directory and will have ranlib run on them after install.
 #
 # You should not have to modify this target.
 #========================================================================
@@ -428,7 +429,7 @@ install-lib-binaries: installdirs
 	    if test "x$$ext" = "xdll"; then \
 	        echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
 	        $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
-		lib=`basename $$p|sed -e 's/.[^.]*$$//'`.lib; \
+		lib=$(WINLIBPRE)`basename $$p|sed -e 's/.[^.]*$$//'`$(WINLIBEXT); \
 		if test -f $$lib; then \
 		    echo " $(INSTALL_PROGRAM) $$lib $(DESTDIR)$(libdir)/$$lib"; \
 	            $(INSTALL_PROGRAM) $$lib $(DESTDIR)$(libdir)/$$lib; \
@@ -440,7 +441,7 @@ install-lib-binaries: installdirs
 	  else :; fi; \
 	done
 	@list='$(lib_BINARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
+	  if test -f $$p && test "x$(WINLIBEXT)" = "x"; then \
 	    echo " $(RANLIB) $(DESTDIR)$(libdir)/$$p"; \
 	    $(RANLIB) $(DESTDIR)$(libdir)/$$p; \
 	  else :; fi; \
