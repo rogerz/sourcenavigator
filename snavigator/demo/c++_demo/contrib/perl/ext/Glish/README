@@ -1,0 +1,43 @@
+								6 January 1995
+
+This Perl 5.0 extension was written by Darrell Schiebel at the
+National Radio Astronomy Observatory as part of the Astronomical
+Information Processing System (AIPS++). This extension allows
+arbitrary Glish events to be sent and received from Perl. This system,
+however, only works with with Perl 5.0 or later.
+
+To take maximum benefit of this extension, sharable Glish libraries
+should be built. If sharable libraries are available, Perl can
+dynamically load the Glish code when necessary. To get this extension
+to compile, you will most likely have to modify the "Makefile.PL"
+which is used to build the "Makefile". The makefile is built using the
+Perl 5.0 utility "ExtUtils::MakeMaker".
+
+This whole directory structure ("ext/Glish") should be moved into the
+Perl distribution. The easiest way to get this new addition
+incorporated is to run Perl's "Configure" script. This will set up all
+of the necessary variables in the Makefile, and the rest should be a
+matter mucking with the "Makefile.PL" file to get the right C++
+compiler to compile the Glish extension and to get the Glish shared
+libraries linked in.
+
+								Darrell
+
+
+    Copyright 1995 Darrell Schiebel (drs@nrao.edu).  All rights reserved.
+  
+   This software is not subject to any license of the American Telephone
+   and Telegraph Company or of the Regents of the University of California.
+  
+   Permission is granted to anyone to use this software for any purpose on
+   any computer system, and to alter it and redistribute it freely, subject
+   to the following restrictions:
+   1. The author is not responsible for the consequences of use of this
+      software, no matter how awful, even if they arise from flaws in it.
+   2. The origin of this software must not be misrepresented, either by
+      explicit claim or by omission.  Since few users ever read sources,
+      credits must appear in the documentation.
+   3. Altered versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.  Since few users
+      ever read sources, credits must appear in the documentation.
+   4. This notice may not be removed or altered.

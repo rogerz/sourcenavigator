@@ -1,0 +1,25 @@
+/* XPM */
+static char * type_gv_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+" 	c None",
+".	c darkgreen",
+"X	c black",
+/* pixels */
+"                ",
+"      ...       ",
+"     .....      ",
+"     .....      ",
+"     .....      ",
+"      ...       ",
+"                ",
+"       X        ",
+"      XXX       ",
+"     XXXXX      ",
+"     XXXXX      ",
+"    X  X  X     ",
+"       X        ",
+"       X        ",
+"                ",
+"                "};

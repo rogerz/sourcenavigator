@@ -1,0 +1,123 @@
+package require tcltest
+package require eventutils
+
+tcltest::test grabbug-1 { working version of the two dialog event scenario } {
+    destroy .d1 .d2
+    set result timeout
+
+    set d1 [toplevel .d1]
+    pack [button $d1.open -text OPEN -command {
+        grab release $d1
+        wm deiconify $d2
+        update
+        grab set $d2
+    }]
+
+    set d2 [toplevel .d2]
+    pack [button $d2.close -text CLOSE -command {
+        grab release $d2
+        wm withdraw $d2
+        grab set $d1
+        pause
+        grab release $d1
+        destroy $d1
+        set result closed
+    }]
+
+    wm withdraw $d2
+    update
+    grab set $d1
+
+    delay 1 {mouse_click $d1.open}
+    delay 3 {mouse_click $d2.close}
+
+    delay 4
+    set result
+} closed
+
+tcltest::test grabbug-2 { buggy version of the two dialog event scenario } {
+    destroy .d1 .d2
+    set result timeout
+
+    set d1 [toplevel .d1]
+    pack [button $d1.open -text OPEN -command {
+        grab release $d1
+        wm deiconify $d2
+        update
+        grab set $d2
+    }]
+
+    set d2 [toplevel .d2]
+    pack [button $d2.close -text CLOSE -command {
+        grab release $d2
+        wm withdraw $d2
+        grab set $d1
+        pause
+        grab release $d1
+        destroy $d1
+        set result closed
+    }]
+
+    wm withdraw $d2
+    update
+    grab set $d1
+
+    delay 1 {mouse_click $d1.open}
+
+    # NOTE: This additional mouse event
+    # in the window that does not have
+    # the grab is the only diff from grabbug-1!
+
+    delay 2 {mouse_click $d1.open}
+
+    delay 3 {mouse_click $d2.close}
+
+    delay 4
+    set result
+} closed
+
+destroy $d1 $d2
+
+
+
+
+tcltest::test typebug-1 { type text followed by Return } {
+    destroy .t
+    set t [toplevel .t]
+    set e [entry $t.e]
+    pack $e
+    set return_binding 0
+    bind $e <Return> {set return_binding 1}
+    enter_text .t.e HELLO\n
+    list [$e get] $return_binding
+} {HELLO 1}
+
+
+tcltest::test typebug-2 { Sending \n -> ascii 10 to an
+    entry widget crashes } {
+
+    destroy .t
+    set t [toplevel .t]
+    set e [entry $t.e]
+    pack $e
+    focus -force $e
+    update
+
+    set keysym C
+    pause 50
+    event generate $e <KeyPress-$keysym>
+    pause 50
+    event generate $e <KeyRelease-$keysym>
+
+    set keysym \n
+    pause 50
+    event generate $e <KeyPress-$keysym>
+    pause 50
+    event generate $e <KeyRelease-$keysym>
+
+    pause 1000
+
+    $e get
+} C
+
+destroy .t

@@ -1,0 +1,29 @@
+/* XPM */
+static char * type_t_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 7 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c blue",
+"o	c white",
+"O	c yellow",
+"+	c red",
+"@	c green",
+/* pixels */
+"       .        ",
+" XX   .o.   XX  ",
+"XX   .....   XX ",
+"XX  ..OOO..  XX ",
+"XX .o.OOO.o. XX ",
+"XX.oo.....oo.XX ",
+"XXoooo.o.ooooXX ",
+"XXooo.ooo.oooXX ",
+"XXoo.ooooo.ooXX ",
+"XX.....o.....XX ",
+"XX .++.o.@@. XX ",
+"XX .++.o.@@. XX ",
+"XX ....o.... XX ",
+"XX    .o.    XX ",
+" XX    .    XX  ",
+"                "};

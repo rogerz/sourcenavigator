@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<TITLE>Command Line Options</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1143523"></A>
+<A NAME="marker-1143524"></A>Command Line Options<A NAME="11975"></A><br>
+<IMG SRC="cmdlineops-1.gif">
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1143533"></A>Source-Navigator 99r1 supports the following command-line options: </P>
+<P CLASS="Body">
+<dl><dt><A NAME="pgfId-1143534"></A><CODE CLASS="Code">
+--batchmode</CODE></dt>
+</P>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139680"></A>This forces batch mode to create a new project. If this is set, the Source-Navigator application will not launch. Instead the following command line options will be used to create a new project.</P>
+</dd><P CLASS="Body">
+<dt><A NAME="pgfId-1139683"></A><CODE CLASS="Code">
+--projectname</CODE></dt>
+</P>
+<P CLASS="BodyListFollow">
+<dd><A NAME="pgfId-1139681"></A>This command creates a project in the current directory using the directory path. For example, if the current directory is <CODE CLASS="Code">
+/home/foo</CODE>
+ and <CODE CLASS="Code">
+--projectname</CODE>
+ is run, the project name becomes <CODE CLASS="Code">
+/home/foo/foo.proj</CODE>.</P></dd>
+<P CLASS="Body">
+<dt><A NAME="pgfId-1139720"></A><CODE CLASS="Code">
+--avail-options</CODE></dt>
+</P>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139939"></A>Sets preferences for an option used in project creation.</P>
+<P CLASS="Body"></dd>
+<dt><A NAME="pgfId-1139699"></A><CODE CLASS="Code">
+--define &lt;option&gt;=&lt;value&gt;</CODE></dt>
+</P>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139930"></A>Lists options that can be set using <CODE CLASS="Code">
+--define</CODE>.</P></dd>
+<dt><P CLASS="Body">
+<A NAME="pgfId-1139724"></A><CODE CLASS="Code">
+--databasedir &lt;directory&gt;</CODE></dt>
+</P>
+<P CLASS="BodyListFollow">
+<dd><A NAME="pgfId-1139725"></A>(synonyms: <CODE CLASS="Code">
+-dbdir</CODE>, <CODE CLASS="Code">
+-database</CODE>, <CODE CLASS="Code">
+-db</CODE>)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1139726"></A>Defines the directory for the symbol databases. Without this, the symbol databases are put in a directory called <CODE CLASS="Code">
+.snprj</CODE>
+ at the same level as the project file.</P></dd>
+<dt><P CLASS="Body">
+<A NAME="pgfId-1139727"></A><CODE CLASS="Code">
+--import &lt;file&gt;</CODE>
+</P></dt>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139728"></A>Specifies a text file with a list of all files or directories to add to the project.</P>
+</dd><P CLASS="Body">
+<dt><A NAME="pgfId-1139729"></A><CODE CLASS="Code">
+--noxref</CODE>
+</P></dt>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139730"></A>This option prevents the creation of cross-references. By default, Source-Navigator generates cross-reference information for the project.</P>
+</dd><P CLASS="Body">
+<dt><A NAME="pgfId-1139731"></A><CODE CLASS="Code">
+--create</CODE>
+</P></dt>
+<dd><P CLASS="BodyListFollow">
+<A NAME="pgfId-1139732"></A>This option is used to start the Auto-Create dialog. It is not normally used with <CODE CLASS="Code">
+--batchmode</CODE>. Source-Navigator prompts the user for information used to create a project.</P>
+<dd></dl><p>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1139748"></A>Example: <A NAME="marker-1139900"></A>Creating a New Project in devo-files</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1139749"></A>The following command creates a project named <CODE CLASS="Code">
+/home/smith/devo.proj</CODE>
+ using the files listed in devo-files in batch mode. The database files are stored in <CODE CLASS="Code">
+&#126;/db_files</CODE>. Source-Navigator returns when the project has been created. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1139750"></A><CODE CLASS="Code">
+&#126;bin/snavigator --batchmode &#92;</CODE>
+<br>
+<A NAME="pgfId-1139751"></A><CODE CLASS="Code">
+&nbsp;&nbsp;--import devo-files &#92;</CODE>
+<br>
+<A NAME="pgfId-1139752"></A><CODE CLASS="Code">
+&nbsp;&nbsp;--databasedir &#126;/db_files &#92;</CODE>
+<br>
+<A NAME="pgfId-1139753"></A><CODE CLASS="Code">
+&nbsp;&nbsp;--project /home/smith/devo</CODE>
+
+<p>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1139733"></A>Example: Creating a New Project in the Current Directory</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1139873"></A>The following command creates a project in batch mode using the current directory. It adds all of the files in the current directory and in all of the subdirectories. The current working directory is <CODE CLASS="Code">
+/home/smith/devo/snavigator</CODE>. The generated project name is <CODE CLASS="Code">
+/home/smith/devo/snavigator/snavigator.proj</CODE>.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1139878"></A><CODE CLASS="Code">
+&#126;bin/snavigator --batchmode</CODE>
+</P>
+</p>
+<p>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1139785"></A>Example: <A NAME="marker-1139901"></A>Auto-Create Dialog</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1139797"></A>The following command displays the Auto-Create dialog, initialized with the current directory, with <CODE CLASS="Code">
+foo.proj</CODE>
+ as the project name. To view the project, you must open Source-Navigator.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1139863"></A><CODE CLASS="Code">
+&#126;bin/snavigator --projectname foo</CODE>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1139958"></A>&nbsp;</P>
+</p>
+</p>
+</BODY>
+</HTML>

@@ -1,0 +1,21 @@
+/* XPM */
+static char * enabled_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"12 12 3 1",
+/* colors */
+" 	c black",
+".	c white",
+"X	c blue",
+/* pixels */
+"            ",
+" .......... ",
+" .......... ",
+" .......... ",
+" .........X ",
+" .X.....XX. ",
+" ..XX.XXX.. ",
+" ...XXXX... ",
+" ...XXX.... ",
+" ....X..... ",
+" .......... ",
+"            "};

@@ -1,0 +1,21 @@
+/* XPM */
+static char * unvisited_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"12 12 3 1",
+/* colors */
+" 	c black",
+".	c white",
+"X	c red",
+/* pixels */
+"            ",
+" .......... ",
+" .X......X. ",
+" ..X....X.. ",
+" ...X..X... ",
+" ....XX.... ",
+" ....XX.... ",
+" ...X..X... ",
+" ..X....X.. ",
+" .X......X. ",
+" .......... ",
+"            "};

@@ -1,0 +1,34 @@
+/* XPM */
+static char * crossref_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"24 24 4 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	s iconColor1	m black	c black",
+"X	s iconColor3	m black	c red",
+"o	s iconColor6	m white	c yellow",
+/* pixels */
+"                        ",
+"                        ",
+"              ......... ",
+"              .XXXXXXX. ",
+"           XXX.XXXXXXX. ",
+"           X  ......... ",
+"           X            ",
+"           X  ......... ",
+"           X  .ooooooo. ",
+".........  ....ooooooo. ",
+".ooooooo.  .  ......... ",
+".ooooooo....            ",
+".........  .  ......... ",
+"           .  .ooooooo. ",
+"           ....ooooooo. ",
+"           .  ......... ",
+"           .            ",
+"           .  ......... ",
+"           .  .ooooooo. ",
+"           ....ooooooo. ",
+"              ......... ",
+"                        ",
+"                        ",
+"                        "};

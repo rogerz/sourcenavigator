@@ -1,0 +1,189 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text/css">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; U) [Netscape]">
+   <title>Cross-Referencer</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1 CLASS="ChapterTitle">
+<a NAME="pgfId-996754"></a><a NAME="35957"></a>Cross-Referencer&nbsp;<img SRC="crossref-1.gif" ></h1>
+<img SRC="crossref-2.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1044957"></a>The&nbsp;<a NAME="marker-1044955"></a><b>Cross-Referencer</b>
+(also called Xref) creates&nbsp;<a NAME="marker-1044956"></a>tree diagrams
+that show essential relationships within the project's symbol database,
+such as the&nbsp;<a NAME="marker-1044958"></a>function call hierarchy tree.
+You can traverse up and down the hierarchy tree, as well as expand or restrict
+the tree. You can select items in the hierarchy and display their <i>Refers-to</i>
+and <i>Referred-by</i> relationships; these relationships are based on
+the "point-of-view" of the selected symbol.
+
+<p CLASS="Body"><a NAME="pgfId-1004869"></a>A <i>Refers-to</i> relationship
+is one where the selected symbol "points to" another symbol; that symbol,
+in turn, is <i>Referred-by</i> the selected symbol.
+
+<p CLASS="Body"><a NAME="pgfId-1003935"></a>Source-Navigator creates the&nbsp;<a NAME="marker-1003927"></a>cross-reference
+database in the background, which enables you to work in other views during
+this process. During this process, the Cross-Referencer tool button is
+disabled (grayed-out). After the database is built, the Cross-Referencer
+tool can be opened.
+
+<p CLASS="Body"><a NAME="pgfId-996758"></a>Although you can always start
+the&nbsp;<a NAME="marker-997931"></a>Cross-Referencer by choosing it from
+the <b>Windows</b> menu (<b>Windows -> New View -> Xref</b>), you may want
+to start the Cross-Referencer so that it focuses on a specific symbol.
+To do this, select a symbol in the Symbol Browser or Editor, and then click
+the <b>Cross-Referencer</b> tool button or choose the <b>Xref</b> tab.
+
+<p CLASS="Body"><a NAME="pgfId-1139278"></a>The selected symbol becomes
+the root symbol in the <b>Symbol Accelerator</b> text box at the top left
+of the&nbsp;<a NAME="marker-1139279"></a><b>Cross-Referencer</b> window.
+The references that <i>Refer-to</i> the root symbol are indicated by blue
+arrows and those that are <i>Referred-by</i> are indicated by red arrows.
+You can traverse the&nbsp;<a NAME="marker-1139280"></a>hierarchy tree by
+selecting references and clicking the right-pointing hand tool (<i>Refers-to</i>)
+and left-pointing one (<i>Referred-by</i>) as shown in <a href="crossref.html#24797" CLASS="XRef">Cross-Reference
+Window</a>.
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1139366"></a><a NAME="24797"></a><a NAME="marker-1139285"></a>Cross-Reference&nbsp;<a NAME="marker-1139286"></a>Window</h4>
+<img SRC="crossref-4.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1139368"></a>The <b>Remove Subnodes</b>
+button allows you to remove the display of&nbsp;<a NAME="marker-1139367"></a>subnodes
+from the hierarchy tree.
+
+<p CLASS="Body"><a NAME="pgfId-1039619"></a>To set the number of subnode&nbsp;<a NAME="marker-1039618"></a>levels
+that will be displayed, enter a positive integer in the <b>Levels</b> text
+entry box.
+
+<p CLASS="Body"><a NAME="pgfId-1138942"></a>Double-clicking a symbol in
+the <b>Cross-Referencer</b> window starts the Editor, with the specific
+symbol in context in the source file. The cross-reference information is
+stored in the database and is kept current by the Editor.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1140188"></a>Cross-Referencer Filter</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1140249"></a>Click the <b>Filter</b> icon
+to bring up this dialog. The symbols displayed by the Cross-Referencer
+are included based on these settings.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1140250"></a>Cross-Referencer Filter</h4>
+<img SRC="crossref-5.gif" >
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1140200"></a><a NAME="26028"></a>Cross-Referencer Details</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1004749"></a>Holding down the right mouse
+button on a symbol in the cross-reference window brings up a menu that
+allows you to filter the list of symbols you're working with, as well as
+to gather new information about the symbols you're interested in.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1004752"></a>Cross-Reference Window, Right Mouse Button
+Down</h4>
+<img SRC="crossref-6.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1134196"></a>Choosing <b>Details By</b>
+brings up a window that shows where each symbol in the list is referenced.
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1134200"></a>Cross-Reference Window Showing Details By Window</h4>
+<img SRC="crossref-7.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1138956"></a>Clicking on the column headers
+allows you to sort the focusing on that column, either alphabetically,
+by line number, by class, etc. The <b>Pattern</b> text entry box in the
+window allows you to use a string to filter the list.
+
+<p CLASS="Body"><a NAME="pgfId-1004780"></a>Symbols that occur multiple
+times are listed; when you click on a symbol and then add the Editor to
+the window (<b>Windows -> Add View -> Editor</b>) the Editor shows where
+that symbol is referenced.
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1004790"></a>Editor Showing Referencing of Symbol</h4>
+<img SRC="crossref-8.gif" >
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1003924"></a><a NAME="27675"></a>Cross-Referencer&nbsp;<a NAME="marker-1120158"></a>Preferences</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1002464"></a>Preference settings for the
+Cross-Referencer are located in the <b>Xref</b> tab of the Preferences
+dialog. Select <b>File -> Project -> Project Preferences...</b> from the
+Symbol Browser or <b>Edit -> View Preferences...</b> from the Cross-Referencer.
+Choose the <b>Xref</b> tab.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1002303"></a>Cross-Referencer Tab of the Preferences Dialog</h4>
+<img SRC="crossref-9.gif" >
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1135354"></a>Cross-referencing</h4>
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002306"></a>Build Cross-Reference
+database
+
+<br>Select this if you would like Source-Navigator to build the cross-reference
+databases for your project. This is on by default.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002307"></a><a NAME="38384"></a>Generate
+references to local variables
+<br>Select this if you would like cross-reference information for local
+variables. This is off by default.
+<br>&nbsp;
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td>
+<p CLASS="Label"><a NAME="pgfId-1098375"></a><b>Note:</b></p>
+</td>
+
+<td>
+<p CLASS="Note"><a NAME="pgfId-1098376"></a>Parsing is much slower when
+cross-referencing local variables. Also, the database size grows considerably
+when generating local variable cross-references. Make sure that you have
+an adequate amount of disk space.</p>
+</td>
+</tr>
+</table>
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002309"></a>Audible alert when complete
+<br>Selecting this causes a bell to ring when cross-referencing is complete.
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1002310"></a>Layout</h4>
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002311"></a>Compare parameters
+
+<br>Select this to generate cross-references only when the parameter types
+of the <i>Refers-to</i> and <i>Referred-by</i> symbols match. Deselecting
+this allows symbols to be considered matches, regardless of differences
+in parameters.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002312"></a>Compare static information
+<br>Select this to generate cross-references only when both the <i>Refers-to</i>
+and <i>Referred-by</i> static attributes match.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002313"></a>Display parameter list
+<br>Select this to display parameters with the symbol in the cross-referencer
+window.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002314"></a>Display boxes
+<br>Select this to surround cross-reference nodes with boxes.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002315"></a>Display order:
+<br><b>Left to right</b> displays the cross-reference hierarchy from left
+to right; <b>Top to Bottom</b> displays it from top to bottom.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1002316"></a>Display layout style:
+<br>Select <b>Tree</b> to display cross-references in tree layout; select
+<b>ISI</b> to display them in ISI layout.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1004911"></a>Vertical space:
+<br>Enter the number of vertical pixels between symbols in the Cross-Referencer
+window.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1004924"></a>Horizontal space:
+<br>Enter the number of horizontal pixels between symbols in the Cross-Referencer
+window.
+
+<p CLASS="BodyListFollow"><a NAME="pgfId-1130595"></a>
+</body>
+</html>

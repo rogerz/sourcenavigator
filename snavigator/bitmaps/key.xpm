@@ -1,0 +1,20 @@
+/* XPM */
+static char * key_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"7 11 3 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c #fefe00",
+/* pixels */
+" ..... ",
+".XXXXX.",
+".XX.XX.",
+".XXXXX.",
+" ..XX. ",
+"  .X.  ",
+"  .XX. ",
+"  .X.  ",
+"  .XX. ",
+"  .X.  ",
+"   .   "};

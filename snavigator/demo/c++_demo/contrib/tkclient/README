@@ -1,0 +1,19 @@
+This directory contains "tkclient", a Glish <-> Tcl/TK interface.  The
+interface is unsupported and undocumented; on the plus side, it's rather
+simple yet effective.  Basically, instantiating a TK_Client object creates
+a Tcl/TK interpreter with the following added commands:
+
+	glish_send name value
+		sends out an event with the given name and (string) value
+	glish_reply value
+		replies to a request/reply event with the given value
+	glish_exit
+		cleanly exits
+
+TK_Client also responds to the following incoming events:
+
+	Tcl	the event's value is interpreted as a string and passed
+		to the Tcl interpreter for execution
+
+	TclN	the event's value is interpretered as an array of strings,
+		each of which is passed in turn to the Tcl interpreter

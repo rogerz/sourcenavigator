@@ -1,0 +1,35 @@
+/* XPM */
+static char * browse_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"24 24 5 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	s iconColor1	m black	c black",
+"X	s iconColor2	m white	c white",
+"o	s iconColor6	m white	c yellow",
+"O	s iconColor5	m black	c blue",
+/* pixels */
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"         ............   ",
+"       .....XXXXXXXX.   ",
+"       .ooo.XXXXXXXX.   ",
+"      .ooo.XXOOOOOXX.   ",
+"      .ooo.XXXXXXXXX.   ",
+"     .ooo.XXXXXOOOXX.   ",
+"     .ooo.....XXXXXX.   ",
+"    .ooooooo.XXOOOXX.   ",
+"    ....ooo.XXXXXXXX.   ",
+"       .oo.XXOOOOOXX.   ",
+"       .o.XXXXXXXXXX.   ",
+"      .o..XXXOOOOOXX.   ",
+"      .. .XXXXXXXXXX.   ",
+"     ..  .XXXXXXXXXX.   ",
+"     .   ............   ",
+"    .                   ",
+"                        ",
+"                        ",
+"                        ",
+"                        "};

@@ -1,0 +1,26 @@
+/* XPM */
+static char * type_fu_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+"o	c red",
+/* pixels */
+"       .        ",
+"      .X.       ",
+"     .XXX.      ",
+"    .XXooX.     ",
+"   .XXooXXX.    ",
+"  .XXXooXXXX.   ",
+" .XXXXooXXXXX.  ",
+".XXXooooooXXXX. ",
+" .XXXXooXXXXX.  ",
+"  .XXXooXXXX.   ",
+"   .XXooXXX.    ",
+"    .ooXXX.     ",
+"     .XXX.      ",
+"      .X.       ",
+"       .        ",
+"                "};

@@ -1,0 +1,1017 @@
+# Copyright (c) 1997, 1998, 1999, 2000, 2001, Red Hat, Inc.
+# 
+# This file is part of Source-Navigator.
+# 
+# Source-Navigator is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+# 
+# Source-Navigator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with Source-Navigator; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# english.txt
+#
+# Description:
+# This file maps short tokens which are used in the program source onto the
+# strings that are actually displayed at run-time.
+#
+# The format is:
+#
+#	<token>,<value>
+#
+# A <value> cannot have embedded newlines.
+#
+# In some contexts, a left bracket indicates that the next character
+# will be underlined in the interface; for instance this works for
+# menu items.
+#
+# Entries in this file can appear in any order.
+#
+# Any changes to this file must be mirrored in the other message catalogs.
+# If you don't know other languages, put an entry into those catalogs with
+# `???' as the "translation".  Then send email to the S-N list asking that
+# someone update the entry.
+#
+# Part of the token name is sometimes used to indicate usage.
+# Balloon help text tokens are usually suffixed with "INFO".
+#
+###############################################################################
+
+#Product Name string
+ProductName,@PRODUCT_NAME@
+
+Format,For[mat
+Work,Work
+Layout,Layout
+Project,Project
+Window,Window
+FilePermRead,r
+FilePermWrite,w
+FilePermUser,user
+FilePermGroup,group
+FilePermOther,other
+KBytes,KBytes
+HierarchyLayout,Hierarchy Layout
+CrossReferencing,Cross-referencing
+Database,Database
+Class,Class
+Name,Name
+Parameters,Parameters
+Type,Type
+Public,Public
+Static,Static
+Protected,Protected
+Virtual,Virtual
+Private,Private
+Related,Related
+Email,E-mail
+Web,World Wide Web
+Loading,Loading...
+Untitled,(untitled)
+AllRightsReserved,All rights reserved.
+BugReport,Bug report
+Internationalization,Internationalization
+Encoding,Character set encodin[g
+ToUpgrade,To upgrade, please contact support@cygnus.com.
+WaitingForXref,Waiting for cross-referencing to complete
+ProjectBatchBuilt,Project has been built
+ScanningFile,Scanning: %s
+Continue,Continue
+DefaultTitle,Select file(s)
+SelFileColHelp,You have to select at least one directory or file.
+Error,Error
+ErrorInvalidProjectFile,Error while opening project.  Please check that %s is a valid project file.
+ErrorImportFileDoesNotExists,Error while opening import file, %s does not exists.
+ErrorImportFileIsADirectory,Error while opening import file, %s is a directory.
+FileExists,File already exists.
+File,File
+Filter,Filter:
+Open,[Open...
+Overwrite,Overwrite
+PermRead,Read
+PermWrite,Write
+PermUser,User
+PermGroup,Group
+PermOthers,Others
+Print,[Print...
+Search,[Search
+SQLFfor,For[ward
+SQLPcolor,Color
+SQLPcolormodell,Color
+SQLPcopies,Copies
+SQLPfile,into file
+SQLPform,Page Format:
+SQLPformland,Landscape
+SQLPformnorm,Portrait
+SQLPgrey,Greyscale
+SQLPmono,Monochrome
+SQLPname,Printing
+SQLPprintall,All
+SQLPprintwidth,Page width
+SQLPprintercmd,Printer command
+SQLPprintit,Print
+SQLPprintleftm,Left margin
+SQLPprinttopm,Top margin
+SQLPprintrange,Range
+SQLPprintheight,height
+SQLPprintfactor,[Scale %
+SQLPprintPageV,Pages [vertical
+SQLPprintPageH,[horizontal
+SQLPPrintPageNum,Print page number
+SQLPPage,Page
+cancel,[Cancel
+ok,OK
+preference,[Preferences...
+View,[View
+ViewINFO,View selected files
+PafCrossRef,[Xref
+StartXRefINFO,Launch Cross-Reference for selected item
+PafCrossToDetail,[Details To
+PafCrossByDetail,D[etails By
+PafWrap,[Wrap
+PafOverWrite,O[verwrite
+ODDReportrightm,Right margin
+ODDReportbotm,Bottom margin
+PafExecFilter,[Filter...
+Marked,Selection
+PrintFile,Print file
+Symbols,[Symbols
+SymbolicTags,Symbolic tags
+Abrav,[Abbreviations...
+ListSize,Total: %s Selected: %s
+UnknownDir,Directory "%s" does not exist.
+ShowFNames,[File names
+ShowFNamesInfo,Show file names
+Access,Access
+Read,Read
+Written,Written
+Passed,Passed
+Unused,Unused
+DrawProjTree,Drawing project tree ...
+WaitForStatistics,Statistics are being calculated. Please Wait.
+Statistics,[Statistics
+StatisticsINFO,Display Statistics for selected files
+HTMLDoc,[HTML Documentation
+HTMLDocAll,Pr[oject HTML Documentation
+Languages,Languages
+Extensions,Extensions
+SelectAll,Select [All
+SelectOnly,Select only "%s"
+
+Windows,[Windows
+Root,Root:
+TakeRoot,[Make Current To Root
+LimitScanMsg,Only the first %s files can be processed.\nProjects built with this version can only have %s lines.\n\nTo upgrade, please contact support@cygnus.com.
+LimitOpenProjError,This version of @PRODUCT_NAME@ cannot open this project.
+ChangeFontSize,Changes font size
+LimMsg,This version of @PRODUCT_NAME@ does not support this feature. To upgrade,\n please contact support@cygnus.com.
+
+Warning,Warning
+SelMrkFiles,Select marked files
+SelAllFiles,Select all files
+DelMrkFiles,Unselect the marked files
+DelAllFiles,Unselect all files
+
+#Page formats
+PrtPageFormat,Page Size
+PageFormatLetter,Letter
+PageFormatLegal,Legal
+PageFormatExecutive,Executive
+PageFormatA4,A4
+
+Recursive,Recursive list
+
+TreeButton,Sort (Left-Click),\nColumn filter (Right-Click)
+TreeColumn,Size (Left-Click),\nSplit lines (Right-Click)
+CrossBoxes,Display [boxes
+CrossBoxesINFO,Display boxes around entries
+CrossAcceptParam,Co[mpare parameters
+CrossAcceptParamINFO,Compare parameter list and location (C++)
+CrossAcceptStatic,Compare static in[formation
+CrossAcceptStaticINFO,Look for static information to locate references
+CrossDispParam,[Display parameter list
+CrossDispParamINFO,View parameter
+XReferences,References
+
+TreeBestFit,[Best fit
+TreeTruncate,[Truncate
+TreeViewSplitLines,[View split lines
+HoldWindow,hold
+HoldWindowINFO,Hold window
+IgnoredDirectories,Ignored directories
+Indent,[Indent
+Sort,[Sort
+Toggle,[View/Hide
+SaveDiasabled,'Save' is disabled.
+Parent,Go to upper
+Reread,Refresh current
+BackProcsRun,Operation can not be completed because a background process is running.
+OwnerRead,Read permission for owner
+OwnerWrite,Write permission for owner
+GroupRead,Read permission for group
+GroupWrite,Write permission for group
+OthersRead,Read permission for others
+OthersWrite,Write permission for others
+DirReadWriteExec,must be readable, writable and executable.
+Permissions,Per[missions
+DatabaseLocked,The database is locked.
+DataBaseUnusable,A database process has crashed. The project might be corrupt.
+DataBaseCrashed,A database process has crashed. You will need to reparse the\nproject before @PRODUCT_NAME@ can open it.
+Mixer,[Filter
+MixerINFO,Set filter for members
+Or,OR
+OrINFO,At least one flag is true
+And,AN[D
+AndINFO,All flags must be true
+ClassAllINFO,Set all flags
+ClassNoneINFO,Disable filter
+ProjTitle,Project title
+PafCloseProj,[Close project...
+XrefSortFile,Fast X-Ref Update
+XrefSortFileInfo,Allow fast update for cross-reference generation.
+ProjClone,Do you want to duplicate the project?
+Close,[Close
+
+CreatProjFile,Creating project file
+CloseProj,[Close project...
+ProjectINFO,Project menu
+LoadNewFiles,[Add...
+LoadNewFilesINFO,Add new files to project
+LoadDirectory,Add [Directory...
+LoadDirectoryINFO,Add all matching files from specified directory
+ProjectEditor,Project [Editor
+ProjectEditorMenu,Project [Editor...
+EditSymbol,Edit symbol
+SaveChanges,[Save changes
+Quit,[Quit
+NewProj,[New Project...
+DeleteProject,[Delete Current Project
+Grep,[Grep
+Hide,[Hide
+HideINFO,Hide selected files
+Make,[Build
+EditMakeCommand,Edit m[ake command...
+Undefined,Undefined
+Functions,[Functions
+FunctionsDec,Function [Declarations
+Commons,C[ommons
+CommonsVars,Common Varia[bles
+Classes,[Classes
+Methods,Met[hods
+Friends,Fr[iends
+MethodImps,Method Im[plementations
+ClassVars,Inst[ance Variables
+Files,File[s
+Typedefs,[Typedefs
+ClassHierarchy,Cl[ass Hierarchy
+ReadOnly,R[ead-only project
+Enums,[Enums
+Variables,[Variables
+Defines,[Macros
+FileBrowTitle,File browser:
+ComBrowTitle,Common browser:
+ClassBrowTitle,[Class
+Browser,[Browser
+Browse,[Browse
+ClassBrowOverridden,[overridden
+PafAbrOverride,Override member of base class
+PafAbrOverridden,Overridden in subclass
+CloseTool,Close [tool
+History,Histor[y
+Help,[Help
+HelpContents,[Online Manuals...
+Version,About [@PRODUCT_NAME@
+Copyright,Copyright
+INFOHide,Iconize [Project
+INFOGrep,Grep pattern in project
+INFOHierarchy,Launch Class Hierarchy Browser for selected class
+INFOClasses,List classes
+INFOMethods,List methods
+INFOFunctions,List functions
+INFOFiles,List files
+INFOTypedefs,List typedefs
+FileNotExist,Files do not exist.
+Yes,[Yes
+No,[No
+Cancel,[Cancel
+ProjectCancelINFO,Undo changes and close Project Editor
+ProjectOkINFO,Apply changes and close Project Editor
+NoRegInter,@PRODUCT_NAME@ cannot communicate with an unregistered project
+SendTo,send to :
+SearchingSubDirectories,Searching through subdirectories...
+Scanning, Scanning Project...
+ProjectDelete,[Delete project...
+DeleteProjectQuestion,Do you want to delete the project 
+NoProjectFile,is not a project file.
+RestoreWindows,Restoring windows ...
+ClassTree,Class Tree
+TitleReadOnly, (Read-only)
+Lines,lines
+IsNotReadable,is not readable.
+LineNumber,[Line Number :
+Goto,Go [To
+ReplacePattern,Replace pa[ttern:
+Next,[Next
+NextINFO,Find Next
+FindReplace,Find - Replace
+All,[All
+IgnoreCase,[Ignore case
+RegExp,Regular e[xpression
+HasBeenModified,has been modified.
+NewFile,New file
+OpenFile,Open file...
+BrowseProj,[Browse...
+RevertFile,Re[vert file
+Revert,Re[vert
+Exit,E[xit
+Save,Save
+DonotSave,Do not Save
+EditSave,[Save
+EditFastSave,[Fast Save
+EditDelete,De[lete
+EditCut,Cu[t
+EditPaste,[Paste
+EditReplace,[Replace...
+EditCopy,[Copy
+EditPattern,[Pattern...
+EditNext,[Next
+EditGotoLine,[Go to line...
+EditGotoError,Go to [error
+EditFile,[File
+EditNewFile,[New
+EditFind,Fi[nd
+EditInsertFile,In[sert...
+EditSaveFileAs,Save [as...
+EditViewFile,[View
+EditQuit,[Quit
+EditEdit,[Edit
+EditSelectTop,Select [top
+EditSelectBottom,Select [bottom
+EditIdent,[Indent Text
+EditOutdent,[Outdent Text
+EditSelection,[Selection
+EditSearchFor,Search for
+EditGrepSelection,Grep for
+EditGoto,[Go to
+EditLastPosition,[Last position
+EditSetMark,[Set Mark
+EditGotoMark,Go To [Mark
+EditGotoTop,Go To [Top
+EditGotoEnd,Go To E[nd
+FileViewOnly,(Read-only)
+EditExtras,E[xtras
+EditCreateBackFiles,Create *.ba[k Files
+EditUpdateHighlights,[Update highlights
+EditSoftTabWidth,Tab [width
+EditAutoIndentWidth,Auto [Indent width
+EditBracketMatchDelay,Bracket [match delay
+EditDefaultHeight,Default [height
+EditDefaultWidth,[Default width
+#
+# Infotexte f?r den Editor
+#
+NewFileINFO,Edit new file
+EINFOSearchHistory,History for Search patterns
+EINFOOpenFile,Open file
+EINFOSaveChanges,Save changes
+EINFODeleteSection,Delete selection
+EINFOCutSelection,Cut to clipboard
+EINFOCopySelection,Copy to clipboard
+EINFOPasteSelection,Paste from clipboard
+EINFOEnterPattern,Enter search pattern
+EINFOFindPattern,Find pattern
+EINFOFindNext,Find next pattern
+EINFOGotoLine,Go to line
+EINFOStartMake,Build the Current Project
+EINFOActivateBrowser,Activate Symbol Browser
+EINFODragDrop,Pull tab to resize the window
+Ok,[OK
+Apply,Appl[y
+DonotApply,Do not apply
+ApplyINFO,Apply changes
+Select,Select
+ErrorNotWrite,is not writable.
+SearchPattern,Search [pattern:
+UtilSearch,[Search
+RetrieverSearchINFO,Search for symbols matching pattern and filter
+UtilEdit,edit
+UtilView,view
+UtilFiles,Fi[les:
+ErrorNoMatches,No files match
+GrepStrings,Grep string:
+Strings,Strings
+Kill,Kill
+MakeKilled,+++ Killed +++
+MakeEnd,+++ End +++
+
+#
+# RCS in Choose
+#
+ChooseHiddenFiles,Hidden Files
+CHooseUnloadFiles,Unload
+ChooseFiles,Project files
+ChooseHistory,Histor[y
+ChooseRevisionControl,Re[vision control
+ChooseDiff,[Compare Revisions...
+ChooseLock,[Lock...
+ChooseDel,[Delete version...
+ChooseUnlock,[Unlock...
+ChooseCheckIn,Check [In...
+ChooseCheckOut,Check [Out...
+ChooseWithLock,With lock
+ChooseDiscard,[Discard Changes
+ChooseRevision,Revision:
+ChooseInfoDeselectOne,Hide selected files
+ChooseInfoDeselectAll,Hide all files
+ChooseInfoSelectOne,Revert selected files
+ChooseInfoSelectAll,Revert all files
+ChooseInfoRevisionControl,Activate/deactivate revision control
+RCS,Re[vision Control
+DiscardNotSupported,This version control system does not have a command to discard changes.
+RCSRelativePathWarning,Error while deriving relative pathname.
+
+Prev,Prev
+PrevINFO,Go to previous
+Of,of
+ChooseNothingCheckedOut,Nothing has been checked out
+PafExpand,E[xpand
+PafUnexpand,[Unexpand
+PafCindent,[C indent
+PafTclindent,[Tcl indent
+INFOGlob,Browse global variables
+Reparse,Re[parse Project
+DonotReparse,Do not Re[parse
+PafReplace,[Replace
+EDITTagStop,Tab st[op
+EditUndo,[Undo
+EditUndoINFO,Undo changes
+UndoINFO,Undo all changes
+Retriever,Retrie[ver
+PrefRetriever,Retriever
+Retrieve,R[etrieve
+PafProjBusy,Project "%s" is being used by user "%s"
+PafWdDir,D[atabase directory name
+PafOpenProj,Projects
+HierDefINFO,Show the superclasses of selected class
+HierDef,[Superclasses
+HierRelINFO,Show subclasses of the selected class
+HierRel,S[ubclasses
+HierDispFiles,Display file names
+Topdown,[Top to Bottom
+LeftRight,[Left to right
+ISI,[ISI
+Tree,Tr[ee
+CrfRefTo,Refers [to
+CrfRefToINFO,Show references
+CrfRefBy,Referred [By
+CrfRefByINFO,Show referenced-by
+CrfRemSubN,[Remove Subnodes
+XRefLocalVars,[Generate references to local variables
+Subr,Sub[routines
+Const,Co[nstants
+EnumCons,Enum Va[lues
+Unions,[Unions
+ProjExit,Do you really want to quit?
+ProjSet,Project settings
+PAfIgnDirs,Ignored directories
+CommentDB,[Build comment database
+CommentDBINFO,Generate database of comments
+PafHtmlView,HTML viewer
+PafLocVars,Local variables
+IgnoreWS,Ignore whitespace
+Comment,Comment
+CacheSize,Database cac[he size
+xrefCacheSize,X-reference database cache si[ze
+FileTrans,Output [File Translation:
+imp,[Implementation of
+def,[Definition of
+IncBroTit,I[nclude browser
+INFOStartClassBrw,Launch Class Browser for selected class
+
+Include,I[nclude
+IncludeLaunch,Launch Include Browser for selected file
+IncludeTree,[Include
+IncLevelTit,[Levels
+Includes,[Includes
+IncludesINFO,Show files included by the selected file
+IncludedFrom,Included B[y
+IncludedFromINFO,Show files that include selected file
+RemIncludedFrom,Hide Included-By [Subtree
+RemIncludes,[Hide Include Subtree
+
+ParserOpt,Parser options:
+ParserIgn,Ignored words:
+
+EditorOpt,Editor options:
+EditM3Sup,Ri[ght mouse supports:
+EditM3Scroll,Scrolling
+EditM3Menu,Edit menu
+
+################################################
+ProjectMenu,P[roject
+DbgTitle,Deb[ugger
+MultiEditor,E[dit
+MultiClass,[Class
+MultiClassHierarchy,Hie[rarchy
+MultiXRef,[Xref
+MultiInclude,I[nclude
+MultiBrowser,[Symbols
+MultiRetriever,Retrie[ver
+RetrieverINFO,Searches project databases for any matched symbols
+
+OpenProject,[Open Project...
+SaveProject,Save Pro[ject
+CloseProject,C[lose Project
+
+EditRedo,[Redo
+EditSaveAll,Fas[t Save All
+WantToFastSave,Do you want to 'Fast Save' modified files before building your project?
+EditClear,U[nselect
+EditPreferences,View Pre[ferences...
+ProjectPreferences,Project [Preferences
+ProjectPreferencesMenu,Project [Preferences...
+Preferences,[Preferences
+
+SearchFind,[Find...
+SearchNext,Find [Next
+SearchPrev,Find [Previous
+SearchReplace,[Replace...
+SearchGoto,[Go To...
+SearchGotoLine,Go To [Line...
+SearchSetMark,[Set Mark
+SearchGotoMark,Go To [Mark
+SearchGotoError,Go To [Error
+SearchDefinition,Find De[claration
+SearchImplementation,Find [Implementation
+SearchGrep,[Grep...
+SearchFindSelectionINFO,Find selection or next pattern
+
+WindowsClose,[Close
+WindowsNew,[Editor
+WindowsIconize,Iconize [Project
+AlighmentHorizontal,Horizontal
+AlighmentVertical,Vertical
+Alighment,[Alignment
+SplitWindows,Sp[lit Windows:
+
+SplitInto,[Add View
+SplitIntoEditor,[Editor
+SplitIntoClass,[Class
+SplitIntoClassHierarchy,Hie[rarchy
+SplitIntoXRef,[XRef
+SplitIntoInclude,[Include
+BuildMenuItem,[Build
+SplitDeleteLast,[Delete Last View
+
+VMakeTitle,VMa[ke
+Tools,[Tools
+
+#Multi Hierarchy
+MultiHierDef,Show [Superclasses
+MultiHierDefINFO,Show Classes, Base Classes & Superclasses
+MultiHierRel,Show S[ubclasses
+MultiHierRelINFO,Show Classes & Superclasses
+MultiHierAll,Show [All
+MultiHierAllINFO,Shows Entire Class Hierarchy
+
+SaveBufferAs,Save Buffer As
+SaveAsFastSaveTitle,Save As...
+SaveAsFastSave,'Save' is not possible while the database is being generated\nDo you want to 'Fast Save' the file?
+XRefIsRunning,@PRODUCT_NAME@ is building the cross-reference database
+Justify,Right [Justify
+Others,[Others
+Reuse,Reuse
+Reusable,Reuseable
+NewReusableINFO,Reuse current window for another view
+Switchable,Keep context
+NewSwitchableINFO,Maintain context of selected symbol in other views
+CreateNewWindow,New [Windows 
+Choose,[...
+ChooseINFO,Choose file...
+Keep,Context
+KeepINFO,Maintain context of symbol in other views
+ReusableINFO,Reuse current window for another view
+XRefFilter,[Filter...
+XRefFilterINFO,Filter...
+XRefCancelINFO,Cancels current Cross-Referencing process
+CrossRetriever,[XRef Retriever
+MultiRetrieverPattern,[Pattern:
+OpenNewBuffer,is modified.\nDo you want to open in another window?
+MultiGrep,[Grep
+MultiMake,[Build...
+MultiGrepPattern,[Pattern:
+MultiGrepFormat,F[ormat:
+MultiGrepMaxMatches,Find f[irst:
+MultiGrepLines,Entries
+MultiGrepStop,[Stop
+MultiMisc,[Miscellaneous
+ColorAndFont,[Colors&Fonts
+Color,[Color
+FgColor,Fore[ground
+BgColor,[Background
+Font,[Font
+Reset,[Reset
+Sample,Sample
+
+PrefTabWidth,Inserted Tab width:
+PrefTabStop,T[ab stop
+
+PrefInNewWindows,Some of the options will only take effect in new windows.
+PrefAfterRestart,Some of the options will only take effect\nafter @PRODUCT_NAME@ has been restarted.
+PrefAfterReparse,Some options will only take effect after the project is reparsed.
+Wrap,[Wrap by
+None,[None
+Char,[Character
+Word,[Word
+AutoIndentWidth,A[uto Indent width
+PrefOverwrite,[Overwrite mode:
+PrefDispOrder,D[isplay order:
+PrefDispLayout,Displ[ay layout style:
+SpaceVertical,Vertica[l space:
+SpaceHorizontal,[Horizontal space:
+GenerateXRef,B[uild Cross-Reference database
+TermoGenerateXRef,Click mouse button to cancel Cross-Reference generation
+GenerateXRefINFO,Build Cross-Reference database
+Parser,[Parser
+Rcs,[Version Control
+LanguageExt,Language Extensions
+ExternalEditor,Externa[l Editor
+ExternalEditors,External Editors
+PrefRcs,Version control system
+ReportBugs,Report [bugs via
+PrefMailhost,[Mailhost
+PrefBugReport,Bug reports
+Orientation,Ori[entation
+First,[First
+Second,[Second
+MembersOrder,Display [members
+PrefInclude,I[nclude directories
+PrefClassAndHierarchy,Class/Hierarchy
+PrefMake,Bui[ld
+PrefMakeCmd,[Build command
+PrefUnknownError,Unable to apply changes to the project.
+PrefPrinter,[Printer
+PrefAsciiPrintCommand,[ASCII Print Command
+PrefPrintCommand,[Print Command
+ChooseColor,Choose Color
+ChooseFont,Choose Font
+Views,[Open Views
+Family,[Family
+FontName,[Name
+FontSize,[Size
+FontBold,[Bold
+FontCursive,[Italics
+ParserCommands,Parser commands
+ReparseINFO,This will reparse the project
+Start,[Start
+StartMake,[Start
+StartMakeINFO,Start Build
+CancelMakeINFO,Cancel Build
+MakeEntry,Build command
+MakeEntryINFO,Enter your build command
+MakeStartDir,Directory
+Directory,Directory
+MakeStartDirINFO,Starting directory
+PrefScanProject,Re[fresh project upon startup
+PrefScanProjectINFO,Rescan project upon opening (large projects may take some time)
+OfScreenSize,of screen size
+WindowSize,W[indow size is
+WindowSizeINFO,Window size relative to screen size
+RetrieverFilter,[Filter
+RetrieverFilterINFO,Select filter options for Retriever
+Definition,[Declaration
+Implementation,[Implementation
+GotoDefImp,[Go To
+goto,Go To:
+GrepFormat,Forma[t
+GrepSearchINFO,Start grep
+GrepCancelINFO,Cancel grep
+GrepFormatINFO,Format current pattern
+AllFiles,All Files
+UsedFileDialog,File dialog box
+UsedFileDialogSN,[S-N
+UsedFileDialogSystem,[System
+UsedFileDialogSNINFO,Uses @PRODUCT_NAME@ file dialog box
+UsedFileDialogSystemINFO,Uses system file dialog box
+WindowLayout,User Interface look and feel
+TkINFO,Uses Tk interface look and feel
+MotifINFO,Uses Motif interface look and feel
+New,[New
+NewWork,[New View
+WindowsNewCTreeClass,[Hierarchy - Class
+WindowsNewClassEditor,Cl[ass - Editor
+WindowsNewClassXRef,Class - XRe[f
+WindowsNewFindEditor,[Grep - Editor
+WindowsNewRetrEditor,Retrie[ver - Editor
+WindowsNewCTreeClassEditor,Hierarch[y - Class - Editor
+ExclusiveMode,E[xclusive Search
+ExclusiveModeINFO,Set filter to single category and execute search
+NoSelection,Nothing is selected
+RecentProjects,Recent Pro[jects
+XRefBell,Audible alert [when complete
+XRefBellINFO,Sound audible alert when Cross-Reference generation is complete
+DeleteColumnFilters,Reset all column filters
+DebuggerCommand,[Insight Debugger command
+ScanProject,[Refresh Project
+XRefReenabled,Cross-Referencing has been re-enabled. You should reparse the project.
+ProjectName,Project File
+ProjectLocation,[Location
+HiddenFiles,Hidden
+ViewMode,[Display project files as:  
+Categorie,[Category
+List,[List
+Unload,Un[load
+UnloadINFO,Unload selected files from project
+UnloadedFiles,[Unloaded
+LoadFiles,Add [Files...
+Rename,[Rename
+Delete,[Delete
+CannotDeleteProject,The selected project was not deleted.\nPlease check permissions and try again.
+ProjectVerifyError,Unknown error opening project.
+ProjectFiles,[Files
+InvalidProjectName,Invalid project name.
+InvalidProjectDir,Invalid directory name.
+AskForNewView,This view is not availiable.\nDo you want to create a new view?
+Disp_Directories,show full path names
+Fullpath,Full path names
+LoadFromProject,Add P[roject...
+LoadFromProjectINFO,Add files from existing project
+RevisionControlEditor,[Revision Control Editor...
+RevisionControlEditorNoKey,Revision Control Editor
+SaveDefault,Save as Defaul[t
+SaveAsDefault,Some preferences have been changed\nthat could affect the default settings.\nDo you want to save those changes as default?
+GrepProcessing,Grep processing....
+ScanningHasBeenCanceled,Cancel the parsing process?\nRemaining files will not be part of the project.
+ErrorByScanning,An error has been detected during the parsing process.\nDo you want to skip the file and continue parsing?
+Stop,[Stop
+Processing,[Parsing Project
+ContinueParsingOtherTypes,The parsing process has been stopped.\nThere may be additional language files to parse.\nDo you want to continue parsing additional languages?
+XRefHasBeenCrashed,@PRODUCT_NAME@ had a problem generating Cross-Reference information.\nCross-Reference information is not complete.
+UnableToExecuteParser,@PRODUCT_NAME@ could not find a specific language parser.\nWould you like to continue parsing the remaining files?
+ContinueParsing,Do you want to continue parsing?
+Parsing,[Parsing Project
+MacroFiles,[C/C++ macro filename(s)
+AddYourMacroFiles,Specify filename(s) for the C/C++ parser
+ProjAlreayOpened,You already have the project '%s' open on this machine.
+MoreEditorToolbarButtons,[Extended toolbar buttons
+MoreEditorToolbarButtonsINFO,Add extended toolbar to Editor
+GotoPrevPosition,Go to previous page
+GotoNextPosition,Go to next page
+FastCreateProject,Auto-Create Project
+FastCreateProjectQuestion,Do you want to automatically create a @PRODUCT_NAME@ Project based on:
+ScanRecursive,Include Subdirectories
+ScanRecursiveINFO,Include all subdirectories in the selected directory
+ManyMatchesTitle,Retriever:  Found Matches
+ManyMatchesINFO,Based on the selected symbol information, @PRODUCT_NAME@ has found more than one match.\nYou must select one match to continue.
+DonotDisplay,Do not display this dialog box.
+DoNotDisplayINFO,Do not show this dialog box again
+DonotDisplayWarning,[Do not display the warning dialog for multiple matches
+DonotDisplayWarningINFO,Enable or disable warning dialog prior to listing multiple symbols that match the search criteria
+CannotCloseWindow,There is an active @PRODUCT_NAME@ process and this window cannot be closed.\nYou must cancel that process or wait until it is finished.
+CannotProceed,The @PRODUCT_NAME@ Database is in use by another process.\nYou must cancel that process or wait until it is finished.
+CancelXref,@PRODUCT_NAME@ is building the Cross-Reference Database\nCancelling this process will delete all related cross-reference files.
+XrefGeneration,Cross-Reference Process
+DoYouWantToReparse,Reparse the project?\nCross-Reference information may take some time to rebuild.
+AddDirectory,Add Directory
+YouHaveAddedSomeDirectories,You have specified the following directories
+DoYouWantToInitProjEditor,Do you want to initialize the project editor with these contents?
+more,more
+SelectDirectory,Select directory
+Pattern,Pattern:
+WaitOrCancelXRef,Cross-reference information is being loaded.\nPlease wait
+WaitOrCancelRetriever,Symbols are being loaded.\nPlease wait.
+ActiveSymbol,Active symbol in view
+ListRelatedSymbols,Select another view-related symbol
+Compile,[Compile
+CompileINFO,Compile this file
+FilesNotFound,@PRODUCT_NAME@ cannot locate the following files.\nDo you want to delete them from the project?
+TryAgain,[Always look for missing files
+TryAgainINFO,[Always display this dialog if a file is missing.
+TryToLocalizeFile,This file is missing. Please locate it.
+Localize,[Locate File...
+EditorFileTranslation,File [Translation
+EditorFileTranslationAutoINFO,Save files based on the current platform
+EditorFileTranslationUnixINFO,Save files in UNIX format
+EditorFileTranslationWindowsINFO,Save files in Windows format
+EditorFileTranslationCRINFO,Save files with Macintosh format
+EditorFileTranslationKeepINFO,Save file in its original format
+KeepLF,Keep
+AutoLF,Auto
+UNIXLF,UNIX
+WindowsCRLF,Windows
+MacintoshCR,Macintosh
+CannotSaveIncludeDirectories,@PRODUCT_NAME@ is unable to save the include directories.
+LocateIncludeFiles,Locate Hea[ders
+LocateIncludeFilesINFO,Locate header files (This might be slow).
+NowPrintingPage,Printing page number %d
+NowPrinting,Printing...
+EditorTranslateTabs,Translate Ta[bs To Spaces
+EditorTranslateTabsINFO,Replace tabs with spaces
+CannotFindDllLibrary,@PRODUCT_NAME@ needs the '%s' library to print in PostScript Format.\nPrinting has been cancelled.
+PrintSelection,Do you want to print the entire file?
+OlderProjectOpened,This project was created with an older version of @PRODUCT_NAME@.\nYou must reparse the project. Some preferences might be lost.
+NewerProjectCannotBeOpened,This project was created with a newer version of @PRODUCT_NAME@. To upgrade,\nplease contact support@cygnus.com.
+UnableToReparse,@PRODUCT_NAME@ is unable to reparse this project. You must rebuild it.
+EditionCannotOpenThisProject,This project was not created with the correct version of @PRODUCT_NAME@.\nTo upgrade, please contact support@cygnus.com.
+CurrentLinesOfSourceCode,Project has %s lines of code.
+ScanningCanceld,Do you really want to stop scanning?
+DatabaseFilesCouldNotBeDeleted,@PRODUCT_NAME@ was unable to delete older database files.\nDo you wish to continue?
+WrongProjectName,Invalid project name '%s'
+WrongDatabaseDirectory,Invalid database directory name '%s'
+SplashCopyrightText,Copyright (c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.
+SplashSupportText,For support, please contact <support@cygnus.com> or visit our webpage at http://support.cygnus.com.
+SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n
+SplashAllRightsReserved,All rights reserved. Red Hat Embedded DevKit, Source-Navigator, the Source-Navigator logo, and the "shadow man" logo are trademarks of Red Hat, Inc.. All other product names are trademarks or their respective owners.
+FileModifiedOutsideTitle,File Modified
+FileModifiedOutside,File %s has been modified outside.\nSave anyway?
+
+#Debugger text variables (DON'T REMOVE!)
+DbgProgram,[Program
+DbgWorkdir,[Working directory
+DbgProgXterm,[Xterm
+DbgExecutable,[Program to debug
+SDK_UnknownRequest,@PRODUCT_NAME@ has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
+
+
+#Others tab in Preferences (those not in other places)
+Default,Default
+General,General
+Standard,Standard
+Highlighting,Highlighting
+Balloon,Balloon
+BoldFont,Bold Font
+Editor,Editor
+Text,Text
+FunctionsNoKey,Functions
+FunctionsDecNoKey,Function Declarations
+SubroutinesNoKey,Subroutines
+Comments,Comments
+Keywords,Keywords
+ClassesNoKey,Classes
+EnumConsNoKey,Enum Values
+MethodsNoKey,Method Definitions
+FriendsNoKey,Friends
+MethodImpsNoKey,Method Implementations
+ClassVarsNoKey,Instance Variables
+VariablesNoKey,Global Variables
+ConstantsNoKey,Constants
+CommonsNoKey,Commons
+CommonsVarsNoKey,Common Variables
+DefinesNoKey,Macros
+Brackets,Brackets
+HierarchyNoKey,Hierarchy
+AbstractClass,AbstractClass
+CrossReference,Cross-Reference
+StandardFont,Standard Font
+BranchFont,Branch Font
+IncludeNoKey,Include
+OthersNoKey,Others
+Drawing,Drawing
+LinesTo,Lines To
+LinesBy,Lines By
+SelectedLines,Selected Lines
+BranchToLines,Branch-To Lines
+BranchByLines,Branch-By Lines
+Listing,Listing
+FoundText,Found Text
+Checkbutton,Checkbutton
+UnionsNoKey,Unions
+ClassNoKey,Class
+
+ButtonBugReport,Bug Report
+ButtonMail,Mail
+
+#Ide strings
+BuildTargetManager,Build [Settings...
+
+#target manager (gui/targetmgr.tcl)
+IDETargetMgrTitle,Build Settings
+IDETMBuildTargets,[Build Targets:
+IDETMCreateTarget,[Create
+IDETMCopyTarget,D[uplicate
+IDETMRenameTarget,[Rename
+IDETMEditTarget,[Edit
+IDETMDeleteTarget,[Delete
+IDETargetMgrDone,D[one
+
+#target editor
+IDETargetEdTitle,Edit Target:
+IDETEBuildDir,Build [Directory:
+IDETETargetType,[Target Type:
+IDETEToolChain,Tool [Chain:
+IDETEOK,OK
+IDETECancel,Cancel
+
+#target editor -> Source Files page
+IDETESourceFilesTab,[Source Files
+IDETEAddFiles,> [Add Files >
+IDETEProjectFiles,Project Files:
+IDETETargetFile,Target Files:
+IDETEClearFile,Cl[ear
+IDETEClearAllFiles,Clear All
+IDETEImportLabel,Import:
+IDETEImportFiles,Files
+IDETEImportDir,Directory
+
+#target editor -> Libs page
+IDETELibraryFileTab,[Library Files
+IDETELibraryLabel,Libraries:
+IDETEAddLib,[Add...
+IDETERemoveLib,R[emove
+IDETEMoveUp,Move [Up
+IDETEMoveDown,Move Dow[n
+
+#target editor -> Build rules tab
+IDETEBuildRulesTab,[Build Rules
+IDETEBuildRuleDisable,Disabl[e
+IDETEBuildRuleEnable,Enabl[e
+IDETEBuildRuleEdit,Ed[it Rule
+
+#target editor -> Link Rules tab
+IDETELinkRulesTab,Link [Rules
+IDETELinkOutputFile,[Output File:
+IDETELinkEntryPoint,Entry Point:
+IDETELinkFlags,Link [flags:
+IDETELinkerExe,Li[nker:
+IDETELaunchSettingsLabel,Debug/Execute Settings:
+IDETELaunchCommand,Command to launch Application:
+IDETELaunchDebug,Debu[g
+IDETELaunchExecute,[Execute
+
+#Build Rule settings.
+IDEBuildRuleTitle,Build Rule Settings
+IDEBRSettingsTab,[Settings
+IDEBRIncludesTab,[Includes
+IDEBRDefinesTab,[Defines
+IDEBROK,OK
+IDEBRCancel,Cancel
+#Settings tab
+IDEBRDebugCombo,Debug:
+IDEBROptimizationCombo,Optimization:
+IDEBRWarningCombo,Warnings:
+IDEBRCodeGenCombo,Code Generation:
+IDEBRUserFlags,User Flags:
+IDEBRExecLocation,Executable:
+#Includes tab
+IDEBRAutoGenPathsLabel,Auto-Generated Include Paths:
+IDEBRUserGenPathsLabel,User Specified Include Paths:
+IDEBRGeneratePaths,[Generate
+IDEBRDeletePath,D[elete
+IDEBRAddPath,[Add...
+#defines tab
+IDEBRMacroDefinesLabel,Macro defines:
+IDEBRDeleteMacro,D[elete
+IDEBRCreateMacro,[New
+IDEBRChangeMacro,[Change
+
+# EL/IX
+ElixFilesys,Filesystem
+ElixDebug,Debugging
+ElixKernel,Kernel
+ElixTarget,Target
+ElixPreferences,ED[K Preferences...
+ElixEthernet,Ethernet
+ElixSerial,Serial
+ElixTargetname,Target Hostname
+ElixPortnumber,Port Number
+ElixTargetport,Target Port
+ElixHostport,Host Port
+ElixSpeed,Speed (bps)
+ElixKernelArgs,Arguments
+ElixKernelImage,Image
+ElixKernelSources,Source Path
+ElixROMfs,RAM Disk / ROMfs
+ElixNFS,NFS Root
+ElixMinix,RAM Disk / Minix
+ElixKernelModules,Modules
+ElixKernelAll,All Modules
+ElixKernelMonolithic,Monolithic
+ElixKernelModuleList,Module Options
+ElixKernelSome,Named Modules
+ElixTargetKernel,Kernel
+ElixTargetDHCP,DHCP
+ElixTargetStatic,Static
+ElixTargetIP,Networking IP
+ElixTargetStaticIP,IP Address
+ElixTargetStaticMask,Mask
+ElixTargetStaticBroadcast,Broadcast
+ElixTargetStaticGateway,Gateway
+ElixTargetHostname,Hostname
+ElixFilesysROMPath,Template Directory
+ElixFilesysNFSPath,Root Directory
+ElixFilesysMinixPath,Template Directory
+ElixFilesysBootimage,Boot Image
+ElixRelative,Relative Size
+ElixAbsolute,Absolute Size
+ElixExtra,Extra Space (Percentage)
+ElixBlocks,Blocks
+ElixInodes,Inodes
+ElixMounts,Mount Points

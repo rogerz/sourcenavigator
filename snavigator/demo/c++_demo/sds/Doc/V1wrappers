@@ -1,0 +1,36 @@
+
+These calls are wrappers to preserve the error returns of V1, that is a
+negative return is the error code indicating what has gone wrong.
+
+ sds_handle sds_define_object(sds_handle,struct type_list *,char *);
+ sds_handle sds_declare_object(sds_handle, void *,
+                                               char *,sds_code,sds_code);
+ sds_handle     sds_load_fd(int, unsigned long, int);
+ int            write_sds2socket(int , sds_handle );
+ sds_handle     sds_dataset_size(sds_handle);
+ int            read_socket2sds(int , int );
+ sds_handle     sds_duplicate(sds_handle, char *);
+ sds_handle     sds_new_index(char *);
+ sds_handle     sds_use(char *,sds_code, sds_code);
+ sds_handle     sds_assemble(sds_handle,char *,sds_code);
+ sds_handle     sds_obname2ind(sds_handle ,char *);
+ sds_handle     sds_oblike2ind(sds_handle ,char *, sds_handle);
+
+Replaced in V2 alpha by .........................................
+Here, a return of 0 indicates failure of some sort; the error code may be
+had from sds_last_error() and the full error stack accessed by the error
+calls (see error documentation).
+
+ sds_handle sds_define_structure(sds_handle,struct type_list *,char *);
+ sds_handle sds_declare_structure(sds_handle, void *,
+                                               char *,sds_code,sds_code);
+ sds_handle     sds_load_open_fd(int, unsigned long, int);
+ sds_handle     sds_write2fd(int , sds_handle );
+ sds_handle     sds_fullsize(sds_handle);
+ sds_handle     sds_read_open_fd(int);
+ sds_handle     sds_dup(sds_handle, char *);
+ sds_handle     sds_new(char *);
+ sds_handle     sds_access(char *,sds_code, sds_code);
+ sds_handle     sds_ass(sds_handle,char *,sds_code);
+ sds_handle     sds_name2ind(sds_handle ,char *);
+ sds_handle     sds_like2ind(sds_handle ,char *, sds_handle);

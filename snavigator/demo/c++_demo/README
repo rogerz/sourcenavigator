@@ -1,0 +1,66 @@
+This is Glish version 2.5.0, dated 22Nov94.
+
+This release includes a large number of new features - see "NEWS" for
+details.
+
+------------------------------------------------------------------------
+
+Glish is a language, interpreter, and class library for building
+loosely-coupled distributed systems.  For an overview from a general
+computing perspective, see the paper ``Glish: A User-Level Software
+Bus for Loosely-Coupled Distributed Systems,'' in the Proceedings of
+the 1993 USENIX Winter Technical Conference.  For an overview from
+an accelerator control perspective, see the paper ``Glish: A Software
+Bus for High-Level Control,'' Proceedings of the 1993 International
+Conference on Accelerator and Large Experimental Physics Control Systems.
+
+These papers are also available via anonymous ftp to ftp.ee.lbl.gov;
+retrieve glish/USENIX-93.ps.Z and glish/ICALEPCS-93.ps.Z, respectively.
+
+This release includes user documentation, which can also be retrieved
+separately from ftp.ee.lbl.gov as glish/USER-DOC-2.3.ps.Z.
+
+Glish users are encouraged to make themselves known by sending email to
+vern@ee.lbl.gov; that way we can keep you informed of bug fixes, new
+releases, and the like.  There is also a Glish mailing list - send mail
+to glishers-request@ee.lbl.gov to be added.
+
+
+Installing Glish
+----------------
+
+The Glish system comes in three directories, "sds", "editline", and "glish".
+To build the system you need a C++ compiler, sockets, an ANSI C compiler,
+and flex 2.4.6 (or higher), which you can get from ftp.ee.lbl.gov.
+
+1.  Unpack the Glish distribution and cd to the corresponding top-level
+    directory.
+
+2.  Setenv the $ARCH environment variable to reflect your architecture
+    (the name isn't important but is used so you can build Glish for
+    multiple architectures).  For example, "setenv $ARCH SUN4".
+
+3.  If you want to force the use of a particular C or C++ compiler, set
+    the $CC and $CXX environment variables (e.g., "setenv CXX g++").  On
+    AIX and Solaris systems, if you have bison installed you should set
+    $YACC to yacc, to avoid using bison (problems with alloca() declarations).
+    If you have installed earlier versions of Glish, you may have the
+    environment variable INSTALL set to "mv"; be sure to unset it!
+
+4.  Type "./configure" to run the configuration script.  This creates
+    (in the sundry subdirectories) Makefile and config.h files from
+    Makefile.in and config.h.in files.  If the configuration process
+    makes some incorrect deductions about your system, you can then
+    edit these generated files to correct the problem.  (And let me
+    know about the problem so I can see whether the configuration
+    process can be modified to avoid it.)
+
+5.  Type "make".  (On Solaris systems, you should use the stock "make"
+    utility and not GNU "make".)  This makes all the components of the
+    Glish system and installs the resulting libraries and executables
+    into lib/$ARCH and bin/$ARCH.  On Sun systems, compiling the file system.c
+    may result in slews of warnings about #define redefinitions; this is
+    due to buggy system header files, but causes no harm.
+
+6.  The configuration process has changed with Glish 2.5 and might have
+    bugs in it.  If so, please send me email and I'll iron them out.

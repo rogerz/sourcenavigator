@@ -1,0 +1,332 @@
+package require tcltest
+package require eventutils
+
+# This is a little hack to get the current Dialog grab stack
+proc get_grabstack { } {
+    set var ::sourcenav::Dialog::grabstack
+    if {[info exists $var]} {
+        return [set $var]
+    }
+    return
+}
+
+tcltest::test dialog-error-1 { Invalid data to ctor } {
+    list [catch {sourcenav::Dialog foo} err] $err
+} {1 {bad window path name "foo"}}
+
+tcltest::test dialog-error-2 { Invoking on_close generates an error } {
+    set d [sourcenav::Dialog .d]
+    set result [catch {$d on_close}]
+    itcl::delete object $d
+    set result
+} 1
+
+tcltest::test dialog-error-3 { Calling deactivate when the Dialog has
+        not been activated will generate an error } {
+    set d [sourcenav::Dialog .d]
+    set result [list [catch {$d deactivate} err] $err]
+    itcl::delete object $d
+    set result
+} {1 {Called deactivate method when Dialog was not active.}}
+
+tcltest::test dialog-error-4 { Calling activate twice will
+        generate an error } {
+    set d [sourcenav::Dialog .d]
+    after 0 {$d activate}
+    after 1 {set result [list [catch {$d activate} err] $err]}
+    after 2 {itcl::delete object $d}
+    update
+    set result
+} {1 {Called activate method when Dialog was already active.}}
+
+tcltest::test dialog-error-5 { calling activate for a mapped window
+        will raise an error } {
+    set d [sourcenav::Dialog .d]
+    $d deiconify
+    update
+    set result [list [catch {$d activate} err] $err]
+    itcl::delete object $d
+    set result
+} {1 {Called activate method when Dialog window was already mapped.}}
+
+tcltest::test dialog-error-6 { Error to change -modality while the
+        dialog is active } {
+    set d [sourcenav::Dialog .d]
+
+    delay {
+        set result [list [catch {$d configure -modality none} err] $err]
+        $d deactivate done
+    }
+    lappend result [$d activate]
+    itcl::delete object $d
+    set result
+} {1 {Cannot change -modality while Dialog is active.} done}
+
+
+
+tcltest::test dialog-destroy-1 { Destroy the object } {
+    set d [sourcenav::Dialog .d]
+    list [catch {itcl::delete object $d} err] $err
+} {0 {}}
+
+tcltest::test dialog-destroy-2 { Destroy the object while waiting } {
+    set d [sourcenav::Dialog .d]
+    delay {itcl::delete object $d}
+    $d activate
+} ""
+
+tcltest::test dialog-destroy-3 { Destroy the widget while waiting } {
+    set d [sourcenav::Dialog .d]
+    delay {destroy $d}
+    $d activate
+} ""
+
+tcltest::test dialog-grabstack-1 { At this point, there should be no
+        widgets sitting on the grab stack. If there are we are
+        in deep trouble } {
+    get_grabstack
+} {}
+
+tcltest::test dialog-deactivate-1 { deactivate the dialog } {
+    set d [sourcenav::Dialog .d]
+    delay {$d deactivate foo}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} foo
+
+tcltest::test dialog-deactivate-2 { deactivate the dialog } {
+    set d [sourcenav::Dialog .d]
+    delay {$d deactivate}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} ""
+
+tcltest::test dialog-deactivate-3 { deactivate the dialog after hiding the window } {
+    set d [sourcenav::Dialog .d]
+    delay {$d withdraw ; $d deactivate bar}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} bar
+
+tcltest::test dialog-deactivate-4 { Pressing Escape key should deactivate the dialog } {
+    set d [sourcenav::Dialog .d]
+    delay {keyevent $d Escape}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} ""
+
+tcltest::test dialog-deactivate-5 { If the Dialog is hidden deactivate should
+        still work as expected. The window should not be left on the grab stack } {
+    set pre_stack [get_grabstack]
+
+    set d [sourcenav::Dialog .stackcheck]
+    delay {$d withdraw ; $d deactivate}
+
+    $d activate
+    itcl::delete object $d
+
+    set post_stack [get_grabstack]
+
+    if {$pre_stack != $post_stack} {
+        set result "\{$pre_stack\}\n\{$post_stack\}"
+    } else {
+        set result ok
+    }
+
+    set result
+} ok
+
+tcltest::test dialog-modality-1 { check modality options } {
+    set d [sourcenav::Dialog .d -modality none]
+    delay {$d deactivate bar}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} bar
+
+tcltest::test dialog-modality-2 { check  modality options } {
+    set d [sourcenav::Dialog .d -modality application]
+    delay {$d deactivate bar}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} bar
+
+tcltest::test dialog-modality-3 { check modality options } {
+    set d [sourcenav::Dialog .d -modality global]
+    delay {$d deactivate bar}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} bar
+
+tcltest::test dialog-modality-3 { check modality options } {
+    set d [sourcenav::Dialog .d]
+    set result [list [catch {$d configure -modality noggyfoo} err] $err]
+    itcl::delete object $d
+    set result
+} {1 {bad modality option "noggyfoo": should be none, application, or global}}
+
+tcltest::test dialog-modality-3 { check default modality } {
+    set d [sourcenav::Dialog .d]
+    set result [$d cget -modality]
+    itcl::delete object $d
+    set result
+} application
+
+tcltest::test dialog-events-1 { deliver event to modal dialog } {
+    set d [sourcenav::Dialog .d]
+    pack [button $d.b -text PressMe -command "$d deactivate pressed"]
+    delay {mouse_click $d.b}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} pressed
+
+tcltest::test dialog-events-2 { check focus with text widget and button } {
+    set d [sourcenav::Dialog .d]
+    set t [text $d.t -width 20 -height 5]
+    set b [button $d.b -text Close -command "$d deactivate closed"]
+    pack $t -side top
+    pack $b
+    focus $t
+
+    delay {mouse_click $t}
+    delay 2 {mouse_click $b}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} closed
+
+
+tcltest::test dialog-multimodal-1 { verify modality using multiple dialogs } {
+    set times_pressed 0
+    set results {}
+    destroy .d1 .d2
+
+    set d1 [sourcenav::Dialog .d1]
+    set d2 [sourcenav::Dialog .d2]
+
+    pack [button $d1.open -text Open -command {
+        incr times_pressed
+        lappend results $times_pressed
+        if {$times_pressed == 1} {
+            #puts "Waiting for second modal dialog"
+            lappend results [$d2 activate]
+            #puts "Done waiting for second modal dialog"
+        }
+    }]
+
+    pack [button $d1.close -text Close -command "$d1 deactivate closed"]
+
+    pack [button $d2.ok -text Ok -command "$d2 deactivate ok"]
+
+    # Open the second modal dialog by clicking
+    # on the open button in the first (after it appears)
+    delay {mouse_click $d1.open}
+
+    # After the second modal dialog is showing, try
+    # to press the open button in the first modal
+    # dialog again. This should not do anything
+    # because the second window is modal at this point.
+    delay 2 {mouse_click $d1.open}
+
+    # After the above mouse click fails, click on the ok
+    # button in the second dialog.
+    delay 3 {mouse_click $d2.ok}
+
+    # After the second modal dialog is closed, we
+    # press the close button in the first
+    delay 4 {mouse_click $d1.close}
+
+    # If the button in the second dialog did not get pressed
+    # then we are hosed, close the two dialogs and fail out.
+    set cleanup [delay 5 {
+        $d2 deactivate TIMEOUT
+        $d1 deactivate TIMEOUT
+    }]
+
+    #puts "Waiting for first modal dialog"
+    lappend results [$d1 activate]
+    #puts "Done waiting for first modal dialog"
+    after cancel $cleanup
+    itcl::delete object $d1 $d2
+    set results
+} {1 ok closed}
+
+
+
+tcltest::test dialog-grabstack-2 { At this point, there should be no
+        widgets sitting on the grab stack. If there are we are
+        in deep trouble } {
+    get_grabstack
+} {}
+
+
+tcltest::test dialog-multimodal-2 { activate the same modal dialog twice } {
+    set d [sourcenav::Dialog .d]
+    pack [button $d.b -text PressMe -command "$d deactivate pressed"]
+    delay {mouse_click $d.b}
+    set result [$d activate]
+    delay {mouse_click $d.b}
+    lappend result [$d activate]
+    itcl::delete object $d
+    set result
+} {pressed pressed}
+
+
+tcltest::test dialog-multimodal-3 { open two modal dialogs } {
+    destroy .d1 .d2
+    set result {}
+
+    set d1 [sourcenav::Dialog .d1]
+    pack [button $d1.open -text Open -command {set result [$d2 activate]}]
+
+    set d2 [sourcenav::Dialog .d2]
+    pack [button $d2.close -text Close -command {$d2 deactivate closed2}]
+
+    delay 1 {mouse_click $d1.open}
+    delay 2 {mouse_click $d2.close}
+    delay 3 {$d1 deactivate closed1}
+
+    lappend result [$d1 activate]
+    set result
+} {closed2 closed1}
+
+set_delay 6000
+
+tcltest::test dialog-multimodal-4 { open two modal dialogs } {
+    destroy .d1 .d2
+    set result {}
+
+    set d1 [sourcenav::Dialog .d1]
+    pack [button $d1.open -text Open -command {set result [$d2 activate]}]
+
+    set d2 [sourcenav::Dialog .d2]
+    pack [button $d2.close -text Close -command {
+        $d2 deactivate closed2
+        pause
+        $d1 deactivate closed1
+    }]
+
+    delay 1 {mouse_click $d1.open}
+# NOTE: This test passes if you comment out this command (in old buggy version)
+    delay 2 {mouse_click $d1.open}
+    delay 3 {mouse_click $d2.close}
+
+    delay 4 {destroy $d2}
+    delay 5 {destroy $d1}
+
+    lappend result [$d1 activate]
+    set result
+} {closed2 closed1}
+
+
+# Test the -none modality thing by using two windows, the
+# first could be modal while the second would not be.
+# Also test with two non modal dialogs, how would that work?
+

@@ -1,0 +1,32 @@
+/* XPM */
+static char * arrow_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"17 24 2 1 0 22",
+/* colors */
+" 	s none	m none	c none",
+".	s iconColor1	m black	c black",
+/* pixels */
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"   ...........   ",
+"    .........    ",
+"     .......     ",
+"      .....      ",
+"       ...       ",
+"        .        ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 ",
+"                 "};

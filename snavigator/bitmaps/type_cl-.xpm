@@ -1,0 +1,28 @@
+/* XPM */
+static char * type_cl__xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c red",
+"o	c darkgreen",
+"O	c green",
+"+	c blue",
+/* pixels */
+"                ",
+"                ",
+"......          ",
+".XXXX.   ...... ",
+".XXXX.ooo.OOOO. ",
+"...... o .OOOO. ",
+"       o ...... ",
+"       o        ",
+"       o        ",
+"  ...  o ...... ",
+"       oo.++++. ",
+"         .++++. ",
+"         ...... ",
+"                ",
+"                ",
+"                "};

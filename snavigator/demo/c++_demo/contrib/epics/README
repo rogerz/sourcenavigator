@@ -1,0 +1,9 @@
+This directory contains the beginnings of a Glish client for interfacing
+between Glish and EPICS.  The EpicsChannel class provides the glue between
+an EPICS Channel and a Glish Value.  main.cc provides the beginnings of
+the Glish client itself.  The main problem I ran into with this code is
+that with the version of EPICS I was using (3.11), there didn't appear to
+be any way to extract from the EPICS library which file descriptors it
+was using for its input, nor to tell it to add additional file descriptors;
+so I wasn't able to add asynchronous channel updates, something you clearly
+must have to make full use of EPICS and Glish.

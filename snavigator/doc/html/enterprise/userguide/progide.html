@@ -1,0 +1,363 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text/css">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; U) [Netscape]">
+   <title>Building Programs</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1 CLASS="Chapter">
+<a NAME="pgfId-996750"></a><a NAME="pgfId-1141072"></a>Building Programs</h1>
+<img SRC="progide-1.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1141074"></a>Source-Navigator allows you
+to build executable programs from the files in your project. Using Source-Navigator,
+you can compile your code, navigate to any errors, link your code, and,
+with your debugger, set up a debugging session to debug your code.<p>
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td>
+<p CLASS="Label"><a NAME="pgfId-1145147"></a><b>Note:</b></p>
+</td>
+
+<td>
+<p CLASS="Note"><a NAME="pgfId-1145148"></a>The compiler, <tt>make</tt>,
+and debugger must be installed on your machine before using these features.</p>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-1149155"></a>At the end of this chapter,
+there is a build tutorial for a command line-driven real estate trading
+game.
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1145152"></a>The Building Process</h2>
+
+<p CLASS="Body"><a NAME="pgfId-1145149"></a>The building process compiles
+and links source files, such as libraries and executable files, to produce
+an output binary file.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1145754"></a>Build Process</h4>
+<img SRC="progide-2.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1141087"></a>There are four steps to building
+your program:
+<ul>
+<li CLASS="Bullet">
+<a NAME="pgfId-1141088"></a>editing your code,</li>
+
+<li CLASS="Bullet">
+<a NAME="pgfId-1141089"></a>compiling your source into an intermediate
+format, called object files,</li>
+
+<li CLASS="Bullet">
+<a NAME="pgfId-1141090"></a>linking your object files together to produce
+an application executable file,</li>
+
+<li CLASS="Bullet">
+<a NAME="pgfId-1172892"></a>debugging your executable to find any problems.</li>
+</ul>
+
+<p CLASS="Body"><a NAME="pgfId-1172893"></a>The minimum requirements
+for building source code include specifying which source files should be
+included, the directory in which the build should be stored, linking rules,
+debugging, and optimization flags, and included paths.</p>
+
+
+<p CLASS="Body"><a NAME="pgfId-1172846"></a>You can edit your code using
+Source-Navigator. This chapter explains compiling and linking. For information
+about external stand-alone debuggers, see either 
+the <a href="progtools.html#45395" CLASS="XRef">Debugger</a> chapter
+in this manual or your debugger's documentation.
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1141169"></a>make</h2>
+
+<p CLASS="Body"><a NAME="pgfId-1141106"></a>Source-Navigator uses a utility
+called <tt>make</tt>. <tt>make</tt> combines a set of rules for compiling
+and linking code with a tracking mechanism for determining which files
+must be compiled.</p>
+
+
+<p CLASS="Body"><a NAME="pgfId-1141109"></a>Source-Navigator generates
+a <tt>makefile</tt>, which <tt>make</tt> uses to determine which commands
+need to be executed in order to build your program.
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1141076"></a><a NAME="marker-1141075"></a>Build Targets</h2>
+
+<p CLASS="Body"><a NAME="pgfId-1140850"></a>A build target is a conceptual
+object that contains information needed to compile and link a project.
+For example, <tt>hello.c</tt> is converted into <tt>hello.o</tt> before
+<tt>hello.exe
+</tt>is built. <tt>hello.o</tt> requires converting rules and information
+regarding which libraries to use to complete the conversion to <tt>hello.exe</tt>.</p>
+
+
+<p CLASS="Body"><a NAME="pgfId-1141526"></a>The first time you select <b>Build
+Settings... </b>, the <b>Build Targets</b> list is empty. After you create
+a target, its name appears in the list.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1140852"></a><a NAME="marker-1140851"></a>Creating a New
+Build Target</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1140853"></a>Choose <b>Tools -> Build
+Settings... </b>to start the <b>Build Settings</b> dialog.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1141661"></a>Build Settings Window</h4>
+<img SRC="progide-3.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1141656"></a>Enter the name of the target
+in the text entry box and click the <b>Create</b> button. The <b>Edit Target</b>
+dialog opens. See <a href="progide.html#15207" CLASS="XRef">Editing a Target</a>.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1141571"></a>Modifying Build Targets</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1145496"></a>Rename a build target by
+selecting the target, entering a new name, and clicking the <b>Rename</b>
+button.</p>
+
+
+<p CLASS="Body"><a NAME="pgfId-1140861"></a>To edit an existing build target,
+select the target and click the <b>Edit</b> button.
+
+<p CLASS="Body"><a NAME="pgfId-1145503"></a>Duplicating a target is useful
+when a new target is only slightly different from an existing target. To&nbsp;<a NAME="marker-1140860"></a>duplicate
+an existing target, select the target in the <b>Build Targets</b> list
+and click the <b>Duplicate</b> button.
+
+<p CLASS="Body"><a NAME="pgfId-1140863"></a><a NAME="marker-1140862"></a>Delete
+a target by selecting it in the <b>Build Targets</b> list and clicking
+<b>Delete</b>.
+The target is removed from the listing.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1140865"></a><a NAME="marker-1140864"></a><a NAME="15207"></a>Editing
+a Target</h3>
+
+<p CLASS="Body"><a NAME="pgfId-1146580"></a>In the <b>Build Targets</b>
+list, either select the target name and click <b>Edit</b> or double-click
+the target name. The <b>Edit Target</b> window opens.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1146591"></a>Edit Target Window Tabs</h4>
+<img SRC="progide-4.gif" >
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1146592"></a>Edit Target Tabs</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1151109"></a>The <b>Build Directory</b>,
+<b>Target
+Type</b>, and <b>Tool Chain</b> combo-boxes are common to the tabs accessed
+in the<b> Edit Target </b>dialog.</p>
+
+
+<p CLASS="Body"><a NAME="pgfId-1151130"></a><img SRC="progide-6.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1151131"></a>These store information about
+the target.
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1146074"></a>Build Directory</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1146075"></a>This is the directory where
+all files generated in the build process are initially stored. By default
+this is blank. To specify the directory, either type the directory path
+or click the "<b>...</b>" button. If you click the "<b>...</b>" button,
+the <b>Browse for Folder</b> dialog opens:</p>
+
+<img SRC="progide-7.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1146079"></a>Select the directory to store
+the intermediate files. Click <b>OK</b> to close the dialog. The directory
+appears in the <b>Build Directory</b> field.
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1146140"></a>Target Type</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1146138"></a>Use this combo-box to select
+the type of target to create. The options are <i>executable</i> and <i>library</i>.</p>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1146152"></a>Tool Chain</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1146153"></a>A <i>tool chain</i> is a
+set of compilers, debuggers, and linkers. The default for <b>Tool Chain</b>
+is <i>GNUPro (native)</i>.</p>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1140875"></a><a NAME="marker-1140874"></a><a NAME="50837"></a>Source
+Files Tab</h4>
+<a NAME="pgfId-1168657"></a>The <b>Source Files </b>tab controls which
+source files are included in your target. The Project Files and Target
+Files sections contain tree information for the selected target.<p>
+<h4 CLASS="FigureTitle"><a NAME="marker-1168669"></a>Importing
+Files and Directories</h4>
+<img SRC="progide-9.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1145870"></a>To&nbsp;<a NAME="marker-1145868"></a>import
+files or&nbsp;<a NAME="marker-1145869"></a>directories into your currently
+active project, follow these steps:
+<ol>
+<li CLASS="Numbered">
+<a NAME="pgfId-1145871"></a>Under <b>Import</b>, click either the <b>Files</b>
+or <b>Directory</b> button.</li>
+
+<li CLASS="NumberedNext">
+<a NAME="pgfId-1140882"></a>Click the files or directory you wish to add
+to the project. Click <b>OK</b> when done. The names of the added files
+or directory appear in the <b>Project Files</b> list.</li>
+</ol>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1145859"></a>Adding Files</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1145883"></a>Add files to the <b>Target
+Files</b> list by selecting them from the <b>Project Files</b> list and
+clicking the <b>Add Files</b> button. The files are copied into the <b>Target
+Files</b> list.</p>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1145897"></a>Removing Files</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140883"></a>You can remove files from
+the <b>Target Files</b> section by selecting them and clicking the <b>Clear</b>
+button. To remove all of the files from the Target Files section, click
+the <b>Clear All</b> button.</p>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1145958"></a><a NAME="marker-1145956"></a><a NAME="46396"></a>Library
+Files Tab</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140886"></a>Most libraries required for
+building targets are linked in automatically by the compiler/linker. If
+you know that your target requires additional libraries, use the <b>Library
+Files</b> tab to add them to your build.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1140890"></a>Library Files Tab of the Build Targets Menu</h4>
+<img SRC="progide-10.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1145504"></a>Add additional libraries by
+clicking the&nbsp;<a NAME="marker-1140891"></a><b>Add...</b> button. The
+<b>Open</b> dialog opens to the last directory you have looked at in this
+project. After you select a library and click <b>Open</b>, it appears in
+the library list.
+
+<p CLASS="Body"><a NAME="pgfId-1146165"></a>To remove a library from the
+listing, select the library and click the&nbsp;<a NAME="marker-1140893"></a><b>Remove
+</b>button.
+The library is removed from the build.
+
+<p CLASS="Body"><a NAME="pgfId-1145509"></a>Libraries are linked in the
+order listed in the window. To change the order of libraries, select the
+library and click either the <b>Move Up</b> or <b>Move Down</b> button
+to change its linking order.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1140895"></a><a NAME="marker-1140894"></a><a NAME="70492"></a>Build
+Rules Tab</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140896"></a>Click the <b>Build Rules
+</b>tab
+to configure each rule in the target.</p>
+
+<p CLASS="Body"><a NAME="pgfId-1141580"></a>A rule contains information
+required to compile files in a project. For example, a rule to compile
+a C file might contain information about which compiler and flags to use,
+as well as what the file is called after it's compiled.
+
+<p CLASS="Body"><a NAME="pgfId-1141531"></a>This tab lists the rules for
+the specified target. Within the <b>Build Rules</b> tab, you can:
+<ul>
+<li CLASS="Bullet">
+<a NAME="pgfId-1140897"></a>disable and enable rules for the target.</li>
+
+<li CLASS="Bullet">
+<a NAME="pgfId-1147416"></a>edit existing rules.</li>
+</ul>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1147435"></a>Build Rules Tab</h4>
+<img SRC="progide-12.gif" >
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td>
+<p CLASS="Label"><a NAME="pgfId-1147436"></a><b>Note:</b></p>
+</td>
+
+<td>
+<p CLASS="Note"><a NAME="pgfId-1140908"></a>The <b>Command Line for Selected
+Rule</b> displays the command line for the selected rule.</p>
+</td>
+</tr>
+</table>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1140909"></a>Status</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140910"></a>This column shows the currently&nbsp;<a NAME="marker-1145197"></a>enabled
+and disabled rules. To disable a rule, highlight the rule and click the
+<b>Disable</b>
+button. To enable a rule, highlight the rule and click the
+<b>Enable</b>
+button.</p>
+
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td>
+<p CLASS="Label"><a NAME="pgfId-1162895"></a><b>Note:</b></p>
+</td>
+
+<td>
+<p CLASS="Note"><a NAME="pgfId-1162904"></a>This button changes between
+<b>Disable</b>
+and <b>Enable</b> depending upon the state of the rule.</p>
+</td>
+</tr>
+</table>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1140912"></a>File Type</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140913"></a>This column displays the
+type of file the rule acts upon.</p>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1140915"></a><a NAME="marker-1140914"></a>Description</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140916"></a>This column displays a description
+of the rule.</p>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1140924"></a><a NAME="marker-1140923"></a>Editing a Rule</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1140925"></a>To edit a rule, select the
+rule from the rule listing. Click the <b>Edit Rule</b> button. The <b>Build
+Rule Settings</b> dialog window opens. The dialog title bar displays the
+extension for the files involved.</p>
+
+<h4 CLASS="Heading4">
+<a NAME="pgfId-1140927"></a><a NAME="marker-1140926"></a>Settings Tab</h4>
+
+<p CLASS="Body"><a NAME="pgfId-1147489"></a>The <b>Settings</b> tab allows
+you to change the default settings for the rule.</p>
+
+<h4 CLASS="FigureTitle">
+<a NAME="pgfId-1147498"></a>Build Rule Settings with Options Selected</h4>
+<img SRC="progide-14.gif" >
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1147499"></a>Debug:
+<br>This controls the debug information generated by the compiler.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1145216"></a>Warnings:
+<br>Controls the level of warnings the compiler generates. A stricter warning
+ensures fewer problems with future compatibility. Set "Warnings as Errors"
+to make sure the compile stops any time a warning is generated.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1145258"></a>User Flags:
+<br>Enter flags not covered by the options listed in this screen. To add
+macros, see the <a href="progide.html#92084" CLASS="XRef">Defines Tab</a>.
+
+<p CLASS="BodyHang1"><a NAME="pgfId-1145226"></a>Optimization:
+<br>Compiler optimization for the code.
+
+<p CLASS="BodyHang1"><a N

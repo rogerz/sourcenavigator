@@ -1,0 +1,1055 @@
+A:link {
+	color: blue;
+	text-decoration: underline;
+}
+A:visited {
+	color: #000077;
+	text-decoration: none;
+}
+EM.Arrow {
+	font-family: Helvetica;
+}
+A:active {
+	color: red;
+	text-decoration: underline;
+}
+OL      {
+	font-size: 12.000000pt;
+	font-weight: medium;
+	text-decoration: none;
+	font-family: Times;
+}
+UL
+{
+      LIST-STYLE-type: DISC
+	font-size: 12.000000pt;
+	font-weight: medium;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.ActiveIX {
+	text-align: justify;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.ActiveTOC {
+	text-align: justify;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Helvetica;
+}
+H1.Appendix()TOC, H2.Appendix()TOC, H3.Appendix()TOC, H4.Appendix()TOC, H5.Appendix()TOC, H6.Appendix()TOC {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 6.000000pt;
+	margin-right: 54.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+H1.AppendixTitle, H2.AppendixTitle, H3.AppendixTitle, H4.AppendixTitle, H5.AppendixTitle, H6.AppendixTitle {
+	text-align: left;
+	margin-bottom: 60.000000pt;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Helvetica;
+}
+P.AppendixTitleTOC {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 3.000000pt;
+	margin-right: 18.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.Body {
+	text-align: left;
+	margin-top: 4.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyAfterHead {
+	text-align: left;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyFollow {
+	text-align: left;
+	margin-top: 4.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang {
+	text-align: left;
+	margin-top: 4.000000pt;
+	margin-left: 16.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang1 {
+	text-align: left;
+	margin-top: 3.000000pt;
+	margin-left: 16.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang1List {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang1Next {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang2 {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang2List {
+	text-align: left;
+	font-size: 12.000000pt;
+	margin-left:12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang2Next {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang3 {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang3List {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyHang3Next {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyListFollow {
+	text-align: left;
+	font-size: 12.000000pt;
+	margin-top: 3.000000pt;
+	margin-left: 16.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyListFollow2 {
+	text-align: left;
+	font-size: 12.000000pt;
+	margin-left: 32.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyListFollow3 {
+	text-align: left;
+	margin-left: 48.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyListFollowa {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BodyListFollowa1 {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.BookName {
+	text-align: left;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	vertical-align: baseline;
+	font-family: Helvetica;
+}
+P.BookNameTOC {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 6.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.BulletSideHead {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.CellBody {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.CellCode {
+	text-align: left;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Courier;
+}
+P.CellHeading {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+H1.ChapterTitle, H2.ChapterTitle, H3.ChapterTitle, H4.ChapterTitle, H5.ChapterTitle, H6.ChapterTitle {
+	text-align: left;
+	margin-bottom: 10.000000pt;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	color: #000077;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Helvetica;
+}
+P.ChapterTitleTOC {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 6.000000pt;
+	margin-right: 54.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	text-decoration: none;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.CodeExample {
+	text-align: left;
+	margin-top: 0.000000pt;
+	margin-bottom: 0.000000pt;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Courier;
+}
+P.CodeExample2 {
+	text-align: left;
+	margin-top: 0.000000pt;
+	margin-bottom: 0.000000pt;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Courier;
+}
+P.CodeScreen {
+	text-align: left;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Courier;
+}
+P.CodeScreen2 {
+	text-align: left;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Courier;
+}
+P.ContentsList {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.CopyrightNotice {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+H2.Descriptor {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 6.000000pt;
+	font-size: 16.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.DescriptorTOC, H2.DescriptorTOC, H3.DescriptorTOC, H4.DescriptorTOC, H5.DescriptorTOC, H6.DescriptorTOC {
+	text-align: left;
+	margin-right: 18.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	vertical-align: baseline;
+	font-family: Times;
+}
+P.Equation {
+	text-align: center;
+	margin-top: 10.000000pt;
+	margin-bottom: 6.000000pt;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Example {
+	text-align: left;
+	margin-top: 3.000000pt;
+	margin-bottom: 3.000000pt;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Courier;
+}
+P.ExampleScreen {
+	text-align: left;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Courier;
+}
+P.ExampleTitle {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.Extract {
+	text-align: left;
+	margin-top: 7.000000pt;
+	margin-right: 18.000000pt;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Figure {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.FigureLabel {
+	text-align: left;
+	margin-top: 4.000000pt;
+	margin-bottom: 4.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.FigureLOF {
+	text-align: left;
+	margin-top: 2.000000pt;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.FigureText {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Helvetica;
+}
+P.FigureTitle {
+	text-align: left;
+	margin-top: 4.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.Footnote {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.GlossarySeparator {
+	text-align: left;
+	margin-top: 16.000000pt;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.GlossaryTerm {
+	text-align: left;
+	margin-top: 6.000000pt;
+	font-size: 13.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.Gotos {
+	margin-top: 8.000000pt;
+	font-size: 10.000000pt;
+	font-weight: Bold;
+	color: #000077;
+	text-decoration: none;
+	font-family: Helvetica;
+}
+P.GroupTitlesIX {
+	text-align: left;
+	margin-top: 15.000000pt;
+	font-size: 20.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+	color: #000077;
+}
+H1.Heading1Top, H2.Heading1Top, H4.Heading1Top, H5.Heading1Top, H6.Heading1Top {
+	text-align: left;
+	margin-top: 4.000000pt;
+	margin-bottom: 13.000000pt;
+	margin-right: 48.023987pt;
+	font-size: 22.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+H1.Heading1, H2.Heading1, H4.Heading1, H5.Heading1, H6.Heading1 {
+	text-align: left;
+	margin-top: 4.000000pt;
+	margin-bottom: 13.000000pt;
+	margin-right: 48.023987pt;
+	font-size: 22.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+H3.Heading1 {
+	text-align: left;
+	margin-top: 30.000000pt;
+	margin-bottom: 13.000000pt;
+	margin-right: 48.023987pt;
+	font-size: 22.000000pt;
+	font-weight: Bold;
+	color: #000077;
+	text-decoration: none;
+	font-family: Helvetica;
+}
+
+P.Heading1TOC {
+	text-align: left;
+	margin-top: 2.000000pt;
+        margin-bottom: 0.000000pt; 
+	margin-left: 12.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+H3.Heading2 {
+	text-align: left;
+	margin-top: 8.000000pt;
+	margin-bottom: 2.000000pt;
+	font-size: 16.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.Heading2TOC {
+	text-align: left;
+	margin-left: 24.000000pt;
+        margin-top: 0.000000pt;
+        margin-bottom: 0.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+        vertical-align: baseline;
+}
+H4.Heading3 {
+	text-align: left;
+	margin-top: 7.000000pt;
+	font-size: 14.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.Heading3TOC {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+H5.Heading4 {
+	text-align: left;
+	margin-top: 4.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+H1.Heading5, H2.Heading5, H3.Heading5, H4.Heading5, H5.Heading5 
+{
+	text-align: left;
+	margin-top: 50.000000pt;
+	margin-bottom: 6.000000pt;
+	font-size: 20.000000pt;
+	font-weight: bold;
+	font-style: oblique;
+	color: #800000;
+	border-top: thick double #800000;
+	background-color: #dcdcdc;
+	text-decoration: none;
+	font-family: Helvetica;
+}
+Table {
+	padding-left: 10.000000pt;
+}
+P.Heading5TOC {
+	text-align: left;
+	margin-right: 54.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-style: Italic;
+	font-family: Times;
+}
+H1.HeadingFront, H2.HeadingFront, H3.HeadingFront, H4.HeadingFront, H5.HeadingFront, H6.HeadingFront {
+	text-align: left;
+	margin-top: 10.000000pt;
+	margin-bottom: 3.000000pt;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.HeadingRunIn {
+	text-align: left;
+	margin-top: 12.000000pt;
+	margin-bottom: 6.000000pt;
+	font-size: 10.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.IgnoreCharsIX {
+	text-align: justify;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Indented {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Index {
+	text-align: left;
+	font-size: 10.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.IndexIX {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.IndexIXTOC {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+H1.IndexTitle, H2.IndexTitle, H3.IndexTitle, H4.IndexTitle, H5.IndexTitle, H6.IndexTitle {
+	text-align: center;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+P.IndexTitleTOC {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+H1.IntroTitle, H2.IntroTitle, H3.IntroTitle, H4.IntroTitle, H5.IntroTitle, H6.IntroTitle {
+	text-align: left;
+	margin-bottom: 10.000000pt;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	color: #000077;
+	text-decoration: none;
+	font-family: Helvetica;
+
+}
+P.IntroTitleTOC {
+	text-align: left;
+	margin-right: 18.000000pt;
+        margin-bottom: 0.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+H3.Label {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	text-decoration: none;
+	font-family: Helvetica;
+        text-transform: capitalize;
+}
+P.Level1IX {
+	text-align: left;
+	font-size: 11.000000pt;
+	font-weight: medium;
+	font-family: Times;
+	margin-top: -10.000000pt;
+}
+P.Level2IX {
+	text-align: left;
+      margin-left: 8.000000pt;
+	font-size: 11.000000pt;
+	font-weight: medium;
+	font-family: Times;
+	margin-top: -12.000000pt;
+}
+P.Level3IX {
+	text-align: left;
+	font-size: 11.000000pt;
+      margin-left: 16.000000pt;
+	font-weight: medium;
+	font-family: Times;
+	margin-top: -12.000000pt;
+}
+P.Mapping-Table-Cell {
+	text-align: left;
+	margin-top: 2.000000pt;
+	margin-bottom: 2.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Mapping-Table-Cell1 {
+	text-align: left;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.Mapping-Table-Cell2 {
+	text-align: left;
+	font-size: 14.000000pt;
+	font-weight: Bold;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.Mapping-Table-Cell3 {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.Mapping-Table-Cell4 {
+	text-align: left;
+	font-size: 10.000000pt;
+	font-weight: Bold;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Courier;
+}
+P.Mapping-Table-Title {
+	text-align: left;
+	margin-top: 2.000000pt;
+	margin-bottom: 2.000000pt;
+	font-size: 14.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.MappingTitle {
+	text-align: justify;
+	font-size: 14.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.Note {
+	text-align: left;
+	margin-top: -12.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Numbered2Follow {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.NumberedSpecialFollow {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.PartNumber {
+	text-align: left;
+	margin-top: 16.000000pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.SeparatorsIX {
+	text-align: left;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.SortOrderIX {
+	text-align: justify;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Table-text {
+	text-align: left;
+	margin-right: 6.479996pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Table-text1 {
+	text-align: left;
+	margin-top: 1.000000pt;
+	margin-bottom: 2.000000pt;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Table-text2 {
+	text-align: left;
+	margin-top: 2.000000pt;
+	margin-bottom: 2.399994pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Table-text3 {
+	text-align: left;
+	margin-top: 1.000000pt;
+	margin-bottom: 1.000000pt;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.Table-text4 {
+	text-align: left;
+	margin-top: 2.000000pt;
+	margin-bottom: 2.399994pt;
+	margin-right: 6.479996pt;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+P.TableFootnote {
+	text-align: left;
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+LI.TableLabel {
+	text-align: left;
+	margin-top: 3.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.TableLOT {
+	text-align: left;
+	margin-top: 2.000000pt;
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+H1.TableTitle, H2.TableTitle, H3.TableTitle, H4.TableTitle, H5.TableTitle, H6.TableTitle {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+LI.TableTitle1 {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+H1.Title {
+	text-align: left;
+	margin-top: 50.000000pt;
+	font-size: 36.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	font-family: Helvetica;
+}
+P.Title/Company {
+	text-align: left;
+	margin-top: 282.000000pt;
+	font-size: 16.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+H1.TitleBook {
+	text-align: right;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	font-family: Helvetica;
+}
+P.TitleBook1TOC {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.TitleBook2TOC {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.TitleBook3TOC {
+	text-align: left;
+	font-size: 12.000000pt;
+	font-weight: medium;
+	color: #ffffff;
+	text-decoration: none;
+	font-family: Times;
+}
+P.TitleTOC {
+	text-align: left;
+	margin-top: 6.000000pt;
+	margin-bottom: 6.000000pt;
+	margin-right: 54.000000pt;
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+P.TitleTOC/Index {
+	text-align: left;
+	font-size: 24.000000pt;
+	font-weight: medium;
+	font-style: Italic;
+	font-family: Times;
+}
+P.TitleVolume {
+	text-align: right;
+	font-size: 28.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	font-family: Helvetica;
+}
+P.TOC {
+	text-align: left;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+H1.TOCStart, H2.TOCStart, H3.TOCStart, H4.TOCStart, H5.TOCStart, H6.TOCStart {
+	text-align: left;
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+H1.TOCTitle, H2.TOCTitle, H3.TOCTitle, H4.TOCTitle, H5.TOCTitle, H6.TOCTitle {
+	text-align: left;
+        font-size: 28.000000pt; 
+        color: #000077;
+	margin-bottom: 14.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+EM.Address {
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-family: Times;
+}
+SPAN.Bold, B.Bold {
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+STRONG.BoldEmphasis {
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	font-family: Times;
+}
+EM.Bullet {
+	font-size: 6.000000pt;
+	font-weight: medium;
+	font-family: ZapfDingbats;
+}
+EM.Bullet2 {
+	font-size: 6.000000pt;
+	font-weight: medium;
+	font-family: ZapfDingbats;
+}
+EM.Callout {
+	font-size: 10.000000pt;
+	font-weight: medium;
+	font-family: Helvetica;
+}
+TT.Code, KBD.Code {
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-family: Courier;
+}
+KBD.CodeOutput, STRONG.CodeOutput  {
+	font-size: 9.000000pt;
+	font-weight: Bold;
+	font-family: Courier;
+}
+EM.CodeSuperscript {
+	font-size: 8.000000pt;
+	font-weight: medium;
+	font-family: Courier;
+}
+KBD.CodeVariant {
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-style: italic;
+	font-family: Courier;
+}
+EM.Emphasis {
+	font-size: 12.000000pt;
+	font-weight: medium;
+	font-style: Italic;
+	font-family: Times;
+}
+EM.EquationNumber {
+	font-size: 8.000000pt;
+	font-weight: Bold;
+	font-family: Helvetica;
+}
+EM.EquationVariables {
+	font-style: Italic;
+}
+CODE.FixedFont {
+	font-size: 26.000000pt;
+	font-weight: Bold;
+	font-family: Courier;
+}
+VAR.FixedFontVariant {
+	font-size: 24.000000pt;
+	font-weight: medium;
+	font-style: Italic;
+	font-family: Courier New;
+}
+CODE.Function {
+	font-size: 18.000000pt;
+	font-weight: Bold;
+	font-family: Courier;
+}
+EM.function-name {
+}
+VAR.FunctionVariant {
+	font-size: 18.000000pt;
+	font-weight: medium;
+	font-style: Oblique;
+	font-family: Courier;
+}
+EM.PageNumber {
+	font-weight: Bold;
+}
+EM.SmallCaps {
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-style: small-caps Regular;
+	font-family: Helvetica;
+}
+SUP.Superscript{
+	font-size: 10.000000pt;
+	font-weight: medium;
+}
+SYM.Symbols {
+	font-size: 12.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+EM.TableFootBold {
+	font-size: 9.000000pt;
+	font-weight: Bold;
+	font-family: Times;
+}
+EM.TableFootBoldEmph {
+	font-size: 9.000000pt;
+	font-weight: Bold;
+	font-style: Italic;
+	font-family: Times;
+}
+EM.TableFootEmph {
+	font-size: 9.000000pt;
+	font-weight: medium;
+	font-style: Italic;
+	font-family: Times;
+}
+EM.MyCharTag {
+	font-size: 11.000000pt;
+	font-weight: medium;
+	font-style: Regular;
+	font-family: Times;
+}

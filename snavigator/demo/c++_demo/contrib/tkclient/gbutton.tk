@@ -1,0 +1,7 @@
+proc glish_buttonx {b name cmd} {
+	button $b -text $name -command $cmd
+	# bind $b <Enter> { %W activate }
+	# bind $b <Leave> { %W deactivate }
+	bind $b <Any-ButtonPress> { %W invoke }
+	return $b
+}
