@@ -1,3 +1,21 @@
+2002-05-09  Mo DeJong  <supermo@bayarea.net>
+
+	* INSTALL.TXT: Minor wording change. Tell folks to
+	add -nologo flag to VC++ CFLAGS.
+	* MAINTAINERS: Syd has resigned as a maintainer,
+	remove him and update Ian's email address.
+	* Makefile.am: Remove install/ from SUBDIRS. Add
+	README.TXT INSTALL.TXT to list of file that get
+	included by the `make dist` target.
+	* Makefile.in: Regen.
+	* README.TXT: Update info and URLs to account for
+	change of project hosting location. Added readme
+	contents from the outdated install/README.TXT.
+	* install/Makefile.am: Remove.
+	* install/Makefile.in: Remove.
+	* install/README.JAPAN.TXT: Remove.
+	* install/README.TXT: Remove.
+
 2002-05-06  Mo DeJong  <supermo@bayarea.net>
 
 	* etc/english.txt.in: Add ButtonDismiss and

@@ -10,7 +10,7 @@ the snavigator.exe executable in the Windows Explorer.
 Generic Build Notes:
 
 These build/install instructions assume that you have already
-downloaded and extracted the files from the zip or tar file.
+downloaded and extracted the source files from the zip or tar file.
 
 We suggest building outside of the src directory, this might
 be a new concept for most users, but it is really quite simple
@@ -57,7 +57,7 @@ the Cygwin root directory and running cygwin.bat. In the bash
 shell, run the following commands.
 
 % export CC=cl
-% export CFLAGS="-Z7 -Od -MD"
+% export CFLAGS="-Z7 -Od -MD -nologo"
 
 You can now run the configure script in the normal way. Of course,
 there are a couple of things to take note of. First, the configure
