@@ -1,3 +1,11 @@
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/preferences.tcl (AddOthers): Remove
+	the "bugs" labeled frame and the mailhost
+	entry box from the others tab. These widgets
+	were not functional, they were left in the
+	5.1 release just to avoid doc impact.
+
 2003-06-17  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/preferences.tcl: Reformat a large number
