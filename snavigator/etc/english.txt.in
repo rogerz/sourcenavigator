@@ -636,6 +636,8 @@ GenerateXRefINFO,Build Cross-Reference database
 Parser,[Parser
 Rcs,[Version Control
 LanguageExt,Language Extensions
+LanguageExtLanguage,Language
+LanguageExtFileExtensions,File Extensions
 ExternalEditor,Externa[l Editor
 ExternalEditors,External Editors
 PrefRcs,Version control system

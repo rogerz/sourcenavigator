@@ -914,27 +914,52 @@ itcl_class Preferences& {
         set win [${Parser}.ext subwidget frame]
         pack ${ext} -fill x -side top -anchor c
 
-        set row 0
+        label $win.label -text [get_indep String LanguageExtLanguage]
+
+        # Figure out how many chars wide the combo should be.
+        # Default to the first parser in the list.
+        set max_width 5
+        set default_type ""
         foreach type [lsort -dictionary ${Avail_Parsers}] {
-            set ext ${win}.edit${row}
-            set externaled ${win}.external${row}
+            set width [string length $type]
+            if {$width > $max_width} {
+                set max_width $width
+            }
 
-            Entry& ${ext} -width -1 -labelwidth 10 -label ${type}\
-              -textvariable opt_Parser_Info(${type},SUF)
-            grid ${ext} -row $row -column 0 -sticky ew
-
-            #external editors
-            LabelEntryButton& ${externaled} -text [get_indep String\
-              ExternalEditor] -width 15 -anchor ne\
-              -variable opt_Parser_Info(${type},EDIT) -native 1\
-              -buttonballoon [get_indep String ChooseINFO]\
-              -extensions $sn_options(executable_ext)\
-              -defaultextension $sn_options(executable_defaultext)
-            grid ${externaled} -row $row -column 1
-
-            incr row
+            if {[string equal $default_type ""]} {
+                set default_type $type
+            }
         }
-        grid columnconfigure ${win} 0 -weight 1
+        incr max_width 1
+
+        set extension_entry ${win}.ext_entry
+        set editor_entry ${win}.edit_entry
+        set combo ${win}.combo
+
+        combobox::combobox $combo \
+            -editable 0 \
+            -width $max_width
+
+        foreach type [lsort -dictionary ${Avail_Parsers}] {
+            $combo listinsert end $type
+        }
+
+        grid $win.label -row 0 -column 0 -sticky ew
+        grid $combo -row 0 -column 1 -sticky ew -pady 5
+
+        label $win.ext_label -text [get_indep String LanguageExtFileExtensions]
+        entry $extension_entry
+
+        grid $win.ext_label -row 1 -column 0 -sticky w -pady 5
+        grid $extension_entry -row 1 -column 1 -sticky we -columnspan 2
+
+        label $win.edit_label -text [get_indep String ExternalEditor]
+        entry $editor_entry
+
+        grid $win.edit_label -row 2 -column 0 -sticky w -pady 5
+        grid $editor_entry -row 2 -column 1 -sticky we -columnspan 2
+
+        grid columnconfigure ${win} 2 -weight 1              
 
         #Macro files
         set macfr [tixLabelFrame ${Parser}.macros -label [get_indep String\
@@ -942,7 +967,6 @@ itcl_class Preferences& {
         ${macfr} config -background $sn_options(def,layout-bg)
         set win [${Parser}.macros subwidget frame]
         pack ${macfr} -side top -anchor c -fill x
-
         set macros ${win}.edit
         set sn_options(opt_macrofiles) $sn_options(macrofiles)
         button ${win}.add -text [get_indep String Choose] -command " ${this}\
@@ -958,10 +982,40 @@ itcl_class Preferences& {
         ${macros} insert 0.0 [join $sn_options(opt_macrofiles) \n]
         balloon_bind_info ${macros} [get_indep String AddYourMacroFiles]
 
+        # Set parser type selected callback and invoke it once with
+        # the default type to get things in the proper state.
+
+        $combo configure -command \
+            [itcl::code parser_type_combo_changed $extension_entry $editor_entry \
+                $win.add $macros]
+
+        $combo entryset $default_type
+
+        parser_type_combo_changed $extension_entry $editor_entry \
+            $win.add $macros $combo $default_type
+
         lappend AvailTools ${Parser}
     }
     method RaiseParser {} {
         #set lastPage parser
+    }
+
+    # Invoked when a new type is selected in the parser combo box.
+    # This will set the textvar used by the extension and editor
+    # entries and disable or enable the macro widgets.
+
+    proc parser_type_combo_changed { extension_widget editor_widget
+            macro_button_widget macro_text_widget combo_widget type } {
+        $extension_widget configure -textvariable opt_Parser_Info(${type},SUF)
+        $editor_widget configure -textvariable opt_Parser_Info(${type},EDIT)
+
+        if {[string equal $::opt_Parser_Info(${type},MACRO) ""]} {
+            $macro_button_widget configure -state disabled
+            $macro_text_widget configure -state disabled
+        } else {
+            $macro_button_widget configure -state normal
+            $macro_text_widget configure -state normal
+        }
     }
 
     #add macro file, if not availiable

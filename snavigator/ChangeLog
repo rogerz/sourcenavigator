@@ -1,3 +1,19 @@
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/english.txt.in: Add LanguageExtLanguage
+	and LanguageExtFileExtensions strings.
+	* gui/preferences.tcl (AddParser,
+	parser_type_combo_changed): Modify the GUI
+	of the Parser tab in the project preferences.
+	There is now a combo box that can be used to
+	select options for a specific parser. This
+	is an improvement over the previous
+	implementation since it will now be possible
+	to add a new parser without having to update
+	screen shots in the documentation. The
+	macro input box is only enabled when c
+	or c++ is selected as the language type.
+
 2003-05-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/m4/m4browser.c: Regen.
