@@ -1,3 +1,15 @@
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* acinclude.m4 (AC_C_BIGENDIAN_CROSS): Add new
+	AC_C_BIGENDIAN_CROSS macro from the autoconf
+	macro archive to support cross compiling.
+	* aclocal.m4: Regen.
+	* configure: Regen.
+	* configure.in: Update to use AC_PROG_INSTALL
+	instead of AM_PROG_INSTALL. Use AC_C_BIGENDIAN_CROSS
+	instead of AC_C_BIGENDIAN to support cross
+	compiling.
+
 2002-04-20  Mo DeJong  <supermo@bayarea.net>
 
 	* btree/bt_open.c:

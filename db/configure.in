@@ -4,7 +4,7 @@ AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(db, 1.85)
 
-AM_PROG_INSTALL
+AC_PROG_INSTALL
 AM_MAINTAINER_MODE
 AC_PROG_MAKE_SET
 AC_ARG_PROGRAM
@@ -80,7 +80,10 @@ AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h)
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_TYPE(ssize_t, int)
 AC_CHECK_TYPE(pgno_t, u_int32_t)
-AC_C_BIGENDIAN
+# CYGNUS LOCAL
+dnl AC_C_BIGENDIAN
+AC_C_BIGENDIAN_CROSS
+# END CYGNUS LOCAL
 AC_C_CONST
 AC_HEADER_TIME
 AC_STRUCT_ST_BLKSIZE
