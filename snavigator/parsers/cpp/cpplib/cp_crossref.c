@@ -146,7 +146,7 @@ extern void Paf_insert_cross_ref_qry( char *pcLine )
    }
    if (strcmp(file_g,prev_filename) != 0)
    {
-      printf("Scanning %s\n",file_g);  /* Informs SN which file is being parsed. */
+      printf("Status: Scanning: %s\n",file_g);  /* Informs SN which file is being parsed. */
       fflush(stdout);
 
       strcpy(prev_filename,file_g);

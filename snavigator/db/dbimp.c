@@ -48,11 +48,6 @@ MA 02111-1307, USA.
 
 #include <compat.h>
 
-/* FIXME: we should try and decouple dbimp from libcpp2. */
-
-/* Not used, but we need to define one due to us linking against libcpp2. */
-Tcl_Encoding encoding = NULL;
-
 extern	int	optind;
 
 #ifdef WIN32
@@ -63,11 +58,6 @@ typedef char	*ARGTYPE;
 
 extern ARGTYPE	optarg;
 
-extern	char	*filename_g;
-extern	int	yylineno,yycharno;
-extern	int	report_local_vars;
-extern	int	yyfd;
-extern	int	Paf_dbimp_running;
 extern	jmp_buf	BAD_IMPL_jmp_buf;
 
 static	int	killed;
@@ -88,12 +78,6 @@ my_panic(int sign)
 	killed = -1;
 
 	fprintf(stderr,"dbimp panic; signal %d received",sign);
-
-	if (filename_g)
-	{
-		fprintf(stderr,", in file: %s, at line: %d column: %d\n",
-			filename_g,yylineno,yycharno);
-	}
 	fprintf(stderr,"\n");
 	fflush(stderr);
 
@@ -456,7 +440,7 @@ main(int argc, char **argv)
 	tty = fopen("/dev/tty","w");
 #endif /* !WIN32 && TTY_TRACE */
 
-	while((type = getopt(argc,argv,"c:C:lf:H:O:P:M:sFm:")) != EOF)
+	while((type = getopt(argc,argv,"c:C:f:H:O:P:M:sF:")) != EOF)
 	{
 		switch (type)
 		{
@@ -466,10 +450,6 @@ main(int argc, char **argv)
 
 		case 'C':
 			cross_cache = optarg;
-			break;
-
-		case 'l':
-			report_local_vars = TRUE;
 			break;
 
 		case 'f':
@@ -494,14 +474,6 @@ main(int argc, char **argv)
 
 		case 'F':
 			break;
-
-		case 'm':
-			if (macro_file_num < MAX_MACRO_FILES - 1)
-			{
-				macro_file[macro_file_num++] = optarg;
-			}
-			MacroReadFile(optarg);
-			break;
 		}
 	}
 
@@ -512,7 +484,7 @@ main(int argc, char **argv)
 
 	if (!db_prefix)
 	{
-		fprintf(stderr, "Usage: %s ?-c cache_size? ?-C cross_cache_size? ?-l? ?-f file? ?-m macrofile? db_prefix\n",
+		fprintf(stderr, "Usage: %s ?-c cache_size? ?-C cross_cache_size? ?-f file? db_prefix\n",
 			argv[0]);
 		fflush(stderr);
 		exit(2);
@@ -574,9 +546,8 @@ main(int argc, char **argv)
 				(unsigned long)getpid(),
 				db_prefix,
 				cache ? cache : "#");
-			fprintf(logfp,"cross_cache: %s local_vars: %d file: <%s>\n",
+			fprintf(logfp,"cross_cache: %s file: <%s>\n",
 				cross_cache ? cross_cache : "#",
-				report_local_vars,
 				file ? file : "stdin");
 			if (macro_file_num)
 			{
@@ -593,8 +564,6 @@ main(int argc, char **argv)
 		}
 	}
 
-	Paf_dbimp_running = TRUE;
-
 	Paf_db_init_tables(db_prefix,cache,cross_cache);
 
 	linenum = 0;
@@ -606,12 +575,6 @@ main(int argc, char **argv)
 		killed = TRUE;
 
 		fprintf(stderr,"dbimp (soft) panic");
-
-		if (filename_g)
-		{
-			fprintf(stderr,", in file: %s, at line: %d column: %d\n",
-				filename_g,yylineno,yycharno);
-		}
 		fprintf(stderr,"\n");
 		fflush(stderr);
 		break;
@@ -683,13 +646,7 @@ main(int argc, char **argv)
 		}
 		else if (type == PAF_CROSS_REF_CPP)
 		{
-			if (first_xref)
-			{
-				first_xref = FALSE;
-
-				open_tables_for_cross_ref();
-			}
-			Paf_insert_cross_ref_qry(bufp);
+                  panic("PAF_CROSS_REF_CPP input to dbimp");
 		}
 		else
 		{
@@ -708,11 +665,6 @@ main(int argc, char **argv)
 
 	buf.free(&buf);
 
-	if (!first_xref)
-	{
-		Paf_Cpp_Cross_Ref_Clean();
-	}
-
 	if (Paf_db_close_tables() == -1)
 	{
 		fprintf(stderr,"Database closing error: %s\n",strerror(errno));
@@ -725,12 +677,6 @@ main(int argc, char **argv)
 	{
 		fprintf(logfp,"#dbimp (pid: %lu) exited\n",(unsigned long)getpid());
 		fclose(logfp);
-	}
-
-	if (yyfd >= 0)
-	{
-		close(yyfd);
-		yyfd = -1;
 	}
 
 	if (lock_file[0])
@@ -779,7 +725,7 @@ main(int argc, char **argv)
 		}
 	}
 
-	fclose(infp);	/* It is important to synchronize. */
+	fclose(infp);
 
 	exit(killed == -1 ? 2 : 0);
 

@@ -183,7 +183,7 @@ SUBDIRS = cpplib
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) 	$(TCLHDIR)
 
 
-bin_PROGRAMS = cbrowser
+bin_PROGRAMS = cbrowser cbrowser2
 
 cbrowser_SOURCES = cparser.c cpdefines.h skeleton.c
 
@@ -192,10 +192,18 @@ cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(
 
 cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
 
+
+cbrowser2_SOURCES = cbrowser2.c
+
+cbrowser2_LDADD = cpplib/libcpp2.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+
+
+cbrowser2_DEPENDENCIES = cpplib/libcpp2.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
+
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-bin_PROGRAMS =  cbrowser$(EXEEXT)
+bin_PROGRAMS =  cbrowser$(EXEEXT) cbrowser2$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)
 
 
@@ -205,6 +213,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 cbrowser_OBJECTS =  cparser.$(OBJEXT) skeleton.$(OBJEXT)
 cbrowser_LDFLAGS = 
+cbrowser2_OBJECTS =  cbrowser2.$(OBJEXT)
+cbrowser2_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -215,8 +225,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(cbrowser_SOURCES)
-OBJECTS = $(cbrowser_OBJECTS)
+SOURCES = $(cbrowser_SOURCES) $(cbrowser2_SOURCES)
+OBJECTS = $(cbrowser_OBJECTS) $(cbrowser2_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -282,6 +292,10 @@ maintainer-clean-compile:
 cbrowser$(EXEEXT): $(cbrowser_OBJECTS) $(cbrowser_DEPENDENCIES)
 	@rm -f cbrowser$(EXEEXT)
 	$(LINK) $(cbrowser_LDFLAGS) $(cbrowser_OBJECTS) $(cbrowser_LDADD) $(LIBS)
+
+cbrowser2$(EXEEXT): $(cbrowser2_OBJECTS) $(cbrowser2_DEPENDENCIES)
+	@rm -f cbrowser2$(EXEEXT)
+	$(LINK) $(cbrowser2_LDFLAGS) $(cbrowser2_OBJECTS) $(cbrowser2_LDADD) $(LIBS)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

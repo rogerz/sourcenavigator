@@ -1038,7 +1038,7 @@ db_remove_file_def(int softdel,char *file)
 	int     del;
 	int     del_fil;
 
-	fprintf(stdout, "Deleting %s\n",file);	/* Informs SN which files is being deleted. */
+	fprintf(stdout, "Status: Deleting: %s\n",file);	/* Informs SN which files is being deleted. */
 	fflush(stdout);
 
 	if (!dbp)
@@ -1259,7 +1259,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 		fn = file_del_key.field_value[3];
 		if (strcmp(last_del_fname, fn) != 0)
 		{
-			fprintf(stdout, "Deleting %s\n", fn);
+			fprintf(stdout, "Status: Deleting: %s\n", fn);
 			fflush(stdout);
 			strcpy(last_del_fname, fn);
 		}

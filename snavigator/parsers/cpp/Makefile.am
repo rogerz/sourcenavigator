@@ -27,7 +27,7 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib \
 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) \
 	$(TCLHDIR)
 
-bin_PROGRAMS = cbrowser
+bin_PROGRAMS = cbrowser cbrowser2
 
 cbrowser_SOURCES = cparser.c cpdefines.h skeleton.c
 
@@ -48,3 +48,15 @@ cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a
 
+cbrowser2_SOURCES = cbrowser2.c
+
+cbrowser2_LDADD = cpplib/libcpp2.a \
+	$(top_builddir)/db/libdbutils.a \
+	$(top_builddir)/misc/libutils/libutils.a \
+	$(DB_LIBDIR)/libdb.a \
+	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+
+cbrowser2_DEPENDENCIES = cpplib/libcpp2.a \
+	$(top_builddir)/db/libdbutils.a \
+	$(top_builddir)/misc/libutils/libutils.a \
+	$(DB_LIBDIR)/libdb.a

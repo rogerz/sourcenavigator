@@ -627,7 +627,7 @@ proc sn_hide_show_project {cmd {mainw ""}} {
 }
 
 proc wait_xref_end {procfd varb} {
-    set end [gets ${procfd} msg]
+    set end [gets ${procfd} line]
     if {${end} < 0} {
         #give the info that the process has been terminated
         upvar #0 ${varb} var
@@ -638,8 +638,20 @@ proc wait_xref_end {procfd varb} {
         xref_delete_termometers
     } else {
         #display xref info
-        xref_termometer_disp ${msg}
-        sn_log "wait_xref_end: ${msg}"
+
+        set scanning "Status: Scanning: "
+        if {[string first $scanning ${line}] == 0} {
+            set file [string range $line [string length $scanning] end]
+            xref_termometer_disp $file 0
+        }
+
+        set deleting "Status: Deleting: "
+        if {[string first $deleting ${line}] == 0} {
+            set file [string range $line [string length $deleting] end]
+            xref_termometer_disp $file 1
+        }
+
+        sn_log "wait_xref_end: ${line}"
     }
     update idletasks
 }
@@ -913,19 +925,39 @@ proc sn_load_xref {xfer_file} {
     catch {paf_db_to close}
     catch {paf_db_by close}
 
-    #generate xref.
-    set cmd [list [file join $sn_path(bindir) dbimp] -H [info hostname]\
-      -P [pid] -c $sn_options(def,db_cachesize)\
-      -C $sn_options(def,xref-db-cachesize)]
+    # Generate xref.
+    # This is currently a bit uglier than it needs to be
+    # since cbrowser generates output that needs to be
+    # processed again by cbrowser2. Since we don't
+    # know if there are c++ refs in the xref file, just
+    # filter all possible xrefs through cbrowser2
+    # before passing them on to dbimp.
+
+    set cbr2_cmd [file join $sn_path(bindir) cbrowser2]
+    
     if {[string first "-l" $sn_options(sys,parser_switches)] != -1} {
-        lappend cmd -l
+        lappend cbr2_cmd -l
     }
+
     if {[info exists sn_options(macrofiles)] && $sn_options(macrofiles) != ""} {
         foreach mf $sn_options(macrofiles) {
-            lappend cmd -m ${mf}
+            lappend cbr2_cmd -m ${mf}
         }
     }
-    lappend cmd $sn_options(db_files_prefix) < ${xfer_file}
+
+    lappend cbr2_cmd -n $sn_options(db_files_prefix)
+    lappend cbr2_cmd -c $sn_options(def,db_cachesize) \
+        -C $sn_options(def,xref-db-cachesize)
+    lappend cbr2_cmd ${xfer_file}
+
+    set dbimp_cmd [list [file join $sn_path(bindir) dbimp] \
+        -H [info hostname] \
+        -P [pid] -c $sn_options(def,db_cachesize) \
+        -C $sn_options(def,xref-db-cachesize) \
+        $sn_options(db_files_prefix)]
+
+    set cmd [concat $cbr2_cmd | $dbimp_cmd]
+
     sn_log "cross-ref command: ${cmd}"
 
     if {[catch {set fd [open "| ${cmd}" r]} err]} {
@@ -1020,9 +1052,17 @@ proc load_xref_pipe {xreffd xfer_file} {
         sn_log "Cross-ref PIPE: ${line}"
 
         #actualize termometer
-        if {[string first "Deleting " ${line}] == 0 || [string first "Scanning\
-          " ${line}] == 0} {
-            xref_termometer_disp ${line}
+
+        set scanning "Status: Scanning: "
+        if {[string first $scanning ${line}] == 0} {
+            set file [string range $line [string length $scanning] end]
+            xref_termometer_disp $file 0
+        }
+
+        set deleting "Status: Deleting: "
+        if {[string first $deleting ${line}] == 0} {
+            set file [string range $line [string length $deleting] end]
+            xref_termometer_disp $file 1
         }
     }
 
@@ -2185,6 +2225,7 @@ proc sn_stop_process {} {
 
 # FIXME: We need to add a kill command to Tcl that will provide a cross platform
 # way to stop a subprocess. This code only works under Unix.
+    sn_log "killing SN_cross_pid \"[pid ${SN_cross_pid}]\""
     catch {exec kill [pid ${SN_cross_pid}]}
     catch {close ${SN_cross_pid}}
     catch {unset SN_cross_pid}
@@ -3522,8 +3563,10 @@ proc event_LoadPipeInput {eventfd sc} {
     sn_log -l 2 "Info from pipe: ${line}"
 
     #status lines, ignore them
-    if {[string first "Deleting " ${line}] == 0 || [string first "Scanning\
-      " ${line}] == 0} {
+    set scanning "Status: Scanning: "
+    set deleting "Status: Deleting: "
+    if {[string first $deleting ${line}] == 0 ||
+            [string first $scanning ${line}] == 0} {
         return
     }
 

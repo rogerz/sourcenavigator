@@ -1,5 +1,58 @@
 2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Tear the C/C++ xref generation code out of
+	dbimp. This change will make it significantly
+	easier to debug the xref parser and dbimp
+	executables since they will be two separate
+	executables.
+
+	* db/Makefile.am: Don't link to libcpp2.a
+	when compiling dbimp since the xref
+	functionality has been moved into cbrowser2.
+	* db/Makefile.in: Regen.
+	* db/dbimp.c (encoding, filename_g, yylineno,
+	yycharno, report_local_vars, yyfd, Paf_dbimp_running,
+	my_panic, main):
+	Remove use of the encoding, filename_g, yylineno,
+	yycharno, and yyfd global vars from libcpp2.a.
+	Don't set Paf_dbimp_running, it is not needed since
+	the C/C++ parser is not linked into dbimp anymore.
+	Don't accept the -l or -m command line arguments,
+	these are now handled by cbrowser2. Panic if a
+	PAF_CROSS_REF_CPP input is found instead of calling
+	the libcpp2.a method Paf_insert_cross_ref_qry.
+	* db/dbutils.c (db_remove_file_def): Print
+	"Status: Deleting: ..." instead of "Deleting ..."
+	so that status messages can be passed through
+	dbimp and can be read by the IDE.
+	* gui/misc.tcl (wait_xref_end, sn_load_xref,
+	load_xref_pipe, event_LoadPipeInput):
+	Check for "Status: Scanning:" or "Status: Deleting:"
+	messages from the xref + dbimp pipe, ignore these
+	same messages if they arrive on the first pass pipe.
+	Run the cbrowser2 command in a pipe and have it
+	output to the dbimp executable. Pass the
+	-l (local vars) and -m (macro files) options to
+	the cbrowser2 executable instead of dbimp.
+	* gui/xrefpane.tcl (xref_termometer_disp):
+	Pass a file name and a boolean flag to
+	xref_termometer_disp instead of doing further
+	pipe output parsing in this function.
+	* parsers/cpp/Makefile.am: Compile the new
+	cbrowser2 executable.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cbrowser2.c: Add code for
+	cbrowser2 executable, this program does the
+	xref generation for C/C++ files that used
+	to be done inside dbimp.
+	* parsers/cpp/cpplib/cp_crossref.c
+	(Paf_insert_cross_ref_qry):
+	Output "Status: Scanning: ..." instead of
+	"Scanning ..." for each file that is
+	processed by the xref stage 2 in cbrowser2.
+
+2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (sn_load_xref): Set the encoding
 	of the dbimp pipe to utf-8 instead of the
 	platform encoding. This fixes reading of file

@@ -2895,7 +2895,7 @@ proc xref_disp_tmeter {txt value} {
 }
 
 #display status of xref processing
-proc xref_termometer_disp {line} {
+proc xref_termometer_disp {file is_delete} {
     global sn_options
     global xref_termometer
 
@@ -2909,10 +2909,9 @@ proc xref_termometer_disp {line} {
     }
 
     #store the last accessed file for bug reporting
-    set i [string first " " ${line}]
-    set xref_termometer(lastfile) [string range ${line} [expr ${i} + 1] end]
+    set xref_termometer(lastfile) $file
 
-    if {[string first "Deleting " ${line}] == 0} {
+    if {$is_delete} {
         incr xref_termometer(del_index)
         upvar #0 xref_termometer(del_index) counter
         set txt "Deleting"
