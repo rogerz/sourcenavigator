@@ -1,7 +1,7 @@
-This is Source-Navigator, an IDE for C/C++/Java/Tcl/Fortran and a
-host of other languages. Source-Navigator includes powerful source
-code comprehension features that help a developer understand complex
-relationships between elements of a program's source.
+This is Source-Navigator, an IDE for C/C++/Fortran/Java/Tcl/PHP/Python
+and a host of other languages. Source-Navigator includes powerful
+source code comprehension features that help a developer understand
+complex relationships between elements of a program's source.
 
 Source-Navigator is released under the terms of the GPL; see the 
 COPYING file for more information about the GPL.

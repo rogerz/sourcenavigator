@@ -1,3 +1,13 @@
+2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* NEWS: Add release notes for 5.1 series and
+	5.2a1.
+	* README.TXT: Note PHP and Python support.
+	* configure: Regen.
+	* configure.in: Change version to 5.2a1.
+	* mkdist.sh: Copy NEWS file to NEWS.TXT
+	in the toplevel dist dir.
+
 2003-07-22  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (goto): When looking up
