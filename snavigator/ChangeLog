@@ -1,5 +1,23 @@
 2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/dbutils.c (db_remove_file_xfer_using_keys):
+	Convert name of keys file from utf-8 to native
+	system encoding before calling fopen or unlink.
+	Add a cleanup block and goto it instead of
+	returning directly to avoid memory leak.
+	* gui/misc.tcl (sn_load_hide_unload_files,
+	sn_parse_uptodate):
+	Use utf-8 encoding for input files and pipe
+	to cbrowser2 and dbimp. Both cbrowser2 and
+	dbimp must read and write symbols and file
+	names in utf-8 format. Reformat any entries
+	that have a -encoding option.
+	* parsers/cpp/cpplib/cp_crossref.c
+	(Paf_insert_cross_ref_qry): Convert file name from
+	utf-8 to system encoding before calling open.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* etc/sn_prop.cfg.in: Enable browser based
 	highlight for m4 language.
 	* parsers/m4/m4browser.c: Regen.

@@ -166,7 +166,16 @@ extern void Paf_insert_cross_ref_qry( char *pcLine )
          test_fp = 0;
       }
 
-      yyfd = open( file_g, OPEN_MODE );
+      /* The filename is utf-8 encoded at this point, so
+       * convert it to the native system encoding before
+       * sending to open().
+       */
+      {
+         Tcl_DString sys;
+         Tcl_UtfToExternalDString(NULL, file_g, -1, &sys);
+         yyfd = open( Tcl_DStringValue(&sys), OPEN_MODE );
+         Tcl_DStringFree(&sys);
+      }
 
       if( yyfd == -1 )
       {

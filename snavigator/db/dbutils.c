@@ -799,14 +799,20 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 	int key_len;
 	int line_cou = 1;
 	int delete_file = TRUE;
+	Tcl_DString sys;
 	
 	LongStringInit(&key_to,0);
 	LongStringInit(&data_buf,0);
 	LongStringInit(&key_by,0);
 	LongStringInit(&file_del_key,0);
 
-	if (!key_files || *key_files == '\0' || (fp = fopen(key_files, "r")) == NULL)
-		return;	/* Should never happen. */
+	/* File name is utf-8 encoded, pass system encoding to fopen. */
+	Tcl_UtfToExternalDString(NULL, key_files, -1, &sys);
+
+	if (!key_files || *key_files == '\0' ||
+            (fp = fopen(Tcl_DStringValue(&sys), "r")) == NULL) {
+		goto cleanup;	/* Should never happen. */
+        }
 
 	if (!dbp)
 	{
@@ -814,7 +820,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 			db_cross_cachesize);		/* Open the table ! */
 
 		if (!dbp)
-			return;
+			goto cleanup;
 	}
 
 	if (!dbp_by)
@@ -912,15 +918,18 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 	}
 	fclose(fp);
 
+	/* Delete the file only if its contains was ok, otherwise we need a chance
+	 * too be able to look. */
+	if (delete_file)
+		unlink(Tcl_DStringValue(&sys));
+
+cleanup:
+        Tcl_DStringFree(&sys);
 	file_del_key.free(&file_del_key);
 	key_to.free(&key_to);
 	data_buf.free(&data_buf);
 	key_by.free(&key_by);
-
-	/* Delete the file only if its contains was ok, otherwise we need a chance
-	 * too be able to look. */
-	if (delete_file)
-		unlink(key_files);
+        return;
 }
 
 void
@@ -1193,6 +1202,9 @@ Paf_Open_Include_Dirs(char *inf_name,char *db_prefix)
 	char	*fname;
 	char	tmp[MAXPATHLEN];
 
+	/* inf_name comes from -I option to cbrowser, it
+	 * is in the native system encoding
+	 */
 	include_fp = fopen(inf_name,"r");
 	if (!include_fp)
 		return;

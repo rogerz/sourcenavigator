@@ -1123,7 +1123,9 @@ proc sn_update_project_hotlist {} {
         sn_error_dialog ${err}
         return 0
     } else {
-        fconfigure ${hlstfd} -encoding $sn_options(def,system-encoding) -blocking 0
+        fconfigure ${hlstfd} \
+            -encoding $sn_options(def,system-encoding) \
+            -blocking 0
         puts ${hlstfd} [join ${exist_projs} "\n"]
         close ${hlstfd}
     }
@@ -1485,7 +1487,9 @@ proc sn_create_new_project {{import_file ""}} {
 	}
 
 	set fd [open ${import_file}]
-        fconfigure ${fd} -encoding $sn_options(def,system-encoding) -blocking 0
+        fconfigure ${fd} \
+            -encoding $sn_options(def,system-encoding) \
+            -blocking 0
         set files [split [read -nonewline ${fd}] "\n"]
         close ${fd}
 
@@ -1969,7 +1973,9 @@ proc set_project_dir_files {{files ""}} {
     if {[catch {set fd [open ${file_list} "w+"]}]} {
         return
     }
-    fconfigure ${fd} -encoding $sn_options(def,system-encoding) -blocking 0
+    fconfigure ${fd} \
+        -encoding $sn_options(def,system-encoding) \
+        -blocking 0
     puts ${fd} [join ${files} \n]
     close ${fd}
 
@@ -2177,7 +2183,7 @@ proc sn_load_hide_unload_files {dir loadf {hidefiles ""} {unloadf ""} {view\
         set have_xref 0
     }
 
-    #cloase database files
+    #close database files
     db_close_files 0
 
     if {[string compare ${unloadf} ""] != 0 && ! [catch {dbopen del_file\
@@ -2199,7 +2205,9 @@ proc sn_load_hide_unload_files {dir loadf {hidefiles ""} {unloadf ""} {view\
 
         set tmpf [sn_tmpFileName]
         set unloadfd [open ${tmpf} "w+"]
-        fconfigure ${unloadfd} -encoding $sn_options(def,system-encoding) -blocking 0
+        fconfigure ${unloadfd} \
+            -encoding utf-8 \
+            -blocking 0
         foreach f ${unloadf} {
             puts ${unloadfd} "-1;$sn_options(db_del_type);${f}"
         }
@@ -2222,9 +2230,9 @@ proc sn_load_hide_unload_files {dir loadf {hidefiles ""} {unloadf ""} {view\
         }
 
         #  X events must be processed !
-        set unloadfd2 [open "| ${cmd}"]
+        set unloadfd2 [open "| ${cmd}" r]
         fconfigure ${unloadfd2} \
-            -encoding $sn_options(def,system-encoding) \
+            -encoding utf-8 \
             -blocking 0
         fileevent ${unloadfd2} readable [list wait_xref_end ${unloadfd2}\
           X_unload]
@@ -3189,7 +3197,9 @@ proc sn_make_delfilelist {files} {
     set fdd_filename [sn_tmpFileName]
 
     set fdd_fd [open ${fdd_filename} "w+"]
-    fconfigure ${fdd_fd} -encoding $sn_options(def,system-encoding) -blocking 0
+    fconfigure ${fdd_fd} \
+        -encoding utf-8 \
+        -blocking 0
 
     foreach fdel ${files} {
         puts ${fdd_fd} [join [paf_db_fil seq -uniq -col [list "2 ;" "3 ;"\
@@ -3438,7 +3448,9 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
     if {${files_to_scan} > 0} {
         set xfer_file [sn_tmpFileName]
         set parsefd [open ${xfer_file} "w+"]
-        fconfigure ${parsefd} -encoding $sn_options(def,system-encoding) -blocking 0
+        fconfigure ${parsefd} \
+            -encoding utf-8 \
+            -blocking 0
 
         sn_log "file symbols for delete are in: ${fdd_filename}"
         puts ${parsefd} "-3;$sn_options(db_del_type);${fdd_filename}"
@@ -3821,7 +3833,9 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
     if {[catch {
         set coll [sn_tmpFileName]
         set collfd [open ${coll} "w+"]
-        fconfigure ${collfd} -encoding $sn_options(def,system-encoding) -blocking 0
+        fconfigure ${collfd} \
+            -encoding $sn_options(def,system-encoding) \
+            -blocking 0
         puts ${collfd} [join ${files} "\n"]
         close ${collfd}
 
@@ -3830,7 +3844,9 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         if {$sn_options(def,include-locatefiles)} {
             set incl [sn_tmpFileName]
             set incfd [open ${incl} "w+"]
-            fconfigure ${incfd} -encoding $sn_options(def,system-encoding) -blocking 0
+            fconfigure ${incfd} \
+                -encoding $sn_options(def,system-encoding) \
+                -blocking 0
             puts ${incfd} [join $sn_options(include-source-directories) "\n"]
             close ${incfd}
         } else {
