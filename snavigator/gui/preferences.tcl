@@ -910,17 +910,15 @@ itcl_class Preferences& {
         ${ext} config -background $sn_options(def,layout-bg)
         set win [${Parser}.ext subwidget frame]
         pack ${ext} -fill x -side top -anchor c
-        foreach type [lsort -dictionary ${Avail_Parsers}] {
-            set fr ${win}.${type}
-            set ext ${fr}.edit
-            set externaled ${fr}.external
 
-            #file extensitions for there types
-            pack [frame ${fr}] -side top -fill x
+        set row 0
+        foreach type [lsort -dictionary ${Avail_Parsers}] {
+            set ext ${win}.edit${row}
+            set externaled ${win}.external${row}
 
             Entry& ${ext} -width -1 -labelwidth 10 -label ${type}\
               -textvariable opt_Parser_Info(${type},SUF)
-            pack ${ext} -side left -fill x -expand y
+            grid ${ext} -row $row -column 0 -sticky ew
 
             #external editors
             LabelEntryButton& ${externaled} -text [get_indep String\
@@ -929,8 +927,11 @@ itcl_class Preferences& {
               -buttonballoon [get_indep String ChooseINFO]\
               -extensions $sn_options(executable_ext)\
               -defaultextension $sn_options(executable_defaultext)
-            pack ${externaled} -side left
+            grid ${externaled} -row $row -column 1
+
+            incr row
         }
+        grid columnconfigure ${win} 0 -weight 1
 
         #Macro files
         set macfr [tixLabelFrame ${Parser}.macros -label [get_indep String\

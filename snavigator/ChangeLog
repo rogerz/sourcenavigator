@@ -1,3 +1,12 @@
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/preferences.tcl (AddParser): Use a grid layout
+	for the "Language Extensions" entries in the Parser tab.
+	The previous implementation would grow the left entry
+	at the expense of the right entry. One could make the
+	right entry vanish by typing a lot of text into the
+	left entry.
+
 2002-02-21  Mo DeJong  <supermo@bayarea.net>
 
         * gui/preferences.tcl (AddProject): Change
