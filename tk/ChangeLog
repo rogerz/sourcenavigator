@@ -11,6 +11,7 @@
 	actions to this Tcl command instead of using a native
 	C binding so that user code can manipulate the binding
 	in Tcl code.
+	[Source-Navigator bug 570080]
 
 2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
