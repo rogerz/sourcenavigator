@@ -1,5 +1,14 @@
 2002-06-24  Mo DeJong  <supermo@bayarea.net>
 
+	* patches/tk_wmwithdraw.patch: Add patch that fixes
+	win32 initial mapping problems. This fixes the forward
+	button in the tools window, it was not painting when
+	the window was first mapped. This also fixes problems
+	with dialogs that get mapped at one size but then
+	get moved or resized at idle time.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/multiview.tcl (search_grep): Invoke StartGrep not
 	ExecGrep on the grep widget.
 
