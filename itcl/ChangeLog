@@ -1,5 +1,118 @@
 2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Remove old build system files. It is not clear why
+	these files were not removed during the Itcl 3.0
+	to 3.2 transition.
+	
+	* itcl/unix/Makefile.in:
+	* itcl/unix/configure:
+	* itcl/unix/configure.in:
+	* itcl/unix/pkgIndex.tcl.in:
+	* itcl/win/Makefile.in:
+	* itcl/win/configure:
+	* itcl/win/configure.in:
+	* itcl/win/itcl.rc:
+	* itcl/win/itclsh.rc:
+	* itcl/win/makefile.bc:
+	* itcl/win/makefile.vc:
+	* itcl/win/pkgIndex.tcl:
+	* itcl/win/rc/itcl.rc:
+	* itk/unix/Makefile.in:
+	* itk/unix/configure:
+	* itk/unix/configure.in:
+	* itk/unix/pkgIndex.tcl.in:
+	* itk/win/Makefile.in:
+	* itk/win/Makefile.in_first:
+	* itk/win/configure:
+	* itk/win/configure.in:
+	* itk/win/makefile.bc:
+	* itk/win/makefile.vc:
+	* itk/win/pkgIndex.tcl:
+	* itk/win/winMain.c:
+	* itk/win/rc/cursor00.cur:
+	* itk/win/rc/cursor02.cur:
+	* itk/win/rc/cursor04.cur:
+	* itk/win/rc/cursor06.cur:
+	* itk/win/rc/cursor08.cur:
+	* itk/win/rc/cursor0a.cur:
+	* itk/win/rc/cursor0c.cur:
+	* itk/win/rc/cursor0e.cur:
+	* itk/win/rc/cursor10.cur:
+	* itk/win/rc/cursor12.cur:
+	* itk/win/rc/cursor14.cur:
+	* itk/win/rc/cursor16.cur:
+	* itk/win/rc/cursor18.cur:
+	* itk/win/rc/cursor1a.cur:
+	* itk/win/rc/cursor1c.cur:
+	* itk/win/rc/cursor1e.cur:
+	* itk/win/rc/cursor20.cur:
+	* itk/win/rc/cursor22.cur:
+	* itk/win/rc/cursor24.cur:
+	* itk/win/rc/cursor26.cur:
+	* itk/win/rc/cursor28.cur:
+	* itk/win/rc/cursor2a.cur:
+	* itk/win/rc/cursor2c.cur:
+	* itk/win/rc/cursor2e.cur:
+	* itk/win/rc/cursor30.cur:
+	* itk/win/rc/cursor32.cur:
+	* itk/win/rc/cursor34.cur:
+	* itk/win/rc/cursor36.cur:
+	* itk/win/rc/cursor38.cur:
+	* itk/win/rc/cursor3a.cur:
+	* itk/win/rc/cursor3c.cur:
+	* itk/win/rc/cursor3e.cur:
+	* itk/win/rc/cursor40.cur:
+	* itk/win/rc/cursor42.cur:
+	* itk/win/rc/cursor44.cur:
+	* itk/win/rc/cursor46.cur:
+	* itk/win/rc/cursor48.cur:
+	* itk/win/rc/cursor4a.cur:
+	* itk/win/rc/cursor4c.cur:
+	* itk/win/rc/cursor4e.cur:
+	* itk/win/rc/cursor50.cur:
+	* itk/win/rc/cursor52.cur:
+	* itk/win/rc/cursor54.cur:
+	* itk/win/rc/cursor54.cur:
+	* itk/win/rc/cursor56.cur:
+	* itk/win/rc/cursor58.cur:
+	* itk/win/rc/cursor5a.cur:
+	* itk/win/rc/cursor5c.cur:
+	* itk/win/rc/cursor5e.cur:
+	* itk/win/rc/cursor60.cur:
+	* itk/win/rc/cursor62.cur:
+	* itk/win/rc/cursor64.cur:
+	* itk/win/rc/cursor66.cur:
+	* itk/win/rc/cursor68.cur:
+	* itk/win/rc/cursor6a.cur:
+	* itk/win/rc/cursor6c.cur:
+	* itk/win/rc/cursor6e.cur:
+	* itk/win/rc/cursor70.cur:
+	* itk/win/rc/cursor72.cur:
+	* itk/win/rc/cursor74.cur:
+	* itk/win/rc/cursor76.cur:
+	* itk/win/rc/cursor78.cur:
+	* itk/win/rc/cursor7a.cur:
+	* itk/win/rc/cursor7c.cur:
+	* itk/win/rc/cursor7e.cur:
+	* itk/win/rc/cursor80.cur:
+	* itk/win/rc/cursor82.cur:
+	* itk/win/rc/cursor84.cur:
+	* itk/win/rc/cursor86.cur:
+	* itk/win/rc/cursor88.cur:
+	* itk/win/rc/cursor8a.cur:
+	* itk/win/rc/cursor8c.cur:
+	* itk/win/rc/cursor8e.cur:
+	* itk/win/rc/cursor90.cur:
+	* itk/win/rc/cursor92.cur:
+	* itk/win/rc/cursor94.cur:
+	* itk/win/rc/cursor96.cur:
+	* itk/win/rc/cursor98.cur;
+	* itk/win/rc/itk.ico:
+	* itk/win/rc/itk.rc:
+	* itk/win/rc/itkwish.rc:
+
+2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* itcl/Makefile.in: Install .a lib after installing .dll.
 	Don't run ranlib under Win32.
 	* itcl/configure: Regen.
