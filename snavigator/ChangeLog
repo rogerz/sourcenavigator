@@ -1,3 +1,11 @@
+2003-03-11  Steven Johnson  <sjohnson@neurizon.net>
+
+	* gui/projedit.tcl (add_files_cb): Use a foreach
+	loop instead of an array set call since the
+	join optimization used in the method broke
+	when processing files where the name included
+	a space.
+
 2003-03-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (InsertTab, Newline):

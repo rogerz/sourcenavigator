@@ -1172,11 +1172,8 @@ itcl::class Project& {
                     set ${lname}_MAP([string tolower $file]) {}
                 }
             } else {
-                if {[llength [set $lname]] > 0} {
-                    set al [join [set $lname] " {} "]
-                    lappend al {}
-                    array set ${lname}_MAP $al
-                    unset al
+                foreach file [set $lname] {
+                    set ${lname}_MAP($file) {}
                 }
             }
         }
