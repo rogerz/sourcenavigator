@@ -991,12 +991,24 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng-1);
 }
 
-<PHP>\n		{
-#if MATCH_DUMP
-  matched_pattern("\\n", yytext);
-#endif
-  sn_advance_line();
-  sn_reset_column();
+<PHP>{wsn}+ {
+  char* x, *y;
+  #if MATCH_DUMP
+  matched_pattern("{wsn}+", yytext);
+  #endif
+
+  for (x=yytext, y=NULL; *x ; x++) {
+    if (*x == '\n') {
+        y=x+1;
+        sn_advance_line();
+    }
+  }
+  if (y == NULL) {
+    sn_advance_column(yyleng);
+  } else {
+    sn_reset_column();
+    sn_advance_column(x-y);
+  }
 }
 
 <PHP>\\\$		{

@@ -1,5 +1,16 @@
 2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.l: Add a rule that
+	matches any series of space, tab, and
+	newline characters. Remove the rule that
+	matched a plain newline since this is now
+	handled by the new rule. This new implementation
+	does not execute the default character
+	rule for each white space matched so
+	it should execute more quickly.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Rework the token
 	dump output so that newlines are printed
