@@ -1476,11 +1476,19 @@ itcl::class Editor& {
     method proceed_gotoline {f} {
 	global tcl_platform
 
+        # FIXME : This is ugly, but the -linenumber_var gets
+        # changed because the vwait in sn_wait will process
+        # Focus_In which resets the variable. We hack this
+        # by saving and resetting the variable here (ugh).
+        # This fixes goto line under Win32.
+        set linenum [set $itk_option(-linenumber_var)]
+
 	itcl::delete object ${f}
 	update idletasks
 	if {$tcl_platform(platform) == "windows"} {
 	    sn_wait 50
 	}
+        set $itk_option(-linenumber_var) $linenum
 	${this} SetFondPos [set $itk_option(-linenumber_var)] 1 0
     }
 
