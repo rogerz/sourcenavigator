@@ -1,3 +1,9 @@
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure: Regen.
+	* win/configure.in: Set CC and CFLAGS when
+	compiling with VC++. Call AC_CANONICAL_HOST.
+
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/configure: Regen.
