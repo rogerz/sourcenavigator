@@ -346,6 +346,12 @@ proc sn_load_pixmaps {} {
         image create ${pixmap} file_-_image -file ${bitd}/file_-.xpm
         image create ${pixmap} parent_image -file ${bitd}/parent.${xpm}
         image create ${pixmap} filter_image -file ${bitd}/filter.${xpm}
+        image create ${pixmap} exe_+_image -file ${bitd}/exe_+.xpm
+        image create ${pixmap} exe_-_image -file ${bitd}/exe_-.xpm
+        image create ${pixmap} lib_+_image -file ${bitd}/lib_+.xpm
+        image create ${pixmap} lib_-_image -file ${bitd}/lib_-.xpm
+        image create ${pixmap} type_exe_image -file ${bitd}/exe_+.xpm
+        image create ${pixmap} type_lib_image -file ${bitd}/lib_+.xpm
 
         image create ${pixmap} next2_image -file ${bitd}/next2.${xpm}
         image create ${pixmap} prev_image -file ${bitd}/prev.${xpm}

@@ -325,6 +325,12 @@ itcl_class SymBr& {
           -underline [get_indep Pos Files] -variable ${symbr}-sc-files\
           -onvalue files -offvalue "" -command " ${symbr} ExecFilter files\
           exec " -state normal
+        ${m}.edit add checkbutton -label [get_indep String SYMViewBuilds]\
+                                  -underline [get_indep Pos SYMViewBuilds]\
+                                  -variable ${symbr}-sc-builds\
+                                  -onvalue builds -offvalue ""\
+                                  -command " ${symbr} ExecFilter builds exec "\
+                                  -state normal
     }
 
     method Update_View_Entries {} {

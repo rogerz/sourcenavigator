@@ -255,6 +255,12 @@ itcl::class Retr& {
             set ${this}-sc-files ""
             set ScopesFilter(files) ""
         }
+
+        if {[lsearch -exact ${scopes} builds] != -1} {
+            set ${this}-sc-builds "builds"
+        } else {
+            set ${this}-sc-builds ""
+        }
     }
 
     method Exclusive_Mode {chkfr srchbtn} {
@@ -306,6 +312,12 @@ itcl::class Retr& {
             set ${this}-sc-files ""
         } else {
             set ${this}-sc-files files
+        }
+
+        if {${scope} != "builds"} {
+            set ${this}-sc-builds ""
+        } else {
+            set ${this}-sc-builds builds
         }
 
         #execute search every time the filter is changed
@@ -510,6 +522,18 @@ itcl::class Retr& {
             ${this}.list toggle_column 1 "" 1
             ${this}.list toggle_column 2 "" 1
             ${this}.list toggle_column 3 "" 0
+            ${this}.list toggle_column 4 "" 0
+        } elseif {${scopes} == "builds"} {
+            ${this}.list change_label 0 [get_indep String SYMTabBuildTarget]
+            ${this}.list change_label 1 [get_indep String Directory]
+            ${this}.list change_label 2 [get_indep String SYMTabBuildStatus]
+            ${this}.list change_label 3 [get_indep String SYMTabBuildRule]
+            ${this}.list change_label 4 ""
+
+            ${this}.list toggle_column 0 "" 1
+            ${this}.list toggle_column 1 "" 1
+            ${this}.list toggle_column 2 "" 1
+            ${this}.list toggle_column 3 "" 1
             ${this}.list toggle_column 4 "" 0
         } else {
             set type ""

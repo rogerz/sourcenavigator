@@ -707,4 +707,27 @@ itcl::class snBuildTarget {
 
 }
 
+# These procedures are used by the GUI to determine
+# information about build targets without the
+# over head of creating and destroying an object.
 
+proc GetTargetType {TargetName} {
+
+    # Get Target Type
+    set db_target_type [paf_db_proj get -key "IDETargetType${TargetName}"]
+        
+    switch $db_target_type {
+       "Executable" { set db_target_type exe}
+       "Library" { set db_target_type lib}
+    }
+
+    return $db_target_type
+}
+
+proc GetTargetSources {TargetName} {
+        # Get Source Files
+        set SrcFiles [paf_db_proj get -key "IDESourceFiles${TargetName}"]
+        return $SrcFiles
+}
+
+       

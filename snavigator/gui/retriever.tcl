@@ -323,6 +323,18 @@ itcl_class Retriever& {
                 } else {
                     set img file_-_image
                 }
+            } elseif {[string first "exe" $img] == 0} {
+                if {${ret} == "view"} {
+                    set img exe_+_image
+                } else {
+                    set img exe_-_image
+                }
+            } elseif {[string first "lib" $img] == 0} {
+                if {${ret} == "view"} {
+                    set img lib_+_image
+                } else {
+                    set img lib_-_image
+                }
             } else {
                 if {${ret} == "view"} {
                     set img type_cl+_image
@@ -338,7 +350,7 @@ itcl_class Retriever& {
         }
         set txt [lindex [${tree} get ${idx}] 0]
         get_key_and_scope ${txt} key scope
-
+        
         #expand classes and files
         if {${scope} == "cl"} {
             set dat [split [${tree} itemcget ${idx} -data] \t]
@@ -376,6 +388,25 @@ itcl_class Retriever& {
                 ${tree} itemconfig ${idx} -image type_cl-_image
             }
         }\
+        elseif {${scope} == "exe" || ${scope} == "lib"} {
+            set target $key
+
+            set target_files [GetTargetSources $target]
+            set target_file_list ""
+
+            foreach target_file $target_files {
+               lappend target_file_list "[file tail $target_file]\t[file dirname $target_file]"
+            }
+
+            ${dspproc} ${cls}.list $target_file_list ${idx}
+
+            set num [${tree} itemcget ${idx} -children]
+            if {${num} > 0} {
+                ${tree} itemconfig ${idx} -image ${scope}_-_image
+            } else {
+                ${tree} itemconfig ${idx} -image ${scope}_image
+            }
+        }\
         elseif {${scope} == ""} {
             set pars [split [${tree} get ${idx}] \t]
             set f [lindex ${pars} 0]
@@ -383,6 +414,7 @@ itcl_class Retriever& {
             if {${d} != ""} {
                 set f [file join ${d} ${f}]
             }
+
             ${dspproc} ${cls}.list [read_matched_from_db "" f -exact "" ""\
               "" ${f}] ${idx}
             set num [${tree} itemcget ${idx} -children]
@@ -577,6 +609,27 @@ proc edit_member {w {what "md"} {go ""}} {
     set cols [get_cols_and_offset ${w} file pos]
     if {${cols} == ""} {
         bell
+        return
+    }
+
+    get_key_and_scope [lindex ${cols} 0] sym scope
+    
+    # Are we trying to edit a build target?
+    if {${scope} == "exe" || ${scope} == "lib"} {
+        # Invoke target editor
+        snEditTarget .snte ${sym}
+
+        .snte transient
+
+        .snte activate
+
+        itcl::delete object .snte
+
+        # FIXME : This is a really nasty hack!
+        foreach buildwindow [itcl::find objects -class Make] {
+            ${buildwindow} RefreshTargetInfo
+        }
+
         return
     }
 
@@ -895,6 +948,21 @@ proc read_matched_from_db {cls what mtype {pattern ""} {type ""} {param ""}\
                         set res ""
                     }
                 }
+            "builds" {
+                    # read all the build targets.
+                    if {[info commands paf_db_proj] != ""} {
+                        set res_tmp [eval paf_db_proj get -key snide_targets]
+ 
+                        foreach target $res_tmp {
+                          set dir [paf_db_proj get -key "IDEBuildDir${target}"]
+                          lappend res \
+                            "${target}([GetTargetType $target])\t$dir\t \t \t "
+                        }
+                    } else {
+                        set res ""
+                    }
+                }  
+
             default {
 
                     #following types haven't class names
@@ -918,6 +986,7 @@ proc read_matched_from_db {cls what mtype {pattern ""} {type ""} {param ""}\
             eval lappend cnt ${res}
         }
     }
+
     if {![info exists cnt]} {
         set cnt ""
     }

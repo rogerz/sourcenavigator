@@ -964,6 +964,12 @@ IDEBRDeleteMacro,[Löschen
 IDEBRCreateMacro,[Neu
 IDEBRChangeMacro,[Ändern
 
+# Symbol Browser build target display.
+SYMViewBuilds,[Builds
+SYMTabBuildTarget,Build target
+SYMTabBuildStatus,Status
+SYMTabBuildRule,Rule
+
 # EL/IX
 ElixFilesys,Filesystem
 ElixDebug,Debugging

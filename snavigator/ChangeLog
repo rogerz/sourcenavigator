@@ -1,3 +1,32 @@
+
+2003-02-17  Ian Roxborough  <irox@ix.netcom.com>
+	
+	* gui/buildtarget.tcl (GetTargetType, GetTargetSources):
+	New procs for getting target data for the UI.
+	* gui/retrieverpane.tcl (Retr&::RestoreScopes,
+	Retr&::ExecFilter, Retr&::start_search): Add build
+	target types to symbol browser.
+	* gui/retriever.tcl (Retriever&::expand_classes, 
+	Retriever&::edit_member):  If the user expands a
+	build target in symbol browser, show the source files
+	of the build target.  Bring up target editor if
+	the user double clicks on a build target.
+	* gui/symbolbrowser.tcl (SymBr&::Add_View_Entries):
+	Add "Builds" to the view menu.
+	* gui/utilities.tcl (sn_load_pixmaps) Add library
+	and executable icons for the symbol browser (Might
+	want to replace these with better art work later).
+	* gui/tclIndex: Regenerated.
+	* bitmaps/exe_-.xpm:
+	* bitmaps/exe_+.xpm:
+	* bitmaps/lib_-.xpm:
+	* bitmaps/lib_+.xpm: New icons for symbol browser.
+	* etc/english.txt.in: Added new strings.
+	* etc/german.txt: Added new strings (place markers
+        in English).
+	* etc/Makefile.am: Install new icons.
+	* etc/Makefile.in: Regenerated.
+
 2003-02-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/fortran/fortran.c: Regen.
