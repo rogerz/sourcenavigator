@@ -1,5 +1,9 @@
 2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Add SN-52A1-2003-07-23 tag.
+
+2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* NEWS: Add release notes for 5.1 series and
 	5.2a1.
 	* README.TXT: Note PHP and Python support.
