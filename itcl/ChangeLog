@@ -1,3 +1,12 @@
+2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/Makefile.in:
+	* itcl/unix/Makefile.in:
+	* itk/Makefile.in:
+	* itk/unix/Makefile.in:
+	* iwidgets3.0.0/Makefile.in: Add DESTDIR support
+	for "make install" into temp location.
+
 2003-12-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itcl/configure: Regen.

@@ -35,7 +35,7 @@ exec_prefix =	@exec_prefix@
 # to be different than those used for actually reference files at
 # run-time.  INSTALL_ROOT is prepended to $prefix and $exec_prefix
 # when installing files.
-INSTALL_ROOT =
+INSTALL_ROOT = $(DESTDIR)
 
 # Directory from which applications will reference the library of
 # [incr Tcl] scripts (note: you can set the ITCL_LIBRARY environment
