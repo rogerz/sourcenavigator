@@ -1060,6 +1060,7 @@ proc tkTextInsertChar {w s} {
     if {$tkBind(delSel) && [${w} tag nextrange sel 1.0 end] != "" &&\
       [${w} compare sel.first <= insert] && [${w} compare sel.last >= insert]} {
         set cutbuf [tkTextCopyTagBuffer ${w} sel.first sel.last]
+        SyncEditors $w delete sel.first sel.last
         catch {${w} delete sel.first sel.last}
     }\
     elseif $tkText(${w},ovwrt) {
