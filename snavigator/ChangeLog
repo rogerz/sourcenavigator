@@ -1,3 +1,10 @@
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (destructor, close, start, isAvailable):
+	Invoke isAvailable if it has not been called so that the
+	grep_exe variable will be set. Set the grep_fd to "" when
+	closing. Don't try to close a grep_fd unless it is not "".
+
 2002-06-20  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/execgrepdriver.tcl (isValidPattern, start, isAvailable):

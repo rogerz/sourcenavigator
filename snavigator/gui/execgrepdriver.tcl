@@ -45,7 +45,7 @@ itcl::class sourcenav::ExecGrepDriver {
 
     # Variables
 
-    private common grep_exe ""
+    private common grep_exe
     private variable grep_running
     private variable grep_canceled
     private variable grep_fd ""
@@ -76,7 +76,7 @@ itcl::class sourcenav::ExecGrepDriver {
 
 itcl::body sourcenav::ExecGrepDriver::destructor { } {
     # Make sure any grep process is terminated
-    if {[catch {::close ${grep_fd}} err]} {
+    if {${grep_fd} != "" && [catch {::close ${grep_fd}} err]} {
         sn_log "caught error in ExecGrepDriver dtor : \"$err\""
     }
 }
@@ -99,6 +99,13 @@ itcl::body sourcenav::ExecGrepDriver::start { pat files nocase max } {
     # The actual count is off by one because we update the % done meter
     # based on the match read back from grep
     incr files_Count -1
+
+    # isAvailable has not been invoked, do it before using grep_exe
+    if {![info exists grep_exe]} {
+        if {![isAvailable]} {
+            error "exec grep driver not available"
+        }
+    }
 
     # grep command
     set cmd [list $grep_exe "-n"]
@@ -307,10 +314,11 @@ itcl::body sourcenav::ExecGrepDriver::close {} {
     # close older descriptor to be secure that no other grep
     # is running
 
-    if {[catch {::close ${grep_fd}} err]} {
+    if {${grep_fd} != "" && [catch {::close ${grep_fd}} err]} {
         sn_log "caught error while closing grep fd : \"$err\""
     }
     sn_log "closed grep fd ${grep_fd}"
+    set grep_fd ""
     set grep_running 0
 }
 
@@ -384,7 +392,7 @@ itcl::body sourcenav::ExecGrepDriver::getScaleValueVariable {} {
 itcl::body sourcenav::ExecGrepDriver::isAvailable {} {
     global tcl_platform sn_path
 
-    if {![string equal ${grep_exe} ""]} {
+    if {[info exists grep_exe]} {
         return 1
     }
 
