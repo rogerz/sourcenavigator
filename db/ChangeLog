@@ -1,5 +1,19 @@
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
+	Upgrade db build system from the old maintainer-tools
+	build scripts to the net release of autoconf 2.13
+	and automake 1.4.
+
+	* Makefile.in: Regen.
+	* aclocal.m4: Regen.
+	* autogen.sh: Add new file.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* missing: Add new file.
+	* PORT/Makefile.in: Regen.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
 	* PORT/Win32/include/NTunixstubs.h: Don't
 	define dev_t to avoid warning from VC++
 	and benign redefinition of type.

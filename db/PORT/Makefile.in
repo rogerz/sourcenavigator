@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.3b from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-# Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -48,7 +48,7 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 transform = @program_transform_name@
@@ -76,8 +76,8 @@ SH5 = @SH5@
 VERSION = @VERSION@
 WINFLAGS = @WINFLAGS@
 
-INCLUDES = -I$(srcdir)/../include -I$(srcdir)/include -D__DBINTERFACE_PRIVATE \
-$(WINFLAGS)
+INCLUDES = -I$(srcdir)/../include -I$(srcdir)/include -D__DBINTERFACE_PRIVATE $(WINFLAGS)
+
 
 # ################################################################
 #
@@ -86,23 +86,18 @@ $(WINFLAGS)
 
 noinst_LIBRARIES = libdb.a
 
-H_OBJS = hash.$(OBJEXT) hash_bigkey.$(OBJEXT) hash_buf.$(OBJEXT) \
-hash_func.$(OBJEXT) hash_log2.$(OBJEXT) hash_page.$(OBJEXT) \
-hsearch.$(OBJEXT) ndbm.$(OBJEXT)
+H_OBJS = hash.$(OBJEXT) hash_bigkey.$(OBJEXT) hash_buf.$(OBJEXT) hash_func.$(OBJEXT) hash_log2.$(OBJEXT) hash_page.$(OBJEXT) hsearch.$(OBJEXT) ndbm.$(OBJEXT)
 
-B_OBJS = bt_close.$(OBJEXT) bt_conv.$(OBJEXT) bt_debug.$(OBJEXT) \
-bt_delete.$(OBJEXT) bt_get.$(OBJEXT) bt_open.$(OBJEXT) \
-bt_overflow.$(OBJEXT) bt_page.$(OBJEXT) bt_put.$(OBJEXT) \
-bt_search.$(OBJEXT) bt_seq.$(OBJEXT) bt_split.$(OBJEXT) \
-bt_utils.$(OBJEXT)
+
+B_OBJS = bt_close.$(OBJEXT) bt_conv.$(OBJEXT) bt_debug.$(OBJEXT) bt_delete.$(OBJEXT) bt_get.$(OBJEXT) bt_open.$(OBJEXT) bt_overflow.$(OBJEXT) bt_page.$(OBJEXT) bt_put.$(OBJEXT) bt_search.$(OBJEXT) bt_seq.$(OBJEXT) bt_split.$(OBJEXT) bt_utils.$(OBJEXT)
+
 
 D_OBJS = db.$(OBJEXT)
 
 M_OBJS = mpool.$(OBJEXT)
 
-R_OBJS = rec_close.$(OBJEXT) rec_delete.$(OBJEXT) rec_get.$(OBJEXT) \
-rec_open.$(OBJEXT) rec_put.$(OBJEXT) rec_search.$(OBJEXT) \
-rec_seq.$(OBJEXT) rec_utils.$(OBJEXT)
+R_OBJS = rec_close.$(OBJEXT) rec_delete.$(OBJEXT) rec_get.$(OBJEXT) rec_open.$(OBJEXT) rec_put.$(OBJEXT) rec_search.$(OBJEXT) rec_seq.$(OBJEXT) rec_utils.$(OBJEXT)
+
 
 libdb_a_SOURCES = @HACK@
 EXTRA_libdb_a_SOURCES = hack.c
@@ -136,28 +131,26 @@ dbtest_OBJECTS =
 dbtest_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LINK = $(CC) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  README Makefile.am Makefile.in memmove.c snprintf.c \
 strerror.c
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
-GZIP = --best
-DEP_FILES =  .deps/hack.P .deps/memmove.P .deps/snprintf.P \
-.deps/strerror.P
+TAR = gtar
+GZIP_ENV = --best
 SOURCES = $(libdb_a_SOURCES) $(EXTRA_libdb_a_SOURCES) $(dbtest_SOURCES)
 OBJECTS = $(libdb_a_OBJECTS) $(dbtest_OBJECTS)
 
-all: Makefile $(LIBRARIES)
-
+all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .o .obj .s
-$(srcdir)/Makefile.in: @MAINT@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu PORT/Makefile
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --cygnus PORT/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -170,6 +163,9 @@ clean-noinstLIBRARIES:
 distclean-noinstLIBRARIES:
 
 maintainer-clean-noinstLIBRARIES:
+
+.c.o:
+	$(COMPILE) -c $<
 
 # FIXME: We should only use cygpath when building on Windows,
 # and only if it is available.
@@ -214,8 +210,12 @@ dbtest$(EXEEXT): $(dbtest_OBJECTS) $(dbtest_DEPENDENCIES)
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
 	here=`pwd` && cd $(srcdir) \
-	  && mkid -f$$here/ID $(SOURCES) $(HEADERS) $(LISP)
+	  && mkid -f$$here/ID $$unique $(LISP)
 
 TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
@@ -241,59 +241,42 @@ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 subdir = PORT
 
 distdir: $(DISTFILES)
-	here=`cd $(top_builddir) && pwd`; \
-	top_distdir=`cd $(top_distdir) && pwd`; \
-	distdir=`cd $(distdir) && pwd`; \
-	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu PORT/Makefile
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
-	  test -f $(distdir)/$$file \
-	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
-	  || cp -p $$d/$$file $(distdir)/$$file; \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
 	done
-
-DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
-
--include $(DEP_FILES)
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-
-maintainer-clean-depend:
-	-rm -rf .deps
-
-%.o: %.c
-	@echo '$(COMPILE) -c $<'; \
-	$(COMPILE) -Wp,-MD,.deps/$(*F).P -c $<
-
-%.lo: %.c
-	@echo '$(LTCOMPILE) -c $<'; \
-	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).p -c $<
-	@-sed -e 's/^\([^:]*\)\.o:/\1.lo \1.o:/' \
-	  < .deps/$(*F).p > .deps/$(*F).P
-	@-rm -f .deps/$(*F).p
-info:
-dvi:
-check: all $(check_PROGRAMS)
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-local
-installcheck:
-install-exec: 
-	@$(NORMAL_INSTALL)
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-info-am: 
+install-info: install-info-am
+install-exec-am:
+install-exec: install-exec-am
 
-install-data: 
-	@$(NORMAL_INSTALL)
+install-data-am:
+install-data: install-data-am
 
-install: install-exec install-data all
-	@:
-
-uninstall: 
-
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(LIBRARIES)
+all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 
 
@@ -306,24 +289,31 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-mostlyclean:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
 		mostlyclean-checkPROGRAMS mostlyclean-tags \
-		mostlyclean-depend mostlyclean-generic
+		mostlyclean-generic
 
-clean:  clean-noinstLIBRARIES clean-compile clean-checkPROGRAMS \
-		clean-tags clean-depend clean-generic mostlyclean
+mostlyclean: mostlyclean-am
 
-distclean:  distclean-noinstLIBRARIES distclean-compile \
-		distclean-checkPROGRAMS distclean-tags distclean-depend \
-		distclean-generic clean
-	-rm -f config.status
+clean-am:  clean-noinstLIBRARIES clean-compile clean-checkPROGRAMS \
+		clean-tags clean-generic mostlyclean-am
 
-maintainer-clean:  maintainer-clean-noinstLIBRARIES \
+clean: clean-am
+
+distclean-am:  distclean-noinstLIBRARIES distclean-compile \
+		distclean-checkPROGRAMS distclean-tags \
+		distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
 		maintainer-clean-compile maintainer-clean-checkPROGRAMS \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
 
 .PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
 clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
@@ -331,10 +321,11 @@ mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-checkPROGRAMS \
 distclean-checkPROGRAMS clean-checkPROGRAMS \
 maintainer-clean-checkPROGRAMS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info dvi \
-check-local installcheck install-exec install-data install uninstall \
-all installdirs mostlyclean-generic distclean-generic clean-generic \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi \
+check-local check check-am installcheck-am installcheck install-info-am \
+install-info install-exec-am install-exec install-data-am install-data \
+install-am install uninstall-am uninstall all-redirect all-am all \
+installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
