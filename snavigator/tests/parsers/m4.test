@@ -339,6 +339,70 @@ AC_DEFUN([MACRO] , [
 }
 
 
+
+
+tcltest::test highlight-1.0 { highlight } {
+    browse_highlights [save_file f.m4 {
+# Comment
+}]
+} {1 rem 2.0 2.9}
+
+tcltest::test highlight-1.1 { highlight } {
+    browse_highlights [save_file f.m4 {
+ # Comment
+}]
+} {1 rem 2.1 2.10}
+
+tcltest::test highlight-1.2 { highlight } {
+    browse_highlights [save_file f.m4 {
+	dnl Comment
+}]
+} {1 rem 2.1 2.12}
+
+
+tcltest::test highlight-2.0 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+HI=1
+}]
+} {1 gv 2.0 2.2}
+
+tcltest::test highlight-2.1 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+echo $HI
+}]
+} {1 gv 2.5 2.8}
+
+tcltest::test highlight-2.2 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+echo $1
+}]
+} {}
+
+tcltest::test highlight-2.3 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+_var=1
+}]
+} {1 gv 2.0 2.4}
+
+tcltest::test highlight-2.4 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+$_var
+}]
+} {1 gv 2.0 2.5}
+
+tcltest::test highlight-2.5 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+${var}
+}]
+} {1 gv 2.0 2.6}
+
+
+# FIXME: Add support for sh heredoc style string
+# No subst should be done in the strings.
+# cat <<_ATEOF
+# ............
+# _ATEOF
+
 # cleanup
 file delete f.m4
 file delete xout

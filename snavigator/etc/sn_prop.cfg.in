@@ -242,7 +242,9 @@ sn_add_parser python \
 
 sn_add_parser m4 \
         -suffix {*.m4 *.ac configure.in} \
-        -brow_cmd $sn_path(bindir)/m4browser
+        -brow_cmd $sn_path(bindir)/m4browser \
+        -high_cmd $sn_path(bindir)/m4browser \
+	-high_switch "-h"
 
 # PHP files
 

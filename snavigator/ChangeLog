@@ -1,5 +1,28 @@
 2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* etc/sn_prop.cfg.in: Enable browser based
+	highlight for m4 language.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Fixup symbol def
+	so that $1 is not seen as a global var
+	and so ${var} is seen as a global var.
+	Insert highlights for comments and variables.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add global and
+	local variable highlighting.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Add support for SN_HIGH_VAR_GLOBAL and
+	SN_HIGH_VAR_LOCAL highlight types.
+	* parsers/toolbox/snptools.h: Declare
+	SN_HIGH_VAR_GLOBAL and SN_HIGH_VAR_LOCAL.
+	* tests/parsers/m4.test: Add highlight
+	tests for comments and variables.
+	* tests/parsers/php.test: Add highlight
+	tests for variables and variables inside
+	strings.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Include the
 	$ character in the variable token text

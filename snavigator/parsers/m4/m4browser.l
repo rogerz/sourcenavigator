@@ -100,7 +100,7 @@ void matched_pattern(char * pattern, char * text);
 %x FUNCTION
 
 ws		[ \t]
-symbol		[a-zA-Z0-9_]+
+symbol		[a-zA-Z_][a-zA-Z0-9_]+
 quoted-symbol	({symbol}|\[{symbol}\])
 func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
@@ -143,13 +143,22 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   sn_reset_column();
 }
 
-<INITIAL,FUNCTION>{ws}*(#|dnl{ws}).*\n {
+<INITIAL,FUNCTION>{ws}*("#"|"dnl"{ws}).*\n {
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
 
   matched_pattern("{ws}*(#|dnl{ws}).*\\n", yytext);
 
   while (*x == '\t' || *x == ' ') { x++; }
+
+  /* Insert comment highlight */
+
+  sn_highlight(SN_HIGH_COMMENT,
+      sn_line(),
+      sn_column() + (x - yytext),
+      sn_line(),
+      sn_column() + yyleng - 1);
+
   if (*x == '#') {
     x++;
   } else if (*x == 'd') {
@@ -173,10 +182,16 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   sn_reset_column();
 }
 
-<INITIAL,FUNCTION>\${symbol} {
+<INITIAL,FUNCTION>"$"({symbol}|"{"{symbol}"}") {
   char * x = (char *) yytext;
 
   matched_pattern("${symbol}", yytext);
+
+  /* Add global var highlight */
+  
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng);
 
   /* Trim leading $ off the front of the symbol */
 
@@ -203,6 +218,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
                  SN_REF_READ);
 
   assert(result == 0);
+
   sn_advance_column(yyleng);
 }
 
@@ -211,6 +227,12 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   char * y;
   
   matched_pattern("{symbol}=", yytext);
+
+  /* Add global var highlight */
+
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng - 1);
 
   /* Trim the '=' off the end of the string */
   

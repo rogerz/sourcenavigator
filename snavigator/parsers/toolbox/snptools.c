@@ -399,6 +399,12 @@ void sn_highlight(enum sn_highlights type,
     case SN_HIGH_STRING:
       tag = "str";
       break;
+    case SN_HIGH_VAR_GLOBAL:
+      tag = "gv";
+      break;
+    case SN_HIGH_VAR_LOCAL:
+      tag = "lv";
+      break;
     default:
       sn_error("Unknown highlight type %d\n", type);
       sn_panic();

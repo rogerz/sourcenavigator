@@ -2883,6 +2883,10 @@ YY_RULE_SETUP
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
+
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
@@ -2906,7 +2910,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 1265 "phpbrowser.l"
+#line 1269 "phpbrowser.l"
 {
   if (current_function) {
     current_function_brace_count++;
@@ -2916,7 +2920,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 1272 "phpbrowser.l"
+#line 1276 "phpbrowser.l"
 {
   if (current_function && (--current_function_brace_count == 0)) {
 #ifdef TOKEN_DEBUG
@@ -2935,7 +2939,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 1288 "phpbrowser.l"
+#line 1292 "phpbrowser.l"
 {
   int line_start, line_end, column_start, column_end;
   char * filename;
@@ -2995,7 +2999,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 1345 "phpbrowser.l"
+#line 1349 "phpbrowser.l"
 {
   SearchEntry entry;
 
@@ -3031,6 +3035,10 @@ YY_RULE_SETUP
   fprintf(tokenout, "added global \"%s\"\n", entry.key);
 #endif
         }
+
+        sn_highlight(SN_HIGH_VAR_GLOBAL,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
     }
 
     free_head_token(); /* VARIABLE || COMMA */
@@ -3041,7 +3049,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 1388 "phpbrowser.l"
+#line 1396 "phpbrowser.l"
 {
   char* fname;
   int line;
@@ -3078,7 +3086,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1422 "phpbrowser.l"
+#line 1430 "phpbrowser.l"
 {
   int offset;
   
@@ -3101,7 +3109,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 1442 "phpbrowser.l"
+#line 1450 "phpbrowser.l"
 {
   int offset;
   
@@ -3124,7 +3132,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1462 "phpbrowser.l"
+#line 1470 "phpbrowser.l"
 {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
@@ -3156,7 +3164,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 1491 "phpbrowser.l"
+#line 1499 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable read at token %d\n", token_index);
@@ -3169,7 +3177,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 1501 "phpbrowser.l"
+#line 1509 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
@@ -3186,7 +3194,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 1515 "phpbrowser.l"
+#line 1523 "phpbrowser.l"
 {
   enum sn_highlights type;
 
@@ -3223,12 +3231,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 1549 "phpbrowser.l"
+#line 1557 "phpbrowser.l"
 
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 1551 "phpbrowser.l"
+#line 1559 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -3236,7 +3244,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 1557 "phpbrowser.l"
+#line 1565 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -3268,7 +3276,7 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 1582 "phpbrowser.l"
+#line 1590 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -3396,7 +3404,7 @@ case YY_STATE_EOF(HDSTRING):
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 1707 "phpbrowser.l"
+#line 1715 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -4286,7 +4294,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1707 "phpbrowser.l"
+#line 1715 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */
@@ -4808,8 +4816,14 @@ void emit_var_access(Token *tok, VarAccess acc) {
     }
   }
 
-  if (highlight_file) {
-      /* Highlight as either a global or local var */
+  if (ref_to_symbol_type == SN_REF_TO_GLOB_VAR) {
+      sn_highlight(SN_HIGH_VAR_GLOBAL,
+          line_start, column_start-1,
+          line_end, column_end);
+  } else {
+      sn_highlight(SN_HIGH_VAR_LOCAL,
+          line_start, column_start-1,
+          line_end, column_end);
   }
 }
 

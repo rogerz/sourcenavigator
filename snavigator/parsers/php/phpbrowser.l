@@ -1241,6 +1241,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
+
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
@@ -1377,6 +1381,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "added global \"%s\"\n", entry.key);
 #endif
         }
+
+        sn_highlight(SN_HIGH_VAR_GLOBAL,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
     }
 
     free_head_token(); /* VARIABLE || COMMA */
@@ -2225,8 +2233,14 @@ void emit_var_access(Token *tok, VarAccess acc) {
     }
   }
 
-  if (highlight_file) {
-      /* Highlight as either a global or local var */
+  if (ref_to_symbol_type == SN_REF_TO_GLOB_VAR) {
+      sn_highlight(SN_HIGH_VAR_GLOBAL,
+          line_start, column_start-1,
+          line_end, column_end);
+  } else {
+      sn_highlight(SN_HIGH_VAR_LOCAL,
+          line_start, column_start-1,
+          line_end, column_end);
   }
 }
 
