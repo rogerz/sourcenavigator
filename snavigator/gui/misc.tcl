@@ -799,12 +799,6 @@ proc sn_session {} {
 }
 
 
-# Start SN Parser debug session.
-proc snpdbg_session {} {
-    tk_dialog auto "Not Implemented Yet!" "Not Implemented Yet!" \
-      question_image 0 Ok
-    exit
-}
 
 # This function is even called when a new interpreter is created
 # to open a project or to create a new project.
@@ -1439,7 +1433,7 @@ proc sn_create_new_project {{import_file ""}} {
 
     # Concatenate the known file extensions!
     # to pass it to the glob command
-    set glob_expr ""
+    set glob_expr [list]
     foreach p ${Avail_Parsers} {
         foreach e $Parser_Info(${p},SUF) {
             if {[string index ${e} 0] != "*"} {
@@ -3928,7 +3922,11 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
     } else {
         set swi $sn_options(sys,parser_switches)
     }
-    lappend cmd -n $sn_options(db_files_prefix) -y ${coll}
+    # The -n option is passed to cbrowser and cbrowser2 only
+    if {[string first cbrowser $cmd] != -1} {
+        lappend cmd -n $sn_options(db_files_prefix)
+    }
+    lappend cmd -y ${coll}
     if {${swi} != ""} {
         eval lappend cmd ${swi}
     }

@@ -1,3 +1,24 @@
+2004-01-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Add initial attempt at a parser debug utility
+	called snpdbg. This util will run the parsers
+	over source code in a directory and detect
+	crashes in the parser. Users have often run
+	into parser problems but they lack the
+	ability to identify where the problem is exactly.
+
+	* NEWS: Add note about snpdbg.
+	* gui/Makefile.am: Add snpdbg.tcl to install rule.
+	* gui/Makefile.in: Regen.
+	* gui/misc.tcl: Define snpdbg_session in snpdbg.tcl.
+	* gui/snpdbg.tcl: Initial version of parser debugger.
+	* gui/tclIndex: Add snpdbg.tcl.
+	* snavigator/win/Makefile.am: Add build rules
+	for snpdbg.
+	* snavigator/win/Makefile.in: Regen.
+	* snavigator/win/snpdbg.c: Add Windows startup
+	executable for snpdbg program.
+
 2004-01-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Cleanup init script used with Source-Navigator,

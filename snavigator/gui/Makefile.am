@@ -32,7 +32,7 @@ misc.tcl panewd.tcl paths.tcl printdialog.tcl \
 rcs.tcl selector.tcl text.tcl utilities.tcl version.tcl \
 history.tcl retriever.tcl statistics.tcl \
 multiview.tcl multichild.tcl classpane.tcl classtreepane.tcl \
-editorpane.tcl symbolbrowser.tcl includepane.tcl xrefpane.tcl \
+editorpane.tcl snpdbg.tcl symbolbrowser.tcl includepane.tcl xrefpane.tcl \
 retrieverpane.tcl greppane.tcl makepane.tcl preferences.tcl tools.tcl \
 window.tcl projedit.tcl font.tcl projmng.tcl \
 gdbtk.tcl tmeter.tcl project.tcl targetmgr.tcl buildtarget.tcl \

@@ -178,18 +178,22 @@ YACC = @YACC@
 
 AUTOMAKE_OPTIONS = cygnus
 
-@WINDOWS_TRUE@bin_PROGRAMS = snavigator snsdk
+@WINDOWS_TRUE@bin_PROGRAMS = snavigator snsdk snpdbg
 @WINDOWS_FALSE@bin_PROGRAMS = 
 @WINDOWS_TRUE@snavigator_SOURCES = snavigator.c
 @WINDOWS_TRUE@snavigator_LDFLAGS = $(WIN32LDAPP)
 @WINDOWS_TRUE@snavigator_LDADD = snavres.$(OBJEXT) $(WIN32LIBS)
+@WINDOWS_TRUE@snpdbg_SOURCES = snpdbg.c
+@WINDOWS_TRUE@snpdbg_LDFLAGS = $(WIN32LDAPP)
+@WINDOWS_TRUE@snpdbg_LDADD = $(WIN32LIBS)
 @WINDOWS_TRUE@snsdk_SOURCES = winCon.c
 @WINDOWS_TRUE@snsdk_LDADD = $(WIN32LIBS)
 @WINDOWS_TRUE@snsdk_CFLAGS = -DAPPNAME=\"..\\\\bin\\\\hyper.exe\"
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-@WINDOWS_TRUE@bin_PROGRAMS =  snavigator$(EXEEXT) snsdk$(EXEEXT)
+@WINDOWS_TRUE@bin_PROGRAMS =  snavigator$(EXEEXT) snsdk$(EXEEXT) \
+@WINDOWS_TRUE@snpdbg$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)
 
 
@@ -202,6 +206,8 @@ LIBS = @LIBS@
 @WINDOWS_TRUE@snsdk_OBJECTS =  winCon.$(OBJEXT)
 @WINDOWS_TRUE@snsdk_DEPENDENCIES = 
 snsdk_LDFLAGS = 
+@WINDOWS_TRUE@snpdbg_OBJECTS =  snpdbg.$(OBJEXT)
+@WINDOWS_TRUE@snpdbg_DEPENDENCIES = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -212,8 +218,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(snavigator_SOURCES) $(snsdk_SOURCES)
-OBJECTS = $(snavigator_OBJECTS) $(snsdk_OBJECTS)
+SOURCES = $(snavigator_SOURCES) $(snsdk_SOURCES) $(snpdbg_SOURCES)
+OBJECTS = $(snavigator_OBJECTS) $(snsdk_OBJECTS) $(snpdbg_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -283,6 +289,10 @@ snavigator$(EXEEXT): $(snavigator_OBJECTS) $(snavigator_DEPENDENCIES)
 snsdk$(EXEEXT): $(snsdk_OBJECTS) $(snsdk_DEPENDENCIES)
 	@rm -f snsdk$(EXEEXT)
 	$(LINK) $(snsdk_LDFLAGS) $(snsdk_OBJECTS) $(snsdk_LDADD) $(LIBS)
+
+snpdbg$(EXEEXT): $(snpdbg_OBJECTS) $(snpdbg_DEPENDENCIES)
+	@rm -f snpdbg$(EXEEXT)
+	$(LINK) $(snpdbg_LDFLAGS) $(snpdbg_OBJECTS) $(snpdbg_LDADD) $(LIBS)
 
 tags: TAGS
 

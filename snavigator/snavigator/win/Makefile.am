@@ -24,13 +24,17 @@ AUTOMAKE_OPTIONS = cygnus
 ## This directory is only used when building for Windows.
 
 if WINDOWS
-bin_PROGRAMS = snavigator snsdk
+bin_PROGRAMS = snavigator snsdk snpdbg
 snavigator_SOURCES = snavigator.c
 snavigator_LDFLAGS = $(WIN32LDAPP)
 snavigator_LDADD = snavres.$(OBJEXT) $(WIN32LIBS)
+snpdbg_SOURCES = snpdbg.c
+snpdbg_LDFLAGS = $(WIN32LDAPP)
+snpdbg_LDADD = $(WIN32LIBS)
 snsdk_SOURCES = winCon.c
 snsdk_LDADD = $(WIN32LIBS)
 snsdk_CFLAGS =  -DAPPNAME=\"..\\\\bin\\\\hyper.exe\"
+
 
 winCon.$(OBJEXT): winCon.c
 	$(COMPILE) $(snsdk_CFLAGS) -c $<
