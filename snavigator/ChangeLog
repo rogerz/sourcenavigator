@@ -1,3 +1,10 @@
+2004-05-10  Eric Lassauge  <lassauge@users.sourceforge.net>
+
+	* NEWS: Note french support.
+	* etc/Makefile.am: Install french.txt.
+	* etc/Makefile.in: Regen.
+	* etc/french.txt: Add French language translation.
+
 2004-03-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Add SN-52B2-2004-03-19 tag.
