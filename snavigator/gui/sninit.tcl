@@ -666,7 +666,7 @@ proc sn_init_globals {} {
         set sn_options(def,window-size) 65
 
         #debugger settings
-        sn_add_option def gdb-command "gdb"
+        sn_add_option def gdb-command "insight"
 
         set sn_options(gdb-program) ""
         set sn_options(gdb-workdir) ""

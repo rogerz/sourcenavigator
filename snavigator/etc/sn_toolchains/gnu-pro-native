@@ -3,7 +3,7 @@
 set tc2 [snToolChain GNUPro]
 ${tc2} SetLongName "GNUPro (native)"
 ${tc2} SetIsEmbedded 0
-${tc2} SetDebuggerName gdb
+${tc2} SetDebuggerName insight
 ${tc2} AddRule CC .c.o gcc "-c $<"
 ${tc2} AddRuleInfo CC "C" "Compile a C file"
 
