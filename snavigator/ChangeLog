@@ -1,3 +1,7 @@
+2002-04-09  Mo DeJong  <mdejong@uncounted.org>
+
+	Added SN-513-2003-04-09 tag for 5.1.3 release.
+
 2003-04-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/projmng.tcl (sn_new_project_cb): Don't delete
