@@ -308,6 +308,18 @@ int     high_end_colpos)
 	else
 		comment = "";
 
+	/* Make sure no '\n' appears in the symbol name */
+	{
+		register char *p;
+
+		for (p = symbol_name; *p; p++)
+		{
+			if (*p == '\n') {
+			    *p = (char )0xff;
+			}
+		}
+	}
+
 	switch (sym_type)
 	{
 	case	PAF_TYPE_DEF:

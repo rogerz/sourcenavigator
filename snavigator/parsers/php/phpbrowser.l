@@ -79,8 +79,10 @@ typedef enum {
 typedef struct Token {
     TokenType type;
     char * strval; /* String value of token, NULL if single character */
-    long line; /* line in file where symbol appears */
-    int column; /* column where symbol starts */
+    long start_line;
+    int start_column;
+    long end_line;
+    int end_column;
     struct Token* next;
 } Token;
 
@@ -134,11 +136,17 @@ static SearchTable * global_var_table = (SearchTable *) NULL;
  * multiple lines/rules.
  */
 LongString mode_buff;
-int mode_start_line;
+long mode_start_line;
 int mode_start_column;
+
 #define COMMENT_DUMP 0
+#define DQSTRING_DUMP 0
+#define SQSTRING_DUMP 0
+#define HDSTRING_DUMP 0
 
 static YY_BUFFER_STATE original_buffer;
+
+static char* heredoc_id = (char *) NULL; /* End marker for a heredoc string */
 
 static void matched_pattern(char * pattern, char * text);
 
@@ -146,38 +154,42 @@ static char* modestring();
 
 static void FreeGlobalEntry(SearchEntry *entry);
 
-Token* AllocToken();
 void FreeToken(Token* tok);
 void free_head_token();
-void add_token(Token* tok);
+void append_token(TokenType type,
+                  char* strval,
+                  long start_line,
+                  int start_column,
+                  long end_line,
+                  int end_column);
+
 char * TokenTypeToString(Token *tok);
 
 void emit_function_declaration();
 void emit_comment();
+void emit_dqstring();
+void emit_sqstring();
+void emit_hdstring();
 
 int yywrap() { return 1; }
 
 %}
 
 %x COMMENT
+%x DQSTRING
+%s SQSTRING
+%s HDSTRING
 %x PHP
 %x TOKEN
 
 ws		[ \t]
 wsn		[ \t\n]
 symbol		[a-zA-Z0-9_]+
-dq-symbol	\"{symbol}\"
-sq-symbol	\'{symbol}\'
-q-symbol	({dq-symbol}|{sq-symbol})
-array-notation  (\[\]|\[{q-symbol}\])
-
-dq-string	\"[^\"]*\"
-sq-string	\'[^\']*\'
-q-string	({dq-string}|{sq-string})
 
 varname		{symbol}
 someword	{symbol}
 token		{symbol}
+heredoc-id	{symbol}
 
 assignment-operators	("+"|"-"|"*"|"/")"="
 
@@ -212,15 +224,6 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     sn_advance_column(2);
 }
 
-<PHP>"/*"		{ /* A C style multi-line comment, just like this! */
-    matched_pattern("/*", yytext);
-    BEGIN(COMMENT);
-    sn_advance_column(2);
-    LongStringInit(&mode_buff,0);
-    mode_start_line = sn_line();
-    mode_start_column = sn_column();
-}
-
 <PHP>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
@@ -248,6 +251,15 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   sn_reset_column();
 }
 
+<PHP>"/*"		{ /* A C style multi-line comment, just like this! */
+    matched_pattern("/*", yytext);
+    BEGIN(COMMENT);
+    sn_advance_column(2);
+    LongStringInit(&mode_buff,0);
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
+}
+
 <COMMENT>{
   [^\*\n]* {
     matched_pattern("[^\\*\\n]*", yytext);
@@ -258,7 +270,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_column(yyleng);
-    }
+  }
   [^\*\n]*\n {
     matched_pattern("[^\\*\\n]*\\n", yytext);
 
@@ -270,7 +282,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
         yytext, yyleng );
     sn_advance_line();
     sn_reset_column();
-    }
+  }
   \*+[^\*/\n]* {
     matched_pattern("\\*+[^\\*/\\n]*", yytext);
 
@@ -316,189 +328,381 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   }
 }
 
+<PHP>\"\" {
+  matched_pattern("\\\"\\\"", yytext);
+  /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
+  append_token(DOUBLE_QUOTED_STRING, "",
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>\" {
+  matched_pattern("\\\"", yytext);
+#if DQSTRING_DUMP
+  fprintf(stderr, "dqstring started at (%d.%d)\n", sn_line(), sn_column());
+#endif
+  LongStringInit(&mode_buff,0);
+  mode_start_line = sn_line();
+  mode_start_column = sn_column();
+  sn_advance_column(yyleng);
+  BEGIN(DQSTRING);
+}
+
+<DQSTRING>{
+  [^\"\n\\]* {
+    matched_pattern("[^\\\"\\n\\\\]*", yytext);
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(1) \"%s\", %d\n", yytext, yyleng);
+    #endif
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  [^\"\n\\]*\n {
+    matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(2) \"%s\", %d\n", yytext, yyleng);
+    #endif
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_line();
+    sn_reset_column();
+  }
+  (\\\")+[^\"/\n\\]* {
+    matched_pattern("\\\"+[^\\\"/\\n\\\\]*", yytext);
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(3) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  (\\\")+[^\"\n\\]*\n {
+    matched_pattern("\\\"+[^\\\"\\n\\\\]*\\n", yytext);
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_line();
+    sn_reset_column();
+  }
+  \\ {
+    matched_pattern("\\\\", yytext);
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  \" {
+    matched_pattern("\\\"", yytext);
+    sn_advance_column(yyleng);
+    emit_dqstring();
+    BEGIN(PHP);
+  }
+}
+
+<PHP>\'\' {
+  matched_pattern("\\\'\\\'", yytext);
+  /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
+  append_token(SINGLE_QUOTED_STRING, "",
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>\' {
+  matched_pattern("\\\'", yytext);
+#if SQSTRING_DUMP
+  fprintf(stderr, "sqstring started at (%d.%d)\n", sn_line(), sn_column());
+#endif
+  LongStringInit(&mode_buff,0);
+  mode_start_line = sn_line();
+  mode_start_column = sn_column();
+  sn_advance_column(yyleng);
+  BEGIN(SQSTRING);
+}
+
+<SQSTRING>{
+  [^\'\n\\]* {
+    matched_pattern("[^\\\'\\n\\\\]*", yytext);
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(1) \"%s\", %d\n", yytext, yyleng);
+    #endif
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  [^\'\n\\]*\n {
+    matched_pattern("[^\\\'\\n\\\\]*\\n", yytext);
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(2) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_line();
+    sn_reset_column();
+  }
+  (\\\')+[^\'/\n\\]* {
+    matched_pattern("\\\'+[^\\\'/\\n\\\\]*", yytext);
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(3) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  (\\\')+[^\'\n\\]*\n {
+    matched_pattern("\\\'+[^\\\'\\n\\\\]*\\n", yytext);
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(4) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_line();
+    sn_reset_column();
+  }
+  \\ {
+    matched_pattern("\\\\", yytext);
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(5) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  \' {
+    matched_pattern("\\\'", yytext);
+    sn_advance_column(yyleng);
+    emit_sqstring();
+    BEGIN(PHP);
+  }
+}
+
+<PHP>"<<<"{ws}*{heredoc-id}\n {
+  char *x = yytext;
+  char *y;
+
+  matched_pattern("<<<{ws}*{heredoc-id}\\n", yytext);
+
+  mode_start_line = sn_line();
+  mode_start_column = sn_column();
+
+  x += 3;
+  while(*x == ' ' || *x == '\t') { x++; }
+  y = x;
+  while(*y != '\n') { y++; }
+  *y = 0;
+
+  LongStringInit(&mode_buff,0);
+  mode_buff.append( &mode_buff,
+          x, -1 );
+  mode_buff.append( &mode_buff,
+          ";\n", -1 );
+  heredoc_id = SN_StrDup(mode_buff.buf);
+  mode_buff.free(&mode_buff);
+
+#if HDSTRING_DUMP
+  fprintf(stderr, "hdstring started at (%d.%d)\n", sn_line(), sn_column());
+  fprintf(stderr, "hdstring id is \"%s\"\n", heredoc_id);
+#endif
+
+  LongStringInit(&mode_buff,0);
+
+  sn_advance_line();
+  sn_reset_column();
+
+  BEGIN(HDSTRING);
+}
+
+<HDSTRING>.*\n {
+  matched_pattern(".*\n", yytext);
+  #if HDSTRING_DUMP
+  fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
+  #endif
+
+  if (strcmp(yytext, heredoc_id) == 0) {
+  #if HDSTRING_DUMP
+      fprintf(stderr, "hdstring end matched\n");
+  #endif
+
+      sn_advance_column(yyleng-2); /* advance to ; */
+      emit_hdstring();
+      sn_advance_line();
+      sn_reset_column();
+      BEGIN(PHP);
+  } else {
+      if (mode_buff.len != 0) {
+          /* Only append newline if more than one line in heredoc */
+          mode_buff.append( &mode_buff, "\n", 1 );
+      }
+      mode_buff.append( &mode_buff, yytext, yyleng-1 );
+      sn_advance_line();
+      sn_reset_column();
+  }
+}
+
 <PHP>"(" {
-  Token* tok;
   matched_pattern("(", yytext);
-  tok = AllocToken();
-  tok->type = OPEN_PAREN;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(OPEN_PAREN, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>")" {
-  Token* tok;
   matched_pattern(")", yytext);
-  tok = AllocToken();
-  tok->type = CLOSE_PAREN;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(CLOSE_PAREN, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"[" {
-  Token* tok;
   matched_pattern("[", yytext);
-  sn_advance_column(yyleng);
-  tok = AllocToken();
-  tok->type = OPEN_BRACKET;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(OPEN_BRACKET, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"]" {
-  Token* tok;
   matched_pattern("]", yytext);
-  tok = AllocToken();
-  tok->type = CLOSE_BRACKET;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(CLOSE_BRACKET, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"{" {
-  Token* tok;
   matched_pattern("{", yytext);
-  tok = AllocToken();
-  tok->type = OPEN_BRACE;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(OPEN_BRACE, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"}" {
-  Token* tok;
   matched_pattern("}", yytext);
-  tok = AllocToken();
-  tok->type = CLOSE_BRACE;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(CLOSE_BRACE, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>";" {
-  Token* tok;
   matched_pattern("}", yytext);
-  tok = AllocToken();
-  tok->type = SEMICOLON;
-  tok->strval = NULL;
-  add_token(tok);
-  tok->line = sn_line();
-  tok->column = sn_column();
+  append_token(SEMICOLON, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"=" {
-  Token* tok;
   matched_pattern("=", yytext);
-  tok = AllocToken();
-  tok->type = ASSIGNMENT_OPERATOR;
-  tok->strval = NULL;
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(ASSIGNMENT_OPERATOR, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>{assignment-operators} {
-  Token* tok;
   matched_pattern("{assignment-operators}", yytext);
-  tok = AllocToken();
-  tok->type = ASSIGNMENT_OPERATORS;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(ASSIGNMENT_OPERATORS, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"function" {
-  Token* tok;
   matched_pattern("function", yytext);
-  tok = AllocToken();
-  tok->type = FUNCTION_KEYWORD;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(FUNCTION_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>"global" {
-  Token* tok;
   matched_pattern("global", yytext);
-  tok = AllocToken();
-  tok->type = GLOBAL_KEYWORD;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(GLOBAL_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>{include-keywords} {
-  Token* tok;
   matched_pattern("{include-keywords}", yytext);
-  tok = AllocToken();
-  tok->type = INCLUDE_KEYWORD;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(INCLUDE_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>{keywords} {
-  Token* tok;
   matched_pattern("{keywords}", yytext);
-  tok = AllocToken();
-  tok->type = KEYWORD;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
-  sn_advance_column(yyleng);
-}
-
-<PHP>{q-string} {
-  Token* tok;
-  matched_pattern("{q-string}", yytext);
-  tok = AllocToken();
-  if (*yytext == '\"') {
-    tok->type = DOUBLE_QUOTED_STRING;
-  } else {
-    tok->type = SINGLE_QUOTED_STRING;
-  }
-  *(yytext + yyleng - 1) = 0;
-  tok->strval = SN_StrDup(yytext+1);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
 <PHP>{someword} {
-  Token* tok;
   matched_pattern("{someword}", yytext);
-  tok = AllocToken();
-  tok->type = SOMEWORD;
-  tok->strval = SN_StrDup(yytext);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
+  append_token(SOMEWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
   sn_advance_column(yyleng);
 }
 
@@ -508,17 +712,13 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 }
 
 <PHP>\${varname} {
-  Token* tok;
   matched_pattern("${varname}", yytext);
   sn_advance_column(1);
-
-  tok = AllocToken();
-  tok->type = VARIABLE;
-  tok->strval = SN_StrDup(yytext+1);
-  tok->line = sn_line();
-  tok->column = sn_column();
-  add_token(tok);
-
+  append_token(VARIABLE, yytext+1,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng - 1);
   sn_advance_column(yyleng-1);
 }
 
@@ -545,8 +745,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 #endif
   assert(tokens_head->type == FUNCTION_KEYWORD);
 
-  current_function_line_start = tokens_head->line;
-  current_function_column_start = tokens_head->column;
+  current_function_line_start = tokens_head->start_line;
+  current_function_column_start = tokens_head->start_column;
 
   free_head_token(); /* FUNCTION_KEYWORD */
 
@@ -555,10 +755,9 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   assert(current_function == NULL);
   current_function = SN_StrDup(tokens_head->strval);
 
-  current_function_highlight_line = tokens_head->line;
-  current_function_highlight_column_start = tokens_head->column;
-  current_function_highlight_column_end = tokens_head->column;
-  current_function_highlight_column_end += strlen(current_function);
+  current_function_highlight_line = tokens_head->start_line;
+  current_function_highlight_column_start = tokens_head->start_column;
+  current_function_highlight_column_end = tokens_head->end_column;
 
   free_head_token(); /* SOMEWORD */
   free_head_token(); /* OPEN_PAREN */
@@ -609,8 +808,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
         current_function, token_index);
 #endif
 
-    current_function_line_end = tokens_head->line;
-    current_function_column_end = tokens_head->column + 1;
+    current_function_line_end = tokens_head->end_line;
+    current_function_column_end = tokens_head->end_column;
 
     emit_function_declaration();
   }
@@ -635,11 +834,12 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   assert((tokens_head->type == SINGLE_QUOTED_STRING) ||
            (tokens_head->type == DOUBLE_QUOTED_STRING));
 
-  /* FIXME: Quoted strings can span lines so line_end needs fixing */
-  line_end = line_start = tokens_head->line;
-  column_start = tokens_head->column + 1;
+  line_start = tokens_head->start_line;
+  column_start = tokens_head->start_column + 1;
+  line_end = tokens_head->end_line;
+  column_end = tokens_head->end_column - 1;
+
   filename = tokens_head->strval;
-  column_end = column_start + strlen(filename);
 
   result = sn_insert_symbol(SN_INCLUDE_DEF,
           /* classname */ NULL,
@@ -718,7 +918,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "function name is \"%s\"\n", fname);
 #endif
-  line = tokens_head->line;
+  line = tokens_head->start_line;
 
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
                  SN_FUNC_DEF,
@@ -745,14 +945,10 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
   int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
   int line_start, line_end, column_start, column_end;
 
-  line_end = line_start = tokens_head->line;
-  column_start = tokens_head->column;
-  column_end = column_start;
-  if (varname == NULL) {
-    column_end += 1;
-  } else {
-    column_end += strlen(varname);
-  }
+  line_start = tokens_head->start_line;
+  column_start = tokens_head->start_column;
+  line_end = tokens_head->end_line;
+  column_end = tokens_head->end_column;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
@@ -842,7 +1038,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 <TOKEN>"VARIABLE" {
   char* varname = tokens_head->strval;
   SearchEntry entry;
-  int line_num = tokens_head->line;
+  int line_num = tokens_head->start_line;
   int ref_to_symbol_type, ref_to_symbol_scope;
 
 #ifdef TOKEN_DEBUG
@@ -948,7 +1144,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     yyterminate();
 }
 
-<INITIAL,PHP,COMMENT><<EOF>> {
+<INITIAL,PHP,COMMENT,DQSTRING,SQSTRING,HDSTRING><<EOF>> {
   LongString token_buffer;
   char *base;
   int i;
@@ -966,6 +1162,15 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     case COMMENT:
       emit_comment();
       break;
+    case DQSTRING:
+      emit_dqstring();
+      break;
+    case SQSTRING:
+      emit_sqstring();
+      break;
+    case HDSTRING: 
+      emit_hdstring();
+      break;
   }
 
   /* If no tokens were generated, then quit now */
@@ -982,20 +1187,16 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
      the input state machine and start out in the TOKEN mode. */
 
   for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
-        int token_length;
 #ifdef TOKEN_DEBUG
         fprintf(tokenout, "token %d %s", i, TokenTypeToString(tok));
         if (tok->strval) {
             fprintf(tokenout, " \"%s\"", tok->strval);
-            token_length = strlen(tok->strval);
-        } else {
-            token_length = 1;
         }
         fprintf(tokenout, " (%d.%d -> %d.%d)",
-            tok->line,
-            tok->column,
-            tok->line,
-            tok->column + token_length
+            tok->start_line,
+            tok->start_column,
+            tok->end_line,
+            tok->end_column
         );
         fprintf(tokenout, "\n");
 #endif
@@ -1037,6 +1238,15 @@ static char* modestring() {
         case COMMENT:
             mode = "COMMENT";
             break;
+        case DQSTRING:
+            mode = "DQSTRING";
+            break;
+        case SQSTRING:
+            mode = "SQSTRING";
+            break;
+        case HDSTRING:
+            mode = "HDSTRING";
+            break;
         case TOKEN:
             mode = "TOKEN";
             break;
@@ -1058,11 +1268,6 @@ static void matched_pattern(char * pattern, char * text) {
 static void FreeGlobalEntry(SearchEntry *entry) {}
 
 
-Token* AllocToken() {
-    Token* tok = (Token*) ckalloc(sizeof(Token));
-    memset(tok, 0, sizeof(Token));
-    return tok;
-}
 void FreeToken(Token* tok) {
     if (tok->strval != NULL) {
         ckfree(tok->strval);
@@ -1070,7 +1275,29 @@ void FreeToken(Token* tok) {
     ckfree((char *) tok);
 }
 
-void add_token(Token* tok) {
+void append_token(TokenType type,
+                  char* strval,
+                  long start_line,
+                  int start_column,
+                  long end_line,
+                  int end_column) {
+    Token* tok;
+    tok = (Token*) ckalloc(sizeof(Token));
+    tok->type = type;
+    if (strval)
+        tok->strval = SN_StrDup(strval);
+    else
+        tok->strval = NULL;
+
+    tok->start_line = start_line;
+    tok->start_column = start_column;
+
+    tok->end_line = end_line;
+    tok->end_column = end_column;
+    tok->next = NULL;
+
+    /* append to token list */
+
     if (tokens_tail == NULL) {
         tokens_head = tokens_tail = tok;
     } else {
@@ -1191,7 +1418,65 @@ void emit_comment() {
 
     mode_buff.free(&mode_buff);
 }
-  
+
+void emit_dqstring() {
+    char* dqstring = mode_buff.buf;
+
+#if DQSTRING_DUMP
+    fprintf(stderr, "creating dqstring token \"%s\"\n", dqstring);
+#endif
+
+    append_token(DOUBLE_QUOTED_STRING, dqstring,
+            mode_start_line,
+            mode_start_column,
+            sn_line(),
+            sn_column());
+
+    mode_buff.free(&mode_buff);
+}
+
+void emit_sqstring() {
+    char* sqstring = mode_buff.buf;
+
+#if SQSTRING_DUMP
+    fprintf(stderr, "creating sqstring token \'%s\'\n", sqstring);
+#endif
+
+    append_token(SINGLE_QUOTED_STRING, sqstring,
+            mode_start_line,
+            mode_start_column,
+            sn_line(),
+            sn_column());
+
+    mode_buff.free(&mode_buff);
+}
+
+void emit_hdstring() {
+    char* hdstring = mode_buff.buf;
+
+#if HDSTRING_DUMP
+    fprintf(stderr, "creating hdstring token \"%s\"\n", hdstring);
+#endif
+
+    /* sn_column() should be at the ; at the end of a heredoc */
+
+    append_token(DOUBLE_QUOTED_STRING, hdstring,
+            mode_start_line,
+            mode_start_column,
+            sn_line(),
+            sn_column());
+
+    /* A heredoc string is followed by a SEMICOLON */
+
+    append_token(SEMICOLON, NULL,
+            sn_line(),
+            sn_column(),
+            sn_line(),
+            sn_column()+1);
+
+    mode_buff.free(&mode_buff);
+}
+ 
 void
 reset()
 {

@@ -1,5 +1,25 @@
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/common/parser.c (put_symbol): Convert
+	a newline in the symbol_name to 0xFF to avoid
+	printing a newline in the output.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add line end
+	and column end members to the Token struct
+	to support quoted strings that span multiple
+	lines. Add special processing modes for
+	double quoted strings, single quoted strings,
+	and heredoc strings. Handle EOF condition in
+	each of these modes.
+	* tests/parsers/php.test: Add a series of tests
+	for single quoted strings, double quoted string,
+	and heredoc string.
+	* tests/parsers/testutil.tcl (php_parse):
+	Convert results of exec from utf-8 so
+	that a newline character is encoded properly.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Rename cbuff
 	to mode_buff, rename cbuff_start_line to

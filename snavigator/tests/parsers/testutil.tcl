@@ -103,7 +103,7 @@ proc m4_parse_comment_xref { fname } {
 }
 
 proc php_parse { fname } {
-    return [paf_subst [exec phpbrowser $fname]]
+    return [paf_subst [encoding convertfrom utf-8 [exec phpbrowser $fname]]]
 }
 
 proc php_parse_multi { fname } {

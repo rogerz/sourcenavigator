@@ -462,6 +462,15 @@ tcltest::test comment-1.13 { hit EOF in comment } {
 }]
 } [format {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;%s%s%s%s} \xFF ?> \xFF \n]
 
+tcltest::test comment-1.14 { double quotes in comment } {
+    php_parse_comment_xref [save_file f.php {
+<?
+/*Comment "Text"*/
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment "Text"
+}
+
 
 tcltest::test comment-2.0 { function with a comment } {
     php_parse [save_file f.php {
@@ -526,7 +535,32 @@ PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
 }
 
 
+
 tcltest::test string-1.0 { double quoted string } {
+    php_parse [save_file f.php {
+<?
+$var = "";
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test string-1.1 { single quoted string } {
+    php_parse [save_file f.php {
+<?
+$var = '';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test string-1.2 { double quoted string } {
     php_parse [save_file f.php {
 <?
 $var = "value";
@@ -538,7 +572,19 @@ PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
-tcltest::test string-1.1 { double quoted string } {
+tcltest::test string-1.3 { single quoted string } {
+    php_parse [save_file f.php {
+<?
+$var = 'value';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test string-1.4 { double quoted string } {
     php_parse [save_file f.php {
 <?
 $var1 = "value";
@@ -553,7 +599,22 @@ PAF_GLOB_VAR_DEF;var2<>000004.001<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
 }
 
-tcltest::test string-1.2 { double quoted string } {
+tcltest::test string-1.5 { single quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = 'value';
+$var2 = 'value';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000004.001<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
+}
+
+tcltest::test string-1.6 { double quoted string } {
     php_parse [save_file f.php {
 <?
 $var1 = "\"" .
@@ -569,9 +630,216 @@ PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
 }
 
-# FIXME: Add string that spans multiple lines test!
-# FIXME: Add single quoted string tests too!
+tcltest::test string-1.7 { single quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = '\'' .
+    '\'';
+$var2 = 1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+}
 
+tcltest::test string-1.8 { double quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = "HELLO
+    THERE";
+$var2 = 1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+}
+
+tcltest::test string-1.9 { single quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = 'HELLO
+    THERE';
+$var2 = 1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+}
+
+tcltest::test string-2.0 { escape characters } {
+    php_parse [save_file f.php {
+<?
+$var = "val\n";
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test string-2.1 { escape characters } {
+    php_parse [save_file f.php {
+<?
+$var = 'val\n';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+
+tcltest::test string-3.0 {  string spans multiple lines } {
+    php_parse [save_file f.php {
+<?
+include "I am
+a file";
+?>
+}]
+} [format {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;I am%sa file<>000003.009<>f.php;4.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>I am%sa file<>iu;4.6<>3.9<>4.6<>{}
+} \xFF \xFF]
+
+tcltest::test string-3.1 {  string spans multiple lines } {
+    php_parse [save_file f.php {
+<?
+include 'I am
+a file';
+?>
+}]
+} [format {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;I am%sa file<>000003.009<>f.php;4.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>I am%sa file<>iu;4.6<>3.9<>4.6<>{}
+} \xFF \xFF]
+
+tcltest::test string-4.0 { hit EOF in double quoted string } {
+    php_parse [save_file f.php {
+<?
+"
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test string-4.1 { hit EOF in single quoted string } {
+    php_parse [save_file f.php {
+<?
+'
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test string-5.0 { heredoc ignores all characters } {
+    php_parse [save_file f.php {
+<?
+print <<<END
+"HI
+END;
+
+$var = "one" . '"';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000007.001<>f.php;7.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000007.001<>#<>var<>gv;7.4<>7.1<>7.4<>{}
+}
+
+
+tcltest::test string-5.1 { hit EOF in heredoc string } {
+    php_parse [save_file f.php {
+<?
+print <<< END
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test string-6.0 { no comments in double quoted string } {
+    php_parse [save_file f.php {
+<?
+include("/*not-comment*/");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;/*not-comment*/<>000003.009<>f.php;3.24<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;3.24<>3.9<>3.24<>{}
+}
+
+tcltest::test string-6.1 { no comments in single quoted string } {
+    php_parse [save_file f.php {
+<?
+include('/*not-comment*/');
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;/*not-comment*/<>000003.009<>f.php;3.24<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;3.24<>3.9<>3.24<>{}
+}
+
+# FIXME: These next two are rather broken. The include statement
+# should think the token starts at 4.0 and ends at 4.15 and
+# does not include a \n. Currently, the impl assumes that
+# a double quoted string starts at tok->start_line + 1
+# while is not correct. Same goes for the end of the token.
+# May need to add some sort of extended token that can
+# handle a range inside the token boundry.
+
+tcltest::test string-6.2 { no comments in heredoc string } {
+    php_parse [save_file f.php {
+<?
+include <<<END
+/*not-comment*/
+END;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;/*not-comment*/<>000003.009<>f.php;5.2<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;5.2<>3.9<>5.2<>{}
+}
+
+tcltest::test string-6.3 { newlines in heredoc string } {
+    php_parse [save_file f.php {
+<?
+include <<<END
+/*not-comment*/
+/*not-comment*/
+END;
+?>
+}]
+} [format {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;%s%s%s<>000003.009<>f.php;6.2<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>%s%s%s<>iu;6.2<>3.9<>6.2<>{}
+} /*not-comment*/ \xFF /*not-comment*/ /*not-comment*/ \xFF /*not-comment*/]
+
+
+
+# FIXME: Need to add tests for heredoc with vars in it
 
 
 # FIXME: Should we declare and define at the same time like the Java parser?
@@ -1091,11 +1359,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 # Need to fix array variable setting and reading.
 
-# Add checks for include or require statements, so that
-# the include browser can show file include relationships.
-
-# Need to check strings that span multiple lines.
-
 # FIXME: Add check for function call inside function arguments,
 # is that valid?
 
@@ -1115,12 +1378,12 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 # Test global statement with more than one variable.
 
-# Test function argument init with string, single quoted string, and literals
-
 # Should we create a token for commas and include them in the
 # parse rules for things like function declarations and global statements?
 
 # Add support for # as line comment in addition to //
+
+# Add .= as assignment operator support.
 
 # cleanup
 file delete f.php
