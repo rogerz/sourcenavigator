@@ -1,3 +1,11 @@
+2002-07-14  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (proceed_gotoline): Save
+	and reset the -linenumber_var value before hiding
+	the goto line dialog since this invokes Focus_In
+	and changes the value. This was causing the Win32
+	version to fail.
+
 2002-07-09  David Philippi  <lists@torangan.de>
 
 	* hyper/c_high.l: Added all missing keywords
