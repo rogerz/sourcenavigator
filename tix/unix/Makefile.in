@@ -242,7 +242,7 @@ install-man:
 	@cd $(MANUAL_DIR); for i in *.n *.1; \
 	    do \
 	    echo "Installing doc/$$i"; \
-	    rm -f $(MANN_DIR)/$$i; \
+	    rm -f $(DESTDIR)$(MANN_DIR)/$$i; \
 	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
 		    $$i > $(DESTDIR)$(MANN_DIR)/$$i; \
 	    chmod 444 $(DESTDIR)$(MANN_DIR)/$$i; \

@@ -1,3 +1,8 @@
+2004-10-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/Makefile.in: Add DESTDIR fix identified
+	in SN bug 951001.
+
 2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/Makefile.in:
