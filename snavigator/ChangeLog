@@ -1,3 +1,123 @@
+2004-03-27  Ian Roxborough  <irox@ix.netcom.com>
+
+	* configure.in: Add support for ANTLR/pccts.
+        * parsers/tcl/Makefile.am: Add support for
+	building tclparser (the new tcl browser).
+
+	* Makefile.in:
+	* aclocal.m4:
+	* configure:
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile:
+	* gui/Makefile.in:
+	* hyper/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regenerated.
+
+	* parsers/tcl/DLGLexer.cpp:
+	* parsers/tcl/DLGLexer.h:
+	* parsers/tcl/TCLParser.cpp:
+	* parsers/tcl/TCLParser.h:
+	* parsers/tcl/colToken.cpp:
+	* parsers/tcl/colToken.h:
+	* parsers/tcl/err.c:
+	* parsers/tcl/mode.h:
+	* parsers/tcl/myPanic.cpp:
+	* parsers/tcl/myPanic.h:
+	* parsers/tcl/myToken.h:
+	* parsers/tcl/myTokenBuffer.cpp:
+	* parsers/tcl/myTokenBuffer.h:
+	* parsers/tcl/noleakTok.cpp:
+	* parsers/tcl/noleakTok.h:
+	* parsers/tcl/simpleToken.h:
+	* parsers/tcl/sntoolkit.cpp:
+	* parsers/tcl/sntoolkit.h:
+	* parsers/tcl/tcl.cpp:
+	* parsers/tcl/tcl.g:
+	* parsers/tcl/tokens.h: New files (New tcl parser).
+
+	* parsers/tcl/pccts/AParser.cpp:
+	* parsers/tcl/pccts/AParser.h:
+	* parsers/tcl/pccts/ASTBase.cpp:
+	* parsers/tcl/pccts/ASTBase.h:
+	* parsers/tcl/pccts/ATokPtr.h:
+	* parsers/tcl/pccts/ATokPtrImpl.h:
+	* parsers/tcl/pccts/AToken.h:
+	* parsers/tcl/pccts/ATokenBuffer.cpp:
+	* parsers/tcl/pccts/ATokenBuffer.h:
+	* parsers/tcl/pccts/ATokenStream.h:
+	* parsers/tcl/pccts/BufFileInput.cpp:
+	* parsers/tcl/pccts/BufFileInput.h:
+	* parsers/tcl/pccts/DLG_stream_input.h:
+	* parsers/tcl/pccts/DLexer.h:
+	* parsers/tcl/pccts/DLexerBase.cpp:
+	* parsers/tcl/pccts/DLexerBase.h:
+	* parsers/tcl/pccts/PBlackBox.h:
+	* parsers/tcl/pccts/PCCTSAST.cpp:
+	* parsers/tcl/pccts/PCCTSAST.h:
+	* parsers/tcl/pccts/SList.h:
+	* parsers/tcl/pccts/antlr.h:
+	* parsers/tcl/pccts/ast.h:
+	* parsers/tcl/pccts/charbuf.h:
+	* parsers/tcl/pccts/charptr.h:
+	* parsers/tcl/pccts/config.h:
+	* parsers/tcl/pccts/dlgauto.h:
+	* parsers/tcl/pccts/dlgdef.h:
+	* parsers/tcl/pccts/err.h:
+	* parsers/tcl/pccts/int.h:
+	* parsers/tcl/pccts/pccts_assert.h:
+	* parsers/tcl/pccts/pccts_iostream.h:
+	* parsers/tcl/pccts/pccts_istream.h:
+	* parsers/tcl/pccts/pccts_setjmp.h:
+	* parsers/tcl/pccts/pccts_stdarg.h:
+	* parsers/tcl/pccts/pccts_stdio.h:
+	* parsers/tcl/pccts/pccts_stdlib.h:
+	* parsers/tcl/pccts/pccts_string.h:
+	* parsers/tcl/pccts/pcctscfg.h:
+	* parsers/tcl/pccts/slist.cpp: New files (pccts headers).
+
 2003-02-19  Ian Roxborough  <irox@ix.netcom.com>
 
 	* bitmaps/Makefile.am: Install executable and

@@ -148,6 +148,7 @@ AC_SUBST(ASSEMBLER_DIRS)
 
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_CXX
 
 AC_CACHE_CHECK([for cygwin32], ide_cv_os_cygwin32,
 [AC_EGREP_CPP(lose, [
@@ -195,6 +196,31 @@ AC_SUBST(YACC)
 
 AC_CHECK_TOOL(RANLIB, ranlib)
 AC_CHECK_TOOL(WINDRES, windres)
+
+dnl Check for ANTLR/pccts, if we find all the tools we need
+dnl then we can build the tclparser from scratch.  Otherwise
+dnl we'll just user the ANTLR header files in the sn source
+dnl tree.
+
+AC_ARG_WITH(PCCTS_BIN,[--with-pccts-bin=/my/pccts/dir/bin       Look for pccts/ANTLR. in this directory.], PCCTS_BIN_PATH=$with_pccts_bin,PCCTS_BIN_PATH="")
+
+AC_ARG_WITH(PCCTS_HEADERS,[--with-pccts-headers=/my/pccts/dir/h      Look for pccts/ANTLR headers in this directory.], PCCTS_HEADERS_PATH=$with_pccts_headers, PCCTS_HEADERS_PATH="")
+
+AC_PATH_PROG(ANTLR, antlr, NONE, [$PCCTS_BIN_PATH:$PATH])
+AC_PATH_PROG(DLG, dlg, NONE, [$PCCTS_BIN_PATH:$PATH])
+
+AC_MSG_CHECKING(for ANTLR/pccts headers)
+if test x$PCCTS_HEADERS_PATH = x -a x$ANTLR != xNONE; then
+  PCCTS_HEADERS_PATH="`echo $ANTLR | sed -e s/antlr$//g`../h"
+else
+  PCCTS_HEADERS_PATH='$(top_srcdir)/parsers/tcl/pccts'
+fi
+AC_MSG_RESULT(using $PCCTS_HEADERS_PATH)
+
+ANTLR_H=$PCCTS_HEADERS_PATH
+AC_SUBST(ANTLR_H)
+AM_CONDITIONAL(USE_ANTLR, test x$ANTLR != xNONE -a x$DLG != xNONE)
+
 
 dnl Put a plausible default for CC_FOR_BUILD in Makefile.  In the
 dnl normal case, this will just set CC_FOR_BUILD to be CC.  People who

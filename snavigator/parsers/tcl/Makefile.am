@@ -21,10 +21,14 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create .in.
 
-bin_PROGRAMS = tbrowser
+bin_PROGRAMS = tbrowser tclparser
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
-	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
+	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR) -I$(ANTLR_H) \
+	-I$(top_srcdir)/parsers/toolbox
+
+AFLAGS = -CC -mrhoist off
+DFLAGS = -C2 -i -CC
 
 tbrowser_SOURCES = Scanner.c Parser.c Tree.c Eval.c Trafo.c itcl.c skeleton.c
 
@@ -36,4 +40,48 @@ tbrowser_DEPENDENCIES = ../libjcreuse/libjcreuse.a \
 	$(top_builddir)/db/libdbutils.a \
 	$(top_builddir)/misc/libutils/libutils.a \
 	$(DB_LIBDIR)/libdb.a
+
+#
+# The all new (not quite doing Xref yet) tcl parser.
+#
+
+tclparser_SOURCES = tcl.cpp \
+	sntoolkit.cpp \
+	colToken.cpp \
+	myPanic.cpp \
+	myTokenBuffer.cpp \
+	noleakTok.cpp \
+	TCLParser.cpp \
+	$(ANTLR_H)/AParser.cpp \
+	$(ANTLR_H)/DLexerBase.cpp \
+	$(ANTLR_H)/ATokenBuffer.cpp \
+	DLGLexer.cpp 
+
+tclparser_LDADD = $(top_builddir)/parsers/toolbox/libsnptools.a \
+	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) \
+	$(top_builddir)/db/libdbutils.a \
+	$(top_builddir)/misc/libutils/libutils.a \
+	$(DB_LIBDIR)/libdb.a
+
+
+tclparser_DEPENDENCIES = $(top_builddir)/parsers/toolbox/libsnptools.a \
+	$(top_builddir)/db/libdbutils.a \
+	$(top_builddir)/misc/libutils/libutils.a
+
+tclparser_CFLAGS = -I$(ANTLR_H)
+
+ANTLR_SPAWN = tcl.cpp TCLParser.cpp \
+	TCLParser.h parser.dlg tckens.h
+
+DLG_SPAWN = DLGLexer.cpp DLGLexer.h
+
+if USE_ANTLR
+$(ANTLR_SPAWN) : tcl.g
+	$(ANTLR) $(AFLAGS) tcl.g
+
+$(DLG_SPAWN) : parser.dlg
+	$(DLG) $(DFLAGS) parser.dlg
+
+endif
+
 
