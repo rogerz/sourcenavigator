@@ -1,3 +1,14 @@
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itk/library/Toplevel.itk (destructor):
+	* itk/library/Widget.itk (destructor): Protect
+	against case where one external component destroy
+	destroys another componet widget.
+	* itk/tests/toplevel.test:
+	* itk/tests/widget.test: Test for bug where one
+	external component deletes another during the
+	itk destructor.
+
 2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itk/configure: Regen to account for

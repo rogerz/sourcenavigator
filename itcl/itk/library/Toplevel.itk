@@ -65,9 +65,19 @@ itcl::class itk::Toplevel {
         }
         itk_component delete hull
 
-        # Any remaining components must be outside the hull
-        foreach component [component] {
-            destroy [component $component]
+        # Any remaining components must be outside the hull.
+        # Loop twice to avoid an error that can happen if
+        # a component got destroyed as a result of another
+        # component getting destroyed.
+
+        set components [component]
+        foreach component $components {
+            set path($component) [component $component]
+        }
+        foreach component $components {
+            if {[winfo exists $path($component)]} {
+                destroy $path($component)
+            }
         }
     }
 
