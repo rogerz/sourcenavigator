@@ -1,6 +1,16 @@
 2003-06-01  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Emit an
+	unfinished function declaration
+	on EOF, fixes case where close bracket
+	is missing.
+	* tests/parsers/php.test: Add test cases
+	for function that has no closing brace.
+
+2003-06-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Rewrite browser
 	so that it works in two passes. The first
 	phase splits the file into tokens, removes

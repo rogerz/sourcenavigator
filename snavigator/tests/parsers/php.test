@@ -785,6 +785,54 @@ function foo() {
 }
 
 
+
+tcltest::test function-4.0 { function not finished at EOF } {
+    php_parse [save_file f.php "
+<?
+function foo() \{
+?>
+"]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;5.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.0<>3.9<>3.12<>{}
+}
+
+tcltest::test function-4.1 { function not finished at EOF } {
+    save_file f1.php "
+<?
+function foo() \{
+?>
+"
+    save_file f2.php {
+<?
+function bar() {}
+?>
+}
+
+    save_file files {
+f1.php
+f2.php
+}
+
+    set results [php_parse_multi files]
+    file delete files f1.php f2.php
+    set results
+} {Status: Parsing: f1.php
+PAF_FILE;f1.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f1.php;5.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f1.php<>000003.000<>#<>foo<>fu;5.0<>3.9<>3.12<>{}
+Status: Parsing: f2.php
+PAF_FILE;f2.php;php<>
+PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
+}
+
+
+
+
+
+
 tcltest::test include-1.0 { include a file } {
     php_parse [save_file f.php {
 <?

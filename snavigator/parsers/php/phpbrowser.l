@@ -148,6 +148,8 @@ void free_head_token();
 void add_token(Token* tok);
 char * TokenTypeToString(Token *tok);
 
+void emit_function_declaration();
+
 int yywrap() { return 1; }
 
 %}
@@ -620,33 +622,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     current_function_line_end = tokens_head->line;
     current_function_column_end = tokens_head->column + 1;
 
-    result = sn_insert_symbol(SN_FUNC_DEF,
-            NULL,
-            current_function,
-            sn_current_file(), 
-            current_function_line_start, current_function_column_start,
-            current_function_line_end, current_function_column_end,
-            0 /* attribute */,
-            NULL /* return type */,
-            NULL /* argument types */,
-            current_function_args /* argument names */,
-            NULL /* comment */,
-            current_function_highlight_line,
-            current_function_highlight_column_start,
-            current_function_highlight_line,
-            current_function_highlight_column_end );
-
-    assert(result == 0);
-
-    ckfree(current_function);
-    current_function = NULL;
-    ckfree(current_function_args);
-    current_function_args = NULL;
-
-    if (global_var_table) {
-      global_var_table->destroy( &global_var_table );
-      global_var_table = NULL;
-    }
+    emit_function_declaration();
   }
 
   free_head_token(); /* CLOSE_BRACE */
@@ -962,7 +938,19 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
 #endif
 
-    assert(tokens_head == NULL);
+    /* A function closing brace was not found before we hit EOF */
+    if (current_function) {
+        current_function_line_end = sn_line();
+        current_function_column_end = sn_column();
+
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "found unfinished function at EOF in %s\n", sn_current_file());
+#endif
+
+        emit_function_declaration();
+    }
+
+    assert(!tokens_head); /* all tokens were processed */
 
     yy_delete_buffer( YY_CURRENT_BUFFER );
     yy_switch_to_buffer( original_buffer );
@@ -1142,10 +1130,46 @@ char * TokenTypeToString(Token *tok) {
             return "TOKEN_NOT_MATCHED";
     }
 }
+
+/* Called when the closing brace of a function is found
+ * or when we hit EOF without finding the end of the
+ * function.
+ */
+
+void emit_function_declaration() {
+    result = sn_insert_symbol(SN_FUNC_DEF,
+            NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+
+    assert(result == 0);
+
+    ckfree(current_function);
+    current_function = NULL;
+    ckfree(current_function_args);
+    current_function_args = NULL;
+
+    if (global_var_table) {
+      global_var_table->destroy( &global_var_table );
+      global_var_table = NULL;
+    }
+}
   
 void
 reset()
 {
+  assert(!current_function);
   sn_reset_line();
   sn_reset_column();
 }
