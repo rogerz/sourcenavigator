@@ -1,3 +1,10 @@
+2003-05-20  John Lash  <jkl@speakeasy.net>
+
+	* gui/misc.tcl (sn_session, sn_nosplash):
+	* gui/sninit.tcl (sn_read_commandline_arguments):
+	Add option --nosplash to turn off splash screen.
+	Helps when running over a slow link.
+
 2003-05-20  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.

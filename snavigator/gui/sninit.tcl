@@ -1174,6 +1174,9 @@ proc sn_read_commandline_arguments {} {
             "-x" {
                     set sn_options(both,xref-create) ""
                 }
+            "--nosplash" {
+                    set sn_arguments(nosplash) 1
+                }
             "--def" -
             "-D" -
             "--define" {
@@ -1214,6 +1217,7 @@ proc sn_read_commandline_arguments {} {
                       \"--define\"
     -D, --define option=value
                        Defines an option, see \"--avail-options\"
+    --nosplash:        disables splash screen
     --debug:           enables debugging mode
     --home:            installation directory"
 

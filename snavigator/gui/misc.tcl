@@ -781,7 +781,8 @@ proc sn_session {} {
 
     #this is the correct place to show the splash screen.
     #show the splash screen, only when no batch_mode
-    if {![sn_batch_mode]} {
+    # Also allow a nosplash arg. 
+    if {(![sn_batch_mode]) && (![sn_nosplash])} {
         sn_show_splash_screen
     }
 
@@ -835,6 +836,14 @@ proc sn_start_new_session {{opts ""}} {
 proc sn_batch_mode {} {
     global sn_arguments
     if {[info exists sn_arguments(batchmode)] && $sn_arguments(batchmode)} {
+        return 1
+    }
+    return 0
+}
+
+proc sn_nosplash {} {
+    global sn_arguments
+    if {[info exists sn_arguments(nosplash)] && $sn_arguments(nosplash)} {
         return 1
     }
     return 0
