@@ -1,5 +1,12 @@
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/makepane.tcl (sn_make): Fix build dialog
+	so that it does not flash on screen when first
+	mapped. The toplevel must be withdrawn and
+	then mapped after idle calculations are done.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/dialog.tcl (tk_dialog_with_widgets): Fix
 	fast create dialog so that it is centered properly.
 	The call to update idletasks needs to happen
