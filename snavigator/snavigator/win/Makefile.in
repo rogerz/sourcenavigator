@@ -405,8 +405,10 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 @WINDOWS_TRUE@	$(COMPILE) $(snsdk_CFLAGS) -c $<
 
 @WINDOWS_TRUE@@MSVC_TRUE@snavres.$(OBJEXT): snavigator.rc
+@WINDOWS_TRUE@@MSVC_TRUE@	cp $(srcdir)/../../bitmaps/sourcenav.ico .
 @WINDOWS_TRUE@@MSVC_TRUE@	rc -i$(srcdir) -fosnavres.$(OBJEXT) $(srcdir)/snavwindres.rc
 @WINDOWS_TRUE@@MSVC_FALSE@snavres.$(OBJEXT): snavigator.rc
+@WINDOWS_TRUE@@MSVC_FALSE@	cp $(srcdir)/../../bitmaps/sourcenav.ico .
 @WINDOWS_TRUE@@MSVC_FALSE@	$(WINDRES) --include $(srcdir) $(srcdir)/snavwindres.rc snavres.$(OBJEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

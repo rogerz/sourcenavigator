@@ -1,5 +1,26 @@
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* bitmaps/Makefile.am: Copy sourcenav.ico to
+	the install dir so that it can be loaded
+	at runtime via wm iconbitmap.
+	* bitmaps/Makefile.in: Regen.
+	* bitmaps/sourcenav.ico: Add new SN Win32 icon.
+	* gui/sninit.tcl (sn_tcl_tk_init): Call
+	wm iconbitmap to set sourcenav.ico as the
+	default icon bitmap.
+	* snavigator/win/Makefile.am: Copy sourcenav.ico
+	to the build dir before creating resource that
+	includes the icon for the executable.
+	* snavigator/win/Makefile.in: Regen.
+	* snavigator/win/icon1.ico: Remove older and
+	uglier SN icon.
+	* snavigator/win/snavigator.rc: Use sourcenav.ico
+	instead of older icon1.ico.
+	* snavigator/win/snavwindres.rc: Use sourcenav.ico
+	instead of older icon1.ico.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/sninit.tcl (sn_tcl_tk_init): Use default
 	border width of 1 for all widgets. This change
 	makes the application look more "modern" since

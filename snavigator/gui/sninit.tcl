@@ -898,6 +898,11 @@ proc sn_tcl_tk_init {} {
     # Use 1 pixel border width so SN looks more "modern"
     option add *borderWidth 1
 
+    # Use sourcenav icon bitmap for all toplevels under Win32
+    if {$tcl_platform(platform) == "windows"} {
+        wm iconbitmap . -default [file join $sn_path(bitmapdir) sourcenav.ico]
+    }
+
     init_some_font_attributes
 
     set vis [winfo screenvisual .]

@@ -37,9 +37,11 @@ winCon.$(OBJEXT): winCon.c
 
 if MSVC
 snavres.$(OBJEXT): snavigator.rc
+	cp $(srcdir)/../../bitmaps/sourcenav.ico .
 	rc -i$(srcdir) -fosnavres.$(OBJEXT) $(srcdir)/snavwindres.rc
 else
 snavres.$(OBJEXT): snavigator.rc
+	cp $(srcdir)/../../bitmaps/sourcenav.ico .
 	$(WINDRES) --include $(srcdir) $(srcdir)/snavwindres.rc snavres.$(OBJEXT)
 endif
 

@@ -60,7 +60,7 @@ type_su.xpm parent.xpm filter.xpm \
 next2.xpm prev.xpm include.xpm \
 file_b.xpm file_s.xpm file_+.xpm file_-.xpm dir_+.xpm dir_-.xpm file_h.xpm \
 file_d.xpm unknown.xpm \
-play.xpm rplay.xpm
+play.xpm rplay.xpm sourcenav.ico
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(imagedir)
