@@ -602,7 +602,7 @@ proc sn_text_default_bindings {text} {
         bind ${text} <Control-Button-5> [list %W xview scroll 10 units]
         bind ${text} <Control-Button-4> [list %W xview scroll -10 units]
     } else {
-        bind ${text} <MouseWheel> { %W yview scroll [expr {- (%D / 120) * 4}] units
+        bind ${text} <MouseWheel> { %W yview scroll [expr {- (%D / 120) * 4}] units }
     }
 
     catch {

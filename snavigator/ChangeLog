@@ -1,3 +1,9 @@
+2003-12-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/bindings.tcl (sn_text_default_bindings):
+	Add missing close brace that was causing the
+	startup scripts to fail.
+
 2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Add SN-52B1-2003-12-06 tag.
