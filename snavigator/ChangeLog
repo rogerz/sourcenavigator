@@ -12,9 +12,11 @@
 
 2003-08-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Add SN-52A2-2003-08-12 tag.
+
 	* configure: Regen.
 	* configure.in: Update version number to
-	5.2a1.
+	5.2a2.
 
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
