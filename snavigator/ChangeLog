@@ -1,3 +1,10 @@
+2003-03-30  Roberto Yazon  <ryazonjr@cox.net>
+
+	* gui/editorpane.tcl (InsertTab, Newline):
+	Insert only the right amount of spaces to move cursor
+	to next tab column. Read the edit-tabstop property
+	to determine the equivalent number of spaces for a tab.
+
 2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/sninit.tcl (sn_tcl_tk_init): Fix prepend
