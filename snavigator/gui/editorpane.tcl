@@ -4638,11 +4638,20 @@ proc sn_edit_file {symbol file {line ""} {search 1} {state ""}} {
 # "global1 gv" to the range 1.0 -> 1.10 and the tag "gv" to the
 # range 1.0 -> 1.5. The "gv" tag is used for highlight colors in the
 # editor and the tag "global1 gv" is used when looking up the symbol
-# under the cursor.
+# under the cursor. The display list of symbols is sorted so that
+# classes and functions are under other symbols like variables.
+# This is needed so that the correct symbol shows up when the
+# cursor is moved over a symbol.
 
 proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
     global sn_options
 
+    # Insert a couple of temporary tags to help sort
+    # the display order of tags. This is needed so
+    # that global vars appear higher in the display
+    # order than classes or functions, for example.
+    $textwidget tag add type_point 1.0
+    $textwidget tag add name_point 1.0
 
     foreach tags $tags_list {
         # format <class symbol type line.col line.col line.col line.col>
@@ -4685,6 +4694,16 @@ proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
         }
 
         $textwidget tag add $tag_poi $beg $end
+        # Move tags like classes and functions lower in the
+        # display list than the other tags we just added.
+        switch -exact $type {
+            "cl" -
+            "mi" -
+            "fu" -
+            "ma" {
+                $textwidget tag lower $tag_poi name_point
+            }
+        }
 
 	# Access variables from the sn_options array. This
 	# variable is defined in sninit.tcl
@@ -4693,6 +4712,17 @@ proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
             $textwidget tag add $type $high_beg $high_end
         }
     }
+
+    # Move the tags used for highlight color to a location
+    # in the display list that is just before all the tags
+    # we just inserted.
+    foreach type {cl mi fu ma} {
+        if {[$textwidget tag range $type] != {}} {
+            $textwidget tag lower $type type_point
+        }
+    }
+    $textwidget tag delete type_point
+    $textwidget tag delete name_point
+
     return
 }
-

@@ -1,3 +1,19 @@
+2003-06-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (sn_db_create_symbol_tags):
+	Sort tags for classes, methods, functions,
+	and macros so that they get moved lower in
+	the display order than any other symbols inserted
+	by this method. This fixes a bug where a global
+	var name does not appear in the combobox when the
+	cursor is moved over the var. The bug was being
+	triggered when an earlier instance of the same
+	symbol lead to the variable being seen as lower
+	in the display order than the enclosing function.
+	* tests/gui/editorpane.test: Add tests for
+	symbol sorting based on type, for tag ranges,
+	and for symbol types like classes or macros.
+
 2003-06-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (sn_db_create_symbol_tags):
