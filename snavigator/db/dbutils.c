@@ -3352,7 +3352,7 @@ int kill(pid_t pid, int dummy) /*sn_win32_ping*/
 
 void
 put_status_parsing_file(char *fname) {
-    fprintf(stdout, "%s\n", fname);
-    fflush(stdout);
+    Paf_Pipe_Write("Status: Parsing: %s\n", fname);
+    Paf_Pipe_Flush();
 }
 

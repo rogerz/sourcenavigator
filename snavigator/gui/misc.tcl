@@ -3480,14 +3480,14 @@ proc event_LoadPipeInput {eventfd sc} {
 	return
     }
 
-    if {[catch {set res [eof ${eventfd}]} err]} {
+    if {[catch {set eof [eof ${eventfd}]} err]} {
         set error 1
     } else {
         set error 0
     }
 
     #the parser crashed
-    if {${error} || ${ProcessingCancelled} || ${res}} {
+    if {${error} || ${ProcessingCancelled} || ${eof}} {
 
 # FIXME : Tcl fails to raise an error
 # during a call to the close command
@@ -3514,6 +3514,12 @@ proc event_LoadPipeInput {eventfd sc} {
     if {[catch {set line [gets ${eventfd}]}]} {
         return
     }
+    
+    if {[string equal $line ""]} {
+        return
+    }
+
+    sn_log -l 2 "Info from pipe: ${line}"
 
     #status lines, ignore them
     if {[string first "Deleting " ${line}] == 0 || [string first "Scanning\
@@ -3531,14 +3537,20 @@ proc event_LoadPipeInput {eventfd sc} {
 
         catch {fileevent ${eventfd} readable ${ev_fnc}}
     } else {
-        sn_log -l 2 "Info from pipe: ${line}"
-        if {${line} != ""} {
-            #store last accessed file for error handling
-            set event_LoadPipeInput_last_accessed_file ${line}
-
-            display_scale_window ${sc} ${line}
-        }
-        update idletasks
+        # Check for parse status message from pipe,
+	# format is "Status: Parsing: filename"
+	set header "Status: Parsing: "
+	if {[string first $header $line] == 0} {
+            set fname [string range $line [string length $header] end]
+            set event_LoadPipeInput_last_accessed_file ${fname}
+            display_scale_window ${sc} ${fname}
+	    update idletasks
+	} else {
+	    set ev_fnc [fileevent ${eventfd} readable]
+	    fileevent ${eventfd} readable {}
+	    sn_error_dialog "unrecognized pipe input \"${line}\""
+	    catch {fileevent ${eventfd} readable ${ev_fnc}}
+	}
     }
 }
 

@@ -640,6 +640,13 @@ main(int argc, char **argv)
 		if (bufp[0] == '#' || bufp[0] == '\0')
 			continue;
 
+		/* Pass on status message from the parser. */
+		if (strncmp(bufp, "Status: ", 8) == 0) {
+			fprintf(stdout, "%s\n", bufp);
+			fflush(stdout);
+			continue;
+		}
+
 		linenum++;
 
 		key = strchr(bufp,';');

@@ -1,5 +1,24 @@
 2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/dbimp.c (main): Pass a line that starts
+	with "Status:" on to stdout. This is used by
+	a parser that wants to pass a status message
+	to SN through the pipe to dbimp.
+	* db/dbutils.c (put_status_parsing_file):
+	Use the Paf_Pipe_Write method to write to the
+	dbimp pipe instead of writing a status
+	message to stdout. Also use a new status
+	format so that dbimp knows what input should
+	be passed on to SN.
+	* gui/misc.tcl (event_LoadPipeInput):
+	Rename res local var to eof. Check for
+	empty input line earlier on in method.
+	Check for a status message that starts
+	with "Status: Parsing:" since this is now
+	used by the parsers and dbimp.
+
+2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* db/dbimp.c (main): Print error message to
 	stderr instead of stdout. Slight change to
 	a couple of error messages.
