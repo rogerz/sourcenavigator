@@ -1,5 +1,12 @@
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/dialog.tcl (tk_dialog_with_widgets): Fix
+	fast create dialog so that it is centered properly.
+	The call to update idletasks needs to happen
+	before the req width and height are calculated.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/makepane.tcl (ExecMake): Pass only the Makefile
 	name to the -f argument instead of passing a fully
 	qualified path name. This should not change any
