@@ -46,6 +46,12 @@
 #endif
 /* END CYGNUS LOCAL */
 
+/* CYGNUS LOCAL */
+#ifndef HAVE_SSIZE_T
+  typedef	int ssize_t;
+#endif
+/* END CYGNUS LOCAL */
+
 /*
  * If your system doesn't typedef u_long, u_short, or u_char, change
  * the 0 to a 1.

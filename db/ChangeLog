@@ -1,5 +1,30 @@
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
+	Remove old style acconfig.h template for
+	config.h.in since it is deprecated in
+	newer versions of automake.
+	
+	* Makefile.in: Regen.
+	* acconfig.h: Remove.
+	* acinclude.m4: Update AC_DEFINE calls to 3
+	arg form so that acconfig.h is not needed.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Remove 2 arg AC_CHECK_TYPE
+	calls because we removed acconfig.h. Replace
+	the ssize_t check with a check that defines
+	HAVE_SSIZE_T. Remove the pgno_t check
+	completely since this symbol is unconditionally
+ 	redefined in db.h.
+	* PORT/Win32/include/NTunixstubs.h: Don't
+	typedef ssize_t here.
+	* PORT/include/compat.h: Conditionally
+	typedef ssize_t based on the value of
+	HAVE_SSIZE_T.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
 	* Makefile.in: Regen.
 	* configure: Regen.
 	* configure.in: Remove the empty variable HACK.

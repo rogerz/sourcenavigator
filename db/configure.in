@@ -73,9 +73,7 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h)
 
-dnl Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_TYPE(ssize_t, int)
-AC_CHECK_TYPE(pgno_t, u_int32_t)
+
 # CYGNUS LOCAL
 dnl AC_C_BIGENDIAN
 AC_C_BIGENDIAN_CROSS
@@ -97,7 +95,27 @@ AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
 db_cv_type_u_char=no)])
 AC_MSG_RESULT($db_cv_type_u_char)
 if test "$db_cv_type_u_char" = yes; then
-   AC_DEFINE(HAVE_UCHAR_T)
+   AC_DEFINE(HAVE_UCHAR_T,,[Define if uchar_t (and friends) are defined.])
+fi
+
+dnl The macro invocation below is currently commented out in order
+dnl to support configuring with autoconf 2.13. Once the move to
+dnl 2.5X is made, the manual check below can be replaced with
+dnl the call to AC_CHECK_TYPES.
+
+dnl AC_CHECK_TYPES(ssize_t)
+
+AC_MSG_CHECKING(for ssize_t)
+AC_CACHE_VAL(db_cv_type_ssize_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [ssize_t c = '0';],
+db_cv_type_ssize_t=yes,
+db_cv_type_ssize_t=no)])
+AC_MSG_RESULT($db_cv_type_ssize_t)
+if test "$db_cv_type_ssize_t" = yes; then
+   AC_DEFINE(HAVE_SSIZE_T,,[Define if ssize_t is defined.])
 fi
 
 dnl Checks for library functions.
@@ -116,7 +134,7 @@ AC_TRY_RUN([main(){char buf[20]; exit(sprintf(buf, "XXX") != 3);}],
 	[db_cv_sprintf_count=yes], [db_cv_sprintf_count=no],
 	[db_cv_sprintf_count=no])])
 if test "$db_cv_sprintf_count" = no; then
-	AC_DEFINE(SPRINTF_RET_CHARPNT)
+	AC_DEFINE(SPRINTF_RET_CHARPNT,,[Return type of sprintf.])
 fi
 AC_MSG_RESULT($db_cv_sprintf_count)
 

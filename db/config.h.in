@@ -36,41 +36,6 @@
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
 
-/* Return type of sprintf.  */
-#undef SPRINTF_RET_CHARPNT
-
-/* ? */
-#undef ssize_t
-
-/* Define if uchar_t (and friends) are defined.  */
-#undef HAVE_UCHAR_T
-
-/* Define if int8_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT8_T
-
-/* Define if u_int8_t is defined in <sys/types.h>.  */
-#undef HAVE_UINT8_T
-
-/* Define if int16_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT16_T
-
-/* Define if u_int16_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT16_T
-
-/* Define if int32_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT32_T
-
-/* Define if u_int32_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT32_T
-
-/* Define if int64_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT64_T
-
-/* Define if u_int64_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT64_T
-
-#undef pgno_t
-
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
@@ -127,4 +92,37 @@
 
 /* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
 #undef BYTEORDER
+
+/* Define if uchar_t (and friends) are defined. */
+#undef HAVE_UCHAR_T
+
+/* Define if ssize_t is defined. */
+#undef HAVE_SSIZE_T
+
+/* Return type of sprintf. */
+#undef SPRINTF_RET_CHARPNT
+
+/* Define if int8_t and friends are in <sys/types.h>. */
+#undef HAVE_INT8_T
+
+/* Define if u_int8_t is defined in <sys/types.h>. */
+#undef HAVE_UINT8_T
+
+/* Define if int16_t and friends are in <sys/types.h>. */
+#undef HAVE_INT16_T
+
+/* Define if u_int16_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT16_T
+
+/* Define if int32_t and friends are in <sys/types.h>. */
+#undef HAVE_INT32_T
+
+/* Define if u_int32_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT32_T
+
+/* Define if int64_t and friends are in <sys/types.h>. */
+#undef HAVE_INT64_T
+
+/* Define if u_int64_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT64_T
 
