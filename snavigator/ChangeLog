@@ -1,3 +1,14 @@
+2003-03-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (InsertTab, Newline):
+	Use string repeat instead of a for loop since
+	it is more clear and executes more quickly.
+	Re-implement the Newline proc, it was doing
+	extra work when it was not needed and creating
+	extra variables for no reason. Incorporate
+	the translate tabs to spaces patch submitted
+	by sjohnson@neurizon.net. [Bug 685173]
+
 2003-02-22  Ian Roxborough  <irox@ix.netcom.com>
 
 	* gui/editorpane.tcl (Editor&::SearchForNext

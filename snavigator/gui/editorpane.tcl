@@ -727,12 +727,14 @@ itcl::class Editor& {
     proc InsertTab {w {pos ""}} {
 	global sn_options
 
-	# Insert Spaces ansted of Tabs.
+	# Insert Spaces instead of Tabs.
 	if {$sn_options(def,edit-tab-inserts-spaces)} {
 	    # At least we should insert one character.
-	    set txt " "
-	    for {set i 1} {${i} < $sn_options(def,edit-tabstop)} {incr i} {
-		append txt " "
+
+	    if {$sn_options(def,edit-tabstop) == 0} {
+	        set txt " "
+	    } else {
+	        set txt [string repeat " " $sn_options(def,edit-tabstop)]
 	    }
 
 	    if {${pos} == ""} {
@@ -1622,29 +1624,38 @@ itcl::class Editor& {
     #
     # The basic insertion routine for adding a new line
     #
-    proc Newline w {
+    proc Newline {w} {
 	global sn_options
 	if {$sn_options(def,edit-indentwidth) <= 0} {
 	    tkTextInsertChar ${w} \n
 	} else {
 	    set l [${w} get "insert linestart" "insert lineend"]
-	    set rest [${w} get "insert" "insert lineend"]
-	    set ind_off [list 0 0]
-	    regexp \
-	        -indices "^\[ \t\]*" ${l} ind_off
-	    set end [lindex ${ind_off} 1]
-	    set indentStr [string range ${l} 0 ${end}]
-	    #	Unexpand the spaces to TABS.
-	    set spaces [format "%8.8s" ""]
-	    regsub \
-	        -all ${spaces} ${indentStr} "\t" indentStr
-	    regsub \
-	        -all "\[ \]+\t" ${indentStr} "\t" indentStr
-	    set l [${w} get insert "insert lineend"]
-	    set ind_off [list 0 0]
-	    regexp \
-	        -indices "^\[ \t\]*" ${l} ind_off
-	    set end [expr [lindex ${ind_off} 1] + 1]
+	    set indentStr ""
+	    if {[regexp \
+	            -indices "^\[ \t\]*" ${l} ind_off]} {
+	        set end [lindex ${ind_off} 1]
+	        set indentStr [string range ${l} 0 ${end}]
+	        # Unexpand the spaces to TABS.
+	        set spaces [string repeat " " 8]
+
+	        regsub \
+	                -all ${spaces} ${indentStr} "\t" indentStr
+	        regsub \
+	                -all "\[ \]+\t" ${indentStr} "\t" indentStr
+
+	        if {$sn_options(def,edit-tab-inserts-spaces)} {
+	            # we have to translate \t to the current size number of tabs
+	            if {$sn_options(def,edit-tabstop) == 0} {
+	                set spaces " "
+	            } else {
+	                set spaces [string repeat " " \
+	                        $sn_options(def,edit-tabstop)]
+	            }
+	            regsub \
+	                -all \t ${indentStr} ${spaces} indentStr
+	        }
+	    }
+	    
 	    tkTextInsertChar ${w} \n${indentStr}
 	}
     }
