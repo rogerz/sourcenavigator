@@ -45,7 +45,7 @@ BIN_DIR =	$(exec_prefix)/bin
 
 # To change the compiler switches, for example to change from -O
 # to -g, change the following line:
-CFLAGS = -O
+CFLAGS = @CFLAGS@
 TIX_CFLAGS = $(CFLAGS) -fwritable-strings
 
 # To disable ANSI-C procedure prototypes reverse the comment characters
