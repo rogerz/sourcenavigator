@@ -26,6 +26,7 @@ Tix and the versions of these packages that sourcenav depends
 on. By installing into an application specific directory
 like /opt/sourcenav, these problems can be avoided.
 
+
 UNIX Build:
 
 GNU tools must be on the PATH before the configure script
@@ -35,45 +36,93 @@ gmake, type gmake instead of make in the following instructions.
 
 To build under a UNIX system, simply create a build directory
 and run the configure script. The following commands assume
-the release is 5.0.1 and that the user wants to install
+the release is 5.2.0 and that the user wants to install
 into a non-default location (/opt/sourcenav) that is owned
-by root.
+by root. If the install directory is not owned by root, then
+you don't need to become root before the make install step.
 
 % mkdir snbuild ; cd snbuild
-% ../sourcenav-5.0.1/configure --prefix=/opt/sourcenav
+% ../sourcenav-5.2.0/configure --prefix=/opt/sourcenav
 % make
 (become root)
 % make install
 
+
+Windows Build (gcc):
+
+The Windows version of Source-Navigator is now built with gcc.
+The Mingw and Msys packages provide a minimal environment
+and the compiler needed to build Win32 applications on
+a Win32 system. Start by downloading the most recent msys + mingw
+zip file from this URL (scroll down, it is near the bottom).
+
+http://sourceforge.net/project/showfiles.php?group_id=10894
+
+Unzip the archive and double click on the msys shortcut to
+start the shell. You can then run the configure script in
+the normal way from inside the shell.
+
+% mkdir snbuild ; cd snbuild
+% ../sourcenav-5.2.0/configure --prefix=/opt/sourcenav
+% make
+% make install
+
+
 Windows Build (VC++):
 
-Building under Windows is more tricky when compared to the UNIX
-build. Be sure to follow the build instructions exactly. Note
-that VC++ 6.0 is the only supported compiler at this time.
+Building with VC++ is significantly more tricky when compared to
+the gcc build. We only suggest this method of building if you
+have a specific reason to want to build with VC++ and you know
+what you are doing. Be sure to follow the build instructions exactly.
 
-Windows versions of Source-Navigator are created using the VC++
-compiler and Cygwin. One needs to run the vcvars32.bat script
-to setup the needed env vars. Typically, this is done by starting
-command.com on Windows 95/98 or cmd.exe under NT, then
+Cygwin is required to build with VC++. The current release of
+Cygwin can be found here:
+
+http://cygwin.com/
+
+Note that this build process has only been tested on binmode
+Cygwin mount points. Since binmode is the default mount type,
+it should just work by default.
+
+One needs to run the vcvars32.bat that comes with VC++ before
+starting the Cygwin bash shell. Typically, this is done by
+starting command.com on Windows 95/98 or cmd.exe under NT, then
 run the vcvars32.bat script in the VC++ bin directory.
 
 After VC++ env vars are setup, start a bash shell by cd'ing to
-the Cygwin root directory and running cygwin.bat. In the bash
-shell, run the following commands.
+the Cygwin root directory and running cygwin.bat. This will
+start the bash shell where unix like commands can be entered.
 
-% export CC=cl
-% export CFLAGS="-Z7 -Od -MD -nologo"
+Unfortunately, the current Cygwin grep.exe executable does not
+deal with a input CRLF sequence properly. This issue needs
+to be worked around by installing a version of grep that does
+deal with CRLF sequences, otherwise the configure script will
+generate an error since it checks the grep executable for
+this problem.
+
+A working Win32 grep executable can be found here:
+
+http://unxutils.sourceforge.net/UnxUtils.zip
+
+Unzip the archive in a temp directory, you won't need
+all these utilities, only the grep.exe is needed. Now
+create an empty directory grep will be saved, something
+like ~/grep should work. Copy the usr/local/wbin/grep.exe
+executable from the temp directory into ~/grep and finally
+put the grep directory at the front of your PATH env var
+so that it is used instead of the Cygwin version of grep.
+
+export PATH=$HOME/grep:${PATH}
 
 You can now run the configure script in the normal way. Of course,
 there are a couple of things to take note of. First, the configure
-script must be run with a relative path (../sourcenav-5.0.1/configure).
+script must be run with a relative path (../sourcenav-5.2.0/configure).
 Second, the --prefix path must be passed as a fully qualified Windows
 style path containing forward slashes (like D:/Cygwin/opt/sourcenav).
 The following example shows how a patch like /opt/sourcenav mounted
 at D:/Cygwin/opt/sourcenav would be passed.
 
 % mkdir snbuild ; cd snbuild
-% ../sourcenav-5.0.1/configure --host=windows32 --prefix=D:/Cygwin/opt/sourcenav
+% ../sourcenav-5.2.0/configure --host=windows32 --prefix=D:/Cygwin/opt/sourcenav
 % make
 % make install
-

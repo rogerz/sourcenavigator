@@ -1,3 +1,27 @@
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* INSTALL.TXT: Document building with Msys+Mingw.
+	Update Cygwin with VC++ build process and include
+	note about broken grep and how to work around it.
+	Remove instructions that set CC and CFLAGS before
+	running configure since that is no longer needed.
+	* configure: Regen.
+	* configure.in: Set CC and CFLAGS to support
+	building with VC++.
+	* db/Makefile.am: Don't pass CFLAGS to linker
+	since that makes no sense and results in
+	warnings from the linker. Don't set CFLAGS
+	in a conditional block, the CFLAGS settings
+	need to come from configure.
+	* db/Makefile.in: Regen.
+	* hyper/Makefile.am: Don't pass CFLAGS to the
+	linker.
+	* hyper/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Set
+	CC and CFLAGS to support building with VC++. Add
+	AC_CONFIG_AUX_DIR and AC_CANONICAL_HOST.
+
 2003-02-13  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/multiview.tcl (AddStatusbar): Anchor the

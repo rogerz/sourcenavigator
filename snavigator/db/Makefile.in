@@ -180,9 +180,8 @@ SUBDIRS = ../parsers/cpp/cpplib
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper 		-I$(DB_INCDIR) $(TCLHDIR) -I$(top_srcdir)/misc
 
-@MSVC_TRUE@LINK = link -DEBUG $(CFLAGS) $(LDFLAGS) -OUT:$@
-@MSVC_FALSE@LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
-@MSVC_FALSE@CFLAGS = -Wall
+@MSVC_TRUE@LINK = link -DEBUG $(LDFLAGS) -OUT:$@
+@MSVC_FALSE@LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
@@ -232,6 +231,7 @@ dbdump_OBJECTS =  dbdump.$(OBJEXT)
 dbdump_LDFLAGS = 
 dbimp_OBJECTS =  dbimp.$(OBJEXT)
 dbimp_LDFLAGS = 
+CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 DIST_COMMON =  Makefile.am Makefile.in

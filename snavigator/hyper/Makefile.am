@@ -31,7 +31,7 @@ if MSVC
 LINK = link -DEBUG $(LDFLAGS) -OUT:$@
 TCL_DIR = 
 else
-LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 endif
 
 HYPER_CFLAGS=@HYPER_CFLAGS@

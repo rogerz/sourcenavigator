@@ -7,15 +7,22 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(sn,5.0.0)
 AM_MAINTAINER_MODE
 
+# The combination of Cygwin, autoconf 2.13. and cl from VC++
+# needs extra hand holding.
+case "${host}" in
+*windows32*)
+        CC="cl"
+        CPP="cl -nologo -E"
+        CFLAGS="-Z7 -Od -MD -nologo"
+        ac_cv_exeext=".exe"
+        ;;
+esac
+
+AC_CONFIG_AUX_DIR(../../../..)
+AC_CANONICAL_HOST
+
 AC_PROG_CC
 AC_PROG_CPP
-
-dnl Autoconf 2.13 gets the executable suffix wrong with VC++
-case "$host" in
-  *windows32*)
-    ac_cv_exeext=".exe"
-    ;;
-esac
 AC_EXEEXT
 
 AC_OBJEXT

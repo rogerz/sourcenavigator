@@ -27,10 +27,9 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper \
 		-I$(DB_INCDIR) $(TCLHDIR) -I$(top_srcdir)/misc
 
 if MSVC
-LINK = link -DEBUG $(CFLAGS) $(LDFLAGS) -OUT:$@
+LINK = link -DEBUG $(LDFLAGS) -OUT:$@
 else
-CFLAGS = -Wall
-LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 endif
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
