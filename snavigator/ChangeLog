@@ -1,5 +1,18 @@
 2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/misc.tcl (sn_load_part_files): Set the
+	pipe used to communicate with the parser
+	and dbimp so that it uses the utf-8 encoding.
+	The recent change that piped status messages
+	through dbimp broke the display of non-ascii
+	file names, that problem is fixed by this change.
+	This change could result in some garbled file
+	names in error messages from the parsers,
+	since they could still write file names
+	in the local encoding to stderr.
+
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* hyper/sninit.c (sn_log): Convert log messages
 	to the local system encoding before printing
 	them to stderr or a log file. Also, remove some

@@ -3773,10 +3773,12 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         return [sn_ask_continue_parsing]
     }
 
-    # Pipe must be non-blocking or GUI will block on cancel of parse
+    # Pipe must be non-blocking or GUI will block on cancel of parse.
+    # Pipe must be in utf-8 mode since output of parsers could
+    # include data that can not be represented in the system encoding.
 
     fconfigure ${cmdfd} \
-        -encoding $sn_options(def,system-encoding) \
+        -encoding utf-8 \
         -blocking 0
     fileevent ${cmdfd} readable [list event_LoadPipeInput ${cmdfd} ${sc}]
     set pids [pid ${cmdfd}]
