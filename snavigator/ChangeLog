@@ -1,3 +1,9 @@
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tcl_configure.patch: Undo deletion of
+	configure patch since we do need it
+	to build using tcl module from 5.1.0.
+
 2002-09-05  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/text.tcl (tkTextInsertChar): Sync so that
@@ -12,7 +18,7 @@
 
 2002-07-30  Mo DeJong  <supermo@bayarea.net>
 
-	* tcl_configure.patch: Remove patch since
+	* patches/tcl_configure.patch: Remove patch since
  	it has been committed to the CVS.
 
 2002-07-30  Mo DeJong  <supermo@bayarea.net>
