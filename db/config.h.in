@@ -24,6 +24,9 @@
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
 
+/* Define if you have the ftruncate function.  */
+#undef HAVE_FTRUNCATE
+
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
@@ -36,6 +39,9 @@
 /* Define if you have the mkstemp function.  */
 #undef HAVE_MKSTEMP
 
+/* Define if you have the munmap function.  */
+#undef HAVE_MUNMAP
+
 /* Define if you have the rmdir function.  */
 #undef HAVE_RMDIR
 
@@ -47,6 +53,9 @@
 
 /* Define if you have the strerror function.  */
 #undef HAVE_STRERROR
+
+/* Define if you have the writev function.  */
+#undef HAVE_WRITEV
 
 /* Define if you have the <dirent.h> header file.  */
 #undef HAVE_DIRENT_H
@@ -63,11 +72,17 @@
 /* Define if you have the <sys/dir.h> header file.  */
 #undef HAVE_SYS_DIR_H
 
+/* Define if you have the <sys/mman.h> header file.  */
+#undef HAVE_SYS_MMAN_H
+
 /* Define if you have the <sys/ndir.h> header file.  */
 #undef HAVE_SYS_NDIR_H
 
 /* Define if you have the <sys/time.h> header file.  */
 #undef HAVE_SYS_TIME_H
+
+/* Define if you have the <sys/uio.h> header file.  */
+#undef HAVE_SYS_UIO_H
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
@@ -101,6 +116,9 @@
 
 /* Define if pid_t is defined. */
 #undef HAVE_PID_T
+
+/* Define if caddr_t is defined. */
+#undef HAVE_CADDR_T
 
 /* Return type of sprintf. */
 #undef SPRINTF_RET_CHARPNT

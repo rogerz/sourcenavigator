@@ -63,8 +63,24 @@
 /* END CYGNUS LOCAL */
 
 /* CYGNUS LOCAL */
-#if defined(__MSVC__) || defined(__MINGW32__)
+#if defined(__MSVC__)
 #include <NTunixstubs.h>
+#endif
+
+#if defined(__MINGW32__)
+#ifndef O_NONBLOCK
+  #define O_NONBLOCK 0
+#endif
+
+#ifndef HAVE_CADDR_T
+  typedef	char *	caddr_t;
+#endif
+
+#ifndef MAXPATHLEN
+  #define MAXPATHLEN 256
+#endif
+
+#include <shlobj.h>
 #endif
 /* END CYGNUS LOCAL */
 

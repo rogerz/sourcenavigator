@@ -1,3 +1,27 @@
+2003-01-28  Mo DeJong  <mdejong@uncounted.org>
+
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Check for sys/uio.h sys/mman.h
+	headers at configure time. Add check for the
+	caddr_t type at configure time. Add checks
+	for writev, munmap, and ftruncate.
+	* PORT/Win32/include/unistd.h: Add newline
+	at end of file to avoid gcc warning.
+	* PORT/Win32/include/sys/param.h: Add newline
+	at end of file to avoid gcc warning.
+	* PORT/include/compat.h: Define __MINGW32__
+	block of compatibility defines instead of
+	using the NTunixstubs.h include which is
+	really just for VC++.
+	* recno/rec_close.c (__rec_close, __rec_sync):
+	Conditionally include sys/uio.h and sys/mman.h
+	based on configure results. Conditionally
+	call munmap, writev, and ftruncate based
+	on configure results.
+	* recno/rec_open.c: Conditionally include
+	sys/mman.h based on configure results.
+
 2003-01-26  Earnie Boyd  <earnie@users.sf.net>
 
 	* btree/bt_seq.c (__bt_first): Cosmetic change,

@@ -39,9 +39,7 @@ static char sccsid[] = "@(#)rec_open.c	8.10 (Berkeley) 9/1/94";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
-#ifndef WIN32
-#include <sys/mman.h>
-#endif
+
 #include <sys/stat.h>
 
 #include <errno.h>
@@ -53,6 +51,10 @@ static char sccsid[] = "@(#)rec_open.c	8.10 (Berkeley) 9/1/94";
 
 #include <db.h>
 #include "recno.h"
+
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
 
 DB *
 __rec_open(fname, flags, mode, openinfo, dflags)
