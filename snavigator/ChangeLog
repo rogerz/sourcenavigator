@@ -1,3 +1,9 @@
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl (cb_add_lib): Change tk_getOpenFile
+	call to Editor&::FileDialog so that the same file selection
+	dialog is used throughout the target editor dialog.
+
 2002-05-02  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/targetedit.tcl: Remove hack at top of file

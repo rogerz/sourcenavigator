@@ -1296,7 +1296,7 @@ itcl::class snEditTarget {
     }
 
     public method cb_add_lib {} {
-        set libfiles [tk_getOpenFile]
+        set libfiles [Editor&::FileDialog $itk_component(hull)]
 	# FIXME : this is dangerous, a file named foo[exit]bar.txt could exit the IDE!
         eval {$itk_component(liblbx) insert end} $libfiles
         HandleLibsTabState
