@@ -1,5 +1,14 @@
 2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/misc.tcl (sn_create_new_project):
+	Introduce a short delay between the file
+	parse and the invocation of the xref
+	process. This lets the symbol browser
+	be mapped before any xref files are
+	scanned under Win95/98.
+
+2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/window.tcl (center): Use reqwidth and
 	reqheight when calculating window size during
 	window centering operation. The previous code

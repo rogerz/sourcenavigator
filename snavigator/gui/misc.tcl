@@ -1894,10 +1894,16 @@ proc sn_create_new_project {{import_file ""}} {
     update idletasks
     update
 
-    #generate Xref information
+    # Generate XRef information:
+    #
+    # Note that we delay starting the xref process in the
+    # pipe for a moment so that the symbol browser can
+    # be mapped. This avoids a problem under Windown 95/98
+    # where there is a long pause between the time the
+    # file scanning is done and the symbol browser shows up.
     if {${xfer_file} != "" && [file exists ${xfer_file}] && [file size\
       ${xfer_file}] > 0} {
-        sn_load_xref ${xfer_file} ${cbrowser_xref}
+        after 1000 [list sn_load_xref ${xfer_file} ${cbrowser_xref}]
     }
 
     catch {paf_db_proj sync}
