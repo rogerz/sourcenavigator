@@ -1,3 +1,10 @@
+2002-05-31  John Lash  <jlash@speakeasy.net>
+
+	* gui/retrieverpane.tcl (handle_all_none): Fix broken
+	checkbutton variable setting in the filter dialog.
+	Deselect the files checkbutton when the None button
+	is pressed.
+
 2002-05-29  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/projedit.tcl (add_files_cb): Rewrite the add_files_cb
