@@ -63,7 +63,7 @@ find . -name "*.rej" -exec rm -f {} \; > /dev/null 2>&1
 
 cp snavigator/README.TXT .
 cp snavigator/INSTALL.TXT .
-cp snavigator/NEWS NEWS.TXT
+cp snavigator/NEWS .
 
 cd ..
 

@@ -1,5 +1,13 @@
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* Makefile.am: Include NEWS in the set of files
+	that get copied into the install location.
+	* Makefile.in: Regen.
+	* NEWS: Add list of features added for 5.2a2.
+	* mkdist.sh: Copy NEWS file into dist dir.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* snavigator/win/snavigator.rc:
 	* snavigator/win/snavwindres.rc:
 	Oops, fix typo in file name from last checkin.

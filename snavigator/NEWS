@@ -1,3 +1,11 @@
+5.2a2:
+- All widgets now use modern looking 1 pixel border width
+- Use new sourcenav icon for Win32 toplevel windows
+- Fix crashing bug in Tcl parser
+- Fix code that checks for a Win32 parser crash
+- Fix running of parsers from dir with a space in path
+- Fix scrollbar layout in symbol browser and retriever
+
 5.2a1:
 - PHP language support added
 - Autoconf/M4 support added
