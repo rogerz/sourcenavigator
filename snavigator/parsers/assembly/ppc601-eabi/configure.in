@@ -8,7 +8,15 @@ AM_INIT_AUTOMAKE(sn,5.0.0)
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
+
+dnl Autoconf 2.13 gets the executable suffix wrong with VC++
+case "$host" in
+  *windows32*)
+    ac_cv_exeext=".exe"
+    ;;
+esac
 AC_EXEEXT
+
 AC_OBJEXT
 AC_PROG_AWK
 AM_PROG_LEX

@@ -1,6 +1,15 @@
 2002-04-24  Mo DeJong  <supermo@bayarea.net>
 
 	* configure: Regen.
+	* configure.in: Set the executable extension before
+	running AC_EXEEXT since autoconf 2.13 gets this
+	wrong with VC++.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
 	* configure.in: Call AC_CONFIG_SUBDIRS with
 	a plain path argument instead of a variable
 	argument. This will allow us to use autoconf

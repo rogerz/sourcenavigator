@@ -138,7 +138,15 @@ fi
 AC_SUBST(HYPER_CFLAGS) 
 
 dnl Checks for programs.
+
+dnl Autoconf 2.13 gets the executable suffix wrong with VC++
+case "$host" in
+  *windows32*)
+    ac_cv_exeext=".exe"
+    ;;
+esac
 AC_EXEEXT
+
 AC_OBJEXT
 AC_PROG_AWK
 AM_PROG_LEX
