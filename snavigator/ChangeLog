@@ -1,3 +1,8 @@
+2003-04-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* patches/tk_altkey.patch: Add fix for keyboard
+	shortcut bug in the Windows port of Tk.
+
 2003-04-02  Steven Johnson  <sjohnson@neurizon.net>
 
 	* gui/tree.tcl (sort_refresh): Added this new method,
