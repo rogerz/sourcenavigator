@@ -1,3 +1,12 @@
+2005-02-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tmeter.tcl (destructor): Avoid raising
+	an error in the case where a variable scope
+	no longer exists which causes the upvar to
+	fail. This can happen as a result of destroying
+	the driver member object in a grep pane and
+	then destroying the progress bar.
+
 2004-10-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/tree.tcl (treetable_search_region): When

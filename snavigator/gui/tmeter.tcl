@@ -189,9 +189,13 @@ itcl::class ProgressBar {
         bind $itk_component(canvas) <Configure> [itcl::code ${this} resize %w %h]
     }
     destructor {
-        # delete the bound tracing script
-        upvar #0  $itk_option(-variable) local
-        trace vdelete local w [itcl::code $this trace_callback]
+        # delete the bound tracing script if one exists
+        if {$itk_option(-variable) != ""} {
+            # upvar can fail if the var scope no longer exits, just ignore
+            if {![catch {upvar #0 $itk_option(-variable) local}]} {
+                trace vdelete local w [itcl::code $this trace_callback]
+            }
+        }
     }
 
     # Should this be keyed to a configure of -width and -height ?
