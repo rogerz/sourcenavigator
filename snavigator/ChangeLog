@@ -1,5 +1,11 @@
 2002-05-29  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/dialog.tcl (tk_dialog_with_widgets): Don't set .
+	as the transient for the dialog. This keeps the dialog
+	from being mapped when . is withdrawn under Win32/Tk 8.3.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/classtreepane.tcl (print): Rename PrintDialog,
 	use itk_component(hull) not this, reorder arguments.
 	Invoke Window::transient to explicitly set the

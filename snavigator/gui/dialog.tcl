@@ -235,13 +235,6 @@ proc tk_dialog_with_widgets {w title text bitmap default create_widgets args} {
     #bind escape/close event
     on_close ${w} "set tkPriv(${w},button) -1"
 
-    # The following command means that the dialog won't be posted if
-    # [winfo parent $w] is iconified, but it's really needed;  otherwise
-    # the dialog can become obscured by other windows in the application,
-    # even though its grab keeps the rest of the application from being used.
-
-    wm transient ${w} [winfo toplevel [winfo parent ${w}]]
-
     frame ${w}.bot
     frame ${w}.top
     if {$tcl_platform(platform) == "unix"} {
