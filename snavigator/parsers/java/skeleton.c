@@ -235,6 +235,8 @@ main(int argc, char *argv[])
 				{
 					*fname = '\0';
 				}
+				if (!*tmp || *tmp == '#')
+				    continue;
 
 				if (log_symbol_filename(out_fp,tmp) == 0)
 				{

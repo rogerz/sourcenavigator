@@ -225,6 +225,8 @@ main(int argc, char *argv[])
 	if ((fname = strchr(tmp,'\n')))	{
 	  *fname = '\0';
 	}
+	if (!*tmp || *tmp == '#')
+	  continue;
 	
 	if (log_symbol_filename(out_fp,tmp) == 0) {
 	  start_parser(tmp,0,NULL,0);

@@ -1,5 +1,17 @@
 2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/cobol/skeleton.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	* parsers/toolbox/snptools.c (sn_parse_all):
+	Skip empty lines and lines that start
+	with the # character when processing a
+	file name passed in via the -y option.
+	This makes the other parsers match
+	the cpp parser implementation.
+
+2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* db/dbutils.c (put_status_parsing_file):
 	Add a util method that prints a file status message.
 	Currently this just prints the file name to

@@ -636,6 +636,8 @@ sn_parse_all(FILE ** lexstream, int (*parse)(), void (*reset)())
     {
       *temp = 0; /* null terminate the string */
     }
+    if (!*filename || *filename == '#')
+      continue;
 
     if (sn_register_filename(lexstream, filename) == 0)
     {
