@@ -895,6 +895,9 @@ proc sn_tcl_tk_init {} {
     # First set up all paths.
     sn_initialize_paths
 
+    # Use 1 pixel border width so SN looks more "modern"
+    option add *borderWidth 1
+
     init_some_font_attributes
 
     set vis [winfo screenvisual .]

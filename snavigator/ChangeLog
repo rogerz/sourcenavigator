@@ -1,3 +1,10 @@
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/sninit.tcl (sn_tcl_tk_init): Use default
+	border width of 1 for all widgets. This change
+	makes the application look more "modern" since
+	it more closely matches the look under Windows.
+
 2003-08-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/retrieverpane.tcl (constructor): Remove
