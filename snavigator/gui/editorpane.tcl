@@ -3306,7 +3306,7 @@ itcl::class Editor& {
 
 	if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
 	    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
-	    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
+	    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
 		bgerror ${err}
 	    }
 	    if {$sn_options(def,edit-xref-highlight)} {
@@ -3371,7 +3371,7 @@ itcl::class Editor& {
 	sn_log "Loading: ${highfile}"
 
 	if {${highfile} != ""} {
-	    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
+	    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
 		bgerror ${err}
 	    }
 	}

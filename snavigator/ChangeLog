@@ -1,3 +1,12 @@
+2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights): Add
+	-delete flag to Sn_Highlight_Text calls so
+	that existing text tags get deleted before
+	new ones are added. This problem only effected
+	file types like fortran, which do not have
+	a built-in syntax highlighter.
+
 2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen.
