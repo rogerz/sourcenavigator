@@ -92,7 +92,7 @@ proc make_scale_window {filenum {enable_cancel 0}} {
 
     button ${thull}.cancel -text [get_indep String Cancel] -command "sn_processing_canceled 2"
 
-    catch {pack ${thull}.i.run -side left -padx 2 -pady 1 -anchor w}
+    pack ${thull}.i.run -side left -padx 2 -pady 1 -anchor w
     pack ${thull}.i.filename -side left -fill x -anchor w -padx 10 -pady 20
     pack ${thull}.i -fill x -anchor w
 
@@ -300,7 +300,7 @@ itcl::class ProgressBar {
 ## Procedures for displaying the loading window on startup.
 ###########################################################
 proc hide_loading_message {{wdg ".loading"}} {
-    catch {destroy ${wdg}}
+    destroy ${wdg}
     update idletasks
 }
 
@@ -403,7 +403,7 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
         set older_sn_loading_message_title ${title}
     }
 
-    catch {${w}.m.cfr.lbl config -text ${str}}
+    ${w}.m.cfr.lbl config -text ${str}
 
     #wait to let the window be drawn (needed for windows)
     if {$tcl_platform(platform) == "windows"} {
@@ -443,7 +443,7 @@ proc sn_wait {{msec 10}} {
     #make sure that 'tkwait' terminates!
     after [expr {${msec} + 2000}] "set sn_str_wait nomore"
     tkwait variable sn_str_wait
-    catch {unset sn_str_wait}
+    unset sn_str_wait
     update idletasks
 }
 

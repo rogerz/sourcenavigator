@@ -1,3 +1,9 @@
+2003-05-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tmeter.tcl (make_scale_window,
+	hide_loading_message, sn_loading_message): Remove
+	some pointless catch calls.
+
 2003-05-15  John Lash  <jlash@speakeasy.net>
 
 	* gui/tmeter.tcl (sn_loading_message):
