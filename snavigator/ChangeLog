@@ -1,3 +1,12 @@
+2003-04-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* mkdist.sh: Grab the version number out of the
+	configure.in file and check it against the version
+	in the configure file in an attempt to avoid
+	releasing a dist with the wrong version info.
+	Update the list of copied files to account for
+	changes from move to sourceforge CVS.
+
 2003-04-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/projmng.tcl (sn_new_project_cb): Don't delete

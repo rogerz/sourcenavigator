@@ -5,17 +5,34 @@
 # at the root of a clean CVS checkout.
 
 DIR=/share/SN51/dist
-RELEASE=sourcenav-5.2.0
-RELEASEDIR=$DIR/$RELEASE
 
 if test ! -d tcl || test ! -d tk ; then
     echo "Must be run from toplevel directory!"
     exit 1
 fi
 
+# Get the version number for this release.
+
+VERSION=`grep AM_INIT_AUTOMAKE snavigator/configure.in`
+if test "$VERSION" != "" ; then
+    VERSION=`expr substr $VERSION 21 5`
+    if grep VERSION=$VERSION snavigator/configure > /dev/null; then
+        DO=nothing
+    else
+        echo "configure.in version does not match version in configure script"
+        exit 2
+    fi
+else
+    echo "version not found in configure.in"
+    exit 1
+fi
+
+RELEASE=sourcenav-${VERSION}
+RELEASEDIR=$DIR/$RELEASE
+
 # Apply any needed patches to Tcl CVS modules
 rm -f patch.out
-PATCHES=`ls snavigator/patches/*.patch`
+PATCHES=`ls snavigator/patches/*.patch 2>/dev/null`
 for file in $PATCHES ; do
     patch -p 0 < $file >> patch.out
 done
@@ -27,10 +44,9 @@ fi
 mkdir $RELEASEDIR
 
 # Only copy those files that we actually need
-ROOTFILES="COPYING ChangeLog Makefile.in config-ml.in config.guess \
-config.if config.sub configure configure.in gettext.m4 install-sh \
-libtool.m4 ltcf-c.sh ltcf-cxx.sh ltcf-gcj.sh ltconfig ltmain.sh \
-missing mkdep mkinstalldirs move-if-change symlink-tree"
+ROOTFILES="COPYING ChangeLog Makefile.in config.guess \
+config.sub configure configure.in install-sh \
+missing mkinstalldirs"
 
 for file in $ROOTFILES ; do
     cp -p $file $RELEASEDIR
