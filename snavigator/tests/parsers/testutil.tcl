@@ -101,3 +101,21 @@ proc m4_parse_comment_xref { fname } {
     set r [exec m4browser -r -x xout $fname]
     return [paf_subst [read_file xout]]
 }
+
+proc php_parse { fname } {
+    return [paf_subst [exec phpbrowser $fname]]
+}
+
+proc php_parse_xref { fname } {
+    file delete xout
+    save_file xout ""
+    set r [exec phpbrowser -x xout $fname]
+    return [paf_subst [read_file xout]]
+}
+
+proc php_parse_comment_xref { fname } {
+    file delete xout
+    save_file xout ""
+    set r [exec phpbrowser -r -x xout $fname]
+    return [paf_subst [read_file xout]]
+}

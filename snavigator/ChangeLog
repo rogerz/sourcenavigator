@@ -1,5 +1,24 @@
 2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* configure: Regen.
+	* configure.in: Generate parsers/php/Makefile.
+	* etc/sn_prop.cfg.in: Add *.php suffix parser.
+	* parsers/Makefile.am: Add php to SUBDIRS.
+	* parsers/Makefile.in: Regen.
+	* parsers/php/Makefile.am:
+	* parsers/php/Makefile.in:
+	* parsers/php/phpbrowser.c:
+	* parsers/php/phpbrowser.l: Add initial version
+	of PHP parser. It only handles global variables,
+	function declarations, comments, and HTML->PHP
+	mode conversions at this point.
+	* tests/parsers/php.test: Add test cases for
+	PHP parser.
+	* tests/parsers/testutil.tcl: Add php parser
+	helper functions.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* etc/sn_prop.cfg.in: Add *.c++ to cpp file
 	extensions. Enable the m4 parser by default.
 	Set the m4 file pattern to {*.m4 *.ac configure.in},

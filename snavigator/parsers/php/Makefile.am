@@ -21,6 +21,31 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-## Order is important here.
-SUBDIRS = common libjcreuse toolbox assembly cobol cpp fortran java @JAVA_PARSER@ @SENDMAIL_PARSER@ tcl python m4 php
+toolbox = $(top_builddir)/parsers/toolbox
+common = $(top_builddir)/parsers/common
+
+bin_PROGRAMS = phpbrowser
+
+INCLUDES = $(WINFLAGS) \
+	-I$(top_srcdir)/hyper \
+	-I$(top_srcdir)/parsers/toolbox \
+	-I$(top_srcdir)/parsers/common \
+	-I$(top_srcdir)/misc/libutils
+
+phpbrowser_SOURCES = phpbrowser.c
+phpbrowser_LDADD = $(toolbox)/libsnptools.a \
+		$(common)/libcommon.a \
+		$(top_builddir)/misc/libutils/libutils.a \
+		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+
+phpbrowser_DEPENDENCIES = \
+			$(common)/libcommon.a \
+			$(toolbox)/libsnptools.a \
+			$(top_builddir)/misc/libutils/libutils.a
+
+# Used to regenerate .c from .l file
+flexgen:
+	cp $(srcdir)/phpbrowser.l .
+	$(LEX) -t $(LFLAGS) phpbrowser.l > $(srcdir)/phpbrowser.c
+	rm phpbrowser.l
 
