@@ -1,3 +1,11 @@
+2002-07-09  David Philippi  <lists@torangan.de>
+
+	* hyper/c_high.l: Added all missing keywords
+	from ISO C++ (according to a list from
+	"The Complete Reference C++" by Herbert Schildt).
+	Removed the obsolete keyword "overload" and
+	the non-existing keyword "interface".
+
 2002-07-02  Mo DeJong  <supermo@bayarea.net>
 
 	Added SN-510-2002-07-02 and SN-51-branch tags.
