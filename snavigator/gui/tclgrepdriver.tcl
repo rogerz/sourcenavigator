@@ -164,10 +164,16 @@ itcl::body sourcenav::TclGrepDriver::processNextIndex { } {
 
     set currentFileFD [open $currentFileName r]
 
-    # This could do some strange things with binary files!
-    # FIMXE: Could we improve performance with a lerger buffer size?
-    fconfigure $currentFileFD -blocking 0 -buffering full \
+    # Don't translate crlf to lf since line_grep takes care of it
+
+    # FIXME: How would this -encoding effect binary files?
+    # FIXME: Could we improve performance with a larger buffer size?
+    fconfigure $currentFileFD \
+        -blocking 0 \
+        -buffering full \
+        -translation lf \
         -encoding $sn_options(def,system-encoding)
+
     fileevent $currentFileFD readable [itcl::code $this inputReadyCallback]
 }
 
@@ -257,7 +263,8 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
 
 proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
 
-    if {[regexp "\n" $pattern]} {
+    if {[string first "\n" $pattern] != -1 ||
+            [string first "\r" $pattern] != -1} {
         error "Pattern cannot contain a newline"
     }
 
@@ -327,7 +334,7 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
                 break
             }
             # Filter out subexpressions, their range falls
-            # within the range of the previous match
+            # within the range of the first match on this line
             # or they are returned as {-1 -1}
             if {$tmp_match_start != -1 &&
                     $tmp_match_start > [lindex $match 1]} {
@@ -345,9 +352,15 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
             set actual_linestart [expr {$linestart + 1}]
         }
 
+        # Check for crlf when calculating the end of line
+        if {[string index $buffer [expr {$lineend - 1}]] == "\r"} {
+            set actual_lineend [expr {$lineend - 2}]
+        } else {
+            set actual_lineend [expr {$lineend - 1}]
+        }
+
         set match_line [string range $buffer \
-            $actual_linestart \
-            [expr {$lineend - 1}]]
+            $actual_linestart $actual_lineend]
 
         set result [list $linenum $match_line]
 
@@ -359,6 +372,10 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
         foreach match $matches_this_line {
             set match_start [lindex $match 0]
             set match_end [lindex $match 1]
+            # Don't include cr in match text
+            if {$match_end > $actual_lineend} {
+                set match_end $actual_lineend
+            }
             lappend mtoff [list [string range $buffer $match_start $match_end] \
                 [expr {$match_start - $actual_linestart}]]
         }

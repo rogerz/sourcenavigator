@@ -1,3 +1,12 @@
+2002-06-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (processNextIndex, line_grep):
+	Don't use Tcl IO subststem to filter crlf into lf,
+	instead handle crlf sequences directly in line_grep.
+	* tests/gui/line_grep.test:
+	* tests/gui/tclgrepdriver.test: Add test cases for crlf
+	EOL style.
+
 2002-06-09  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/editorpane.tcl (print_file, print_dialog): Escape []
