@@ -435,7 +435,7 @@ tcltest::test comment-1.10 { insert comment xref } {
 }]
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;********\xFF * Hello *\xFF ********\n"
 
-tcltest::test comment-1.11 { can't leave comment mode with ?> } {
+tcltest::test comment-1.11 { can't leave multi line comment mode with ?> } {
     php_parse_comment_xref [save_file f.php {
 <?
 /*Comment ?>ONE<? Text*/
@@ -469,6 +469,46 @@ tcltest::test comment-1.14 { double quotes in comment } {
 ?>
 }]
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment "Text"
+}
+
+tcltest::test comment-1.14 { no ws before // } {
+    php_parse_comment_xref [save_file f.php {
+<?
+"s";//Comment
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000003.006<>#<>#;Comment
+}
+
+tcltest::test comment-1.15 { shell style comment } {
+    php_parse_comment_xref [save_file f.php {
+<?
+#Comment
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000003.001<>#<>#;Comment
+}
+
+tcltest::test comment-1.16 { line comment ends at ?> } {
+    php_parse_comment_xref [save_file f.php {
+<?//Comment?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000002.004<>#<>#;Comment
+}
+
+tcltest::test comment-1.17 { line comment ends at ?> } {
+    php_parse_comment_xref [save_file f.php {
+<?#Comment?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000002.003<>#<>#;Comment
+}
+
+tcltest::test comment-1.18 { line comment ends at ?> } {
+    php_parse_comment_xref [save_file f.php {
+<?//Comment1?>HTML<?#Comment2?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000002.004<>#<>#;Comment1
+PAF_COMMENT_DEF;f.php<>000002.021<>#<>#;Comment2
 }
 
 
@@ -1380,10 +1420,13 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 # Should we create a token for commas and include them in the
 # parse rules for things like function declarations and global statements?
-
-# Add support for # as line comment in addition to //
+# Also, we don't currently report a function name when inserting
+# comments. It might also be good to check the return value
+# of the sn_insert_comment if there is one.
 
 # Add .= as assignment operator support.
+
+# When should we do with  <? CODE ?> when already in PHP mode?
 
 # cleanup
 file delete f.php

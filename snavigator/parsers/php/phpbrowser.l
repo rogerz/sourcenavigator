@@ -224,20 +224,40 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     sn_advance_column(2);
 }
 
-<PHP>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
+<PHP>{ws}*("//"|"#").*\n {
   char * x = (char *) yytext;
-  char * y = x + yyleng - 1;
+  char * y;
+  int newline = 0;
 
-  matched_pattern("//.*\\n", yytext);
+  matched_pattern("{ws}*(//|#).*\\n", yytext);
 
-  while (*x != '/') { x++; }
-  x++;
-  assert(*x == '/');
-  x++;
+  while (*x == ' ' || *x == '\t') { x++; }
+  assert(*x == '#' || (*x == '/' && *(x+1) == '/'));
+  if (*x == '#') {
+    x++;
+  } else if (*x == '/') {
+    x += 2;
+  }
   sn_advance_column(x - yytext);
 
-  assert(*y == '\n');
-  *y = '\0';
+  /* Check for ?> in the text leading up to the newline.
+   * PHP has this special rule where a line comment
+   * can be terminated before the newline.
+   */
+
+  for (y=x; *y; y++) {
+    if (*y == '?' && *(y+1) == '>') {
+        int offset = (int) (y - yytext);
+        yyless(offset); /* send everything after ?> back */
+        break;
+    }
+  }
+
+  y = yytext + yyleng - 1;
+  if (*y == '\n') {
+    newline = 1;
+    *y = 0;
+  }
 
   sn_insert_comment(
     /* classname */ NULL,
@@ -247,8 +267,12 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     sn_line(),
     sn_column());
 
-  sn_advance_line();
-  sn_reset_column();
+  if (newline) {
+    sn_advance_line();
+    sn_reset_column();
+  } else {
+    sn_advance_column(yyleng - (x - yytext));
+  }
 }
 
 <PHP>"/*"		{ /* A C style multi-line comment, just like this! */

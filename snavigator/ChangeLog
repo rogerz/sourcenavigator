@@ -1,5 +1,16 @@
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework line comment
+	rule so that line comments can be started
+	with // or #. If ?> is found before the newline
+	then send the text starting with the ?> back
+	and finish the comment there.
+	* tests/parsers/php.test: Add test cases for
+	# and ?> to terminate a line comment early.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/editorpane.tcl (UpdateHighlights):
 	Delete all the tags in the editor when a file
 	that has no built-in highlighter and no browser
