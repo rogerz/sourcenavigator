@@ -883,6 +883,9 @@ itcl_class Preferences& {
         pack ${win}.x -side bottom -fill x
         pack ${inc_editor} -side left -fill both -expand y
 
+        # Don't dismiss entire dialog when Return key is presed in editor
+        bindtags ${inc_editor} {Text all}
+
         lappend AvailTools ${Include}
     }
     method RaiseInclude {} {
@@ -910,17 +913,15 @@ itcl_class Preferences& {
         ${ext} config -background $sn_options(def,layout-bg)
         set win [${Parser}.ext subwidget frame]
         pack ${ext} -fill x -side top -anchor c
-        foreach type [lsort -dictionary ${Avail_Parsers}] {
-            set fr ${win}.${type}
-            set ext ${fr}.edit
-            set externaled ${fr}.external
 
-            #file extensitions for there types
-            pack [frame ${fr}] -side top -fill x
+        set row 0
+        foreach type [lsort -dictionary ${Avail_Parsers}] {
+            set ext ${win}.edit${row}
+            set externaled ${win}.external${row}
 
             Entry& ${ext} -width -1 -labelwidth 10 -label ${type}\
               -textvariable opt_Parser_Info(${type},SUF)
-            pack ${ext} -side left -fill x -expand y
+            grid ${ext} -row $row -column 0 -sticky ew
 
             #external editors
             LabelEntryButton& ${externaled} -text [get_indep String\
@@ -929,8 +930,11 @@ itcl_class Preferences& {
               -buttonballoon [get_indep String ChooseINFO]\
               -extensions $sn_options(executable_ext)\
               -defaultextension $sn_options(executable_defaultext)
-            pack ${externaled} -side left
+            grid ${externaled} -row $row -column 1
+
+            incr row
         }
+        grid columnconfigure ${win} 0 -weight 1
 
         #Macro files
         set macfr [tixLabelFrame ${Parser}.macros -label [get_indep String\
@@ -1133,6 +1137,9 @@ itcl_class Preferences& {
             pack ${html} -side top -anchor nw -fill x
         }
 
+# FIXME: The mailhost frame and entry should be removed post 5.1.
+# The widget has been disconnected from any variables and has no
+# function but it was left in to avoid GUI changes with doc impact.
         #Bug reports
         set bugs [tixLabelFrame ${Others}.bugs -label [get_indep String\
           PrefBugReport]]
@@ -1141,11 +1148,9 @@ itcl_class Preferences& {
         pack ${bugs} -fill x -side top -anchor c
 
         #Bug mail host
-        set sn_options(opt_def,mailhost) $sn_options(def,mailhost)
         set mhost ${win}.mhost
         Entry& ${mhost} -width -1 -labelwidth 15 -label [get_indep String\
-          PrefMailhost] -underline [get_indep Pos PrefMailhost]\
-          -textvariable sn_options(opt_def,mailhost)
+          PrefMailhost] -underline [get_indep Pos PrefMailhost]
         pack ${mhost} -side top -anchor nw -fill x
 
         #no printer commands on windows
@@ -1215,11 +1220,6 @@ itcl_class Preferences& {
     }
     method RaiseOthers {} {
         #set lastPage others
-    }
-    method handle_mailhost {w mhost} {
-        global sn_options
-        set state normal
-        ${mhost} config -state ${state}
     }
 
     #####################################################
@@ -1612,7 +1612,6 @@ itcl_class Preferences& {
         if {[winfo exists ${Others}]} {
             verify_set both,make-command trap1
             verify_set def,html-viewer trap1
-            verify_set def,mailhost trap1
 
             #no printer commands on windows
             if {$tcl_platform(platform) != "windows"} {

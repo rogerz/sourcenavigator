@@ -25,7 +25,8 @@ MA 02111-1307, USA.
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef _MSC_VER
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -48,6 +49,8 @@ MA 02111-1307, USA.
 #define  OPEN_MODE   O_RDONLY
 #include <sys/param.h>
 #endif /* WIN32 */
+
+#include <compat.h>
 
 #include "crossrefP.h"
 

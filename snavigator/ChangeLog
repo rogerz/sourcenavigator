@@ -1,3 +1,943 @@
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
+	* patches/libgui_print.patch: Add patch
+	for libgui that fixes Win32 printing crash.
+
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/Makefile.am: Add winprint.tcl.
+	* gui/Makefile.in: Regen.
+	* gui/editorpane.tcl (print_file): Don't
+	attempt to delete a printer dialog object
+	if it does not exist. This fixes a problem
+	printing the grep pane under Windows.
+	* gui/tclIndex: Regen.
+	* gui/winprint.tcl: Resurrect windows
+	printing file that was erroneously removed
+	on 2000-05-26. These methods are used
+	by the utilities.tcl file.
+
+2002-11-25  Mo DeJong  <mdejong@uncounted.org>
+
+	* Makefile.am: Ignore doc subdir.
+	* Makefile.in: Regen.
+	* README.TXT: Mention sourceforge URL
+ 	for online docs.
+	* configure: Regen.
+	* configure.in: Don't generate Makefiles
+	in doc subdir.
+	* mkdist.sh: Don't copy doc subdir.
+	* gui/multiview.tcl (AddHelpMenu):
+	Open sourceforge online docs. The
+	existing documentation is corrupted
+	so leave them out of the distribution.
+
+2002-11-25  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/retriever.tcl (destructor, window_deleted):
+	Fixup window deletion by setting the window
+	var to "" when it is deleted by the user.
+
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
+	* configure.in:
+	* mkdist.sh: Update version number
+	to 5.1.2.
+
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/multiview.tcl (toolbar_post_scope_menu):
+	Fix state of Related, All, All, and None buttons
+	inside the symbol combo to match the comments
+	and the documentation.
+	* gui/xrefpane.tcl (fill): Use variables
+	prefixed by $itk_option(-symbols_filter) not
+	$itk_option(-symbols) when setting values
+	for the combobox. This fixes symbol filtering
+	while the xref tab is active.
+
+2002-11-20  Mo DeJong  <mdejong@uncounted.org>
+
+	* INSTALL.TXT: Inform users that GNU tools
+	are required to build Source-Navigator.
+	* configure: Regen.
+	* configure.in: Require GNU flex and
+	bison when building.
+	* hyper/Makefile.am: Remove generated
+	.c files as a results of 'make clean'.
+	* hyper/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Add
+	missing backslash.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/m4/Makefile.am: Add missing backslash.
+	* parsers/m4/Makefile.in: Regen.
+
+2002-11-19  Mo DeJong  <mdejong@uncounted.org>
+
+	* patches/tcl_pascal.patch: Add patch to
+	get rid of crashes that show up under
+	windows when launching emacs. This patch
+	was already added to the CVS but it is
+	needed for the released 5.1 sources.
+
+2002-11-16  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (m3_post_menu_update):
+	Invert undo menu state so that it is normal
+	when the file has changed.
+	* gui/multiview.tcl (edit_post): Make the
+	state of the undo and redo menu items
+	depend on the -file_changed option from
+	the editor to match the implementation
+	in the editor class.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
+	* db/dbimp.c (check_running): Add declaration
+	of kill function when compiling under Win32.
+	Fix check_running comment since this method
+	does not check for the process using a socket.
+	Reverse order of arguments to kill.
+	* db/dbutils.c (kill): Reverse order of
+	arguments to Win32 version of kill so they
+	match the Unix implementation.
+
+2002-11-14  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (toolbar_grep): Invoke search_grep
+	method from the multiwin parent instead of broken
+	sn_grep procedure. [Bug 610449]
+
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/makepane.tcl (ExecMake): Pipe stdout
+	and stderr from make to cat and read the
+	results from the pipe. The old code used
+	2>@stdout in an attempt to do this, but
+	that fails under Windows with Tcl 8.3.
+
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Remove 2>@stdout argument to exec since
+	this is failing under Windows with Tcl 8.3.
+	Log subprocess errors if they occur.
+
+2002-09-13  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (make_editor_bindings):
+	Move Editor bindings after instance bindings
+	to avoid a problem with highlighting when
+	indenting text when events are processed
+	in the wrong order.
+	[Bug 597660]
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-511-2002-09-11 tag.
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Update version to 5.1.1.
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Update version to 5.1.1.
+	Rework toplevel directory test so it
+	checks for tcl and tk directories.
+	Remove any .rej files from dest dir
+	after patching.
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tcl_configure.patch: Undo deletion of
+	configure patch since we do need it
+	to build using tcl module from 5.1.0.
+
+2002-09-05  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/text.tcl (tkTextInsertChar): Sync so that
+	highlighted region is deleted in other editors
+	when a character is typed.
+
+2002-09-04  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/text.tcl (tkTextInsert): Sync other
+	editors when pasting into a text widget.
+	[Bug 594678]
+
+2002-07-30  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tcl_configure.patch: Remove patch since
+ 	it has been committed to the CVS.
+
+2002-07-30  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (filter): Sort symbols before
+	inserting them into the editor combo box. This
+	reverses an accidental gui change introduced
+	in 5.0 as part of the combo rewrite.
+	[Bug 579570]
+
+2002-07-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/mkfilegen.tcl (WriteRuleTarget): Escape
+	variable name that is meant to be evaluated
+	when make is run.
+	[Bug 585568]
+
+2002-07-16  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/rcs.tcl (check_in_out): Don't check
+	return value of sn_rcs.* methods since they
+	do not return booleans and we don't do anything
+	with the results of such a check.
+	* gui/version.tcl (sn_rcs_lockunlockdel): Use
+	treebind method of the Selector& class, the
+	bind method was removed long ago.
+	[Bug 570492]
+
+2002-07-14  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (proceed_gotoline): Save
+	and reset the -linenumber_var value before hiding
+	the goto line dialog since this invokes Focus_In
+	and changes the value. This was causing the Win32
+	version to fail.
+	[Bug 579168]
+
+2002-07-09  David Philippi  <lists@torangan.de>
+
+	* hyper/c_high.l: Added all missing keywords
+	from ISO C++ (according to a list from
+	"The Complete Reference C++" by Herbert Schildt).
+	Removed the obsolete keyword "overload" and
+	the non-existing keyword "interface".
+
+2002-07-02  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-510-2002-07-02 and SN-51-branch tags.
+
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Update version to 5.1.0.
+
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
+	* hyper/highlight.c (tk_text_buffer): Update hack used
+	to extract text from a Tk text widget before passing
+	it to the lexer. This function has the name of the
+	tk dll hard coded inside it, and it needed to be
+	updated. The method also lacked error checking for
+	the case where the dll could not be found.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tk_wmwithdraw.patch: Add patch that fixes
+	win32 initial mapping problems. This fixes the forward
+	button in the tools window, it was not painting when
+	the window was first mapped. This also fixes problems
+	with dialogs that get mapped at one size but then
+	get moved or resized at idle time.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (search_grep): Invoke StartGrep not
+	ExecGrep on the grep widget.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (constructor): Base the initial size
+	of the tools window on the user pref percent.
+	* gui/symbolbrowser.tcl (constructor): Cleanup height
+	calculation so that it uses floating point arithmetic.
+
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (start, finish, grepReadableEvent):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Add a newline after the truncated or canceled message
+	so the test cases get a uniform output. If the search
+	has been canceled, look back at the last line to see
+	if it ends in a \n and add one if missing. This avoids
+	a problem where the canceled message shows up on
+	the same line as the last line of data.
+	Walk backward over the characters in the buffer to
+	find the last line of text when seeing if the max
+	number of matches has been reached.
+	* gui/greppane.tcl (finish_grep, incr_selected_line):
+	Don't change the -state of the text widget in finish_grep
+	since the drivers finish method now does it.
+	When moving the selected line up or down, check for the
+	last line by walking backwards over the buffer until
+	we find a non newline character. This fixes a problem
+	where you would have to hit the next button twice before
+	the selection would wrap around.
+	* gui/tclgrepdriver.tcl (start, finish, doneReadingData):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Check to see if adding next line would put us over the
+	max matches limit and truncate if it would.
+	* tests/gui/execgrepdriver.test: Add truncation tests.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (destructor, close, start, isAvailable):
+	Invoke isAvailable if it has not been called so that the
+	grep_exe variable will be set. Set the grep_fd to "" when
+	closing. Don't try to close a grep_fd unless it is not "".
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (isValidPattern, start, isAvailable):
+	Add isValidPattern method, it lets the user ask the driver if
+	a given pattern can be used before actually invoking the driver.
+	Pass -- to the grep command after the -n and -i flags so user
+	can type in a pattern that starts with the - character.
+	* gui/greppane.tcl (GrepDriver, StartGrep): Add isValidPattern
+	method declaration to the driver interface. Use new isValidPattern
+	method to provide the user with a error dialog box in the
+	case of an invalid pattern. Remove check for - character at
+	the beginning of a pattern since this needs to be handled in
+	the driver.
+	* gui/tclgrepdriver.tcl (isValidPattern): Add isValidPattern
+	method, it lets the user ask the driver if a given pattern can
+	be used before actually invoking the driver.
+	* tests/gui/execgrepdriver.test: Test pattern that starts with -.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/misc.tcl (sn_title): Remove useless call to join
+	that was generating an error if the user entered
+	"HI {" as a grep pattern.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (processNextIndex, inputReadyCallback):
+	Unset currentFileBuffer after running the grep to deallocate
+	the buffer instead of setting it to the empty string before
+	running the next grep. Just set the buffer in the fileevent
+	callback instead of appending to an empty variable. This
+	can cut the amount in memory needed in half since it avoids
+	doubling the allocated size in the append command. Check to
+	see if all bytes have been read by checking the size of the
+	buffer instead of decrementing after a read.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (line_grep): Fix search for last
+	character in buffer as well as bad variable access introduced
+	by my last checkin.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (line_grep): Rework line_grep
+	method so that it works for buffers that do not end
+	with a newline. This lets us get rid of the need to
+	append a newline on the end of the buffer and
+	making an extra copy of a potentially large buffer.
+	* tests/gui/line_grep.test: Add more test cases for
+	buffers that do not end with a newline.
+
+2002-06-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (processNextIndex, line_grep):
+	Don't use Tcl IO subststem to filter crlf into lf,
+	instead handle crlf sequences directly in line_grep.
+	* tests/gui/line_grep.test:
+	* tests/gui/tclgrepdriver.test: Add test cases for crlf
+	EOL style.
+
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (print_file, print_dialog): Escape []
+	in user input to avoid an error where sn_print_file
+	tries to execute the window title as a command. Don't
+	regsub the input first since that does not protect
+	from bad user input.
+	* gui/printdialog.tcl (printit): Escape [] in user input
+	to avoid an error where sn_print_file tries to execute
+	the window title as a command.
+	* gui/tree.tcl (print_it): Ditto.
+
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (EditorBindings): Take puts call
+	out of Insert binding. Remove <Double-1><ButtonRelease-1>
+	binding. This binding did not function in version 5.0
+	and it was highlighting in an unexpected way under 5.1.
+
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/preferences.tcl (AddInclude): Reorder bindings
+	on "Include Directories" text widget so that hitting
+	Return in the text widget no longer dismisses the
+	project prefs dialog.
+
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Remove unused Email, Web,
+	BugReport, LimitScanMsg, LimMsg, ReportBugs,
+	EditionCannotOpenThisProject, SplashSupportText,
+	ButtonBugReport, and ButtonMail strings. Removed
+	mention of old support email from the string
+	NewerProjectCannotBeOpened.
+	* etc/german.txt: Ditto.
+	* etc/japanese.txt: Ditto.
+	* gui/bugreport.tcl (mail_send_bug_report,
+	web_send_bug_report, mail_bug_report, sn_drop_mail_line,
+	sn_send_mail): Remove all old email and web based
+	bug reporting code.
+	* gui/misc.tcl: Remove commented out use of the string
+	SplashSupportText.
+	* gui/preferences.tcl (AddOthers, handle_mailhost):
+	Disconnect the mailhost entry box from the
+	sn_options(def,mailhost) variable. The gui elements were
+	not removed to avoid doc impact of a gui change.
+	Remove unused method handle_mailhost.
+	* gui/sninit.tcl (sn_init_globals): Remove mailhost,
+	cygnus-home-http, and bug-mail-address sn_options
+	values. Remove any old cygnus references.
+	* gui/tmeter.tcl: Use copyright not cygnus_copyright.
+
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (AddMenu):
+	* gui/projedit.tcl (AddMenu): Pass $itk_component(hull)
+	instead of $this to AddWindowsMenu method to avoid
+	a problem in sn_hide_show_project where all the project
+	windows were withdrawn via Windows->Iconize Project.
+	Ditto for AddHelpMenu.
+
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/includepane.tcl (mark_item, see_item): Set -fill to red
+	for connecting lines when a "to" or "by" relationship is
+	added. Call mark_item when a canvas id is passed to see_item
+	and correctly deal with a canvas id passed to mark_item.
+
+2002-06-07  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
+
+	* etc/Makefile.am: Add german.txt to etc_DATA.
+	* etc/Makefile.in: Regen.
+	* etc/english.txt.in: Remove unused ToUpgrade
+	and fix minor typo.
+	* etc/german.txt: Sync keywords with english.txt.in.
+	Partially update the translations.
+	* etc/japanese.txt: Sync keywords with english.txt.in.
+
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
+	* etc/english.txt.in: Remove PafProjBusy and ProjAlreayOpened.
+	Add ProjAlreadyOpenedThisProcess, ProjAlreadyOpenedOtherSystem,
+	ProjAlreadyOpenedThisUser, and ProjAlreadyOpenedThisSystem.
+	* etc/german.txt: Ditto, with empty place holders.
+	* etc/japanese.txt: Ditto, with empty place holders.
+	* gui/misc.tcl (sn_is_project_busy, sn_open_project,
+	sn_read_project): Set a pid value so that callers can
+	display the locked process pid. Return a more descriptive
+	set of values so that callers can display more information
+	about why the db is locked.
+	* gui/projedit.tcl (can_create_project):
+	* gui/projmng.tcl (sn_delete_project): Display a more
+	descriptive set of errors after calling sn_is_project_busy.
+
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
+	* gui/misc.tcl (sn_is_project_busy,
+	sn_unix_check_process): Check to see if another
+	process that holds a db lock is still alive using
+	the /proc filesystem instead of kill -0. If we
+	don't have access to /proc then default to
+	kill -0 but only when the same user has the lock.
+	Add new method that looks at the /proc filesystem
+	for Linux, BSD, and Solaris style implementations.
+
+2002-06-04  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/itk_pathname.patch: Remove patch
+	since it has been integrated into the CVS
+	at sources.redhat.com.
+
+2002-06-01  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tcl_configure.patch: Add patch for
+	tcl/win/configure so that mkdist.sh will
+	generate a dist file that compiles under Windows.
+
+2002-05-31  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Automatically apply patches
+	from src/snavigator/patches to clean CVS
+	checkout before making dist file.
+	* patches/README.TXT:
+	* patches/itk_component.patch:
+	* patches/itk_pathname.patch:
+	* patches/tcl_configure.patch:
+	* patches/tk_select.patch: Add patch
+	files that need to be applied to sources CVS.
+
+2002-05-31  John Lash  <jlash@speakeasy.net>
+
+	* gui/retrieverpane.tcl (handle_all_none): Fix broken
+	checkbutton variable setting in the filter dialog.
+	Deselect the files checkbutton when the None button
+	is pressed.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/projedit.tcl (add_files_cb): Rewrite the add_files_cb
+	method to avoid invoking [lsearch -nocase $files $file].
+	This lsearch option was a local hack that is not in Tcl 8.3.
+	To speed things up and support no case searching, we create
+	a map that is checked as we loop over added files. Pass
+	a list of file names to add_files_cb instead of wasting
+	time in a useless eval.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/dialog.tcl (tk_dialog_with_widgets): Don't set .
+	as the transient for the dialog. This keeps the dialog
+	from being mapped when . is withdrawn under Win32/Tk 8.3.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classtreepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/dialog.tcl: Remove the poorly named -parent
+	option for the Dialog class. A transient window
+	should set its master using Window::transient.
+	* gui/includepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/targetmgr.tcl (edit_target): Invoke the
+	Window::transient method instead of using -parent.
+	* gui/xrefpane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classpane.tcl:
+	* gui/classtreepane.tcl:
+	* gui/editorpane.tcl:
+	* gui/greppane.tcl:
+	* gui/includepane.tcl:
+	* gui/makepane.tcl:
+	* gui/projedit.tcl:
+	* gui/retrieverpane.tcl:
+	* gui/xrefpane.tcl: Rework use of $topw member
+	variable in pane windows. Use $itk_component(hull)
+	instead of namespace tail ${this}. Use the
+	-title and -iconname options from the Window class.
+	Don't set a default value for topw so we can be sure
+	it is set before use. Move itk_initialize in the
+	Editor& class after variable initilizations because
+	the -filename property invokes editfile. Use $topw
+	member instead of makeing another call to wm toplevel.
+
+2002-05-28  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Don't subst install/Makefile
+ 	since it no longer exists.
+	* mkdist.sh: Use 5.1a2 as tar ball name.
+	No need to make a zip file since we require
+	Cygwin to do the build.
+
+2002-05-19  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Add GrepCanceledString,
+	GrepTruncatedString, and GrepFileDoesNotExist.
+	* gui/Makefile.am: Include tclgrepdriver.tcl
+	and execgrepdriver.tcl files.
+	* gui/Makefile.in: Ditto.
+	* gui/execgrepdriver.tcl: Add exec based implementation
+	of GrepDriver interface from greppane.tcl. This rewrite
+	includes support for versions of grep other than GNU grep.
+	* gui/greppane.tcl: Move exec based implementation of
+	grep into execgrepdriver.tcl. Add new generic driver
+	interface so we can swap out grep implementations.
+	Default to exec grep if available and SN_TCLGREP is
+	not defined in the env array.
+	* gui/tclIndex: Regen.
+	* gui/tclgrepdriver.tcl: Add Tcl 8.3 regexp implementation
+	of grep.
+	* tests/gui/execgrepdriver.test: Test ExecGrepDriver.
+	* tests/gui/line_grep.test: Test line_grep.
+	* tests/gui/tclgrepdriver.test: Test TclGrepDriver.
+
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/greppane.tcl (constructor, ExecGrep, handle_proceed):
+	Use bindtags and a <Return> binding on the hull to implement
+	starting grep via the keyboard. Fix the filtercombo and max
+	lines entries so that they support this binding. Reenable the
+	widgets before leaving the ExecGrep method because of user
+	error. Set or remove the <Return> binding in the handle_proceed
+	method so that ExecGrep cannot be reentered by hitting the
+	Return key twice in a row.
+
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/greppane.tcl (ExecGrep, finish_grep): Disable the Serach
+	button along with other widgets as soon as the user clicks.
+	Snap the horizontal scrollbar to the left side after the
+	grep has completed.
+
+2002-05-16  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Add script to create source
+	distribution archives.
+
+2002-05-09  Mo DeJong  <supermo@bayarea.net>
+
+	* INSTALL.TXT: Minor wording change. Tell folks to
+	add -nologo flag to VC++ CFLAGS.
+	* MAINTAINERS: Syd has resigned as a maintainer,
+	remove him and update Ian's email address.
+	* Makefile.am: Remove install/ from SUBDIRS. Add
+	README.TXT INSTALL.TXT to list of file that get
+	included by the `make dist` target.
+	* Makefile.in: Regen.
+	* README.TXT: Update info and URLs to account for
+	change of project hosting location. Added readme
+	contents from the outdated install/README.TXT.
+	* install/Makefile.am: Remove.
+	* install/Makefile.in: Remove.
+	* install/README.JAPAN.TXT: Remove.
+	* install/README.TXT: Remove.
+
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Add ButtonDismiss and
+	ErrorOccured strings.	
+	* gui/bugreport.tcl (display_bug_report): Add a
+	new method to replace mail_send_bug_report. This
+	error handler simply displays bug information in
+	a text box instead of sending an email to the
+	cygnus support email address.
+	* gui/sninit.tcl: Call display_bug_report instead
+	of mail_send_bug_report and avoid the initial
+	bug report dialog.
+	* gui/tclIndex: Regen to account for addition of
+	the display_bug_report procedure.
+
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl (cb_add_lib): Change tk_getOpenFile
+	call to Editor&::FileDialog so that the same file selection
+	dialog is used throughout the target editor dialog.
+
+2002-05-02  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl: Remove hack at top of file
+	that sources combobox.tcl. This is not needed
+	since this procedure is auto-loaded from libgui.
+	This command has become broken because the
+	.../share/cygnus install directory in libgui was
+	renamed to .../share/redhat recently.
+
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Bump version to 5.1.0.
+
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (FileDialog): Remove the
+	-multiple argument to the file dialog boxes.
+	This was a local modification to the Tk 8.1
+	sources for tkFDialog and tk_getOpenFile.
+	* gui/projedit.tcl (add_files): Remove the
+	-multiple argument to Editor&::FileDialog.
+	* gui/targetedit.tcl (import_files): Ditto.
+
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
+	* hyper/recudir.c: Cast return values from
+	ckalloc to avoid warnings from VC++. Cast
+	values passed to ckfree for the same reason.
+	* misc/libutils/mxfuncs.h: Undefine EXTERN
+	before defining it to avoid compiler warning.
+	* parsers/cpp/cpplib/macro.c: Avoid compiler
+	warning by including longstr.h to access the
+	function prototype for SN_StrDup. Use NULL
+	instead of the literal 0.
+	* parsers/tcl/Scanner.c: Include string.h
+	to avoid compiler warning because of lack
+	of prototypes for functions like strchr.
+
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
+	* db/dbcp.c: Include compat.h before db.h
+	to avoid undefined type error when building
+	with VC++.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.am: Remove BUILD_GREP conditional
+	install rule.
+	* Makefile.in: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Check for sys/param.h header.
+	Check for u_char type. Remove special VC++ flags
+	from WINFLAGS since they are no longer needed.
+	Add WINFLAGS settings for mingw.
+	Remove check of the system's grep, we no longer
+	include a grep module so this is not needed.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.am: Add snavigator/misc
+	to include search directories. Fixup CFLAGS
+	assignment to use = instead of +=.
+	* db/Makefile.in: Regen.
+	* db/dbcp.c: Include <compat.h>.
+	* db/dbimp.c: Include <config.h> and <compat.h>.
+	Conditionally include <unistd.h>
+	* db/dbutils.c: Ditto.
+	* db/dbutils.h: Remove WIN32 conditional around
+	<config.h> include.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.am: Add warning message in case
+	the tclIndex file does not exist.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* hyper/Makefile.in: Regen.
+	* hyper/dbsym.c: Remove WIN32 conditional around
+	<config.h> include. Include <compat.h>.
+	* hyper/win/winMain.c: Include <config.h> and
+	conditionally include <unistd.h>
+	* install/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/compat.h: Add new file.
+	* misc/libutils/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* misc/libutils/Makefile.in: Regen.
+	* misc/libutils/realpath.c: Include <config.h>.
+	Conditionally include <sys/param.h>. Include
+	<compat.h>.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Add
+	mingw compiler check and WINFLAGS. Remove unneeded
+	VC++ WINFLAGS that include files from the db package.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/cobol/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/cpp/cpplib/cp_crossref.c: Remove _MSC_VER
+	conditional around <config.h> include. Conditionally
+	include <unistd.h>. Include <compat.h>.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/java/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/tcl/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/toolbox/Makefile.in: Regen.
+	* parsers/toolbox/snptools.c: Include <config.h>.
+	Conditionally include <unistd.h> and <sys/param.h>.
+	* parsers/toolbox/snptools.h: Include <config.h>.
+	Conditionally include <unistd.h>.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Avoid using AC_TYPE_* macros
+	since they muck with #defines of the type name.
+	Use AC_TRY_COMPILE and AC_DEFINE to create newer
+	autoconf style HAVE_* defines. These calls to
+	AC_TRY_COMPILE can be replaced by the commented
+	out AC_CHECK_TYPES call when upgrading to 2.5X.
+	The effected types are ssize_t, size_t, mode_t,
+	off_t, and pid_t. Remove useless call of
+	AC_TYPE_GETGROUPS.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Check for Windows compiler type
+	using AC_EGREP_CPP instead of looking at the
+	value of ac_cv_prog_CC. Call AC_PROG_CPP before
+	hand since this is required for Autoconf 2.13.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Set the executable extension before
+	running AC_EXEEXT since autoconf 2.13 gets this
+	wrong with VC++.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Call AC_CONFIG_SUBDIRS with
+	a plain path argument instead of a variable
+	argument. This will allow us to use autoconf
+	2.5X when the time comes.
+
+2002-04-23  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.in: Regen.
+	* acconfig.h: Remove.
+	* acinclude.m4: Use 3 argument form of
+	AC_DEFINE so that acconfig.h is no longer
+	required.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Use 3 argument form of
+	AC_DEFINE so that acconfig.h is no longer
+	required.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	* parsers/assembly/ppc601-eabi/Makefile.in:
+	* parsers/assembly/ppc601-eabi/aclocal.m4:
+	* parsers/assembly/ppc601-eabi/autogen.sh:
+	* parsers/assembly/ppc601-eabi/config.h.in:
+	* parsers/assembly/ppc601-eabi/configure: Update
+	build files to autoconf 2.13 and automake 1.4.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.in:
+	* autogen.sh: Add new file.
+	* config.h.in:
+	* configure:
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in:
+	* hyper/Makefile.in:
+	* install/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen with net release of
+	autoconf 2.13 and automake 1.4
+
+2002-04-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclIndex: Add file that got
+	ignored by the cvs import.
+
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
+	* configure.in: Avoid setting HYPER_CONSOLE.
+	* hyper/Makefile.am: Avoid using HYPER_CONSOLE
+	when linking hyper.exe.
+	* hyper/Makefile.in: Ditto.
+	* hyper/win/winMain.c (WinMain, Tcl_AppInit):
+	Use public Tk_CreateConsoleWindow instead of
+	internal TkConsoleCreate and TkConsoleInit
+	functions. This removes the need to link
+	to the HYPER_CONSOLE object from tk which
+	should make it easier to build with an
+	already installed version of Tk.
+
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/preferences.tcl (AddParser): Use a grid layout
+	for the "Language Extensions" entries in the Parser tab.
+	The previous implementation would grow the left entry
+	at the expense of the right entry. One could make the
+	right entry vanish by typing a lot of text into the
+	left entry.
+
 2002-02-21  Mo DeJong  <supermo@bayarea.net>
 
         * gui/preferences.tcl (AddProject): Change

@@ -49,15 +49,16 @@ itcl::class Editor& {
 	    rename -state -editstate editState State
 	}
 
-	eval itk_initialize $args
-
 	# Init some variables.
 	set editor $itk_component(hull).editor
 
-	set topw [winfo toplevel [namespace tail ${this}]]
+	set topw [winfo toplevel $itk_component(hull)]
 
 	# Init some local/global variables.
 	init_Editor
+
+        # Init options after setting up class variables
+	eval itk_initialize $args
 
 	# Add menu entries, if availiable.
 	if {$itk_option(-menu) != ""} {
@@ -141,10 +142,6 @@ itcl::class Editor& {
 	            -command "${this} toolbar_grep"
             }
 	    
-# FIXME: The above toolbar_grep needs to be replaced by a call
-# that will switch to the greppane and do a grep, I was thinking
-# of calling sn_grep here, but that API needs to get replaced
-
 	    bind_history $itk_component(grep) grep
 	    balloon_bind_info $itk_component(grep) [get_indep String INFOGrep]
 	    pack $itk_component(grep) \
@@ -170,10 +167,6 @@ itcl::class Editor& {
 	    -orient horizontal
 	scrollbar $itk_component(hull).yview \
 	    -command "$itk_component(editor) yview"
-
-	# Load file into editor.
-	editfile $itk_option(-filename) \
-	    -1 "" 0
 
 	pack $itk_component(hull).xview \
 	    -side bottom \
@@ -260,19 +253,9 @@ itcl::class Editor& {
 	}
     }
 
-#FIXME : This toolbar_grep method needs to be replaced by something
-# that will just switch to the active grep pane!
-
-    #Execute grep with selection, when there is no selection,
-    #call grep dialog box
+    #Execute grep with selection
     method toolbar_grep {} {
-	#something must be selected
-	if {[catch {set pat [string trim [selection get]]}]} {
-	    sn_error_dialog [get_indep String NoSelection] [get_indep String \
-	      MultiGrep]
-	    return
-	}
-	sn_grep 1 ${pat}
+	$itk_option(-parent) search_grep
     }
     ############################################
 
@@ -340,7 +323,6 @@ itcl::class Editor& {
 	bind ${t} <Tab> {Editor&::InsertTab %W; break}
 	bind ${t} <Return> {Editor&::Newline %W; break}
 
-# FIXME : need to be replaced with call to switch to the grep pane!
 	# Grep accelerator.
 	bind ${t} <Shift-Control-G> "${this} toolbar_grep; break"
 
@@ -393,7 +375,7 @@ itcl::class Editor& {
 	bind ${t} <Control-less> "Editor&::Indent ${this} outdent; break"
 
 	# Define the queue, how the event are handled.
-	sn_add_tags $itk_component(editor) Editor
+	sn_add_tags $itk_component(editor) Editor 2
     }
 
     # Default bindings for the text editor.
@@ -422,43 +404,7 @@ itcl::class Editor& {
         # Sun UNDO.
 	bind ${t} <F14> [bind Text <Control-z>]
 
-	bind ${t} <Insert> "puts \"Other insert binding call\" ; Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
-
-	bind ${t} <Double-1><ButtonRelease-1> {
-			switch -- [%W get insert] {
-			\} {
-					Editor&::Insert_Mark_Bracket %W \} 0
-				}
-			\{ {
-					Editor&::Insert_Mark_Bracket %W \{ 0
-				}
-			\) {
-					Editor&::Insert_Mark_Bracket %W \) 0
-				}
-			\( {
-					Editor&::Insert_Mark_Bracket %W \( 0
-				}
-			">" {
-					Editor&::Insert_Mark_Bracket %W ">" 0
-				}
-			"<" {
-					Editor&::Insert_Mark_Bracket %W "<" 0
-				}
-			\] {
-					Editor&::Insert_Mark_Bracket %W \] 0
-				}
-			\[ {
-					Editor&::Insert_Mark_Bracket %W \[ 0
-				}
-			\" {
-					Editor&::Insert_Mark_Bracket %W \" 0
-				}
-			\' {
-					Editor&::Insert_Mark_Bracket %W \' 0
-				}
-			}
-			break
-		}
+	bind ${t} <Insert> "Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
     }
 
     method m3_post_menu {w X Y x y} {
@@ -480,9 +426,9 @@ itcl::class Editor& {
 
 	# Add edit commands (Undo,Copy,Cut,Delete,..).
 	if {$itk_option(-file_changed)} {
-	    set state disabled
+	    set state "normal"
 	} else {
-	    set state normal
+	    set state "disabled"
 	}
 	set str [get_indep String EditUndo]
 	${m} add command \
@@ -1515,11 +1461,19 @@ itcl::class Editor& {
     method proceed_gotoline {f} {
 	global tcl_platform
 
+        # FIXME : This is ugly, but the -linenumber_var gets
+        # changed because the vwait in sn_wait will process
+        # Focus_In which resets the variable. We hack this
+        # by saving and resetting the variable here (ugh).
+        # This fixes goto line under Win32.
+        set linenum [set $itk_option(-linenumber_var)]
+
 	itcl::delete object ${f}
 	update idletasks
 	if {$tcl_platform(platform) == "windows"} {
 	    sn_wait 50
 	}
+        set $itk_option(-linenumber_var) $linenum
 	${this} SetFondPos [set $itk_option(-linenumber_var)] 1 0
     }
 
@@ -2398,7 +2352,6 @@ itcl::class Editor& {
 	set script ""
 	set prefix "file_dialog"
 	set save_open "open"
-	set multiple 0
 	set initialdir ""
 	set extensions ""
 	set initialfile ""
@@ -2425,9 +2378,6 @@ itcl::class Editor& {
 		}
 	    "-save_open" {
 		    set save_open ${val}
-		}
-	    "-multiple" {
-		    set multiple ${val}
 		}
 	    "-initialdir" -
 	    "-dir" {
@@ -2499,7 +2449,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    } else {
 		set f [tk_getOpenFile \
@@ -2508,7 +2457,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    }
 	} else {
@@ -2542,11 +2490,7 @@ itcl::class Editor& {
 
 	#store last accessed directory
 	if {${f} != ""} {
-	    if {${multiple}} {
-		set ff [lindex ${f} 0]
-	    } else {
-		set ff ${f}
-	    }
+	    set ff ${f}
 	    catch {set last_accessed_dir [file dirname ${ff}]}
 	}
 
@@ -3254,11 +3198,8 @@ itcl::class Editor& {
     method SetTitle {} {
 	global sn_options sn_root
 
-	#toplevel window
-	set win [winfo toplevel $itk_component(editor)]
+	${topw} configure -title [Title] -iconname [Icon]
 
-	wm title ${win} [Title]
-	wm iconname ${win} [Icon]
 	set lines 0
 	scan [$itk_component(editor) index "end-1c"] %d lines
 
@@ -3797,7 +3738,8 @@ itcl::class Editor& {
 	    }
 	}
 
-	if {${print_dialog} != ""} {
+	if {${print_dialog} != "" &&
+	        [itcl::find object ${print_dialog}] == ${print_dialog}} {
 	    itcl::delete object ${print_dialog}
 	}
 
@@ -3825,6 +3767,8 @@ itcl::class Editor& {
 
 	if {$tcl_platform(platform) != "windows"} {
 	    upvar #0 ${print_dialog}-cmd cmd
+	    # Escape [] and $ in user input for eval in sn_print_file
+	    regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 	} else {
 	    set cmd ide_winprint
 	}
@@ -3841,7 +3785,8 @@ itcl::class Editor& {
 	global sn_options
 	global tcl_platform
 
-	set print_dialog "[winfo toplevel ${t}].printdlg"
+	set topl [winfo toplevel ${t}]
+	set print_dialog "${topl}.printdlg"
 
 	if {$tcl_platform(platform) == "windows"} {
 	    upvar #0 ${print_dialog}-ptarget target
@@ -3871,7 +3816,7 @@ itcl::class Editor& {
 	    ${print_dialog} raise
 	    return
 	}
-	set topl [winfo toplevel ${t}]
+
 	set print_dialog [sourcenav::Window ${print_dialog} \
 	    -leader ${t}]
 
@@ -3884,13 +3829,8 @@ itcl::class Editor& {
 
 	global ${print_dialog}-ptarget ${print_dialog}-cmd
 	set ${print_dialog}-ptarget "all"
-	set tit [wm title ${topl}]
-	regsub \
-	    -all {\*} ${tit} "" tit
-	regsub \
-	    -all {\[} ${tit} {\\[} tit
-	regsub \
-	    -all {\]} ${tit} {\\]} tit
+
+	set tit [${topl} cget -title]
 	set ${print_dialog}-cmd [format $sn_options(def,ascii-print-command) \
 	  ${tit}]
 	${print_dialog} configure -title [list [get_indep String Print] ${tit}]
@@ -3941,7 +3881,8 @@ itcl::class Editor& {
 
     method filter {{all 0}} {
 	if {$itk_option(-symbols) != ""} {
-	    $itk_option(-symbols) configure -contents [read_filetags ${all}]
+	    $itk_option(-symbols) configure -contents \
+	        [lsort -command sn_compare [read_filetags ${all}]]
 	}
     }
 
@@ -4612,8 +4553,8 @@ itcl::class Editor& {
     itk_option define -file_changed file_changed File_Changed 0
     public variable highlight y
     itk_option define -findcombo findcombo Findcombo ""
-    #for readonly-projects
-    public variable topw ""
+
+    protected variable topw
     
     private variable edit_SearchNoCase
     private variable edit_SearchMethod

@@ -339,8 +339,10 @@ itcl::class snIdeTargetMgr {
 
 	if {[itcl::find objects -class snEditTarget .snte] != ".snte"} {
 	    # Invoke target editor
-	    snEditTarget .snte ${target_name} -parent $itk_component(hull)
+	    snEditTarget .snte ${target_name}
 	    
+	    .snte transient $itk_component(hull)
+
 	    .snte activate
 
 	    itcl::delete object .snte

@@ -27,7 +27,7 @@ itcl::class ClassTree& {
     constructor {args} {
         global sn_options
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
         # Set default layout and order for classtree.
         global ${this}-layoutstyle
@@ -263,10 +263,14 @@ itcl::class ClassTree& {
         } else {
             if {${print_dialog} == "" || [itcl_info objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.printdlg -canvas $itk_component(canvas)\
-                  -leader ${topw} -modality application -file [file join $sn_options(profile_dir)\
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas $itk_component(canvas)\
+                  -file [file join $sn_options(profile_dir)\
                   tree.ps]]
 
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {
@@ -730,8 +734,7 @@ itcl::class ClassTree& {
         return [sn_view_icon [get_indep String ClassHierarchy] ${base_root}]
     }
     method SetTitle {} {
-        wm title ${topw} [Title]
-        wm iconname ${topw} [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     # Fill combobox with the correct entries
@@ -996,7 +999,7 @@ itcl::class ClassTree& {
     }
 
     protected variable print_dialog ""
-    protected variable topw "."
+    protected variable topw
     protected variable displayed 0
     protected variable CanDraw
     protected variable RelativClass ""

@@ -34,7 +34,10 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #endif
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include "dbutils.h"
 #include <setjmp.h>
@@ -43,6 +46,8 @@ MA 02111-1307, USA.
 #include "fileutils.h"
 
 #include <tcl.h>
+
+#include <compat.h>
 
 #ifndef MY_DEBUG2
 #define MY_DEBUG(x)
@@ -3306,11 +3311,11 @@ Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
   [irox:3.3.98]
 */
 
-int kill(int dumy, DWORD proc_id) /*sn_win32_ping*/
+int kill(pid_t pid, int dummy) /*sn_win32_ping*/
 {
         HANDLE hProcess;
         char debug_str[200];
-
+        DWORD proc_id = pid;
 
         hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, proc_id);
 

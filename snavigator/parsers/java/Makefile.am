@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 bin_PROGRAMS = jbrowser
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper \
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
 	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
 
 jbrowser_SOURCES = Eval.c Eval.h Parser.c Parser.h Scanner.c Scanner.h \

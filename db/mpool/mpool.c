@@ -78,7 +78,7 @@ mpool_open(key, fd, pagesize, maxcache)
 	 * XXX
 	 * We don't currently handle pipes, although we should.
 	 */
-	if (fstat(fd, &sb))
+	if (fstat(fd, (struct stat *) &sb))
 		return (NULL);
 	if (!S_ISREG(sb.st_mode)) {
 		errno = ESPIPE;

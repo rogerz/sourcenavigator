@@ -4,10 +4,6 @@
   #define O_NONBLOCK 0
 #endif
 
-#ifndef mode_t
-  typedef int mode_t;
-#endif
-
 #undef HAVE_SYS_UTSNAME_H
 #ifndef F_OK
   #define F_OK 0
@@ -15,8 +11,6 @@
 
 #ifndef caddr_t
   typedef	char *	caddr_t;
-  typedef	long ssize_t;
-  typedef	int dev_t;
   typedef	int uid_t;
   typedef	int gid_t;
   typedef unsigned short nlink_t;
@@ -60,4 +54,4 @@
 
 #endif
 
-#include <Shlobj.h>
+#include <shlobj.h>

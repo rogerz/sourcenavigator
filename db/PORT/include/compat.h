@@ -40,6 +40,35 @@
 
 #include <sys/types.h>
 
+/* CYGNUS LOCAL */
+#ifndef HAVE_SSIZE_T
+  typedef	int ssize_t;
+#endif
+
+#ifndef HAVE_SIZE_T
+  typedef	unsigned size_t;
+#endif
+
+#ifndef HAVE_MODE_T
+  typedef int mode_t;
+#endif
+
+#ifndef HAVE_OFF_T
+  typedef long off_t;
+#endif
+
+#ifndef HAVE_PID_T
+  typedef int pid_t;
+#endif
+/* END CYGNUS LOCAL */
+
+/* CYGNUS LOCAL */
+#if defined(__MSVC__) || defined(__MINGW32__)
+#include <NTunixstubs.h>
+#endif
+/* END CYGNUS LOCAL */
+
+
 /*
  * If your system doesn't typedef u_long, u_short, or u_char, change
  * the 0 to a 1.
