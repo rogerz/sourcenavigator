@@ -157,6 +157,46 @@ tcltest::test highlight-1.6 { functions appear lower in display order than varia
 } {{sel fu {function1 fu} {global1 gv} gv} {1.0 1.10 3.0 3.5} {{function1 fu} {global1 gv} gv}}
 
 
+tcltest::test highlight-2.0 { Sn_Highlight_Text } {
+    destroy .t
+    toplevel .t
+    set t [text .t.t]
+    pack .t.t
+    for {set i 0} {$i < 10} {incr i} {
+        .t.t insert end "1234567890\n"
+    }
+
+    set highlights ""
+    append highlights "1 key 1.0 1.5" \n
+    append highlights "2 str 2.0 2.5" \n
+    append highlights "3 rem 3.0 3.5"
+
+    tcltest::makeFile $highlights high
+    Sn_Highlight_Text .t.t high
+    list [.t.t tag ranges key] \
+         [.t.t tag ranges str] \
+         [.t.t tag ranges rem]
+} {{1.0 1.5} {2.0 2.5} {3.0 3.5}}
+
+tcltest::test highlight-2.1 { Sn_Highlight_Text } {
+    destroy .t
+    toplevel .t
+    set t [text .t.t]
+    pack .t.t
+    for {set i 0} {$i < 10} {incr i} {
+        .t.t insert end "1234567890\n"
+    }
+
+    set highlights ""
+    append highlights "1 \{var1 gv\} 1.0 1.5" \n
+    append highlights "2 \{var2 lv\} 2.0 2.5"
+
+    tcltest::makeFile $highlights high
+    Sn_Highlight_Text .t.t high
+    list [.t.t tag ranges {var1 gv}] \
+         [.t.t tag ranges {var2 lv}]
+} {{1.0 1.5} {2.0 2.5}}
+
 destroy .t
 ::tcltest::cleanupTests
 return

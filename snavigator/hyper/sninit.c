@@ -398,10 +398,6 @@ sn_init_mycommands(Tcl_Interp *interp,ClientData main_win)
 		(Tcl_CmdProc *)tk_trim_text_index,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
-	Tcl_CreateCommand(interp, "Sn_Highlight_Text",
-		(Tcl_CmdProc *)Sn_Highlight_Text,
-		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
-
 	Tcl_CreateCommand(interp, "Sn_Syntax_Highlight",
 		(Tcl_CmdProc *)Sn_Syntax_Highlight,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);

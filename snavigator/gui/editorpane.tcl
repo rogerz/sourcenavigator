@@ -3313,7 +3313,7 @@ itcl::class Editor& {
 	#if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
 	#    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
 	#    sn_delete_editor_tags $itk_component(editor)
-	#    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
+	#    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
 	#	bgerror ${err}
 	#    }
 	#    if {$sn_options(def,edit-xref-highlight)} {
@@ -4729,6 +4729,32 @@ proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
     $textwidget tag delete name_point
 
     return
+}
+
+# When a parser is invoked with the -h option, it
+# creates a highlight file which is read in by
+# this method.
+
+proc Sn_Highlight_Text { textwidget highfile } {
+    global sn_options
+
+    set fd [open $highfile r]
+    fconfigure $fd \
+        -encoding $sn_options(def,encoding) \
+        -blocking 0
+
+    set data [read $fd [file size $highfile]]
+    close $fd
+
+    foreach line [split $data \n] {
+        # format <num tag beg_pos end_pos>
+        if {[llength $line] != 4} {
+            continue
+        }
+        $textwidget tag add [lindex $line 1] \
+                            [lindex $line 2] \
+                            [lindex $line 3]
+    }
 }
 
 # Delete all the symbol tags in the editor.

@@ -1,5 +1,23 @@
 2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/editorpane.tcl (Sn_Highlight_Text):
+	Create Tcl only implementation of the
+	Sn_Highlight_Text C command. This
+	implementation makes the highlight a file
+	operation about 30% slower, but this should
+	not even be noticeable.
+	* gui/tclIndex: Regen.
+	* hyper/exint.c (Sn_Highlight_Text): Remove
+	C impl of Sn_Highlight_Text.
+	* hyper/sninit.c (sn_init_mycommands): Remove
+	define if Sn_Highlight_Text Tcl command.
+	* misc/libutils/mxfuncs.h: Remove
+	Sn_Highlight_Text declaration.
+	* tests/gui/editorpane.test: Add test cases
+	for Sn_Highlight_Text.
+
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Rework the
 	highlight writing logic. Instead of

@@ -747,3 +747,5 @@ set auto_index(::Editor&::friend_copy) [list source [file join $dir editorpane.t
 set auto_index(wait_editor_end) [list source [file join $dir editorpane.tcl]]
 set auto_index(sn_edit_file) [list source [file join $dir editorpane.tcl]]
 set auto_index(sn_db_create_symbol_tags) [list source [file join $dir editorpane.tcl]]
+set auto_index(Sn_Highlight_Text) [list source [file join $dir editorpane.tcl]]
+set auto_index(sn_delete_editor_tags) [list source [file join $dir editorpane.tcl]]
