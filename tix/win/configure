@@ -576,10 +576,22 @@ host_vendor=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 host_os=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 echo "$ac_t""$host" 1>&6
 
+
+# Autoconf 2.13 does not understand how to run the C preprocessor
+# when compiling with VC++, so just hard code it here. It also
+# gets the executable suffix wrong.
+
+case "${host}" in
+*windows32*)
+        CPP="${CC} -nologo -E"
+        ac_cv_exeext=".exe"
+        ;;
+esac
+
 # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:583: checking for $ac_word" >&5
+echo "configure:595: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -609,7 +621,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:613: checking for $ac_word" >&5
+echo "configure:625: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -660,7 +672,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:664: checking for $ac_word" >&5
+echo "configure:676: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -692,7 +704,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:696: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:708: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -703,12 +715,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 707 "configure"
+#line 719 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:712: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:724: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -734,12 +746,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:738: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:750: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:743: checking whether we are using GNU C" >&5
+echo "configure:755: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -748,7 +760,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:752: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:764: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -767,7 +779,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:771: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:783: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -799,13 +811,13 @@ else
 fi
 
 echo $ac_n "checking for object suffix""... $ac_c" 1>&6
-echo "configure:803: checking for object suffix" >&5
+echo "configure:815: checking for object suffix" >&5
 if eval "test \"`echo '$''{'ac_cv_objext'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   rm -f conftest*
 echo 'int i = 1;' > conftest.$ac_ext
-if { (eval echo configure:809: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:821: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   for ac_file in conftest.*; do
     case $ac_file in
     *.c) ;;
@@ -823,12 +835,12 @@ OBJEXT=$ac_cv_objext
 ac_objext=$ac_cv_objext
 
 echo $ac_n "checking for Cygwin environment""... $ac_c" 1>&6
-echo "configure:827: checking for Cygwin environment" >&5
+echo "configure:839: checking for Cygwin environment" >&5
 if eval "test \"`echo '$''{'ac_cv_cygwin'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 832 "configure"
+#line 844 "configure"
 #include "confdefs.h"
 
 int main() {
@@ -839,7 +851,7 @@ int main() {
 return __CYGWIN__;
 ; return 0; }
 EOF
-if { (eval echo configure:843: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:855: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_cygwin=yes
 else
@@ -860,7 +872,7 @@ CYGWIN=$ac_cv_cygwin
 
 
 echo $ac_n "checking build system type""... $ac_c" 1>&6
-echo "configure:864: checking build system type" >&5
+echo "configure:876: checking build system type" >&5
 
 build_alias=$build
 case "$build_alias" in
@@ -886,7 +898,7 @@ fi
 # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:890: checking for $ac_word" >&5
+echo "configure:902: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -918,7 +930,7 @@ if test -n "$ac_tool_prefix"; then
   # Extract the first word of "ranlib", so it can be a program name with args.
 set dummy ranlib; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:922: checking for $ac_word" >&5
+echo "configure:934: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -953,7 +965,7 @@ fi
 # Extract the first word of "${ac_tool_prefix}nm", so it can be a program name with args.
 set dummy ${ac_tool_prefix}nm; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:957: checking for $ac_word" >&5
+echo "configure:969: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_NM'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -985,7 +997,7 @@ if test -n "$ac_tool_prefix"; then
   # Extract the first word of "nm", so it can be a program name with args.
 set dummy nm; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:989: checking for $ac_word" >&5
+echo "configure:1001: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_NM'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1020,7 +1032,7 @@ fi
 # Extract the first word of "${ac_tool_prefix}as", so it can be a program name with args.
 set dummy ${ac_tool_prefix}as; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1024: checking for $ac_word" >&5
+echo "configure:1036: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_AS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1052,7 +1064,7 @@ if test -n "$ac_tool_prefix"; then
   # Extract the first word of "as", so it can be a program name with args.
 set dummy as; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1056: checking for $ac_word" >&5
+echo "configure:1068: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_AS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1087,7 +1099,7 @@ fi
 # Extract the first word of "${ac_tool_prefix}dlltool", so it can be a program name with args.
 set dummy ${ac_tool_prefix}dlltool; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1091: checking for $ac_word" >&5
+echo "configure:1103: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_DLLTOOL'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1119,7 +1131,7 @@ if test -n "$ac_tool_prefix"; then
   # Extract the first word of "dlltool", so it can be a program name with args.
 set dummy dlltool; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1123: checking for $ac_word" >&5
+echo "configure:1135: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_DLLTOOL'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1154,7 +1166,7 @@ fi
 # Extract the first word of "${ac_tool_prefix}windres", so it can be a program name with args.
 set dummy ${ac_tool_prefix}windres; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1158: checking for $ac_word" >&5
+echo "configure:1170: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_WINDRES'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1186,7 +1198,7 @@ if test -n "$ac_tool_prefix"; then
   # Extract the first word of "windres", so it can be a program name with args.
 set dummy windres; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1190: checking for $ac_word" >&5
+echo "configure:1202: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_WINDRES'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1231,7 +1243,7 @@ fi
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:1235: checking for a BSD compatible install" >&5
+echo "configure:1247: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1296,7 +1308,7 @@ if test "${with_tclconfig+set}" = set; then
 fi
 
     echo $ac_n "checking for Tcl configuration script""... $ac_c" 1>&6
-echo "configure:1300: checking for Tcl configuration script" >&5
+echo "configure:1312: checking for Tcl configuration script" >&5
     if eval "test \"`echo '$''{'ac_cv_c_tclconfig'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1304,7 +1316,7 @@ else
 
         if test x"${with_tclconfig}" != x ; then
         if test -f "${with_tclconfig}/tclConfig.sh" ; then
-            ac_cv_c_tclconfig=`(cd ${with_tclconfig}; pwd)`
+            ac_cv_c_tclconfig=`(cd ${with_tclconfig}; ${PWDCMD-pwd})`
         else
             { echo "configure: error: ${with_tclconfig} directory doesn't contain tclConfig.sh" 1>&2; exit 1; }
         fi
@@ -1312,8 +1324,12 @@ else
 
         if test x"${ac_cv_c_tclconfig}" = x ; then
         for i in $dirlist; do
-            if test -f $srcdir/$i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $srcdir/$i/unix; pwd)`
+                                                if test -f $srcdir/$i/unix/tclConfig.sh ; then
+                ac_cv_c_tclconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
+	        break
+            fi
+            if test -f $srcdir/$i/win/tclConfig.sh ; then
+                ac_cv_c_tclconfig=`(cd $srcdir/$i/win; ${PWDCMD-pwd})`
 	        break
             fi
         done
@@ -1327,8 +1343,12 @@ else
         done
 
                         for i in `ls -dr $tclconfpath/tcl* 2>/dev/null ` ; do
-            if test -f $i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/unix; pwd)`
+                                                if test -f $i/unix/tclConfig.sh ; then
+                ac_cv_c_tclconfig=`(cd $i/unix; ${PWDCMD-pwd})`
+                break
+            fi
+            if test -f $i/win/tclConfig.sh ; then
+                ac_cv_c_tclconfig=`(cd $i/win; ${PWDCMD-pwd})`
                 break
             fi
         done
@@ -1388,7 +1408,7 @@ if test "${with_tkconfig+set}" = set; then
 fi
 
     echo $ac_n "checking for Tk configuration script""... $ac_c" 1>&6
-echo "configure:1392: checking for Tk configuration script" >&5
+echo "configure:1412: checking for Tk configuration script" >&5
     if eval "test \"`echo '$''{'ac_cv_c_tkconfig'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1396,7 +1416,7 @@ else
 
         if test x"${with_tkconfig}" != x ; then
         if test -f "${with_tkconfig}/tkConfig.sh" ; then
-            ac_cv_c_tkconfig=`(cd ${with_tkconfig}; pwd)`
+            ac_cv_c_tkconfig=`(cd ${with_tkconfig}; ${PWDCMD-pwd})`
         else
             { echo "configure: error: ${with_tkconfig} directory doesn't contain tkConfig.sh" 1>&2; exit 1; }
         fi
@@ -1404,8 +1424,12 @@ else
 
         if test x"${ac_cv_c_tkconfig}" = x ; then
         for i in $dirlist; do
-            if test -f $srcdir/$i/unix/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; pwd)`
+                                                if test -f $srcdir/$i/unix/tkConfig.sh ; then
+                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
+	        break
+            fi
+            if test -f $srcdir/$i/win/tkConfig.sh ; then
+                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
 	        break
             fi
         done
@@ -1419,8 +1443,12 @@ else
         done
 
                         for i in `ls -dr $tkconfpath/tk* 2>/dev/null ` ; do
-            if test -f $i/unix/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $i/unix; pwd)`
+                                                if test -f $i/unix/tkConfig.sh ; then
+                ac_cv_c_tkconfig=`(cd $i/unix; ${PWDCMD-pwd})`
+                break
+            fi
+            if test -f $i/win/tkConfig.sh ; then
+                ac_cv_c_tkconfig=`(cd $i/win; ${PWDCMD-pwd})`
                 break
             fi
         done
@@ -1465,7 +1493,7 @@ fi
     
 
 echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
-echo "configure:1469: checking how to run the C preprocessor" >&5
+echo "configure:1497: checking how to run the C preprocessor" >&5
 # On Suns, sometimes $CPP names a directory.
 if test -n "$CPP" && test -d "$CPP"; then
   CPP=
@@ -1480,13 +1508,13 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1484 "configure"
+#line 1512 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1490: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1518: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1497,13 +1525,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1501 "configure"
+#line 1529 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1507: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1535: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1514,13 +1542,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -nologo -E"
   cat > conftest.$ac_ext <<EOF
-#line 1518 "configure"
+#line 1546 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1524: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1552: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1548,7 +1576,7 @@ echo "$ac_t""$CPP" 1>&6
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 no_tcl=true
 echo $ac_n "checking for Tcl headers in the source tree""... $ac_c" 1>&6
-echo "configure:1552: checking for Tcl headers in the source tree" >&5
+echo "configure:1580: checking for Tcl headers in the source tree" >&5
 # Check whether --with-tclinclude or --without-tclinclude was given.
 if test "${with_tclinclude+set}" = set; then
   withval="$with_tclinclude"
@@ -1561,9 +1589,9 @@ else
   
 if test x"${with_tclinclude}" != x ; then
   if test -f ${with_tclinclude}/tcl.h ; then
-    ac_cv_c_tclh=`(cd ${with_tclinclude}; pwd)`
+    ac_cv_c_tclh=`(cd ${with_tclinclude}; ${PWDCMD-pwd})`
   elif test -f ${with_tclinclude}/generic/tcl.h ; then
-    ac_cv_c_tclh=`(cd ${with_tclinclude}/generic; pwd)`
+    ac_cv_c_tclh=`(cd ${with_tclinclude}/generic; ${PWDCMD-pwd})`
   else
     { echo "configure: error: ${with_tclinclude} directory doesn't contain headers" 1>&2; exit 1; }
   fi
@@ -1572,7 +1600,7 @@ fi
 if test x"${ac_cv_c_tclconfig}" != x ; then
   for i in $dirlist; do
     if test -f $ac_cv_c_tclconfig/$i/generic/tcl.h ; then
-      ac_cv_c_tclh=`(cd $ac_cv_c_tclconfig/$i/generic; pwd)`
+      ac_cv_c_tclh=`(cd $ac_cv_c_tclconfig/$i/generic; ${PWDCMD-pwd})`
       break
     fi
   done
@@ -1588,7 +1616,7 @@ if test x"${ac_cv_c_tclh}" = x ; then
 
             for i in `ls -dr $tclpath/tcl* 2>/dev/null ` ; do
         if test -f $i/generic/tcl.h ; then
-          ac_cv_c_tclh=`(cd $i/generic; pwd)`
+          ac_cv_c_tclh=`(cd $i/generic; ${PWDCMD-pwd})`
           break
         fi
     done
@@ -1605,17 +1633,17 @@ if test x"${ac_cv_c_tclh}" = x ; then
    echo "$ac_t""none" 1>&6
    ac_safe=`echo "tcl.h" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for tcl.h""... $ac_c" 1>&6
-echo "configure:1609: checking for tcl.h" >&5
+echo "configure:1637: checking for tcl.h" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1614 "configure"
+#line 1642 "configure"
 #include "confdefs.h"
 #include <tcl.h>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1619: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1647: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1672,14 +1700,14 @@ fi
 # Note the gross little conversion here of srcdir by cd'ing to the found
 # directory. This converts the path from a relative to an absolute, so
 # recursive cache variables for the path will work right. We check all
-# the possible paths in one loop rather than many seperate loops to speed
+# the possible paths in one loop rather than many separate loops to speed
 # things up.
 # the alternative search directory is involked by --with-tkinclude
 #
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 no_tk=true
 echo $ac_n "checking for Tk headers in the source tree""... $ac_c" 1>&6
-echo "configure:1683: checking for Tk headers in the source tree" >&5
+echo "configure:1711: checking for Tk headers in the source tree" >&5
 # Check whether --with-tkinclude or --without-tkinclude was given.
 if test "${with_tkinclude+set}" = set; then
   withval="$with_tkinclude"
@@ -1692,9 +1720,9 @@ else
   
 if test x"${with_tkinclude}" != x ; then
   if test -f ${with_tkinclude}/tk.h ; then
-    ac_cv_c_tkh=`(cd ${with_tkinclude}; pwd)`
+    ac_cv_c_tkh=`(cd ${with_tkinclude}; ${PWDCMD-pwd})`
   elif test -f ${with_tkinclude}/generic/tk.h ; then
-    ac_cv_c_tkh=`(cd ${with_tkinclude}/generic; pwd)`
+    ac_cv_c_tkh=`(cd ${with_tkinclude}/generic; ${PWDCMD-pwd})`
   else
     { echo "configure: error: ${with_tkinclude} directory doesn't contain headers" 1>&2; exit 1; }
   fi
@@ -1703,7 +1731,7 @@ fi
 if test x"${ac_cv_c_tkconfig}" != x ; then
   for i in $dirlist; do
     if test -f $ac_cv_c_tkconfig/$i/generic/tk.h ; then
-      ac_cv_c_tkh=`(cd $ac_cv_c_tkconfig/$i/generic; pwd)`
+      ac_cv_c_tkh=`(cd $ac_cv_c_tkconfig/$i/generic; ${PWDCMD-pwd})`
       break
     fi
   done
@@ -1719,7 +1747,7 @@ if test x"${ac_cv_c_tkh}" = x ; then
 
             for i in `ls -dr $tkpath/tk* 2>/dev/null ` ; do
         if test -f $i/generic/tk.h ; then
-          ac_cv_c_tkh=`(cd $i/generic; pwd)`
+          ac_cv_c_tkh=`(cd $i/generic; ${PWDCMD-pwd})`
           break
         fi
     done
