@@ -1,3 +1,10 @@
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen.
+	* configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+
 2003-01-28  Mo DeJong  <mdejong@uncounted.org>
 
 	* config.h.in: Regen.
