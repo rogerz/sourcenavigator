@@ -1,5 +1,15 @@
 2002-05-29  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/projedit.tcl (add_files_cb): Rewrite the add_files_cb
+	method to avoid invoking [lsearch -nocase $files $file].
+	This lsearch option was a local hack that is not in Tcl 8.3.
+	To speed things up and support no case searching, we create
+	a map that is checked as we loop over added files. Pass
+	a list of file names to add_files_cb instead of wasting
+	time in a useless eval.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/dialog.tcl (tk_dialog_with_widgets): Don't set .
 	as the transient for the dialog. This keeps the dialog
 	from being mapped when . is withdrawn under Win32/Tk 8.3.
