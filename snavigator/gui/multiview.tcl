@@ -57,6 +57,16 @@ itcl::class MultiWindow& {
 
 	eval itk_initialize $args
 
+        # Set initial size based on user prefs.
+
+        set height [expr {int([winfo screenheight .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        set width [expr {int([winfo screenwidth .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        wm geometry $itk_component(hull) ${width}x${height}
+
         # Add menu.
         AddMenu
 

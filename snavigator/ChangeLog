@@ -1,3 +1,10 @@
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (constructor): Base the initial size
+	of the tools window on the user pref percent.
+	* gui/symbolbrowser.tcl (constructor): Cleanup height
+	calculation so that it uses floating point arithmetic.
+
 2002-06-21  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/execgrepdriver.tcl (start, finish, grepReadableEvent):
