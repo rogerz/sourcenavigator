@@ -15,6 +15,20 @@
 AC_INIT(generic/itk.h)
 # CYGNUS LOCAL
 AC_CONFIG_AUX_DIR(../..)
+
+# The combination of Cygwin, autoconf 2.13. and cl from VC++
+# needs extra hand holding.
+case "${host}" in
+*windows32*)
+        CC="cl"
+        CPP="cl -nologo -E"
+        CFLAGS="-Z7 -Od -MD -nologo"
+        ac_cv_exeext=".exe"
+        ;;
+esac
+
+AC_CANONICAL_HOST
+
 # END CYGNUS LOCAL
 
 #--------------------------------------------------------------------

@@ -1,5 +1,14 @@
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* itcl/configure: Regen.
+	* itcl/configure.in: Set CC and CFLAGS when
+	compiling with VC++. Call AC_CANONICAL_HOST.
+	* itk/configure: Regen.
+	* itk/configure.in: Set CC and CFLAGS when
+	compiling with VC++. Call AC_CANONICAL_HOST.
+
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* tcl.m4 (SC_MAKE_LIB): Split up library link
 	lines based on $host instead of $CC.
 	* itcl/configure: Regen.
