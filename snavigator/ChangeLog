@@ -1,5 +1,12 @@
 2002-06-08  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/preferences.tcl (AddInclude): Reorder bindings
+	on "Include Directories" text widget so that hitting
+	Return in the text widget no longer dismisses the
+	project prefs dialog.
+
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
 	* etc/english.txt.in: Remove unused Email, Web,
 	BugReport, LimitScanMsg, LimMsg, ReportBugs,
 	EditionCannotOpenThisProject, SplashSupportText,

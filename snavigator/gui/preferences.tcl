@@ -883,6 +883,9 @@ itcl_class Preferences& {
         pack ${win}.x -side bottom -fill x
         pack ${inc_editor} -side left -fill both -expand y
 
+        # Don't dismiss entire dialog when Return key is presed in editor
+        bindtags ${inc_editor} {Text all}
+
         lappend AvailTools ${Include}
     }
     method RaiseInclude {} {
