@@ -26,9 +26,6 @@ snavigator bitmaps install
 
 install-exec-local:
 	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
-if BUILD_GREP
-	$(INSTALL_PROGRAM) ../grep/src/grep$(EXEEXT) $(bindir)
-endif
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)

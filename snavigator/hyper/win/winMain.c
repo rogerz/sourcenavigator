@@ -46,7 +46,10 @@ MA 02111-1307, USA.
 #include <signal.h>
 #include <locale.h>
 #include <time.h>
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "mxlogger.h"
 #include "mxdefine.h"

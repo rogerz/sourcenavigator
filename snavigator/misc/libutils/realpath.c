@@ -64,14 +64,22 @@ MA 02111-1307, USA.
 static char *rcsid = "$Id$";
 #endif /* LIBC_SCCS and not lint */
 
+#include <config.h>
+
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <sys/stat.h>
 
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#include <compat.h>
 
 /*
  * char *realpath(const char *path, char resolved_path[MAXPATHLEN]);

@@ -1,5 +1,113 @@
 2002-04-25  Mo DeJong  <supermo@bayarea.net>
 
+	* Makefile.am: Remove BUILD_GREP conditional
+	install rule.
+	* Makefile.in: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Check for sys/param.h header.
+	Check for u_char type. Remove special VC++ flags
+	from WINFLAGS since they are no longer needed.
+	Add WINFLAGS settings for mingw.
+	Remove check of the system's grep, we no longer
+	include a grep module so this is not needed.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.am: Add snavigator/misc
+	to include search directories. Fixup CFLAGS
+	assignment to use = instead of +=.
+	* db/Makefile.in: Regen.
+	* db/dbcp.c: Include <compat.h>.
+	* db/dbimp.c: Include <config.h> and <compat.h>.
+	Conditionally include <unistd.h>
+	* db/dbutils.c: Ditto.
+	* db/dbutils.h: Remove WIN32 conditional around
+	<config.h> include.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.am: Add warning message in case
+	the tclIndex file does not exist.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* hyper/Makefile.in: Regen.
+	* hyper/dbsym.c: Remove WIN32 conditional around
+	<config.h> include. Include <compat.h>.
+	* hyper/win/winMain.c: Include <config.h> and
+	conditionally include <unistd.h>
+	* install/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/compat.h: Add new file.
+	* misc/libutils/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* misc/libutils/Makefile.in: Regen.
+	* misc/libutils/realpath.c: Include <config.h>.
+	Conditionally include <sys/param.h>. Include
+	<compat.h>.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Add
+	mingw compiler check and WINFLAGS. Remove unneeded
+	VC++ WINFLAGS that include files from the db package.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/cobol/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/cpp/cpplib/cp_crossref.c: Remove _MSC_VER
+	conditional around <config.h> include. Conditionally
+	include <unistd.h>. Include <compat.h>.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/java/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/tcl/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/toolbox/Makefile.in: Regen.
+	* parsers/toolbox/snptools.c: Include <config.h>.
+	Conditionally include <unistd.h> and <sys/param.h>.
+	* parsers/toolbox/snptools.h: Include <config.h>.
+	Conditionally include <unistd.h>.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
 	* config.h.in: Regen.
 	* configure: Regen.
 	* configure.in: Avoid using AC_TYPE_* macros

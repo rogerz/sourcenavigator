@@ -67,6 +67,12 @@ AC_CACHE_CHECK([for Microsoft Visual C++], sn_cv_os_msvc,
 coool
 #endif],[sn_cv_os_msvc=yes],[sn_cv_os_msvc=no])])
 
+AC_CACHE_CHECK([for Mingw32], sn_cv_os_mingw32,
+[AC_EGREP_CPP(coool, [
+#ifdef __MINGW32__
+coool
+#endif],[sn_cv_os_mingw32=yes],[sn_cv_os_mingw32=no])])
+
 if test x$ide_cv_os_cygwin32 = xyes; then
   WINFLAGS="-D_WINDOWS=1 -DWIN32"
   WIN32LIBS="-lcomdlg32 -ladvapi32 -lshell32 -luser32 -lgdi32"
@@ -74,13 +80,17 @@ if test x$ide_cv_os_cygwin32 = xyes; then
   SNCONFIGDIR="win"
   ac_win_build="yes"
 elif test x$sn_cv_os_msvc = xyes; then
-  WINFLAGS="-D_WINDOWS=1 -DWIN32 -D__MSVC__ -DWINNT -FI\$(top_srcdir)/../../../../db/PORT/win32/NTunixstubs.h -I\$(top_srcdir)/../../../../db/PORT/win32/include"
+  WINFLAGS="-D_WINDOWS=1 -DWIN32 -D__MSVC__ -DWINNT"
   WIN32LIBS="comdlg32.lib advapi32.lib shell32.lib user32.lib gdi32.lib"
   WIN32LDAPP="-subsystem:windows -entry:WinMainCRTStartup"
   SNCONFIGDIR="win"
   ac_win_build="yes"
 elif test x$sn_cv_os_mingw32 = xyes; then
-  # FIXME: Add mingw flags
+  WINFLAGS="-D_WINDOWS=1 -DWIN32 -DWINNT"
+  WIN32LIBS="-lcomdlg32 -ladvapi32 -lshell32 -luser32 -lgdi32"
+  WIN32LDAPP="-Wl,--subsystem,windows"
+  SNCONFIGDIR="win"
+  ac_win_build="yes"
 else
   WINFLAGS=
   WIN32LIBS=

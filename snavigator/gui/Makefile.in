@@ -83,10 +83,10 @@ AWK = @AWK@
 BFDHDIR = @BFDHDIR@
 BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
+CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 C_DEMO = @C_DEMO@
@@ -101,7 +101,6 @@ FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
 GUILIB = @GUILIB@
 HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
@@ -331,6 +330,9 @@ install-am install uninstall-am uninstall all-redirect all-am all \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+tclIndex:
+	@echo "no tclIndex file found, run make in the snavigator/gui dir"
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

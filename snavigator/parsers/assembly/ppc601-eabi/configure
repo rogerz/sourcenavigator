@@ -1736,6 +1736,33 @@ fi
 
 echo "$ac_t""$sn_cv_os_msvc" 1>&6
 
+echo $ac_n "checking for Mingw32""... $ac_c" 1>&6
+echo "configure:1741: checking for Mingw32" >&5
+if eval "test \"`echo '$''{'sn_cv_os_mingw32'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 1746 "configure"
+#include "confdefs.h"
+
+#ifdef __MINGW32__
+coool
+#endif
+EOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "coool" >/dev/null 2>&1; then
+  rm -rf conftest*
+  sn_cv_os_mingw32=yes
+else
+  rm -rf conftest*
+  sn_cv_os_mingw32=no
+fi
+rm -f conftest*
+
+fi
+
+echo "$ac_t""$sn_cv_os_mingw32" 1>&6
+
 if test x$ide_cv_os_cygwin32 = xyes; then
   WINFLAGS="-D_WINDOWS=1 -DWIN32"
   WIN32LIBS="-lcomdlg32 -ladvapi32 -lshell32 -luser32 -lgdi32"
@@ -1743,13 +1770,17 @@ if test x$ide_cv_os_cygwin32 = xyes; then
   SNCONFIGDIR="win"
   ac_win_build="yes"
 elif test x$sn_cv_os_msvc = xyes; then
-  WINFLAGS="-D_WINDOWS=1 -DWIN32 -D__MSVC__ -DWINNT -FI\$(top_srcdir)/../../../../db/PORT/win32/NTunixstubs.h -I\$(top_srcdir)/../../../../db/PORT/win32/include"
+  WINFLAGS="-D_WINDOWS=1 -DWIN32 -D__MSVC__ -DWINNT"
   WIN32LIBS="comdlg32.lib advapi32.lib shell32.lib user32.lib gdi32.lib"
   WIN32LDAPP="-subsystem:windows -entry:WinMainCRTStartup"
   SNCONFIGDIR="win"
   ac_win_build="yes"
 elif test x$sn_cv_os_mingw32 = xyes; then
-  # FIXME: Add mingw flags
+  WINFLAGS="-D_WINDOWS=1 -DWIN32 -DWINNT"
+  WIN32LIBS="-lcomdlg32 -ladvapi32 -lshell32 -luser32 -lgdi32"
+  WIN32LDAPP="-Wl,--subsystem,windows"
+  SNCONFIGDIR="win"
+  ac_win_build="yes"
 else
   WINFLAGS=
   WIN32LIBS=

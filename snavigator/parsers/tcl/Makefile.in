@@ -83,10 +83,10 @@ AWK = @AWK@
 BFDHDIR = @BFDHDIR@
 BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
+CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 C_DEMO = @C_DEMO@
@@ -101,7 +101,6 @@ FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
 GUILIB = @GUILIB@
 HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
@@ -208,7 +207,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 bin_PROGRAMS = tbrowser
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper 	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc 	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
 
 
 tbrowser_SOURCES = Scanner.c Parser.c Tree.c Eval.c Trafo.c itcl.c skeleton.c

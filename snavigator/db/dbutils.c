@@ -34,7 +34,10 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #endif
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include "dbutils.h"
 #include <setjmp.h>
@@ -43,6 +46,8 @@ MA 02111-1307, USA.
 #include "fileutils.h"
 
 #include <tcl.h>
+
+#include <compat.h>
 
 #ifndef MY_DEBUG2
 #define MY_DEBUG(x)

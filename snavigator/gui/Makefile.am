@@ -39,3 +39,5 @@ gdbtk.tcl tmeter.tcl project.tcl targetmgr.tcl buildtarget.tcl \
 targetedit.tcl toolchain.tcl conftooldlg.tcl mkfilegen.tcl \
 tree.tcl optiontrace.tcl
 
+tclIndex:
+	@echo "no tclIndex file found, run make in the snavigator/gui dir"
