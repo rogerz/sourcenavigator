@@ -91,6 +91,11 @@ static void		DrawMenuEntryAccelerator _ANSI_ARGS_((
 			    Drawable d, GC gc, Tk_Font tkfont,
 			    CONST Tk_FontMetrics *fmPtr,
 			    Tk_3DBorder activeBorder, int x, int y,
+			    int width, int height));
+static void		DrawMenuEntryArrow _ANSI_ARGS_((
+			    TkMenu *menuPtr, TkMenuEntry *mePtr, 
+			    Drawable d, GC gc,
+			    Tk_3DBorder activeBorder, int x, int y,
 			    int width, int height, int drawArrow));
 static void		DrawMenuEntryBackground _ANSI_ARGS_((
 			    TkMenu *menuPtr, TkMenuEntry *mePtr,
@@ -1585,7 +1590,7 @@ DrawMenuEntryIndicator(menuPtr, mePtr, d, gc, indicatorGC, tkfont, fmPtr, x,
 
 void
 DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
-	activeBorder, x, y, width, height, drawArrow)
+	activeBorder, x, y, width, height)
     TkMenu *menuPtr;			/* The menu we are drawing */
     TkMenuEntry *mePtr;			/* The entry we are drawing */
     Drawable d;				/* What we are drawing into */
@@ -1597,10 +1602,6 @@ DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
     int y;				/* top edge */
     int width;				/* Width of menu entry */
     int height;				/* Height of menu entry */
-    int drawArrow;			/* For cascade menus, whether of not
-					 * to draw the arraw. I cannot figure
-					 * out Windows' algorithm for where
-					 * to draw this. */
 {
     int baseline;
     int leftEdge = x + mePtr->indicatorSpace + mePtr->labelWidth;
@@ -1613,8 +1614,7 @@ DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
     baseline = y + (height + fmPtr->ascent - fmPtr->descent) / 2;
 
     if ((mePtr->state == ENTRY_DISABLED) && (menuPtr->disabledFgPtr != NULL)
-	    && ((mePtr->accelPtr != NULL)
-		    || ((mePtr->type == CASCADE_ENTRY) && drawArrow))) {
+	    && (mePtr->accelPtr != NULL)) {
 	COLORREF oldFgColor = gc->foreground;
 
 	gc->foreground = GetSysColor(COLOR_3DHILIGHT);
@@ -1622,6 +1622,55 @@ DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
 	    Tk_DrawChars(menuPtr->display, d, gc, tkfont, accel,
 		    mePtr->accelLength, leftEdge + 1, baseline + 1);
 	}
+
+	gc->foreground = oldFgColor;
+    }
+
+    if (mePtr->accelPtr != NULL) {
+	Tk_DrawChars(menuPtr->display, d, gc, tkfont, accel, 
+		mePtr->accelLength, leftEdge, baseline);
+    }
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * DrawMenuEntryArrow --
+ *
+ *	This function draws the arrow bitmap on the right side of a
+ *	a menu entry. This function is currently unused.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+void
+DrawMenuEntryArrow(menuPtr, mePtr, d, gc,
+	activeBorder, x, y, width, height, drawArrow)
+    TkMenu *menuPtr;			/* The menu we are drawing */
+    TkMenuEntry *mePtr;			/* The entry we are drawing */
+    Drawable d;				/* What we are drawing into */
+    GC gc;				/* The gc we are drawing with */
+    Tk_3DBorder activeBorder;		/* The border when an item is active */
+    int x;				/* left edge */
+    int y;				/* top edge */
+    int width;				/* Width of menu entry */
+    int height;				/* Height of menu entry */
+    int drawArrow;			/* For cascade menus, whether of not
+					 * to draw the arraw. I cannot figure
+					 * out Windows' algorithm for where
+					 * to draw this. */
+{
+    if ((mePtr->state == ENTRY_DISABLED) && (menuPtr->disabledFgPtr != NULL)
+	    && ((mePtr->type == CASCADE_ENTRY) && drawArrow)) {
+	COLORREF oldFgColor = gc->foreground;
+
+	gc->foreground = GetSysColor(COLOR_3DHILIGHT);
 
 	if (mePtr->type == CASCADE_ENTRY) {
 	    RECT rect;
@@ -1634,11 +1683,6 @@ DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
 		    OBM_MNARROW, ALIGN_BITMAP_RIGHT);
 	}
 	gc->foreground = oldFgColor;
-    }
-
-    if (mePtr->accelPtr != NULL) {
-	Tk_DrawChars(menuPtr->display, d, gc, tkfont, accel, 
-		mePtr->accelLength, leftEdge, baseline);
     }
 
     if ((mePtr->type == CASCADE_ENTRY) && drawArrow) {
@@ -2280,6 +2324,8 @@ TkpDrawMenuEntry(mePtr, d, tkfont, menuMetricsPtr, x, y, width, height,
 	DrawMenuEntryLabel(menuPtr, mePtr, d, gc, tkfont, fmPtr, x, adjustedY,
 		width, adjustedHeight);
 	DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
+		activeBorder, x, adjustedY, width, adjustedHeight);
+	DrawMenuEntryArrow(menuPtr, mePtr, d, gc,
 		activeBorder, x, adjustedY, width, adjustedHeight, drawArrow);
 	if (!mePtr->hideMargin) {
 	    DrawMenuEntryIndicator(menuPtr, mePtr, d, gc, indicatorGC, tkfont,

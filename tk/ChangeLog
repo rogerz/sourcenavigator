@@ -1,5 +1,14 @@
 2003-12-27  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* win/tkWinMenu.c (DrawMenuEntryAccelerator,
+	DrawMenuEntryArrow): Move the unused menu
+	arrow drawing code in DrawMenuEntryAccelerator
+	into a new function named DrawMenuEntryArrow.
+	This makes no functional change but it will
+	make it easier to fix things in the future.
+
+2003-12-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* win/tkWinMenu.c (DrawWindowsSystemBitmap):
 	Fix a strange Win32 bug where the logical
 	coordinates returned by a call to DPtoLP
