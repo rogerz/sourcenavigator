@@ -1607,6 +1607,7 @@ itcl::class MultiWindow& {
         if {${ed} == ""} {
             set state disabled
             set modstate disabled
+            set dostate disabled
         } else {
             set state normal
             if {[${ed} canModify]} {
@@ -1614,10 +1615,15 @@ itcl::class MultiWindow& {
             } else {
                 set modstate disabled
             }
+            if {[${ed} cget -file_changed]} {
+                set dostate normal
+            } else {
+                set dostate disabled
+            }
         }
 
-        ${m} entryconfig [get_indep String EditUndo] -state ${modstate}
-        ${m} entryconfig [get_indep String EditRedo] -state ${modstate}
+        ${m} entryconfig [get_indep String EditUndo] -state ${dostate}
+        ${m} entryconfig [get_indep String EditRedo] -state ${dostate}
         ${m} entryconfig [get_indep String EditCut] -state ${modstate}
         ${m} entryconfig [get_indep String EditCopy] -state ${state}
         ${m} entryconfig [get_indep String EditPaste] -state ${modstate}

@@ -1,3 +1,14 @@
+2002-11-16  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (m3_post_menu_update):
+	Invert undo menu state so that it is normal
+	when the file has changed.
+	* gui/multiview.tcl (edit_post): Make the
+	state of the undo and redo menu items
+	depend on the -file_changed option from
+	the editor to match the implementation
+	in the editor class.
+
 2002-11-15  Mo DeJong  <mdejong@uncounted.org>
 
 	* db/dbimp.c (check_running): Add declaration
