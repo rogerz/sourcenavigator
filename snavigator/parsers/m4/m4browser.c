@@ -1071,6 +1071,10 @@ YY_RULE_SETUP
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng - 1);
+
   sn_advance_column(yyleng);
 
   current_function_paren_count++;
@@ -1078,7 +1082,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 378 "m4browser.l"
+#line 382 "m4browser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1969,7 +1973,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 378 "m4browser.l"
+#line 382 "m4browser.l"
 
 
 void dump_function_definition() {

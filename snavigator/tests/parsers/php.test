@@ -434,6 +434,18 @@ function foo() {
 3 str 4.16 4.21
 4 gv 4.10 4.15}
 
+tcltest::test highlight-1.15 { highlight function xref } {
+    browse_highlights [save_file f.php {
+<?
+function foo() {}
+foo();
+?>
+}]
+} {1 key 3.0 3.8
+2 fu 4.0 4.3}
+
+
+
 
 tcltest::test highlight-2.0 { highlight special keywords } {
     browse_highlights [save_file f.php {
@@ -2610,6 +2622,10 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 #    print hi;
 #  }
 # }
+
+# Fix var highlight for array vars with named elements
+#
+# $row->cat_id
 
 
 # cleanup

@@ -405,6 +405,9 @@ void sn_highlight(enum sn_highlights type,
     case SN_HIGH_VAR_LOCAL:
       tag = "lv";
       break;
+    case SN_HIGH_FUNCTION:
+      tag = "fu";
+      break;
     default:
       sn_error("Unknown highlight type %d\n", type);
       sn_panic();

@@ -370,6 +370,10 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng - 1);
+
   sn_advance_column(yyleng);
 
   current_function_paren_count++;

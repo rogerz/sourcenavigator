@@ -398,6 +398,12 @@ ${var}
 }]
 } {1 gv 2.0 2.6}
 
+tcltest::test highlight-3.0 { highlight function xref } {
+    browse_highlights [save_file f.m4 {
+foo();
+}]
+} {1 fu 2.0 2.3}
+
 
 # FIXME: Add support for sh heredoc style string
 # No subst should be done in the strings.

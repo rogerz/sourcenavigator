@@ -1470,6 +1470,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_FUNCTION,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* SOMEWORD */
   free_head_token(); /* OPEN_PAREN */
 }

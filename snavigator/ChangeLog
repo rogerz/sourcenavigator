@@ -1,3 +1,20 @@
+2003-07-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Highlight macro
+	invocations as functions.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Highlight
+	function invocations.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Map SN_HIGH_FUNCTION to the tag "fu".
+	* parsers/toolbox/snptools.h: Add define
+	for SN_HIGH_FUNCTION.
+	* tests/parsers/m4.test: Test for macro
+	xref highlight.
+	* tests/parsers/php.test: Test for function
+	xref highlight.
+
 2003-07-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbutils.c (db_insert_entry): When inserting

@@ -2921,13 +2921,17 @@ YY_RULE_SETUP
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_FUNCTION,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* SOMEWORD */
   free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1477 "phpbrowser.l"
+#line 1481 "phpbrowser.l"
 {
   int offset;
 
@@ -2943,7 +2947,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 1490 "phpbrowser.l"
+#line 1494 "phpbrowser.l"
 {
   int offset;
 
@@ -2959,7 +2963,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1503 "phpbrowser.l"
+#line 1507 "phpbrowser.l"
 {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
@@ -2981,7 +2985,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 1522 "phpbrowser.l"
+#line 1526 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable read at token %d\n", token_index);
@@ -2994,7 +2998,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 1532 "phpbrowser.l"
+#line 1536 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "increment array variable start token %d\n", token_index);
@@ -3019,7 +3023,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 1554 "phpbrowser.l"
+#line 1558 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable start token %d\n", token_index);
@@ -3041,7 +3045,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 1573 "phpbrowser.l"
+#line 1577 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable array dimension tokens %d\n", token_index);
@@ -3060,7 +3064,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 1589 "phpbrowser.l"
+#line 1593 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable assignment end token %d\n", token_index);
@@ -3091,7 +3095,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 1617 "phpbrowser.l"
+#line 1621 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable read/write assignment end token %d\n", token_index);
@@ -3121,7 +3125,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 1644 "phpbrowser.l"
+#line 1648 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable post increment end token %d\n", token_index);
@@ -3152,7 +3156,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 1672 "phpbrowser.l"
+#line 1676 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array variable read end token %d\n", token_index);
@@ -3193,7 +3197,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 1710 "phpbrowser.l"
+#line 1714 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
@@ -3210,7 +3214,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 1724 "phpbrowser.l"
+#line 1728 "phpbrowser.l"
 {
   enum sn_highlights type;
 
@@ -3247,12 +3251,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 1758 "phpbrowser.l"
+#line 1762 "phpbrowser.l"
 
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 1760 "phpbrowser.l"
+#line 1764 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -3260,7 +3264,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 1766 "phpbrowser.l"
+#line 1770 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -3292,7 +3296,7 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 1791 "phpbrowser.l"
+#line 1795 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -3420,7 +3424,7 @@ case YY_STATE_EOF(HDSTRING):
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 1916 "phpbrowser.l"
+#line 1920 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -4310,7 +4314,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1916 "phpbrowser.l"
+#line 1920 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */
