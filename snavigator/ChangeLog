@@ -1,3 +1,12 @@
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
+	* hyper/highlight.c (tk_text_buffer): Update hack used
+	to extract text from a Tk text widget before passing
+	it to the lexer. This function has the name of the
+	tk dll hard coded inside it, and it needed to be
+	updated. The method also lacked error checking for
+	the case where the dll could not be found.
+
 2002-06-24  Mo DeJong  <supermo@bayarea.net>
 
 	* patches/tk_wmwithdraw.patch: Add patch that fixes
