@@ -1,3 +1,9 @@
+2003-05-30  John Lash  <jlash@speakeasy.net>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Add missing \ at end of line so that
+	exec of gnudoit does not fail.
+
 2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/misc.tcl (sn_create_new_project):
