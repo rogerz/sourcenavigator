@@ -2157,7 +2157,7 @@ itcl::class Editor& {
 
 	#use external Editor !
 	if {${external_editor} != ""} {
-	    if {[regexp "(emacs|gnuclient|gnudoit)" ${external_editor}]} {
+	    if {[regexp "(emacs|gnuclient)" ${external_editor}]} {
 		if {[string compare ${line} ""] == 0} {
 		    set line 1.0
 		}

@@ -1,3 +1,12 @@
+2003-06-05  John Lash  <jlash@speakeasy.net>
+
+	* gui/editorpane.tcl (EditFile): Remove
+	gnudoit as string to match external editor on.
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	gnudoit	is deprecated, change call to "gnudoit"
+	to "gnuclient -batch -eval". Remove other
+	places where the string gnudoit appears.
+
 2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/emacs.tcl (sn_ensure_emacs_running):

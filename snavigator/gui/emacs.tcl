@@ -42,9 +42,9 @@ proc sn_ensure_emacs_running {editcmd} {
         # sn.el is loaded only once.
         set lisp_commands "(progn (add-to-list 'load-path \"[file dirname\
           ${lisp_file}]\") (require 'sn))"
-        if {[regexp "(gnuclient|gnudoit)" ${editcmd}]} {
+        if {[regexp "gnuclient" ${editcmd}]} {
 
-            # Unset tmp env vars while executing gnudoit
+            # Unset tmp env vars while executing gnuclient
             # since these programs will fail to find unix socket files
             # when the tmp dir is set to .snprj
             set tmp [sn_unset_tmp_dir]
@@ -52,16 +52,16 @@ proc sn_ensure_emacs_running {editcmd} {
             # First try via gnuclient.  If that fails,
             # then start a new Emacs.
 
-            if {! [catch {exec gnudoit ${lisp_commands}} err]} {
+            if {! [catch {exec gnuclient -batch -eval ${lisp_commands}} err]} {
                 # It worked.  So send the magic command.
-                sn_log "Emacs: connected via gnudoit"
-                if {[catch {exec gnudoit\
+                sn_log "Emacs: connected via gnuclient"
+                if {[catch {exec gnuclient -batch -eval\
                         "(sn-startup nil \"${host}\" nil ${port})"} err]} {
-                    sn_log "exec gnudoit startup failed : $err"
+                    sn_log "exec gnuclient startup failed : $err"
                 }
                 set emacs_connection 1
             } else {
-                sn_log "Emacs: exec gnudoit failed : $err"
+                sn_log "Emacs: exec gnuclient failed : $err"
                 # Assume "emacs" is in path.
                 set editcmd emacs
             }
