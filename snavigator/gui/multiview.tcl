@@ -1083,7 +1083,7 @@ itcl::class MultiWindow& {
         AddHistMenu $itk_component(menu)
 
         ##Windows
-        AddWindowsMenu $itk_component(menu) ${this} 1 1
+        AddWindowsMenu $itk_component(menu) $itk_component(hull) 1 1
 
         ##Help menu
         AddHelpMenu $itk_component(menu) $itk_component(hull)

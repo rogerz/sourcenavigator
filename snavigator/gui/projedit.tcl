@@ -355,10 +355,10 @@ itcl::class Project& {
           -underline [get_indep Pos Exit] -command " sn_exit "
 
         ##Windows
-        AddWindowsMenu ${m} ${this}
+        AddWindowsMenu ${m} $itk_component(hull)
 
         ##Help
-        AddHelpMenu ${m} ${this}
+        AddHelpMenu ${m} $itk_component(hull)
 
         ${this} configure -menu ${m}
     }

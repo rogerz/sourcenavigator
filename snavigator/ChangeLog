@@ -1,5 +1,14 @@
 2002-06-07  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/multiview.tcl (AddMenu):
+	* gui/projedit.tcl (AddMenu): Pass $itk_component(hull)
+	instead of $this to AddWindowsMenu method to avoid
+	a problem in sn_hide_show_project where all the project
+	windows were withdrawn via Windows->Iconize Project.
+	Ditto for AddHelpMenu.
+
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/includepane.tcl (mark_item, see_item): Set -fill to red
 	for connecting lines when a "to" or "by" relationship is
 	added. Call mark_item when a canvas id is passed to see_item
