@@ -1,3 +1,11 @@
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in:
+	* itk/configure: Regen.
+	* itk/configure.in: Include user set CFLAGS
+	in the CFLAGS passed to the compiler.
+
 2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itcl/Makefile.in: Add installdirs to deps
