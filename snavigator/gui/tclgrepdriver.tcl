@@ -33,6 +33,8 @@ itcl::class sourcenav::TclGrepDriver {
 
     public method setTextWidget { widget }
 
+    public method isValidPattern { pat }
+
     # Invoked when ready to process next file
     private method processNextIndex {}
 
@@ -134,6 +136,16 @@ itcl::body sourcenav::TclGrepDriver::getScaleValueVariable {} {
 
 itcl::body sourcenav::TclGrepDriver::setTextWidget { widget } {
     set text $widget
+}
+
+itcl::body sourcenav::TclGrepDriver::isValidPattern { pat } {
+    if {[catch {regexp -- $pat ""} err]} {
+        set ind [string first : $err]
+        incr ind
+        set str [string range $err $ind end]
+        return [string trim $str]
+    }
+    return 1
 }
 
 itcl::body sourcenav::TclGrepDriver::processNextIndex { } {

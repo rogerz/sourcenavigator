@@ -41,6 +41,9 @@ itcl::class sourcenav::GrepDriver {
     # Tell driver where to insert results
     public method setTextWidget {}
 
+    # Return 1 is a valid grep pattern, otherwise
+    # return a string describing why it is not.
+    public method isValidPattern { pat }
 }
 
 
@@ -500,8 +503,12 @@ itcl::class Grep {
             return
         }
 
-        if {[string compare [string index ${pat} 0] "-"] == 0} {
-            set pat "\\${pat}"
+        set valid [$driver isValidPattern ${pattern}]
+
+        if {$valid != "1"} {
+            handle_proceed normal
+            sn_error_dialog ${valid}
+            return
         }
 
         # Set toplevel window title to a tool specific string

@@ -1,5 +1,24 @@
 2002-06-20  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/execgrepdriver.tcl (isValidPattern, start, isAvailable):
+	Add isValidPattern method, it lets the user ask the driver if
+	a given pattern can be used before actually invoking the driver.
+	Pass -- to the grep command after the -n and -i flags so user
+	can type in a pattern that starts with the - character.
+	* gui/greppane.tcl (GrepDriver, StartGrep): Add isValidPattern
+	method declaration to the driver interface. Use new isValidPattern
+	method to provide the user with a error dialog box in the
+	case of an invalid pattern. Remove check for - character at
+	the beginning of a pattern since this needs to be handled in
+	the driver.
+	* gui/tclgrepdriver.tcl (isValidPattern): Add isValidPattern
+	method, it lets the user ask the driver if a given pattern can
+	be used before actually invoking the driver.
+	* tests/gui/execgrepdriver.test: Test pattern that starts with -.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/misc.tcl (sn_title): Remove useless call to join
 	that was generating an error if the user entered
 	"HI {" as a grep pattern.

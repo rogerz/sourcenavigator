@@ -35,6 +35,8 @@ itcl::class sourcenav::ExecGrepDriver {
 
     public method setTextWidget { widget }
 
+    public method isValidPattern { pat }
+
     private method ExecGrepEvent {cmd}
 
     private method grepReadableEvent {}
@@ -105,6 +107,8 @@ itcl::body sourcenav::ExecGrepDriver::start { pat files nocase max } {
     if {! ${case_sensitive}} {
         lappend cmd "-i"
     }
+
+    lappend cmd "--"
 
     # The pattern to search for
     set activePattern ${pat}
@@ -410,9 +414,9 @@ itcl::body sourcenav::ExecGrepDriver::isAvailable {} {
     set f2 [sn_tmpFileName]
     ::close [open $f2 w]
 
-    sn_log "Attempting to grep exec check : $grep_cmd -n -i $f1 $f2"
+    sn_log "Attempting to grep exec check : $grep_cmd -n -i -- one $f1 $f2"
 
-    if {[catch {exec $grep_cmd -n -i one $f1 $f2} str]} {
+    if {[catch {exec $grep_cmd -n -i -- one $f1 $f2} str]} {
         sn_log "grep exec check failed \"$str\""
     } else {
         set expected "$f1:1:ONE"
@@ -433,4 +437,8 @@ itcl::body sourcenav::ExecGrepDriver::isAvailable {} {
 
 itcl::body sourcenav::ExecGrepDriver::setTextWidget { widget } {
     set text $widget
+}
+
+itcl::body sourcenav::ExecGrepDriver::isValidPattern { pat } {
+    return 1
 }
