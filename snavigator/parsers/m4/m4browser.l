@@ -67,8 +67,6 @@ yywrap()
 
 %}
 
-%x COMMENT
-
 ws		[ \t]
 symbol		[a-zA-Z0-9_]+
 quoted-symbol	({symbol}|\[{symbol}\])
@@ -84,6 +82,29 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 \n		{ sn_advance_line(); sn_reset_column(); }
 
 {ws}*(#|dnl{ws}).*\n {
+  char * x = (char *) yytext;
+  char * y = x + yyleng - 1;
+
+  while (*x == '\t' || *x == ' ') { x++; }
+  if (*x == '#') {
+    x++;
+  } else if (*x == 'd') {
+    x += 3;
+  }
+  while (*x == '\t' || *x == ' ') { x++; }
+  sn_advance_column(x - yytext);
+
+  assert(*y == '\n');
+  *y = '\0';
+
+  sn_insert_comment(
+    /* classname */ NULL,
+    /* funcname */ NULL,
+    sn_current_file(),
+    x,
+    sn_line(),
+    sn_column());
+
   sn_advance_line();
   sn_reset_column();
 }

@@ -61,7 +61,7 @@ static char currentFilename[MAXPATHLEN];
  * boolean values (with their defaults) for command line switches
  */
 static int case_sensitive = 1;
-static int comments = 0;
+extern int comment_database;
 static int dialect = 0;
 static int drop_usr_headers = 0;
 static int local_vars = 0;
@@ -198,7 +198,7 @@ sn_getopt(enum sn_options opt)
     case SN_OPT_CASE_SENSITIVE:
       return (void *) case_sensitive; 
     case SN_OPT_COMMENTS:
-      return (void *) comments;
+      return (void *) comment_database;
     case SN_OPT_DIALECT:
       return (void *) dialect;
     case SN_OPT_DROP_USR_HEADERS:
@@ -285,7 +285,7 @@ sn_process_options(int argc, char *argv[])
         break;
 
       case 'r':
-        comments = 1;
+        comment_database = 1;
         break;
 
       case 's':

@@ -1,5 +1,23 @@
 2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Remove unused COMMENT
+	mode decl. Call sn_insert_comment to write
+	comments into the database.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Set the global variable
+	comment_database defined in libcommon.a
+	when the -r command line option is passed.
+	This fixes insertion of comments into the
+	database with the toolbox library.
+	* tests/parsers/m4.test: Add comment
+	xref tests.
+	* tests/parsers/testutil.tcl
+	(m4_parse_comment_xref): Add helper method
+	to generate an xref with comments.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* etc/english.txt.in: Add LanguageExtLanguage
 	and LanguageExtFileExtensions strings.
 	* gui/preferences.tcl (AddParser,
