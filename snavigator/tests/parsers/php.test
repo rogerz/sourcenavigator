@@ -112,9 +112,17 @@ $var[]=1
 4 ASSIGNMENT_OPERATOR "" 3.6 3.7
 5 SOMEWORD "1" 3.7 3.8}
 
-
-
-
+tcltest::test tokens-2.3 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$foo = &$bar;
+?>
+}]]
+} {1 VARIABLE "foo" 3.1 3.4
+2 ASSIGNMENT_OPERATOR "" 3.5 3.6
+3 REFERENCE_OPERATOR "" 3.7 3.8
+4 VARIABLE "bar" 3.9 3.12
+5 SEMICOLON "" 3.12 3.13}
 
 
 # ---------------------------------------------

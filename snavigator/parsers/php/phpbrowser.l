@@ -64,6 +64,7 @@ typedef enum {
     ASSIGNMENT_OPERATOR, /* '=' */
     ASSIGNMENT_OPERATORS, /* = -= += and so on */
     COMPARISON_OPERATORS, /* == === != >= and so on */
+    REFERENCE_OPERATOR,   /* & */
 
     SOMEWORD,          /* a sequence of text */
     KEYWORD,       /* a key sequence in this language */
@@ -219,7 +220,7 @@ sq-string-token  "SINGLE_QUOTED_STRING"
 string-token  ({dq-string-token}|{sq-string-token})
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
 
-function-argument-token  ("VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
+function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
@@ -320,13 +321,13 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   /*. {}*/
 }
 
-<PHP>{ws}*("//"|"#").*("\n"|"?>") {
+<PHP>("//"|"#").*("\n"|"?>") {
   char * x = (char *) yytext;
   char * y;
   int newline = 0;
 
 #if MATCH_DUMP
-  matched_pattern("{ws}*(//|#).*\\n", yytext);
+  matched_pattern("(//|#).*\\n", yytext);
 #endif
 
   while (*x == ' ' || *x == '\t') { x++; }
@@ -882,6 +883,18 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   matched_pattern("=", yytext);
 #endif
   append_token(ASSIGNMENT_OPERATOR, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"&" {
+#if MATCH_DUMP
+  matched_pattern("&", yytext);
+#endif
+  append_token(REFERENCE_OPERATOR, NULL,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1707,6 +1720,8 @@ char * TokenTypeToString(Token *tok) {
             return "ASSIGNMENT_OPERATORS";
         case COMPARISON_OPERATORS:
             return "COMPARISON_OPERATORS";
+        case REFERENCE_OPERATOR:
+            return "REFERENCE_OPERATOR";
         case SOMEWORD:
             return "SOMEWORD";
         case KEYWORD:

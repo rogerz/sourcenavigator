@@ -1,5 +1,20 @@
 2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for &, the reference operator. Update
+	function arguments pattern to support
+	use of a reference operator before
+	a variable in the argument list.
+	Remove {ws} from the front of the
+	line comment rule since this is
+	now handled by the greedy {wsn} rule.
+	* tests/parsers/php.test: Add token
+	parsing test for reference operator.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Add a rule that
 	matches any series of space, tab, and
 	newline characters. Remove the rule that
