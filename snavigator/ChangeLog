@@ -1,3 +1,10 @@
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Remove 2>@stdout argument to exec since
+	this is failing under Windows with Tcl 8.3.
+	Log subprocess errors if they occur.
+
 2002-09-13  Mo DeJong  <supermo@bayarea.net>
 
 	* patches/tk_wmwithdraw.patch: Removed
