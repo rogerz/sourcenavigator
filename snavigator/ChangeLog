@@ -1,3 +1,10 @@
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/sninit.c (sn_log): Convert log messages
+	to the local system encoding before printing
+	them to stderr or a log file. Also, remove some
+	DOS style CRLF line endings.
+
 2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbimp.c (main): Pass a line that starts

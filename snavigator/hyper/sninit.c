@@ -146,7 +146,11 @@ sn_log(ClientData clientData, Tcl_Interp *interp,int argc,char **argv)
 		{
 			for (argv++; argc-- > 1; argv++)
 			{
-				fprintf (stderr, "%s", *argv);
+				Tcl_DString sys;
+				Tcl_DStringInit(&sys);
+				Tcl_UtfToExternalDString(NULL, *argv, -1, &sys);
+				fprintf (stderr, "%s", Tcl_DStringValue(&sys));
+				Tcl_DStringFree(&sys);
 			}
 			fprintf(stderr,"\n");
 		}
@@ -155,10 +159,14 @@ sn_log(ClientData clientData, Tcl_Interp *interp,int argc,char **argv)
 
 	for (argv++; argc-- > 1; argv++)
 	{
-		LOGGER((LOGFP,"%s",*argv));
+		Tcl_DString sys;
+		Tcl_DStringInit(&sys);
+		Tcl_UtfToExternalDString(NULL, *argv, -1, &sys);
+		LOGGER((LOGFP,"%s",Tcl_DStringValue(&sys)));
 #if !_WINDOWS
-		fprintf(stderr,"%s",*argv);
+		fprintf(stderr,"%s",Tcl_DStringValue(&sys));
 #endif /* !_WINDOWS */
+		Tcl_DStringFree(&sys);
 	}
 #if !_WINDOWS
 	fprintf(stderr,"\n");
