@@ -270,7 +270,7 @@ AC_DEFUN(SC_ENABLE_SYMBOLS, [
     else
 	CFLAGS_DEFAULT='$(CFLAGS_DEBUG)'
 	LDFLAGS_DEFAULT='$(LDFLAGS_DEBUG)'
-	DBGX=g
+	DBGX=d
 	if test "$tcl_ok" = "yes"; then
 	    AC_MSG_RESULT([yes (standard debugging)])
 	fi

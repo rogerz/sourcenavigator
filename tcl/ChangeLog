@@ -1,3 +1,10 @@
+2003-12-25  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure:
+	* win/tcl.m4 (SC_ENABLE_SYMBOLS): Fix last
+	update to macro, the Win32 DBGX symbol should
+	be d not g.
+
 2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/configure: Regen.
