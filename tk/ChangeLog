@@ -1,3 +1,10 @@
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure: Regen.
+	* win/configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+
 2002-09-13  Keith Seitz  <keiths@redhat.com>
 
 	From Mo Dejong  <supermo@bayarea.net>:
