@@ -292,8 +292,8 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
     }
     # If the last index in the buffer is not a newline add
     # it as a newline_index since regexp considers it one.
-    if {[string index $buffer $buffer_length] != "\n"} {
-        lappend newline_indexes $buffer_length
+    if {[string index $buffer end] != "\n"} {
+        lappend newline_indexes [string length $buffer]
     }
     set newline_length [llength $newline_indexes]
     if {$newline_length == 0} {error "no newlines found in buffer"}
