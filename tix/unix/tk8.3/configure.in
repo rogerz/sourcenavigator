@@ -141,11 +141,10 @@ AC_ARG_ENABLE(sam,
 if test "$ok" = "yes"; then
     TIX_BUILD_SAM="yes"
     TIX_SAM_TARGETS='$(SAM_TARGETS)'
+    TIX_SAM_INSTALL=_install_sam_lib_
 else
     TIX_BUILD_SAM="no"
 fi
-
-	    TIX_SAM_INSTALL=_install_sam_lib_
 
 IS_ITCL=0
 ITCL_BUILD_LIB_SPEC=""

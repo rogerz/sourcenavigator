@@ -1,3 +1,12 @@
+2003-04-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/tk8.3/configure: Regen.
+	* unix/tk8.3/configure.in: Don't set TIX_SAM_INSTALL
+	unless configured to build with sam. This keeps sam
+	from being built at install time. The sam feature
+	does not really work properly since it depends on
+	tclsh at build time.
+
 2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/Makefile.in: Use TCL_DBGX when setting
