@@ -372,7 +372,11 @@ itcl::class LabelEntryButton& {
 	    global $itk_option(-variable)
 	    upvar #0 $itk_option(-variable) var
             set inifile [file tail $var]
-            set inidir [file dirname $var]
+            if {$directory && [file isdirectory $var]} {
+                set inidir $var
+            } else {
+                set inidir [file dirname $var]
+            }
         } else {
 	    # Fixme: if the user is not using -variable
 	    # there are other ways to initialize these:-

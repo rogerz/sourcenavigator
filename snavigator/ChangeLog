@@ -1,3 +1,11 @@
+2003-05-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tools.tcl (select_file): When a
+	LabelEntryButton& widget is used to select
+	a directory, start in the directory named
+	in the entry. The previous implementation
+	would start one directory up.
+
 2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/misc.tcl (sn_load_xref, sn_create_new_project,
