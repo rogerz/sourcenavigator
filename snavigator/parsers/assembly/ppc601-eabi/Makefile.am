@@ -39,7 +39,7 @@ abrowser_LDADD = $(toolbox)/libsnptools.a $(db)/libdbutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 abrowser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a \
-			$(db)/libdbutils.a
+			$(db)/libdbutils.a \
 			$(common)/libcommon.a \
 			$(toolbox)/libsnptools.a \
 			$(libutils)/libutils.a

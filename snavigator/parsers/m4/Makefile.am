@@ -36,7 +36,7 @@ m4browser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 m4browser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a \
-			$(top_builddir)/db/libdbutils.a
+			$(top_builddir)/db/libdbutils.a \
 			$(common)/libcommon.a \
 			$(toolbox)/libsnptools.a \
 			$(top_builddir)/misc/libutils/libutils.a
