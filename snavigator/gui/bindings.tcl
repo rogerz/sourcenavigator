@@ -180,7 +180,34 @@ proc sn_treetable_bindings {t} {
     bind ${t} <Up> {
 		tkTreeTableUpDown %W -1
 	}
-    bind ${t} <Shift-Up> {
+
+
+    if {[string equal "unix" $::tcl_platform(platform)]} {
+        bind ${t} <Button-4> {
+            %W yview scroll -5 units
+        }
+        bind ${t} <Shift-Button-4> {
+            %W yview scroll -1 units
+        }
+        bind ${t} <Control-Button-4> {
+            %W xview scroll -10 units
+        }
+        bind ${t} <Button-5> {
+            %W yview scroll 5 units
+        }
+        bind ${t} <Shift-Button-5> {
+            %W yview scroll 1 units
+        }
+        bind ${t} <Control-Button-5> {
+            %W xview scroll 10 units
+        }
+    } else {
+        bind ${t} <MouseWheel> {
+            %W yview scroll [expr {- (%D / 120) * 4}] units
+        }
+    }
+
+  bind ${t} <Shift-Up> {
 		tkListboxExtendUpDown %W -1
 	}
     bind ${t} <Down> {
@@ -566,6 +593,17 @@ proc sn_text_default_bindings {text} {
     bind ${text} <Control-d> [bind ${text} <Delete>]
     bind ${text} <Control-a> [bind ${text} <Home>]
     bind ${text} <Control-e> [bind ${text} <End>]
+
+    if {[string equal "unix" $::tcl_platform(platform)]} {
+        bind ${text} <Button-5> [list %W yview scroll 5 units]
+        bind ${text} <Button-4> [list %W yview scroll -5 units]
+        bind ${text} <Shift-Button-5> [list %W yview scroll 1 units]
+        bind ${text} <Shift-Button-4> [list %W yview scroll -1 units]
+        bind ${text} <Control-Button-5> [list %W xview scroll 10 units]
+        bind ${text} <Control-Button-4> [list %W xview scroll -10 units]
+    } else {
+        bind ${text} <MouseWheel> { %W yview scroll [expr {- (%D / 120) * 4}] units
+    }
 
     catch {
         bind ${text} <apLineDel> "[bind ${text} <Delete>]; break"
@@ -1186,6 +1224,20 @@ proc sn_canv_goto_bindings {c} {
     #apply input to canvases
     bind ${c} <ButtonRelease-1> "focus %W"
 
+    if {[string equal "unix" $::tcl_platform(platform)]} {
+        bind ${c} <Button-4> {sn_canvas_scroll %W MultiUp}
+        bind ${c} <Button-5> {sn_canvas_scroll %W MultiDown}
+        bind ${c} <Shift-Button-4> {sn_canvas_scroll %W Up}
+        bind ${c} <Shift-Button-5> {sn_canvas_scroll %W Down}
+        bind ${c} <Control-Button-4> {sn_canvas_scroll %W MultiLeft}
+        bind ${c} <Control-Button-5> {sn_canvas_scroll %W MultiRight}
+    } else {
+        # don't see a way to use sn_canvas_scroll with this single binding
+        bind ${c} <MouseWheel> {
+            %W yview scroll [expr {- (%D / 120) * 4}] units
+        }
+    }
+
     bind ${c} <Left> {sn_canvas_scroll %W Left}
     bind ${c} <Right> {sn_canvas_scroll %W Right}
     bind ${c} <Control-Left> {sn_canvas_scroll %W PgLeft}
@@ -1248,6 +1300,18 @@ proc sn_canvas_scroll {c which} {
             }
         End {
                 ${c} yview moveto 1
+            }
+        MultiUp {
+                ${c} yview scroll -5 units
+            }
+        MultiDown {
+                ${c} yview scroll 5 units
+            }
+        MultiLeft {
+                ${c} xview scroll -5 units
+            }
+        MultiRight {
+                ${c} xview scroll 5 units
             }
     }
 }

@@ -1,5 +1,14 @@
 2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/bindings.tcl (sn_treetable_bindings,
+	sn_text_default_bindings, sn_canv_goto_bindings):
+	Implement MouseWheel binding for Win32 and
+	Button 4/5 button scroll bindings for
+	X11 based systems. Based on patches submitted
+	by Brad Forden and John Lash. [Bug 814341]
+
+2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* db/dbutils.c (db_remove_file_def): Rework
 	the function that removes all symbols for
 	a given file name so that it uses the symbol
