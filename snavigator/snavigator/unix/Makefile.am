@@ -26,9 +26,9 @@ AUTOMAKE_OPTIONS = cygnus
 #If we ever do elix again, I will struggle to make this dependent on configure.
 
 #bin_SCRIPTS = elix-link snscenario
-bin_SCRIPTS = snscenario
+bin_SCRIPTS = snscenario snpdbg
 
 install-exec-local: $(bindir)/@SN_LAUNCH_SHELL@
 
 $(bindir)/@SN_LAUNCH_SHELL@: snavigator
-	$(INSTALL_SCRIPT) snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@
+	$(INSTALL_SCRIPT) $(srcdir)/snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@

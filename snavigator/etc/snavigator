@@ -1,0 +1,7 @@
+# Name the main interp, so we can keep them straight.
+tk appname sourcenav-main
+
+# Create an interp and run the SN session inside it.
+create_interp {
+  sn_session
+}

@@ -2,20 +2,21 @@
 
 # the directory where this script lives
 snbindir=`dirname $0`
+script=snavigator
 
-# navigato is either in ../share/etc/navigato or ../../share/etc/navigato
+# $script is either in ../share/etc/ or ../../share/etc/
 
-if test -f $snbindir/../share/etc/navigato; then
+if test -f $snbindir/../share/etc/$script; then
     etcdir=`cd $snbindir/../share/etc; pwd`
-elif test -f $snbindir/../../share/etc/navigato; then
+elif test -f $snbindir/../../share/etc/$script; then
     etcdir=`cd $snbindir/../../share/etc; pwd`
 else
     echo "Cannot find Source-Navigator's startup script."
 fi
 
 # Run SN inside GDB
-#echo "set args -file "$etcdir/navigato" ${1+"$@"}" > gdb.run
+#echo "set args -file "$etcdir/$script" ${1+"$@"}" > gdb.run
 #exec gdb --command gdb.run $snbindir/hyper
 
 # Run SN
-exec "$snbindir/hyper" -file "$etcdir/navigato" ${1+"$@"}
+exec "$snbindir/hyper" -file "$etcdir/$script" ${1+"$@"}

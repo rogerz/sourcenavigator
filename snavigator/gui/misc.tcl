@@ -798,6 +798,14 @@ proc sn_session {} {
     sn_start_new_session
 }
 
+
+# Start SN Parser debug session.
+proc snpdbg_session {} {
+    tk_dialog auto "Not Implemented Yet!" "Not Implemented Yet!" \
+      question_image 0 Ok
+    exit
+}
+
 # This function is even called when a new interpreter is created
 # to open a project or to create a new project.
 proc sn_start_new_session {{opts ""}} {

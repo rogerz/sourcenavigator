@@ -166,7 +166,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 	}
 
 	/*
-	 * Now, we have to find the navigato file.
+	 * Now, we have to find the etc/snavigator file.
 	 */
 
 	strcpy(tmp, sn_loc);
@@ -176,7 +176,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
 		exit(1);
 	}
-	strcpy(relativePtr, "\\share\\etc\\navigato");
+	strcpy(relativePtr, "\\share\\etc\\snavigator");
 
 	testFile = CreateFile(tmp, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (INVALID_HANDLE_VALUE == testFile) {
@@ -189,7 +189,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 			exit(1);
 		}
 
-		strcpy(relativePtr, "\\share\\etc\\navigato");
+		strcpy(relativePtr, "\\share\\etc\\snavigator");
 		testFile = CreateFile(tmp, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 		if (INVALID_HANDLE_VALUE == testFile) {
 			MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
@@ -201,7 +201,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 	strcpy(etc_dir, tmp);
 
 	/*
-	 * relativePtr is still set to "\\share\\etc\\navigato"
+	 * relativePtr is still set to "\\share\\etc\\snavigator"
 	 */
 
 	relativePtr[0] = '\0';
@@ -246,7 +246,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 
 	if(CreateProcess(
 		NULL,
-		hyper_cmd_line	/*"hyper -f share\\etc\\navigato"*/ , /* pointer to command line string */
+		hyper_cmd_line	/*"hyper -f share\\etc\\snavigator"*/ , /* pointer to command line string */
 		NULL,	/* pointer to process security attributes */
 		NULL,	/* pointer to thread security attributes */
 		FALSE,	/* handle inheritance flag */

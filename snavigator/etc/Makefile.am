@@ -23,8 +23,8 @@ AUTOMAKE_OPTIONS = cygnus
 SUBDIRS = sn_toolchains
 
 etcdir = $(datadir)/etc
-etc_DATA = english.txt german.txt grep.fil navigato sn_prop.cfg \
-sn.el sn_cmp_g.pat snscenario
+etc_DATA = english.txt german.txt grep.fil sn_prop.cfg \
+sn.el sn_cmp_g.pat snscenario snavigator snpdbg
 
 #all-local:	stamp
 

@@ -181,13 +181,13 @@ AUTOMAKE_OPTIONS = cygnus
 #If we ever do elix again, I will struggle to make this dependent on configure.
 
 #bin_SCRIPTS = elix-link snscenario
-bin_SCRIPTS = snscenario
+bin_SCRIPTS = snscenario snpdbg
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
-CONFIG_CLEAN_FILES =  snavigator snscenario
+CONFIG_CLEAN_FILES =  snscenario
 SCRIPTS =  $(bin_SCRIPTS)
 
-DIST_COMMON =  Makefile.am Makefile.in snavigator.in snscenario.in
+DIST_COMMON =  Makefile.am Makefile.in snscenario.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -202,8 +202,6 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-snavigator: $(top_builddir)/config.status snavigator.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 snscenario: $(top_builddir)/config.status snscenario.in
 	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -312,7 +310,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 install-exec-local: $(bindir)/@SN_LAUNCH_SHELL@
 
 $(bindir)/@SN_LAUNCH_SHELL@: snavigator
-	$(INSTALL_SCRIPT) snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@
+	$(INSTALL_SCRIPT) $(srcdir)/snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

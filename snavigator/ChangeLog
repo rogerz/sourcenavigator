@@ -1,5 +1,39 @@
 2004-01-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Cleanup init script used with Source-Navigator,
+	there is no longer any need to do the fancy
+	configure time subst that we were doing. Also,
+	add a snpdebug script (it does nothing yet).
+
+	* configure: Regen.
+	* configure.in: Don't generate scripts
+	from .in files when it is not needed.
+	a .in file since it is not needed.
+	* etc/Makefile.am: Update after rename
+	of navigato script, also add snpdbg.
+	* etc/Makefile.in: Regen.
+	* etc/navigato.in: Renamed to snavigator.
+	* etc/snavigator: Renamed from navigato.in.
+	* etc/snpdbg: Add startup script for
+	snpdbg tool which will be used to debug
+	parser problems.
+	* gui/misc.tcl (snpdbg_session): Add
+	placeholder for snpdbg session command.
+	* snavigator/unix/Makefile.am:
+	* snavigator/unix/Makefile.in:
+	* snavigator/unix/snavigator: Renamed
+	from snavigator.in, the configure time
+	subst is no longer needed.
+	* snavigator/unix/snavigator.in: Remove
+	since this is now called "snavigator".
+	* snavigator/win/snavigator.c: Replace
+	etc/navigato with etc/snavigator in
+	startup script.
+	* snavigator/unix/snpdbg: Add new startup
+	file "snpdbg" used to debug a parser/browser.
+
+2004-01-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* NEWS: Add new notes for 5.2b2 release.
 	* configure: Regen.
 	* configure.in: Add parsers/example

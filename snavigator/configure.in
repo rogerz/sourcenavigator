@@ -539,7 +539,6 @@ AC_SUBST(TK_DBGX)
 
 AC_OUTPUT([Makefile
 gui/Makefile
-etc/navigato
 hyper/Makefile
 db/Makefile
 packages/Makefile
@@ -583,7 +582,6 @@ sdk/parsers/examples/Makefile
 sdk/parsers/examples/assembly/Makefile
 sdk/parsers/examples/elf/Makefile
 snavigator/unix/Makefile
-snavigator/unix/snavigator
 snavigator/unix/snscenario
 snavigator/win/Makefile
 demo/Makefile
