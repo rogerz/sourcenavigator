@@ -410,6 +410,42 @@ itcl::class Editor& {
 	bind ${t} <F14> [bind Text <Control-z>]
 
 	bind ${t} <Insert> "Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
+
+	bind ${t} <Double-1><ButtonRelease-1> {
+	    switch -- [%W get {insert - 1 char}] {
+	        "\}" {
+	            Editor&::Insert_Mark_Bracket %W "\}" 0
+	        }
+	        "\{" {
+	            Editor&::Insert_Mark_Bracket %W "\{" 0
+	        }
+	        ")" {
+	            Editor&::Insert_Mark_Bracket %W ")" 0
+	        }
+	        "(" {
+	            Editor&::Insert_Mark_Bracket %W "(" 0
+	        }
+	        ">" {
+	            Editor&::Insert_Mark_Bracket %W ">" 0
+	        }
+	        "<" {
+	            Editor&::Insert_Mark_Bracket %W "<" 0
+	        }
+	        "\]" {
+	            Editor&::Insert_Mark_Bracket %W "\]" 0
+	        }
+	        "\[" {
+	            Editor&::Insert_Mark_Bracket %W "\[" 0
+	        }
+	        "\"" {
+	            Editor&::Insert_Mark_Bracket %W "\"" 0
+	        }
+	        "\'" {
+	            Editor&::Insert_Mark_Bracket %W "\'" 0
+	        }
+	    }
+	    break
+	}
     }
 
     method m3_post_menu {w X Y x y} {
@@ -1576,11 +1612,7 @@ itcl::class Editor& {
 		set ob ${sb}
 		set cb ${eb}
 		set beg_off 0.0
-		if {${bracket}} {
-		    set cont [${w} get ${beg_off} insert]
-		} else {
-		    set cont [${w} get ${beg_off} "insert+1c"]
-		}
+		set cont [${w} get ${beg_off} insert]
 		set forw 0
 	    }
 	\< -
@@ -1589,7 +1621,7 @@ itcl::class Editor& {
 	\{ {
 		set ob ${sb}
 		set cb ${eb}
-		set beg_off "insert"
+		set beg_off "insert-1c"
 		set cont [${w} get ${beg_off} end]
 		set forw 1
 	    }
@@ -1618,12 +1650,9 @@ itcl::class Editor& {
 	if {${str_range} == ""} {
 	    if {[${w} compare ${idx} > "insert"]} {
 		set end ${idx}
-		set idx "insert"
-	    } \
-	    elseif {${bracket}} {
-		set end "insert"
+		set idx "insert-1c"
 	    } else {
-		set end "insert+1c"
+		set end "insert"
 	    }
 	}
 

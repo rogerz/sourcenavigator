@@ -1,3 +1,14 @@
+2004-02-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* NEWS: Add note about bracket/paren fix.
+	* gui/editorpane.tcl (EditorBindings,
+	x_Insert_Mark_Bracket): Adust begin and
+	end highlight positions to account for
+	binding order changes. A double click on
+	a brace, bracket, or paren will now
+	highlight to the matching bracket.
+	[Bug 711358]
+
 2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* Makefile.am:
