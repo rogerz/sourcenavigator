@@ -1,3 +1,9 @@
+2003-04-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/Makefile.in: Add -DBUILD_tcl to the
+	tclWinPipe.c compile line to fix build error
+	introduced by last patch.
+
 2003-03-31  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/Makefile.in: Define TCL_DBGX when compiling
