@@ -1,0 +1,31 @@
+source testutil.tcl
+
+# The Tcl parser seems to include a file name in the PAF_FILE
+# part, this does not match the other parsers and makes it
+# impossible to write tests since the tmp file name changes.
+if 0 {
+tcltest::test namespace-1.0 { crash in namespace parsing } {
+    browse [save_file f.tcl {
+proc foo {} {}
+}]
+} {Status: Parsing: f.tcl
+PAF_FILE;f.tcl;tcl<>
+}
+}
+
+tcltest::test namespace-1.1 { test used to crash in put_cross_ref
+        because of an abort that has been removed. The test will
+        still generate output to stderr, but this output is ignored
+        by the IDE } {
+
+    catch {
+    browse_xref [save_file f.tcl {
+proc foo {} {
+    namespace eval :: {}
+    namespace eval :: {}
+}
+    }]
+    } err
+    string match "*must not be NULL*" $err
+} 1
+

@@ -511,7 +511,6 @@ int	acc)
 	{
 		fprintf(stderr,"Input parameter (#8) must not be NULL file: %s line: %d\n",
 				file,lineno);
-		abort();
 		return -1;
 	}
 

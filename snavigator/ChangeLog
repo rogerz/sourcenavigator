@@ -1,3 +1,14 @@
+2003-08-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/common/parser.c (put_cross_ref):
+	Remove abort call when bad input is passed
+	in to an xref call. There is no reason to
+	abort here and no other bad input checks
+	call abort.
+	* tests/parsers/tcl.test: Add example that
+	caused abort to be invoked when writing
+	an xref.
+
 2003-08-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/misc.tcl (sn_load_xref): Use list command
