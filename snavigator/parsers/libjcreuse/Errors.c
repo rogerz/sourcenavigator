@@ -27,8 +27,15 @@ MA 02111-1307, USA.
 
 /*
  * $Log$
- * Revision 1.1  2002/04/18 23:41:59  mdejong
- * Initial revision
+ * Revision 1.2  2003/05/03 20:09:15  mdejong
+ * 	* parsers/libjcreuse/Errors.c: Include
+ * 	string.h to avoid compiler warning.
+ * 	* parsers/python/pybrowser.c: Regen.
+ * 	* parsers/python/pybrowser.l: Define YY_SKIP_YYWRAP
+ * 	to avoid compiler warning.
+ *
+ * Revision 1.1.1.1  2002/04/18 23:41:59  mdejong
+ * Import from sources.redhat.com on 2002-04-18.
  *
  * Revision 1.3  2000/04/20 00:38:40  spolk
  * 2000-04-19  Syd Polk  <spolk@redhat.com>
@@ -146,6 +153,8 @@ MA 02111-1307, USA.
 #if HAVE_STDLIB_H | defined _MSC_VER
 #include <stdlib.h>
 #endif
+
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {

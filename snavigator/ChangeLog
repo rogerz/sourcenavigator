@@ -1,5 +1,13 @@
 2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/libjcreuse/Errors.c: Include
+	string.h to avoid compiler warning.
+	* parsers/python/pybrowser.c: Regen.
+	* parsers/python/pybrowser.l: Define YY_SKIP_YYWRAP
+	to avoid compiler warning.
+
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Rework flex invocations via the "make flexgen"
 	target so that generated .c files include only
 	the file name of the .l file instead of the
