@@ -12,8 +12,13 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <sys/stat.h>
 
 #ifdef WIN32

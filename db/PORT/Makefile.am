@@ -34,8 +34,7 @@ R_OBJS = rec_close.$(OBJEXT) rec_delete.$(OBJEXT) rec_get.$(OBJEXT) \
 rec_open.$(OBJEXT) rec_put.$(OBJEXT) rec_search.$(OBJEXT) \
 rec_seq.$(OBJEXT) rec_utils.$(OBJEXT)
 
-libdb_a_SOURCES = @HACK@
-EXTRA_libdb_a_SOURCES = hack.c
+libdb_a_SOURCES = hack.c
 libdb_a_LIBADD = @LIBOBJS@ $(H_OBJS) $(B_OBJS) $(D_OBJS) $(M_OBJS) $(R_OBJS)
 libdb_a_DEPENDENCIES = $(libdb_a_LIBADD)
 
@@ -46,7 +45,7 @@ libdb_a_DEPENDENCIES = $(libdb_a_LIBADD)
 
 check_PROGRAMS = dbtest
 
-dbtest_SOURCES = @HACK@
+dbtest_SOURCES = hack.c
 dbtest_LDADD = -L. $(dbtest_DEPENDENCIES)
 dbtest_DEPENDENCIES = dbtest.$(OBJEXT) @LIBOBJS@ -ldb
 
@@ -61,6 +60,8 @@ check-local:
 # All the compilation rules.  Normally you don't have to do this with
 # automake.
 #
+
+hack.$(OBJEXT):
 
 hash.$(OBJEXT): ../hash/hash.c
 	$(COMPILE) -c -I$(srcdir)/../hash $(srcdir)/../hash/hash.c

@@ -29,10 +29,15 @@ MA 02111-1307, USA.
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <config.h>
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <tcl.h>
 
 #include "sn.h"
+
+#include <compat.h>
  
 #ifdef WIN32
 #define		OPEN_MODE   "rb"

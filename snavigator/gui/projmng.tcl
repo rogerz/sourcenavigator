@@ -131,18 +131,38 @@ proc sn_delete_project {prjname {ask ""}} {
         }
 
         #check wether the database is locked
-        set ret [sn_is_project_busy ${prjname} in user host port]
+        set ret [sn_is_project_busy ${prjname} in user host port pid]
+# FIXME: This would allow the delete of locked project files!
         set ret 0
+
         switch -- ${ret} {
-            "me" -
-            "busy" {
-                    sn_error_dialog [format [get_indep String PafProjBusy]\
-                      ${prjname} ${user}]
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${user} ${prjname} ${host}]
                     set ret 1
-                }
+            }
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        ${prjname}]
+                    set ret 1
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        ${prjname} ${pid}] 
+                    set ret 1
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${user} ${prjname} ${pid}]
+                    set ret 1
+            }
             "error" {
-                    #ignore error
-                }
+                    # ignore error
+            }
         }
 
         #project can't be deleted

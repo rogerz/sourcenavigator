@@ -1399,6 +1399,9 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	puts $fd $lst
 	close $fd
 
+	# Escape [] and $ in user input for eval in sn_print_file
+	regsub -all {(\$|\[|\])} $cmd {\\&} cmd
+
 	sn_print_file $cmd $tmpf
 
 	file delete -- $tmpf

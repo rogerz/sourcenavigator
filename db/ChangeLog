@@ -1,3 +1,140 @@
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-511-2002-09-11 tag.
+
+2002-07-02  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-510-2002-07-02 and SN-51-branch tags.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Explicitly set ac_cv_exeext
+	when compiling with VC++ since the AC_EXEEXT
+	from autoconf 2.13 incorrectly detects .pdb
+	as the executable extension.
+	* include/cdefs.h: When compiling with VC++,
+	use standard keywords and don't muck with
+	__inline because it is used in Windows
+	header files. This problem did not show
+	up until now because the Windows headers
+	used to be pulled in before cdef.h.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	Add mingw native/cross build support.
+	
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Set WINFLAGS appropriately when
+	building with mingw. Replace broken AC_TYPE_*
+	macros with manual checks that set HAVE_*
+	values. Include winsock.h when checking for
+	u_char with mingw.
+	* PORT/Win32/include/NTunixstubs.h: Remove
+	mode_t typedef. Correct case of include so
+	that it works with Mingw on a case sensitive
+	file-system.
+	* PORT/include/compat.h: Check for missing
+	ssize_t, size_t, mode_t, off_t, and pid_t
+	types and define them if needed. Include the
+	NTunixstubs.h header when building with mingw.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	Remove old style acconfig.h template for
+	config.h.in since it is deprecated in
+	newer versions of automake.
+	
+	* Makefile.in: Regen.
+	* acconfig.h: Remove.
+	* acinclude.m4: Update AC_DEFINE calls to 3
+	arg form so that acconfig.h is not needed.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Remove 2 arg AC_CHECK_TYPE
+	calls because we removed acconfig.h. Replace
+	the ssize_t check with a check that defines
+	HAVE_SSIZE_T. Remove the pgno_t check
+	completely since this symbol is unconditionally
+ 	redefined in db.h. Update AC_DEFINE calls to 3
+	arg form so that acconfig.h is not needed.
+	* PORT/Win32/include/NTunixstubs.h: Don't
+	typedef ssize_t here.
+	* PORT/include/compat.h: Conditionally
+	typedef ssize_t based on the value of
+	HAVE_SSIZE_T.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.in: Regen.
+	* configure: Regen.
+	* configure.in: Remove the empty variable HACK.
+	This little trick works with automake 1.4 but
+	it fails under automake 1.6.
+	* PORT/Makefile.am: Include hack.c in the _SOURCES
+	variable instead of @HACK@.
+	* PORT/Makefile.in: Regen.
+	* PORT/hack.c: New empty file.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* acinclude.m4: Remove RCS keyword that was getting
+	changed every time aclocal was run.
+	* aclocal.m4: Regen.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	Upgrade db build system from the old maintainer-tools
+	build scripts to the net release of autoconf 2.13
+	and automake 1.4.
+
+	* Makefile.in: Regen.
+	* aclocal.m4: Regen.
+	* autogen.sh: Add new file.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* missing: Add new file.
+	* PORT/Makefile.in: Regen.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* PORT/Win32/include/NTunixstubs.h: Don't
+	define dev_t to avoid warning from VC++
+	and benign redefinition of type.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Don't include the NTunixstubs.h
+	header directly on the command line. Correct
+	case of directory name in -I compiler directive.
+	* PORT/Win32/NTunixstubs.h: Removed.
+	* PORT/Win32/include/NTunixstubs.h: Added.
+	* PORT/include/compat.h: Include NTunixstubs.h
+	when compiling with VC++.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
+	* acinclude.m4 (AC_C_BIGENDIAN_CROSS): Add new
+	AC_C_BIGENDIAN_CROSS macro from the autoconf
+	macro archive to support cross compiling.
+	* aclocal.m4: Regen.
+	* configure: Regen.
+	* configure.in: Update to use AC_PROG_INSTALL
+	instead of AM_PROG_INSTALL. Use AC_C_BIGENDIAN_CROSS
+	instead of AC_C_BIGENDIAN to support cross
+	compiling.
+
+2002-04-20  Mo DeJong  <supermo@bayarea.net>
+
+	* btree/bt_open.c:
+	* mpool/mpool.c:
+	* recno/rec_open.c: Cast the second argument
+	of fstat to struct stat * to avoid a compiler
+	warning.
+
 2000-09-26  Ben Elliston  <bje@redhat.com>
 
 	* hash/hash.h: Undefine Automake's VERSION macro.

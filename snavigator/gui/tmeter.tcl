@@ -349,10 +349,10 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
         pack ${w}.m -fill both -expand y
 
         if {${first_interp}} {
-            global cygnus_copyright
+            global copyright
             label ${w}.m.copyr -bg ${bg} -fg black\
               -font $sn_options(def,layout-font) -cursor ${cursor}\
-              -anchor center -text ${cygnus_copyright}
+              -anchor center -text ${copyright}
             pack ${w}.m.copyr -pady 5 -fill x -expand y -side top
         }
 

@@ -57,6 +57,16 @@ itcl::class MultiWindow& {
 
 	eval itk_initialize $args
 
+        # Set initial size based on user prefs.
+
+        set height [expr {int([winfo screenheight .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        set width [expr {int([winfo screenwidth .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        wm geometry $itk_component(hull) ${width}x${height}
+
         # Add menu.
         AddMenu
 
@@ -1083,7 +1093,7 @@ itcl::class MultiWindow& {
         AddHistMenu $itk_component(menu)
 
         ##Windows
-        AddWindowsMenu $itk_component(menu) ${this} 1 1
+        AddWindowsMenu $itk_component(menu) $itk_component(hull) 1 1
 
         ##Help menu
         AddHelpMenu $itk_component(menu) $itk_component(hull)
@@ -1981,7 +1991,7 @@ itcl::class MultiWindow& {
         #sn_grep
         $itk_component(notebook) raise grep
         $itk_component(grep) setPatternFromClipboard
-	$itk_component(grep) ExecGrep
+	$itk_component(grep) StartGrep
     }
 
     method search_goto_post {m} {

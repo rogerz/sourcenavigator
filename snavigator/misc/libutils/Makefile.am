@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = cygnus
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 sdk_LIBRARIES = libutils.a
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/db $(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/db -I$(top_srcdir)/misc $(TCLHDIR)
 
 if HAVE_REALPATH
 REALPATH =

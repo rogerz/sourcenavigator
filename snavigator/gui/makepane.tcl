@@ -624,9 +624,8 @@ itcl::class Make {
     }
 
     method SetTitle {} {
-	set top [winfo toplevel [namespace tail ${this}]]
-        ${top} title [Title]
-        ${top} configure -iconname [Icon]
+	set top [winfo toplevel $itk_component(hull)]
+	${top} configure -title [Title] -iconname [Icon]
     }
 
     method handle_return {} {

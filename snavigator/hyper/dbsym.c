@@ -27,9 +27,7 @@ MA 02111-1307, USA.
 #define	MAIN_MODULE
 #endif /* DB_DLL */
 
-#ifndef WIN32
-#include "config.h"
-#endif
+#include <config.h>
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -43,6 +41,8 @@ MA 02111-1307, USA.
 #include "sn.h"
 #include "fileutils.h"
 #include "dbutils.h"
+
+#include <compat.h>
 
 #if DB_DLL
 #define	DB_DLL_EXPORT	__declspec(dllexport)
