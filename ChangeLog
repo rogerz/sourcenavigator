@@ -1,3 +1,9 @@
+2003-02-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* missing:
+	* mkinstalldirs: Add files that did not get
+	imported before, but are actually needed by libgui.
+
 2003-02-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* COPYING:
