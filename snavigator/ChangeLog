@@ -1,3 +1,22 @@
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/fortran/forlex.c (IncludeFileStack,
+	push_include_file, pop_include_file, advance):
+	Rename input_fd to yyin.
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main):
+	Move fclose(hig_fp) call just before hig_fp
+	is reset, that better matches the logic in
+	other implementations of log_symbol_filename.
+	Avoid calling freopen() to change the fd
+	associated with stdin. Call fclose() and
+	fopen() to manipulate the yyin file pointer.
+	Don't set input_fd since this is handled
+	by the yyin logic in log_symbol_filename.
+	Close yyin at the end of main.
+	* parsers/fortran/ftnchek.h: Rename input_fd
+	to yyin.
+
 2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (UpdateHighlights): Comment

@@ -238,24 +238,30 @@ static	int
 log_symbol_filename(FILE *fp, char *fname)
 {
   char	*outfile = NULL;
-  
-  if (hig_fp)
-    {
-      fclose(hig_fp);
-      hig_fp = NULL;
+
+  if (fname) {
+    if (yyin) {
+      fclose(yyin);
     }
-  
-  if (fname && freopen(fname,"r",stdin) == NULL)
-    {
+    yyin = fopen(fname,"r");
+    if (!yyin) {
       fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",fname,errno);
-      fflush(stderr);
       return 1;
     }
-  
+  } else {
+    yyin = stdin;
+  }
+
   if (fname)
     {
       if (highlight)
 	{
+	  if (hig_fp)
+	    {
+	      fclose(hig_fp);
+	      hig_fp = NULL;
+	    }
+	
 	  outfile = Paf_tempnam(NULL,"hf");
 	  if (fp)
 	    {
@@ -431,7 +437,6 @@ main(int argc, char *argv[])
 			}
 		}
 
-		input_fd = stdin;
 		if (list_fp)
 		{
 			while (fgets(tmp,sizeof(tmp) -1,list_fp))
@@ -463,13 +468,15 @@ main(int argc, char *argv[])
 	}
 	else if (highlight && optind == argc)		/* Just highlight */
 	{
-		input_fd = stdin;
 		log_symbol_filename(out_fp,NULL);
 		src_file_in(NULL);
 	}
 
 	if (cross_ref_fp)
 		fclose(cross_ref_fp);
+
+	if (yyin && (yyin != stdin))
+		fclose(yyin);
 
 	if (out_fp)
 		fclose(out_fp);
