@@ -1,5 +1,14 @@
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/makepane.tcl (ExecMake): Pass only the Makefile
+	name to the -f argument instead of passing a fully
+	qualified path name. This should not change any
+	functionality since the ExecMake command should
+	cd to the proper directory first. Add some debug
+	output and comments.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* bitmaps/clsbr_private.xpm: Add small empty
 	image to represent a private class member.
 	* gui/utilities.tcl: Define cls_br_private_image
