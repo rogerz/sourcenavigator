@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Version Control Systems</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="grep.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="debugger.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1002142"></A><BR>
+<A NAME="marker-1002141"></A><A NAME="35619"></A>Version Control Systems<DIV>
+<IMG SRC="versctrl-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002143"></A>Source-Navigator provides a graphical user interface to several external version control systems. Source-Navigator allows you to manage <A NAME="marker-1002144"></A>version control tasks on a project level. With version control you can organize your development to manage versions, version history, labels, and related documents.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004575"></A>Version control systems use locks to prevent the same files from being modified by two developers simultaneously. If a <A NAME="marker-1004578"></A>lock is used while revising a file, no one can modify the file until it is unlocked. Locking and unlocking can be controlled by checking in or checking out versions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1145350"></A>For more information, see the <A HREF="../progref/versctrl.html#pgfId-996752" CLASS="XRef">Integrating with Version Control Systems</A> chapter in the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996764"></A><A NAME="33489"></A>Using Version Control</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996765"></A>The following <A NAME="marker-997375"></A>version control systems have been integrated with Source-Navigator: GNU Revision Control System (<A NAME="marker-997319"></A>RCS), Concurrent Versions System (<A NAME="marker-1004469"></A>CVS), and the Source Code Control System (<A NAME="marker-997335"></A>SCCS). It has also been integrated with Rational's <A NAME="marker-1004480"></A>ClearCase version 3; other versions may also work, although these have not been tested. When creating a project, you must specify the correct version control system being used to manage the body of source code you wish to analyze. You make your selection in the <SPAN CLASS="Bold">
+Version Control</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog (see <A HREF="versctrl.html#14496" CLASS="XRef">Version Control Preferences</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1123617"></A>To start <A NAME="marker-1123613"></A>version control, from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Revision Control </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Revision Control Editor</SPAN>
+ (see <A HREF="versctrl.html#78460" CLASS="XRef">Revision Version Control Window</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1136084"></A><A NAME="marker-1136067"></A><A NAME="78460"></A>Revision Version Control Window </P>
+<DIV>
+<IMG SRC="versctrl-2.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1145351"></A><A NAME="38024"></A>Checking Out a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1113084"></A>In the <SPAN CLASS="Bold">
+Editor</SPAN>, from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu select <SPAN CLASS="Bold">
+Revision Control </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Check Out</SPAN>
+ to <A NAME="marker-1127778"></A>check out a file. Versions of a file can be checked out for modification either locked or unlocked. Checking out with <SPAN CLASS="Bold">
+With lock</SPAN>
+ selected in the <SPAN CLASS="Bold">
+Check Out </SPAN>
+dialog box prevents other users from checking out the same version in write mode.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1137179"></A>Check Out Dialog Box</P>
+<DIV>
+<IMG SRC="versctrl-3.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-997194"></A><A NAME="11033"></A>Checking In a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-997096"></A>You can <A NAME="marker-996794"></A>check in all or selected project files into your version control system. When you check in, you can enter descriptive text of the changes and a version number. Using the left-mouse button, select one or more files to check in. With these files highlighted, in the <SPAN CLASS="Bold">
+Revision Control Editor</SPAN>
+ window, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Check In</SPAN>. The <SPAN CLASS="Bold">
+Check In</SPAN>
+ dialog is displayed. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1137187"></A>Check In Dialog Box</P>
+<DIV>
+<IMG SRC="versctrl-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1127322"></A>If you check in with <SPAN CLASS="Bold">
+With lock</SPAN>
+ selected in this dialog box, others may not check out the same file in write mode.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004493"></A>This is useful if you are continuously working on a particular file, but wish to register checkpoints in your work without giving other developers the opportunity to make modifications to that file. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996805"></A><A NAME="31808"></A>Discarding Changes to a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996807"></A>To revert working files to the repository version, in the <SPAN CLASS="Bold">
+Revision Control Editor</SPAN>
+ window, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Discard Changes</SPAN><A NAME="marker-1145337"></A>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1004570"></A><A NAME="12899"></A>Show Differences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1004501"></A>The <SPAN CLASS="Bold">
+Diff</SPAN>
+<A NAME="marker-1004499"></A> tool highlights differences between the current <A NAME="marker-1004500"></A>version of a file (the one you have checked out) and another one that you select from the list of available version numbers. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1113104"></A>To access this tool, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu select <SPAN CLASS="Bold">
+Compare Revisions</SPAN>.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1136096"></A>Showing Differences</P>
+<DIV>
+<IMG SRC="versctrl-5.gif">
+</DIV>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1002207"></A><A NAME="14496"></A>Version Control <A NAME="marker-1113046"></A>Preferences</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1002222"></A>Use the <SPAN CLASS="Bold">
+Version Control </SPAN>
+tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ window to tell Source-Navigator what source code control system you're running. You can access this tab from the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu by selecting <SPAN CLASS="Bold">
+Project Preferences</SPAN>, or from the <SPAN CLASS="Bold">
+Version Control</SPAN>
+ window from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu by selecting <SPAN CLASS="Bold">
+View Preferences</SPAN>. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002211"></A>Version Control Tab of the Preferences Dialog</P>
+<DIV>
+<IMG SRC="versctrl-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1002213"></A>Version control system<BR>
+<P CLASS="BodyHang1">Select your external version control system for the project. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1113071"></A>Ignored directories<BR>
+<P CLASS="BodyHang1">These directories will be ignored by the Source-Navigator 
+as it scans for files to parse.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996747"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="grep.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="debugger.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

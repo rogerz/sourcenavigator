@@ -36,7 +36,7 @@ JAVA_PARSER=
 JAVAEXE=jbrowser
 SPLASHFILE=splashsn.gif
 X11ICON=paf.xbm
-SN_DOCSET=enterprise
+SN_DOCSET=
 SN_BOOKS="userguide progref"
 SN_LAUNCH_SHELL=snavigator
 AC_DEFINE(SN_ELIX, 0, [Define this if we are building with elix features.])

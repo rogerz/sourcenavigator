@@ -22,8 +22,7 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 htmldir = $(prefix)/html
-html_DATA=cygnus1.css index-1.gif redhatlogo.png index.html
-userguidedir = $(htmldir)/userguide
+html_DATA=cygnus.css index-1.gif magnifying_glass.png index.html
 srchtmldir = $(top_srcdir)/doc/html
 
 install-data-local:

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Include Browser</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="crossref.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="retrvr.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996755"></A><BR>
+<A NAME="14837"></A>Include Browser&nbsp;&nbsp;<IMG SRC="inclbrws-1.gif">
+<DIV>
+<IMG SRC="inclbrws-2.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1000627"></A>Some programming languages provide a facility for including other source files. In C/C++ this is achieved using the <KBD CLASS="Code">
+#include</KBD>
+ preprocessor directive. The <A NAME="marker-1000628"></A><SPAN CLASS="Bold">
+Include Browser</SPAN>
+ lets you display <EM CLASS="Italics">
+Includes</EM>
+ and <EM CLASS="Italics">
+Included by</EM>
+ relationships simultaneously.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1045976"></A><A NAME="38470"></A>Using the Include Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1045980"></A>Start the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+<A NAME="marker-1045979"></A> in one of the following ways:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1149746"></A>from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+New View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Include</SPAN>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1149750"></A>click the <SPAN CLASS="Bold">
+Include</SPAN>
+ toolbar button (see <A HREF="symbrws.html#97572" CLASS="XRef">Include Browser button</A>).</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1149751"></A>choose the <SPAN CLASS="Bold">
+Include</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>.</LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002848"></A><A NAME="20928"></A>Include <A NAME="marker-1042768"></A>Browser Window</P>
+<DIV>
+<IMG SRC="inclbrws-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-997450"></A>To see further relationships, after selecting a file in the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ window, use the right and left pointing-hand tool icons to show files included by the selected file (black connection arrows) and files that include the selected file (red connection arrows).</P>
+<P CLASS="Body">
+<A NAME="pgfId-997451"></A>To determine the number of levels shown for a query, enter a positive integer in the <SPAN CLASS="Bold">
+Levels</SPAN>
+ text entry box.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1003698"></A>Reducing Displayed Information</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1138909"></A>Holding down the right mouse button on a symbol in the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ window brings up a popup menu that allows you to show or hide include information.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1138911"></A>Include Browser Window, Right Mouse Button Down</P>
+<DIV>
+<IMG SRC="inclbrws-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1138912"></A>This is useful when the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ displays more information than you need, and you'd like to hide all relationships but the particular one you're interested in. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1001364"></A><A NAME="30602"></A>Include <A NAME="marker-1125085"></A>Preferences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1135370"></A>You'll find preference settings for the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ window in the <SPAN CLASS="Bold">
+Include </SPAN>
+tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog. To find this dialog, select one of the following:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1135382"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>,<SPAN CLASS="Bold">
+ </SPAN>
+from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. In the <SPAN CLASS="Bold">
+Include Browser</SPAN>, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+View Preferences</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1135373"></A>Choose the <SPAN CLASS="Bold">
+Include</SPAN>
+ tab.</LI>
+</OL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1135378"></A><A NAME="93647"></A>Include Tab of the Preferences Dialog<A NAME="31607"></A></P>
+<DIV>
+<IMG SRC="inclbrws-5.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1001370"></A>Layout</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1001371"></A>Display order:<BR>
+<P CLASS="BodyHang1">
+<SPAN CLASS="Bold">
+Left to right</SPAN>
+ displays the include hierarchy from left to right; <SPAN CLASS="Bold">
+Top to Bottom</SPAN>
+ displays it from top to bottom.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001372"></A>Display layout style:<BR>
+<P CLASS="BodyHang1">
+Select <SPAN CLASS="Bold">
+Tree</SPAN>
+ to display includes in tree layout; select <SPAN CLASS="Bold">
+ISI</SPAN>
+ to display them in ISI layout.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1003660"></A>Vertical space:<BR>
+<P CLASS="BodyHang1">
+Enter the number of vertical pixels between symbols in the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ window. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1003674"></A>Horizontal space:<BR>
+<P CLASS="BodyHang1">
+Enter the number of horizontal pixels between symbols in the <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ window. </P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1125110"></A>Include directories</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1125116"></A>Locate Headers<BR>
+<P CLASS="BodyHang1">
+Uncheck this box to prevent included files from being parsed. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001375"></A>In the <SPAN CLASS="Bold">
+Include Directories</SPAN>
+ box you can choose which directories should be searched for include 
+files. Using the set of directories shown 
+in <A HREF="inclbrws.html#93647" CLASS="XRef">Include Tab of the Preferences 
+Dialog</A>, for example, if <KBD CLASS="Code">
+stdio.h</KBD>
+ is a reference then Source-Navigator looks first for the file <KBD CLASS="Code">
+/usr/include/stdio.h</KBD>, then for <KBD CLASS="Code">
+./stdio.h</KBD>, and so on down the list. The order of the list is important, 
+because the first file found is the one that will be used by the <SPAN CLASS="Bold">
+Include Browser</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1149891"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="crossref.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="retrvr.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

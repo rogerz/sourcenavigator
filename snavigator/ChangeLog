@@ -1,5 +1,25 @@
 2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* doc/html/Makefile.am: Replace cygnus1.css
+	with cygnus.css. Replace redhatlogo.png
+	with magnifying_glass.png.
+	* doc/html/Makefile.in: Regen.
+	* doc/html/cygnus.css: Replace cygnus1.css.
+	* doc/html/cygnus1.css: Remove.
+	* doc/html/index.html: Use magnifying_glass.png
+	and remove link to ../index.html.
+	* magnifying_glass.png: Add image.
+	* doc/html/redhatlogo.png: Remove.
+	* edk: Remov entire subdirectory.
+	* enterprise: Remove entire subdirectory.
+	* progref:
+	* userguide: Add programmers reference
+	guide and users guide from the website.
+	These html files include reformatting
+	and updating changes from Bill Parke.
+
+2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Add SN-pre-doc-merge-2003-07-19 tag.
 
 2003-07-18  Mo DeJong  <mdejong@users.sourceforge.net>

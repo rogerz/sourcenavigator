@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Debugger</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progide.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1129183"></A><A NAME="45395"></A><BR>
+Debugger<DIV>
+<IMG SRC="debugger-1.gif">
+</DIV>
+</H1>
+<P CLASS="BodyAfterHead">
+<A NAME="pgfId-1129190"></A>Source-Navigator works with the Red Hat 
+Insight<SUP>TM</SUP> debugger, which is based on gdb, a popular open-source
+debugger. To get Insight, go to <A HREF="http://sourceware.cygnus.com/insight">
+http://sourceware.cygnus.com/insight</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1129194"></A>Launching the Insight Debugger</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1129198"></A>The following steps are necessary to start 
+Insight from Source-Navigator:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1129202"></A>Launch Source-Navigator:<P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1129210"></A>On UNIX, change to the <KBD CLASS="Code"> 
+&lt;<KBD CLASS="CodeVariant">install directory</KBD>&gt;/bin</KBD> directory and type <KBD CLASS="Code">./snavigator</KBD>
+ to launch Source-Navigator <EM CLASS="Emphasis">
+without</EM>
+ putting it in the background.<BR>
+<A NAME="pgfId-1129206"></A>On Windows, double-click the Source-Navigator icon
+(or snavigator.exe). It is located in 
+<KBD CLASS="Code">&lt;</KBD><KBD CLASS="CodeVariant">install directory</KBD><KBD CLASS="Code">&gt;/bin</KBD>.
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129214"></A>Open the project to debug.</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1129215"></A>From the <SPAN CLASS="Bold">
+File </SPAN>
+menu, select <SPAN CLASS="Bold">
+Project -&gt; Project Preferences -&gt; Others</SPAN>
+ to set the debugging preferences.<P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1129219"></A>Others Tab </P>
+<DIV>
+<IMG SRC="debugger-2.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129223"></A>Enter <KBD CLASS="Code">
+gdb</KBD>
+ in the <SPAN CLASS="Bold">
+Insight Debugger Command</SPAN>
+ text box. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129226"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the window.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129288"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Debugger </SPAN>
+to launch the <SPAN CLASS="Bold">
+Program to Debug</SPAN>
+ dialog box.<P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1129302"></A>Program to Debug Dialog</P>
+<DIV>
+<IMG SRC="debugger-3.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129303"></A>In the <SPAN CLASS="Bold">Program</SPAN>
+field, enter the name of the application you want to 
+debug; you can also click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button 
+and browse to the application in the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog box.<P>
+In the <SPAN CLASS="Bold">Working Directory</SPAN> field, enter (or browse to) 
+a working directory.<P>
+On UNIX, in the <SPAN CLASS="Bold">Xterm</SPAN> field, enter <KBD CLASS="Code">xterm -e</KBD> if
+you are debugging a console application.<P>
+<A NAME="pgfId-1129336"></A>The application name and command line you entered 
+are saved in the project database, and are used as the default values the next 
+time you launch the debugger from Source-Navigator.</P></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129340"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to launch the debugger.</LI>
+</OL>
+<P CLASS="Body">
+<A NAME="pgfId-1129341"></A><A NAME="pgfId-1129111"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progide.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Class Browser</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="clhierbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="crossref.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-997886"></A><BR>
+<A NAME="38835"></A>Class Browser&nbsp;&nbsp;<IMG SRC="clbrws-1.gif">
+<DIV>
+<IMG SRC="clbrws-2.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1001771"></A>For projects developed using object-oriented 
+languages, the <A NAME="marker-1001770"></A><SPAN CLASS="Bold">
+Class Browser</SPAN>
+ enables you to browse class hierarchies, access levels, and member types. 
+The <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ displays the list of class members of a particular class, based on your 
+selections from the <SPAN CLASS="Bold">
+Class/Hierarchy</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog (see <A HREF="clhierbrws.html#29305" CLASS="XRef">Class/Hierarchy 
+Preferences</A>). </P>
+<P CLASS="Body">
+<A NAME="pgfId-1046282"></A>For traditional languages such as C, COBOL, and 
+FORTRAN, the <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ enables you to see the members of structures and common blocks.</P>
+<H3 CLASS="Label">Note</H3>
+<P CLASS="Note">Source-Navigator treats structures, classes, and common blocks in the same way.
+The only difference is that classes have inheritance and the others do not.
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1091985"></A>Using the Class Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1091991"></A>Start the <A NAME="marker-1091990"></A><SPAN CLASS="Bold">
+Class Browser</SPAN>
+ in one of the following ways:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1158604"></A>double-click on a class.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1158605"></A>select a class and click the <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ toolbar button (see <A HREF="symbrws.html#20717" CLASS="XRef">Class Browser button</A>).</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1158606"></A>from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+New View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Class</SPAN>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1158607"></A>choose the <SPAN CLASS="Bold">
+Class</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>.</LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1046411"></A><A NAME="marker-1046357"></A>Class Browser Window </P>
+<DIV>
+<IMG SRC="clbrws-3.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996794"></A> Class Name</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996795"></A>You can enter the <A NAME="marker-999609"></A>class name 
+into the <SPAN CLASS="Bold">
+Symbol Accelerator </SPAN>
+combo-box (<A NAME="marker-1165108"></A>emacs-style tab completion is also supported). 
+If you press the <SPAN CLASS="Bold">
+Enter</SPAN>
+ key and the name matches a valid class name, the information for the appropriate 
+class is loaded.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996797"></A>Member List</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996798"></A>The symbols displayed in the member list are controlled 
+by the pulldown menus and inheritance tree. Access levels and attributes are 
+indicated by icons; for the key to these icons select <SPAN CLASS="Bold">
+Abbreviations</SPAN>
+ from the <SPAN CLASS="Bold">
+Help </SPAN>
+menu, or see <A HREF="usingsn.html#16890" CLASS="XRef">Abbreviations Panel</A>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996808"></A>Inheritance Tree</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996809"></A>The <A NAME="marker-997418"></A>inheritance tree 
+shows the relationship of the browsed class and its baseclasses. </P>
+<DIV>
+<IMG SRC="clbrws-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1002666"></A>The check boxes before the class names determine 
+whether or not members of a class are included in the member list. Use the 
+mouse to manipulate these check boxes:</P>
+<P CLASS="Body">
+<A NAME="pgfId-996810"></A>Click<BR>
+<P CLASS="BodyHang1">
+Toggles the check box.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996811"></A>Ctrl+click<BR>
+<P CLASS="BodyHang1">
+Includes only the members of the selected class.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996812"></A>Double-click<BR>
+<P CLASS="BodyHang1">
+Starts the <SPAN CLASS="Bold">
+Editor</SPAN>, which displays the source file.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996813"></A>Right-click<BR>
+<P CLASS="BodyHang1">
+Displays a menu in which you may select one or all classes.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996826"></A>Member List Filter Dialog</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1002728"></A>Click on the <SPAN CLASS="Bold">
+Filter</SPAN>
+ button to bring up the <SPAN CLASS="Bold">
+Filter</SPAN>
+ dialog. The symbols displayed by the <SPAN CLASS="Bold">
+Member List </SPAN>
+<A NAME="marker-1002727"></A>are included based upon these settings. </P>
+<DIV>
+<IMG SRC="clbrws-5.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-996828"></A>All<BR>
+<P CLASS="BodyHang1">
+Sets all selections.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002770"></A>None<BR>
+<P CLASS="BodyHang1">
+Clears all selections.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002752"></A>Methods, Instance Variables, Friends<BR>
+<P CLASS="BodyHang1">
+Shows methods based on their types.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002761"></A>public, private, protected<BR>
+<P CLASS="BodyHang1">
+Shows members based on their access level.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002773"></A>AND<BR>
+<P CLASS="BodyHang1">
+If AND is selected, only functions matching <EM CLASS="Italics">
+all</EM>
+ attributes will be shown. If AND is not selected, functions matching 
+any of the attributes will be shown. </P>
+<P CLASS="Body">
+<A NAME="pgfId-996830"></A>static, structor, inline, virtual, pure virtual<BR>
+<P CLASS="BodyHang1">
+Shows members based on their attributes.</P>
+<P CLASS="Body">
+<A NAME="pgfId-997448"></A>overridden<BR>
+<P CLASS="BodyHang1">Shows members that are overridden from a base class. 
+You can also display these by selecting the <SPAN CLASS="Bold">
+overridden</SPAN>
+ checkbox in the main window.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002827"></A>overloaded<BR>
+<P CLASS="BodyHang1">
+Shows functions that have more than one type signature in the class.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1165358"></A>Scope Selector</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1165361"></A>The <A NAME="marker-1165359"></A><SPAN CLASS="Bold">
+Scope Selector</SPAN>
+ menu filters the member list by the accessibility of the members. </P>
+<DIV>
+<IMG SRC="clbrws-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1165363"></A><A NAME="marker-1165362"></A>subclass<BR>
+<P CLASS="BodyHang1">Shows only the members accessible to new subclasses of the 
+currently browsed class. Does not include private members of the currently browsed 
+class or private base classes.</P>
+<P CLASS="Body">
+<A NAME="pgfId-997466"></A><A NAME="marker-997465"></A>class<BR>
+<P CLASS="BodyHang1">
+Shows only the accessible members of the currently browsed class; private members of 
+base classes are not included.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996857"></A><A NAME="marker-996856"></A>baseclass<BR>
+<P CLASS="BodyHang1">
+Shows all members, including the private members of the base classes.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1167482"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="clhierbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="crossref.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

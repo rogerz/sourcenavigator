@@ -1,0 +1,632 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Source-Navigator Tutorial</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usrguide_intro.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="wrkproj.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="IntroTitle">
+<A NAME="pgfId-1071143"></A><A NAME="34063"></A><BR>
+Source-Navigator Tutorial<DIV>
+<IMG SRC="tutorial-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1104885"></A>Source-Navigator scans your source code 
+and loads the extracted information into a project database. This 
+database stores all information about file names, symbol elements, 
+and symbol relationships (functions and global variables are examples 
+of symbols). Source-Navigator provides you with different browsers 
+(graphical views) into the project database.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1218750"></A>Creating a New Project</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1218751"></A>To create a new project, follow these 
+steps:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1218759"></A>Create a directory in which to store your project files.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218760"></A>Launch Source-Navigator.
+<BR>
+<A NAME="pgfId-1218761"></A>In UNIX, at the command prompt, 
+type <KBD CLASS="Code">
+snavigator</KBD>
+<BR>
+<A NAME="pgfId-1218780"></A>In Windows, open the directory where 
+Source-Navigator is located and double-click the snavigator.exe icon.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218781"></A>Source-Navigator launches and 
+the <SPAN CLASS="Bold">
+Projects</SPAN>
+ window appears.<P>
+<DIV>
+<IMG SRC="tutorial-2.gif">
+</DIV>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218782"></A>Click the <SPAN CLASS="Bold">
+New Project</SPAN>
+ button.<BR>
+<A NAME="pgfId-1218831"></A>The <SPAN CLASS="Bold">
+Auto-Create Project</SPAN>
+ dialog appears.<P>
+<DIV>
+<IMG SRC="tutorial-3.gif">
+</DIV>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218934"></A>Click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button next to 
+the <SPAN CLASS="Bold">
+Project File</SPAN>
+ text box. The <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Navigate to the project directory.<BR>
+<A NAME="pgfId-1218949"></A>Enter the name of the project.<P>
+<DIV>
+<IMG SRC="tutorial-4.gif">
+</DIV>
+<A NAME="pgfId-1223156"></A>Click the <SPAN CLASS="Bold">
+Save</SPAN>
+ button. The <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog closes.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218950"></A>If the <SPAN CLASS="Bold">
+Add Directory</SPAN>
+ text box does not point to the project directory, use 
+the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button to navigate to 
+it. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ when done.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218951"></A>The <SPAN CLASS="Bold">
+Scanning Project</SPAN>
+ progress bar appears:<P>
+<DIV>
+<IMG SRC="tutorial-5.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218952"></A>Once your project is created, 
+the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ appears:<P>
+<DIV>
+<IMG SRC="tutorial-6.gif">
+</DIV>
+<A NAME="pgfId-1218971"></A>The <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ is empty because there are not any files in the project.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218972"></A>From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Editor</SPAN>
+ to create a new file.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218981"></A>The <SPAN CLASS="Bold">
+Editor</SPAN>
+ window appears.<P>
+<DIV>
+<IMG SRC="tutorial-7.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218997"></A>Enter your code and save the file. 
+Saving the file using either <SPAN CLASS="Bold">
+Save</SPAN>
+ or <SPAN CLASS="Bold">
+Save as</SPAN>
+ updates the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>. <SPAN CLASS="Bold">
+Fast Save</SPAN>
+ does not update the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ window.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218998"></A>Click the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ window to see the newly created symbol for the selected directory.<P>
+<DIV>
+<IMG SRC="tutorial-8.gif">
+</DIV>
+</LI>
+</OL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1106241"></A>Opening a New Project</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1218758"></A>In this tutorial, existing source code 
+is used to create the <KBD CLASS="Code">
+c++_demo</KBD>
+ project.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1219026"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+New Project</SPAN>.<BR>
+<A NAME="pgfId-1219029"></A>The <SPAN CLASS="Bold">
+Auto-Create Project</SPAN>
+ dialog appears.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1218744"></A>Click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button next to 
+the <SPAN CLASS="Bold">
+Project File</SPAN>
+ field. The <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Navigate to the <KBD CLASS="Code">
+c++_demo</KBD>
+ directory. The path is <KBD CLASS="Code">
+.../share/demos</KBD>.<P>
+<DIV>
+<IMG SRC="tutorial-9.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1221920"></A>Enter <KBD CLASS="Code">
+c++_demo.proj</KBD>
+ to create the C++ demo project.<P>
+<DIV>
+<IMG SRC="tutorial-10.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1221971"></A>Click the <SPAN CLASS="Bold">
+Save</SPAN>
+ button. The <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog closes.<BR>
+<A NAME="pgfId-1221963"></A>If the <SPAN CLASS="Bold">
+Add Directory</SPAN>
+ text box does not point to the <KBD CLASS="Code">
+c++_demo</KBD>
+ directory, use the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button to navigate 
+to it. The path is <KBD CLASS="Code">
+.../share/demos</KBD>.
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1221978"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to generate the <KBD CLASS="Code">
+c++_demo</KBD>
+ project.</LI>
+</OL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1003567"></A><A NAME="17813"></A>Using the Symbol 
+Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1177681"></A>After you create the demo project, 
+the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ window opens. The <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ provides a view of the symbols within the project.</P>
+<DIV>
+<IMG SRC="tutorial-11.gif">
+</DIV>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1222043"></A>Click on the icon to the left 
+of the file or symbol name to expand the list view to a tree 
+view of the file or symbol.<P>
+<DIV>
+<IMG SRC="tutorial-12.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1222047"></A>Double-click on the file or symbol 
+name <KBD CLASS="Code">
+Agent.h</KBD>
+ to open the <SPAN CLASS="Bold">
+Editor</SPAN>
+ to the location of the selected file or symbol in the source code.</LI>
+</OL>
+<P CLASS="Body">
+<A NAME="pgfId-1081227"></A>For more information on the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, see <A HREF="symbrws.html#16805" CLASS="XRef">Symbol 
+Browser</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1003632"></A>Using the Editor</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1211646"></A>Items in the project database are 
+hyperlinked to the <SPAN CLASS="Bold">
+Editor</SPAN>. When you double-click on a symbol anywhere 
+within Source-Navigator, the <SPAN CLASS="Bold">
+Editor</SPAN>
+ opens to the location of that selected symbol in your source code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1211664"></A></P><P>
+<DIV>
+<IMG SRC="tutorial-13.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1222865"></A>When you save modified source files, 
+the project database is updated and changes are reflected in all 
+of the Source-Navigator tools. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1223108"></A>For more information on the <SPAN CLASS="Bold">
+Editor</SPAN>, see <A HREF="editor.html#40005" CLASS="XRef">Editor</A>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1211665"></A>Using the Symbol Accelerator</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1222859"></A>The <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>
+ combo-box in the toolbar allows you to quickly navigate 
+through the code. When the <SPAN CLASS="Bold">
+Editor</SPAN>
+ is open, the Symbol Accelerator lists all of the symbols either 
+within the open file or within the entire project. </P>
+<DIV>
+<IMG SRC="tutorial-14.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1222856"></A>When other browsers are open, the 
+Symbol Accelerator lists the components relative to that browser. 
+For instance, in the <SPAN CLASS="Bold">
+Class Browser</SPAN>, it lists only classes in the file 
+or in the project.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1003693"></A>Notice that the Symbol Accelerator 
+text field in the toolbar displays the symbol that is referenced 
+as the cursor moves through the file.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1223096"></A>Using the Cross-Reference Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1179097"></A>The <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ (also called <SPAN CLASS="Bold">
+Xref</SPAN>) helps you to understand complex source 
+code by showing the <EM CLASS="Emphasis">
+Refers-to</EM>
+ and <EM CLASS="Emphasis">
+Referred-by</EM>
+ relationships between symbols in the project. 
+You can traverse the tree, and expand or collapse the elements 
+within the tree.</P>
+<TABLE BORDER=0>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-1179100"></A>Cross-Reference Browser relationships</P>
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179107"></A><IMG SRC="tutorial-15.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179109"></A><EM CLASS="Emphasis">
+Refers-to<BR>
+</EM>
+shown by blue arrows</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179114"></A><IMG SRC="tutorial-16.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179116"></A><EM CLASS="Emphasis">
+Referred-by<BR>
+</EM>
+shown by red arrows</P>
+</TD>
+</TR>
+</TABLE>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1179118"></A>From the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, open the <KBD CLASS="Code">
+Agent.h</KBD>
+ file.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1180018"></A>Highlight the class <KBD CLASS="Code">
+Notifiee</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1128639"></A>To activate the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>, select the <SPAN CLASS="Bold">
+Xref</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>
+ window. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1223126"></A>Add an <SPAN CLASS="Bold">
+Editor</SPAN>
+ view to the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window. From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Editor</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003800"></A>Click on the function<KBD CLASS="Code">
+ Notification(mi) Notification</KBD>.<P>
+<DIV>
+<IMG SRC="tutorial-17.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1208885"></A>Click the <EM CLASS="Emphasis">
+Refers-to</EM>
+ button. The <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ view lists the functions that reference <KBD CLASS="Code">
+Notification(mi) Notification</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003802"></A>Click on <KBD CLASS="Code">
+Ref(fu)</KBD>
+ and notice that the <EM CLASS="Emphasis">
+Refers-to</EM>
+ and <EM CLASS="Emphasis">
+Referred-by</EM>
+ buttons in the toolbar become active. Click the <EM CLASS="Emphasis">
+Referred-by</EM>
+ button.<P>
+<DIV>
+<IMG SRC="tutorial-18.gif">
+</DIV>
+<A NAME="pgfId-1222208"></A>Source-Navigator shows the source 
+syntax of <KBD CLASS="Code">
+Ref(fu)</KBD>
+ in the <SPAN CLASS="Bold">
+Editor</SPAN>
+ pane, and shows the functions that reference <KBD CLASS="Code">
+Ref(fu)</KBD>.</LI></OL>
+<P CLASS="Body">
+<A NAME="pgfId-1081213"></A>For more information on the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>, see 
+<A HREF="crossref.html#35957" CLASS="XRef">Cross-Reference Browser</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1003809"></A>Using the Class Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1003810"></A>The Source-Navigator <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ provides a view of classes and their attributes. Using 
+the <SPAN CLASS="Bold">
+Class Browser</SPAN>, you can analyze the members of a selected 
+class based on inheritance tree, scope, member attribute, member 
+type, and more.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1101143"></A>Imagine a situation where you are 
+investigating the class structures and attributes of classes 
+within your project, but want to simultaneously view the 
+declaration or implementation of the classes in the source code.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1101149"></A>Ensure that <KBD CLASS="Code">
+Agent.h</KBD>
+ is open. If it is not, select it from the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1128728"></A>To activate the <SPAN CLASS="Bold">
+Class Browser</SPAN>, select the <SPAN CLASS="Bold">
+Class</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>
+ window. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1101013"></A>Add an <SPAN CLASS="Bold">
+Editor</SPAN>
+ to the <SPAN CLASS="Bold">
+Class Browser</SPAN>. From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Editor</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1205715"></A>In the <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>, all class components for the entire 
+project are listed. From this list of components, select <KBD CLASS="Code">
+AwaitStmt</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1222739"></A>In the <SPAN CLASS="Bold">
+Class Browser</SPAN>, click <KBD CLASS="Code">
+AwaitStmt(md)</KBD>
+ in the list view.<P>
+<DIV>
+<IMG SRC="tutorial-19.gif">
+</DIV>
+<A NAME="pgfId-1205743"></A>Notice that the <SPAN CLASS="Bold">
+Editor</SPAN>
+ view on the bottom takes you to the Declaration of the <KBD CLASS="Code">
+AwaitStmt</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1129335"></A>From the <SPAN CLASS="Bold">
+Search</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Find Implementation</SPAN>.
+<P><DIV>
+<IMG SRC="tutorial-20.gif">
+</DIV>
+<A NAME="pgfId-1222750"></A>Notice that the <SPAN CLASS="Bold">
+Editor</SPAN>
+ view updates to show the Implementation.</P></LI></OL>
+<H3 CLASS="Label">
+<A NAME="pgfId-1222767"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1222772"></A><A NAME="marker-1222768"></A><SPAN CLASS="Bold">
+Declaration</SPAN>
+ is set by default. You can set Source-Navigator to open to 
+the <A NAME="marker-1222773"></A><SPAN CLASS="Bold">
+Implementation</SPAN>
+ instead. For more information, 
+see <A HREF="clhierbrws.html#29305" CLASS="XRef">Class/Hierarchy 
+Preferences</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1081220"></A>For more information on the <SPAN CLASS="Bold">
+Class Browser</SPAN>, see <A HREF="clbrws.html#38835" CLASS="XRef">Class 
+Browser</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1003953"></A>Using the Hierarchy Browser </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1106014"></A>The <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ (also known as the <SPAN CLASS="Bold">
+Class Hierarchy Browser</SPAN>) helps you understand the inheritance 
+relationship for a particular 
+class.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1128697"></A>To activate the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>, select the <SPAN CLASS="Bold">
+Hierarchy</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>
+ window. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1128698"></A>Add an <SPAN CLASS="Bold">
+Editor</SPAN>
+ to the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>. From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Editor</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003957"></A>From the Symbol Accelerator, select 
+the class <KBD CLASS="Code">
+BinaryExpr</KBD>. <P>
+<DIV>
+<IMG SRC="tutorial-21.gif">
+</DIV>
+<A NAME="pgfId-1003959"></A>Source-Navigator draws an inheritance 
+tree from <KBD CLASS="Code">
+GlishObject</KBD>, the base class, to <KBD CLASS="Code">
+LogExpr</KBD>, a derived class.<P>
+<A NAME="pgfId-1206476"></A>By clicking on any of the classes 
+in the tree, Source-Navigator shows the class definition in the 
+source code in the <SPAN CLASS="Bold">
+Editor</SPAN>.</LI></OL>
+<P CLASS="Body">
+<A NAME="pgfId-1081224"></A>For more information on the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>, 
+see <A HREF="clhierbrws.html#Hierarchy Browser" CLASS="XRef">Hierarchy 
+Browser</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1003983"></A>Using the Include Browser </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1003984"></A>Some programming languages allow 
+files to include source code from other files. The <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ allows you to see these <EM CLASS="Emphasis">
+Includes</EM>
+ and <EM CLASS="Emphasis">
+Included by</EM>
+ relationships.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1106031"></A>Click the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1222805"></A>Add an <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ to the <SPAN CLASS="Bold">
+Editor</SPAN>. From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Include</SPAN>.<P>
+<A NAME="pgfId-1222836"></A>The <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ allows you to maintain awareness of where you are in the project 
+based on pathnames and included files. <P>
+<DIV>
+<IMG SRC="tutorial-22.gif">
+</DIV>
+<A NAME="pgfId-1003990"></A>This complex view will maintain your 
+visibility while you move between files.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003992"></A>Go to the <SPAN CLASS="Bold">
+History </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Edit</SPAN>
+ menu.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003993"></A>Select another view from 
+the <SPAN CLASS="Bold">
+Editor</SPAN>, such as the previous <KBD CLASS="Code">
+Notifiee</KBD>
+ view.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1003994"></A>Notice that the <SPAN CLASS="Bold">
+Editor</SPAN>
+ opens a view to that source file and the integrated <SPAN CLASS="Bold">
+Include Browser</SPAN>
+ shows information relative to the &quot;including&quot; 
+or &quot;included&quot; files.</LI>
+</OL>
+<P CLASS="Body">
+<A NAME="pgfId-1081238"></A>For more information on the <SPAN CLASS="Bold">
+Include Browser</SPAN>, see 
+<A HREF="inclbrws.html#14837" CLASS="XRef">Include Browser</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-999543"></A>Closing the Demo Project</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998791"></A>To close a project, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, choose <SPAN CLASS="Bold">
+Close Project</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998808"></A>This tutorial introduced you to some of 
+Source-Navigator's browsers for more information on these and other 
+useful tools, 
+see any chapters in Part II of this User's Guide. <P>
+With the user interface concepts conveyed in this tutorial, you are 
+now ready to begin exploring your own software projects. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1129049"></A>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usrguide_intro.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="wrkproj.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

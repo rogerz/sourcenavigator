@@ -1,0 +1,1578 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Building Programs</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="debugger.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="elixcmdline.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998205"></A><A NAME="42744"></A>Building Programs<DIV>
+<IMG SRC="progide-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-998209"></A>Source-Navigator allows you to build executable 
+programs from the files in your project. Using Source-Navigator, you can 
+compile your code, navigate to any errors, link your code, and, with the 
+Insight debugger, set up a debugging session to debug your code.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998216"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998220"></A>The compiler, <KBD CLASS="Code">
+make</KBD>, and the Insight debugger must be installed on your machine 
+before using these features.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002352"></A>At the end of this chapter, there 
+is a <A HREF="#tutorial">build 
+tutorial</A> for a command line-driven real estate trading game.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998221"></A>The Building Process</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998222"></A>The building process compiles and links 
+source files, such as libraries and executable files, to produce an 
+output binary file.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998226"></A>Build Process</P>
+<DIV>
+<IMG SRC="progide-2.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998227"></A>There are four steps to building your program:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998228"></A>editing your code,</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998229"></A>compiling your source into an intermediate format, 
+called object files,</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998230"></A>linking your object files together to produce an 
+executable application, and</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998231"></A>debugging your executable to find any problems.</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-998232"></A>The minimum requirements for building source 
+code include specifying which source files should be included, the directory 
+in which the build should be stored, linking rules, debugging, and optimization 
+flags, and included paths.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998236"></A>You can edit your code using Source-Navigator. This 
+chapter explains compiling and linking. For information about external stand 
+alone debuggers, see either <A HREF="debugger.html#45395" CLASS="XRef">Debugger</A> 
+or your debugger's documentation.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998246"></A>make</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998250"></A>Source-Navigator uses a utility called <KBD CLASS="Code">
+make</KBD>. <KBD CLASS="Code">
+make</KBD>
+ combines a set of rules for compiling and linking code with 
+a tracking mechanism for determining which files must be compiled.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998254"></A>Source-Navigator generates a <KBD CLASS="Code">
+makefile</KBD>, which <KBD CLASS="Code">
+make</KBD>
+ uses to determine which commands need to be executed in order 
+to build your program.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998256"></A><A NAME="marker-998255"></A>Build Targets</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998258"></A>A <A NAME="marker-998257"></A>build target is a 
+conceptual object that contains information needed to compile and link a 
+project. For example, <KBD CLASS="Code">
+hello.c</KBD>
+ is converted into <KBD CLASS="Code">
+hello.o</KBD>
+ before <KBD CLASS="Code">
+hello</KBD>
+ is built. To produce the <KBD CLASS="Code">
+hello</KBD>
+ executable, the <KBD CLASS="Code">
+hello.o</KBD>
+ object file is linked with any required libraries.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998259"></A>The first time you select <SPAN CLASS="Bold">
+Build Settings</SPAN>, the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ list is empty. After you create a build target, its name appears in the list.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998261"></A><A NAME="marker-998260"></A>Creating a New Build Target</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998262"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings </SPAN>
+to start the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998266"></A>Build Settings Dialog</P>
+<DIV>
+<IMG SRC="progide-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998267"></A>Enter the name of the build target in the 
+text entry box and click the <SPAN CLASS="Bold">
+Create</SPAN>
+ button. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens. <P CLASS="Body">
+See <A HREF="progide.html#15207" CLASS="XRef">Editing a Target</A>.</P>
+</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998271"></A>Modifying Build Targets</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998272"></A>Rename a build target by selecting the target, 
+entering a new name, and clicking the <SPAN CLASS="Bold">
+Rename</SPAN>
+ button.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002480"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002481"></A>Do not highlight the target name in the text 
+box or a new target is created.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998275"></A>To edit an existing build target, select the target 
+and click the <SPAN CLASS="Bold">
+Edit</SPAN>
+ button.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998276"></A>Duplicating a build target is useful when 
+a new target is only slightly different from an existing target. 
+To <A NAME="marker-998277"></A>duplicate an existing build target, select the 
+target in the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ list and click the <SPAN CLASS="Bold">
+Duplicate</SPAN>
+ button. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998279"></A><A NAME="marker-998278"></A>Delete a build target by 
+selecting it in the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ list and click the <SPAN CLASS="Bold">
+Delete </SPAN>
+button. The target is removed from the listing.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998282"></A><A NAME="marker-998280"></A><A NAME="15207"></A>Editing 
+a Target</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998283"></A>In the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ list, either select the target name and click the <SPAN CLASS="Bold">
+Edit</SPAN>
+ button or double-click the target name. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998287"></A>Edit Target Dialog</P>
+<DIV>
+<IMG SRC="progide-4.gif">
+</DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998288"></A>Edit Target tabs</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998289"></A>The <SPAN CLASS="Bold">
+Build Directory</SPAN>, <SPAN CLASS="Bold">
+Target Type</SPAN>, and <SPAN CLASS="Bold">
+Tool Chain</SPAN>
+ combo-boxes are common to the tabs accessed in the<SPAN CLASS="Bold">
+ Edit Target </SPAN>
+dialog.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998308"></A></P>
+<DIV>
+<IMG SRC="progide-5.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998312"></A>These store information about the build target.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998313"></A>Build Directory</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998314"></A>This is the directory where all files generated 
+in the build process are initially stored. By default this is blank. If this 
+is left blank, then the project directory is used. To specify the directory, 
+either type the directory path or click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. If you click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button, the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog opens: </P>
+<DIV>
+<IMG SRC="progide-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998318"></A>Select the directory in which to store the 
+intermediate files. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the dialog. The directory appears in the <SPAN CLASS="Bold">
+Build Directory</SPAN>
+ field.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998319"></A>Target Type</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998320"></A>Use this combo-box to select the type of 
+build target to create. The options are <EM CLASS="Emphasis">
+Executable</EM>
+ and <EM CLASS="Emphasis">
+Library</EM>.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998321"></A>Tool Chain</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998322"></A>A <EM CLASS="Emphasis">
+tool chain</EM>
+ is a set of compilers, debuggers, and linkers. The currently available 
+option is <EM CLASS="Emphasis">
+GNUPro (native)</EM>.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998325"></A><A NAME="marker-998323"></A><A NAME="50837"></A>
+Source Files tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998326"></A>The <SPAN CLASS="Bold">
+Source Files </SPAN>
+tab controls which source files are included in your build target. 
+The <SPAN CLASS="Bold">
+Project Files</SPAN>
+ and <SPAN CLASS="Bold">
+Target</SPAN>
+ <SPAN CLASS="Bold">
+Files</SPAN>
+ sections contain tree information for the selected build target.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998337"></A>Source Files Tab</P>
+<DIV>
+<IMG SRC="progide-7.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998341"></A>Adding files</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998343"></A><A NAME="marker-998342"></A>To add 
+files to the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ list:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998344"></A>Select the files from the <SPAN CLASS="Bold">
+Project Files</SPAN>
+ list.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998345"></A>Click the <SPAN CLASS="Bold">
+Add Files</SPAN>
+ button. <P>
+<A NAME="pgfId-998346"></A>The files are copied into the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ list.</LI></OL>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998348"></A><A NAME="marker-998347"></A>Removing files</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998349"></A>To remove files from the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ section, select the files to remove and click the <SPAN CLASS="Bold">
+Clear</SPAN>
+ button. To remove all of the files from the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ section, click the <SPAN CLASS="Bold">
+Clear All</SPAN>
+ button.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998350"></A>Importing files and directories</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998353"></A>To <A NAME="marker-998351"></A>import 
+files or <A NAME="marker-998352"></A>directories into your currently 
+active project:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998354"></A>Under <SPAN CLASS="Bold">
+Import</SPAN>, click either the <SPAN CLASS="Bold">
+Files</SPAN>
+ or <SPAN CLASS="Bold">
+Directory</SPAN>
+ button.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998355"></A>Click the files or directories you wish to add 
+to the project. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ when done. The names of the added files or directory appear 
+in the <SPAN CLASS="Bold">
+Project Files</SPAN>
+ list.</LI>
+</OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998358"></A><A NAME="marker-998356"></A><A NAME="46396"></A>
+Library Files tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998359"></A>Most libraries required for building 
+targets are linked in automatically by the compiler/linker. If you 
+know that your target requires additional libraries, use the <SPAN CLASS="Bold">
+Library Files</SPAN>
+ tab to add them to your build.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998363"></A>Library Files Tab</P>
+<DIV>
+<IMG SRC="progide-8.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998366"></A>Add <A NAME="marker-998364"></A>additional 
+libraries by clicking the <A NAME="marker-998365"></A><SPAN CLASS="Bold">
+Add</SPAN>
+ button. The <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog opens to the last directory you have looked at in this project. 
+After you select a library and click the <SPAN CLASS="Bold">
+Open </SPAN>
+button, it appears in the library list.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998368"></A>To remove a library from the listing, 
+select the library and click the <A NAME="marker-998367"></A><SPAN CLASS="Bold">
+Remove </SPAN>
+button. The library is removed from the build.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998369"></A>Libraries are linked in the order listed in 
+the dialog. To change the order of libraries, select the library and 
+click either the <SPAN CLASS="Bold">
+Move Up</SPAN>
+ or <SPAN CLASS="Bold">
+Move Down</SPAN>
+ button to change its linking order.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998372"></A><A NAME="marker-998370"></A><A NAME="70492"></A>Build 
+Rules tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998373"></A>Click the <SPAN CLASS="Bold">
+Build Rules </SPAN>
+tab to configure each rule in the build target.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998375"></A>A <A NAME="marker-998374"></A>rule contains 
+information required to compile files in a project. For example, a rule 
+to compile a C file might contain information about which compiler and 
+flags to use, as well as what the file is called after it's compiled.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998376"></A>This tab lists the rules for the specified build 
+target. Within the <SPAN CLASS="Bold">
+Build Rules</SPAN>
+ tab, you can:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998377"></A>disable and enable rules for the target.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998378"></A>edit existing rules.</LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998388"></A>Build Rules Tab</P>
+<DIV>
+<IMG SRC="progide-9.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998392"></A>Status</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998394"></A>This column shows the 
+currently <A NAME="marker-998393"></A>enabled and disabled rules. 
+To disable a rule, highlight the rule and click the <SPAN CLASS="Bold">
+Disable</SPAN>
+ button. To enable a rule, highlight the rule and click the <SPAN CLASS="Bold">
+Enable</SPAN>
+ button.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998395"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998396"></A>This button changes between <SPAN CLASS="Bold">
+Disable</SPAN>
+ and <SPAN CLASS="Bold">
+Enable</SPAN>
+ depending upon the state of the rule.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998397"></A>File Type</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998398"></A>This column displays the type of file the 
+rule acts upon.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998400"></A><A NAME="marker-998399"></A>Description</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998401"></A>This column displays a description of the rule.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998403"></A><A NAME="marker-998402"></A>Editing a rule</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998404"></A>To edit a rule, select the rule from the rule 
+listing. Click the <SPAN CLASS="Bold">
+Edit Rule</SPAN>
+ button. The <SPAN CLASS="Bold">
+Build Rule Settings</SPAN>
+ dialog opens. The dialog title bar displays the extension for the files involved.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998406"></A><A NAME="marker-998405"></A>Settings tab</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998407"></A>The <SPAN CLASS="Bold">
+Settings</SPAN>
+ tab allows you to change the default settings for the rule.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998414"></A>Build Rule Settings with Options Selected</P>
+<DIV>
+<IMG SRC="progide-10.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998418"></A>Debug:<BR>
+<P CLASS="BodyHang1">This controls the debug information generated by the compiler.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998419"></A>Warnings:<BR>
+<P CLASS="BodyHang1">Controls the level of warnings the compiler generates. 
+A stricter warning ensures fewer problems with future compatibility. 
+Set &quot;Warnings as Errors&quot; to make sure the compile stops any 
+time a warning is generated.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998420"></A>User flags:<BR>
+<P CLASS="BodyHang1">Enter flags not covered by the options listed in this screen. 
+To add macros, see <A HREF="progide.html#92084" CLASS="XRef">Defines tab</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998424"></A>Optimization:<BR>
+<P CLASS="BodyHang1">Compiler optimization for the code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998425"></A>Code Generation:<BR>
+<P CLASS="BodyHang1">Processor or code control specific optimizations of settings.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998426"></A>Executable:<BR>
+<P CLASS="BodyHang1">Selects the executable to use. To change the tool 
+(such as compiler) location, either enter the location path or click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button to choose the tool 
+binary to use.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998428"></A><A NAME="marker-998427"></A>Includes tab</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998429"></A>Sometimes files include other files. In C 
+this is done with the <KBD CLASS="Code">
+#include</KBD>
+ statement. The <SPAN CLASS="Bold">
+Includes</SPAN>
+ tab allows you to change the included paths for the rule.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998433"></A>Includes Tab</P>
+<DIV>
+<IMG SRC="progide-11.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998434"></A>The <SPAN CLASS="Bold">
+Auto-Generated Include Paths</SPAN>
+ list displays paths generated from the Source-Navigator database. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998442"></A><A NAME="marker-998438"></A>Click 
+the <SPAN CLASS="Bold">
+Generate</SPAN>
+ button to generate a list of Source-Navigator included paths. These 
+appear in the <SPAN CLASS="Bold">
+Auto-Generated Include Paths</SPAN>
+ list.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998444"></A>To add additional paths, click the <SPAN CLASS="Bold">
+Add</SPAN>
+ button. The selected paths appear in the <A NAME="marker-998443"></A>
+<SPAN CLASS="Bold">
+User Specified Include Paths</SPAN>
+ list. You can delete paths by highlighting the path and clicking 
+the <SPAN CLASS="Bold">
+Delete</SPAN>
+ button.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998447"></A><A NAME="marker-998445"></A>
+<A NAME="92084"></A>Defines tab</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998448"></A>The <SPAN CLASS="Bold">
+Defines</SPAN>
+ tab enables you to view, edit, and create new macro definitions.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998452"></A>Defines Tab</P>
+<DIV>
+<IMG SRC="progide-12.gif">
+</DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998453"></A>Modifying macro definitions</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998455"></A>To create a <A NAME="marker-998454"></A>new macro, 
+enter the name and definition in the text entry box and click the <SPAN CLASS="Bold">
+New</SPAN>
+ button.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998457"></A>To change the <A NAME="marker-998456"></A>current 
+macro definition, select the macro from the <SPAN CLASS="Bold">
+Macro defines</SPAN>
+ list. The macro appears in the text entry box.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998461"></A>Macro Created and Selected</P>
+<DIV>
+<IMG SRC="progide-13.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998462"></A>Make the necessary modifications to the macro. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998463"></A>To create a new macro, click the <SPAN CLASS="Bold">
+New</SPAN>
+ button. The new macro appears in the listing.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998464"></A>To update the macro, click the <SPAN CLASS="Bold">
+Change</SPAN>
+ button. The modified macro appears in the listing.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998465"></A>To delete a macro, select it from the <SPAN CLASS="Bold">
+Macro defines</SPAN>
+ list and click the <SPAN CLASS="Bold">
+Delete</SPAN>
+ button. The macro is removed from the listing.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998467"></A><A NAME="51848"></A>Link Rules tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998469"></A>The <SPAN CLASS="Bold">
+Link Rules</SPAN>
+<A NAME="Link Rules tab"></A> tab allows you to specify the program to 
+execute and the name of the final output file.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998479"></A>Link Rules Tab of the Build Targets Menu</P>
+<DIV>
+<IMG SRC="progide-14.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998483"></A>Output File:<BR>
+<P CLASS="BodyHang1">
+The name of the final output file.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998484"></A>Linker:<BR>
+<P CLASS="BodyHang1">
+Auto-detects the type of project. Click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button to select another linker.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998485"></A>Entry Point:<BR>
+<P CLASS="BodyHang1">
+This is the first function executed for the application. Default is <KBD CLASS="Code">
+main()</KBD>. In Java, you must specify the name of the class that 
+defines <KBD CLASS="Code">
+main()</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998486"></A>Link flags:<BR>
+<P CLASS="BodyHang1">
+Displays the full link command line and allows you to add flags, but you 
+cannot edit existing links or flags.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998487"></A><SPAN CLASS="Bold">
+Debug/Execute Settings:</SPAN>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998488"></A>Controls the mode for the rule. <SPAN CLASS="Bold">
+Execute</SPAN>
+ allows running the program from the <SPAN CLASS="Bold">
+Build</SPAN>
+ window. <SPAN CLASS="Bold">
+Debug</SPAN>
+ allows starting the Insight debugger from the <SPAN CLASS="Bold">
+Build</SPAN>
+ window. See <A HREF="progide.html#13755" CLASS="XRef">Debugging the 
+build target</A> for more information on debugging your program.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998492"></A>Command to launch Application:<BR>
+<P CLASS="BodyHang1">
+This field lists the name of the binary to execute or debug. The default 
+name is the file listed in <SPAN CLASS="Bold">
+Output File</SPAN>. If you changed the default output file, you also 
+need to change the name here. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1002510"></A>On UNIX, enter <KBD CLASS="Code">
+xterm -e</KBD>
+ before the executable name if you are debugging a console application.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998493"></A>Click the <SPAN CLASS="Bold">
+OK</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog. Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998496"></A><A NAME="marker-998494"></A><A NAME="57216"></A>Compiling 
+Build Targets</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998497"></A>After you have created and configured a build target, 
+you must build it. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998501"></A>Source-Navigator can generate its own <KBD CLASS="Code">
+makefiles</KBD>
+ or work with one that you supply.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998502"></A>Internal build systems</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998506"></A>To build your project using the 
+Source-Navigator build system:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998507"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu in the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, select <SPAN CLASS="Bold">
+Build</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998511"></A>The <SPAN CLASS="Bold">
+Build</SPAN>
+ window opens.<P>
+<DIV>
+<IMG SRC="progide-15.gif">
+</DIV></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998515"></A>Select the build target from the <SPAN CLASS="Bold">
+Build Target</SPAN>
+ list.<P>
+<DIV>
+<IMG SRC="progide-16.gif">
+</DIV></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998516"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button to perform the build. If you need to stop the build process for any 
+reason, click the <SPAN CLASS="Bold">
+Stop </SPAN>
+button.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998521"></A>When Source-Navigator starts the <KBD CLASS="Code">
+make</KBD>
+<A NAME="marker-998520"></A> command, output from the <KBD CLASS="Code">
+make</KBD>
+ process is displayed. To step through the results, click the left or 
+right black arrow keys in the toolbar.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998524"></A>If errors appear, the build target needs to 
+be modified. See <A HREF="progide.html#10160" CLASS="XRef">Modifying 
+the Build</A>.<P>
+<A NAME="pgfId-998526"></A>If no errors appear, the build target 
+is compiled and ready to be executed. Click the <SPAN CLASS="Bold">
+Run</SPAN>
+ button to execute the application.</LI></OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998530"></A>External build systems</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998531"></A>To build using your own <KBD CLASS="Code">
+makefile</KBD>:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998532"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu in the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, select <SPAN CLASS="Bold">
+Build</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998536"></A>Ensure that <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ is set to <KBD CLASS="Code">
+&lt;External Makefile&gt;</KBD>.<P><DIV>
+<IMG SRC="progide-17.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998537"></A>In the <SPAN CLASS="Bold">
+Directory</SPAN>
+ field, select the directory containing the external makefile.<P>
+<A NAME="pgfId-1001880"></A>If you require additional flags or a 
+different <KBD CLASS="Code">
+make</KBD>
+ program, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences </SPAN>
+and select the<SPAN CLASS="Bold">
+ Others</SPAN>
+ tab. Enter the additional flags or <KBD CLASS="Code">
+make</KBD>
+ program into the <SPAN CLASS="Bold">
+Build</SPAN>
+ field (see <A HREF="customsn.html#97692" CLASS="XRef">Others Tab of the 
+Preferences Dialog</A>).
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1001884"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button to perform the build. If you need to stop the build process 
+for any reason, click the <SPAN CLASS="Bold">
+Stop </SPAN>
+button.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998547"></A>When Source-Navigator starts the <KBD CLASS="Code">
+make</KBD>
+<A NAME="marker-998546"></A> command, output from the <KBD CLASS="Code">
+make</KBD>
+ process is displayed. To step through the results, click the left or right 
+black arrow keys in the toolbar.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998548"></A>If errors appear, the source code needs 
+to be modified.<P>
+<A NAME="pgfId-998549"></A>If no errors appear, the build target is 
+compiled and ready to be executed. Click the <SPAN CLASS="Bold">
+Run</SPAN>
+ button to execute the application.</LI></OL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998554"></A><A NAME="10160"></A>Modifying the Build</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998555"></A>If errors appear in the <SPAN CLASS="Bold">
+Build</SPAN>
+ window, the source code must be modified before the build is 
+downloaded to the target board.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998557"></A>Double-clicking a line with a compiler 
+error message activates the <SPAN CLASS="Bold">
+Editor</SPAN>
+<A NAME="marker-998556"></A> with the cursor positioned on the line of 
+code where the error appears. Right-clicking in the output window allows 
+you to save the build output to a file.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998558"></A>From the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Build</SPAN>
+ to add a <SPAN CLASS="Bold">
+Build</SPAN>
+ window to an <SPAN CLASS="Bold">
+Editor</SPAN>
+ window.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998568"></A>Editor-Build Window</P>
+<DIV>
+<IMG SRC="progide-18.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998572"></A>To save and recompile the modified files, 
+press the <SPAN CLASS="Bold">
+Start </SPAN>
+button. The <SPAN CLASS="Bold">
+Fast Save</SPAN>
+ dialog box appears asking if you want to perform a fast save. Click 
+the <SPAN CLASS="Bold">
+Yes</SPAN>
+ button to save the changes and rebuild. Click the <SPAN CLASS="Bold">
+No</SPAN>
+ button to discard changes and perform a rebuild. Clicking the <SPAN CLASS="Bold">
+Cancel</SPAN>
+ button closes the dialog without rebuilding the program.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998576"></A>When the build is completed, 
+Source-Navigator saves the executable using the name specified in 
+the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ tab. If a name is not specified, the file name will be the target 
+name. The compiled file is saved in the build directory.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998581"></A>Build types</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998583"></A>The <A NAME="menus"></A><SPAN CLASS="Bold">
+Tools</SPAN>
+ menu in the <SPAN CLASS="Bold">
+Build</SPAN>
+ window lists the types of builds you can perform. Before selecting an option 
+from this menu, ensure that a build target has been selected.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998587"></A>Tools Menu</P>
+<DIV>
+<IMG SRC="progide-19.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998588"></A>Build<BR>
+<P CLASS="BodyHang1">Rebuilds only the modified files. This is the same as clicking 
+the <SPAN CLASS="Bold">
+Start</SPAN>
+ button in the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ window.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998589"></A>Force Build<BR>
+<P CLASS="BodyHang1">
+Rebuilds the modified files in the project and ignores errors,</P>
+<P CLASS="Body">
+<A NAME="pgfId-998590"></A>Clean Build<BR>
+<P CLASS="BodyHang1">
+Removes the object files and executables.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998591"></A>Export Makefile<BR>
+<P CLASS="BodyHang1">
+Saves your build target as a <KBD CLASS="Code">
+makefile</KBD>
+ for external use.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998593"></A><A NAME="13755"></A>Debugging the build target</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998594"></A>If you selected <SPAN CLASS="Bold">
+Debug</SPAN>
+ from the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog, you will use Insight or another debugger to debug your code.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998595"></A>From the <SPAN CLASS="Bold">
+Build</SPAN>
+ window, click the <SPAN CLASS="Bold">
+Debug </SPAN>
+button.<P>
+<A NAME="pgfId-998596"></A>The <SPAN CLASS="Bold">
+Program to Debug</SPAN>
+ dialog appears.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998600"></A>Program to Debug Dialog Box</P>
+<DIV>
+<IMG SRC="progide-20.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998601"></A>In the <SPAN CLASS="Bold">
+Program</SPAN>
+ field, enter or select the application to debug.<P>
+<A NAME="pgfId-998602"></A>In the <SPAN CLASS="Bold">
+Working Directory</SPAN>
+ field, enter or select the path of the project directory.</P>
+<P>
+<A NAME="pgfId-998603"></A>On UNIX, in the <SPAN CLASS="Bold">
+Xterm</SPAN>
+ field, enter <KBD CLASS="Code">
+xterm</KBD>
+ to have a separate debugger output console window appear. If this field 
+is left blank, the Source-Navigator output console, specified in 
+the <SPAN CLASS="Bold">
+Others</SPAN>
+ preference tab (see <A HREF="customsn.html#25936" CLASS="XRef">Others tab</A>), 
+is used.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998610"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to debug the build target.<P>
+<A NAME="pgfId-998614"></A>The debugger launches.</P>
+<P>
+<A NAME="pgfId-998621"></A>For more information on the debugger, 
+see <A HREF="debugger.html#45395" CLASS="XRef">Debugger</A> or your 
+debugger's documentation.</P></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998625"></A>Return to Source-Navigator to fix any errors 
+and repeat the build-download-debug cycle. </LI>
+</OL>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998626"></A>Changing the build target from Debug to Execute</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998627"></A>After debugging and fixing your build target, 
+you must change the build target from debug to execute in order to run the 
+application.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-998628"></A>From the <SPAN CLASS="Bold">
+Symbol Browser </SPAN>
+window, select <SPAN CLASS="Bold">
+Tools</SPAN>
+ <EM CLASS="Arrow">
+-></EM>
+ <SPAN CLASS="Bold">
+Build Settings</SPAN>. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998629"></A>Double-click the build target to modify 
+from the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ list box.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998630"></A>Click the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ tab.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998631"></A>In the <SPAN CLASS="Bold">
+Debug/Execute</SPAN>
+ <SPAN CLASS="Bold">
+Settings</SPAN>, select <SPAN CLASS="Bold">
+Execute</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998632"></A>Click the <SPAN CLASS="Bold">
+OK</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998633"></A>Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-998636"></A>Recompile and execute your build 
+target (see <A HREF="progide.html#57216" CLASS="XRef">Compiling Build 
+Targets</A>).</LI>
+</OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998640"></A><A NAME="marker-998638"></A><A NAME="28559"></A>Executing 
+the application</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998642"></A>Once the application compiles without 
+errors, from the <SPAN CLASS="Bold">
+Build</SPAN>
+ window, click the <SPAN CLASS="Bold">
+Run</SPAN>
+ button to execute the application.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998197"></A><A NAME="tutorial"></A>Build Tutorial</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1002415"></A>This build tutorial is based on the <KBD CLASS="Code">
+monop</KBD>
+ demo, located in the <KBD CLASS="Code">
+demos</KBD>
+ directory. <KBD CLASS="Code">
+monop</KBD>
+ is a command line based game that you can build, edit, and play. In 
+this tutorial, you will create two build targets and use many build and 
+debugging features of Source-Navigator.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002419"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002420"></A>The monop demo is written in C. A Java demo 
+is located in the <KBD CLASS="Code">
+.../share/demos/java</KBD>
+ folder. A C++ demo is located in the <KBD CLASS="Code">
+.../share/demos/c++</KBD>
+ folder. To learn more about these demos, read the Readme file located 
+in each folder.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1002429"></A>Creating the Project</H3>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002431"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+New Project</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002441"></A>Create a new project called <KBD CLASS="Code">
+monop.proj</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002434"></A>Under <SPAN CLASS="Bold">
+Add Directory</SPAN>, click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; 
+button to select the <KBD CLASS="Code">
+demos/monop</KBD>
+ folder.<P>
+<DIV>
+<IMG SRC="progide-21.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002590"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to create the project</LI>
+</OL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1002442"></A>Creating the monop Target</H3>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002443"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings. </SPAN>
+The <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002446"></A>Enter <KBD CLASS="Code">
+monop</KBD>
+ as the name of the build target.
+<DIV>
+<IMG SRC="progide-22.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002447"></A>Click the <SPAN CLASS="Bold">
+Create </SPAN>
+button. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.<P>
+<DIV>
+<IMG SRC="progide-23.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002448"></A>In the <SPAN CLASS="Bold">
+Build Directory</SPAN>
+ field, click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button 
+and select the build directory for the <KBD CLASS="Code">
+monop</KBD>
+ project.<P>
+<DIV>
+<IMG SRC="progide-24.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002449"></A>From <SPAN CLASS="Bold">
+Project Files</SPAN>, select the <KBD CLASS="Code">
+cards.c</KBD>, <KBD CLASS="Code">
+execute.c</KBD>, <KBD CLASS="Code">
+getinp.c</KBD>, <KBD CLASS="Code">
+houses.c</KBD>, <KBD CLASS="Code">
+jail.c</KBD>, <KBD CLASS="Code">
+misc.c</KBD>, <KBD CLASS="Code">
+monop.c</KBD>, <KBD CLASS="Code">
+morg.c</KBD>, <KBD CLASS="Code">
+print.c</KBD>, <KBD CLASS="Code">
+prop.c</KBD>, <KBD CLASS="Code">
+rent.c</KBD>, <KBD CLASS="Code">
+roll.c</KBD>, <KBD CLASS="Code">
+spec.c</KBD>, and <KBD CLASS="Code">
+trade.c</KBD>
+ files.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002450"></A>Click the <SPAN CLASS="Bold">
+Add Files</SPAN>
+ button to copy the files to the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ list.<P>
+<DIV>
+<IMG SRC="progide-25.gif">
+</DIV>
+</LI></OL>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002513"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002514"></A>To execute the program correctly in UNIX, click the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ tab. Enter <KBD CLASS="Code">
+xterm -e ./monop</KBD>
+ in the <SPAN CLASS="Bold">
+Command to launch Application</SPAN>
+ field. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ dialog.</P>
+<OL START="7">
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002451"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002455"></A>Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog. </LI>
+</OL>
+<P CLASS="Body">
+<A NAME="pgfId-1002456"></A>The build target is created. Now you need 
+to compile the program.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002457"></A>Debugging the monop build target</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002518"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build</SPAN>. The <SPAN CLASS="Bold">
+Build</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002521"></A>From the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ field, select <KBD CLASS="Code">
+monop</KBD>.<P>
+<DIV>
+<IMG SRC="progide-26.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002522"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button.<P>
+<DIV>
+<IMG SRC="progide-27.gif">
+</DIV>
+<A NAME="pgfId-1002524"></A>Source-Navigator generates some errors 
+from the build. The <KBD CLASS="Code">
+lint</KBD>
+ macro must be defined.</LI></OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002523"></A>Creating the lint macro</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002528"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings</SPAN>. The <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog appears.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002529"></A>Double-click the <KBD CLASS="Code">
+monop</KBD>
+ build target. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002532"></A>Click the <SPAN CLASS="Bold">
+Build Rules</SPAN>
+ tab.<P><DIV>
+<IMG SRC="progide-28.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002533"></A>Because <KBD CLASS="Code">
+monop</KBD>
+ is written in C, double-click the <SPAN CLASS="Bold">
+C</SPAN>
+ rule. The <SPAN CLASS="Bold">
+Build Rule Settings</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002534"></A>Click the <SPAN CLASS="Bold">
+Defines</SPAN>
+ tab. Enter <KBD CLASS="Code">
+lint</KBD>
+ in the text entry box.<P>
+<DIV>
+<IMG SRC="progide-29.gif">
+</DIV>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002535"></A>Click the <SPAN CLASS="Bold">
+New</SPAN>
+ button to create the macro.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002536"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Build Rules Settings</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002992"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002993"></A>Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog.</LI>
+</OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002537"></A>Rebuilding the monop build target</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002539"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002538"></A>From the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ field, select <KBD CLASS="Code">
+monop</KBD>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002542"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button.<P>
+<DIV>
+<IMG SRC="progide-30.gif">
+</DIV>
+<A NAME="pgfId-1002548"></A>Source-Navigator generates without errors. 
+However, at runtime the program will not execute because the path to the 
+cards must be defined.</LI></OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002543"></A>Creating the _PATH_CARDS macro</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002643"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002644"></A>Double-click the <KBD CLASS="Code">
+monop</KBD>
+ build target. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002648"></A>Click the <SPAN CLASS="Bold">
+Build Rules</SPAN>
+ tab.<P>
+<DIV>
+<IMG SRC="progide-31.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002649"></A>Double-click the <SPAN CLASS="Bold">
+C</SPAN>
+ rule. The <SPAN CLASS="Bold">
+Build Rule Settings</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002653"></A>Click the <SPAN CLASS="Bold">
+Defines</SPAN>
+ tab.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002664"></A>Enter the following information in the text 
+entry box, replacing <KBD CLASS="CodeVariant">
+&lt;project directory&gt;</KBD>
+ with the path to the <KBD CLASS="Code">
+demos/monop</KBD>
+ directory:<P>
+<A NAME="pgfId-1002667"></A><KBD CLASS="Code">
+_PATH_CARDS=&quot;&#92;&quot;</KBD>
+<KBD CLASS="CodeVariant">
+&lt;project directory&gt;</KBD>
+<KBD CLASS="Code">
+/cards.pck&#92;&quot;&quot;</KBD>
+</P>
+<DIV>
+<IMG SRC="progide-32.gif">
+</DIV>
+<P CLASS="Body"><A NAME="pgfId-1002679"></A>This tells Source-Navigator which card 
+pack to use when running the <KBD CLASS="Code">
+monop</KBD>
+ program.</P>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002654"></A>Click the <SPAN CLASS="Bold">
+New</SPAN>
+ button to create the macro.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002655"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Build Rules Settings</SPAN>
+ dialog. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002998"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002999"></A>Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog.</LI>
+</OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002680"></A>Performing a clean build</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1002681"></A>To ensure that the new macro is picked up at 
+compile time, perform a clean build on the <KBD CLASS="Code">
+monop</KBD>
+ target.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002686"></A>In the <SPAN CLASS="Bold">
+Build</SPAN>
+ window, from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Clean Build</SPAN>.<P>
+<DIV>
+<IMG SRC="progide-33.gif">
+</DIV>
+<P CLASS="Body"><A NAME="pgfId-1002691"></A>A clean build is equivalent to the 
+command <KBD CLASS="Code">
+make clean</KBD>.</P>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002692"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button to perform the build.<P>
+<DIV>
+<IMG SRC="progide-34.gif">
+</DIV>
+<P CLASS="Body"><A NAME="pgfId-1002693"></A>Again <KBD CLASS="Code">
+monop</KBD>
+ compiles without errors, but now it links to the correct card pack.</P></LI></OL>
+<P CLASS="Body">
+<A NAME="pgfId-1002728"></A>Now you need to create another target to 
+initialize the cards used in the <KBD CLASS="Code">
+monop</KBD>
+ game.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1002641"></A>Creating the initdeck Target</H3>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002727"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings</SPAN>. The <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002729"></A>Enter <KBD CLASS="Code">
+initdeck</KBD>
+ as the name of the build target.<P>
+<DIV>
+<IMG SRC="progide-35.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002748"></A>Click the <SPAN CLASS="Bold">
+Create</SPAN>
+ button. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002752"></A>In the <SPAN CLASS="Bold">
+Build Directory</SPAN>
+ field, click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button and 
+select the build directory for the <KBD CLASS="Code">
+monop</KBD>
+ project.
+<DIV>
+<IMG SRC="progide-36.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002756"></A>From <SPAN CLASS="Bold">
+Project Files</SPAN>, select the <KBD CLASS="Code">
+initdeck.c</KBD>
+ file.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002766"></A>Click the <SPAN CLASS="Bold">
+Add Files</SPAN>
+ button to copy the files to the <SPAN CLASS="Bold">
+Target Files</SPAN>
+ list.
+<DIV>
+<IMG SRC="progide-37.gif">
+</DIV></LI></OL>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002767"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002768"></A>To execute the program correctly in 
+UNIX, click the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ tab. Enter <KBD CLASS="Code">
+xterm -e ./monop</KBD>
+ in the <SPAN CLASS="Bold">
+Command to launch Application</SPAN>
+ field. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Link Rules</SPAN>
+ dialog.</P>
+<OL START="7">
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002769"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002770"></A>Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog. </LI>
+</OL>
+<P CLASS="Body">
+<A NAME="pgfId-1002771"></A>The build target is created. Now 
+you need to compile the program.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002749"></A>Debugging the initdeck build target</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002832"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build</SPAN>. The <SPAN CLASS="Bold">
+Build</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002836"></A>From the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ field, select <KBD CLASS="Code">
+initdeck</KBD>.<P>
+<DIV>
+<IMG SRC="progide-38.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002840"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button.<P>
+<DIV>
+<IMG SRC="progide-39.gif">
+</DIV>
+<A NAME="pgfId-1002800"></A>Source-Navigator generates some errors 
+from the build. The <KBD CLASS="Code">
+lint</KBD>
+ and <KBD CLASS="Code">
+_PATH_CARDS</KBD>
+ macros must be defined.</P></LI></OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002801"></A>Creating the lint and _PATH_CARDS macros</H4>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002802"></A>From the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Build Settings</SPAN>. The <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog appears.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002803"></A>Double-click the <KBD CLASS="Code">
+initdeck</KBD>
+ build target. The <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002807"></A>Click the <SPAN CLASS="Bold">
+Build Rules</SPAN>
+ tab.<P>
+<DIV>
+<IMG SRC="progide-40.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002808"></A>Because <KBD CLASS="Code">
+initdeck</KBD>
+ is written in C, double-click the <SPAN CLASS="Bold">
+C</SPAN>
+ rule. The <SPAN CLASS="Bold">
+Build Rule Settings</SPAN>
+ dialog opens.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002812"></A>Click the <SPAN CLASS="Bold">
+Defines</SPAN>
+ tab. Enter <KBD CLASS="Code">
+lint</KBD>
+ in the text entry box.<P>
+<DIV>
+<IMG SRC="progide-41.gif">
+</DIV></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+Click the <B CLASS="Bold">New</B> button to create the macro.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002868"></A>Enter the following information in the 
+text entry box, replacing <KBD CLASS="CodeVariant">
+&lt;project directory&gt;</KBD>
+ with the path to the <KBD CLASS="Code">
+demos/monop</KBD>
+ directory:<P>
+<A NAME="pgfId-1002872"></A><KBD CLASS="Code">
+_PATH_CARDS=&quot;&#92;&quot;</KBD>
+<KBD CLASS="CodeVariant">
+&lt;project directory&gt;</KBD>
+<KBD CLASS="Code">
+/cards.pck&#92;&quot;&quot;</KBD>
+</P>
+<DIV>
+<IMG SRC="progide-42.gif">
+</DIV>
+<P CLASS="Body"><A NAME="pgfId-1002876"></A>This tells Source-Navigator which 
+card pack to use when running the <KBD CLASS="Code">
+monop</KBD>
+ program.</P>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002877"></A>Click the <SPAN CLASS="Bold">
+New</SPAN>
+ button to create the macro.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002814"></A>Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Build Rules Settings</SPAN>
+ dialog. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to close the <SPAN CLASS="Bold">
+Edit Target</SPAN>
+ dialog. Click the <SPAN CLASS="Bold">
+Done</SPAN>
+ button to close the <SPAN CLASS="Bold">
+Build Settings</SPAN>
+ dialog.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002886"></A>Open a console window and copy the <KBD CLASS="Code">
+card.inp</KBD>
+ files, located in the <KBD CLASS="Code">
+demos/monop</KBD>
+ directory, into the build directory.<P>
+<DIV>
+<IMG SRC="progide-43.gif">
+</DIV></LI></OL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1002880"></A>Performing a clean build</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1002919"></A>To ensure that the macros are picked up 
+at compile time, perform a clean build on the <KBD CLASS="Code">
+initdeck</KBD>
+ target.</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1002923"></A>In the <SPAN CLASS="Bold">
+Build</SPAN>
+ window, from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Clean Build</SPAN>.<P>
+<DIV>
+<IMG SRC="progide-44.gif">
+</DIV>
+</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002900"></A>Click the <SPAN CLASS="Bold">
+Start</SPAN>
+ button to perform the build.<P>
+<DIV>
+<IMG SRC="progide-45.gif">
+</DIV>
+<P>
+<A NAME="pgfId-1002901"></A>This time <KBD CLASS="Code">
+initdeck</KBD>
+ compiles and links without errors. <KBD CLASS="Code">
+initdeck</KBD>
+ is the name of the working executable.</P></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002902"></A>Click the <SPAN CLASS="Bold">
+Run</SPAN>
+ button to run <KBD CLASS="Code">
+initdeck</KBD>, which creates the cards used in the game.<P>
+<A NAME="pgfId-1002940"></A>A console window opens to build the cards and 
+closes after the build is complete.</P></LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002782"></A>From the <SPAN CLASS="Bold">
+Build Targets</SPAN>
+ field, select <KBD CLASS="Code">
+monop</KBD>. </LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1002941"></A>Click the <SPAN CLASS="Bold">
+Run</SPAN>
+ button.<P>
+<A NAME="pgfId-1002948"></A>A console window opens and <KBD CLASS="Code">
+monop</KBD>
+ runs automatically. Enter the number of players and their names. 
+Press the <KBD CLASS="Code">
+?</KBD>
+ key to list the playing options.</P>
+<DIV>
+<IMG SRC="progide-46.gif">
+</DIV>
+</LI></OL><P CLASS="Body">
+<A NAME="pgfId-1002949"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="debugger.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="elixcmdline.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,646 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Customizing Source-Navigator</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usingsn.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="symbrws.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998204"></A><BR>
+<A NAME="23446"></A>Customizing Source-Navigator <DIV>
+<IMG SRC="customsn-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-998212"></A>This chapter describes how to customize 
+Source-Navigator to reflect your preferences. For additional information 
+on changing the start-up and runtime behaviors, see 
+the <A HREF="../progref/custom.html#14563" CLASS="XRef">Customization</A> chapter 
+in the <STRONG CLASS="BoldEmphasis">Programmer's Reference Guide</STRONG>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998214"></A><A NAME="41072"></A>Preferences Dialog</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998215"></A>Use the<SPAN CLASS="Bold">
+ Preferences</SPAN>
+ dialog to specify project-specific parameters. In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project </SPAN>
+<A NAME="marker-998216"></A><EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Project Preferences</SPAN>
+ and enter your changes in the dialog. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to update the project with the current settings.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998217"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998218"></A>Default values may be transferred from the 
+previously created project, some options take effect only in new windows, 
+and some options only take effect the next time the project is opened.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998222"></A>Project Tab of the Preferences Dialog</P>
+<DIV>
+<IMG SRC="customsn-2.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998224"></A><A NAME="40531"></A>General Project Preferences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998225"></A>Descriptions of the general<SPAN CLASS="Bold">
+ Preferences</SPAN>
+ tabs (<SPAN CLASS="Bold">Project</SPAN>, <SPAN CLASS="Bold">
+Parser</SPAN>, <SPAN CLASS="Bold">
+Others</SPAN>, and <SPAN CLASS="Bold">
+Colors &#038; Fonts</SPAN>) are included in this section. 
+The following tabs are discussed in the relevant chapters:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998229"></A><SPAN CLASS="Bold">
+Edit</SPAN>
+ see <A HREF="editor.html#40803" CLASS="XRef">Editor Preferences</A>.<BR>
+<A NAME="pgfId-998233"></A><SPAN CLASS="Bold">
+Class/Hierarchy</SPAN>
+ see <A HREF="clhierbrws.html#29305" CLASS="XRef">Class/Hierarchy Preferences</A>.<BR>
+<A NAME="pgfId-998237"></A><SPAN CLASS="Bold">
+Xref</SPAN>
+ see <A HREF="crossref.html#27675" CLASS="XRef">Cross-Reference Preferences</A>. <BR>
+<A NAME="pgfId-998241"></A><SPAN CLASS="Bold">
+Include</SPAN>
+ see <A HREF="inclbrws.html#30602" CLASS="XRef">Include Preferences</A>.</BR>
+<A NAME="pgfId-998245"></A><SPAN CLASS="Bold">
+Version Control</SPAN>
+ see <A HREF="versctrl.html#14496" CLASS="XRef">Version Control Preferences</A>.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998248"></A><A NAME="38317"></A>Project <A NAME="marker-998247"></A>
+tab</H4>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998249"></A>Project</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998250"></A>Read-only project<BR>
+<P CLASS="BodyHang1">
+Select this if the project should be read-only. Default is off. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998251"></A>Refresh project upon startup<BR>
+<P CLASS="BodyHang1">
+Select this when files are likely to be changed by other developers, or 
+when you want to be sure that your database is in sync with your sources 
+when you start. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998252"></A>Default is off. Changing this to on may cause 
+delays when opening your project. For large source bases that are relatively 
+stable, or where network latency is a problem, set this to off and periodically, 
+from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Refresh Project</SPAN>
+ to resync the database with the source. </P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998254"></A><A NAME="84770"></A>Database</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998255"></A>Database directory name<BR>
+<P CLASS="BodyHang1">
+Source-Navigator creates all database files under this directory. 
+If the directory already exists, you will need read and write 
+permissions for it. If you're creating a new directory, you will 
+need permission to create it.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998259"></A>The filesystem for this directory must 
+contain free disk space equal to the size of the source base without 
+cross-references, and up to about ten times the size of the source code 
+if you choose to generate cross-references. If you don't have the necessary 
+permissions (for example, if it is a read-only file system), or if there is 
+insufficient free disk space in your first choice of location, you may 
+create your project directory in another location on your network by entering 
+a directory name with its absolute path.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998260"></A>This option can be changed only when creating a 
+project.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998262"></A><A NAME="12021"></A>Permissions<BR>
+<P CLASS="BodyHang1">These buttons control the read-write permissions 
+for your project: the first 
+set controls access for the creator of the file, the second set for the group, 
+and the third for &quot;others&quot; (everyone else on the network). </P>
+<P CLASS="Body">
+<A NAME="pgfId-998263"></A>Build comment database<BR>
+<P CLASS="BodyHang1">Select this to store comment strings in the database. 
+Default is off.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998265"></A><A NAME="50281"></A>Database cache size<BR>
+<P CLASS="BodyHang1">Caches improve performance by using memory (fast) 
+instead of disk (slow) 
+where possible. Larger cache sizes increase the likelihood that data will be 
+found in memory rather than on disk, though overallocating caches has the 
+opposite effect. The operating system will swap the cache to disk and the 
+system will get dramatically slower. The cache defaults are generous for 
+most projects; don't increase them without a reason.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998266"></A>This option can be changed only when 
+creating a project.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998267"></A>Enter the database cache size (in kilobytes) 
+or accept the default value. Source-Navigator creates the project 
+database (in the background) with the specified cache size. Increasing 
+this amount speeds up project creation and data access, but requires 
+that more memory be allocated to Source-Navigator. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998274"></A>The recommended maximum is the amount of 
+free RAM divided by 16, up to a maximum of 4 MB. The total of this 
+amount plus the amount allocated to the cross-reference database cache 
+should not exceed one quarter of the total memory.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1001709"></A>For more details about this parameter, 
+see <A HREF="../progref/dbaseAPI.html#15148" CLASS="XRef">dbopen</A> in 
+the <A HREF="../progref/dbaseAPI.html#22066" CLASS="XRef">Database API</A> 
+chapter of the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998275"></A>X-reference (Cross-Reference) database cache size<BR>
+<P CLASS="BodyHang1">Enter the Cross-Reference database cache size in 
+kilobytes or accept the default value. Source-Navigator creates the 
+project cross-reference database with this cache size. Increasing this 
+amount speeds up cross-reference creation and data access but requires 
+that more memory be allocated to Source-Navigator.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998282"></A>This option can be changed only when creating 
+a project.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998283"></A>The recommended maximum size is the amount of 
+system memory divided by 32, up to 8 MB. The total of this amount plus the 
+amount allocated to the database cache should not exceed one quarter of the 
+total memory.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1001724"></A>For more details about this parameter, 
+see <A HREF="../progref/dbaseAPI.html#15148" CLASS="XRef">dbopen</A> in 
+the <A HREF="../progref/dbaseAPI.html#22066" CLASS="XRef">Database API</A> 
+chapter of the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998285"></A><A NAME="29232"></A>Window</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998287"></A><A NAME="marker-998286"></A>Split Windows<BR>
+<P CLASS="BodyHang1"> These buttons control where new views appear 
+when you add a view to an existing window (from the <SPAN CLASS="Bold">
+Windows </SPAN>
+menu, select <SPAN CLASS="Bold">
+Add View</SPAN>). </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998288"></A>Select <SPAN CLASS="Bold">
+Horizontal</SPAN>
+ to have new views appear to the right of the current pane; 
+select <SPAN CLASS="Bold">
+Vertical</SPAN>
+ to have new views appear below the current pane.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998289"></A>New Windows<BR>
+<P CLASS="BodyHang1">
+Selecting <SPAN CLASS="Bold">
+Reusable</SPAN>
+ causes new information to appear in the current window; 
+deselecting it causes a new window to appear when you choose a 
+new symbol, tool, or view.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998290"></A>Selecting <SPAN CLASS="Bold">
+Keep Context</SPAN>
+ causes new tool windows to be opened to the same symbol context as the 
+current window; deselecting it causes a new tool to be empty when opened. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998291"></A>Window size is<BR>
+<P CLASS="BodyHang1">This setting controls the size of newly-created 
+Source-Navigator windows. You may also resize the windows after they are created.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998296"></A><A NAME="marker-998295"></A>Internationalization</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998297"></A>Character set encoding<BR>
+<P CLASS="BodyHang1">
+This combo-box allows you to choose the character set encoding for your 
+project to match the character set of your source files. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998299"></A>The default <A NAME="marker-998298"></A>character 
+set for English, German, and most other European languages is ISO8859-1. For 
+Japanese, the default character set is Shift-JIS.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998301"></A><A NAME="marker-998300"></A>Parser tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998305"></A>Source-Navigator uses plug-in parsers to parse 
+multiple programming languages. Choosing the appropriate parser is based 
+on <A NAME="marker-998306"></A>file extensions.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998310"></A>Parser Tab of the Preferences Dialog</P>
+<DIV>
+<IMG SRC="customsn-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1001740"></A>Source-Navigator is pre-configured 
+for the most commonly used file types; these can be changed and 
+new parsers can be added. For more information on adding parsers, 
+see the <A HREF="../progref/addparsers.html#18979" CLASS="XRef">Adding Parsers</A> 
+chapter of the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998314"></A>
+<TABLE BORDER=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-998321"></A><A NAME="37765"></A>File Types and Associated Filename 
+Extensions</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998325"></A>Parse source files as</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998327"></A>File Extensions</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998329"></A>PowerPC 601 assembly</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998331"></A><KBD CLASS="Code">
+*.asm *.s *.S</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998333"></A>C/C++</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998335"></A><KBD CLASS="Code">
+*.[hHcC] *.[ch]xx *.[ch]pp *.cc *.hh *.[CH]XX *.[CH]PP *.CC *.HH</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998337"></A>Cobol</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998339"></A><KBD CLASS="Code">
+*.cbl *.cob</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998341"></A>FORTRAN</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998343"></A><KBD CLASS="Code">
+*.f *.for *.FOR</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998345"></A>Java</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998347"></A><KBD CLASS="Code">
+*.java</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998349"></A>others</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998351"></A><KBD CLASS="Code">
+*.[ly] *[IMm]akefile</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998353"></A>Tcl <KBD CLASS="Code">
+[incr Tcl]</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998355"></A><KBD CLASS="Code">
+*.tcl *.itcl *.itk *.tk</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-998356"></A>After each of the languages is an <SPAN CLASS="Bold">
+External Editor</SPAN>
+ text box; you may type in the executable (shell) command for an external 
+editor, or you may click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button 
+to browse. If you leave the text box blank, Source-Navigator uses its built-in 
+editor.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998361"></A><A NAME="marker-998360"></A>Macro processing</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998362"></A>Macros make the task of source code analysis more 
+complicated, and there is no single right way to handle them. By default, 
+Source-Navigator treats them as opaque symbols and, aside from recording 
+where they are defined, it ignores them completely. This behavior not only 
+makes parsing substantially faster than true <A NAME="marker-998366"></A>compilation, 
+but it also preserves the layer of source code abstraction that is presented 
+in the <SPAN CLASS="Bold">
+Editor</SPAN>. This behavior is particularly useful when maintaining software 
+that must run 
+on multiple platforms, and you would like to see all
+ of the impacts that a change might have, regardless of a macro's platform 
+definition.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998367"></A>For some projects and/or tasks, this layer of 
+abstraction is a barrier to code comprehension. For these cases, you can 
+direct Source-Navigator to define and expand macros in one of four ways:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998372"></A><KBD CLASS="Code">
+define<BR>
+define</KBD>
+<A NAME="marker-998371"></A> is used to insert a symbol into 
+Source-Navigator's preprocessor namespace. If you <KBD CLASS="Code">
+define FOO</KBD>
+ (or <KBD CLASS="Code">
+#define FOO</KBD>, the leading <KBD CLASS="Code">
+#</KBD>
+ is optional), then conditionals that test <KBD CLASS="Code">
+#ifdef/#ifndef</KBD>
+ are scanned according to the <KBD CLASS="Code">
+#ifdef/#ifndef</KBD>
+<A NAME="marker-998376"></A> test. <KBD CLASS="Code">
+FOO</KBD>
+ will be replaced with the empty string.<P>
+<A NAME="pgfId-998377"></A><KBD CLASS="Code">
+define</KBD>
+ can also be used to give a symbol a value (such as <KBD CLASS="Code">
+define FOO BAR</KBD>). This will not only inject the symbol into the namespace, 
+but will cause Source-Navigator to scan <KBD CLASS="Code">
+BAR</KBD>
+ whenever it sees the <KBD CLASS="Code">
+FOO</KBD>
+ macro. This is particularly useful for <KBD CLASS="Code">
+DEFUN</KBD>
+ or <KBD CLASS="Code">
+PROTO</KBD>
+ macros that are used to bridge between K&#038;R and ANSI C but 
+which otherwise are not interesting at the source code comprehension level. It 
+is also useful when macros test numerical results, such as <KBD CLASS="Code">
+#if (X &gt;= Y) or #if X</KBD>.<P>
+<A NAME="pgfId-998381"></A><KBD CLASS="Code">
+define</KBD>
+ macros can take arguments, just as in C and C++, and they can expand 
+recursively. For example, <KBD CLASS="Code">
+FOO</KBD>
+ might expand to <KBD CLASS="Code">
+BAR (5)</KBD>
+ which might then expand to <KBD CLASS="Code">
+mumble (5, 5, 0)</KBD>; in this case Source-Navigator would only 
+see <KBD CLASS="Code">
+mumble (5, 5, 0)</KBD>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998385"></A><KBD CLASS="Code">
+replace<BR>
+replace</KBD>
+ is just like <KBD CLASS="Code">
+define</KBD>, except that the symbol is not injected into the namespace. 
+Thus, if you want to expand macros, but not have conditional code compiled 
+away, use <KBD CLASS="Code">
+replace</KBD>.<P>
+<A NAME="pgfId-998386"></A>The macro processor does not support <KBD CLASS="Code">
+include</KBD>, token concatenation, ANSI stringification, or other pre-processor 
+directives. These may be implemented in a future release.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998387"></A><KBD CLASS="Code">
+delete<BR>
+</KBD>
+Source-Navigator lets you use more than one macro file in 
+a project. You can specify a macro in one file and then delete 
+it from the preprocessor namespace using <KBD CLASS="Code">
+delete</KBD>
+ in a second macro file. </LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998391"></A><KBD CLASS="Code">
+undef<BR>
+undef</KBD>
+ doesn't do any substitution, it just affects the evaluation of <KBD CLASS="Code">
+#if</KBD>, <KBD CLASS="Code">
+#ifdef</KBD>, and <KBD CLASS="Code">
+#ifndef</KBD>
+ statements.</LI>
+</UL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998393"></A>Defining and using <A NAME="marker-998392"></A>macro 
+files</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998397"></A>As explained above, Source-Navigator parses, but 
+does not interpret, macro definitions in your project files. It only interprets 
+macro definitions from files you specify explicitly in the parser preferences of 
+your project. Because multiple files may be specified, you may want to organize 
+your macro files according to global, per-user, and per-project divisions. This 
+order is important, because Source-Navigator uses the last encountered 
+definition for the macro.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998401"></A>Macro files are ASCII files and every non-blank 
+line is a macro directive. Leading blanks and <KBD CLASS="Code">
+#</KBD>
+ characters are stripped, and if the first character of a line is an apostrophe 
+( <SPAN CLASS="Bold">'</SPAN> ), the line is treated as a comment. The macro 
+file can contain continuation lines, for example:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998402"></A>define ABC&#92;
+   &#92;
+   5</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998403"></A>Otherwise, the directives are interpreted as documented 
+above.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998406"></A><A NAME="25936"></A>Others <A NAME="marker-998405"></A>
+tab</H4>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998411"></A><A NAME="97692"></A>Others Tab of the Preferences 
+Dialog</P>
+<DIV>
+<IMG SRC="customsn-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998412"></A>Build<BR>
+<P CLASS="BodyHang1">Enter the executable (shell) command used to start 
+your <KBD CLASS="Code">
+make</KBD>
+ system.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998413"></A>HTML viewer (UNIX only)<BR>
+<P CLASS="BodyHang1">Enter the HTML viewer to display online help. 
+From <SPAN CLASS="Bold">
+Help</SPAN>, select <SPAN CLASS="Bold">
+Online Manuals</SPAN>
+ to open the viewer, which must be included in your path.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998414"></A>Bug reports</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998416"></A>Mailhost<BR>
+<P CLASS="BodyHang1">Source-Navigator supports sending bug report emails by SMTP. 
+Enter the name of your SMTP mail server in this field.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998420"></A>Printer (UNIX only)</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998422"></A>ASCII <A NAME="marker-998421"></A>Print Command<BR>
+<P CLASS="BodyHang1">Enter the command you use when printing a source file 
+from the command line.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998423"></A>Print Command<BR>
+<P CLASS="BodyHang1">Enter the print command appropriate for your system. 
+For example, Linux-based systems use <KBD CLASS="Code">
+lpr</KBD>. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1001748"></A>On Windows, Source-Navigator uses the Registry 
+to decide how to print.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998424"></A>Insight Debugger command</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998428"></A>Enter the executable (shell) command to start Insight.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998429"></A>Retriever</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998430"></A>Do not display the warning dialog for multiple matches<BR>
+<P CLASS="BodyHang1">Select this if you do not want to be warned when 
+the <SPAN CLASS="Bold">
+Retriever</SPAN>
+ finds more than one symbol with the name you are searching for. 
+See <A HREF="retrvr.html#40079" CLASS="XRef">Retriever</A> for more information 
+about the <SPAN CLASS="Bold">
+Retriever</SPAN>.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998435"></A><A NAME="marker-998434"></A>Colors &#038; Fonts tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998439"></A>Source-Navigator assigns a different default 
+color to each component of your source code. To customize these colors or 
+choose different fonts, click the <SPAN CLASS="Bold">
+Colors &#038; Fonts</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998443"></A>Colors &#038; Fonts Tab of the Preferences Dialog</P>
+<DIV>
+<IMG SRC="customsn-5.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998444"></A>From the list of components, choose the item 
+you want to change. The current settings appear in the <SPAN CLASS="Bold">
+Font</SPAN>, <SPAN CLASS="Bold">
+Foreground</SPAN>, and <SPAN CLASS="Bold">
+Background</SPAN>
+ text boxes, and the word &quot;Sample&quot; displays the text with these 
+settings.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998446"></A><A NAME="marker-998445"></A>Changing Fonts</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998448"></A>Changing the font assigned to a component is done 
+differently, depending upon your platform.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001758"></A>Under UNIX, click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button at the 
+end of the <SPAN CLASS="Bold">
+Font</SPAN>
+ text entry box. The <A NAME="marker-998447"></A><SPAN CLASS="Bold">
+Choose Font</SPAN>
+ dialog appears: </P>
+<DIV>
+<IMG SRC="customsn-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998452"></A>Choose the Family, Name, and Size of font that 
+you would like, as well as Bold or Italics, if you want to use those properties. 
+Click the <SPAN CLASS="Bold">
+Apply</SPAN>
+ button to see the effect of your changes and, when you are satisfied, 
+click <SPAN CLASS="Bold">
+OK</SPAN>. Your changes take effect the next time you start Source-Navigator.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001770"></A>Under Windows, click the 
+&quot;<SPAN CLASS="Bold">...</SPAN>&quot; button at the 
+end of the <SPAN CLASS="Bold">
+Font</SPAN>
+ text entry box. The <SPAN CLASS="Bold">
+Font</SPAN>
+ window appears.</P>
+<DIV>
+<IMG SRC="customsn-7.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1001761"></A>Choose the Font, Font style, and Size of the font 
+to use. Your changes appear in the Sample box. When you are satisfied, 
+click <SPAN CLASS="Bold">OK</SPAN>. Your changes take effect the next time 
+you access the item you changed.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998457"></A><A NAME="marker-998456"></A>Changing Colors</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998458"></A>You may want to change the Foreground or 
+Background colors from their default settings if they do not show up well 
+on your laptop or CRT display, or if your code colorization conventions do 
+not match Source-Navigator's default colors.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998462"></A>To choose a different color for any component, 
+you must set new RGB (Red-Green-Blue) values. Click the Foreground or 
+Background &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. 
+The <A NAME="marker-998463"></A><SPAN CLASS="Bold">
+Choose Color</SPAN>
+ dialog appears.</P>
+<DIV>
+<IMG SRC="customsn-8.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998467"></A>Move the red, green, and blue sliders until the 
+color you want appears in the box at the top of the dialog. Click 
+the <SPAN CLASS="Bold">
+Apply</SPAN>
+ button to see how your text or background looks with the new color. If you are 
+satisfied, click <SPAN CLASS="Bold">
+OK</SPAN>. Your changes take effect the next time you start Source-Navigator.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998197"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usingsn.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="symbrws.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

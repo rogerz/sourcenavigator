@@ -1,0 +1,624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Editor</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="symbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="clhierbrws.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-958208"></A><BR>
+<A NAME="40005"></A>Editor<DIV>
+<IMG SRC="editor-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-884441"></A>Source-Navigator<EM CLASS="Italics">
+ </EM>
+allows you to<EM CLASS="Italics">
+ </EM>
+edit source files with its built-in <A NAME="marker-886660"></A>editor, or with an 
+external editor that you select in the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab of the<SPAN CLASS="Bold">
+ Preferences </SPAN>
+dialog (see <A HREF="editor.html#40803" CLASS="XRef">Editor Preferences</A>). 
+For instructions on how to use Emacs as your external editor, 
+see <A HREF="editor.html#23830" CLASS="XRef">Using Emacs as your Editor</A>. 
+If you intend to use another external editor, see 
+the <A HREF="../progref/custom.html" CLASS="XRef">Customization</A> 
+chapter in the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-974543"></A><A NAME="28585"></A>The Editor Window</H2>
+<P CLASS="Body">
+<A NAME="pgfId-974627"></A>To open the <SPAN CLASS="Bold">
+Editor</SPAN><A NAME="marker-974626"></A>, double-click a symbol 
+in the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ (or other Source-Navigator browser window). Symbols are hyperlinked 
+to the <SPAN CLASS="Bold">
+Editor</SPAN>, which displays the contents of a project source file 
+and allows you to edit it.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018658"></A>When you save a modified source file, the project 
+database is updated and changes are reflected in all of the Source-Navigator 
+tools. Standard mouse operations are supported in the <SPAN CLASS="Bold">
+Editor</SPAN>:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018648"></A>click on the text and new text will be inserted 
+to the right of the cursor.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018649"></A>clicking and dragging selects text so that 
+operations such as <SPAN CLASS="Bold">
+Cut</SPAN>, <SPAN CLASS="Bold">
+Copy</SPAN>, and <SPAN CLASS="Bold">
+Paste</SPAN>
+ can be performed.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018650"></A>clicking and dragging in the scroll bars scrolls the 
+file appropriately.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018651"></A>double-clicking on words selects the entire word; 
+triple-clicking selects the entire line.</LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-896033"></A><A NAME="marker-959947"></A>Editor Window</P>
+<DIV>
+<IMG SRC="editor-2.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-897255"></A><A NAME="marker-897269"></A><A NAME="29540"></A>Symbol 
+Accelerator Combo-box</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1069424"></A>The <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>
+ combo-box in the toolbar allows you to quickly navigate through your source code. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1098325"></A>Symbol Accelerator Combo-box</P>
+<DIV>
+<IMG SRC="editor-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1098319"></A>When the <SPAN CLASS="Bold">
+Editor</SPAN>
+ is open this combo-box lists all of the symbols in the open file. When 
+the <SPAN CLASS="Bold">
+All</SPAN>
+ button is clicked, all of the symbols within the entire project are displayed. 
+When other tools are open, the <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>
+ combo-box lists the components relative to the tool.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1069415"></A>For instance, in the <SPAN CLASS="Bold">
+Class Browser</SPAN>, it lists only classes in the file. When the <SPAN CLASS="Bold">
+All</SPAN>
+ button is clicked, all of the classes in the project are displayed. </P>
+<P CLASS="Body">
+<A NAME="pgfId-897258"></A>Notice that the <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>
+ text field in the toolbar displays the component that is referenced as the 
+Editor's cursor moves through the file.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1099068"></A>Find Box</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1099057"></A>You can use the <SPAN CLASS="Bold">
+Find</SPAN>
+ box in the toolbar to search for text. Type text into the text box and 
+press the <SPAN CLASS="Bold">
+Enter</SPAN>
+ key; the next instance of the text is found. To find a previously used 
+pattern, click the <SPAN CLASS="Bold">
+Find</SPAN>
+ box down arrow to see a list of previous patterns. Select one of the 
+patterns with the mouse and the next instance of that pattern is found. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1099118"></A>Pattern Searching</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1099119"></A>Use these buttons to search the window or the 
+project database for a symbol.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1099143"></A>Pattern Searching Toolbar Buttons</P>
+<DIV>
+<IMG SRC="editor-4.gif">
+</DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1099177"></A><A NAME="26260"></A>The 
+<A NAME="marker-1099176"></A>Extended Toolbar</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1099178"></A>The extended toolbar provides buttons 
+to manage your files and text. To add this toolbar to Source-Navigator, 
+from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. Select the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab and select the <SPAN CLASS="Bold">
+Extended Toolbar Buttons</SPAN>
+ box.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1099205"></A>File and Text Management Toolbar Buttons</P>
+<DIV>
+<IMG SRC="editor-5.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-897275"></A>View History</H3>
+<P CLASS="Body">
+<A NAME="pgfId-897276"></A>Source-Navigator provides complex information 
+in a number of ways. As you navigate through a project, you may want to return 
+to the view of a relationship that you previously investigated. Source-Navigator 
+stores a <A NAME="marker-1089990"></A>view history of your journey through the 
+project. The left and right arrows in the toolbar act like <SPAN CLASS="Bold">
+Back</SPAN>
+ and <SPAN CLASS="Bold">
+Forward</SPAN>
+ buttons in popular Web browsers. You can also right-click on one of these 
+buttons to get a list of previously visited locations within the project. </P>
+<DIV>
+<IMG SRC="editor-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1077515"></A>For more detailed history, the <SPAN CLASS="Bold">
+History</SPAN>
+ menu lists previous views on a per-tool basis. This lets you jump directly to the 
+view you want, rather than paging through previous views.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-897022"></A><A NAME="marker-1053359"></A>Search Menu</H3>
+<P CLASS="Body">
+<A NAME="pgfId-897029"></A>The <SPAN CLASS="Bold">
+Search</SPAN>
+ menu is context-sensitive; different options are available depending upon the 
+tool you are using.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-897067"></A><A NAME="marker-1053358"></A>Find dialog</H4>
+<P CLASS="Body">
+<A NAME="pgfId-897068"></A>To find a specific string or pattern in the text 
+file, from the <SPAN CLASS="Bold">
+Search</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Find</SPAN>. </P>
+<DIV>
+<IMG SRC="editor-7.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-897034"></A>Type your string or pattern into the text box and 
+click the <SPAN CLASS="Bold">
+Search </SPAN>
+button; you can click the <SPAN CLASS="Bold">
+Search</SPAN>
+ button multiple times to find more instances of the string. 
+Deselect <SPAN CLASS="Bold">
+Ignore</SPAN>
+ <SPAN CLASS="Bold">
+case</SPAN>
+ if you want a case-sensitive search. When <SPAN CLASS="Bold">
+Regular expression</SPAN>
+ is selected, the pattern is treated as a regular expression, and clicking 
+the <SPAN CLASS="Bold">
+Search</SPAN>
+ button finds the next match for the regular expression. Deselect <SPAN CLASS="Bold">
+Forward</SPAN>
+ if you wish to search backwards. </P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-897049"></A><A NAME="marker-1053360"></A>Replace dialog</H4>
+<P CLASS="Body">
+<A NAME="pgfId-897050"></A>To search and replace a specific string or pattern 
+in the text file, from the <SPAN CLASS="Bold">
+Search</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Replace</SPAN>. </P>
+<DIV>
+<IMG SRC="editor-8.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-897054"></A>The <SPAN CLASS="Bold">
+Replace</SPAN>
+ dialog is similar to the <SPAN CLASS="Bold">
+Find</SPAN>
+ dialog. The <SPAN CLASS="Bold">
+Ignore case</SPAN>, <SPAN CLASS="Bold">
+Regular expression</SPAN>, and <SPAN CLASS="Bold">
+Forward</SPAN>
+ options behave the same way. <SPAN CLASS="Bold">
+Search</SPAN>
+ finds the next instance of the pattern. <SPAN CLASS="Bold">
+Replace</SPAN>
+ replaces the current pattern with the pattern in the <SPAN CLASS="Bold">
+Replace pattern</SPAN>
+ text box. Select <SPAN CLASS="Bold">
+All</SPAN>
+ to replace all occurrences of the pattern.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-897103"></A><A NAME="marker-1098250"></A>Find Declaration, 
+Implementation</H4>
+<P CLASS="Body">
+<A NAME="pgfId-897129"></A>If a symbol is selected in the <SPAN CLASS="Bold">
+Editor</SPAN>, selecting <SPAN CLASS="Bold">
+Find Declaration</SPAN>
+ switches to the location of the declaration of the symbol, and <SPAN CLASS="Bold">
+Find Implementation</SPAN>
+ switches to the location of the implementation of the symbol. </P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1049641"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1064506"></A>You can also toggle between Declaration and 
+Implementation by using the <A NAME="marker-1064874"></A>keyboard shortcut 
+commands <SPAN CLASS="Bold">
+Ctrl+Shift+D</SPAN>
+ and <SPAN CLASS="Bold">
+Ctrl+Shift+I</SPAN>, respectively.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1064509"></A><A NAME="marker-1064508"></A>Grep</H4>
+<P CLASS="Body">
+<A NAME="pgfId-897104"></A><SPAN CLASS="Bold">
+Grep</SPAN>
+ activates the <SPAN CLASS="Bold">
+Grep</SPAN>
+ tool, which allows you to search for text in all project files. Select the 
+expression you want to search for and from the <SPAN CLASS="Bold">
+Search</SPAN>
+ menu select <SPAN CLASS="Bold">
+Grep</SPAN>. Source-Navigator automatically searches for your text in all project 
+files. For more information on Grep, 
+see <A HREF="grep.html#21607" CLASS="XRef">Grep</A>.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-897137"></A>Go To menu</H4>
+<P CLASS="Body">
+<A NAME="pgfId-897138"></A>When you want to go to a specific line in the file, 
+from the <SPAN CLASS="Bold">
+Search</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Go To </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Go To Line</SPAN>. This allows you to type in the line number you wish 
+to go to. <SPAN CLASS="Bold">
+Set Mark</SPAN>
+ allows you to set a place in the file you wish to come back to 
+later. <SPAN CLASS="Bold">
+Go To Mark</SPAN>
+ jumps to the last mark you set. <SPAN CLASS="Bold">
+Go to Error</SPAN>
+ displays the line that caused the build error.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-896855"></A><A NAME="40803"></A>Editor 
+<A NAME="marker-1053126"></A>Preferences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-897145"></A>You'll find preference settings for the <SPAN CLASS="Bold">
+Editor</SPAN>
+ window in the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog. To find this dialog:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1099080"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. In the <SPAN CLASS="Bold">
+Editor</SPAN>, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+View Preferences</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1099081"></A>Choose the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab.</LI>
+</OL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1071446"></A>Edit Tab of the Preferences Dialog</P>
+<DIV>
+<IMG SRC="editor-9.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-895206"></A>Format</H5>
+<P CLASS="Body">
+<A NAME="pgfId-895207"></A>Tab stop<BR>
+<P CLASS="BodyHang1">When a tab is inserted, it is this many spaces wide.</P>
+<P CLASS="Body">
+<A NAME="pgfId-895209"></A>Auto Indent width<BR>
+<P CLASS="BodyHang1">When the <SPAN CLASS="Bold">
+Enter</SPAN>
+ key is pressed, this is the number of spaces inserted at the beginning 
+of the next line. This is also the number of spaces inserted by 
+indent (from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Indent Text</SPAN>) and deleted by outdent 
+(from the <SPAN CLASS="Bold">
+Edit </SPAN>
+menu, select <SPAN CLASS="Bold">
+Outdent Text</SPAN>) when reformatting source code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-895210"></A>Wrap by<BR>
+<P CLASS="BodyHang1">This controls where the <SPAN CLASS="Bold">
+Editor</SPAN>
+ breaks a line that is longer than the width of the window. </P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-895211"></A>Work</H5>
+<P CLASS="Body">
+<A NAME="pgfId-895212"></A>Create <KBD CLASS="Code">
+*.bak</KBD>
+ Files<BR>
+<P CLASS="BodyHang1">If selected, the <SPAN CLASS="Bold">
+Editor</SPAN>
+ creates backup files whenever you save a file.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1053232"></A>Output File Translation:<BR>
+<P CLASS="BodyHang1">End-of-lines of source files may be represented differently on different platforms:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1053233"></A><SPAN CLASS="Bold">
+Keep</SPAN>
+ retains the original file's end-of-line characters; this is set by default.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1053241"></A><SPAN CLASS="Bold">
+Auto</SPAN>
+ saves the file with your current platform's end-of-line characters.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1053261"></A><SPAN CLASS="Bold">
+UNIX</SPAN>, <SPAN CLASS="Bold">
+Windows</SPAN>, or <SPAN CLASS="Bold">
+Macintosh</SPAN>
+ sets the end-of-line characters to match the platform you choose, regardless 
+of the platform you're working on.</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-895213"></A>Bracket match delay<BR>
+<P CLASS="BodyHang1">
+Sets the amount of time (in milliseconds) that matching brackets should be 
+highlighted.</P>
+<P CLASS="Body">
+<A NAME="pgfId-895214"></A>Right mouse supports<BR>
+<P CLASS="BodyHang1">
+If <SPAN CLASS="Bold">
+Edit menu</SPAN>
+ is selected, you can access some functions, such as <SPAN CLASS="Bold">
+Undo</SPAN>, <SPAN CLASS="Bold">
+Delete</SPAN>, <SPAN CLASS="Bold">
+Cut</SPAN>, <SPAN CLASS="Bold">
+Copy</SPAN>, and <SPAN CLASS="Bold">
+Paste</SPAN>
+ through a right-mouse pop-up menu. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-969620"></A>If <SPAN CLASS="Bold">
+Scrolling</SPAN>
+ is selected, you can scroll the text in the <SPAN CLASS="Bold">
+Editor</SPAN>
+ using the right-mouse button.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1053270"></A>Translate Tabs to Spaces<BR>
+<P CLASS="BodyHang1">
+Selecting this converts all tab characters in the file to the number of spaces 
+shown in the <SPAN CLASS="Bold">
+Tab Stop</SPAN>
+ box. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1073393"></A>Extended toolbar buttons<BR>
+<P CLASS="BodyHang1">
+Selecting this adds several new tool buttons to the <SPAN CLASS="Bold">
+Editor</SPAN>
+ toolbar. For more information, see <A HREF="editor.html#26260" CLASS="XRef">The 
+Extended Toolbar</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1075848"></A><A NAME="marker-1075847"></A>External Editor<BR>
+<P CLASS="BodyHang1">
+Insert the command line for your favorite editor in this text box. 
+See <A HREF="editor.html#28279" CLASS="XRef">Common editor configurations</A> for 
+command line syntax.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1098190"></A>Source-Navigator can set the position of the 
+cursor in the editor if the editor can be configured by command line options. 
+Source-Navigator can perform the following substitutions on the command line 
+before it is executed: </P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075857"></A><KBD CLASS="Code">
+%f</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075859"></A>file name</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075861"></A><KBD CLASS="Code">
+%l</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075863"></A>line number</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075865"></A><KBD CLASS="Code">
+%c</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075867"></A>column number</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075869"></A><KBD CLASS="Code">
+%d</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1075871"></A>project directory</P>
+</TD>
+</TR>
+</TABLE>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1075877"></A><A NAME="28279"></A>Common editor configurations</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1075879"></A><A NAME="marker-1075878"></A>vi<BR>
+<P CLASS="BodyHang1">
+To invoke the vi editor, you must enter the following into either 
+the <SPAN CLASS="Bold">
+External Editor </SPAN>
+text box in the <SPAN CLASS="Bold">
+Edit</SPAN>
+ preferences tab or at the command line:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1075880"></A><KBD CLASS="Code">
+xterm -T %f -e vi +%l %f</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1075881"></A>The modifications you make and save are stored 
+in the database only after you quit vi.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1075888"></A><A NAME="marker-1075887"></A>Emacs<BR>
+<P CLASS="BodyHang1">
+<SPAN CLASS="Bold">
+Starting a new Emacs session</SPAN>: To start a new Emacs session whenever 
+you view source code, enter <KBD CLASS="Code">
+emacs</KBD>
+ or the name of the executable file of Emacs in either the <SPAN CLASS="Bold">
+External Editor</SPAN>
+ text box in the <SPAN CLASS="Bold">
+Edit </SPAN>
+preferences tab or at the command line. For example, enter <KBD CLASS="Code">
+nemacs</KBD>
+ or <KBD CLASS="Code">
+xemacs</KBD>, without any parameters. The string <KBD CLASS="Code">
+emacs</KBD>
+ must be found in the command if you want the changes you make and save to be 
+immediately stored in the database (without terminating Emacs).</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1075892"></A><SPAN CLASS="Bold">
+Using a current Emacs session</SPAN>: For instructions on how to configure 
+Source-Navigator to communicate with a currently 
+running Emacs session, see <A HREF="editor.html#23830" CLASS="XRef">Using 
+Emacs as your Editor</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1099105"></A>For information on customizing your key bindings, 
+see the <A HREF="../progref/custom.html#14563" CLASS="XRef">Customization</A> chapter 
+in the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1075901"></A><A NAME="23830"></A>Using Emacs as your Editor</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1075906"></A>Source-Navigator supports 
+GNU <A NAME="marker-1075905"></A>Emacs 19.34 and XEmacs 19.14; other versions 
+may also work, although these have not been tested.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1098578"></A>When you use <A NAME="marker-1098574"></A>Emacs 
+as your editor, Source-Navigator displays files in an Emacs window. Whenever 
+Emacs saves a file, Source-Navigator updates the database. Multiple projects 
+can share a single Emacs editing session.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1075921"></A>You can use Emacs with Source-Navigator in one 
+of two ways: </P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1075922"></A>to start a new Emacs process whenever you make 
+an edit request.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1075923"></A>to communicate with an already running Emacs 
+process. </LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1075925"></A>To Start a New <A NAME="marker-1075924"></A>Emacs 
+Process</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1075926"></A>Enter <KBD CLASS="Code">
+emacs</KBD>
+ (or the name of your program with the string <KBD CLASS="Code">
+emacs</KBD>) in the <SPAN CLASS="Bold">
+External Editor</SPAN>
+ text box of the <SPAN CLASS="Bold">
+Edit</SPAN>
+ preferences tab.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1075928"></A>To Communicate with an Already 
+Running <A NAME="marker-1075927"></A>Emacs Process</H3>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1075929"></A>Modify your Emacs start-up file so 
+that <KBD CLASS="Code">
+gnuserv</KBD>
+ utility, which is provided in your Emacs distribution, is loaded. 
+This involves adding two lines to your Emacs start-up file 
+(usually <KBD CLASS="Code">
+&#126;/.emacs</KBD>). You need to enter the full path to your Emacs directory:<P>
+<KBD CLASS="Code"><A NAME="pgfId-1075930"></A>(load 
+&quot;<KBD CLASS="CodeVariant">&lt;path to emacs 
+location&gt;</KBD>/lisp/gnuserv&quot;)<BR>
+(server-start)</KBD>
+<P>
+<A NAME="pgfId-1098225"></A>See your Emacs documentation for 
+additional information.</LI><P>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1098227"></A>In the <SPAN CLASS="Bold">
+External Editor</SPAN>
+ text box, set your editor to <KBD CLASS="Code">
+gnuclient</KBD><A NAME="marker-1098226"></A>.<P>
+<A NAME="pgfId-1098231"></A>When you start a new Emacs session, 
+Source-Navigator can now request that the running Emacs session bring up 
+files for editing. Source-Navigator also rescans the files when you finish 
+editing. </LI></OL>
+<H3 CLASS="Label">
+<A NAME="pgfId-1075941"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1098886"></A>If you use <KBD CLASS="Code">
+xemacs</KBD>, the <KBD CLASS="Code">
+gnuserv</KBD>
+ package is included; see your XEmacs documentation for instructions on 
+loading it.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1098890"></A>Source-Navigator's search function 
+replaces the <KBD CLASS="Code">
+find-tag</KBD>
+ command 
+(<KBD CLASS="Code">Meta-period</KBD>) when you search for a symbol. 
+Because the other tag 
+commands are not yet available inside Source-Navigator, you need to use the 
+equivalent <KBD CLASS="Code">
+emacs</KBD>
+<A NAME="marker-1098894"></A> commands, if available. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1098249"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="symbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="clhierbrws.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

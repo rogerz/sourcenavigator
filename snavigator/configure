@@ -898,7 +898,7 @@ JAVA_PARSER=
 JAVAEXE=jbrowser
 SPLASHFILE=splashsn.gif
 X11ICON=paf.xbm
-SN_DOCSET=enterprise
+SN_DOCSET=
 SN_BOOKS="userguide progref"
 SN_LAUNCH_SHELL=snavigator
 cat >> confdefs.h <<\EOF

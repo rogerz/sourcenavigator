@@ -179,8 +179,7 @@ YACC = @YACC@
 AUTOMAKE_OPTIONS = cygnus
 
 htmldir = $(prefix)/html
-html_DATA = cygnus1.css index-1.gif redhatlogo.png index.html
-userguidedir = $(htmldir)/userguide
+html_DATA = cygnus.css index-1.gif magnifying_glass.png index.html
 srchtmldir = $(top_srcdir)/doc/html
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
