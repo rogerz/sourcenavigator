@@ -172,7 +172,6 @@ itcl::class Retr& {
             set str "*"
         }
         set ${this}-pattern ${str}
-        $itk_component(hull).pattern.e select range 0 end
 
         #enable all filer-scopes except files
         InitScopes
