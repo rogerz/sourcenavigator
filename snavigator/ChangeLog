@@ -1,3 +1,14 @@
+2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/window.tcl (center): Use reqwidth and
+	reqheight when calculating window size during
+	window centering operation. The previous code
+	tried to query the configured width and height
+	of the window. This approach was failing under
+	Win32 because the default platform window min
+	size was being returned in the interval before
+	the window was mapped.
+
 2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
