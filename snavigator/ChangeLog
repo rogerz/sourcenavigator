@@ -1,4 +1,11 @@
-2003-01-11 Mo DeJong  <mdejong@uncounted.org>
+2003-01-11  Ian Roxborough  <irox@sbcglobal.net>
+
+	* gui/projedit.tcl (print_file): Where possible
+	use the directory of the first source file in
+	a project as the default directory for the
+	"Add Files" file selection dialog.
+
+2003-01-11  Mo DeJong  <mdejong@uncounted.org>
 
 	* etc/sn_cmp_g.pat: Add pattern to match a
 	Win32 filename like d:/filename.c:856.

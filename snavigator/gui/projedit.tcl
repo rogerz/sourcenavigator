@@ -797,6 +797,14 @@ itcl::class Project& {
             set files_to_unload ""
         }
 
+        if {${reset}} {
+            # Set last_dir to first directory on file list.
+            set default [file dirname [lindex $ProjectFiles 0]]
+            if {[file exists $default] == 1} {
+                set last_dir $default
+            }
+        }
+
         #Project views
         if {${ProjectViews} == ""} {
             set ProjectViews [list default ""]
