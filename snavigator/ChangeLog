@@ -57,6 +57,10 @@
 	Remove any .rej files from dest dir
 	after patching.
 
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-511-2002-09-11 tag.
+	
 2002-09-05  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/text.tcl (tkTextInsertChar): Sync so that
