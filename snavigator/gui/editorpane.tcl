@@ -1053,6 +1053,7 @@ itcl::class Editor& {
 
 	if {[string compare ${pos} ""] != 0} {
 	    $itk_component(editor) tag add sel ${pos} "${pos} + ${SearchFoundLength} chars"
+            $itk_component(editor) tag raise sel
 	    $itk_component(editor) mark set lastpos insert
 	    $itk_component(editor) mark set insert ${pos}
 	    $itk_component(editor) see insert
@@ -1148,6 +1149,7 @@ itcl::class Editor& {
 	}
 	$itk_component(editor) tag add sel "insert -[string length ${edit_ReplaceString}] \
 	  char" insert
+        $itk_component(editor) tag raise sel
 	${btn} config \
 	    -state disabled
     }
@@ -2869,6 +2871,7 @@ itcl::class Editor& {
 	$itk_component(editor) tag del sel
 	#mark new inserted text
 	$itk_component(editor) tag add sel ${fpos} ${epos}
+        $itk_component(editor) tag raise sel
 
 	#see last inserted character
 	$itk_component(editor) see insert
@@ -2949,6 +2952,7 @@ itcl::class Editor& {
 		#mark or goto first character
 		if {${mrk}} {
 		    ${w} tag add sel "insert linestart" "insert lineend + 1c"
+                    ${w} tag raise sel
 		} else {
 		    #goto line, move the insert cursor to first printable
 		    #character in the line
@@ -2971,6 +2975,7 @@ itcl::class Editor& {
 			set rng [${w} tag prevrange ${nm} "insert+1c"]
 			if {${mrk}} {
 			    eval ${w} tag add sel ${rng}
+                            ${w} tag raise sel
 			}
 			break
 		    }
@@ -2978,6 +2983,7 @@ itcl::class Editor& {
 
 		if {${mrk} && !${fnd}} {
 		    ${w} tag add sel "insert wordstart" "insert wordend"
+                    ${w} tag raise sel
 		}
 	    }
 	}
@@ -3697,6 +3703,7 @@ itcl::class Editor& {
 	#reset some tags
 	$editor tag remove sel 0.0 end
 	$editor tag add sel ${beg} "${end} lineend + 1c"
+        $editor tag raise sel
 	set ypos [expr [lindex [split ${pos} "."] 0] - 1]
 	$editor yview ${ypos}
 

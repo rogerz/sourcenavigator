@@ -1779,6 +1779,7 @@ itcl::class MultiWindow& {
             return
         }
         [${ed} editor] tag add sel 0.0 end
+        [${ed} editor] tag raise sel
     }
 
     method edit_clear {} {

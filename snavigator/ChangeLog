@@ -1,3 +1,17 @@
+2003-02-22  Ian Roxborough  <irox@ix.netcom.com>
+
+	* gui/editorpane.tcl (Editor&::SearchForNext
+	Editor&::Replace_String Editor&::insert_file_cb
+	Editor&::SetFondPos Editor&::Indent):
+	* gui/text.tcl (tkTextSelectTo tkTextSelectAll
+	tkTextKeySelect tkTextMarkPara):
+	* gui/multiview.tcl (MultiWindow&::edit_selectall):
+	When setting the selection, raise the selection to
+	highest level, otherwise the selected text will not
+	have the selection foreground color and maybe be
+	unreadable (i.e. light yellow text with a slightly
+	different light yellow background).
+
 2003-02-22  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/classtreepane.tcl (constructor):

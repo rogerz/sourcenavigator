@@ -812,6 +812,7 @@ proc tkTextSelectTo {w x y} {
     if {$tkPriv(mouseMoved) ||($tkPriv(selectMode) != "char")} {
         ${w} tag remove sel 0.0 ${first}
         ${w} tag add sel ${first} ${last}
+        ${w} tag raise sel
         ${w} tag remove sel ${last} end
         update idletasks
     }
@@ -896,6 +897,7 @@ proc tkTextSelectAll w {
     global tkText tkBind
 
     ${w} tag add sel 1.0 end
+    ${w} tag raise sel
     ${w} mark set emacs "end -1c"
     ${w} mark set anchor emacs
     ${w} mark set insert 1.0
@@ -968,6 +970,7 @@ proc tkTextKeySelect {w new} {
         ${w} tag add sel ${first} ${last}
         ${w} tag remove sel ${last} end
     }
+    ${w} tag raise sel
     ${w} mark set insert ${new}
     ${w} see insert
     update idletasks
@@ -1789,6 +1792,7 @@ proc tkTextMarkPara {w {dosel 1}} {
     if ${dosel} {
         ${w} tag remove sel 1.0 end
         ${w} tag add sel insert emacs
+        ${w} tag raise sel
         set tkText(${w},markActive) 1
     }
 
