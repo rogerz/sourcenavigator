@@ -686,7 +686,7 @@ itcl::class MultiWindow& {
 
 	itk_component add menu {
 	    menu $itk_component(hull).menu -tearoff 0
-	}
+	} {}
 
         ## File menu
         ####################
@@ -694,7 +694,7 @@ itcl::class MultiWindow& {
 	itk_component add file_menu {
 	    menu $itk_component(menu).file -tearoff 0 -postcommand\
 		    [itcl::code ${this} file_post $itk_component(menu).file]
-	}
+	} {}
 
         $itk_component(file_menu) configure -font $sn_options(def,layout-font)
 
@@ -772,7 +772,7 @@ itcl::class MultiWindow& {
 	itk_component add edit_menu {
 	    menu $itk_component(menu).edit -tearoff 0\
 		    -postcommand [itcl::code ${this} edit_post $itk_component(menu).edit]
-	}
+	} {}
 
         $itk_component(edit_menu) configure -font $sn_options(def,layout-font)
 
@@ -854,7 +854,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(menu).search -tearoff 0\
 		    -postcommand [itcl::code ${this} search_post\
 		     $itk_component(menu).search]
-	}
+	} {}
 
         $itk_component(search_menu) configure -font $sn_options(def,layout-font)
 
@@ -913,7 +913,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(search_menu).goto -tearoff 0\
 		    -postcommand [itcl::code ${this} search_goto_post\
 		     $itk_component(search_menu).goto]
-	}
+	} {}
 
         $itk_component(search_menu) add cascade\
 		-label [get_indep String Goto]\
@@ -954,7 +954,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(menu).tools -tearoff 0\
 		    -postcommand [itcl::code ${this} tools_post\
 		     $itk_component(menu).tools]
-	}
+	} {}
 
         $itk_component(tools_menu) configure -font $sn_options(def,layout-font)
 
@@ -975,7 +975,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(tools_menu).ctree -tearoff 0\
 		    -postcommand [itcl::code ${this} tools_ctree_post\
 		     $itk_component(tools_menu).ctree]
-	}
+	} {}
 
         $itk_component(tools_menu) add cascade\
 		-label [get_indep String MultiClassHierarchy]\
@@ -991,7 +991,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(tools_menu).class -tearoff 0\
 		    -postcommand [itcl::code ${this} tools_classbr_post\
 		     $itk_component(tools_menu).class]
-	}
+	} {}
 
         $itk_component(tools_menu) add cascade\
 		-label [get_indep String MultiClass]\
@@ -1006,7 +1006,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(tools_menu).xref -tearoff 0\
 		    -postcommand [itcl::code ${this} tools_xref_post\
 		     $itk_component(tools_menu).xref]
-	}
+	} {}
 
         $itk_component(tools_menu) add cascade\
 		-label [get_indep String MultiXRef]\
@@ -1021,7 +1021,7 @@ itcl::class MultiWindow& {
 	    menu $itk_component(tools_menu).incbr -tearoff 0\
 		    -postcommand [itcl::code ${this} tools_incbr_post\
 		     $itk_component(tools_menu).incbr]
-	}
+	} {}
         $itk_component(tools_menu) add cascade\
 		-label [get_indep String MultiInclude]\
 		-menu $itk_component(include_menu)\
@@ -1038,7 +1038,7 @@ itcl::class MultiWindow& {
 
 	itk_component add rc_menu {
 	    menu $itk_component(tools_menu).rc -tearoff 0
-	}
+	} {}
 
         $itk_component(tools_menu) add cascade\
 		-label [get_indep String RCS]\

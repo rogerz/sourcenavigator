@@ -167,7 +167,7 @@ itcl::class ClassTree& {
 	    menu $itk_component(canvas).menu\
 		    -tearoff 0 -postcommand\
 		     "${this} update_post_menu $itk_component(canvas).menu"
-	}
+	} {}
 	
 	wm overrideredirect $itk_component(menu) 1
 

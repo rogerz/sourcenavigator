@@ -1,3 +1,15 @@
+2003-12-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/classtreepane.tcl (constructor):
+	* gui/multiview.tcl (AddMenu): Pass {} as the
+	4th argument to itk_component add calls that
+	create a menu widget. There is a problem with
+	the defaults for menu widgets where the
+	-background was getting set to SystemButtonFace
+	when it should have been SystemMenu. The result
+	was that some menu items were showing up with
+	a gray background instead of a white one.
+
 2003-12-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/diff.tcl (move):
