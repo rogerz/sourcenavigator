@@ -1544,6 +1544,11 @@ proc sn_init_keybindings {} {
 
     #toggle between views
     bind ${all} <Control-Tab> "switch_to_next_view %W; break"
+    #bind ${all} <Shift-Control-Tab> "?"
+
+    # Prior -> PgUp, Next -> PgDn
+    bind ${all} <Control-Prior> "switch_tab %W prev; break"
+    bind ${all} <Control-Next> "switch_tab %W next; break"
 
     bind ${all} <Control-F2> "dbg_start; break"
 }

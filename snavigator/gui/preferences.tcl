@@ -2676,6 +2676,10 @@ itcl_class Preferences& {
         }
     }
 
+    method switch_tab {op} {
+        switch_tix_notebook_tab $NoteBook $op
+    }
+
     protected AvailTools
     protected NoteBook
 

@@ -273,7 +273,7 @@ itcl::class Editor& {
 	  <Shift-Up> <Shift-Down> <Control-Left> <Control-Right> <Control-Up> \
 	  <Control-Down> <Shift-Control-Left> <Shift-Control-Right> \
 	  <Shift-Control-Up> <Shift-Control-Down> <Prior> <Shift-Prior> \
-	  <Next> <Shift-Next> <Control-Prior> <Control-Next> <Home> \
+	  <Next> <Shift-Next> <Home> \
 	  <Shift-Home> <End> <Shift-End> <Control-Home> <Control-Shift-Home> \
 	  <Control-End> <Control-Shift-End>] {
 
@@ -319,6 +319,14 @@ itcl::class Editor& {
 	# Insert tab/return.
 	bind ${t} <Tab> {Editor&::InsertTab %W; break}
 	bind ${t} <Return> {Editor&::Newline %W; break}
+
+	# Pass Control-Tab and Shift-Control-Tab up to all bindtag
+	bind ${t} <Control-Tab> continue
+	bind ${t} <Shift-Control-Tab> continue
+
+	# Pass Control-Prior (PgUp) and Control-Next (PgDn) up to all bindtag
+	bind ${t} <Control-Prior> continue
+	bind ${t} <Control-Next> continue
 
 	# Grep accelerator.
 	bind ${t} <Shift-Control-G> "${this} toolbar_grep; break"

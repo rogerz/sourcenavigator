@@ -1,3 +1,20 @@
+2003-12-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/bindings.tcl (sn_init_keybindings):
+	* gui/editorpane.tcl (make_editor_bindings):
+	* gui/multiview.tcl (switch_tab, main_print,
+	find_dialog, switch_to_next_view,
+	switch_tix_notebook_tab): Cleanup some ugly
+	catch statements.
+	* gui/preferences.tcl (switch_tab):
+	Add Control-Prior and Control-Next bindings
+	for use with PgUp and PgDn keys. Pass these
+	keypress events up to the all binding when
+	detected in the editor. These keyboard
+	shortcuts will switch to the previous or
+	next tab in the notebook inside the main
+	tool window or the preferences window.
+
 2003-12-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/xrefpane.tcl (read_references):

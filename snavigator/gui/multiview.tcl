@@ -2835,6 +2835,10 @@ itcl::class MultiWindow& {
         ${ActiveWidget} Focus
     }
 
+    method switch_tab {op} {
+        switch_tix_notebook_tab $itk_component(notebook) $op
+    }
+
     proc windows_post {my_top w {pref 0}} {
         global sn_options
 
@@ -4302,7 +4306,10 @@ proc switch_to_view {view} {
 }
 
 proc main_print {w} {
-    catch {[winfo toplevel ${w}] file_print}
+    set top [winfo toplevel ${w}]
+    if {[itcl::find objects -isa MultiWindow& ${top}] != ""} {
+        ${top} file_print
+    }
 }
 
 proc close_main_window {w} {
@@ -4316,12 +4323,66 @@ proc close_main_window {w} {
 }
 
 proc find_dialog {w} {
-    catch {[winfo toplevel ${w}] search_findtext}
+    set top [winfo toplevel ${w}]
+    if {[itcl::find objects -isa MultiWindow& ${top}] != ""} {
+        ${top} search_findtext
+    }
 }
 
 proc switch_to_next_view {w} {
-    catch {[winfo toplevel ${w}] switch_to_next_view ${w}}
+    set top [winfo toplevel ${w}]
+    if {[itcl::find objects -isa MultiWindow& ${top}] != ""} {
+        ${top} switch_to_next_view ${w}
+    }
 }
+
+proc switch_tab {w op} {
+    set top [winfo toplevel ${w}]
+    if {[itcl::find objects -isa MultiWindow& ${top}] != ""} {
+        ${top} switch_tab ${op}
+    }
+    if {[itcl::find objects -isa Preferences& ${top}] != ""} {
+        ${top} switch_tab ${op}
+    }
+}
+
+proc switch_tix_notebook_tab {tixnb op} {
+    # Create a list that starts with the current page
+    # and ends with the previous or next page
+    # (forward if op is next, backward if op is prev)
+    set Pages [$tixnb pages]
+    set raised [$tixnb raised]
+    set ind [lsearch -exact $Pages $raised]
+    if {$ind == -1} {
+        error "raised page \"$raised\" not found in \{$Pages\}"
+    }
+
+    if {$op == "prev"} {
+        set page_list [list]
+        for {set pos [expr {$ind - 1}]} {$pos >= 0} {incr pos -1} {
+            lappend page_list [lindex $Pages $pos]
+        }
+        for {set pos [expr {[llength $Pages] - 1}]} {$pos > $ind} {incr pos -1} {
+            lappend page_list [lindex $Pages $pos]
+        }
+    } elseif {$op == "next"} {
+        set page_list [lrange $Pages [expr {$ind + 1}] end]
+        foreach page [lrange $Pages 0 [expr {$ind - 1}]] {
+            lappend page_list $page
+        }
+    }
+
+    # Loop over the tab pages (forwards or backwards) and
+    # find the first one in a state that can be activated
+    foreach page $page_list {
+        if {[$tixnb pagecget $page -state] == "normal"} {
+            $tixnb raise $page
+            return
+        }
+    }
+    return
+}
+
 
 ##############################################################
 ## End of keybindings
