@@ -2933,7 +2933,7 @@ EOF
 
 fi
 
-for ac_func in mkdir rmdir select
+for ac_func in mkdir rmdir select mkstemp
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 echo "configure:2940: checking for $ac_func" >&5

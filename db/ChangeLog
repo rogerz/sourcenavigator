@@ -1,5 +1,15 @@
 2002-11-09  Mo DeJong  <mdejong@uncounted.org>
 
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Check for mkstemp function.
+	* btree/bt_open.c (tmp):
+	* hash/hash_page.c (open_temp): Check for
+	HAVE_MKSTEMP define instead of __MSVC__
+	so we can compile with mingw.
+
+2002-11-09  Mo DeJong  <mdejong@uncounted.org>
+
 	* Makefile.in: Regen.
 	* configure: Regen.
 	* configure.in: Invoke AC_CANONICAL_HOST

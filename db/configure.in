@@ -195,7 +195,7 @@ fi
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_FUNC_MMAP
-AC_CHECK_FUNCS(mkdir rmdir select)
+AC_CHECK_FUNCS(mkdir rmdir select mkstemp)
 AC_REPLACE_FUNCS(memmove snprintf strerror)
 # memcmp strdup
 dnl Some versions of sprintf return a pointer to the first argument instead
