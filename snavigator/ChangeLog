@@ -1,5 +1,11 @@
 2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* patches/README.TXT:
+	* patches/tk_select.patch: Remove last patch
+	and README.TXT file.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* patches/libgui_print.patch: Remove libgui patch
 	since it was just added to the libgui CVS.
 
