@@ -1,3 +1,9 @@
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
+	* db/dbcp.c: Include compat.h before db.h
+	to avoid undefined type error when building
+	with VC++.
+
 2002-04-25  Mo DeJong  <supermo@bayarea.net>
 
 	* Makefile.am: Remove BUILD_GREP conditional
