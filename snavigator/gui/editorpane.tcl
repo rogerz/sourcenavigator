@@ -426,9 +426,9 @@ itcl::class Editor& {
 
 	# Add edit commands (Undo,Copy,Cut,Delete,..).
 	if {$itk_option(-file_changed)} {
-	    set state disabled
+	    set state "normal"
 	} else {
-	    set state normal
+	    set state "disabled"
 	}
 	set str [get_indep String EditUndo]
 	${m} add command \
