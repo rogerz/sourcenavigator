@@ -1,5 +1,19 @@
 2002-04-25  Mo DeJong  <supermo@bayarea.net>
 
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Avoid using AC_TYPE_* macros
+	since they muck with #defines of the type name.
+	Use AC_TRY_COMPILE and AC_DEFINE to create newer
+	autoconf style HAVE_* defines. These calls to
+	AC_TRY_COMPILE can be replaced by the commented
+	out AC_CHECK_TYPES call when upgrading to 2.5X.
+	The effected types are ssize_t, size_t, mode_t,
+	off_t, and pid_t. Remove useless call of
+	AC_TYPE_GETGROUPS.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
 	* configure: Regen.
 	* configure.in: Check for Windows compiler type
 	using AC_EGREP_CPP instead of looking at the

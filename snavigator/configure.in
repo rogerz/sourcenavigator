@@ -224,13 +224,81 @@ AC_MSG_RESULT($tk_ok)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
-AC_TYPE_UID_T
-AC_TYPE_MODE_T
-AC_TYPE_OFF_T
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
+
+dnl The macro invocation below is currently commented out in order
+dnl to support configuring with autoconf 2.13. Once the move to
+dnl 2.5X is made, the manual check below can be replaced with
+dnl the call to AC_CHECK_TYPES.
+
+dnl AC_CHECK_TYPES([ssize_t, size_t, mode_t, off_t, pid_t])
+
+AC_MSG_CHECKING(for ssize_t)
+AC_CACHE_VAL(db_cv_type_ssize_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [ssize_t c = '0';],
+db_cv_type_ssize_t=yes,
+db_cv_type_ssize_t=no)])
+AC_MSG_RESULT($db_cv_type_ssize_t)
+if test "$db_cv_type_ssize_t" = yes; then
+   AC_DEFINE(HAVE_SSIZE_T,,[Define if ssize_t is defined.])
+fi
+
+AC_MSG_CHECKING(for size_t)
+AC_CACHE_VAL(db_cv_type_size_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [size_t c = '0';],
+db_cv_type_size_t=yes,
+db_cv_type_size_t=no)])
+AC_MSG_RESULT($db_cv_type_size_t)
+if test "$db_cv_type_size_t" = yes; then
+   AC_DEFINE(HAVE_SIZE_T,,[Define if size_t is defined.])
+fi
+
+AC_MSG_CHECKING(for mode_t)
+AC_CACHE_VAL(db_cv_type_mode_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [mode_t c = '0';],
+db_cv_type_mode_t=yes,
+db_cv_type_mode_t=no)])
+AC_MSG_RESULT($db_cv_type_mode_t)
+if test "$db_cv_type_mode_t" = yes; then
+   AC_DEFINE(HAVE_MODE_T,,[Define if mode_t is defined.])
+fi
+
+AC_MSG_CHECKING(for off_t)
+AC_CACHE_VAL(db_cv_type_off_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [off_t c = '0';],
+db_cv_type_off_t=yes,
+db_cv_type_off_t=no)])
+AC_MSG_RESULT($db_cv_type_off_t)
+if test "$db_cv_type_off_t" = yes; then
+   AC_DEFINE(HAVE_OFF_T,,[Define if off_t is defined.])
+fi
+
+AC_MSG_CHECKING(for pid_t)
+AC_CACHE_VAL(db_cv_type_pid_t, [dnl
+AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <sys/types.h>], [pid_t c = '0';],
+db_cv_type_pid_t=yes,
+db_cv_type_pid_t=no)])
+AC_MSG_RESULT($db_cv_type_pid_t)
+if test "$db_cv_type_pid_t" = yes; then
+   AC_DEFINE(HAVE_PID_T,,[Define if pid_t is defined.])
+fi
+
 
 dnl Test for GNU libc.
 AC_CACHE_CHECK([for GNU libc],sn_cv_lib_glibc,[AC_EGREP_CPP(yes, [
@@ -254,7 +322,6 @@ AC_EGREP_CPP(strncasecmp, [#include <string.h>],
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA
-AC_TYPE_GETGROUPS
 AC_FUNC_MEMCMP
 if test "$cross_compiling" = yes; then
   AC_CACHE_CHECK(whether setpgrp takes no argument, ac_cv_func_setpgrp_void,

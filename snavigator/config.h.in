@@ -10,13 +10,6 @@
    This function is required for alloca.c support on those systems.  */
 #undef CRAY_STACKSEG_END
 
-/* Define to the type of elements in the array set by `getgroups'.
-   Usually this is either `int' or `gid_t'.  */
-#undef GETGROUPS_T
-
-/* Define to `int' if <sys/types.h> doesn't define.  */
-#undef gid_t
-
 /* Define if you have alloca, as a function or macro.  */
 #undef HAVE_ALLOCA
 
@@ -35,20 +28,8 @@
 /* Define if you have the wait3 system call.  */
 #undef HAVE_WAIT3
 
-/* Define to `int' if <sys/types.h> doesn't define.  */
-#undef mode_t
-
-/* Define to `long' if <sys/types.h> doesn't define.  */
-#undef off_t
-
-/* Define to `int' if <sys/types.h> doesn't define.  */
-#undef pid_t
-
 /* Define if the `setpgrp' function takes no argument.  */
 #undef SETPGRP_VOID
-
-/* Define to `unsigned' if <sys/types.h> doesn't define.  */
-#undef size_t
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -67,9 +48,6 @@
 
 /* Define if your <sys/time.h> declares struct tm.  */
 #undef TM_IN_SYS_TIME
-
-/* Define to `int' if <sys/types.h> doesn't define.  */
-#undef uid_t
 
 /* Define if lex declares yytext as a char * by default, not a char[].  */
 #undef YYTEXT_POINTER
@@ -220,6 +198,21 @@
 
 /* Set this if Tk's stdlib.h should be used. */
 #undef NO_STDLIB_H
+
+/* Define if ssize_t is defined. */
+#undef HAVE_SSIZE_T
+
+/* Define if size_t is defined. */
+#undef HAVE_SIZE_T
+
+/* Define if mode_t is defined. */
+#undef HAVE_MODE_T
+
+/* Define if off_t is defined. */
+#undef HAVE_OFF_T
+
+/* Define if pid_t is defined. */
+#undef HAVE_PID_T
 
 /* Define this if we link against GNU libc. */
 #undef HAVE_GLIBC
