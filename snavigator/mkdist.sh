@@ -5,7 +5,7 @@
 # at the root of a clean CVS checkout.
 
 DIR=/tmp/sourcenav
-RELEASE=sourcenav-5.1.0a1
+RELEASE=sourcenav-5.1a2
 RELEASEDIR=$DIR/$RELEASE
 
 PWD=`pwd`
@@ -45,8 +45,10 @@ cp snavigator/INSTALL.TXT .
 
 cd ..
 
-tar -czf $RELEASE.tar.gz $RELEASE
-NODOT=`echo $RELEASE | sed -e 's/\.//g'`
-zip -rq8 $NODOT.zip $RELEASE
+# Make a tar.gz archive, we don't need to make
+# a zip file of the source since Cygwin is required
+# to build and it includes tar and gzip.
 
-echo "Done, dist files saved in $DIR"
+tar -czf $RELEASE.tar.gz $RELEASE
+
+echo "Tar $RELEASE.tar.gz saved in $DIR"

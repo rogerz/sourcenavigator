@@ -3751,7 +3751,7 @@ else
 
         if test x"${with_tclconfig}" != x ; then
         if test -f "${with_tclconfig}/tclConfig.sh" ; then
-            ac_cv_c_tclconfig=`(cd ${with_tclconfig}; pwd)`
+            ac_cv_c_tclconfig=`(cd ${with_tclconfig}; ${PWDCMD-pwd})`
         else
             { echo "configure: error: ${with_tclconfig} directory doesn't contain tclConfig.sh" 1>&2; exit 1; }
         fi
@@ -3760,11 +3760,11 @@ else
         if test x"${ac_cv_c_tclconfig}" = x ; then
         for i in $dirlist; do
                                                 if test -f $srcdir/$i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $srcdir/$i/unix; pwd)`
+                ac_cv_c_tclconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
 	        break
             fi
             if test -f $srcdir/$i/win/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $srcdir/$i/win; pwd)`
+                ac_cv_c_tclconfig=`(cd $srcdir/$i/win; ${PWDCMD-pwd})`
 	        break
             fi
         done
@@ -3779,11 +3779,11 @@ else
 
                         for i in `ls -dr $tclconfpath/tcl* 2>/dev/null ` ; do
                                                 if test -f $i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/unix; pwd)`
+                ac_cv_c_tclconfig=`(cd $i/unix; ${PWDCMD-pwd})`
                 break
             fi
             if test -f $i/win/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/win; pwd)`
+                ac_cv_c_tclconfig=`(cd $i/win; ${PWDCMD-pwd})`
                 break
             fi
         done
@@ -3851,7 +3851,7 @@ else
 
         if test x"${with_tkconfig}" != x ; then
         if test -f "${with_tkconfig}/tkConfig.sh" ; then
-            ac_cv_c_tkconfig=`(cd ${with_tkconfig}; pwd)`
+            ac_cv_c_tkconfig=`(cd ${with_tkconfig}; ${PWDCMD-pwd})`
         else
             { echo "configure: error: ${with_tkconfig} directory doesn't contain tkConfig.sh" 1>&2; exit 1; }
         fi
@@ -3860,11 +3860,11 @@ else
         if test x"${ac_cv_c_tkconfig}" = x ; then
         for i in $dirlist; do
                                                 if test -f $srcdir/$i/unix/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; pwd)`
+                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
 	        break
             fi
             if test -f $srcdir/$i/win/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; pwd)`
+                ac_cv_c_tkconfig=`(cd $srcdir/$i/unix; ${PWDCMD-pwd})`
 	        break
             fi
         done
@@ -3879,11 +3879,11 @@ else
 
                         for i in `ls -dr $tkconfpath/tk* 2>/dev/null ` ; do
                                                 if test -f $i/unix/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $i/unix; pwd)`
+                ac_cv_c_tkconfig=`(cd $i/unix; ${PWDCMD-pwd})`
                 break
             fi
             if test -f $i/win/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $i/win; pwd)`
+                ac_cv_c_tkconfig=`(cd $i/win; ${PWDCMD-pwd})`
                 break
             fi
         done
@@ -3944,9 +3944,9 @@ else
   
 if test x"${with_tclinclude}" != x ; then
   if test -f ${with_tclinclude}/tcl.h ; then
-    ac_cv_c_tclh=`(cd ${with_tclinclude}; pwd)`
+    ac_cv_c_tclh=`(cd ${with_tclinclude}; ${PWDCMD-pwd})`
   elif test -f ${with_tclinclude}/generic/tcl.h ; then
-    ac_cv_c_tclh=`(cd ${with_tclinclude}/generic; pwd)`
+    ac_cv_c_tclh=`(cd ${with_tclinclude}/generic; ${PWDCMD-pwd})`
   else
     { echo "configure: error: ${with_tclinclude} directory doesn't contain headers" 1>&2; exit 1; }
   fi
@@ -3955,7 +3955,7 @@ fi
 if test x"${ac_cv_c_tclconfig}" != x ; then
   for i in $dirlist; do
     if test -f $ac_cv_c_tclconfig/$i/generic/tcl.h ; then
-      ac_cv_c_tclh=`(cd $ac_cv_c_tclconfig/$i/generic; pwd)`
+      ac_cv_c_tclh=`(cd $ac_cv_c_tclconfig/$i/generic; ${PWDCMD-pwd})`
       break
     fi
   done
@@ -3971,7 +3971,7 @@ if test x"${ac_cv_c_tclh}" = x ; then
 
             for i in `ls -dr $tclpath/tcl* 2>/dev/null ` ; do
         if test -f $i/generic/tcl.h ; then
-          ac_cv_c_tclh=`(cd $i/generic; pwd)`
+          ac_cv_c_tclh=`(cd $i/generic; ${PWDCMD-pwd})`
           break
         fi
     done
@@ -4074,9 +4074,9 @@ else
   
 if test x"${with_tkinclude}" != x ; then
   if test -f ${with_tkinclude}/tk.h ; then
-    ac_cv_c_tkh=`(cd ${with_tkinclude}; pwd)`
+    ac_cv_c_tkh=`(cd ${with_tkinclude}; ${PWDCMD-pwd})`
   elif test -f ${with_tkinclude}/generic/tk.h ; then
-    ac_cv_c_tkh=`(cd ${with_tkinclude}/generic; pwd)`
+    ac_cv_c_tkh=`(cd ${with_tkinclude}/generic; ${PWDCMD-pwd})`
   else
     { echo "configure: error: ${with_tkinclude} directory doesn't contain headers" 1>&2; exit 1; }
   fi
@@ -4085,7 +4085,7 @@ fi
 if test x"${ac_cv_c_tkconfig}" != x ; then
   for i in $dirlist; do
     if test -f $ac_cv_c_tkconfig/$i/generic/tk.h ; then
-      ac_cv_c_tkh=`(cd $ac_cv_c_tkconfig/$i/generic; pwd)`
+      ac_cv_c_tkh=`(cd $ac_cv_c_tkconfig/$i/generic; ${PWDCMD-pwd})`
       break
     fi
   done
@@ -4101,7 +4101,7 @@ if test x"${ac_cv_c_tkh}" = x ; then
 
             for i in `ls -dr $tkpath/tk* 2>/dev/null ` ; do
         if test -f $i/generic/tk.h ; then
-          ac_cv_c_tkh=`(cd $i/generic; pwd)`
+          ac_cv_c_tkh=`(cd $i/generic; ${PWDCMD-pwd})`
           break
         fi
     done
@@ -4251,7 +4251,7 @@ else
   # First check to see if --with-itclconfig was specified.
   if test x"${with_itclconfig}" != x ; then
     if test -f "${with_itclconfig}/itclConfig.sh" ; then
-      ac_cv_c_itclconfig=`(cd ${with_itclconfig}; pwd)`
+      ac_cv_c_itclconfig=`(cd ${with_itclconfig}; ${PWDCMD-pwd})`
     else
       { echo "configure: error: ${with_itclconfig} directory doesn't contain itclConfig.sh" 1>&2; exit 1; }
     fi
@@ -4267,7 +4267,7 @@ else
 		../../../itcl/itcl \
 		`ls -dr ../../../itcl/itcl[3]* 2>/dev/null` ; do
       if test -f "$i/itclConfig.sh" ; then
-        ac_cv_c_itclconfig=`(cd $i; pwd)`
+        ac_cv_c_itclconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4276,7 +4276,7 @@ else
   if test x"${ac_cv_c_itclconfig}" = x ; then
     for i in `ls -d ${prefix}/lib /usr/local/lib 2>/dev/null` ; do
       if test -f "$i/itclConfig.sh" ; then
-        ac_cv_c_itclconfig=`(cd $i; pwd)`
+        ac_cv_c_itclconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4287,7 +4287,7 @@ else
 		${srcdir}/../itcl/itcl \
 		`ls -dr ${srcdir}/../itcl/itcl[3]* 2>/dev/null` ; do
       if test -f "$i/itcl/itclConfig.sh" ; then
-        ac_cv_c_itclconfig=`(cd $i; pwd)`
+        ac_cv_c_itclconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4343,7 +4343,7 @@ else
   # First check to see if --with-itkconfig was specified.
   if test x"${with_itkconfig}" != x ; then
     if test -f "${with_itkconfig}/itkConfig.sh" ; then
-      ac_cv_c_itkconfig=`(cd ${with_itkconfig}; pwd)`
+      ac_cv_c_itkconfig=`(cd ${with_itkconfig}; ${PWDCMD-pwd})`
     else
       { echo "configure: error: ${with_itkconfig} directory doesn't contain itkConfig.sh" 1>&2; exit 1; }
     fi
@@ -4359,7 +4359,7 @@ else
 		../../../itcl/itk \
 		`ls -dr ../../../itcl/itk[3]* 2>/dev/null` ; do
       if test -f "$i/itkConfig.sh" ; then
-        ac_cv_c_itkconfig=`(cd $i; pwd)`
+        ac_cv_c_itkconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4368,7 +4368,7 @@ else
   if test x"${ac_cv_c_itkconfig}" = x ; then
     for i in `ls -d ${prefix}/lib /usr/local/lib 2>/dev/null` ; do
       if test -f "$i/itcl/itkConfig.sh" ; then
-        ac_cv_c_itkconfig=`(cd $i; pwd)`
+        ac_cv_c_itkconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4379,7 +4379,7 @@ else
 		${srcdir}/../itcl/itk \
 		`ls -dr ${srcdir}/../itcl/itk[3]* 2>/dev/null` ; do
       if test -f "$i/itkConfig.sh" ; then
-        ac_cv_c_itkconfig=`(cd $i; pwd)`
+        ac_cv_c_itkconfig=`(cd $i; ${PWDCMD-pwd})`
 	break
       fi
     done
@@ -4568,7 +4568,6 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile
-install/Makefile
 gui/Makefile
 etc/navigato
 hyper/Makefile
@@ -4809,7 +4808,6 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile
-install/Makefile
 gui/Makefile
 etc/navigato
 hyper/Makefile

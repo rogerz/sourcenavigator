@@ -513,7 +513,6 @@ fi
 AC_SUBST(SN_PLATFORM_DIR)
 
 AC_OUTPUT([Makefile
-install/Makefile
 gui/Makefile
 etc/navigato
 hyper/Makefile
