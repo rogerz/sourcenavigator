@@ -648,7 +648,6 @@ ImgPhotoCmd(clientData, interp, objc, objv)
 	/*
 	 * photo configure command - handle this in the standard way.
 	 */
-	char *opt, *arg;
 
 	if (objc == 2) {
 	    Tcl_Obj *obj, *subobj;

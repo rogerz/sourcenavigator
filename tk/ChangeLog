@@ -1,3 +1,10 @@
+2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* generic/tkImgPhoto.c (ImgPhotoCmd):
+	* generic/tkMenu.c (MenuWidgetObjCmd): Remove
+	unused local variables which made the compile
+	fail under VC++ when --enable-symbols is passed.
+
 2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/tkWinPort.h: Define ALWAYS_SHOW_SELECTION

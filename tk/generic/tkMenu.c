@@ -700,8 +700,6 @@ MenuWidgetObjCmd(clientData, interp, objc, objv)
     switch ((enum options) option) {
 	case MENU_ACTIVATE: {
 	    int index;
-	    /* patch for menu selection */
-	    int state;
 
 	    if (objc != 3) {
 		Tcl_WrongNumArgs(interp, 1, objv, "activate index");
