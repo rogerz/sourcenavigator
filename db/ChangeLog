@@ -16,7 +16,8 @@
 	the ssize_t check with a check that defines
 	HAVE_SSIZE_T. Remove the pgno_t check
 	completely since this symbol is unconditionally
- 	redefined in db.h.
+ 	redefined in db.h. Update AC_DEFINE calls to 3
+	arg form so that acconfig.h is not needed.
 	* PORT/Win32/include/NTunixstubs.h: Don't
 	typedef ssize_t here.
 	* PORT/include/compat.h: Conditionally
