@@ -77,48 +77,28 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
+CPP = @CPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
 FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -130,28 +110,20 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
-LIBIBERTY = @LIBIBERTY@
+LEXLIB = @LEXLIB@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MONOP_DEMO = @MONOP_DEMO@
 OBJEXT = @OBJEXT@
 OLDTARFLAG = @OLDTARFLAG@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 PRODUCT_NAME = @PRODUCT_NAME@
 PROGRAMMERS_REFERENCE_DIR = @PROGRAMMERS_REFERENCE_DIR@
 PROGRAMMERS_REFERENCE_INDEX = @PROGRAMMERS_REFERENCE_INDEX@
 PROGRAMMERS_REFERENCE_NAME = @PROGRAMMERS_REFERENCE_NAME@
 RANLIB = @RANLIB@
-RUNTESTDIR = @RUNTESTDIR@
 SDK_DIR = @SDK_DIR@
 SENDMAIL_PARSER = @SENDMAIL_PARSER@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 SN_BOOKS = @SN_BOOKS@
 SN_DOCSET = @SN_DOCSET@
 SN_GUI_DIR = @SN_GUI_DIR@
@@ -167,6 +139,7 @@ TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
 TCL_BUILD_LIB_SPEC = @TCL_BUILD_LIB_SPEC@
 TCL_CFLAGS = @TCL_CFLAGS@
+TCL_DBGX = @TCL_DBGX@
 TCL_DEFS = @TCL_DEFS@
 TCL_LD_FLAGS = @TCL_LD_FLAGS@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
@@ -178,13 +151,12 @@ TCL_LIB_SPEC = @TCL_LIB_SPEC@
 TCL_RANLIB = @TCL_RANLIB@
 TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
 TCL_SHLIB_LD = @TCL_SHLIB_LD@
-TIXHDIR = @TIXHDIR@
 TIX_BUILD_LIB_SPEC = @TIX_BUILD_LIB_SPEC@
-TIX_LIB_FULL_PATH = @TIX_LIB_FULL_PATH@
 TKCONFIG = @TKCONFIG@
 TKHDIR = @TKHDIR@
 TK_BUILD_INCLUDES = @TK_BUILD_INCLUDES@
 TK_BUILD_LIB_SPEC = @TK_BUILD_LIB_SPEC@
+TK_DBGX = @TK_DBGX@
 TK_DEFS = @TK_DEFS@
 TK_LIBS = @TK_LIBS@
 TK_LIB_FILE = @TK_LIB_FILE@
@@ -203,19 +175,26 @@ WINDRES = @WINDRES@
 WINFLAGS = @WINFLAGS@
 X11ICON = @X11ICON@
 YACC = @YACC@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
-SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc snavigator bitmaps install
+SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc snavigator bitmaps
 
+
+rootdir = $(prefix)
+
+root_DATA = README.TXT INSTALL.TXT
+
+EXTRA_DIST = $(DATA)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
+DATA =  $(root_DATA)
+
 DIST_COMMON =  ./stamp-h.in AUTHORS ChangeLog Makefile.am Makefile.in \
-NEWS acconfig.h acinclude.m4 aclocal.m4 config.h.in configure \
-configure.in install-sh missing mkinstalldirs
+NEWS acinclude.m4 aclocal.m4 config.h.in configure configure.in \
+install-sh missing mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -253,7 +232,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/stamp-h.in
 		rm -f $(srcdir)/stamp-h.in; \
 		$(MAKE) $(srcdir)/stamp-h.in; \
 	else :; fi
-$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
 
@@ -265,6 +244,25 @@ distclean-hdr:
 	-rm -f config.h
 
 maintainer-clean-hdr:
+
+install-rootDATA: $(root_DATA)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(rootdir)
+	@list='$(root_DATA)'; for p in $$list; do \
+	  if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rootdir)/$$p"; \
+	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rootdir)/$$p; \
+	  else if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(rootdir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(rootdir)/$$p; \
+	  fi; fi; \
+	done
+
+uninstall-rootDATA:
+	@$(NORMAL_UNINSTALL)
+	list='$(root_DATA)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(rootdir)/$$p; \
+	done
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -429,20 +427,21 @@ all-recursive-am: config.h
 install-exec-am: install-exec-local
 install-exec: install-exec-recursive
 
-install-data-am:
+install-data-am: install-rootDATA
 install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-recursive
-uninstall-am:
+uninstall-am: uninstall-rootDATA
 uninstall: uninstall-recursive
-all-am: Makefile config.h
+all-am: Makefile $(DATA) config.h
 all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs: installdirs-recursive
 installdirs-am:
+	$(mkinstalldirs)  $(DESTDIR)$(rootdir)
 
 
 mostlyclean-generic:
@@ -476,7 +475,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f config.status
 
 .PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
+uninstall-rootDATA install-rootDATA install-data-recursive \
+uninstall-data-recursive install-exec-recursive \
 uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
 all-recursive check-recursive installcheck-recursive info-recursive \
 dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
@@ -492,12 +492,23 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 install-exec-local:
 	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
-@BUILD_GREP_TRUE@	$(INSTALL_PROGRAM) ../grep/src/grep$(EXEEXT) $(bindir)
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)
 	(cd ../itcl; $(MAKE) install-libraries)
 	(cd ../libgui; $(MAKE) install)
+
+flexgen:
+	cd hyper ; $(MAKE) flexgen
+	cd parsers/assembly/ppc601-eabi ; $(MAKE) flexgen
+	cd parsers/chill ; $(MAKE) flexgen
+	cd parsers/m4 ; $(MAKE) flexgen
+	cd parsers/python ; $(MAKE) flexgen
+	cd parsers/sendmail ; $(MAKE) flexgen
+
+bisongen:
+	cd parsers/chill ; $(MAKE) bisongen
+	cd parsers/fortran ; $(MAKE) bisongen
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

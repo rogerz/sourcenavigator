@@ -1,0 +1,747 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Integrating with Version Control Systems</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="dbaseutil.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="interappcomm.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996752"></A>Integrating with Version Control Systems<DIV>
+<IMG SRC="line.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1183766"></A>Source-Navigator provides a graphical user interface to version control systems. Red Hat has performed product integrations with a number of popular version control packages such as the GNU Revision Control System (RCS), Concurrent Versions System (CVS), the Source Code Control System (SCCS), and Rational's ClearCase.</P>
+<P CLASS="Body">
+<A NAME="pgfId-997972"></A>Source-Navigator's user interface provides a standard set of version control operations. The software development kit (SDK) allows third parties to integrate version control packages so that some or all of these operations can be performed from within Source-Navigator. This chapter assumes a basic understanding of the Tcl programming language and familiarity with the version control system that is to be integrated with Source-Navigator.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-997980"></A>Basics</H2>
+<P CLASS="Body">
+<A NAME="pgfId-997982"></A>The version control interface in Source-Navigator assumes that there is a basic set of version control operations in the context of source code comprehension:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-997986"></A>obtaining different versions of a source file from a repository or archive maintained by the version control system. This operation will be referred to as a <EM CLASS="Emphasis">
+check-out</EM>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998587"></A>examining the differences between the current working version of a source file and another version held under version control. This operation will be referred to as a <EM CLASS="Emphasis">
+diff</EM>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998599"></A>making changes to the most current version of a file and placing those changes under version control. This operation will be referred to as a <EM CLASS="Emphasis">
+check-in</EM>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998608"></A>deleting versions from the repository.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998613"></A>acquiring exclusive access to a particular version of a file so that no other developer can make changes to that version. This operation will be referred to as <EM CLASS="Emphasis">
+locking</EM>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998633"></A>relinquishing exclusive access to a particular version of a file so that other developers may make modifications. This operation will be referred to as <EM CLASS="Emphasis">
+unlocking</EM>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998642"></A>discarding any changes to the current working version and reverting to the most recent version in the repository.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998649"></A>obtaining the history of a file from the version control system. This includes:</LI>
+<UL>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-998659"></A>descriptive text about the changes made for each version.</LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-999380"></A>a list of symbolic names for the versions associated with 
+a file. In GNU RCS, for example, these names are known as <EM CLASS="Emphasis">
+tags</EM>.</LI>
+</UL>
+</UL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998023"></A>Version Control Operations</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998025"></A>Source-Navigator takes a universal approach to interfacing with external version control systems: each operation is performed by executing a particular command line and capturing the output from that command.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998029"></A>For some operations, the output of the command is significant and only information relevant to the user must be extracted from the output. Examples of this include obtaining a history of changes made to a file, obtaining the names of symbolic tags, and obtaining all of the version numbers associated with a file. The Source-Navigator SDK provides a mechanism based on Tcl regular expressions for extracting the relevant text from command output.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998037"></A><A NAME="11295"></A>The Configuration File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998039"></A>The Source-Navigator configuration file, <KBD CLASS="Code">
+.../share/etc/sn_prop.cfg</KBD>, is read at start-up and can be used to customize Source-Navigator. In particular, new version control systems may be integrated from within this file. New systems are added by calling a Tcl procedure called <KBD CLASS="Code">
+sn_add_version_control_system</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998045"></A>The signature of this procedure is:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1183932"></A><KBD CLASS="Code">
+sn_add_version_control_system {</KBD><KBD CLASS="CodeVariant">ident</KBD><EM CLASS="CodeItalics"> args</EM><KBD CLASS="Code">}</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-998049"></A>where </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-999538"></A><KBD CLASS="CodeVariant">
+ident</KBD>
+&nbsp;is an internal identifier used by Source-Navigator. This should be a 
+logical derivation of the name of the version control system and consist 
+only of alphanumeric characters and start with an alphabetic character. Examples are:</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-999445"></A><KBD CLASS="Code">
+rcs<BR>
+cvs<BR>
+ccase3</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998058"></A><KBD CLASS="CodeVariant">
+args</KBD>
+&nbsp;is a variable number of arguments and may be any of the options described in the <A HREF="versctrl.html#10979" CLASS="XRef">Options</A> section, followed by a suitable value. For example:</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-999456"></A><KBD CLASS="Code">
+-checkout co</KBD>
+</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-999539"></A><A NAME="10979"></A>Options</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998063"></A>For options that have simple values, the possible values are outlined and the default is given. If this default value is satisfactory, the option may be omitted from the call.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000218"></A>For options that specify command lines, the usage of the command is shown. If the option is not applicable to a particular command, omitting it from the call is permissible, but may result in some version control operations being unavailable to the user.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000223"></A>Using the <KBD CLASS="Code">
+-checkout</KBD>
+ example on <A HREF="versctrl.html#64636" CLASS="XRef">-checkout</A>, the checkout command line will be illustrated in the following notation:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998076"></A>${checkout} <KBD CLASS="CodeVariant">filename</KBD>
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998078"></A>At runtime, the command line that is executed might be:</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998080"></A><KBD CLASS="Code">
+co main.c</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-998083"></A><KBD CLASS="CodeOutput">
+args</KBD>
+ may be any of the following options:</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998085"></A><KBD CLASS="CodeOutput">
+-checkin</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1097705"></A>This specifies the command line to check a modified file back into the repository.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998090"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1090810"></A><KBD CLASS="Code">
+${checkin}</KBD>
+ <KBD CLASS="CodeVariant">
+filename</KBD>
+ &nbsp;or: <BR>
+<KBD CLASS="Code">
+${checkin}</KBD>
+ <KBD CLASS="CodeVariant">
+comment-text filenames</KBD>
+ &nbsp;or: <BR>
+<KBD CLASS="Code">
+${checkin}</KBD>
+ <KBD CLASS="CodeVariant">
+comment-filename filenames<BR>
+</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1184370"></A>Which of these command lines will be used depends on the value of <KBD CLASS="Code">
+-checkin-comment-via</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1184371"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-1184372"></A><KBD CLASS="CodeOutput">
+-checkin-comment-via</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1097753"></A>This option specifies how comments about changes made to a file must be passed to the <KBD CLASS="Code">
+-checkin</KBD>
+ command. The three possible values are:</P>
+<TABLE>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097768"></A><KBD CLASS="Code">
+stdin</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097770"></A>The comment is issued on the checkin command's standard input.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097772"></A><KBD CLASS="Code">
+file</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097774"></A>The command is placed into a temporary file and the filename is passed on the command line prior to the names of source files.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097776"></A><KBD CLASS="Code">
+cmdline</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1097778"></A>The comment is placed on the command line prior to the filename(s).</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998114"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184408"></A>None</P>
+<P CLASS="Body">
+<A NAME="pgfId-999593"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998116"></A><KBD CLASS="CodeOutput">
+-checkin-exclusive</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998118"></A>This option specifies the command line to check a file into the repository and to acquire a lock once the check-in is complete. This is useful when you want to make successive changes to a file. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998123"></A>Command usage:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184388"></A> <KBD CLASS="Code">
+{$checkin-exclusive}</KBD>
+ <KBD CLASS="CodeVariant">
+filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-999631"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-999616"></A><KBD CLASS="CodeOutput">
+-checkout</KBD>
+<A NAME="64636"></A></P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1097846"></A>This option specifies the command line to check out the latest version of a file from the repository.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998130"></A>Command usage:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184389"></A><KBD CLASS="Code">
+${checkout}</KBD>
+ <KBD CLASS="CodeVariant">
+filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-999654"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-999633"></A><KBD CLASS="CodeOutput">
+-checkout-exclusive</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998134"></A>This option specifies the command line to check out the latest version of a file from the repository with exclusive access that prevents other developers from modifying the file. Some version control systems require that a file be checked out exclusively before a modified version of it may be checked in.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998140"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184390"></A><KBD CLASS="Code">
+${checkout-exclusive}</KBD>
+ <KBD CLASS="CodeVariant">
+filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-999655"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998142"></A><KBD CLASS="CodeOutput">
+-checkout-individual</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998144"></A>This option specifies the command line to check out a particular version of a file from the repository.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998147"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184398"></A><KBD CLASS="Code">
+${checkout-individual}</KBD>
+ <KBD CLASS="CodeVariant">
+version-num filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000017"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998149"></A><KBD CLASS="CodeOutput">
+-checkout-individual-to-stdout</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998151"></A>This option specifies the command line to check out a particular version of a file from the repository and echo the contents to standard output.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998155"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184403"></A><KBD CLASS="Code">
+${checkout-individual-to-stdout}</KBD>
+ <KBD CLASS="CodeVariant">
+version-num filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000018"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998158"></A><KBD CLASS="CodeOutput">
+-checkout-with-lock</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998160"></A>If this option is set to <KBD CLASS="Code">
+yes</KBD>, then checkout operations will by default attempt to acquire a lock to prevent other developers from making concurrent modifications. This option determines whether the <KBD CLASS="Code">
+with</KBD>
+ <KBD CLASS="Code">
+lock</KBD>
+ check button is initially set in the <KBD CLASS="Code">
+Checkout</KBD>
+ dialog box.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998166"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184412"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000019"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998168"></A><KBD CLASS="CodeOutput">
+-default</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998170"></A>If this option is set to <KBD CLASS="Code">
+yes</KBD>, then this version control system entry will be the default for new projects. If this option is set to <KBD CLASS="Code">
+yes</KBD>
+ for more than one entry in the configuration file, then the entry which appears last in the file will be the default.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1184436"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184437"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000020"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998178"></A><KBD CLASS="CodeOutput">
+-delete-revision</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998180"></A>This option specifies the command line to delete a particular version of a file from the repository. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998183"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184444"></A><KBD CLASS="Code">
+${delete-revision}</KBD>
+ <KBD CLASS="CodeVariant">
+version-num filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000021"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998185"></A><KBD CLASS="CodeOutput">
+-diff-command</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998187"></A>This option specifies the name of the command used to compare two files (or two versions of the same file).</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998190"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184471"></A><KBD CLASS="Code">
+diff</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000022"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998192"></A><KBD CLASS="CodeOutput">
+-diff-ignore-case</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998194"></A>This option specifies any additional command line options to the <KBD CLASS="Code">
+diff</KBD>
+ command to cause it to perform case insensitive comparisons. For almost all implementations of the traditional <KBD CLASS="Code">
+diff</KBD>
+ command, this will be <KBD CLASS="Code">
+-i</KBD>.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998199"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184499"></A><KBD CLASS="Code">
+-i</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000024"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998201"></A><KBD CLASS="CodeOutput">
+-diff-ignore-whitespace</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998203"></A>This option specifies any additional command line options to the <KBD CLASS="Code">
+diff</KBD>
+ command to cause it to perform comparisons that are insensitive to whitespace. For almost all implementations of the traditional <KBD CLASS="Code">
+diff</KBD>
+ command, this will be <KBD CLASS="Code">
+-w</KBD>.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998208"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184509"></A><KBD CLASS="Code">
+-w</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000025"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998210"></A><KBD CLASS="CodeOutput">
+-discard</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998212"></A>This option specifies a command line to discard any modifications made to the working version of a file and revert it to the current version in the repository.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998216"></A>Command usage:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184563"></A><KBD CLASS="Code">
+${discard}</KBD>
+ <KBD CLASS="CodeVariant">
+filenames</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000026"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998218"></A><KBD CLASS="CodeOutput">
+-history</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998220"></A>This option specifies a command line to retrieve the history of a file. Typically this includes comments made by developers at each version of the file, the set of version numbers for the file and the time and date of each change.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998225"></A>Command usage:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184588"></A><KBD CLASS="Code">
+${history}</KBD>
+<KBD CLASS="CodeVariant">
+filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000027"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998227"></A><KBD CLASS="CodeOutput">
+-history-pattern</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998229"></A>This option specifies a pattern to extract the version history from the output of <KBD CLASS="Code">
+${history}</KBD>. It should extract all the relevant information about all versions of a file. See <A HREF="versctrl.html#18338" CLASS="XRef">Patterns</A> for more detailed information about possible values for this option.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998235"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184625"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000028"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998237"></A><KBD CLASS="CodeOutput">
+-history-individual</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998239"></A>This option specifies the command to retrieve the history for a particular version of a file. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998242"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184675"></A><KBD CLASS="Code">
+${history-individual}</KBD>
+ <KBD CLASS="CodeVariant">
+version-num filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1184644"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998243"></A><KBD CLASS="CodeOutput">
+-history-individual-pattern</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998246"></A>This option specifies a pattern to extract the version history from the output of <KBD CLASS="Code">
+${history-individual}</KBD>. It should extract all the relevant information about the particular revision of a file.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998251"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184652"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000030"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998253"></A><KBD CLASS="CodeOutput">
+-history-replacements</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998255"></A>This option specifies a set of textual replacements to perform on text extracted by the patterns <KBD CLASS="Code">
+${history-pattern}</KBD>
+ and <KBD CLASS="Code">
+${history-individual-pattern}</KBD>. This allows text to be manipulated so that it may be cosmetically improved before being shown in the <SPAN CLASS="Bold">
+History</SPAN>
+ window.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998261"></A>See <A HREF="versctrl.html#22560" CLASS="XRef">Replacements</A> for details about possible values for this option.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998264"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184653"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000031"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998266"></A><KBD CLASS="CodeOutput">
+-ignore-dirs</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998268"></A>This option specifies one or more directories to ignore when presenting directory trees to the user. Such directories may include a repository subdirectory for each directory maintained by the version control system. When specifying more than one subdirectory, use the Tcl list notation. For example: <KBD CLASS="Code">
+{foo bar}</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998275"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184655"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000032"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998277"></A><KBD CLASS="CodeOutput">
+-lock</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998279"></A>This option specifies the command line to lock a file such that no other developer may make concurrent modifications.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998283"></A>Command usage:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184659"></A><KBD CLASS="Code">
+${lock}</KBD>
+ <KBD CLASS="CodeVariant">
+filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000033"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998285"></A><KBD CLASS="CodeOutput">
+-lock-individual</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998287"></A>This option specifies the command line to lock a particular version of a file such that no other developer may make concurrent modifications to that version of the file.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998291"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184679"></A><KBD CLASS="Code">
+${lock-individual}</KBD>
+<KBD CLASS="CodeVariant">
+version-num filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000034"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-999945"></A><KBD CLASS="CodeOutput">
+-revision-number-pattern</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998295"></A>This option specifies a pattern to extract all of the available revision numbers from the output of the <KBD CLASS="Code">
+${history}</KBD>
+ command.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998299"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184698"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000035"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998301"></A><KBD CLASS="CodeOutput">
+-symbolic-tags-pattern</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998303"></A>This option specifies a pattern to extract the names of a file's symbolic tags from the output of the <KBD CLASS="Code">
+${history}</KBD>
+ command.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998307"></A>Default:</P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184715"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000036"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998309"></A><KBD CLASS="CodeOutput">
+-symbolic-tags-replacements</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998311"></A>This option specifies a set of textual replacements to perform on text that is extracted by the <KBD CLASS="Code">
+${symbolic-tags-pattern}</KBD>
+ option. This allows text to be manipulated so that it may be cosmetically improved before being shown in the <SPAN CLASS="Bold">
+Symbolic tags</SPAN>
+ window.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998317"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184723"></A>None.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000037"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-1098042"></A><KBD CLASS="CodeOutput">
+-title</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-1098063"></A>This option specifies a descriptive label that will be presented to the user in the project preferences window. This option is useful for showing a mixed-case product name or one that contains whitespace.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998326"></A>Default: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184727"></A>the <KBD CLASS="Code">
+ident</KBD>
+ parameter (in upper-case).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000038"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-998328"></A><KBD CLASS="CodeOutput">
+-unlock</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998330"></A>This option specifies the command line needed to unlock a file so that other developers may make concurrent modifications.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998334"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184736"></A><KBD CLASS="Code">
+${unlock}</KBD>
+ <KBD CLASS="CodeVariant">
+filename</KBD>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000041"></A></P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-1000015"></A><KBD CLASS="CodeOutput">
+-unlock-individual</KBD>
+</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998338"></A>This specifies the command line to unlock a particular version of a file so that other developers may make concurrent modifications to that version of the file.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998342"></A>Command usage: </P>
+<P CLASS="BodyListFollow3">
+<A NAME="pgfId-1184746"></A><KBD CLASS="Code">
+${unlock-individual}</KBD>
+ <EM CLASS="CodeItalics">
+v</EM>
+<KBD CLASS="CodeVariant">
+ersion-num filename</KBD>
+</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998344"></A><A NAME="18338"></A>Patterns</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998346"></A>Patterns are used to extract text resulting from certain version control commands. It is necessary to use patterns to filter relevant lines of text from the output.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998350"></A>A pattern is specified as either:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998352"></A>A list of regular expression pairs specifying where to start and stop extracting text. The two keywords <KBD CLASS="Code">
+start</KBD>
+ and <KBD CLASS="Code">
+end</KBD>
+ are reserved and refer to the start and end of the body of text respectively, or</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998357"></A>An atomic regular expression specifying lines that will be extracted if the regular expression matches any text in the line.</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-998361"></A>Some examples of patterns are:</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998363"></A>Extract the names of all the directories in <KBD CLASS="Code">
+ls -l</KBD>
+ output:</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998365"></A><KBD CLASS="Code">
+^d</KBD>
+ (an atomic regular expression)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998367"></A>Extract the names of all the files and directories in <KBD CLASS="Code">
+ls -al</KBD>
+ output, but exclude the current and parent directories (&quot;.&quot; and &quot;..&quot;):</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998371"></A><KBD CLASS="Code">
+{ {</KBD>&quot;<KBD CLASS="Code">..</KBD>&quot;<KBD CLASS="Code"> end} } </KBD>
+(a list of 1 regular expression pair)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998373"></A>More sophisticated examples exist in the configuration example on <A HREF="versctrl.html#14889" CLASS="XRef">Example</A>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998376"></A><A NAME="22560"></A>Replacements</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998378"></A>Replacements may be used to modify or delete text that is extracted from the result of certain version control commands.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998382"></A>Where replacements are mentioned in the option descriptions above, legal values are a list of zero or more pairs. A pair is defined to be a list of exactly two elements. The left-hand side of the pair is a Tcl regular expression and the right-hand side is a literal string to replace the text matched by the regular expression.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998388"></A>An example of a replacement list is:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998390"></A>{ {&quot;&#92;t&quot; &quot; &quot;} {&quot;foo&quot; &quot;bar&quot;} {&quot;^-+$&quot; &quot;&quot;} }</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998392"></A>When applied to output from a version control command, this would cause:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998395"></A>tabs to be replaced by spaces.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1000121"></A>all occurrences of <KBD CLASS="Code">
+foo</KBD>
+ to be replaced by <KBD CLASS="Code">
+bar</KBD>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1000124"></A>separation lines consisting of hyphens to be replaced by a blank line.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998400"></A>Scripts</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998402"></A>Situations may arise in which a version control system will seem incompatible with Source-Navigator's approach to constructing command lines and examining the output of the command.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998406"></A>In most cases, these issues are overcome by writing shell scripts that provide a wrapper interface that Source-Navigator works with, but internally issues commands that work with the version control system.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998411"></A>Consider a version control system that does not adhere to the convention of specifying the version number of a file prior to the filename on the command line. Systems such as RCS would expect a command line such as:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998416"></A>co -r1.5 main.c</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998418"></A>But other systems might expect a command line like:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998420"></A>foocs checkout main.c/1.5</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998422"></A>This could be handled by writing a small shell script that maps the command lines accordingly:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998425"></A>#!/bin/sh
+foocs checkout $2/$1</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998428"></A>You would then instruct Source-Navigator to work via the shell script:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998430"></A>-checkout-individual &quot;foocs-wrapper&quot;</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998432"></A>Shell scripts can also be useful in situations where a particular operation requires more than one command to be issued to the version control system.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998437"></A><A NAME="14889"></A>Example</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998439"></A>The following example is based on the GNU RCS version control system, which many developers are familiar with. Red Hat has integrated Source-Navigator with RCS and this configuration example is taken directly from the <KBD CLASS="Code">
+sn_prop.cfg</KBD>
+ configuration file.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-998444"></A># GNU Revision Control System (RCS)
+sn_add_version_control_system rcs -default yes &#92;
+  -checkin &quot;ci&quot; &#92;
+  -checkin-comment-via stdin &#92;
+  -checkin-exclusive &quot;ci -l&quot; &#92;
+  -checkout &quot;co -f&quot; &#92;
+  -checkout-exclusive &quot;co -f -l&quot; &#92;
+  -checkout-individual &quot;co -f -r&quot; &#92;
+  -checkout-individual-to-stdout &quot;co -p&quot; &#92;
+  -checkout-with-lock yes &#92;
+  -delete-revision &quot;rcs -o&quot; &#92;
+  -discard &quot;unco&quot; &#92;
+  -history &quot;rlog&quot; &#92;
+  -history-pattern { {&quot;^-----&quot; &quot;^=====&quot;} } &#92;
+  -history-individual &quot;rlog -r&quot; &#92;
+  -history-individual-pattern { {&quot;^-----&quot; &quot;^=====&quot;} } &#92;
+  -history-replacements { {&quot;[ &#92;t]+&quot; &quot; &quot;} } &#92;
+  -ignore-dirs RCS &#92;
+  -lock &quot;rcs -l&quot; &#92;
+  -lock-individual &quot;rcs -l&quot; &#92;
+  -revision-number-pattern &quot;^revision (&#92;[0-9.&#92;]+)&quot; &#92;
+  -symbolic-tags-pattern { {&quot;^symbolic names&quot; &quot;^keyword&quot;} } &#92;
+  -symbolic-tags-replacements { {&quot;&#92;t&quot; &quot;&quot;} } &#92;
+  -unlock &quot;rcs -u&quot; &#92;
+  -unlock-individual &quot;rcs -u&quot;
+</PRE>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="dbaseutil.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="interappcomm.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

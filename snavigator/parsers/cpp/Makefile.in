@@ -77,48 +77,28 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
+CPP = @CPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
 FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -130,28 +110,20 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
-LIBIBERTY = @LIBIBERTY@
+LEXLIB = @LEXLIB@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MONOP_DEMO = @MONOP_DEMO@
 OBJEXT = @OBJEXT@
 OLDTARFLAG = @OLDTARFLAG@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 PRODUCT_NAME = @PRODUCT_NAME@
 PROGRAMMERS_REFERENCE_DIR = @PROGRAMMERS_REFERENCE_DIR@
 PROGRAMMERS_REFERENCE_INDEX = @PROGRAMMERS_REFERENCE_INDEX@
 PROGRAMMERS_REFERENCE_NAME = @PROGRAMMERS_REFERENCE_NAME@
 RANLIB = @RANLIB@
-RUNTESTDIR = @RUNTESTDIR@
 SDK_DIR = @SDK_DIR@
 SENDMAIL_PARSER = @SENDMAIL_PARSER@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 SN_BOOKS = @SN_BOOKS@
 SN_DOCSET = @SN_DOCSET@
 SN_GUI_DIR = @SN_GUI_DIR@
@@ -167,6 +139,7 @@ TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
 TCL_BUILD_LIB_SPEC = @TCL_BUILD_LIB_SPEC@
 TCL_CFLAGS = @TCL_CFLAGS@
+TCL_DBGX = @TCL_DBGX@
 TCL_DEFS = @TCL_DEFS@
 TCL_LD_FLAGS = @TCL_LD_FLAGS@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
@@ -178,13 +151,12 @@ TCL_LIB_SPEC = @TCL_LIB_SPEC@
 TCL_RANLIB = @TCL_RANLIB@
 TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
 TCL_SHLIB_LD = @TCL_SHLIB_LD@
-TIXHDIR = @TIXHDIR@
 TIX_BUILD_LIB_SPEC = @TIX_BUILD_LIB_SPEC@
-TIX_LIB_FULL_PATH = @TIX_LIB_FULL_PATH@
 TKCONFIG = @TKCONFIG@
 TKHDIR = @TKHDIR@
 TK_BUILD_INCLUDES = @TK_BUILD_INCLUDES@
 TK_BUILD_LIB_SPEC = @TK_BUILD_LIB_SPEC@
+TK_DBGX = @TK_DBGX@
 TK_DEFS = @TK_DEFS@
 TK_LIBS = @TK_LIBS@
 TK_LIB_FILE = @TK_LIB_FILE@
@@ -203,28 +175,37 @@ WINDRES = @WINDRES@
 WINFLAGS = @WINFLAGS@
 X11ICON = @X11ICON@
 YACC = @YACC@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
+common = $(top_builddir)/parsers/common
+
 SUBDIRS = cpplib
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) 	$(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) 	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 
-bin_PROGRAMS = cbrowser
+bin_PROGRAMS = cbrowser cbrowser2
 
 cbrowser_SOURCES = cparser.c cpdefines.h skeleton.c
 
-cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(OBJEXT) cpplib/macread.$(OBJEXT) 	cpplib/token.$(OBJEXT) cpplib/process.$(OBJEXT) 	cpplib/expr.$(OBJEXT) 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(OBJEXT) cpplib/macread.$(OBJEXT) 	cpplib/token.$(OBJEXT) cpplib/process.$(OBJEXT) 	cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
+cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+cbrowser2_SOURCES = cbrowser2.c
+
+cbrowser2_LDADD = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a 	$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+
+
+cbrowser2_DEPENDENCIES = cpplib/libcpp2.a 	$(common)/libcommon.a 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
+
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-bin_PROGRAMS =  cbrowser$(EXEEXT)
+bin_PROGRAMS =  cbrowser$(EXEEXT) cbrowser2$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS)
 
 
@@ -234,6 +215,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 cbrowser_OBJECTS =  cparser.$(OBJEXT) skeleton.$(OBJEXT)
 cbrowser_LDFLAGS = 
+cbrowser2_OBJECTS =  cbrowser2.$(OBJEXT)
+cbrowser2_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -244,8 +227,8 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(cbrowser_SOURCES)
-OBJECTS = $(cbrowser_OBJECTS)
+SOURCES = $(cbrowser_SOURCES) $(cbrowser2_SOURCES)
+OBJECTS = $(cbrowser_OBJECTS) $(cbrowser2_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -311,6 +294,10 @@ maintainer-clean-compile:
 cbrowser$(EXEEXT): $(cbrowser_OBJECTS) $(cbrowser_DEPENDENCIES)
 	@rm -f cbrowser$(EXEEXT)
 	$(LINK) $(cbrowser_LDFLAGS) $(cbrowser_OBJECTS) $(cbrowser_LDADD) $(LIBS)
+
+cbrowser2$(EXEEXT): $(cbrowser2_OBJECTS) $(cbrowser2_DEPENDENCIES)
+	@rm -f cbrowser2$(EXEEXT)
+	$(LINK) $(cbrowser2_LDFLAGS) $(cbrowser2_OBJECTS) $(cbrowser2_LDADD) $(LIBS)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

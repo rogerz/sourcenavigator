@@ -125,7 +125,7 @@ absolutepath (char *rpath, char *fullpath, char *pwd)
 #endif
 
 #if _WINDOWS
-#ifndef __MSVC__
+#if defined (__CYGWIN32__)
 /* Get the realpath() from Cygwin.*/
 int
 win32_realpath(char* p,char *realnm)
@@ -165,7 +165,7 @@ win32_realpath(char* p,char *realnm)
 	
 	return 1;
 }
-#else /* __MSVC__ */
+#else /* __CYGWIN32__ */
 
 /* Get the realpath() from WIN32.*/
 int
@@ -197,7 +197,7 @@ win32_realpath(char* p,char *realnm)
 	return 1;
 }
 
-#endif /* __MSVC__ */
+#endif /* __CYGWIN32__ */
 
 #endif /* _WINDOWS */
 

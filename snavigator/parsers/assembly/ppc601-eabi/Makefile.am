@@ -24,7 +24,6 @@ AUTOMAKE_OPTIONS = cygnus
 toolbox = $(top_builddir)/../../toolbox
 common = $(top_builddir)/../../common
 libutils = $(top_builddir)/../../../misc/libutils
-db = $(top_builddir)/../../../db
 
 bin_PROGRAMS = abrowser
 
@@ -32,14 +31,19 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/../../../hyper \
 	-I$(top_srcdir)/../../toolbox \
 	-I$(top_srcdir)/../../common
 
-abrowser_SOURCES = abrowser.l
-abrowser_LDADD = $(toolbox)/libsnptools.a $(db)/libdbutils.a \
-		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a \
+abrowser_SOURCES = abrowser.c
+abrowser_LDADD = $(toolbox)/libsnptools.a \
+		$(common)/libcommon.a \
 		$(libutils)/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
-abrowser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a \
-			$(db)/libdbutils.a
-			$(common)/libcommon.a \
+abrowser_DEPENDENCIES = $(common)/libcommon.a \
 			$(toolbox)/libsnptools.a \
 			$(libutils)/libutils.a
+
+# Used to regenerate .c from .l file
+flexgen:
+	cp $(srcdir)/abrowser.l .
+	$(LEX) -t $(LFLAGS) abrowser.l > $(srcdir)/abrowser.c
+	rm abrowser.l
+

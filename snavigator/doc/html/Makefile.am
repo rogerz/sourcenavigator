@@ -22,23 +22,22 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 htmldir = $(prefix)/html
-html_DATA=cygnus1.css index-1.gif redhatlogo.png index.html
-userguidedir = $(htmldir)/userguide
+html_DATA=cygnus.css index-1.gif magnifying_glass.png index.html
 srchtmldir = $(top_srcdir)/doc/html
 
 install-data-local:
-	$(mkinstalldirs) $(htmldir)
+	$(mkinstalldirs) $(DESTDIR)$(htmldir)
 	for p in @SN_BOOKS@; do \
-		$(mkinstalldirs) $(htmldir)/$$p; \
-		rm -f $(htmldir)/$$p/*.html; \
-		rm -f $(htmldir)/$$p/*.gif; \
-		echo "copying $$p to $(htmldir)/$$p" ;\
+		$(mkinstalldirs) $(DESTDIR)$(htmldir)/$$p; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.html; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.gif; \
+		echo "copying $$p to $(DESTDIR)$(htmldir)/$$p" ;\
 		( \
 		cd $(srcdir)/@SN_DOCSET@/$$p ;\
 		$(TAR) -ch$(OLDTARFLAG) -f /tmp/$$p.tar-$$$$ *.html *.gif ;\
-		cp /tmp/$$p.tar-$$$$ $(htmldir)/$$p ;\
+		cp /tmp/$$p.tar-$$$$ $(DESTDIR)$(htmldir)/$$p ;\
 		rm /tmp/$$p.tar-$$$$ ;\
-		cd $(htmldir)/$$p ;\
+		cd $(DESTDIR)$(htmldir)/$$p ;\
 		$(TAR) -xf $$p.tar-$$$$ ;\
 		rm $$p.tar-$$$$ ;\
 		) \

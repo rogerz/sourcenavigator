@@ -27,10 +27,7 @@ MA 02111-1307, USA.
 
 #define  _DBUTILS_
 
-#ifndef WIN32
-/* Once we start using confiure we can get rid of this. */
 #include <config.h>
-#endif
 
 #include "mxdefine.h"
 #include "mxfuncs.h"
@@ -48,7 +45,7 @@ int my_SplitList (char *str, int *num, char ***argvPtr, char sep);
 char * read_next_field (char *str, char *buf, int size, char sep);
 int read_next_int_field (char *str, char sep);
 void db_remove_file_xfer_using_keys(int softdel, char *key_files);
-void MacroReadFile(char *pcFilename);
+void MacroReadFile(const char *pcFilename);
 
 #endif /* _DBUTILS_ */
 

@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Cross-Reference Browser</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="clbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="inclbrws.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996754"></A><A NAME="35957"></A>Cross-Reference 
+Browser&nbsp;&nbsp;<IMG SRC="crossref-1.gif">
+<DIV>
+<IMG SRC="crossref-2.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1044957"></A>The <A NAME="marker-1044955"></A><SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+shows you where elements in your program are used
+or accessed. It can find every call of a function, or tell you everything
+a particular function calls. It creates <A NAME="marker-1044956"></A>tree diagrams 
+that show essential relationships 
+within the project's symbol database, such as the <A NAME="marker-1044958"></A>
+function call hierarchy tree. You can traverse up and down the hierarchy tree, 
+as well as expand or restrict the tree. You can select items in the hierarchy 
+and display their <EM CLASS="Italics">
+Refers-to</EM>
+ and <EM CLASS="Italics">
+Referred-by</EM>
+ relationships; these relationships are based on the &quot;point-of-view&quot; of 
+the selected symbol. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1004869"></A>A <EM CLASS="Italics">
+Refers-to</EM>
+ relationship is one where the selected symbol is used in the context of 
+another symbol, which is in turn <EM CLASS="Emphasis">
+Referred-by</EM>
+ the selected symbol. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1003935"></A>Source-Navigator creates 
+the <A NAME="marker-1003927"></A>cross-reference database in the background, 
+which enables you to work in other views. During this process, the Cross-Reference 
+tool button is disabled (grayed-out). After the database is built, 
+the <SPAN CLASS="Bold">
+Cross-Reference</SPAN>
+ tool can be opened.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996758"></A>Although you can always start 
+the <A NAME="marker-997931"></A><SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu by selecting <SPAN CLASS="Bold">
+New View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Xref</SPAN>, you may want to start the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ so that it focuses on a specific symbol. To do this, select a symbol in 
+the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ or <SPAN CLASS="Bold">
+Editor</SPAN>, and then click the <SPAN CLASS="Bold">
+Cross-Reference</SPAN>
+ tool button or choose the <SPAN CLASS="Bold">
+Xref</SPAN>
+ tab. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1142764"></A>The selected symbol becomes the root symbol in 
+the <SPAN CLASS="Bold">
+Symbol Accelerator</SPAN>
+ text box at the top left of the <A NAME="marker-1142765"></A><SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window. The references that <EM CLASS="Italics">
+Refer-to</EM>
+ the root symbol are indicated by connecting lines and those that are <EM CLASS="Italics">
+Referred-by</EM>
+ are indicated by connecting arrows. You can traverse 
+the <A NAME="marker-1142766"></A>hierarchy tree by 
+selecting references and clicking the right-pointing hand tool 
+(<EM CLASS="Italics">Refers-to</EM>) and left-pointing one 
+(<EM CLASS="Italics">Referred-by</EM>) as shown in <A HREF="crossref.html#24797" CLASS="XRef">Cross-Reference 
+Browser Window</A>. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1142812"></A><A NAME="24797"></A>Cross-Reference Browser<A NAME="marker-1142820"></A> Window</P>
+<DIV>
+<IMG SRC="crossref-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1142814"></A>The <SPAN CLASS="Bold">
+Remove Subnodes</SPAN>
+ button allows you to remove displayed <A NAME="marker-1142813"></A>subnodes from 
+the hierarchy tree view.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1039619"></A>To set the number of 
+subnode <A NAME="marker-1039618"></A>levels to display, 
+enter a positive integer in the <SPAN CLASS="Bold">
+Levels</SPAN>
+ text entry box.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1138942"></A>Double-clicking a symbol in the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window starts the <SPAN CLASS="Bold">
+Editor</SPAN>, with the specific symbol in context in the source file. The 
+cross-reference information is stored in the database and is kept 
+current by the <SPAN CLASS="Bold">
+Editor</SPAN>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1140188"></A>Cross-Reference Filter</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1140249"></A>Click the <SPAN CLASS="Bold">
+Filter</SPAN>
+ icon to bring up the <SPAN CLASS="Bold">
+Filter</SPAN>
+ dialog. The symbols displayed by the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ are included based on these settings.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1140250"></A>Cross-Reference Filter</P>
+<DIV>
+<IMG SRC="crossref-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1150642"></A>All<BR>
+<P CLASS="BodyHang1">Sets all non-Access selections.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1150643"></A>None<BR>
+<P CLASS="BodyHang1">Clears all non-Access selections.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1150637"></A><A NAME="26028"></A>Cross-Reference Browser Details</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1004749"></A>Holding down the right mouse button on a symbol 
+in the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ brings up a popup menu that allows you to filter the list of symbols you're 
+working with, as well as to gather new information about the symbols you're 
+interested in.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1004752"></A>Cross-Reference Browser, Right Mouse Button Down</P>
+<DIV>
+<IMG SRC="crossref-5.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1134196"></A>Choosing <SPAN CLASS="Bold">
+Details By</SPAN>
+ brings up a window that shows where each symbol in the list is referenced. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1134200"></A>Cross-Reference Browser Showing Details By Window</P>
+<DIV>
+<IMG SRC="crossref-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1138956"></A>Clicking on the column headers allows you to sort by the 
+selected column, either alphabetically, by line number, by class, etc. 
+The <SPAN CLASS="Bold">
+Pattern</SPAN>
+ text entry box in the window allows you to use a string to filter the list. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1004780"></A>Symbols that occur multiple times are listed; when you 
+click on a symbol and then add the <SPAN CLASS="Bold">
+Editor</SPAN>
+ to the window (from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Add View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold"> Editor</SPAN>), the <SPAN CLASS="Bold">
+Editor</SPAN>
+ shows where that symbol is referenced. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1004790"></A>Editor Showing Referencing of Symbol</P>
+<DIV>
+<IMG SRC="crossref-7.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1003924"></A><A NAME="27675"></A>
+Cross-Reference <A NAME="marker-1120158"></A>Preferences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1002464"></A>Preference settings for the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ are located in the <SPAN CLASS="Bold">
+Xref</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog. </P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-1150665"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>,<SPAN CLASS="Bold">
+ </SPAN>
+from the <SPAN CLASS="Bold">
+File </SPAN>
+menu<SPAN CLASS="Bold">, </SPAN>
+select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. In the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>, from the <SPAN CLASS="Bold">
+Edit</SPAN>
+ menu, select <SPAN CLASS="Bold">
+View Preferences</SPAN>. </LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1150666"></A>Choose the <SPAN CLASS="Bold">
+Xref</SPAN>
+ tab.</LI>
+</OL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002303"></A>Cross-Reference Tab of the Preferences Dialog </P>
+<DIV>
+<IMG SRC="crossref-8.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1135354"></A>Cross-referencing</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1002306"></A>Build Cross-Reference database<BR>
+<P CLASS="BodyHang1">Select this if you would like Source-Navigator to build the 
+cross-reference databases for your project. This is on by default.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002307"></A><A NAME="38384"></A>Generate references to local 
+variables<BR>
+<P CLASS="BodyHang1">Select this if you would like cross-reference 
+information for local variables. This is off by default.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1098375"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1098376"></A>Parsing is much slower when cross-referencing local 
+variables. Also, the database size grows considerably when generating local 
+variable cross-references. Make sure that you have an adequate amount of disk 
+space (approximately 10 times the space used by your source code).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002309"></A>Audible alert when complete<BR>
+<P CLASS="BodyHang1">Selecting this causes a bell to ring when cross-referencing 
+is complete.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1002310"></A>Layout</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1002311"></A>Compare parameters<BR>
+<P CLASS="BodyHang1">Select this to generate cross-references only when the parameter types of 
+the <EM CLASS="Italics">
+Refers-to</EM>
+ and <EM CLASS="Italics">
+Referred-by</EM>
+ symbols match. Deselecting this allows symbols to be considered matches, 
+regardless of differences in parameters. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1002312"></A>Compare static information<BR>
+<P CLASS="BodyHang1">Select this to generate cross-references only when both the <EM CLASS="Italics">
+Refers-to</EM>
+ and <EM CLASS="Italics">
+Referred-by</EM>
+ static attributes match.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002313"></A>Display parameter list<BR>
+<P CLASS="BodyHang1">Select this to display parameters with the symbol in the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1002314"></A>Display boxes<BR>
+<P CLASS="BodyHang1">Select this to surround cross-reference nodes with boxes.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002315"></A>Display order:<BR>
+<P CLASS="BodyHang1"><SPAN CLASS="Bold">
+Left to right</SPAN>
+ displays the cross-reference hierarchy from left to right; <SPAN CLASS="Bold">
+Top to Bottom</SPAN>
+ displays it from top to bottom.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002316"></A>Display layout style:<BR>
+<P CLASS="BodyHang1">Select <SPAN CLASS="Bold">
+Tree</SPAN>
+ to display cross-references in tree layout; select <SPAN CLASS="Bold">
+ISI</SPAN>
+ to display them in ISI layout. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1004911"></A>Vertical space:<BR>
+<P CLASS="BodyHang1">Enter the number of vertical pixels between symbols in the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1004924"></A>Horizontal space:<BR>
+<P CLASS="BodyHang1">Enter the number of horizontal pixels between symbols in the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-1130595"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="clbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="inclbrws.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -592,11 +592,11 @@ itcl_class Elix& {
         global elix_options
 
         if {${module_widget} != ""} {
-            ::set elix_options(kernel-module-list) [split\
+            set elix_options(kernel-module-list) [split\
               [${module_widget} get 1.0 end] \n]
         }
         if {${mount_widget} != ""} {
-            ::set elix_options(mount-points) [split [${mount_widget} get 1.0\
+            set elix_options(mount-points) [split [${mount_widget} get 1.0\
               end] \n]
         }
 

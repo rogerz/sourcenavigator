@@ -142,9 +142,13 @@ default |
 delete |
 do |
 double |
+dynamic_cast |
 else |
 enum |
+explicit |
+export |
 extern |
+false |
 float |
 for |
 friend |
@@ -152,17 +156,16 @@ goto |
 if |
 inline |
 int |
-interface |
 long |
+mutable |
 namespace |
 new |
 operator |
-overload |
 private |
 protected |
 public |
-reinterpret_cast |
 register |
+reinterpret_cast |
 return |
 short |
 signed |
@@ -174,14 +177,18 @@ switch |
 template |
 this |
 throw |
+true |
 try |
 typedef |
+typeid |
+typename |
 union |
 unsigned |
 using |
 virtual |
 void |
 volatile |
+wchar_t |
 while {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;

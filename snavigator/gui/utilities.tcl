@@ -291,6 +291,7 @@ proc sn_load_pixmaps {} {
         image create ${pixmap} cls_br_p+_image -file ${bitd}/clsbr_p+.${xpm}
         image create ${pixmap} cls_br_p+-_image -file ${bitd}/clsbr_p+-.${xpm}
         image create ${pixmap} cls_br_p-_image -file ${bitd}/clsbr_p-.${xpm}
+        image create ${pixmap} cls_br_private_image -file ${bitd}/clsbr_private.${xpm}
 
         #retriever images
         image create ${pixmap} type_cl_image -file ${bitd}/type_cl.${xpm}
@@ -409,7 +410,7 @@ proc sn_get_symbol_and_scope {symm} {
 proc sn_external_editor {file} {
     global Parser_Info
     # Use always file extensions
-    set type [file_type_using_suf [file tail ${file}]]
+    set type [sn_get_file_type ${file}]
     return $Parser_Info(${type},EDIT)
 }
 
@@ -418,7 +419,7 @@ proc sn_highlight_browser {file {cmd "b"}} {
     global Parser_Info Avail_Parsers
     set type [paf_db_f get -key -col {0} ${file}]
     if {${type} == ""} {
-        set type [file_type_using_suf [file tail ${file}]]
+        set type [sn_get_file_type ${file}]
     }
     set exe_cmd ""
     set cmd_swi ""
@@ -442,20 +443,25 @@ proc sn_highlight_browser {file {cmd "b"}} {
     return ${browcmd}
 }
 
-# This function returns properties depending of file extension.
-# verify the type "others" as last match, the customer can have
-# defined the suffix "*" to others.
-proc file_type_using_suf {suf} {
+# This function returns the file type given a file name.
+# A file type is a descriptive string like "java", "asm",
+# "m4" and so on. If a specific match can not be found
+# then the catch all type "others" is returned.
+proc sn_get_file_type {file} {
     global sn_options
     global Avail_Parsers Parser_Info
+
+    set tail [file tail $file]
 
     #test "others" extension matching as last possibility
     #the user can add "*" to others to include all
     #file that don't match another languages.
     foreach p ${Avail_Parsers} {
         if {$Parser_Info(${p},TYPE) != "others"} {
-            foreach s $Parser_Info(${p},SUF) {
-                if {[string match ${s} ${suf}]} {
+            foreach pattern $Parser_Info(${p},SUF) {
+                if {[string equal $pattern $tail] ||
+                        [string match $pattern $tail]} {
+                    sn_log "$tail file type is $p"
                     return ${p}
                 }
             }

@@ -52,8 +52,8 @@ static int calc_indent (char*, char *);
 static void baseclasses (char *, char *);
 static void parse_triple(int);
 
-/* XXX Is this correct? */
 #undef YY_INPUT
+#define YY_SKIP_YYWRAP
 #define YY_INPUT(buf,r,ms) (r = sn_encoded_input(buf, ms))
 
 int

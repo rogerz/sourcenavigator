@@ -27,13 +27,13 @@ itcl::class ClassTree& {
     constructor {args} {
         global sn_options
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
         # Set default layout and order for classtree.
         global ${this}-layoutstyle
         global ${this}-order
-        ::set ${this}-order $sn_options(def,ctree-view-order)
-        ::set ${this}-layoutstyle $sn_options(def,ctree-layout)
+        set ${this}-order $sn_options(def,ctree-view-order)
+        set ${this}-layoutstyle $sn_options(def,ctree-layout)
 
 	itk_component add canvas {
 	    canvas $itk_component(hull).canvas\
@@ -57,9 +57,12 @@ itcl::class ClassTree& {
 		    -jump $sn_options(def,canvas-tree-jump)
 	}
 
-        pack $itk_component(scrollx) -side bottom -fill x
-        pack $itk_component(scrolly) -side right -fill y
-        pack $itk_component(canvas) -side top -fill both -expand y
+        grid $itk_component(canvas) -row 0 -column 0 -sticky news
+        grid $itk_component(scrollx) -row 1 -column 0 -sticky ew
+        grid $itk_component(scrolly) -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         $itk_component(canvas) bind cl <1> "${this} mark_class"
         $itk_component(canvas) bind cl <Control-1>\
@@ -70,7 +73,7 @@ itcl::class ClassTree& {
 
         # Display filenames with the classes.
         global ${this}-disp-files
-        ::set ${this}-disp-files ${display_filenames}
+        set ${this}-disp-files ${display_filenames}
 
 	eval itk_initialize $args
 
@@ -263,10 +266,14 @@ itcl::class ClassTree& {
         } else {
             if {${print_dialog} == "" || [itcl_info objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.printdlg -canvas $itk_component(canvas)\
-                  -leader ${topw} -modality application -file [file join $sn_options(profile_dir)\
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas $itk_component(canvas)\
+                  -file [file join $sn_options(profile_dir)\
                   tree.ps]]
 
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {
@@ -474,7 +481,7 @@ itcl::class ClassTree& {
         # Unmark old selection.
         catch {$itk_component(canvas) itemconfig "e:${m_edges}"\
           -fill $sn_options(def,canv-line-fg)}
-        ::set m_edges ${cname}
+        set m_edges ${cname}
 
         $itk_component(canvas) itemconfig e:${cname}\
 		-fill $sn_options(def,tree-select-line)
@@ -730,8 +737,7 @@ itcl::class ClassTree& {
         return [sn_view_icon [get_indep String ClassHierarchy] ${base_root}]
     }
     method SetTitle {} {
-        wm title ${topw} [Title]
-        wm iconname ${topw} [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     # Fill combobox with the correct entries
@@ -996,7 +1002,7 @@ itcl::class ClassTree& {
     }
 
     protected variable print_dialog ""
-    protected variable topw "."
+    protected variable topw
     protected variable displayed 0
     protected variable CanDraw
     protected variable RelativClass ""

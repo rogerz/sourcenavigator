@@ -49,15 +49,16 @@ itcl::class Editor& {
 	    rename -state -editstate editState State
 	}
 
-	eval itk_initialize $args
-
 	# Init some variables.
 	set editor $itk_component(hull).editor
 
-	set topw [winfo toplevel [namespace tail ${this}]]
+	set topw [winfo toplevel $itk_component(hull)]
 
 	# Init some local/global variables.
 	init_Editor
+
+        # Init options after setting up class variables
+	eval itk_initialize $args
 
 	# Add menu entries, if availiable.
 	if {$itk_option(-menu) != ""} {
@@ -141,10 +142,6 @@ itcl::class Editor& {
 	            -command "${this} toolbar_grep"
             }
 	    
-# FIXME: The above toolbar_grep needs to be replaced by a call
-# that will switch to the greppane and do a grep, I was thinking
-# of calling sn_grep here, but that API needs to get replaced
-
 	    bind_history $itk_component(grep) grep
 	    balloon_bind_info $itk_component(grep) [get_indep String INFOGrep]
 	    pack $itk_component(grep) \
@@ -171,19 +168,12 @@ itcl::class Editor& {
 	scrollbar $itk_component(hull).yview \
 	    -command "$itk_component(editor) yview"
 
-	# Load file into editor.
-	editfile $itk_option(-filename) \
-	    -1 "" 0
+	grid $itk_component(editor) -row 0 -column 0 -sticky news
+	grid $itk_component(hull).xview -row 1 -column 0 -sticky ew
+	grid $itk_component(hull).yview -row 0 -column 1 -sticky ns
 
-	pack $itk_component(hull).xview \
-	    -side bottom \
-	    -fill x
-	pack $itk_component(hull).yview \
-	    -side right \
-	    -fill y
-	pack $itk_component(editor) \
-	    -fill both \
-	    -expand y
+	grid rowconfigure $itk_component(hull) 0 -weight 1
+	grid columnconfigure $itk_component(hull) 0 -weight 1
 
 	# Call user defined procedure.
 	if {[catch {sn_rc_editor $itk_component(hull) $itk_component(editor)} err]} {
@@ -260,19 +250,9 @@ itcl::class Editor& {
 	}
     }
 
-#FIXME : This toolbar_grep method needs to be replaced by something
-# that will just switch to the active grep pane!
-
-    #Execute grep with selection, when there is no selection,
-    #call grep dialog box
+    #Execute grep with selection
     method toolbar_grep {} {
-	#something must be selected
-	if {[catch {set pat [string trim [selection get]]}]} {
-	    sn_error_dialog [get_indep String NoSelection] [get_indep String \
-	      MultiGrep]
-	    return
-	}
-	sn_grep 1 ${pat}
+	$itk_option(-parent) search_grep
     }
     ############################################
 
@@ -340,7 +320,6 @@ itcl::class Editor& {
 	bind ${t} <Tab> {Editor&::InsertTab %W; break}
 	bind ${t} <Return> {Editor&::Newline %W; break}
 
-# FIXME : need to be replaced with call to switch to the grep pane!
 	# Grep accelerator.
 	bind ${t} <Shift-Control-G> "${this} toolbar_grep; break"
 
@@ -393,7 +372,7 @@ itcl::class Editor& {
 	bind ${t} <Control-less> "Editor&::Indent ${this} outdent; break"
 
 	# Define the queue, how the event are handled.
-	sn_add_tags $itk_component(editor) Editor
+	sn_add_tags $itk_component(editor) Editor 2
     }
 
     # Default bindings for the text editor.
@@ -422,43 +401,7 @@ itcl::class Editor& {
         # Sun UNDO.
 	bind ${t} <F14> [bind Text <Control-z>]
 
-	bind ${t} <Insert> "puts \"Other insert binding call\" ; Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
-
-	bind ${t} <Double-1><ButtonRelease-1> {
-			switch -- [%W get insert] {
-			\} {
-					Editor&::Insert_Mark_Bracket %W \} 0
-				}
-			\{ {
-					Editor&::Insert_Mark_Bracket %W \{ 0
-				}
-			\) {
-					Editor&::Insert_Mark_Bracket %W \) 0
-				}
-			\( {
-					Editor&::Insert_Mark_Bracket %W \( 0
-				}
-			">" {
-					Editor&::Insert_Mark_Bracket %W ">" 0
-				}
-			"<" {
-					Editor&::Insert_Mark_Bracket %W "<" 0
-				}
-			\] {
-					Editor&::Insert_Mark_Bracket %W \] 0
-				}
-			\[ {
-					Editor&::Insert_Mark_Bracket %W \[ 0
-				}
-			\" {
-					Editor&::Insert_Mark_Bracket %W \" 0
-				}
-			\' {
-					Editor&::Insert_Mark_Bracket %W \' 0
-				}
-			}
-			break
-		}
+	bind ${t} <Insert> "Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
     }
 
     method m3_post_menu {w X Y x y} {
@@ -480,9 +423,9 @@ itcl::class Editor& {
 
 	# Add edit commands (Undo,Copy,Cut,Delete,..).
 	if {$itk_option(-file_changed)} {
-	    set state disabled
+	    set state "normal"
 	} else {
-	    set state normal
+	    set state "disabled"
 	}
 	set str [get_indep String EditUndo]
 	${m} add command \
@@ -784,12 +727,23 @@ itcl::class Editor& {
     proc InsertTab {w {pos ""}} {
 	global sn_options
 
-	# Insert Spaces ansted of Tabs.
+	# Insert Spaces instead of Tabs.
 	if {$sn_options(def,edit-tab-inserts-spaces)} {
 	    # At least we should insert one character.
-	    set txt " "
-	    for {set i 1} {${i} < $sn_options(def,edit-tabstop)} {incr i} {
-		append txt " "
+
+	    if {$sn_options(def,edit-tabstop) == 0} {
+	        set txt " "
+	    } else {
+	        set txt [string repeat " " $sn_options(def,edit-tabstop)]
+
+	        set ts $sn_options(def,edit-tabstop)
+	        set l [${w} index insert]
+	        set col [lindex [split ${l} {.}] 1]
+	        while {${col} >= $ts} {
+	            incr col -$ts
+	        }
+	        set spaces [expr {$ts - $col}]
+	        set txt [string repeat " " ${spaces}]
 	    }
 
 	    if {${pos} == ""} {
@@ -816,7 +770,7 @@ itcl::class Editor& {
 
     method Redo {} {
 	global tkText
-	::set tkText($itk_component(editor),prevCmd) "Redo"
+	set tkText($itk_component(editor),prevCmd) "Redo"
 	tkTextUndo $itk_component(editor)
     }
 
@@ -1110,6 +1064,7 @@ itcl::class Editor& {
 
 	if {[string compare ${pos} ""] != 0} {
 	    $itk_component(editor) tag add sel ${pos} "${pos} + ${SearchFoundLength} chars"
+            $itk_component(editor) tag raise sel
 	    $itk_component(editor) mark set lastpos insert
 	    $itk_component(editor) mark set insert ${pos}
 	    $itk_component(editor) see insert
@@ -1205,6 +1160,7 @@ itcl::class Editor& {
 	}
 	$itk_component(editor) tag add sel "insert -[string length ${edit_ReplaceString}] \
 	  char" insert
+        $itk_component(editor) tag raise sel
 	${btn} config \
 	    -state disabled
     }
@@ -1515,11 +1471,19 @@ itcl::class Editor& {
     method proceed_gotoline {f} {
 	global tcl_platform
 
+        # FIXME : This is ugly, but the -linenumber_var gets
+        # changed because the vwait in sn_wait will process
+        # Focus_In which resets the variable. We hack this
+        # by saving and resetting the variable here (ugh).
+        # This fixes goto line under Win32.
+        set linenum [set $itk_option(-linenumber_var)]
+
 	itcl::delete object ${f}
 	update idletasks
 	if {$tcl_platform(platform) == "windows"} {
 	    sn_wait 50
 	}
+        set $itk_option(-linenumber_var) $linenum
 	${this} SetFondPos [set $itk_option(-linenumber_var)] 1 0
     }
 
@@ -1669,29 +1633,38 @@ itcl::class Editor& {
     #
     # The basic insertion routine for adding a new line
     #
-    proc Newline w {
+    proc Newline {w} {
 	global sn_options
 	if {$sn_options(def,edit-indentwidth) <= 0} {
 	    tkTextInsertChar ${w} \n
 	} else {
 	    set l [${w} get "insert linestart" "insert lineend"]
-	    set rest [${w} get "insert" "insert lineend"]
-	    set ind_off [list 0 0]
-	    regexp \
-	        -indices "^\[ \t\]*" ${l} ind_off
-	    set end [lindex ${ind_off} 1]
-	    set indentStr [string range ${l} 0 ${end}]
-	    #	Unexpand the spaces to TABS.
-	    set spaces [format "%8.8s" ""]
-	    regsub \
-	        -all ${spaces} ${indentStr} "\t" indentStr
-	    regsub \
-	        -all "\[ \]+\t" ${indentStr} "\t" indentStr
-	    set l [${w} get insert "insert lineend"]
-	    set ind_off [list 0 0]
-	    regexp \
-	        -indices "^\[ \t\]*" ${l} ind_off
-	    set end [expr [lindex ${ind_off} 1] + 1]
+	    set indentStr ""
+	    if {[regexp \
+	            -indices "^\[ \t\]*" ${l} ind_off]} {
+	        set end [lindex ${ind_off} 1]
+	        set indentStr [string range ${l} 0 ${end}]
+	        # Unexpand the spaces to TABS.
+	        set spaces [string repeat " " $sn_options(def,edit-tabstop)]
+
+	        regsub \
+	                -all ${spaces} ${indentStr} "\t" indentStr
+	        regsub \
+	                -all "\[ \]+\t" ${indentStr} "\t" indentStr
+
+	        if {$sn_options(def,edit-tab-inserts-spaces)} {
+	            # we have to translate \t to the current size number of tabs
+	            if {$sn_options(def,edit-tabstop) == 0} {
+	                set spaces " "
+	            } else {
+	                set spaces [string repeat " " \
+	                        $sn_options(def,edit-tabstop)]
+	            }
+	            regsub \
+	                -all \t ${indentStr} ${spaces} indentStr
+	        }
+	    }
+	    
 	    tkTextInsertChar ${w} \n${indentStr}
 	}
     }
@@ -1865,7 +1838,7 @@ itcl::class Editor& {
 	set case -1
 	set file $itk_option(-filename)
 	if {${file} != $sn_options(noname_file)} {
-	    set type [file_type_using_suf [file extension ${file}]]
+	    set type [sn_get_file_type ${file}]
 	    set case $Parser_Info(${type},CASE)
 	}
 	if {[catch {set name [selection get]}]} {
@@ -1892,10 +1865,10 @@ itcl::class Editor& {
 	global combobox_editor_scopes
 
 	if {$sn_options(iscolor)} {
-	    #init symbol colors
+	    # Create highlight tags for text widget
 	    set sc [::lunique [lsort [eval concat [array get \
 	      combobox_editor_scopes]]]]
-	    foreach tg "key ${sc}" {
+	    foreach tg [concat key rem str ${sc} lv] {
 		catch {${t} tag configure ${tg} \
 		        -foreground $sn_options(def,color_${tg})}
 	    }
@@ -1908,10 +1881,6 @@ itcl::class Editor& {
 		        -foreground "cornflower blue"}
 	    }
 
-	    ${t} tag configure rem \
-	        -foreground $sn_options(def,color_rem)
-	    ${t} tag configure str \
-	        -foreground $sn_options(def,color_str)
 	    ${t} tag configure bracket \
 	        -background $sn_options(def,bracketmatch-bg) \
 	        -foreground white
@@ -1935,7 +1904,7 @@ itcl::class Editor& {
 	    set file_syms [get_file_symbols $itk_option(-filename)]
 
 	    #create tags for the found symbols in the editor
-	    sn_db_create_symbol_tags $itk_component(editor) ${file_syms} "in iu lv"
+	    sn_db_create_symbol_tags $itk_component(editor) ${file_syms} "in iu"
 
 	    #mark actual tag and display found tags into
 	    #the combobox
@@ -2184,7 +2153,7 @@ itcl::class Editor& {
 
 	#use external Editor !
 	if {${external_editor} != ""} {
-	    if {[regexp "(emacs|gnuclient|gnudoit)" ${external_editor}]} {
+	    if {[regexp "(emacs|gnuclient)" ${external_editor}]} {
 		if {[string compare ${line} ""] == 0} {
 		    set line 1.0
 		}
@@ -2274,13 +2243,13 @@ itcl::class Editor& {
 
 		#disable gotosymbol
 		global gotosymbol_active
-		::set gotosymbol_active 0
+		set gotosymbol_active 0
 
 		#raise editor in the multi window
 		${win} view edit
 
 		#enable gotosymbol
-		::set gotosymbol_active 1
+		set gotosymbol_active 1
 
 		#get editor class & widget
 		set ed [${win} editor]
@@ -2398,7 +2367,6 @@ itcl::class Editor& {
 	set script ""
 	set prefix "file_dialog"
 	set save_open "open"
-	set multiple 0
 	set initialdir ""
 	set extensions ""
 	set initialfile ""
@@ -2425,9 +2393,6 @@ itcl::class Editor& {
 		}
 	    "-save_open" {
 		    set save_open ${val}
-		}
-	    "-multiple" {
-		    set multiple ${val}
 		}
 	    "-initialdir" -
 	    "-dir" {
@@ -2499,7 +2464,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    } else {
 		set f [tk_getOpenFile \
@@ -2508,7 +2472,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    }
 	} else {
@@ -2542,11 +2505,7 @@ itcl::class Editor& {
 
 	#store last accessed directory
 	if {${f} != ""} {
-	    if {${multiple}} {
-		set ff [lindex ${f} 0]
-	    } else {
-		set ff ${f}
-	    }
+	    set ff ${f}
 	    catch {set last_accessed_dir [file dirname ${ff}]}
 	}
 
@@ -2928,6 +2887,7 @@ itcl::class Editor& {
 	$itk_component(editor) tag del sel
 	#mark new inserted text
 	$itk_component(editor) tag add sel ${fpos} ${epos}
+        $itk_component(editor) tag raise sel
 
 	#see last inserted character
 	$itk_component(editor) see insert
@@ -3008,6 +2968,7 @@ itcl::class Editor& {
 		#mark or goto first character
 		if {${mrk}} {
 		    ${w} tag add sel "insert linestart" "insert lineend + 1c"
+                    ${w} tag raise sel
 		} else {
 		    #goto line, move the insert cursor to first printable
 		    #character in the line
@@ -3030,6 +2991,7 @@ itcl::class Editor& {
 			set rng [${w} tag prevrange ${nm} "insert+1c"]
 			if {${mrk}} {
 			    eval ${w} tag add sel ${rng}
+                            ${w} tag raise sel
 			}
 			break
 		    }
@@ -3037,6 +2999,7 @@ itcl::class Editor& {
 
 		if {${mrk} && !${fnd}} {
 		    ${w} tag add sel "insert wordstart" "insert wordend"
+                    ${w} tag raise sel
 		}
 	    }
 	}
@@ -3254,11 +3217,8 @@ itcl::class Editor& {
     method SetTitle {} {
 	global sn_options sn_root
 
-	#toplevel window
-	set win [winfo toplevel $itk_component(editor)]
+	${topw} configure -title [Title] -iconname [Icon]
 
-	wm title ${win} [Title]
-	wm iconname ${win} [Icon]
 	set lines 0
 	scan [$itk_component(editor) index "end-1c"] %d lines
 
@@ -3314,19 +3274,25 @@ itcl::class Editor& {
 	    }
 	}
 
-	if {[::info commands paf_db_f] != ""} {
-	    set highfile [paf_db_f get \
-	        -key -col {0 2} $itk_option(-filename)]
-	} else {
-	    set highfile ""
-	}
+        # Checking the database for a highlight file is commented
+        # out since the parsers should never write into the database
+        # directly. If in the future we can pass the -h flag to a
+        # normal parse operation, we could revisit this issue.
 
-	set grp [lindex ${highfile} 0]
+	#if {[::info commands paf_db_f] != ""} {
+	#    set highfile [paf_db_f get \
+	#        -key -col {0 2} $itk_option(-filename)]
+	#} else {
+	#    set highfile ""
+	#}
+        #
+	#set grp [lindex ${highfile} 0]
+        set grp [sn_get_file_type $itk_option(-filename)]
 
 	if {[lsearch \
 	    -exact $sn_options(sys,builtin-highlighting) ${grp}] != -1} {
 	    global sn_text_highlight_group
-	    ::set sn_text_highlight_group($itk_component(editor)) ${grp}
+	    set sn_text_highlight_group($itk_component(editor)) ${grp}
 
 	    sn_log "Highlighting -delall \"$itk_option(-filename)\", group \"${grp}\""
 
@@ -3335,78 +3301,100 @@ itcl::class Editor& {
 	    return
 	}
 
-	set highfile [lindex ${highfile} 1]
+	#set highfile [lindex ${highfile} 1]
 
 	#verify if the file is modified (modified status)
 	set mod [is_fileModified $itk_option(-filename)]
 
-	if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
-	    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
-	    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
-		bgerror ${err}
-	    }
-	    if {$sn_options(def,edit-xref-highlight)} {
-		catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
-	    }
-	    return
-	}
+	#if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
+	#    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
+	#    sn_delete_editor_tags $itk_component(editor)
+	#    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
+	#	bgerror ${err}
+	#    }
+	#    if {$sn_options(def,edit-xref-highlight)} {
+	#	catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
+	#    }
+	#    return
+	#}
 
 	set highcmd [sn_highlight_browser $itk_option(-filename) "h"]
 	if {${highcmd} == ""} {
+            # When the source code browser does not support highlighting
+            # the symbols parsed from the file are still highlighted, so
+            # just delete any tags currently in the editor.
+	    sn_delete_editor_tags $itk_component(editor)
+
 	    sn_log "Empty highlighter command for \"$itk_option(-filename)\""
 	    return
 	}
 
-	set outf [sn_tmpFileName]
-	lappend highcmd \
-	    -s ${outf}
+        set files_to_delete [list]
 
-	if {!${mod}} {
-	    lappend highcmd \
-	        -n $sn_options(db_files_prefix) $itk_option(-filename)
-	}
+        set outf [sn_tmpFileName]
+        lappend highcmd -s $outf
+        lappend files_to_delete $outf
+
+        set errf [sn_tmpFileName]
+        lappend files_to_delete $errf
+
+        if {${mod}} {
+	    # FIXME: It is not really clear why this logic is needed
+            # since we only highlight when opening, saving, or reverting.
+
+            # When a file has been modified outside the IDE, save
+            # the editor contents into a tmp file and highlight that.
+            set savef [sn_tmpFileName]
+            set fd [open ${savef} w]
+            fconfigure ${fd} \
+                -encoding $sn_options(def,system-encoding) \
+                -blocking 0
+            puts -nonewline ${fd} [$itk_component(editor) get 1.0 end]
+            close ${fd}
+
+            lappend highcmd $savef
+            lappend files_to_delete $savef
+        } else {
+            lappend highcmd $itk_option(-filename)
+        }
 
 	sn_log "Highlighter: ${highcmd}"
 
-	if {${mod}} {
-	    $itk_component(editor) tag remove key 1.0 end
-	    $itk_component(editor) tag remove rem 1.0 end
-	    if {[catch {eval exec \
-		    -- ${highcmd} << {[$editor get 1.0 end]}} err]} {
+	if {[catch {eval exec -- ${highcmd} 2>$errf} err]} {
 		bgerror ${err}
 		return
-	    }
-	} else {
-	    if {[catch {eval exec \
-		    -- ${highcmd}} err]} {
-		bgerror ${err}
-		return
-	    }
 	}
 
-	if {!${mod}} {
-	    set highfile [paf_db_f get \
-	        -key -col [list 2] $itk_option(-filename)]
-	} else {
-	    set highfile ${outf}
-	}
+        if {[file exists $errf] && [file size $errf] > 0} {
+            set fd [open $errf r]
+            fconfigure ${fd} \
+                -encoding $sn_options(def,system-encoding) \
+                -blocking 0
+            set data [read -nonewline ${fd} [file size $errf]]
+            close $fd
+            sn_log "highlight cmd stderr was : $data"
+        }
 
-	# It might happen, that the highlighting filename could
-	# not be inserted into thet database.
-	if {${highfile} == ""} {
-	    set fd [open ${outf}]
-	    fconfigure ${fd} \
-	        -encoding $sn_options(def,system-encoding) \
-	        -blocking 0
-	    set highfile [gets ${fd}]
-	    close ${fd}
-	    # Lets mark it for delete.
-	    lappend outf ${highfile}
-	}
+	#if {!${mod}} {
+	#    set highfile [paf_db_f get \
+	#        -key -col [list 2] $itk_option(-filename)]
+	#} else {
+	#    set highfile ${outf}
+	#}
 
-	sn_log "Loading: ${highfile}"
+	set fd [open ${outf}]
+	fconfigure ${fd} \
+	    -encoding $sn_options(def,system-encoding) \
+	    -blocking 0
+	set highfile [gets ${fd}]
+	close ${fd}
+
+        lappend files_to_delete ${highfile}
+
+	sn_log "Loading Highlight File: ${highfile}"
 
 	if {${highfile} != ""} {
+	    sn_delete_editor_tags $itk_component(editor)
 	    if {[catch {Sn_Highlight_Text $itk_component(editor) ${highfile}} err]} {
 		bgerror ${err}
 	    }
@@ -3416,13 +3404,14 @@ itcl::class Editor& {
 	    catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
 	}
 
-	if {[info exists env(TMP)] && [file dirname ${highfile}] != $env(TMP)} {
-	    lappend outf ${highfile}
-	}
+	#if {[info exists env(TMP)] && [file dirname ${highfile}] != $env(TMP)} {
+	#    lappend files_to_delete ${highfile}
+	#}
 
 	if {!${sn_debug}} {
-	    file delete \
-	        -- ${outf}
+            foreach file $files_to_delete {
+                file delete -- $file
+            }
 	}
     }
 
@@ -3630,7 +3619,9 @@ itcl::class Editor& {
 
 	#verify if we stay on a symbol declaration/implementaion
 	set pos_tags ""
-	foreach tg [$itk_component(editor) tag names ${idx}] {
+	set tmp_tags [$itk_component(editor) tag names ${idx}]
+	#sn_log "insert cursor tags : $tmp_tags"
+	foreach tg $tmp_tags {
 	    if {[string first " " ${tg}] != -1} {
 		#tags like "symbol scope"
 		lappend pos_tags ${tg}
@@ -3721,7 +3712,7 @@ itcl::class Editor& {
 	    set last_line_col [lindex [split [$editor index sel.last] \
 	      "."] end]
 	    if {${last_line_col} == "0"} {
-		::set tkPriv(selectMode) "line"
+		set tkPriv(selectMode) "line"
 		set end [$editor index "sel.last -1c"]
 	    } else {
 		set end [$editor index "sel.last lineend"]
@@ -3759,6 +3750,7 @@ itcl::class Editor& {
 	#reset some tags
 	$editor tag remove sel 0.0 end
 	$editor tag add sel ${beg} "${end} lineend + 1c"
+        $editor tag raise sel
 	set ypos [expr [lindex [split ${pos} "."] 0] - 1]
 	$editor yview ${ypos}
 
@@ -3797,7 +3789,8 @@ itcl::class Editor& {
 	    }
 	}
 
-	if {${print_dialog} != ""} {
+	if {${print_dialog} != "" &&
+	        [itcl::find object ${print_dialog}] == ${print_dialog}} {
 	    itcl::delete object ${print_dialog}
 	}
 
@@ -3825,6 +3818,8 @@ itcl::class Editor& {
 
 	if {$tcl_platform(platform) != "windows"} {
 	    upvar #0 ${print_dialog}-cmd cmd
+	    # Escape [] and $ in user input for eval in sn_print_file
+	    regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 	} else {
 	    set cmd ide_winprint
 	}
@@ -3841,13 +3836,14 @@ itcl::class Editor& {
 	global sn_options
 	global tcl_platform
 
-	set print_dialog "[winfo toplevel ${t}].printdlg"
+	set topl [winfo toplevel ${t}]
+	set print_dialog "${topl}.printdlg"
 
 	if {$tcl_platform(platform) == "windows"} {
 	    upvar #0 ${print_dialog}-ptarget target
 
 	    #default print all when no selection
-	    ::set target "all"
+	    set target "all"
 
 	    #if selection availiable ask to print selection only
 	    if {! [catch {set lst [${t} get sel.first sel.last]}] && ${lst} \
@@ -3860,7 +3856,7 @@ itcl::class Editor& {
 		    return
 		}
 		if {${answer} == 1} {
-		    ::set target "marked"
+		    set target "marked"
 		}
 	    }
 	    Editor&::print_file ${print_dialog} ${t}
@@ -3871,7 +3867,7 @@ itcl::class Editor& {
 	    ${print_dialog} raise
 	    return
 	}
-	set topl [winfo toplevel ${t}]
+
 	set print_dialog [sourcenav::Window ${print_dialog} \
 	    -leader ${t}]
 
@@ -3884,13 +3880,8 @@ itcl::class Editor& {
 
 	global ${print_dialog}-ptarget ${print_dialog}-cmd
 	set ${print_dialog}-ptarget "all"
-	set tit [wm title ${topl}]
-	regsub \
-	    -all {\*} ${tit} "" tit
-	regsub \
-	    -all {\[} ${tit} {\\[} tit
-	regsub \
-	    -all {\]} ${tit} {\\]} tit
+
+	set tit [${topl} cget -title]
 	set ${print_dialog}-cmd [format $sn_options(def,ascii-print-command) \
 	  ${tit}]
 	${print_dialog} configure -title [list [get_indep String Print] ${tit}]
@@ -3941,7 +3932,8 @@ itcl::class Editor& {
 
     method filter {{all 0}} {
 	if {$itk_option(-symbols) != ""} {
-	    $itk_option(-symbols) configure -contents [read_filetags ${all}]
+	    $itk_option(-symbols) configure -contents \
+	        [lsort -command sn_compare [read_filetags ${all}]]
 	}
     }
 
@@ -3967,7 +3959,7 @@ itcl::class Editor& {
 	#a long time
 	if {$itk_option(-symbols_filter) != ""} {
 	    upvar #0 $itk_option(-symbols_filter)-related related
-	    ::set related 1
+	    set related 1
 	}
 	DispModified
 	GetFileTags 0 ""
@@ -3987,7 +3979,7 @@ itcl::class Editor& {
 
     method Focus_In {} {
 	global last_Editor
-	::set last_Editor ${this}
+	set last_Editor ${this}
 
         if {$itk_option(-linenumber_var) != ""} {
 	    set $itk_option(-linenumber_var) [$itk_component(editor) index insert]
@@ -4514,7 +4506,8 @@ itcl::class Editor& {
 	    -fg $sn_options(def,edit-fg) \
 	    -bg $sn_options(def,edit-bg) \
 	    -selectforeground $sn_options(def,select-fg) \
-	    -selectbackground $sn_options(def,select-bg)
+	    -selectbackground $sn_options(def,select-bg) \
+	    -insertbackground $sn_options(def,edit-fg)
 
 	# Actual tab size.
 	set_tabsize $itk_component(editor)
@@ -4612,8 +4605,8 @@ itcl::class Editor& {
     itk_option define -file_changed file_changed File_Changed 0
     public variable highlight y
     itk_option define -findcombo findcombo Findcombo ""
-    #for readonly-projects
-    public variable topw ""
+
+    protected variable topw
     
     private variable edit_SearchNoCase
     private variable edit_SearchMethod
@@ -4651,4 +4644,142 @@ proc sn_edit_file {symbol file {line ""} {search 1} {state ""}} {
     return ${ret}
 }
 
+# This function will take a list of file symbol info retrieved from the
+# database and insert tags into the text widget. Two tags can be
+# applied for each element in the list. For example, an input of
+# {# global1 gv 000001.000 1.10 1.0 1.5} would apply the tag
+# "global1 gv" to the range 1.0 -> 1.10 and the tag "gv" to the
+# range 1.0 -> 1.5. The "gv" tag is used for highlight colors in the
+# editor and the tag "global1 gv" is used when looking up the symbol
+# under the cursor. The display list of symbols is sorted so that
+# classes and functions are under other symbols like variables.
+# This is needed so that the correct symbol shows up when the
+# cursor is moved over a symbol.
 
+proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
+    global sn_options
+
+    # Insert a couple of temporary tags to help sort
+    # the display order of tags. This is needed so
+    # that global vars appear higher in the display
+    # order than classes or functions, for example.
+    $textwidget tag add type_point 1.0
+    $textwidget tag add name_point 1.0
+
+    foreach tags $tags_list {
+        # format <class symbol type line.col line.col line.col line.col>
+        if {[llength $tags] < 7} {
+            continue
+        }
+        set class [lindex $tags 0]
+        set symbol [lindex $tags 1]
+        set type [lindex $tags 2]
+
+        # The first index integers can be zero padded
+        scan [lindex $tags 3] "%d.%d" one two
+        set beg "$one.$two"
+
+        set end [lindex $tags 4]
+        set pair [split $end "."]
+        set end_line [lindex $pair 0]
+        set end_col [lindex $pair 1]
+
+        set high_beg [lindex $tags 5]
+
+        set high_end [lindex $tags 6]        
+        set pair [split $high_end "."]
+        set high_end_line [lindex $pair 0]
+        set high_end_col [lindex $pair 1]
+
+        # skip tag, if it is on the ignored tag list
+        if {[lsearch -exact $exclude_list $type] != -1} {
+            continue
+        }
+
+        if {$high_end_line >= $end_line && $high_end_col >= $end_col} {
+            set end $high_end_line.$high_end_col
+        }
+
+        if {$class == "#"} {
+            set tag_poi "$symbol $type"
+        } else {
+            set tag_poi "$class $symbol $type"
+        }
+
+        $textwidget tag add $tag_poi $beg $end
+        # Move tags like classes and functions lower in the
+        # display list than the other tags we just added.
+        switch -exact $type {
+            "cl" -
+            "mi" -
+            "fu" -
+            "ma" {
+                $textwidget tag lower $tag_poi name_point
+            }
+        }
+
+	# Access variables from the sn_options array. This
+	# variable is defined in sninit.tcl
+
+        if {[info exists sn_options(def,color_$type)]} {
+            $textwidget tag add $type $high_beg $high_end
+        }
+    }
+
+    # Move the tags used for highlight color to a location
+    # in the display list that is just before all the tags
+    # we just inserted.
+    foreach type {cl mi fu ma} {
+        if {[$textwidget tag range $type] != {}} {
+            $textwidget tag lower $type type_point
+        }
+    }
+    $textwidget tag delete type_point
+    $textwidget tag delete name_point
+
+    return
+}
+
+# When a parser is invoked with the -h option, it
+# creates a highlight file which is read in by
+# this method.
+
+proc Sn_Highlight_Text { textwidget highfile } {
+    global sn_options
+
+    set fd [open $highfile r]
+    fconfigure $fd \
+        -encoding $sn_options(def,encoding) \
+        -blocking 0
+
+    set data [read $fd [file size $highfile]]
+    close $fd
+
+    foreach line [split $data \n] {
+        # format <num tag beg_pos end_pos>
+        if {[llength $line] != 4} {
+            continue
+        }
+        $textwidget tag add [lindex $line 1] \
+                            [lindex $line 2] \
+                            [lindex $line 3]
+    }
+}
+
+# Delete all the symbol tags in the editor.
+# Tags liks "gv" are not deleted, the
+# ranges that they apply to are removed.
+
+proc sn_delete_editor_tags { textwidget } {
+    foreach tag [$textwidget tag names] {
+        if {[string first " " $tag] != -1} {
+            # A symbol tag like "global1 gv"
+            $textwidget tag delete $tag
+        } elseif {$tag == "sel"} {
+            # Ignore the sel tag
+        } else {
+            # A tag like "gv"
+            $textwidget tag remove $tag 1.0 end
+        }
+    }
+}

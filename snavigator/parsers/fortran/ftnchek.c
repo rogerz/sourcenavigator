@@ -51,12 +51,15 @@ MA 02111-1307, USA.
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#ifdef __MSVC__
-#define	MAXPATHLEN _MAX_PATH
-typedef	unsigned int pid_t;
-#else
+
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
-#endif /* WIN32 */
+#endif
+
+#if defined(__MSVC__)
+#define	MAXPATHLEN _MAX_PATH
+#endif /* __MSVC__ */
+
 #define MAIN
 #include "ftnchek.h"
 #include <tcl.h>
@@ -220,6 +223,7 @@ int      highlight;
 
 #include <tcl.h>
 #include "sn.h"
+#include "parser.h"
 
 /* Tcl encoding to translate from. The default (when equal to NULL) is
    to do no translation. */
@@ -234,49 +238,41 @@ static	int
 log_symbol_filename(FILE *fp, char *fname)
 {
   char	*outfile = NULL;
-  
-  if (hig_fp)
+
+  if (fname == NULL) {
+    fprintf(stderr, "log_symbol_filename called with NULL filename\n");
+    exit(1);
+  }
+
+  if (yyin) {
+    fclose(yyin);
+  }
+  yyin = fopen(fname,"r");
+  if (!yyin) {
+    fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",fname,errno);
+    return 1;
+  }
+
+  if (highlight)
     {
-      fclose(hig_fp);
-      hig_fp = NULL;
-    }
-  
-  if (fname && freopen(fname,"r",stdin) == NULL)
-    {
-      printf("Error: unable to open file \"%s\",errno: %d\n",fname,errno);
-      fflush(stdout);
-      return 1;
-    }
-  
-  if (fname)
-    {
-      if (highlight)
+      if (hig_fp)
+        {
+          fclose(hig_fp);
+	  hig_fp = NULL;
+	}
+	
+	outfile = Paf_tempnam(NULL,"hf");
+	if (fp)
 	{
-	  outfile = Paf_tempnam(NULL,"hf");
-	  if (fp)
-	    {
-	      fprintf(fp,"%s\n",outfile);
-	    }
+	  fprintf(fp,"%s\n",outfile);
+	}
 	  
-	  hig_fp = fopen(outfile,"w+");
-	}
-      /* print filename only */
-      printf("%s...\n",fname);
-      fflush(stdout);
+	hig_fp = fopen(outfile,"w+");
     }
-  else
-    {
-      if (highlight)
-	{
-	  hig_fp = (fp) ? fp : stdout;
-	}
-    }
+  put_status_parsing_file(fname); 
   
 #ifndef NO_DATABASE
-  if (fname)
-    {
-      put_file(fname,group,outfile);
-    }
+  put_file(fname,group,outfile);
 #endif
   
   return 0;
@@ -303,14 +299,8 @@ main(int argc, char *argv[])
    	FILE    *include_fp = NULL;
 	char	*cross_ref_file = NULL;
 	char	tmp[500];
-	char	*pipe_cmd = NULL;
-	char	*cachesize = NULL;
-	pid_t	pid = 0;
 	char	dirname[MAXPATHLEN];
-	char	*db_prefix = NULL;
 	char	*incl_to_pipe = NULL;
-	char	*sn_host = NULL;
-	char	*sn_pid = NULL;
 
 	dirname[0] = '\0';
 
@@ -340,7 +330,7 @@ main(int argc, char *argv[])
 	/* Character set encoding (as defined by Tcl). */
 	Tcl_FindExecutable(argv[0]);
 
-	while ((iarg = getopt(argc,argv,"e:s:n:hy:I:g:p:c:i:ltx:CrH:O:P:w:"))
+	while ((iarg = getopt(argc,argv,"e:s:n:hy:I:g:i:ltx:Cr:O:w:"))
 	       != EOF)
 	  {
 	    switch (iarg)
@@ -354,13 +344,13 @@ main(int argc, char *argv[])
 		break;
 		
 	      case 'n':
-		db_prefix = optarg;
+		/* FIXME: Remove db prefix option later */
 		break;
 		
 	      case 'e':
 		if ((encoding = Tcl_GetEncoding(NULL, optarg)) == NULL)
 		  {
-		    printf("Unable to locate `%s' encoding\n", optarg);
+		    fprintf(stderr, "Unable to locate `%s' encoding\n", optarg);
 		    return 1;
 		  }
 		break;
@@ -371,6 +361,11 @@ main(int argc, char *argv[])
 		
 	      case 'y':
 		list_fp = fopen(optarg,"r");
+		if (!list_fp) {
+		    fprintf(stderr, "Could not open: \"%s\", %s\n",
+		            optarg, strerror(errno));
+		    exit(2);
+		}
 		break;
 		
 	      case 'I':
@@ -381,24 +376,8 @@ main(int argc, char *argv[])
 		group = optarg;
 		break;
 		
-	      case 'p':
-		pipe_cmd = optarg;
-		break;
-		
-	      case 'c':
-		cachesize = optarg;
-		break;
-		
 	      case 'i':
 		incl_to_pipe = optarg;
-		break;
-		
-	      case 'H':
-		sn_host = optarg;
-		break;
-		
-	      case 'P':
-		sn_pid = optarg;
 		break;
 		
 	      case 'x':
@@ -440,25 +419,17 @@ main(int argc, char *argv[])
 
 	if (optind < argc || list_fp)
 	{
-		if (pipe_cmd)
-		{
-			pid = Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
-				cachesize,sn_host,sn_pid);
-		}
-#ifndef NO_DATABASE
-		else
-			Paf_db_init_tables(db_prefix,cachesize,NULL);
-#endif
+		Paf_Pipe_Create(incl_to_pipe);
+
 		if (cross_ref_file)
 		{
 			if (!(cross_ref_fp = fopen(cross_ref_file,"a")))
 			{
-				printf("Error: (open) \"%s, errno: %d\"\n",cross_ref_file,errno);
+				fprintf(stderr, "Error: (open) \"%s, errno: %d\"\n",cross_ref_file,errno);
 				exit(1);
 			}
 		}
 
-		input_fd = stdin;
 		if (list_fp)
 		{
 			while (fgets(tmp,sizeof(tmp) -1,list_fp))
@@ -488,15 +459,16 @@ main(int argc, char *argv[])
 		}
 		empty_comments();
 	}
-	else if (highlight && optind == argc)		/* Just highlight */
-	{
-		input_fd = stdin;
-		log_symbol_filename(out_fp,NULL);
-		src_file_in(NULL);
+	else	{
+		fprintf(stderr, "-y or file name required\n");
+		exit(1);
 	}
 
 	if (cross_ref_fp)
 		fclose(cross_ref_fp);
+
+	if (yyin)
+		fclose(yyin);
 
 	if (out_fp)
 		fclose(out_fp);

@@ -75,8 +75,6 @@ extern int      Ttk_Init (Tcl_Interp *interp);
 int
 fill_file_tree(ClientData clientData,Tcl_Interp *interp,int argc,char **argv);
 
-int sn_db_create_symbol_tags(ClientData clientData,Tcl_Interp *interp,int argc,Tcl_Obj *CONST objv[]);
-
 int sn_db_format_qry(ClientData clientData,Tcl_Interp *interp,int argc,Tcl_Obj *CONST objv[]);
 
 int tk_trim_text_index(ClientData clientData,Tcl_Interp *interp,int argc,char **argv);
@@ -146,7 +144,11 @@ sn_log(ClientData clientData, Tcl_Interp *interp,int argc,char **argv)
 		{
 			for (argv++; argc-- > 1; argv++)
 			{
-				fprintf (stderr, "%s", *argv);
+				Tcl_DString sys;
+				Tcl_DStringInit(&sys);
+				Tcl_UtfToExternalDString(NULL, *argv, -1, &sys);
+				fprintf (stderr, "%s", Tcl_DStringValue(&sys));
+				Tcl_DStringFree(&sys);
 			}
 			fprintf(stderr,"\n");
 		}
@@ -155,10 +157,14 @@ sn_log(ClientData clientData, Tcl_Interp *interp,int argc,char **argv)
 
 	for (argv++; argc-- > 1; argv++)
 	{
-		LOGGER((LOGFP,"%s",*argv));
+		Tcl_DString sys;
+		Tcl_DStringInit(&sys);
+		Tcl_UtfToExternalDString(NULL, *argv, -1, &sys);
+		LOGGER((LOGFP,"%s",Tcl_DStringValue(&sys)));
 #if !_WINDOWS
-		fprintf(stderr,"%s",*argv);
+		fprintf(stderr,"%s",Tcl_DStringValue(&sys));
 #endif /* !_WINDOWS */
+		Tcl_DStringFree(&sys);
 	}
 #if !_WINDOWS
 	fprintf(stderr,"\n");
@@ -351,7 +357,7 @@ isfileused(ClientData clientData,Tcl_Interp *interp,int argc,char **argv)
   Tcl_DStringFree(&nativeName);
   if (fd == INVALID_HANDLE_VALUE)
     {
-      sprintf(tmp,"%d",GetLastError());
+      sprintf(tmp,"%d",(int)GetLastError());
       LOGGER((LOGFP,"CreateFile for <%s> error: %s\n",filename,tmp));
       
       Tcl_AppendResult(interp, tmp, (char *) NULL);
@@ -392,10 +398,6 @@ sn_init_mycommands(Tcl_Interp *interp,ClientData main_win)
 		(Tcl_CmdProc *)tk_trim_text_index,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
-	Tcl_CreateCommand(interp, "Sn_Highlight_Text",
-		(Tcl_CmdProc *)Sn_Highlight_Text,
-		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
-
 	Tcl_CreateCommand(interp, "Sn_Syntax_Highlight",
 		(Tcl_CmdProc *)Sn_Syntax_Highlight,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -418,10 +420,6 @@ sn_init_mycommands(Tcl_Interp *interp,ClientData main_win)
 
 	Tcl_CreateObjCommand(interp, "sn_db_format_qry",
 		(Tcl_ObjCmdProc *)sn_db_format_qry,
-		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
-
-	Tcl_CreateObjCommand(interp, "sn_db_create_symbol_tags",
-		(Tcl_ObjCmdProc *)sn_db_create_symbol_tags,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
 	Tcl_CreateObjCommand(interp, "sn_compare",
@@ -952,7 +950,6 @@ Sn_setup_Init(Tcl_Interp *interp)		/* Interpreter for application. */
 	char	old_auto_path[2000];
 #if _WINDOWS
 	char	*null_dev = "NULL:";
-	char	cwd_str[255];
 #else
 	char	*null_dev = "/dev/null";
 #endif /* _WINDOWS */

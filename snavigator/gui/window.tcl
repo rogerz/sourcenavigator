@@ -355,15 +355,9 @@ itcl::class sourcenav::Window {
         #$this withdraw
         update idletasks
 
-        set h [winfo height $itk_component(hull)]
-        set w [winfo width $itk_component(hull)]
+        set w [winfo reqwidth $itk_component(hull)]
+        set h [winfo reqheight $itk_component(hull)]
 
-        if {${h} <= 20} {
-            set h [winfo reqheight $itk_component(hull)]
-        }
-        if {${w} <= 10} {
-            set w [winfo reqwidth $itk_component(hull)]
-        }
         set sw [winfo screenwidth $itk_component(hull)]
         set sh [winfo screenheight $itk_component(hull)]
 

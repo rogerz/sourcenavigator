@@ -77,6 +77,7 @@ MA 02111-1307, USA.
 #   define CONST
 #endif
 
+#undef EXTERN
 #ifdef __cplusplus
 #   define EXTERN extern "C"
 #else
@@ -107,7 +108,6 @@ EXTERN void Tcl_XListInit _ANSI_ARGS_((Tcl_Interp *interp));
 EXTERN int  Itcl_Init _ANSI_ARGS_((Tcl_Interp *interp));
 EXTERN int Tcl_InfoCmd _ANSI_ARGS_((ClientData cli, Tcl_Interp *in, int argc, char **argv));
 
-EXTERN int Sn_Highlight_Text _ANSI_ARGS_((ClientData cli, Tcl_Interp *in, int argc, char **argv));
 EXTERN int brace_balance _ANSI_ARGS_((ClientData cli, Tcl_Interp *in, int argc, char **argv));
 #endif /* _TCL */
 

@@ -131,18 +131,38 @@ proc sn_delete_project {prjname {ask ""}} {
         }
 
         #check wether the database is locked
-        set ret [sn_is_project_busy ${prjname} in user host port]
+        set ret [sn_is_project_busy ${prjname} in user host port pid]
+# FIXME: This would allow the delete of locked project files!
         set ret 0
+
         switch -- ${ret} {
-            "me" -
-            "busy" {
-                    sn_error_dialog [format [get_indep String PafProjBusy]\
-                      ${prjname} ${user}]
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${user} ${prjname} ${host}]
                     set ret 1
-                }
+            }
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        ${prjname}]
+                    set ret 1
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        ${prjname} ${pid}] 
+                    set ret 1
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${user} ${prjname} ${pid}]
+                    set ret 1
+            }
             "error" {
-                    #ignore error
-                }
+                    # ignore error
+            }
         }
 
         #project can't be deleted
@@ -304,7 +324,7 @@ proc sn_new_project_cb {{t ""}} {
     #create the project
     set ret [sn_create_new_project $sn_arguments(import-file)]
     if {${ret} == 0 || ${ProcessingCancelled}} {
-        if {${ret} == 0} {
+        if {${ret} == 0 && ![sn_batch_mode]} {
             # If a half-created project is sitting around, delete it!
             if {[file exists $sn_options(sys,project-file)]} {
                 sn_delete_project $sn_options(sys,project-file)
@@ -541,7 +561,13 @@ proc sn_select_project {{waiting "wait"}} {
 
     bind ${f}.projs <Return> $return_binding
     bind ${f}.projs <space> $return_binding
-    bind ${f}.projs <Double-1> "${t}.btns.open invoke; break"
+
+    # Wait for ButtonRelease before invoking the open button.
+    # Otherwise the ButtonRelease event will be lost and it will appear
+    # as if Button-1 is being held down once the project is opened.
+ 
+    bind ${f}.projs <Double-1> "bind $f.projs <ButtonRelease-1>\
+                                \"${t}.btns.open invoke; break\";update; break"
     bind ${f}.projs <Escape> "${t}.btns.exit invoke; break"
 
     grid $f.projs -row 1 -column 1 -sticky news

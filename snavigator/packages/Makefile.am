@@ -28,6 +28,6 @@ packages = eventutils snscenario
 install-data-local:
 	for i in $(packages); \
 	    do \
-		mkdir -p $(progdir)/$$i ;\
-		cp -p $(srcdir)/$$i/*.tcl $(progdir)/$$i; \
+		mkdir -p $(DESTDIR)$(progdir)/$$i ;\
+		cp -p $(srcdir)/$$i/*.tcl $(DESTDIR)$(progdir)/$$i; \
 	    done;

@@ -21,9 +21,14 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/db \
+INCLUDES = $(WINFLAGS) \
+	-I$(top_srcdir)/hyper \
+	-I$(top_srcdir)/parsers/common \
+	-I$(top_srcdir)/db \
+	-I$(top_srcdir)/misc \
+	-I$(top_srcdir)/misc/libutils \
 	$(TCLHDIR)
-	
+
 noinst_LIBRARIES = libcpp2.a
 
 libcpp2_a_SOURCES = cp_argument.c cp_class.c cp_crossref.c \

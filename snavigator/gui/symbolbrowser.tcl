@@ -41,16 +41,15 @@ itcl_class SymBr& {
             wm geometry  $itk_component(hull) [expr int(${width})]x[expr\
               int(${height})]+${x}+${y}
         } else {
-            set height [expr [winfo screenheight .] *\
-              $sn_options(def,window-size) / 100]
-            set width [expr [winfo screenwidth .] / 3]
+            set height [expr {int([winfo screenheight .] *
+                ($sn_options(def,window-size)*0.01))}]
+            set width [expr {int([winfo screenwidth .] / 3)}]
             if {${width} < 300} {
                 set width 300
-            }\
-            elseif {${width} > 450} {
+            } elseif {${width} > 450} {
                 set width 450
             }
-            wm geometry  $itk_component(hull) [expr int(${width})]x[expr int(${height})]
+            wm geometry $itk_component(hull) ${width}x${height}
         }
 
         set Toolbar $itk_component(hull).exp

@@ -30,7 +30,7 @@ snavigator_LDFLAGS = $(WIN32LDAPP)
 snavigator_LDADD = snavres.$(OBJEXT) $(WIN32LIBS)
 snsdk_SOURCES = winCon.c
 snsdk_LDADD = $(WIN32LIBS)
-snsdk_CFLAGS =  -DAPPNAME=\"..\\bin\\hyper.exe\"
+snsdk_CFLAGS =  -DAPPNAME=\"..\\\\bin\\\\hyper.exe\"
 
 winCon.$(OBJEXT): winCon.c
 	$(COMPILE) $(snsdk_CFLAGS) -c $<

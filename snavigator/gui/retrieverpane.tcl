@@ -209,10 +209,10 @@ itcl::class Retr& {
         foreach sc ${sn_scopes} {
             global ${this}-sc-${sc}
             if {[::info commands paf_db_${sc}] != "" && ${mode} == "retr"} {
-                ::set ${this}-sc-${sc} ${sc}
+                set ${this}-sc-${sc} ${sc}
                 set ScopesFilter(${sc}) ${sc}
             } else {
-                ::set ${this}-sc-${sc} ""
+                set ${this}-sc-${sc} ""
                 set ScopesFilter(${sc}) ""
             }
         }
@@ -221,11 +221,11 @@ itcl::class Retr& {
         global ${this}-sc-files
         if {${mode} == "symbr"} {
             upvar #0 ${this}-exclusive excl
-            ::set excl 1
-            ::set ${this}-sc-files "files"
+            set excl 1
+            set ${this}-sc-files "files"
             set ScopesFilter(files) "files"
         } else {
-            ::set ${this}-sc-files ""
+            set ${this}-sc-files ""
             set ScopesFilter(files) ""
         }
     }
@@ -237,10 +237,10 @@ itcl::class Retr& {
             global ${this}-sc-${sc}
             if {[lsearch -exact ${scopes} ${sc}] != -1 && [::info commands\
               paf_db_${sc}] != ""} {
-                ::set ${this}-sc-${sc} ${sc}
+                set ${this}-sc-${sc} ${sc}
                 set ScopesFilter(${sc}) ${sc}
             } else {
-                ::set ${this}-sc-${sc} ""
+                set ${this}-sc-${sc} ""
                 set ScopesFilter(${sc}) ""
             }
         }
@@ -249,10 +249,10 @@ itcl::class Retr& {
         global ${this}-sc-files
         if {[lsearch -exact ${scopes} files] != -1 && [::info commands\
           paf_db_f] != ""} {
-            ::set ${this}-sc-files "files"
+            set ${this}-sc-files "files"
             set ScopesFilter(files) "files"
         } else {
-            ::set ${this}-sc-files ""
+            set ${this}-sc-files ""
             set ScopesFilter(files) ""
         }
     }
@@ -269,10 +269,10 @@ itcl::class Retr& {
 
             foreach sc ${sn_scopes} {
                 global ${this}-sc-${sc}
-                ::set ${this}-sc-${sc} ""
+                set ${this}-sc-${sc} ""
             }
             global ${this}-sc-files
-            ::set ${this}-sc-files ""
+            set ${this}-sc-files ""
         } else {
             if {[winfo exists ${srchbtn}]} {
                 ${srchbtn} config -state normal
@@ -296,16 +296,16 @@ itcl::class Retr& {
         foreach sc ${sn_scopes} {
             global ${this}-sc-${sc}
             if {${sc} != ${scope}} {
-                ::set ${this}-sc-${sc} ""
+                set ${this}-sc-${sc} ""
             } else {
-                ::set ${this}-sc-${sc} ${sc}
+                set ${this}-sc-${sc} ${sc}
             }
         }
         global ${this}-sc-files
         if {${scope} != "files"} {
-            ::set ${this}-sc-files ""
+            set ${this}-sc-files ""
         } else {
-            ::set ${this}-sc-files files
+            set ${this}-sc-files files
         }
 
         #execute search every time the filter is changed
@@ -385,16 +385,16 @@ itcl::class Retr& {
             set s [convert_scope_to_str ${sc}]
             set i [convert_scope_to_num ${sc}]
             global ${this}-sc-${sc}
-            ::set ${this}-sc-${sc} ${sc}
+            set ${this}-sc-${sc} ${sc}
             if {[::info commands paf_db_${sc}] != ""} {
                 if {![info exists ScopesFilter(${sc})]} {
-                    ::set ${this}-sc-${sc} ${sc}
+                    set ${this}-sc-${sc} ${sc}
                 } else {
-                    ::set ${this}-sc-${sc} $ScopesFilter(${sc})
+                    set ${this}-sc-${sc} $ScopesFilter(${sc})
                 }
                 set state normal
             } else {
-                ::set ${this}-sc-${sc} ""
+                set ${this}-sc-${sc} ""
                 set state disabled
             }
             checkbutton ${chkfr}.${sc} -text ${s} -underline ${i}\
@@ -404,9 +404,9 @@ itcl::class Retr& {
         }
         global ${this}-sc-files
         if {![info exists ScopesFilter(files)]} {
-            ::set ${this}-sc-files ""
+            set ${this}-sc-files ""
         } else {
-            ::set ${this}-sc-files $ScopesFilter(files)
+            set ${this}-sc-files $ScopesFilter(files)
         }
         checkbutton ${chkfr}.files -text [get_indep String Files]\
           -underline [get_indep Pos Files] -variable ${this}-sc-files\
@@ -563,6 +563,8 @@ itcl::class Retr& {
         display_contents ${this}.list [read_matched_from_db ${this}.list\
           ${scopes} -glob ${pat}]
 
+        ${this}.list sort_refresh
+
         #delete cancel button, if availiable
         Delete_Cancel_Dialog
 
@@ -602,19 +604,28 @@ itcl::class Retr& {
     }
 
     method handle_all_none {prefix all} {
+        global sn_scopes
         upvar #0 ${this}-exclusive excl
-        ::set excl 0
+        set excl 0
         ${this}-mixer.button_0 config -state normal
-        foreach v [::info globals ${prefix}-*] {
+        foreach sc ${sn_scopes} {
             if {${all}} {
-                set sc [string range ${v} [expr [string last "-" ${v}] + 1] end]
-                if {[::info commands paf_db_${sc}] == ""} {
-                    set sc ""
+                if {[info commands paf_db_${sc}] == ""} {
+                    set val ""
+                } else {
+                    set val ${sc}
                 }
             } else {
-                set sc ""
+                set val ""
             }
-            uplevel #0 "set ${v} [list ${sc}]"
+            set ::${prefix}-${sc} ${val}
+        }
+
+        # Note: The "files" option is not selected by all but
+        # it is deselected by none.
+
+        if {!$all} {
+            set ::${prefix}-files ""
         }
     }
 
@@ -639,7 +650,7 @@ itcl::class Retr& {
         global sn_options
         upvar #0 ${this}-pattern ptrn
         if {${ptrn} == ""} {
-            ::set ptrn "*"
+            set ptrn "*"
         }
         set t [string trimright ${Retr_Title} "."]
         if {${mode} != "symbr" && ${ptrn} != ""} {
@@ -655,8 +666,7 @@ itcl::class Retr& {
         return [sn_view_icon ${Retr_Title}]
     }
     method SetTitle {} {
-        catch {[winfo toplevel $itk_component(hull)] title [Title]}
-        [winfo toplevel $itk_component(hull)] configure -iconname [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     method print {} {
@@ -829,7 +839,7 @@ itcl::class Retr& {
         upvar #0 ${this}-pattern pattern
         upvar #0 ${this}-exclusive excl
         if {![info exists excl]} {
-            ::set excl 0
+            set excl 0
         }
         set scopes [retriever_what_to_qry ${this}]
 
@@ -842,8 +852,8 @@ itcl::class Retr& {
         upvar #0 ${this}-pattern pattern
         upvar #0 ${this}-exclusive excl
 
-        ::set pattern [lindex ${str} 0]
-        ::set excl [lindex ${str} 2]
+        set pattern [lindex ${str} 0]
+        set excl [lindex ${str} 2]
 
         set scopes [lindex ${str} 1]
         RestoreScopes ${scopes}
@@ -878,7 +888,7 @@ itcl::class Retr& {
     }
 
     protected variable searchbtn ""
-    protected variable topw "."
+    protected variable topw
     protected variable tree ""
     protected variable treew ""
     protected variable ScopesFilter
@@ -899,7 +909,7 @@ itcl::class Retr& {
     public variable pattern "" {
         if {[winfo exists ${this}.pattern.e]} {
             global ${this}-pattern
-            ::set ${this}-pattern ${pattern}
+            set ${this}-pattern ${pattern}
         }
     }
 

@@ -113,21 +113,21 @@ AC_DEFUN(CY_AC_BERKELEY_DB,
   if test x$result = xyes
   then
     case $type in
-	int8_t)		AC_DEFINE(HAVE_INT8_T)
+	int8_t)		AC_DEFINE(HAVE_INT8_T,,[Define if int8_t and friends are in <sys/types.h>.])
 			;;
-	u_int8_t)	AC_DEFINE(HAVE_UINT8_T)
+	u_int8_t)	AC_DEFINE(HAVE_UINT8_T,,[Define if u_int8_t is defined in <sys/types.h>.])
 			;;
-	int16_t)	AC_DEFINE(HAVE_INT16_T)
+	int16_t)	AC_DEFINE(HAVE_INT16_T,,[Define if int16_t and friends are in <sys/types.h>.])
 			;;
-	u_int16_t)	AC_DEFINE(HAVE_UINT16_T)
+	u_int16_t)	AC_DEFINE(HAVE_UINT16_T,,[Define if u_int16_t and friends are in <sys/types.h>.])
 			;;
-	int32_t)	AC_DEFINE(HAVE_INT32_T)
+	int32_t)	AC_DEFINE(HAVE_INT32_T,,[Define if int32_t and friends are in <sys/types.h>.])
 			;;
-	u_int32_t)	AC_DEFINE(HAVE_UINT32_T)
+	u_int32_t)	AC_DEFINE(HAVE_UINT32_T,,[Define if u_int32_t and friends are in <sys/types.h>.])
 			;;
-	int64_t)	AC_DEFINE(HAVE_INT64_T)
+	int64_t)	AC_DEFINE(HAVE_INT64_T,,[Define if int64_t and friends are in <sys/types.h>.])
 			;;
-	u_int64_t)	AC_DEFINE(HAVE_UINT64_T)
+	u_int64_t)	AC_DEFINE(HAVE_UINT64_T,,[Define if u_int64_t and friends are in <sys/types.h>.])
 			;;
 	*)		AC_MSG_ERROR([this should never happen])
 			;;
@@ -282,13 +282,4 @@ else
   $1_TRUE='#'
   $1_FALSE=
 fi])
-
-
-dnl AM_PROG_LEX
-dnl Look for flex, lex or missing, then run AC_PROG_LEX and AC_DECL_YYTEXT
-AC_DEFUN(AM_PROG_LEX,
-[missing_dir=ifelse([$1],,`cd $ac_aux_dir && pwd`,$1)
-AC_CHECK_PROGS(LEX, flex lex, "$missing_dir/missing flex")
-AC_PROG_LEX
-AC_DECL_YYTEXT])
 

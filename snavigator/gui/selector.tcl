@@ -55,7 +55,7 @@ itcl_class Selector& {
               -padx 2 -pady 2
 
             focus ${direct_ent}
-            ::set ${this}-e-name ${advised}
+            set ${this}-e-name ${advised}
             ${this} direct_ent select range 0 end
         }
 
@@ -93,7 +93,7 @@ itcl_class Selector& {
     method set_selection {} {
         if {${direct_ent} != ""} {
             global ${this}-e-name
-            ::set ${this}-e-name [${this} marked]
+            set ${this}-e-name [${this} marked]
             ${direct_ent} selection range 0 end
         }
 
