@@ -27,6 +27,7 @@ srcdir = @srcdir@
 prefix      = @prefix@
 exec_prefix = @exec_prefix@
 TIX_VERSION = @TIX_VERSION@
+DESTDIR = 
 
 @SET_MAKE@
 
@@ -474,52 +475,52 @@ sa-tests: $(TIX_SAMEXE_FILE)
 _install_: $(TIX_LIB_FILE) $(TIX_EXE_FILE) $(SAM_INSTALL)
 	@for i in $(LIB_DIR) $(BIN_DIR) ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
-	@echo "Installing $(TIX_LIB_FILE) as $(LIB_DIR)/$(TIX_LIB_FILE)"
-	@$(INSTALL_DATA) $(TIX_LIB_FILE) $(LIB_DIR)/$(TIX_LIB_FILE)
-	@echo "Installing $(TIX_EXE_FILE) as $(BIN_DIR)/$(INST_EXE)"
-	@$(INSTALL_PROGRAM) $(TIX_EXE_FILE) $(BIN_DIR)/$(INST_EXE)
+	@echo "Installing $(TIX_LIB_FILE) as $(DESTDIR)$(LIB_DIR)/$(TIX_LIB_FILE)"
+	@$(INSTALL_DATA) $(TIX_LIB_FILE) $(DESTDIR)$(LIB_DIR)/$(TIX_LIB_FILE)
+	@echo "Installing $(TIX_EXE_FILE) as $(DESTDIR)$(BIN_DIR)/$(INST_EXE)"
+	@$(INSTALL_PROGRAM) $(TIX_EXE_FILE) $(DESTDIR)$(BIN_DIR)/$(INST_EXE)
 
 _install_sam_exe_: $(SAM_TARGETS)
 	@for i in $(LIB_DIR) $(BIN_DIR) ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
-	@echo "Installing $(TK_SAM_FILE) as $(LIB_DIR)/$(TK_SAM_FILE)"
-	@$(INSTALL_DATA) $(TK_SAM_FILE) $(LIB_DIR)/$(TK_SAM_FILE)
-	@echo "Installing $(TCL_SAM_FILE) as $(LIB_DIR)/$(TCL_SAM_FILE)"
-	@$(INSTALL_DATA) $(TCL_SAM_FILE) $(LIB_DIR)/$(TCL_SAM_FILE)
+	@echo "Installing $(TK_SAM_FILE) as $(DESTDIR)$(LIB_DIR)/$(TK_SAM_FILE)"
+	@$(INSTALL_DATA) $(TK_SAM_FILE) $(DESTDIR)$(LIB_DIR)/$(TK_SAM_FILE)
+	@echo "Installing $(TCL_SAM_FILE) as $(DESTDIR)$(LIB_DIR)/$(TCL_SAM_FILE)"
+	@$(INSTALL_DATA) $(TCL_SAM_FILE) $(DESTDIR)$(LIB_DIR)/$(TCL_SAM_FILE)
 	@echo ""
-	@echo "Installing $(TIX_SAMEXE_FILE) as $(BIN_DIR)/$(INST_TIX_SAMEXE)"
-	@$(INSTALL_PROGRAM) $(TIX_SAMEXE_FILE) $(BIN_DIR)/$(INST_TIX_SAMEXE)
-	@echo "Installing $(TK_SAMEXE_FILE) as $(BIN_DIR)/$(INST_TK_SAMEXE)"
-	@$(INSTALL_PROGRAM) $(TK_SAMEXE_FILE) $(BIN_DIR)/$(INST_TK_SAMEXE)
-	@echo "Installing $(TCL_SAMEXE_FILE) as $(BIN_DIR)/$(INST_TCL_SAMEXE)"
-	@$(INSTALL_PROGRAM) $(TCL_SAMEXE_FILE) $(BIN_DIR)/$(INST_TCL_SAMEXE)
+	@echo "Installing $(TIX_SAMEXE_FILE) as $(DESTDIR)$(BIN_DIR)/$(INST_TIX_SAMEXE)"
+	@$(INSTALL_PROGRAM) $(TIX_SAMEXE_FILE) $(DESTDIR)$(BIN_DIR)/$(INST_TIX_SAMEXE)
+	@echo "Installing $(TK_SAMEXE_FILE) as $(DESTDIR)$(BIN_DIR)/$(INST_TK_SAMEXE)"
+	@$(INSTALL_PROGRAM) $(TK_SAMEXE_FILE) $(DESTDIR)$(BIN_DIR)/$(INST_TK_SAMEXE)
+	@echo "Installing $(TCL_SAMEXE_FILE) as $(DESTDIR)$(BIN_DIR)/$(INST_TCL_SAMEXE)"
+	@$(INSTALL_PROGRAM) $(TCL_SAMEXE_FILE) $(DESTDIR)$(BIN_DIR)/$(INST_TCL_SAMEXE)
 
 _install_sam_lib_: $(SAM_TARGETS)
 	@for i in $(LIB_DIR) $(BIN_DIR) ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
-	@echo "Installing $(TIX_SAM_FILE) as $(LIB_DIR)/$(TIX_SAM_FILE)"
-	@$(INSTALL_DATA) $(TIX_SAM_FILE) $(LIB_DIR)/$(TIX_SAM_FILE)
+	@echo "Installing $(TIX_SAM_FILE) as $(DESTDIR)$(LIB_DIR)/$(TIX_SAM_FILE)"
+	@$(INSTALL_DATA) $(TIX_SAM_FILE) $(DESTDIR)$(LIB_DIR)/$(TIX_SAM_FILE)
 
 
 install: _install_

@@ -20,6 +20,7 @@
 
 prefix      =	@prefix@
 exec_prefix =	@exec_prefix@
+DESTDIR =
 
 @SET_MAKE@
 
@@ -117,7 +118,7 @@ install-binaries::
 	        echo "Entering directory $$i"; \
 	        cd $$i; \
 	        $(MAKE) prefix=$(prefix) \
-		    exec_prefix=$(exec_prefix) _install_; \
+		    exec_prefix=$(exec_prefix) DESTDIR=$(DESTDIR) _install_; \
 	        cd ..; \
             fi; \
 	done;
@@ -131,73 +132,73 @@ install-basic:: install-libraries install-headers install-demos \
 install-tools:
 	@for i in $(BIN_DIR) ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
 	@echo "installing the tixindex program for building tclIndex for Tix scripts"
-	@cd $(TOOLS_DIR); $(INSTALL_PROGRAM) tixindex $(BIN_DIR)/tixindex
+	@cd $(TOOLS_DIR); $(INSTALL_PROGRAM) tixindex $(DESTDIR)$(BIN_DIR)/tixindex
 
 install-headers:
 	@for i in $(INCLUDE_DIR); \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
 	@for i in $(INC_DIR)/tix.h; \
 	    do \
 	    echo "Installing $$i"; \
-	    $(INSTALL_DATA) $$i $(INCLUDE_DIR); \
+	    $(INSTALL_DATA) $$i $(DESTDIR)$(INCLUDE_DIR); \
 	    done;
 
 install-libraries:
 	@for i in $(TIX_LIBRARY) $(TIX_LIBRARY)/bitmaps $(TIX_LIBRARY)/pref; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
 	@for i in $(LIBRARY_DIR)/*.tcl $(LIBRARY_DIR)/tclIndex; \
 	    do \
 	    echo "Installing $$i"; \
-	    $(INSTALL_DATA) $$i $(TIX_LIBRARY); \
+	    $(INSTALL_DATA) $$i $(DESTDIR)$(TIX_LIBRARY); \
 	    done;
 	@for i in $(LIBRARY_DIR)/bitmaps/* .gif $(LIBRARY_DIR)/bitmaps/*.x*m; \
 	    do \
 	    if [ -f $$i ] ; then \
 		echo "Installing $$i"; \
-		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/bitmaps; \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(TIX_LIBRARY)/bitmaps; \
 		fi; \
 	    done;
 	@for i in $(LIBRARY_DIR)/pref/*.f* $(LIBRARY_DIR)/pref/*.c* $(LIBRARY_DIR)/pref/tixmkpref; \
 	    do \
 	    if [ -f $$i ] ; then \
 		echo "Installing $$i"; \
-		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/pref; \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(TIX_LIBRARY)/pref; \
 		fi; \
 	    done;
 	@echo "Installing pkgIndex.tcl"
 	@cat */pkgIndex.tcl > pkgIndex.tcl
-	@$(INSTALL_DATA) pkgIndex.tcl $(TIX_LIBRARY)
+	@$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(TIX_LIBRARY)
 
 install-demos:
 	@for i in $(prefix)/lib $(TIX_LIBRARY) $(TIX_LIBRARY)/demos \
 		$(TIX_LIBRARY)/demos/bitmaps $(TIX_LIBRARY)/demos/samples ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
@@ -206,35 +207,35 @@ install-demos:
 	    if [ -f $$i ] ; then \
 		echo "Installing demos/$$i"; \
 		sed -e '1 s|/usr/local/bin/tixwish|$(BIN_DIR)/tixwish|' \
-			$$i > $(TIX_LIBRARY)/demos/$$i; \
+			$$i > $(DESTDIR)$(TIX_LIBRARY)/demos/$$i; \
 	    fi; \
 	    done;
 	@for i in $(DEMO_PROGS); \
 	    do \
-	    chmod 755 $(TIX_LIBRARY)/demos/$$i; \
+	    chmod 755 $(DESTDIR)$(TIX_LIBRARY)/demos/$$i; \
 	    done;
 	@for i in $(DEMOS_DIR)/bitmaps/*; \
 	    do \
 	    if [ -f $$i ] ; then \
 		echo "Installing $$i"; \
-		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/demos/bitmaps; \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(TIX_LIBRARY)/demos/bitmaps; \
 		fi; \
 	    done;
 	@for i in $(DEMOS_DIR)/samples/*; \
 	    do \
 	    if [ -f $$i ] ; then \
 		echo "Installing $$i"; \
-		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/demos/samples; \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(TIX_LIBRARY)/demos/samples; \
 		fi; \
 	    done;
 
 install-man:
 	@for i in $(MAN_DIR) $(MAN1_DIR) $(MAN3_DIR) $(MANN_DIR) ; \
 	    do \
-	    if [ ! -d $$i ] ; then \
+	    if [ ! -d $(DESTDIR)$$i ] ; then \
 		echo "Making directory $$i"; \
-		mkdir $$i; \
-		chmod 755 $$i; \
+		mkdir $(DESTDIR)$$i; \
+		chmod 755 $(DESTDIR)$$i; \
 		else true; \
 		fi; \
 	    done;
@@ -243,8 +244,8 @@ install-man:
 	    echo "Installing doc/$$i"; \
 	    rm -f $(MANN_DIR)/$$i; \
 	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
-		    $$i > $(MANN_DIR)/$$i; \
-	    chmod 444 $(MANN_DIR)/$$i; \
+		    $$i > $(DESTDIR)$(MANN_DIR)/$$i; \
+	    chmod 444 $(DESTDIR)$(MANN_DIR)/$$i; \
 	    done;
 
 # CYGNUS LOCAL: install-minimal target.
