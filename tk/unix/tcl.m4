@@ -1422,8 +1422,9 @@ AC_DEFUN(SC_PATH_X, [
 	fi
     fi
     if test "$XINCLUDES" = nope; then
-	AC_MSG_RESULT(couldn't find any!)
-	XINCLUDES="# no include files found"
+	dnl AC_MSG_RESULT(couldn't find any!)
+	dnl XINCLUDES="# no include files found"
+        AC_MSG_ERROR([X include files could not be found, you may need to install them. Some broken Red Hat systems fail to install the XFree86 devel RPM, so check that first.])
     fi
 
     if test "$no_x" = yes; then

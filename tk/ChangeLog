@@ -1,3 +1,9 @@
+2003-09-13  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/configure: Regen.
+	* unix/tcl.m4 (SC_PATH_X): Error out in the
+	configure if no X11 includes can be found.
+
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/Makefile.in: Remove evil rerun of autoconf.
