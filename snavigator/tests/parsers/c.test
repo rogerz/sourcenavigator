@@ -1,0 +1,33 @@
+source testutil.tcl
+
+tcltest::test var-1.0 { var declaration } {
+    browse [save_file f.c {
+int foo;
+}]
+} {Status: Parsing: f.c
+PAF_FILE;f.c;c++<>
+PAF_GLOB_VAR_DEF;foo<>000002.004<>f.c;2.7<>0x0<>{int}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.c<>000002.004<>#<>foo<>gv;2.7<>2.4<>2.7<>{}
+}
+
+# FIXME: The function range should start at 2.0 not 2.5!
+
+tcltest::test function-1.0 { function declaration } {
+    browse [save_file f.c {
+void foo();
+}]
+} {Status: Parsing: f.c
+PAF_FILE;f.c;c++<>
+PAF_FUNC_DCL;foo<>000002.005<>f.c;2.8<>0x0<>{void}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.c<>000002.005<>#<>foo<>fd;2.10<>2.5<>2.8<>{}
+}
+
+tcltest::test function-1.1 { function definition } {
+    browse [save_file f.c {
+void foo() {}
+}]
+} {Status: Parsing: f.c
+PAF_FILE;f.c;c++<>
+PAF_FUNC_DEF;foo<>000002.005<>f.c;2.8<>0x0<>{void}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.c<>000002.005<>#<>foo<>fu;2.13<>2.5<>2.8<>{}
+}

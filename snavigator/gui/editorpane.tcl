@@ -4081,13 +4081,36 @@ itcl::class Editor& {
 	}
 
 	if {${related}} {
+	    #sn_log "editor tag dump:"
+	    #foreach tag [$itk_component(editor) tag names] {
+	    #    if {[$itk_component(editor) tag ranges $tag] == {}} {continue}
+	    #    sn_log "tag \"$tag\" ranges are\
+	    #        \{[$itk_component(editor) tag ranges $tag]\}"
+	    #}
+
 	    #get ranges with the specified scope
 	    set tg "${name} ${scope}"
-	    set pos [$itk_component(editor) tag ranges ${tg}]
-	    set len [llength ${pos}]
-	    #there are two tags (first,end) with the same name
-	    set pos [lindex ${pos} [expr {${off} * 2}]]
+	    set sym_ranges [$itk_component(editor) tag ranges ${tg}]
+	    # If multiple text ranges are returned, use the
+	    # offset to get the correct range
+	    set first_off [expr {$off * 2}]
+	    set last_off [expr {$first_off + 1}]
+	    set sym_range_start [lindex $sym_ranges $first_off]
+	    set sym_range_end [lindex $sym_ranges $last_off]
+	    sn_log "goto: sym_range for \{$tg\} is\
+	            \{$sym_range_start $sym_range_end\}"
+	    # Find the highlight range inside the symbol range.
+	    # If no highlight is found in the symbol range, use
+	    # the symbol start index (keeps older parsers working)
+	    set high_range [$itk_component(editor) tag nextrange \
+	        ${scope} $sym_range_start $sym_range_end]
+	    if {[llength $high_range] > 0} {
+	        set pos [lindex $high_range 0]
+	    } else {
+	        set pos $sym_range_start
+	    }
 
+	    sn_log "goto: start index for $tg is $pos"
 	    SetFondPos ${pos} 0 0
 	} else {
 	    set pos ""

@@ -201,7 +201,7 @@ AC_DEFUN([MACRO], [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.21<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.21<>2.10<>2.15<>{}
 }
 
@@ -211,7 +211,7 @@ AU_DEFUN([MACRO], [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.21<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.21<>2.10<>2.15<>{}
 }
 
@@ -221,7 +221,7 @@ m4_define([MACRO], [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.22<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
 }
 
@@ -231,7 +231,7 @@ AC_DEFUN(MACRO, [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.19<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.009<>f.m4;2.14<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.19<>2.9<>2.14<>{}
 }
 
@@ -241,7 +241,7 @@ AC_DEFUN( MACRO, [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.20<>2.10<>2.15<>{}
 }
 
@@ -251,7 +251,7 @@ AC_DEFUN( [MACRO], [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.22<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
 }
 
@@ -261,7 +261,7 @@ AC_DEFUN(MACRO , [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.009<>f.m4;2.14<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.20<>2.9<>2.14<>{}
 }
 
@@ -271,7 +271,7 @@ AC_DEFUN([MACRO] , [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.22<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.10<>2.15<>{}
 }
 
@@ -281,7 +281,7 @@ AC_DEFUN(	[MACRO], [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.22<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
 }
 
@@ -291,7 +291,7 @@ AC_DEFUN([MACRO]	, [])
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;2.22<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.10<>2.15<>{}
 }
 
@@ -303,7 +303,7 @@ AC_DEFUN([MACRO], [
 }]
 } {Status: Parsing: f.m4
 PAF_FILE;f.m4;m4<>
-PAF_FUNC_DEF;MACRO<>000002.000<>f.m4;4.2<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;4.2<>2.10<>2.15<>{}
 }
 

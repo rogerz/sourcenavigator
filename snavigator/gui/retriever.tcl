@@ -880,7 +880,7 @@ proc read_matched_from_db {cls what mtype {pattern ""} {type ""} {param ""}\
                     if {[info commands paf_db_fil] != ""} {
                         set res [paf_db_fil seq -updatecommand retr_update\
                           -col [list "3 \(" "4 \)\\t" "2 \\t\\t\(" "8 \)\\t"\
-                          "0 \\t" "1 \\t" "5"] "${file}${sn_sep}"]
+                          "0 \\t" "6 \\t" "7"] "${file}${sn_sep}"]
                     } else {
                         set res ""
                     }

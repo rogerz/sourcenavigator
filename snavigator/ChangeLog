@@ -1,3 +1,38 @@
+2003-07-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (goto): When looking up
+	the line and column position of a symbol in
+	the editor, first search for symbol and
+	then for the highlight marker. This will
+	select the region defined as the highlight
+	range instead of where the symbols starts.
+	Older parsers that start a symbol where
+	the highlight starts will still work.
+	* gui/retriever.tcl (read_matched_from_db):
+	When reading the symbols from a file, return
+	the highlight range instead of the symbol
+	start range. This fixes a bug where a symbol
+	in a file gets clicked on in the symbol browser,
+	but the highlight range would not get selected
+	in the editor.
+	* parsers/common/parser.c (put_symbol): When
+	writing a symbol table entry (like fu, cl, mi)
+	use the highlight range instead of the whole
+	symbol range. This fixes a bug in the retriever
+	where a symbol gets clicked on but the highlight
+	range is not selected.
+	* tests/parsers/c.test: Add new test file with
+	a couple of C regression tests.
+	* tests/parsers/m4.test:
+	* tests/parsers/php.test: Update regression tests
+	to account for change where highlight range is
+	inserted into a specific symbol table instead of
+	the entire symbol range.
+
+2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Add SN-post-doc-merge-2003-07-19 tag.
+
 2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* doc/html/Makefile.am: Replace cygnus1.css

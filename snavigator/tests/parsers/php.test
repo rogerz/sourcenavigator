@@ -619,7 +619,7 @@ function foo() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
 }
 
@@ -630,7 +630,7 @@ function bar() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000002.003<>f.php;2.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000002.012<>f.php;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000002.003<>#<>foo<>fu;2.20<>2.12<>2.15<>{}
 }
 
@@ -641,7 +641,7 @@ function bar() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.003<>f.php;3.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.012<>f.php;3.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>foo<>fu;3.20<>3.12<>3.15<>{}
 }
 
@@ -654,9 +654,9 @@ function bar2() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo1<>000003.003<>f.php;3.21<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo1<>000003.012<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>foo1<>fu;3.21<>3.12<>3.16<>{}
-PAF_FUNC_DEF;foo2<>000005.003<>f.php;5.21<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo2<>000005.012<>f.php;5.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.003<>#<>foo2<>fu;5.21<>5.12<>5.16<>{}
 }
 
@@ -668,7 +668,7 @@ function foo() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
 }
 
@@ -678,7 +678,7 @@ tcltest::test mode-2.5 { php mode } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000002.003<>f.php;2.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000002.012<>f.php;2.15<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000002.003<>#<>foo<>fu;2.20<>2.12<>2.15<>{}
 }
 
@@ -710,7 +710,7 @@ $var=1;$var=1; function foo() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.015<>f.php;3.32<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.024<>f.php;3.27<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.015<>#<>foo<>fu;3.32<>3.24<>3.27<>{}
 }
 
@@ -722,7 +722,7 @@ $var;$var=1; function foo() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.013<>f.php;3.30<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.022<>f.php;3.25<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.013<>#<>foo<>fu;3.30<>3.22<>3.25<>{}
 }
 
@@ -737,7 +737,7 @@ $var = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
 }
 
@@ -752,7 +752,7 @@ print $var;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
 }
 
@@ -769,7 +769,7 @@ $var = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
@@ -783,7 +783,7 @@ print $var;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
@@ -1489,7 +1489,7 @@ function foo() { /* no-op */ }
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.30<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.30<>3.9<>3.12<>{}
 }
 
@@ -1891,7 +1891,7 @@ function foo() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
 }
 
@@ -1904,7 +1904,7 @@ function foo() {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;4.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.1<>3.9<>3.12<>{}
 }
 
@@ -1918,7 +1918,7 @@ foo() {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000004.000<>f.php;4.3<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>4.0<>4.3<>{}
 }
 
@@ -1933,7 +1933,7 @@ foo()
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000004.000<>f.php;4.3<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>4.0<>4.3<>{}
 }
 
@@ -1946,7 +1946,7 @@ function foo
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.5<>3.9<>3.12<>{}
 }
 
@@ -1958,7 +1958,7 @@ tcltest::test function-1.5 { function definition } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;stop_go<>000003.002<>f.php;3.23<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;stop_go<>000003.011<>f.php;3.18<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>stop_go<>fu;3.23<>3.11<>3.18<>{}
 }
 
@@ -1972,7 +1972,7 @@ function foo() {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
@@ -1986,7 +1986,7 @@ function foo($arg1) {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.22<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.22<>3.9<>3.12<>{}
 }
 
@@ -1998,7 +1998,7 @@ function foo($arg1,$arg2) {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.28<>0x0<>{}<>{}<>{arg1,arg2}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1,arg2}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.28<>3.9<>3.12<>{}
 }
 
@@ -2010,7 +2010,7 @@ function foo($arg1 = "default") {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.34<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.34<>3.9<>3.12<>{}
 }
 
@@ -2022,7 +2022,7 @@ function foo($arg1 = "default", $arg2=1, $arg3 = 'default') {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.62<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.62<>3.9<>3.12<>{}
 }
 
@@ -2035,7 +2035,7 @@ function foo(&$arg1) {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;3.23<>0x0<>{}<>{}<>{arg1}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.23<>3.9<>3.12<>{}
 }
 
@@ -2050,7 +2050,7 @@ function foo(
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;6.10<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.10<>3.9<>3.12<>{}
 }
 
@@ -2146,7 +2146,7 @@ function foo() \{
 "]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;5.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.0<>3.9<>3.12<>{}
 }
 
@@ -2172,11 +2172,11 @@ f2.php
     set results
 } {Status: Parsing: f1.php
 PAF_FILE;f1.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f1.php;5.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f1.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f1.php<>000003.000<>#<>foo<>fu;5.0<>3.9<>3.12<>{}
 Status: Parsing: f2.php
 PAF_FILE;f2.php;php<>
-PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;bar<>000003.009<>f2.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
@@ -2192,11 +2192,11 @@ function foo() {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;baz<>000005.008<>f.php;5.25<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;baz<>000005.017<>f.php;5.20<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.008<>#<>baz<>fu;5.25<>5.17<>5.20<>{}
-PAF_FUNC_DEF;bar<>000005.008<>f.php;6.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;bar<>000004.013<>f.php;4.16<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.008<>#<>bar<>fu;6.5<>4.13<>4.16<>{}
-PAF_FUNC_DEF;foo<>000004.004<>f.php;7.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000004.004<>#<>foo<>fu;7.1<>3.9<>3.12<>{}
 }
 
@@ -2210,9 +2210,9 @@ function bar() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;bar<>000005.000<>f.php;5.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;bar<>000005.009<>f.php;5.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>bar<>fu;5.17<>5.9<>5.12<>{}
-PAF_FUNC_DEF;foo<>000005.000<>f.php;7.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>foo<>fu;7.0<>3.9<>3.12<>{}
 }
 
@@ -2582,11 +2582,11 @@ f2.php
     set results
 } {Status: Parsing: f1.php
 PAF_FILE;f1.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f1.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;foo<>000003.009<>f1.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f1.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
 Status: Parsing: f2.php
 PAF_FILE;f2.php;php<>
-PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FUNC_DEF;bar<>000003.009<>f2.php;3.12<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
