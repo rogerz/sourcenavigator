@@ -1,3 +1,12 @@
+2002-05-28  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Don't subst install/Makefile
+ 	since it no longer exists.
+	* mkdist.sh: Use 5.1a2 as tar ball name.
+	No need to make a zip file since we require
+	Cygwin to do the build.
+
 2002-05-19  Mo DeJong  <supermo@bayarea.net>
 
 	* etc/english.txt.in: Add GrepCanceledString,
