@@ -1,3 +1,8 @@
+2003-04-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* patches/tix_sam.patch: Add patch to fix Tix
+	install time problem with sam lib.
+
 2003-03-30  Steven Johnson  <sjohnson@neurizon.net>
 
 	*  gui/editorpane.tcl (Update_Layout): Set the cursor
