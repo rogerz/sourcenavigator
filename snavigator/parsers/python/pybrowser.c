@@ -407,7 +407,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 1 "pybrowser.l"
 #define INITIAL 0
 /* -*- c -*- */
 /*
@@ -432,7 +432,7 @@ the Free Software Foundation, 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 */
-#line 26 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 26 "pybrowser.l"
 /*
  * pybrowser.l
  *
@@ -625,7 +625,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 67 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 67 "pybrowser.l"
 
 
 
@@ -713,7 +713,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 69 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 69 "pybrowser.l"
 {
     sn_advance_column (3);
     parse_triple((int)'"');
@@ -721,7 +721,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 74 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 74 "pybrowser.l"
 {
     sn_advance_column (3);
     parse_triple((int)'\'');
@@ -729,7 +729,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 79 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 79 "pybrowser.l"
 {
     int ofs;
     char *p;
@@ -777,7 +777,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 124 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 124 "pybrowser.l"
 {
     int ofs;
     char *p, *super;
@@ -821,17 +821,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 165 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 165 "pybrowser.l"
 { var_or_const (SN_CONS_DEF); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 167 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 167 "pybrowser.l"
 { var_or_const (SN_GLOB_VAR_DEF); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 169 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 169 "pybrowser.l"
 {
    sn_advance_line();
    sn_reset_column();
@@ -839,12 +839,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 174 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 174 "pybrowser.l"
 { sn_advance_column(yyleng); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 176 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 176 "pybrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1734,7 +1734,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 176 "/share/SN51/src/snavigator/parsers/python/pybrowser.l"
+#line 176 "pybrowser.l"
 
 struct stack {
     int indent;

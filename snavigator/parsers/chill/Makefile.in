@@ -395,7 +395,9 @@ bisongen:
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > lexer.c $(LFLAGS) $(srcdir)/lexer.l
+	cp $(srcdir)/lexer.l .
+	$(LEX) -t $(LFLAGS) lexer.l > $(srcdir)/lexer.c
+	rm lexer.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

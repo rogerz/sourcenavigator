@@ -41,4 +41,7 @@ m4browser_DEPENDENCIES = $(common)/libcommon.a \
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > m4browser.c $(LFLAGS) $(srcdir)/m4browser.l
+	cp $(srcdir)/m4browser.l .
+	$(LEX) -t $(LFLAGS) m4browser.l > $(srcdir)/m4browser.c
+	rm m4browser.l
+

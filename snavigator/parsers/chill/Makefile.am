@@ -50,4 +50,7 @@ bisongen:
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > lexer.c $(LFLAGS) $(srcdir)/lexer.l
+	cp $(srcdir)/lexer.l .
+	$(LEX) -t $(LFLAGS) lexer.l > $(srcdir)/lexer.c
+	rm lexer.l
+

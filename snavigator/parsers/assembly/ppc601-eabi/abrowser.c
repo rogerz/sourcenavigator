@@ -467,7 +467,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 1 "abrowser.l"
 #define INITIAL 0
 /*
 
@@ -501,7 +501,7 @@ MA 02111-1307, USA.
  * Description:
  * Lex input file for the Source-Navigator PowerPC assembly parser.
  */
-#line 36 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 36 "abrowser.l"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -741,7 +741,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 134 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 134 "abrowser.l"
 
 
 
@@ -829,12 +829,12 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 136 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 136 "abrowser.l"
 /* eat string literals */ 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 138 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 138 "abrowser.l"
 {
   for (p = yytext; !isspace(*p); sn_advance_column(1), p++);
   for (; isspace(*p); sn_advance_column(1), p++);
@@ -842,7 +842,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 143 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 143 "abrowser.l"
 {
   current_context = text;
   sn_advance_column(yyleng);
@@ -850,7 +850,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 148 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 148 "abrowser.l"
 {
   current_context = data;
   sn_advance_column(yyleng);
@@ -858,7 +858,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 153 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 153 "abrowser.l"
 {
 
   /* walk over the indentation (if any) */
@@ -886,7 +886,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 178 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 178 "abrowser.l"
 {
   for (p = yytext; !isspace(*p); sn_advance_column(1), p++);
   for (; isspace(*p); sn_advance_column(1), p++);
@@ -901,7 +901,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 190 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 190 "abrowser.l"
 {
   char * x = (char *) strstr(yytext, ",");
   char * y = x;
@@ -929,7 +929,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 215 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 215 "abrowser.l"
 {
   char * x = (char *) strstr(yytext, ",");
   char * y = x;
@@ -959,7 +959,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 242 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 242 "abrowser.l"
 {
   char * x = (char *) yytext;
 
@@ -1022,7 +1022,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 302 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 302 "abrowser.l"
 { /* we really ought to buffer up the C comment as we eat
                      characters from the input so we don't just put "blah" 
                      in the S-N project dbase ;-) */ 
@@ -1033,7 +1033,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 310 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 310 "abrowser.l"
 {
   sn_advance_line();
   sn_reset_column();
@@ -1041,19 +1041,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 315 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 315 "abrowser.l"
 ;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 317 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 317 "abrowser.l"
 {
   sn_advance_column(yyleng); 
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 321 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 321 "abrowser.l"
 {
   sn_advance_column(yyleng);
 
@@ -1065,7 +1065,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 330 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 330 "abrowser.l"
 {
   char *x;
 
@@ -1080,17 +1080,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 342 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 342 "abrowser.l"
 { sn_advance_column(yyleng); /* eat asm text */ }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 344 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 344 "abrowser.l"
 { sn_advance_line(); sn_reset_column(); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 346 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 346 "abrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1981,7 +1981,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 346 "/share/SN51/src/snavigator/parsers/assembly/ppc601-eabi/abrowser.l"
+#line 346 "abrowser.l"
 
   
 void

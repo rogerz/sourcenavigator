@@ -402,7 +402,9 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > m4browser.c $(LFLAGS) $(srcdir)/m4browser.l
+	cp $(srcdir)/m4browser.l .
+	$(LEX) -t $(LFLAGS) m4browser.l > $(srcdir)/m4browser.c
+	rm m4browser.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -43,4 +43,7 @@ pybrowser_DEPENDENCIES = \
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > pybrowser.c $(LFLAGS) $(srcdir)/pybrowser.l
+	cp $(srcdir)/pybrowser.l .
+	$(LEX) -t $(LFLAGS) pybrowser.l > $(srcdir)/pybrowser.c
+	rm pybrowser.l
+

@@ -813,7 +813,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 1 "tcl_high.l"
 #define INITIAL 0
 /*
 
@@ -839,7 +839,7 @@ MA 02111-1307, USA.
 
 
 */
-#line 27 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 27 "tcl_high.l"
 #include <ctype.h>
 
 #include "highlight.h"
@@ -1013,7 +1013,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 49 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 49 "tcl_high.l"
 
 
 
@@ -1100,10 +1100,10 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
-#line 52 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 52 "tcl_high.l"
 case 2:
 YY_RULE_SETUP
-#line 52 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 52 "tcl_high.l"
 {
     char    *p;
 
@@ -1117,7 +1117,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 63 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 63 "tcl_high.l"
 {
     lineNumber++;
     charNumber = 0;
@@ -1125,7 +1125,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 68 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 68 "tcl_high.l"
 {	    /* end of comment */
     lineNumber++;
     charNumber = 0;
@@ -1139,14 +1139,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 79 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 79 "tcl_high.l"
 {	    /* eat up everything */
     charNumber += yyleng;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 83 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 83 "tcl_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -1163,14 +1163,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 97 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 97 "tcl_high.l"
 {
     charNumber += yyleng;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 101 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 101 "tcl_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber + 2;
@@ -1183,166 +1183,166 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 9:
-#line 113 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 113 "tcl_high.l"
 case 10:
-#line 114 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 114 "tcl_high.l"
 case 11:
-#line 115 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 115 "tcl_high.l"
 case 12:
-#line 116 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 116 "tcl_high.l"
 case 13:
-#line 117 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 117 "tcl_high.l"
 case 14:
-#line 118 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 118 "tcl_high.l"
 case 15:
-#line 119 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 119 "tcl_high.l"
 case 16:
-#line 120 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 120 "tcl_high.l"
 case 17:
-#line 121 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 121 "tcl_high.l"
 case 18:
-#line 122 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 122 "tcl_high.l"
 case 19:
-#line 123 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 123 "tcl_high.l"
 case 20:
-#line 124 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 124 "tcl_high.l"
 case 21:
-#line 125 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 125 "tcl_high.l"
 case 22:
-#line 126 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 126 "tcl_high.l"
 case 23:
-#line 127 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 127 "tcl_high.l"
 case 24:
-#line 128 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 128 "tcl_high.l"
 case 25:
-#line 129 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 129 "tcl_high.l"
 case 26:
-#line 130 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 130 "tcl_high.l"
 case 27:
-#line 131 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 131 "tcl_high.l"
 case 28:
-#line 132 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 132 "tcl_high.l"
 case 29:
-#line 133 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 133 "tcl_high.l"
 case 30:
-#line 134 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 134 "tcl_high.l"
 case 31:
-#line 135 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 135 "tcl_high.l"
 case 32:
-#line 136 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 136 "tcl_high.l"
 case 33:
-#line 137 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 137 "tcl_high.l"
 case 34:
-#line 138 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 138 "tcl_high.l"
 case 35:
-#line 139 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 139 "tcl_high.l"
 case 36:
-#line 140 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 140 "tcl_high.l"
 case 37:
-#line 141 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 141 "tcl_high.l"
 case 38:
-#line 142 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 142 "tcl_high.l"
 case 39:
-#line 143 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 143 "tcl_high.l"
 case 40:
-#line 144 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 144 "tcl_high.l"
 case 41:
-#line 145 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 145 "tcl_high.l"
 case 42:
-#line 146 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 146 "tcl_high.l"
 case 43:
-#line 147 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 147 "tcl_high.l"
 case 44:
-#line 148 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 148 "tcl_high.l"
 case 45:
-#line 149 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 149 "tcl_high.l"
 case 46:
-#line 150 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 150 "tcl_high.l"
 case 47:
-#line 151 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 151 "tcl_high.l"
 case 48:
-#line 152 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 152 "tcl_high.l"
 case 49:
-#line 153 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 153 "tcl_high.l"
 case 50:
-#line 154 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 154 "tcl_high.l"
 case 51:
-#line 155 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 155 "tcl_high.l"
 case 52:
-#line 156 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 156 "tcl_high.l"
 case 53:
-#line 157 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 157 "tcl_high.l"
 case 54:
-#line 158 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 158 "tcl_high.l"
 case 55:
-#line 159 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 159 "tcl_high.l"
 case 56:
-#line 160 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 160 "tcl_high.l"
 case 57:
-#line 161 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 161 "tcl_high.l"
 case 58:
-#line 162 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 162 "tcl_high.l"
 case 59:
-#line 163 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 163 "tcl_high.l"
 case 60:
-#line 164 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 164 "tcl_high.l"
 case 61:
-#line 165 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 165 "tcl_high.l"
 case 62:
-#line 166 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 166 "tcl_high.l"
 case 63:
-#line 167 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 167 "tcl_high.l"
 case 64:
-#line 168 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 168 "tcl_high.l"
 case 65:
-#line 169 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 169 "tcl_high.l"
 case 66:
-#line 170 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 170 "tcl_high.l"
 case 67:
-#line 171 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 171 "tcl_high.l"
 case 68:
-#line 172 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 172 "tcl_high.l"
 case 69:
-#line 173 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 173 "tcl_high.l"
 case 70:
-#line 174 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 174 "tcl_high.l"
 case 71:
-#line 175 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 175 "tcl_high.l"
 case 72:
-#line 176 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 176 "tcl_high.l"
 case 73:
-#line 177 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 177 "tcl_high.l"
 case 74:
-#line 178 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 178 "tcl_high.l"
 case 75:
-#line 179 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 179 "tcl_high.l"
 case 76:
-#line 180 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 180 "tcl_high.l"
 case 77:
-#line 181 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 181 "tcl_high.l"
 case 78:
-#line 182 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 182 "tcl_high.l"
 case 79:
-#line 183 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 183 "tcl_high.l"
 case 80:
-#line 184 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 184 "tcl_high.l"
 case 81:
-#line 185 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 185 "tcl_high.l"
 case 82:
-#line 186 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 186 "tcl_high.l"
 case 83:
-#line 187 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 187 "tcl_high.l"
 case 84:
-#line 188 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 188 "tcl_high.l"
 case 85:
-#line 189 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 189 "tcl_high.l"
 case 86:
-#line 190 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 190 "tcl_high.l"
 case 87:
-#line 191 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 191 "tcl_high.l"
 case 88:
 YY_RULE_SETUP
-#line 191 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 191 "tcl_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -1356,7 +1356,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 202 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 202 "tcl_high.l"
 {
     lineNumber += yyleng;
     charNumber = 0;
@@ -1364,14 +1364,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 207 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 207 "tcl_high.l"
 {    /* eat up \. characters like \\ \" \{*/
     charNumber += yyleng;
 }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 211 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 211 "tcl_high.l"
 {
     charNumber += yyleng;
     /* drop_braces(); */
@@ -1379,7 +1379,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 216 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 216 "tcl_high.l"
 {
     braceNest++;
     charNumber += yyleng;
@@ -1387,7 +1387,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 221 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 221 "tcl_high.l"
 {
     charNumber += yyleng;
     if (--braceNest <= 0)
@@ -1396,36 +1396,36 @@ YY_RULE_SETUP
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 227 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 227 "tcl_high.l"
 {
     charNumber += yyleng;
 }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 231 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 231 "tcl_high.l"
 {
     charNumber += yyleng;
 }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 235 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 235 "tcl_high.l"
 {
 	    }
 	YY_BREAK
 case 97:
-#line 239 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 239 "tcl_high.l"
 case 98:
 YY_RULE_SETUP
-#line 239 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 239 "tcl_high.l"
 {
     charNumber += yyleng;
 }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 242 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 242 "tcl_high.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -2316,7 +2316,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 242 "/share/SN51/src/snavigator/hyper/tcl_high.l"
+#line 242 "tcl_high.l"
 
 
 static    void

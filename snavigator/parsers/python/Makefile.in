@@ -403,7 +403,9 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > pybrowser.c $(LFLAGS) $(srcdir)/pybrowser.l
+	cp $(srcdir)/pybrowser.l .
+	$(LEX) -t $(LFLAGS) pybrowser.l > $(srcdir)/pybrowser.c
+	rm pybrowser.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

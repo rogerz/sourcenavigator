@@ -41,4 +41,7 @@ sbrowser_DEPENDENCIES = \
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > sbrowser.c $(LFLAGS) $(srcdir)/sbrowser.l
+	cp $(srcdir)/sbrowser.l .
+	$(LEX) -t $(LFLAGS) sbrowser.l > $(srcdir)/sbrowser.c
+	rm sbrowser.l
+

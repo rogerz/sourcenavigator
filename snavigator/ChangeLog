@@ -1,3 +1,33 @@
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Rework flex invocations via the "make flexgen"
+	target so that generated .c files include only
+	the file name of the .l file instead of the
+	fully qualified path. Also, generate
+	the c files directly in the srcdir.
+
+	* hyper/Makefile.am:
+	* hyper/Makefile.in: Regen.
+	* hyper/c_high.c: Regen.
+	* hyper/ch_high.c: Regen.
+	* hyper/j_high.c: Regen.
+	* hyper/py_high.c: Regen.
+	* hyper/tcl_high.c: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am:
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.c: Regen.
+	* parsers/chill/Makefile.am:
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/m4/Makefile.am:
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/python/Makefile.am:
+	* parsers/python/Makefile.in: Regen.
+	* parsers/python/pybrowser.c: Regen.
+	* parsers/sendmail/Makefile.am:
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/sendmail/sbrowser.c: Regen.
+
 2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/common/parser.c (put_cross_ref):

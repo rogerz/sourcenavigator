@@ -535,7 +535,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 1 "j_high.l"
 #define INITIAL 0
 /*
 
@@ -561,7 +561,7 @@ MA 02111-1307, USA.
 
 
 */
-#line 27 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 27 "j_high.l"
 #include <ctype.h>
 
 #include "highlight.h"
@@ -727,7 +727,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 44 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 44 "j_high.l"
 
 
 
@@ -817,7 +817,7 @@ case 1:
 yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 46 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 46 "j_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -831,7 +831,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 57 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 57 "j_high.l"
 {
     int c, prev_c;
 
@@ -870,7 +870,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 93 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 93 "j_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -887,7 +887,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 107 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 107 "j_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -903,120 +903,120 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 5:
-#line 122 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 122 "j_high.l"
 case 6:
-#line 123 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 123 "j_high.l"
 case 7:
-#line 124 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 124 "j_high.l"
 case 8:
-#line 125 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 125 "j_high.l"
 case 9:
-#line 126 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 126 "j_high.l"
 case 10:
-#line 127 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 127 "j_high.l"
 case 11:
-#line 128 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 128 "j_high.l"
 case 12:
-#line 129 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 129 "j_high.l"
 case 13:
-#line 130 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 130 "j_high.l"
 case 14:
-#line 131 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 131 "j_high.l"
 case 15:
-#line 132 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 132 "j_high.l"
 case 16:
-#line 133 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 133 "j_high.l"
 case 17:
-#line 134 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 134 "j_high.l"
 case 18:
-#line 135 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 135 "j_high.l"
 case 19:
-#line 136 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 136 "j_high.l"
 case 20:
-#line 137 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 137 "j_high.l"
 case 21:
-#line 138 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 138 "j_high.l"
 case 22:
-#line 139 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 139 "j_high.l"
 case 23:
-#line 140 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 140 "j_high.l"
 case 24:
-#line 141 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 141 "j_high.l"
 case 25:
-#line 142 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 142 "j_high.l"
 case 26:
-#line 143 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 143 "j_high.l"
 case 27:
-#line 144 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 144 "j_high.l"
 case 28:
-#line 145 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 145 "j_high.l"
 case 29:
-#line 146 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 146 "j_high.l"
 case 30:
-#line 147 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 147 "j_high.l"
 case 31:
-#line 148 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 148 "j_high.l"
 case 32:
-#line 149 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 149 "j_high.l"
 case 33:
-#line 150 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 150 "j_high.l"
 case 34:
-#line 151 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 151 "j_high.l"
 case 35:
-#line 152 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 152 "j_high.l"
 case 36:
-#line 153 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 153 "j_high.l"
 case 37:
-#line 154 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 154 "j_high.l"
 case 38:
-#line 155 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 155 "j_high.l"
 case 39:
-#line 156 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 156 "j_high.l"
 case 40:
-#line 157 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 157 "j_high.l"
 case 41:
-#line 158 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 158 "j_high.l"
 case 42:
-#line 159 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 159 "j_high.l"
 case 43:
-#line 160 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 160 "j_high.l"
 case 44:
-#line 161 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 161 "j_high.l"
 case 45:
-#line 162 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 162 "j_high.l"
 case 46:
-#line 163 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 163 "j_high.l"
 case 47:
-#line 164 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 164 "j_high.l"
 case 48:
-#line 165 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 165 "j_high.l"
 case 49:
-#line 166 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 166 "j_high.l"
 case 50:
-#line 167 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 167 "j_high.l"
 case 51:
-#line 168 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 168 "j_high.l"
 case 52:
-#line 169 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 169 "j_high.l"
 case 53:
-#line 170 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 170 "j_high.l"
 case 54:
-#line 171 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 171 "j_high.l"
 case 55:
-#line 172 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 172 "j_high.l"
 case 56:
-#line 173 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 173 "j_high.l"
 case 57:
-#line 174 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 174 "j_high.l"
 case 58:
-#line 175 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 175 "j_high.l"
 case 59:
-#line 176 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 176 "j_high.l"
 case 60:
-#line 177 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 177 "j_high.l"
 case 61:
 YY_RULE_SETUP
-#line 177 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 177 "j_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -1030,7 +1030,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 188 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 188 "j_high.l"
 {
     lineNumber += yyleng;
     charNumber = 0;
@@ -1038,24 +1038,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 193 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 193 "j_high.l"
 {
 	    }
 	YY_BREAK
 case 64:
-#line 197 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 197 "j_high.l"
 case 65:
-#line 198 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 198 "j_high.l"
 case 66:
 YY_RULE_SETUP
-#line 198 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 198 "j_high.l"
 {
     charNumber += yyleng;
 }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 201 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 201 "j_high.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1943,7 +1943,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 201 "/share/SN51/src/snavigator/hyper/j_high.l"
+#line 201 "j_high.l"
 
 
 static    void

@@ -437,7 +437,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 1 "m4browser.l"
 #define INITIAL 0
 /*
 
@@ -471,7 +471,7 @@ MA 02111-1307, USA.
  * Description:
  * Lex input file for an M4 macro language processor.
  */
-#line 36 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 36 "m4browser.l"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -659,7 +659,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 77 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 77 "m4browser.l"
 
 
 
@@ -747,22 +747,22 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 79 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 79 "m4browser.l"
 { sn_advance_column(yyleng); /* eat text */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 81 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 81 "m4browser.l"
 { sn_advance_column(yyleng); /* ignore \$ */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 84 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 84 "m4browser.l"
 { sn_advance_line(); sn_reset_column(); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 86 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 86 "m4browser.l"
 {
   sn_advance_line();
   sn_reset_column();
@@ -770,7 +770,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 91 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 91 "m4browser.l"
 {
   char * x = (char *) yytext;
 
@@ -802,7 +802,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 120 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 120 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -863,7 +863,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 178 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 178 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -926,7 +926,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 239 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 239 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -960,7 +960,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 270 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 270 "m4browser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1851,7 +1851,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 270 "/share/SN51/src/snavigator/parsers/m4/m4browser.l"
+#line 270 "m4browser.l"
 
   
 void

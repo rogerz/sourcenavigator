@@ -43,4 +43,7 @@ abrowser_DEPENDENCIES = $(common)/libcommon.a \
 
 # Used to regenerate .c from .l file
 flexgen:
-	$(LEX) -t > abrowser.c $(LFLAGS) $(srcdir)/abrowser.l
+	cp $(srcdir)/abrowser.l .
+	$(LEX) -t $(LFLAGS) abrowser.l > $(srcdir)/abrowser.c
+	rm abrowser.l
+

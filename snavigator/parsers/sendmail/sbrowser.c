@@ -402,7 +402,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 1 "sbrowser.l"
 #define INITIAL 0
 /*
 
@@ -428,7 +428,7 @@ MA 02111-1307, USA.
 
 
 */
-#line 27 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 27 "sbrowser.l"
 /*
  * sbrowser.l
  *
@@ -625,7 +625,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 72 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 72 "sbrowser.l"
 
 
 
@@ -713,7 +713,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 74 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 74 "sbrowser.l"
 {			/* a comment */
 
   yytext[yyleng - 1] = '\0';
@@ -727,7 +727,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 85 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 85 "sbrowser.l"
 {
   p = strchr(yytext, ',');
   *p = '\0';
@@ -746,7 +746,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 101 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 101 "sbrowser.l"
 {
   char buf[2] = { 0, 0 };
   
@@ -762,7 +762,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 114 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 114 "sbrowser.l"
 {
   char * filename;
   unsigned margin;
@@ -801,7 +801,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 150 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 150 "sbrowser.l"
 {
   unsigned margin;
   char * filename;
@@ -833,7 +833,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 179 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 179 "sbrowser.l"
 {
   if (flag)
   {
@@ -866,7 +866,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 209 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 209 "sbrowser.l"
 {
   sn_advance_column(yyleng);
   BEGIN(RULE);
@@ -874,7 +874,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 214 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 214 "sbrowser.l"
 {
   p = yytext;
   while (*p != ' ' && *p != '\t') { p++; }
@@ -890,7 +890,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 227 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 227 "sbrowser.l"
 {
   p = yytext + 1;
   if (*p == '=') { p++; }
@@ -904,7 +904,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 238 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 238 "sbrowser.l"
 {
   p = yytext + 1;
   if (*p == '=') { p++; }
@@ -918,7 +918,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 249 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 249 "sbrowser.l"
 {
   p = strchr(yytext, '>');
   *p = 'S';			/* we know this for sure */
@@ -932,7 +932,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 260 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 260 "sbrowser.l"
 {
   sn_advance_line();
   sn_reset_column();
@@ -941,14 +941,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 266 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 266 "sbrowser.l"
 { /* eat whitespace */
   sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 270 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 270 "sbrowser.l"
 {
    sn_advance_line();
    sn_reset_column();
@@ -956,17 +956,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 275 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 275 "sbrowser.l"
 ;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 277 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 277 "sbrowser.l"
 { sn_advance_column(yyleng); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 279 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 279 "sbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1857,7 +1857,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 279 "/share/SN51/src/snavigator/parsers/sendmail/sbrowser.l"
+#line 279 "sbrowser.l"
 
 
 void

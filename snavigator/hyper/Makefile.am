@@ -95,13 +95,21 @@ tkTreeTable.$(OBJEXT): tkTreeTable.c tkTreeTable.h
 # This target will regenerate .c files from .l files. it
 # must never depend on a timestamp for .l files because
 # this would fail to compile on an end users system that
-# did not have flex installed if the timestamps got hosed
+# did not have flex installed if the timestamps got hosed.
+# Note that we copy to the local dir so that include
+# directives include only the file name and not a path.
 flexgen:
-	$(LEX) -t > j_high.c $(LFLAGS) -Pjava_highlight_ $(srcdir)/j_high.l
-	$(LEX) -t > py_high.c $(LFLAGS) -Ppy_highlight_ $(srcdir)/py_high.l
-	$(LEX) -t > c_high.c $(LFLAGS) -Pc_highlight_ $(srcdir)/c_high.l
-	$(LEX) -t > ch_high.c $(LFLAGS) -Pch_highlight_ $(srcdir)/ch_high.l
-	$(LEX) -t > tcl_high.c $(LFLAGS) -Ptcl_highlight_ $(srcdir)/tcl_high.l
+	cp $(srcdir)/j_high.l .
+	cp $(srcdir)/py_high.l .
+	cp $(srcdir)/c_high.l .
+	cp $(srcdir)/ch_high.l .
+	cp $(srcdir)/tcl_high.l .
+	$(LEX) -t $(LFLAGS) -Pjava_highlight_ j_high.l > $(srcdir)/j_high.c
+	$(LEX) -t $(LFLAGS) -Ppy_highlight_ py_high.l > $(srcdir)/py_high.c
+	$(LEX) -t $(LFLAGS) -Pc_highlight_ c_high.l > $(srcdir)/c_high.c
+	$(LEX) -t $(LFLAGS) -Pch_highlight_ ch_high.l  > $(srcdir)/ch_high.c
+	$(LEX) -t $(LFLAGS) -Ptcl_highlight_ tcl_high.l > $(srcdir)/tcl_high.c
+	rm j_high.l py_high.l c_high.l ch_high.l tcl_high.l
 
 highlight.$(OBJEXT): highlight.c
 	$(COMPILE) $(TK_DEFS) -DTK_DBGX=\"$(TK_DBGX)\" -c $<
@@ -119,3 +127,4 @@ winMain.obj: win/winMain.c
 
 winMain.o: win/winMain.c
 	$(COMPILE) -c $<
+

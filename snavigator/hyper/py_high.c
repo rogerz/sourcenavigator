@@ -450,7 +450,7 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 1 "py_high.l"
 #define INITIAL 0
 /* -*- c -*- */
 /*
@@ -484,7 +484,7 @@ MA 02111-1307, USA.
  * A lex specification for a scanner to parse python files
  * and highlight the source code.
  */
-#line 36 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 36 "py_high.l"
 #include <ctype.h>
 
 #include "highlight.h"
@@ -651,7 +651,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 54 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 54 "py_high.l"
 
 
 
@@ -741,7 +741,7 @@ case 1:
 yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 56 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 56 "py_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -755,7 +755,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 67 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 67 "py_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -772,7 +772,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 81 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 81 "py_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -788,7 +788,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 94 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 94 "py_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -804,7 +804,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 107 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 107 "py_high.l"
 {
     paf_high_pos.beg_lineno = lineNumber;
     paf_high_pos.beg_charno = charNumber;
@@ -820,62 +820,62 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 6:
-#line 122 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 122 "py_high.l"
 case 7:
-#line 123 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 123 "py_high.l"
 case 8:
-#line 124 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 124 "py_high.l"
 case 9:
-#line 125 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 125 "py_high.l"
 case 10:
-#line 126 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 126 "py_high.l"
 case 11:
-#line 127 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 127 "py_high.l"
 case 12:
-#line 128 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 128 "py_high.l"
 case 13:
-#line 129 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 129 "py_high.l"
 case 14:
-#line 130 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 130 "py_high.l"
 case 15:
-#line 131 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 131 "py_high.l"
 case 16:
-#line 132 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 132 "py_high.l"
 case 17:
-#line 133 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 133 "py_high.l"
 case 18:
-#line 134 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 134 "py_high.l"
 case 19:
-#line 135 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 135 "py_high.l"
 case 20:
-#line 136 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 136 "py_high.l"
 case 21:
-#line 137 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 137 "py_high.l"
 case 22:
-#line 138 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 138 "py_high.l"
 case 23:
-#line 139 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 139 "py_high.l"
 case 24:
-#line 140 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 140 "py_high.l"
 case 25:
-#line 141 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 141 "py_high.l"
 case 26:
-#line 142 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 142 "py_high.l"
 case 27:
-#line 143 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 143 "py_high.l"
 case 28:
-#line 144 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 144 "py_high.l"
 case 29:
-#line 145 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 145 "py_high.l"
 case 30:
-#line 146 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 146 "py_high.l"
 case 31:
-#line 147 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 147 "py_high.l"
 case 32:
-#line 148 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 148 "py_high.l"
 case 33:
 YY_RULE_SETUP
-#line 148 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 148 "py_high.l"
 {
 	paf_high_pos.beg_lineno = lineNumber;
 	paf_high_pos.beg_charno = charNumber;
@@ -889,7 +889,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 159 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 159 "py_high.l"
 {
 	lineNumber += yyleng;
 	charNumber = 0;
@@ -897,24 +897,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 164 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 164 "py_high.l"
 {
 			}
 	YY_BREAK
 case 36:
-#line 168 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 168 "py_high.l"
 case 37:
-#line 169 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 169 "py_high.l"
 case 38:
 YY_RULE_SETUP
-#line 169 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 169 "py_high.l"
 {
 	charNumber += yyleng;
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 172 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 172 "py_high.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1802,7 +1802,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 172 "/share/SN51/src/snavigator/hyper/py_high.l"
+#line 172 "py_high.l"
 
 
 static void
