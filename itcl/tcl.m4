@@ -480,15 +480,14 @@ AC_DEFUN(SC_ENABLE_SYMBOLS, [
 
 AC_DEFUN(SC_MAKE_LIB, [
     case "${host}" in
-	*mingw32* | *windows32*)
-	    if test "${CC}" = "cl"; then
-		MAKE_STATIC_LIB="\${STLIB_LD} -out:\[$]@ \$(\[$]@_OBJECTS) "
-		MAKE_SHARED_LIB="\${SHLIB_LD} \${SHLIB_LDFLAGS} \${SHLIB_LD_LIBS} \$(LDFLAGS) -out:\[$]@ \$(\[$]@_OBJECTS) "
-	    else
-		MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(\[$]@_OBJECTS) "
-		POST_MAKE_STATIC_LIB="\${RANLIB} \[$]@"
-		MAKE_SHARED_LIB="\${SHLIB_LD} -o \[$]@ \$(\[$]@_OBJECTS) \${SHLIB_LDFLAGS} \$(LDFLAGS) \${SHLIB_LD_LIBS} -Wl,--out-implib,\$(patsubst %.dll,lib%.a,\[$]@)"
-	    fi
+        *windows32*)
+	    MAKE_STATIC_LIB="\${STLIB_LD} -out:\[$]@ \$(\[$]@_OBJECTS) "
+	    MAKE_SHARED_LIB="\${SHLIB_LD} \${SHLIB_LDFLAGS} \${SHLIB_LD_LIBS} \$(LDFLAGS) -out:\[$]@ \$(\[$]@_OBJECTS) "
+	    ;;
+	*mingw32*)
+	    MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(\[$]@_OBJECTS) "
+	    POST_MAKE_STATIC_LIB="\${RANLIB} \[$]@"
+	    MAKE_SHARED_LIB="\${SHLIB_LD} -o \[$]@ \$(\[$]@_OBJECTS) \${SHLIB_LDFLAGS} \$(LDFLAGS) \${SHLIB_LD_LIBS} -Wl,--out-implib,\$(patsubst %.dll,lib%.a,\[$]@)"
 	    ;;
 	*)
 	    MAKE_STATIC_LIB="\${STLIB_LD} \[$]@ \$(\[$]@_OBJECTS)"

@@ -1,3 +1,10 @@
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* tcl.m4 (SC_MAKE_LIB): Split up library link
+	lines based on $host instead of $CC.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itcl/configure: Regen.
