@@ -1,6 +1,16 @@
 2002-11-13  Mo DeJong  <mdejong@uncounted.org>
 
 	* configure: Regen.
+	* configure.in: Include sys/times.h in
+	the headers we check for.
+	* parsers/libjcreuse/rSystem.c: Include
+	sys/times.h based on HAVE_SYS_TIMES_H
+	instead of _MSC_VER. This fixes
+	compilation problems under mingw.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
 	* configure.in: Check for cygpath and
 	don't attempt path conversions if it
 	is not found. This fix is needed to
