@@ -492,8 +492,10 @@ itcl::class Make {
         #on window we must mask all "\"
         regsub -all {\\} ${make_cmd} {\\\\} make_cmd
 
-        lappend make_cmd 2>@stdout
-
+        # Bah! Tcl provides no way to read both
+        # stdout and stderr from a pipe so we
+        # pipe them both to cat and read that.
+        lappend make_cmd |& cat
 
         #1. store last used make directory
         if {[file isdirectory ${startdir}]} {

@@ -1,5 +1,13 @@
 2002-11-10  Mo DeJong  <mdejong@uncounted.org>
 
+	* gui/makepane.tcl (ExecMake): Pipe stdout
+	and stderr from make to cat and read the
+	results from the pipe. The old code used
+	2>@stdout in an attempt to do this, but
+	that fails under Windows with Tcl 8.3.
+
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
 	* gui/emacs.tcl (sn_ensure_emacs_running):
 	Remove 2>@stdout argument to exec since
 	this is failing under Windows with Tcl 8.3.
