@@ -350,6 +350,7 @@ reset()
 {
   sn_reset_line();
   sn_reset_column();
+  sn_reset_encoding();
 }
 
 int

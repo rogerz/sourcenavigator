@@ -1,3 +1,17 @@
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/assembly/ppc601-eabi/abrowser.c: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.l: Add
+	sn_reset_encoding call.
+	* parsers/chill/main.c: Add sn_reset_encoding call.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Add sn_reset_encoding call.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l:Add sn_reset_encoding call.
+	* sdk/parsers/examples/assembly/abrowser.l.in:
+	* sdk/parsers/examples/elf/ebrowser.l:
+	Add sn_reset_encoding call.
+
 2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/m4/m4browser.c: Regen.
