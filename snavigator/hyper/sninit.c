@@ -75,8 +75,6 @@ extern int      Ttk_Init (Tcl_Interp *interp);
 int
 fill_file_tree(ClientData clientData,Tcl_Interp *interp,int argc,char **argv);
 
-int sn_db_create_symbol_tags(ClientData clientData,Tcl_Interp *interp,int argc,Tcl_Obj *CONST objv[]);
-
 int sn_db_format_qry(ClientData clientData,Tcl_Interp *interp,int argc,Tcl_Obj *CONST objv[]);
 
 int tk_trim_text_index(ClientData clientData,Tcl_Interp *interp,int argc,char **argv);
@@ -426,10 +424,6 @@ sn_init_mycommands(Tcl_Interp *interp,ClientData main_win)
 
 	Tcl_CreateObjCommand(interp, "sn_db_format_qry",
 		(Tcl_ObjCmdProc *)sn_db_format_qry,
-		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
-
-	Tcl_CreateObjCommand(interp, "sn_db_create_symbol_tags",
-		(Tcl_ObjCmdProc *)sn_db_create_symbol_tags,
 		(ClientData)NULL, (Tcl_CmdDeleteProc *) NULL);
 
 	Tcl_CreateObjCommand(interp, "sn_compare",

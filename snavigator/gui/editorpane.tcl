@@ -4631,4 +4631,68 @@ proc sn_edit_file {symbol file {line ""} {search 1} {state ""}} {
     return ${ret}
 }
 
+# This function will take a list of file symbol info retrieved from the
+# database and insert tags into the text widget. Two tags can be
+# applied for each element in the list. For example, an input of
+# {# global1 gv 000001.000 1.10 1.0 1.5} would apply the tag
+# "global1 gv" to the range 1.0 -> 1.10 and the tag "gv" to the
+# range 1.0 -> 1.5. The "gv" tag is used for highlight colors in the
+# editor and the tag "global1 gv" is used when looking up the symbol
+# under the cursor.
+
+proc sn_db_create_symbol_tags { textwidget tags_list {exclude_list {}} } {
+    global sn_options
+
+
+    foreach tags $tags_list {
+        # format <class symbol type line.col line.col line.col line.col>
+        if {[llength $tags] < 7} {
+            continue
+        }
+        set class [lindex $tags 0]
+        set symbol [lindex $tags 1]
+        set type [lindex $tags 2]
+
+        # The first index integers can be zero padded
+        scan [lindex $tags 3] "%d.%d" one two
+        set beg "$one.$two"
+
+        set end [lindex $tags 4]
+        set pair [split $end "."]
+        set end_line [lindex $pair 0]
+        set end_col [lindex $pair 1]
+
+        set high_beg [lindex $tags 5]
+
+        set high_end [lindex $tags 6]        
+        set pair [split $high_end "."]
+        set high_end_line [lindex $pair 0]
+        set high_end_col [lindex $pair 1]
+
+        # skip tag, if it is on the ignored tag list
+        if {[lsearch -exact $exclude_list $type] != -1} {
+            continue
+        }
+
+        if {$high_end_line >= $end_line && $high_end_col >= $end_col} {
+            set end $high_end_line.$high_end_col
+        }
+
+        if {$class == "#"} {
+            set tag_poi "$symbol $type"
+        } else {
+            set tag_poi "$class $symbol $type"
+        }
+
+        $textwidget tag add $tag_poi $beg $end
+
+	# Access variables from the sn_options array. This
+	# variable is defined in sninit.tcl
+
+        if {[info exists sn_options(def,color_$type)]} {
+            $textwidget tag add $type $high_beg $high_end
+        }
+    }
+    return
+}
 

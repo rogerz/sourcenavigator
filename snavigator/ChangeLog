@@ -1,3 +1,21 @@
+2003-06-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (sn_db_create_symbol_tags):
+	Create a Tcl only implementation of the
+	sn_db_create_symbol_tags. This implementation
+	is about 3 times slower than the C implementation,
+	but having less C code to support wins out here.
+	* gui/tclIndex: Regen.
+	* hyper/exint.c (get_line_column, sn_db_create_symbol_tags):
+	Remove C implementation of sn_db_create_symbol_tags
+	method along with a helper method used only by this
+	function.
+	* hyper/sninit.c (sn_init_mycommands): Remove
+	sn_db_create_symbol_tags decl. Remove define of
+	sn_db_create_symbol_tags Tcl command.
+	* tests/gui/editorpane.test: Add test cases
+	for sn_db_create_symbol_tags command.
+
 2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/README.TXT: Add README file
