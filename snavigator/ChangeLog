@@ -1,3 +1,10 @@
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (load_xref_pipe): Switch xref
+	pipe back to blocking mode before closing
+	so that stderr messages are not lost due to
+	a nasty Tcl bug.
+
 2003-05-15  John Lash  <jlash@speakeasy.net>
 
 	* gui/tmeter.tcl (sn_loading_message):
