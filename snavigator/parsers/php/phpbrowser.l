@@ -1051,13 +1051,34 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #if MATCH_DUMP
   matched_pattern("\\$", yytext);
 #endif
-  sn_advance_column(yyleng); /* ignore \$ */
+
+  append_token(SOMEWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+
+  sn_advance_column(yyleng);
 }
 
 <PHP>.		{
 #if MATCH_DUMP
   matched_pattern(".", yytext);
 #endif
+
+  /* Add an UNKNOWN token for each
+   * character that we don't know
+   * how to deal with.
+   */
+
+  append_token(UNKNOWN, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+
+  /*fprintf(stderr, "adding unknown token for \"%s\"\n", yytext);*/
+
   sn_advance_column(yyleng); /* eat text */
 }
 

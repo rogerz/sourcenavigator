@@ -124,7 +124,7 @@ $foo = &$bar;
 4 VARIABLE "bar" 3.9 3.12
 5 SEMICOLON "" 3.12 3.13}
 
-tcltest::test tokens-3.0 { parse into tokens } {
+tcltest::test tokens-2.4 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var++;
@@ -137,6 +137,41 @@ $var++;
 4 INCREMENT_OPERATORS "--" 4.0 4.2
 5 VARIABLE "var" 4.3 4.6
 6 SEMICOLON "" 4.6 4.7}
+
+tcltest::test tokens-2.5 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+\$var;
+?>
+}]]
+} {1 SOMEWORD "\$" 3.0 3.2
+2 SOMEWORD "var" 3.2 3.5
+3 SEMICOLON "" 3.5 3.6}
+
+tcltest::test tokens-3.0 { unknown tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+!!$var;
+?>
+}]]
+} {1 UNKNOWN "!" 3.0 3.1
+2 UNKNOWN "!" 3.1 3.2
+3 VARIABLE "var" 3.3 3.6
+4 SEMICOLON "" 3.6 3.7}
+
+tcltest::test tokens-3.1 { unknown tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$var ~= 1;
+?>
+}]]
+} {1 VARIABLE "var" 3.1 3.4
+2 UNKNOWN "~" 3.5 3.6
+3 ASSIGNMENT_OPERATOR "" 3.6 3.7
+4 SOMEWORD "1" 3.8 3.9
+5 SEMICOLON "" 3.9 3.10}
+
+
 
 # ---------------------------------------------
 # The rest of the tests check for output that
@@ -1921,7 +1956,7 @@ $var , = 1;
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
 }
 
-tcltest::test operator-2.4 { not an assignment operator } {knownbug} {
+tcltest::test operator-2.4 { not an assignment operator } {
     browse_xref [save_file f.php {
 <?
 $var > = 1;
@@ -1991,14 +2026,25 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # Test "foo(foo());" to make sure tokens in a function
 # call are being processed and not ignored.
 
-# Also, we don't currently report a function name when inserting
-# comments. It might also be good to check the return value
+# We don't currently report a function name when inserting
+# comments. Not clear how we would implement this since
+# comments are stripped before token matching.
+# It might also be good to check the return value
 # of the sn_insert_comment if there is one.
 
 # When should we do with  <? CODE ?> when already in PHP mode?
 
-# For operators like += both a read xref and a write xref should
-# be emitted. The assigment code needs to emit a read ref for this case!
+# The docs for function don't mention this usage, but I noticed
+# an example like "func($ref=$defaultValue) { ... }", should this be supported?
+
+# There seems to be a double var deref syntax that I have not
+# seen before:
+# function show($arrayName) {
+#     global $$arrayName;
+#     print_r($$arrayName);
+# )
+# show('myArray');
+ 
 
 # cleanup
 file delete f.php

@@ -1,3 +1,14 @@
+2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: When text that does
+	not match a known pattern is found, emit an
+	UNKNOWN token and continue processing. Also
+	emit a SOMEWORD token for a \$ sequence.
+	* tests/parsers/php.test: Add test for UNKNOWN
+	token and remove knownbug constraint from test
+	that was failing. Add some FIXME notes.
+
 2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
