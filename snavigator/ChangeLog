@@ -1,3 +1,9 @@
+2003-02-17  Ian Roxborough  <irox@ix.netcom.com>
+
+	* gui/projmng.tcl (sn_select_project): On a
+	Double click, don't invoke the open project
+	proc until a ButtonRelease event is received.
+	
 2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen to account for --enable-symbols
