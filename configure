@@ -631,6 +631,20 @@ test "$host_alias" != "$target_alias" &&
   program_prefix=${target_alias}-
 
 
+# When compiling with VC++ under Cygwin, we need to
+# check for a grep executable that does not treat
+# CRLF the same as LF. This problem causes a number
+# of really mysterious configure problems.
+
+case "${host}" in
+*windows32*)
+        result=`echo file.cA | tr A '\r' | grep -v '^file.c$'`
+        if test "$result" = "file.c" ; then
+            { echo "configure: error: Can't build with Cygwin grep, see INSTALL.TXT" 1>&2; exit 1; }
+        fi
+        ;;
+esac
+
 TOP_SUBDIRS="tcl tk itcl tix libgui db snavigator"
 
 subdirs="$TOP_SUBDIRS"

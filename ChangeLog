@@ -1,3 +1,13 @@
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen.
+	* configure.in: Check for broken Cygwin grep
+	and generate an error if found.
+	* config/acinclude.m4 (CYG_AC_PATH_TCLH,
+	CYG_AC_PATH_TKH): Rework tests so they depend
+	on $host instead of a hard coded check to
+	see if CC is set to "cl".
+
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* config.guess:

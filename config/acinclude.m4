@@ -81,10 +81,12 @@ fi
 if test x"${ac_cv_c_tclh}" != x ; then
     no_tcl=""
     if test x"${ac_cv_c_tclh}" != x"installed" ; then
-	if test x"${CC}" = xcl ; then
+	case "${host}" in
+	*windows32*)
 	    tmp="`cygpath --windows ${ac_cv_c_tclh}`"
 	    ac_cv_c_tclh="`echo $tmp | sed -e s#\\\\\\\\#/#g`"
-	fi
+	    ;;
+	esac
         AC_MSG_RESULT(${ac_cv_c_tclh})
         TCLHDIR="-I${ac_cv_c_tclh}"
     fi
@@ -310,10 +312,12 @@ fi
 if test x"${ac_cv_c_tkh}" != x ; then
     no_tk=""
     if test x"${ac_cv_c_tkh}" != x"installed" ; then
-	if test x"${CC}" = xcl ; then
+	case "${host}" in
+	*windows32*)
 	    tmp="`cygpath --windows ${ac_cv_c_tkh}`"
 	    ac_cv_c_tkh="`echo $tmp | sed -e s#\\\\\\\\#/#g`"
-	fi
+	    ;;
+	esac
         AC_MSG_RESULT([found in ${ac_cv_c_tkh}])
         TKHDIR="-I${ac_cv_c_tkh}"
     fi
