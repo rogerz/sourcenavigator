@@ -1,3 +1,7 @@
+2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/Makefile.in: Add DESTDIR support.
+
 2003-12-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/tkWinMenu.c (DrawMenuEntryLabel): Fix

@@ -37,7 +37,7 @@ mandir			= @mandir@
 # to be different than those used for actually reference files at
 # run-time.  INSTALL_ROOT is prepended to $prefix and $exec_prefix
 # when installing files.
-INSTALL_ROOT		=
+INSTALL_ROOT		= $(DESTDIR)
 
 # Directory from which applications will reference the library of Tcl
 # scripts (note: you can set the TK_LIBRARY environment variable at
@@ -51,7 +51,7 @@ TK_LIB_TRAILER = /lib/tk$(VERSION)
 # END CYGNUS LOCAL
 
 # Path name to use when installing library scripts:
-SCRIPT_INSTALL_DIR =	$(INSTALL_ROOT)/$(TK_LIBRARY)
+SCRIPT_INSTALL_DIR =	$(INSTALL_ROOT)$(TK_LIBRARY)
 
 # Directory in which to install the .a or .so binary for the Tk library:
 LIB_INSTALL_DIR =	$(INSTALL_ROOT)@libdir@
