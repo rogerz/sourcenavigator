@@ -358,7 +358,7 @@ AC_DEFUN(SC_CONFIG_CFLAGS, [
         DEPARG='"$(shell $(CYGPATH) $<)"'
     fi
 
-    VENDORPREFIX=""
+    VENDORPREFIX="rh"
 
     # set various compiler flags depending on whether we are using gcc or cl
 
@@ -366,7 +366,9 @@ AC_DEFUN(SC_CONFIG_CFLAGS, [
     if test "${GCC}" = "yes" ; then
 
 	# CYGNUS LOCAL
-	VENDORPREFIX="cyg"
+	if test "$ac_cv_cygwin" = "yes" ; then
+	    VENDORPREFIX="cyg"
+	fi
 
 	SHLIB_LD=""
 	SHLIB_LD_LIBS=""
@@ -419,6 +421,13 @@ AC_DEFUN(SC_CONFIG_CFLAGS, [
 
 	CFLAGS_DEBUG=-g
 	CFLAGS_OPTIMIZE=-O
+
+        # Don't set an opt level if an option like -O3 was set in CFLAGS
+        if echo $CFLAGS | grep '\-O' > /dev/null ; then
+            CFLAGS_OPTIMIZE=""
+        fi
+
+
 	CFLAGS_WARNING="-Wall -Wconversion"
 	LDFLAGS_DEBUG=
 	LDFLAGS_OPTIMIZE=
@@ -432,9 +441,6 @@ AC_DEFUN(SC_CONFIG_CFLAGS, [
 	LDFLAGS_CONSOLE="-mconsole ${extra_ldflags}"
 	LDFLAGS_WINDOW="-mwindows ${extra_ldflags}"
     else
-	# CYGNUS LOCAL
-	VENDORPREFIX="sn"
-
 	SHLIB_LD="link -dll -nologo"
 	SHLIB_LD_LIBS="user32.lib advapi32.lib"
 	LIBS="user32.lib advapi32.lib"

@@ -1366,7 +1366,7 @@ echo "configure:1352: checking for Windows native path bug in windres" >&5
         DEPARG='"$(shell $(CYGPATH) $<)"'
     fi
 
-    VENDORPREFIX=""
+    VENDORPREFIX="rh"
 
     # set various compiler flags depending on whether we are using gcc or cl
 
@@ -1375,7 +1375,9 @@ echo "configure:1375: checking compiler flags" >&5
     if test "${GCC}" = "yes" ; then
 
 	# CYGNUS LOCAL
-	VENDORPREFIX="cyg"
+	if test "$ac_cv_cygwin" = "yes" ; then
+	    VENDORPREFIX="cyg"
+	fi
 
 	SHLIB_LD=""
 	SHLIB_LD_LIBS=""
@@ -1428,6 +1430,13 @@ echo "configure:1375: checking compiler flags" >&5
 
 	CFLAGS_DEBUG=-g
 	CFLAGS_OPTIMIZE=-O
+
+        # Don't set an opt level if an option like -O3 was set in CFLAGS
+        if echo $CFLAGS | grep '\-O' > /dev/null ; then
+            CFLAGS_OPTIMIZE=""
+        fi
+
+
 	CFLAGS_WARNING="-Wall -Wconversion"
 	LDFLAGS_DEBUG=
 	LDFLAGS_OPTIMIZE=
@@ -1441,9 +1450,6 @@ echo "configure:1375: checking compiler flags" >&5
 	LDFLAGS_CONSOLE="-mconsole ${extra_ldflags}"
 	LDFLAGS_WINDOW="-mwindows ${extra_ldflags}"
     else
-	# CYGNUS LOCAL
-	VENDORPREFIX="sn"
-
 	SHLIB_LD="link -dll -nologo"
 	SHLIB_LD_LIBS="user32.lib advapi32.lib"
 	LIBS="user32.lib advapi32.lib"
@@ -1508,7 +1514,7 @@ echo "configure:1375: checking compiler flags" >&5
 #--------------------------------------------------------------------
 
 echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
-echo "configure:1512: checking how to run the C preprocessor" >&5
+echo "configure:1518: checking how to run the C preprocessor" >&5
 # On Suns, sometimes $CPP names a directory.
 if test -n "$CPP" && test -d "$CPP"; then
   CPP=
@@ -1523,13 +1529,13 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1527 "configure"
+#line 1533 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1533: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1539: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1540,13 +1546,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1544 "configure"
+#line 1550 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1550: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1556: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1557,13 +1563,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -nologo -E"
   cat > conftest.$ac_ext <<EOF
-#line 1561 "configure"
+#line 1567 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1567: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1573: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   :
@@ -1589,17 +1595,17 @@ echo "$ac_t""$CPP" 1>&6
 
 ac_safe=`echo "errno.h" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for errno.h""... $ac_c" 1>&6
-echo "configure:1593: checking for errno.h" >&5
+echo "configure:1599: checking for errno.h" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1598 "configure"
+#line 1604 "configure"
 #include "confdefs.h"
 #include <errno.h>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1603: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1609: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1631,7 +1637,7 @@ fi
 
 
     echo $ac_n "checking for build with symbols""... $ac_c" 1>&6
-echo "configure:1635: checking for build with symbols" >&5
+echo "configure:1641: checking for build with symbols" >&5
     # Check whether --enable-symbols or --disable-symbols was given.
 if test "${enable_symbols+set}" = set; then
   enableval="$enable_symbols"
@@ -1662,7 +1668,7 @@ TK_DBGX=${DBGX}
 
 
     echo $ac_n "checking the location of tclConfig.sh""... $ac_c" 1>&6
-echo "configure:1666: checking the location of tclConfig.sh" >&5
+echo "configure:1672: checking the location of tclConfig.sh" >&5
 
 # CYGNUS LOCAL
     if test -d ../../tcl8.1/win;  then
@@ -1690,7 +1696,7 @@ fi
 
 
     echo $ac_n "checking for existence of $TCL_BIN_DIR/tclConfig.sh""... $ac_c" 1>&6
-echo "configure:1694: checking for existence of $TCL_BIN_DIR/tclConfig.sh" >&5
+echo "configure:1700: checking for existence of $TCL_BIN_DIR/tclConfig.sh" >&5
 
     if test -f "$TCL_BIN_DIR/tclConfig.sh" ; then
         echo "$ac_t""loading" 1>&6

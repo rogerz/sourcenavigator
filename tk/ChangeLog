@@ -1,5 +1,15 @@
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* unix/Makefile.in: Remove evil rerun of autoconf.
+	* unix/configure: Regen.
+	* unix/tcl.m4: Update from Tcl to get CFLAGS
+	opt fix.
+	* win/configure: Regen.
+	* win/tcl.m4 (SC_CONFIG_CFLAGS): Update macro
+	to behave more like the Tcl version of same.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* win/tkWinWm.c: Back port of wm iconbitmap
 	feature from Tk 8.4. This feature provides the
 	ability to set a Windows icon for toplevel

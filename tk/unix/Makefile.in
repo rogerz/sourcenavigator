@@ -1010,8 +1010,6 @@ DISTNAME =	tk@TK_VERSION@@TK_PATCH_LEVEL@
 ZIPNAME =	tk@TK_MAJOR_VERSION@@TK_MINOR_VERSION@@TK_PATCH_LEVEL@.zip
 DISTDIR =	$(DISTROOT)/$(DISTNAME)
 TCLDIR = 	@TCL_SRC_DIR@
-$(UNIX_DIR)/configure:
-	autoconf $(UNIX_DIR)/configure.in > $(UNIX_DIR)/configure
 
 dist:   $(UNIX_DIR)/configure
 	rm -rf $(DISTDIR)
