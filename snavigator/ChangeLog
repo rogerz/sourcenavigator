@@ -1,3 +1,24 @@
+2003-06-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Update call
+	to sn_highlight to use type enum instead
+	of passing the editor tag directly since
+	a parser author should not need to know
+	what the tags are.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Pass an enum as the first argument to
+	sn_highlight instead of forcing the browser
+	author to know what the editor tags are.
+	* parsers/toolbox/snptools.h: Define the
+	sn_highlights enum passed as the first
+	argument to sn_highlight. Update the
+	declaration for sn_highlight.
+	* tests/parsers/php.test: Add a couple of
+	token parsing tests for heredoc comments.
+	Add a test for a known crasher bug that
+	has to do with nested functions.
+
 2003-06-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/Makefile.am: Add Tcl include dir

@@ -2548,7 +2548,7 @@ YY_RULE_SETUP
 
   /* FIXME: It would be better to create a state stack and push
      the current state onto that (class, function, namespace) */
-  assert(current_function == NULL);
+  assert(!current_function);
   current_function = SN_StrDup(tokens_head->strval);
 
   current_function_highlight_line = tokens_head->start_line;
@@ -3049,27 +3049,29 @@ case YY_STATE_EOF(HDSTRING):
   }
 
   /*
-   * If the -h and -s command line options were passed,
-   * then dump highlight info to a file.
+   * If the -h option was passed to indicate that
+   * highlighting should be done, do that now.
    */
 
   if (highlight_file) {
+    enum sn_highlights type;
 
     for (tok = tokens_head ; tok ; tok = tok->next) {
-        char * tag = NULL;
         switch (tok->type) {
             case COMMENT:
-                tag = "rem";
+                type = SN_HIGH_COMMENT;
                 break;
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-                tag = "str";
+                type = SN_HIGH_STRING;
                 break;
             case HTML:
                 break;
+            default:
+                type = 0;
         }
-        if (tag) {
-            sn_highlight(tag, tok->start_line, tok->start_column,
+        if (type != 0) {
+            sn_highlight(type, tok->start_line, tok->start_column,
                     tok->end_line, tok->end_column);
         }
     }
@@ -3119,7 +3121,7 @@ case YY_STATE_EOF(HDSTRING):
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1631 "phpbrowser.l"
+#line 1633 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -4007,7 +4009,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1631 "phpbrowser.l"
+#line 1633 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */

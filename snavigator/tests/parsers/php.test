@@ -148,6 +148,30 @@ tcltest::test tokens-2.5 { parse into tokens } {
 2 SOMEWORD "var" 3.2 3.5
 3 SEMICOLON "" 3.5 3.6}
 
+tcltest::test tokens-2.6 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+<<<END
+/*not-comment*/
+END;
+?>
+}]]
+} {1 DOUBLE_QUOTED_STRING "/*not-comment*/" 3.0 5.3
+2 SEMICOLON "" 5.3 5.4}
+
+tcltest::test tokens-2.7 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+<<<END
+/*not-comment*/
+/*not-comment*/
+END;
+?>
+}]]
+} {1 DOUBLE_QUOTED_STRING "/*not-comment*/\n/*not-comment*/" 3.0 6.3
+2 SEMICOLON "" 6.3 6.4}
+
+
 tcltest::test tokens-3.0 { unknown tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
@@ -1403,9 +1427,11 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;3.24<>3.9<>3.24<>{}
 # should think the token starts at 4.0 and ends at 4.15 and
 # does not include a \n. Currently, the impl assumes that
 # a double quoted string starts at tok->start_line + 1
-# while is not correct. Same goes for the end of the token.
+# which is not correct. Same goes for the end of the token.
 # May need to add some sort of extended token that can
-# handle a range inside the token boundry.
+# handle a range inside the token boundry. On second thought
+# this may not even be needed since the include statement
+# does not do any highlighting anyway.
 
 tcltest::test string-6.2 { no comments in heredoc string } {
     browse [save_file f.php {
@@ -1712,9 +1738,21 @@ PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
-
-
-
+tcltest::test function-4.2 { syntax error leads to nested function } {knownbug} {
+    browse [save_file f.php {
+<?
+function foo() {'}
+'
+function bar() {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;6.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.0<>3.9<>3.12<>{}
+PAF_FUNC_DEF;foo<>000005.000<>f.php;5.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>bar<>fu;5.17<>3.9<>3.12<>{}
+}
 
 
 tcltest::test include-1.0 { include a file } {

@@ -382,15 +382,29 @@ sn_message(char * format, ...)
  * This function should only be called when the -h
  * option has been passed to the browser.
  */
-void sn_highlight(char * ident,
-    long line_start, int column_start,
-    long line_end, int column_end)
+void sn_highlight(enum sn_highlights type,
+    long start_line, int start_column,
+    long end_line, int end_column)
 {
+  char * tag;
   assert(highlight);
   assert(highlightfp);
+
+  switch (type) {
+    case SN_HIGH_COMMENT:
+      tag = "rem";
+      break;
+    case SN_HIGH_STRING:
+      tag = "str";
+      break;
+    default:
+      sn_error("Unknown highlight type %d\n", type);
+      sn_panic();
+  }
+
   fprintf(highlightfp, "%d %s %d.%d %d.%d\n",
-    highlight_number++,
-    ident,
+    highlight_number++, /* Ignored by Sn_Highlight_Text */
+    tag,
     line_start, column_start, line_end, column_end);
 }
 

@@ -1104,7 +1104,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   /* FIXME: It would be better to create a state stack and push
      the current state onto that (class, function, namespace) */
-  assert(current_function == NULL);
+  assert(!current_function);
   current_function = SN_StrDup(tokens_head->strval);
 
   current_function_highlight_line = tokens_head->start_line;
@@ -1560,27 +1560,29 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
 
   /*
-   * If the -h and -s command line options were passed,
-   * then dump highlight info to a file.
+   * If the -h option was passed to indicate that
+   * highlighting should be done, do that now.
    */
 
   if (highlight_file) {
+    enum sn_highlights type;
 
     for (tok = tokens_head ; tok ; tok = tok->next) {
-        char * tag = NULL;
         switch (tok->type) {
             case COMMENT:
-                tag = "rem";
+                type = SN_HIGH_COMMENT;
                 break;
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
-                tag = "str";
+                type = SN_HIGH_STRING;
                 break;
             case HTML:
                 break;
+            default:
+                type = 0;
         }
-        if (tag) {
-            sn_highlight(tag, tok->start_line, tok->start_column,
+        if (type != 0) {
+            sn_highlight(type, tok->start_line, tok->start_column,
                     tok->end_line, tok->end_column);
         }
     }

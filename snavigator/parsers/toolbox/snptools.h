@@ -39,6 +39,12 @@ enum sn_options
   SN_OPT_XREF_FILENAME
 };
 
+enum sn_highlights
+{
+  SN_HIGH_COMMENT = 1,
+  SN_HIGH_STRING
+};
+
 /*
  * The following #defines just map onto the old PAF_ constants.
  */
@@ -298,9 +304,9 @@ int sn_find_file(char * filename, char * buf);
  * the IDE and used to add highlight tags to the editor.
  */
 
-void sn_highlight(char * ident,
-    long line_start, int column_start,
-    long line_end, int column_end);
+void sn_highlight(enum sn_highlights,
+    long start_line, int start_column,
+    long end_line, int end_column);
 
 #endif /* SNPTOOLS_H */
 
