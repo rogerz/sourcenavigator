@@ -1,5 +1,10 @@
 2002-06-24  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/multiview.tcl (search_grep): Invoke StartGrep not
+	ExecGrep on the grep widget.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/multiview.tcl (constructor): Base the initial size
 	of the tools window on the user pref percent.
 	* gui/symbolbrowser.tcl (constructor): Cleanup height

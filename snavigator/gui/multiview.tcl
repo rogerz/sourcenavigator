@@ -1991,7 +1991,7 @@ itcl::class MultiWindow& {
         #sn_grep
         $itk_component(notebook) raise grep
         $itk_component(grep) setPatternFromClipboard
-	$itk_component(grep) ExecGrep
+	$itk_component(grep) StartGrep
     }
 
     method search_goto_post {m} {
