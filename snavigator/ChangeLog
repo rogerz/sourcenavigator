@@ -1,5 +1,18 @@
 2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/misc.tcl (sn_load_xref, sn_create_new_project,
+	sn_parse_uptodate): Add a new cbrowser_xref
+	argument to the sn_load_xref procedure. If this
+	argument is true, cbrowser2 is run over the
+	xref output before passing the data to dbimp.
+	If the argument is false, the output of the
+	parsers is passed directly to dbimp. Check to
+	see if a C/C++ file will be parsed in the
+	sn_create_new_project and sn_parse_uptodate
+	methods and call sn_load_xref accordingly.
+
+2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (sn_create_new_project):
 	Move the call to sn_set_tmp_dir before the
 	sn_tmpFileName call that gets a tmp file name

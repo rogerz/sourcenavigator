@@ -906,7 +906,7 @@ proc sn_process_gui {} {
     return 1
 }
 
-proc sn_load_xref {xfer_file} {
+proc sn_load_xref {xfer_file cbrowser_xref} {
     global sn_options
     global sn_path ProcessingCancelled
     global SN_cross_pid
@@ -926,12 +926,12 @@ proc sn_load_xref {xfer_file} {
     catch {paf_db_by close}
 
     # Generate xref.
-    # This is currently a bit uglier than it needs to be
-    # since cbrowser generates output that needs to be
-    # processed again by cbrowser2. Since we don't
-    # know if there are c++ refs in the xref file, just
-    # filter all possible xrefs through cbrowser2
-    # before passing them on to dbimp.
+    #
+    # The output of the cbrowser executable needs to
+    # be processed again by cbrowser2 before piping
+    # it to dbimp. If no C/C++ files have been
+    # parsed then just pass the file name containing
+    # xref output to dbimp.
 
     set cbr2_cmd [file join $sn_path(bindir) cbrowser2]
     
@@ -953,10 +953,16 @@ proc sn_load_xref {xfer_file} {
     set dbimp_cmd [list [file join $sn_path(bindir) dbimp] \
         -H [info hostname] \
         -P [pid] -c $sn_options(def,db_cachesize) \
-        -C $sn_options(def,xref-db-cachesize) \
-        $sn_options(db_files_prefix)]
+        -C $sn_options(def,xref-db-cachesize)]
 
-    set cmd [concat $cbr2_cmd | $dbimp_cmd]
+    if {$cbrowser_xref} {
+        lappend dbimp_cmd $sn_options(db_files_prefix)
+        set cmd [concat $cbr2_cmd | $dbimp_cmd]
+    } else {
+        lappend dbimp_cmd -f ${xfer_file}
+        lappend dbimp_cmd $sn_options(db_files_prefix)
+        set cmd $dbimp_cmd
+    }
 
     sn_log "cross-ref command: ${cmd}"
 
@@ -1781,6 +1787,7 @@ proc sn_create_new_project {{import_file ""}} {
     #added to the project
     set fil_list ""
     set file_types ""
+    set cbrowser_xref 0
     foreach type [array names parserfiles] {
         set files [lsort -dictionary $parserfiles(${type})]
 
@@ -1793,6 +1800,12 @@ proc sn_create_new_project {{import_file ""}} {
 
         set brow_cmd [list ${brow_exec}]
         if {${brow_exec} != "" && ${files} != ""} {
+            # If parsing c/c++ file with cbrowser, pass
+            # a flag to sn_load_xref so that it knows to
+            # use cbrowser2 in the xref gen stage.
+            if {[string first cbrowser $brow_exec] != -1} {
+                set cbrowser_xref 1
+            }
 
             #append macro files to the parser
             set macroflag $Parser_Info(${type},MACRO)
@@ -1856,7 +1869,7 @@ proc sn_create_new_project {{import_file ""}} {
     #generate Xref information
     if {${xfer_file} != "" && [file exists ${xfer_file}] && [file size\
       ${xfer_file}] > 0} {
-        sn_load_xref ${xfer_file}
+        sn_load_xref ${xfer_file} ${cbrowser_xref}
     }
 
     catch {paf_db_proj sync}
@@ -3384,6 +3397,8 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
             set scale_window "never_exists"
         }
 
+        set cbrowser_xref 0
+
         #scan language files grouped by there own language
         #type (c++, tcl, java, ....)
         foreach type [array names grouped_files] {
@@ -3393,6 +3408,14 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
             if {${brow_exec} == ""} {
                 continue
             }
+	    
+	    # If parsing c/c++ file with cbrowser, pass
+            # a flag to sn_load_xref so that it knows to
+            # use cbrowser2 in the xref gen stage.
+            if {[string first cbrowser $brow_exec] != -1} {
+                set cbrowser_xref 1
+            }
+	    
             set lfiles [lsort -dictionary $grouped_files(${type})]
 
             set brow_cmd [list ${brow_exec}]
@@ -3452,7 +3475,7 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
         if {[file size ${xfer_file}] == ${xfer_size}} {
             file delete -- ${xfer_file}
         } else {
-            sn_load_xref ${xfer_file}
+            sn_load_xref ${xfer_file} ${cbrowser_xref}
         }
     }
 
