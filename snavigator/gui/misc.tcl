@@ -1825,7 +1825,7 @@ proc sn_create_new_project {{import_file ""}} {
     #generate Xref information
     if {${xfer_file} != "" && [file exists ${xfer_file}] && [file size\
       ${xfer_file}] > 0} {
-        sn_load_xref ${xfer_file}
+        after 1000 [list sn_load_xref ${xfer_file}]
     }
 
     catch {paf_db_proj sync}
