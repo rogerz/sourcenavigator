@@ -1756,6 +1756,11 @@ proc sn_create_new_project {{import_file ""}} {
         }
     }
 
+    # Make sure that the temporary files are created in the
+    # symbol db directory! this because on some OS's the
+    # temporary directory doesn't have alot of space
+    sn_set_tmp_dir $sn_options(both,db-directory)
+
     #to store xref-info for dbimp
     set xfer_file [sn_tmpFileName]
 
@@ -1769,12 +1774,6 @@ proc sn_create_new_project {{import_file ""}} {
     #create a window with the scale widget to view the position
     #of parsing
     set scale_window [make_scale_window ${filenum} 1]
-
-    #make sure that the temporary files are created in the symbol db\
-      directory!!!
-    #this because on some OS's the temporary directory doesn't have alot of\
-      space
-    sn_set_tmp_dir $sn_options(both,db-directory)
 
     #Now we can start parsers on the source code files
     #reset the project file list, it could be the case that

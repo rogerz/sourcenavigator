@@ -1,3 +1,13 @@
+2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_create_new_project):
+	Move the call to sn_set_tmp_dir before the
+	sn_tmpFileName call that gets a tmp file name
+	for the xref tmp file. This creates the tmp
+	file that is passed as the -x option to the
+	parser in the .snprj directory instead of
+	/tmp on Unix systems.
+
 2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* MAINTAINERS: Update Mo's email address.
