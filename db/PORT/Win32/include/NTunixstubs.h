@@ -16,7 +16,6 @@
 #ifndef caddr_t
   typedef	char *	caddr_t;
   typedef	long ssize_t;
-  typedef	int dev_t;
   typedef	int uid_t;
   typedef	int gid_t;
   typedef unsigned short nlink_t;

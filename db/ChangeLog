@@ -1,5 +1,11 @@
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
+	* PORT/Win32/include/NTunixstubs.h: Don't
+	define dev_t to avoid warning from VC++
+	and benign redefinition of type.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
 	* configure: Regen.
 	* configure.in: Don't include the NTunixstubs.h
 	header directly on the command line. Correct
