@@ -1324,7 +1324,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* CLOSE_BRACE */
 }
 
-<TOKEN>("INCLUDE_KEYWORD "{include-string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{include-string-token}" CLOSE_PAREN SEMICOLON") {
+<TOKEN>("INCLUDE_KEYWORD "{include-string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{include-string-token}" CLOSE_PAREN") {
   int line_start, line_end, column_start, column_end;
   char * filename;
 
@@ -1373,12 +1373,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
           tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
-
-  if (tokens_head->type == CLOSE_PAREN) {
-    free_head_token(); /* CLOSE_PAREN */
-  }
-
-  free_head_token(); /* SEMICOLON */
+  free_head_token(); /* CLOSE_PAREN || SEMICOLON */
 }
 
 <TOKEN>("GLOBAL_KEYWORD"{variable-tokens}"SEMICOLON") {

@@ -1,5 +1,18 @@
 2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Don't require the
+	SEMICOLON token when matching an include
+	statement that includes parens. This fixes
+	statements like <? require_once("one.php") ?>
+	which are valid PHP but were not being
+	recognised because a semicolon was expected.
+	* tests/parsers/php.test: Add tests for
+	include line with no semicolon and include
+	with parens and no semicolon.
+
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/common/lexinput.c (sn_encoded_input,
 	translate_crlf): Add translate_crlf method
 	and use it to translate CRLF sequences to

@@ -2429,6 +2429,29 @@ require_once("$var.php");
 PAF_FILE;f.php;php<>
 }
 
+tcltest::test include-2.6 { semicolon required } {
+    browse [save_file f.php {
+<?
+require_once "one.php"
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test include-2.7 { no semicolon required with parens } {
+    browse [save_file f.php {
+<?
+require_once("one.php")
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;one.php<>000003.014<>f.php;3.21<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>one.php<>iu;3.21<>3.14<>3.21<>{}
+}
+
+
 tcltest::test operator-1.0 { assignment operator } {
     browse_xref [save_file f.php {
 <?
@@ -2613,11 +2636,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # range of 0 to 7 instead of just 1 to 4. That would
 # make the combobox display the variable name over
 # the whole range instead of just over the highlight.
-
-# Add tests for CRLF line ending and a missing \n at
-# the end of the file. The input layer should convert
-# \r\n to \n and add a \n to the end of the file if
-# one does not exist!
 
 # display order for nested functions is messed up.
 # The outer function needs to be added first so
