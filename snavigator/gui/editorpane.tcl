@@ -735,6 +735,15 @@ itcl::class Editor& {
 	        set txt " "
 	    } else {
 	        set txt [string repeat " " $sn_options(def,edit-tabstop)]
+
+	        set ts $sn_options(def,edit-tabstop)
+	        set l [${w} index insert]
+	        set col [lindex [split ${l} {.}] 1]
+	        while {${col} >= $ts} {
+	            incr col -$ts
+	        }
+	        set spaces [expr {$ts - $col}]
+	        set txt [string repeat " " ${spaces}]
 	    }
 
 	    if {${pos} == ""} {
@@ -1636,7 +1645,7 @@ itcl::class Editor& {
 	        set end [lindex ${ind_off} 1]
 	        set indentStr [string range ${l} 0 ${end}]
 	        # Unexpand the spaces to TABS.
-	        set spaces [string repeat " " 8]
+	        set spaces [string repeat " " $sn_options(def,edit-tabstop)]
 
 	        regsub \
 	                -all ${spaces} ${indentStr} "\t" indentStr
