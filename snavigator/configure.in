@@ -359,14 +359,11 @@ AC_SUBST(TCL_LIBRARY)
 
 if test x$ac_win_build = xyes ; then
   HYPER_MAIN='winMain.$(OBJEXT)'
-  HYPER_CONSOLE='$(top_builddir)/../tk/win/tkConsole.$(OBJEXT)'
 else
   HYPER_MAIN=
-  HYPER_CONSOLE=
 fi
 
 AC_SUBST(HYPER_MAIN)
-AC_SUBST(HYPER_CONSOLE)
 
 tmp="`cd $srcdir/gui; pwd`"
 if test x$ac_win_build = xyes ; then

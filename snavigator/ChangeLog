@@ -1,5 +1,19 @@
 2002-04-19  Mo DeJong  <supermo@bayarea.net>
 
+	* configure.in: Avoid setting HYPER_CONSOLE.
+	* hyper/Makefile.am: Avoid using HYPER_CONSOLE
+	when linking hyper.exe.
+	* hyper/Makefile.in: Ditto.
+	* hyper/win/winMain.c (WinMain, Tcl_AppInit):
+	Use public Tk_CreateConsoleWindow instead of
+	internal TkConsoleCreate and TkConsoleInit
+	functions. This removes the need to link
+	to the HYPER_CONSOLE object from tk which
+	should make it easier to build with an
+	already installed version of Tk.
+
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/preferences.tcl (AddParser): Use a grid layout
 	for the "Language Extensions" entries in the Parser tab.
 	The previous implementation would grow the left entry
