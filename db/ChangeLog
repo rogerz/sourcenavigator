@@ -1,3 +1,14 @@
+2002-11-09  Mo DeJong  <mdejong@uncounted.org>
+
+	* Makefile.in: Regen.
+	* configure: Regen.
+	* configure.in: Invoke AC_CANONICAL_HOST
+	to better support cross compiling.
+	Set auxdir to .. so configure finds
+	config.sub.
+	* PORT/Makefile.in: Regen, fix cross
+	compiling by setting AR = @AR@.
+
 2002-09-11  Mo DeJong  <supermo@bayarea.net>
 
 	Added SN-511-2002-09-11 tag.

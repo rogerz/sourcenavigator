@@ -57,6 +57,9 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AR = @AR@
 BASH = @BASH@
 CC = @CC@
 CPP = @CPP@
@@ -75,12 +78,12 @@ WINFLAGS = @WINFLAGS@
 
 SUBDIRS = PORT
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  README ./stamp-h.in ChangeLog Makefile.am Makefile.in \
-TODO acinclude.m4 aclocal.m4 config.h.in configure configure.in \
-install-sh missing mkinstalldirs
+acinclude.m4 aclocal.m4 config.h.in configure configure.in install-sh \
+missing mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
