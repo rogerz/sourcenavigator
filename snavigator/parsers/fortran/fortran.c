@@ -1,5 +1,5 @@
 
-/*  A Bison parser, made from /share/SN51/src/snavigator/parsers/fortran/fortran.y
+/*  A Bison parser, made from ../../../../new_src/src/snavigator/parsers/fortran/fortran.y
     by GNU Bison version 1.28  */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -97,7 +97,7 @@
 #define	EOS	127
 #define	REDUCE	347
 
-#line 26 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 26 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 
 
 /*
@@ -524,14 +524,14 @@ static const short yyrline[] = { 0,
   1780,  1781,  1783,  1784,  1788,  1789,  1791,  1799,  1800,  1804,
   1810,  1814,  1815,  1820,  1834,  1838,  1841,  1845,  1852,  1856,
   1862,  1862,  1868,  1868,  1877,  1879,  1904,  1912,  1916,  1924,
-  1931,  1935,  1942,  1979,  1990,  1995,  1998,  2006,  2017,  2019,
-  2024,  2031,  2033,  2040,  2042,  2049,  2051,  2057,  2059,  2067,
-  2069,  2073,  2077,  2082,  2089,  2091,  2101,  2108,  2110,  2117,
-  2119,  2124,  2131,  2133,  2135,  2137,  2139,  2147,  2162,  2167,
-  2172,  2181,  2188,  2192,  2196,  2200,  2204,  2211,  2220,  2231,
-  2245,  2268,  2280,  2292,  2296,  2302,  2316,  2324,  2330,  2334,
-  2340,  2346,  2351,  2356,  2363,  2381,  2382,  2385,  2411,  2434,
-  2449,  2467,  2468,  2469,  2470,  2471,  2472,  2478,  2494,  2501
+  1931,  1935,  1942,  1979,  1990,  1995,  1998,  2006,  2018,  2020,
+  2025,  2032,  2034,  2041,  2043,  2050,  2052,  2058,  2060,  2068,
+  2070,  2074,  2078,  2083,  2090,  2092,  2102,  2109,  2111,  2118,
+  2120,  2125,  2132,  2134,  2136,  2138,  2140,  2148,  2163,  2168,
+  2173,  2182,  2189,  2193,  2197,  2201,  2205,  2212,  2221,  2232,
+  2246,  2269,  2281,  2293,  2297,  2303,  2317,  2325,  2331,  2335,
+  2341,  2347,  2352,  2357,  2364,  2382,  2383,  2386,  2412,  2435,
+  2450,  2468,  2469,  2470,  2471,  2472,  2473,  2479,  2495,  2502
 };
 #endif
 
@@ -1776,7 +1776,7 @@ yyreduce:
   switch (yyn) {
 
 case 5:
-#line 284 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 284 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				/* Create id token for prog if unnamed. */
 			  if(current_module_hash == -1) {
@@ -1800,7 +1800,7 @@ case 5:
 			;
     break;}
 case 10:
-#line 319 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 319 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 #ifdef CHECK_LABELS
 			  def_label(&(yyvsp[-1]));
@@ -1808,20 +1808,20 @@ case 10:
 			;
     break;}
 case 12:
-#line 328 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 328 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    exec_stmt_count = 0;
 			    executable_stmt = FALSE;
 			;
     break;}
 case 13:
-#line 333 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 333 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    executable_stmt = FALSE;
 			;
     break;}
 case 14:
-#line 337 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 337 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {	/* handle statement functions correctly */
 			  if(is_true(STMT_FUNCTION_EXPR, yyvsp[0].subclass)
 				     && stmt_sequence_no <= SEQ_STMT_FUN) {
@@ -1836,7 +1836,7 @@ case 14:
 			;
     break;}
 case 15:
-#line 350 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 350 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    stmt_sequence_no = SEQ_EXEC;
 			    ++exec_stmt_count;
@@ -1844,7 +1844,7 @@ case 15:
 			;
     break;}
 case 16:
-#line 356 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 356 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    executable_stmt = TRUE;
 			    if(stmt_sequence_no == 0)
@@ -1858,31 +1858,31 @@ case 16:
 			;
     break;}
 case 17:
-#line 370 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 370 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    current_module_type = type_PROGRAM;
 			;
     break;}
 case 18:
-#line 374 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 374 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    current_module_type = type_SUBROUTINE;
 			;
     break;}
 case 19:
-#line 378 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 378 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    current_module_type = type_SUBROUTINE;
 			;
     break;}
 case 20:
-#line 382 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 382 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    current_module_type = type_BLOCK_DATA;
 			;
     break;}
 case 24:
-#line 395 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 395 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 #ifdef ALLOW_INCLUDE
  			  open_include_file(yyvsp[-1].value.string);
@@ -1890,7 +1890,7 @@ case 24:
  			;
     break;}
 case 25:
-#line 408 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 408 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     if(stmt_sequence_no < SEQ_IMPLICIT) {
 				stmt_sequence_no = SEQ_IMPLICIT;
@@ -1898,7 +1898,7 @@ case 25:
 			;
     break;}
 case 26:
-#line 414 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 414 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     if(stmt_sequence_no < SEQ_IMPLICIT) {
 				   stmt_sequence_no = SEQ_IMPLICIT;
@@ -1909,13 +1909,13 @@ case 26:
 			;
     break;}
 case 27:
-#line 423 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 423 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_stmt_sequence(&(yyvsp[0]),SEQ_IMPLICIT);
 			;
     break;}
 case 28:
-#line 427 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 427 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     if(stmt_sequence_no < SEQ_STMT_FUN) {
 				stmt_sequence_no = SEQ_STMT_FUN;
@@ -1923,13 +1923,13 @@ case 28:
 			;
     break;}
 case 29:
-#line 433 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 433 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_stmt_sequence(&(yyvsp[0]),SEQ_SPECIF);
 			;
     break;}
 case 41:
-#line 454 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 454 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			if( highlight != -1 )
 			{
@@ -1947,17 +1947,17 @@ case 41:
         ;
     break;}
 case 42:
-#line 470 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 470 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
             current_struct_hash = -1;
         ;
     break;}
 case 79:
-#line 533 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 533 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {check_seq_header(&(yyvsp[0]));;
     break;}
 case 80:
-#line 535 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 535 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_function(
 				type_PROGRAM,size_DEFAULT,&(yyvsp[-1]),(Token*)NULL);
@@ -1966,14 +1966,14 @@ case 80:
 			;
     break;}
 case 81:
-#line 548 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 548 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  do_ENTRY(&(yyvsp[-1]),(Token*)NULL
 				   ,current_module_hash);
 			;
     break;}
 case 82:
-#line 553 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 553 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  do_ENTRY(&(yyvsp[-4]),&(yyvsp[-2])
 				   ,current_module_hash);
@@ -1984,7 +1984,7 @@ case 82:
 			;
     break;}
 case 83:
-#line 567 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 567 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			 def_function(
 				current_datatype,current_typesize,
@@ -1994,7 +1994,7 @@ case 83:
 			;
     break;}
 case 84:
-#line 576 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 576 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			 def_function(
 				current_datatype,current_typesize,
@@ -2008,7 +2008,7 @@ case 84:
 			;
     break;}
 case 85:
-#line 588 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 588 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			 def_function(
 				type_UNDECL,size_DEFAULT,&(yyvsp[-1]),(Token*)NULL);
@@ -2017,7 +2017,7 @@ case 85:
 			;
     break;}
 case 86:
-#line 596 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 596 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			 def_function(
 				type_UNDECL,size_DEFAULT,&(yyvsp[-4]),&(yyvsp[-2]));
@@ -2030,25 +2030,25 @@ case 86:
 			;
     break;}
 case 87:
-#line 609 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 609 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_seq_header(&(yyvsp[0]));
 			;
     break;}
 case 88:
-#line 615 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 615 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_seq_header(&(yyvsp[0]));
 			;
     break;}
 case 89:
-#line 621 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 621 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				current_record_hash = -1;
 			;
     break;}
 case 92:
-#line 635 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 635 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  def_function(
 				 type_SUBROUTINE,size_DEFAULT,
@@ -2058,7 +2058,7 @@ case 92:
 			;
     break;}
 case 93:
-#line 644 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 644 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  def_function(
 				 type_SUBROUTINE,size_DEFAULT,&(yyvsp[-4]),&(yyvsp[-2]));
@@ -2071,45 +2071,45 @@ case 93:
 			;
     break;}
 case 94:
-#line 657 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 657 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_seq_header(&(yyvsp[0]));
 			;
     break;}
 case 95:
-#line 663 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 663 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = (Token*)NULL;
 			;
     break;}
 case 97:
-#line 670 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 670 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 98:
-#line 674 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 674 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token(yyvsp[-2].next_token,&(yyvsp[0]));
 			;
     break;}
 case 99:
-#line 680 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 680 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_arg_name(&(yyvsp[0]));
 			     primary_id_expr(&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 100:
-#line 685 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 685 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.class = type_byte(class_LABEL,type_LABEL);
 			     yyval.subclass = 0;
 			;
     break;}
 case 101:
-#line 695 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 695 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				  /* form name %DATnn */
 			  ++block_data_number;
@@ -2125,7 +2125,7 @@ case 101:
 			;
     break;}
 case 102:
-#line 709 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 709 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  def_function(
 				 type_BLOCK_DATA,size_DEFAULT,
@@ -2135,39 +2135,39 @@ case 102:
 			;
     break;}
 case 103:
-#line 719 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 719 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_seq_header(&(yyvsp[0]));
 			;
     break;}
 case 104:
-#line 723 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 723 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_seq_header(&(yyvsp[0]));
 			;
     break;}
 case 108:
-#line 738 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 738 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_array_dim(&(yyvsp[-3]),&(yyvsp[-1]));
 			;
     break;}
 case 109:
-#line 745 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 745 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.class = 1;
 			     yyval.subclass = yyvsp[0].subclass;
 			;
     break;}
 case 110:
-#line 750 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 750 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.class = yyvsp[-2].class + 1; /* one more dimension */
 			     yyval.subclass = yyvsp[-2].subclass * yyvsp[0].subclass;
 			;
     break;}
 case 111:
-#line 757 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 757 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			      if( datatype_of(yyvsp[0].class) == type_INTEGER
 				 && is_true(EVALUATED_EXPR,yyvsp[0].subclass) )
@@ -2177,7 +2177,7 @@ case 111:
 			;
     break;}
 case 112:
-#line 765 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 765 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {	/* avoid getting 0 - 0 + 1 = 1 if bounds nonconstant */
 			      if( datatype_of(yyvsp[-2].class) == type_INTEGER
 				 && is_true(EVALUATED_EXPR,yyvsp[-2].subclass)
@@ -2189,57 +2189,57 @@ case 112:
 			;
     break;}
 case 113:
-#line 775 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 775 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.subclass = 0;
 			;
     break;}
 case 114:
-#line 779 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 779 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.subclass = 0;
 			;
     break;}
 case 115:
-#line 785 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 785 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {equivalence_flag = TRUE;;
     break;}
 case 116:
-#line 786 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 786 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {equivalence_flag = FALSE;;
     break;}
 case 119:
-#line 794 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 794 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  equivalence(&(yyvsp[-2]), &(yyvsp[0]));
 			;
     break;}
 case 120:
-#line 798 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 798 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  equivalence(&(yyvsp[-2]), &(yyvsp[0]));
 			;
     break;}
 case 121:
-#line 805 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 805 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_equiv_name(&(yyvsp[0]));
 			;
     break;}
 case 122:
-#line 809 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 809 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_equiv_name(&(yyvsp[0]));
 			;
     break;}
 case 123:
-#line 813 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 813 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_equiv_name(&(yyvsp[0]));
 			;
     break;}
 case 127:
-#line 828 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 828 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     implied_id_token(&(yyval),blank_com_name);
 			     def_com_block(&(yyval), &(yyvsp[-1]));
@@ -2251,7 +2251,7 @@ case 127:
 			;
     break;}
 case 129:
-#line 839 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 839 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     implied_id_token(&(yyval),blank_com_name);
 			     def_com_block(&(yyval),&(yyvsp[-2]));
@@ -2262,7 +2262,7 @@ case 129:
 			;
     break;}
 case 130:
-#line 850 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 850 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 		;
 			if( highlight != -1 )
@@ -2279,17 +2279,17 @@ case 130:
 		;
     break;}
 case 131:
-#line 865 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 865 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 { yyval = yyvsp[0]; ;
     break;}
 case 132:
-#line 872 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 872 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.subclass = yyvsp[0].subclass;
 			;
     break;}
 case 133:
-#line 876 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 876 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.subclass = yyvsp[0].subclass;
 			     yyval.line_num = yyvsp[0].line_num;
@@ -2297,7 +2297,7 @@ case 133:
 			;
     break;}
 case 134:
-#line 884 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 884 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				if( highlight != -1 )
 				{
@@ -2315,7 +2315,7 @@ case 134:
 			;
     break;}
 case 135:
-#line 900 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 900 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
             	current_common_hash = -1;
 			     def_com_block(&(yyvsp[-2]),&(yyvsp[0]));
@@ -2329,32 +2329,32 @@ case 135:
 			;
     break;}
 case 136:
-#line 914 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 914 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval = yyvsp[-1];
 			;
     break;}
 case 137:
-#line 919 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 919 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     implied_id_token(&(yyval),blank_com_name);
 			;
     break;}
 case 138:
-#line 923 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 923 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     implied_id_token(&(yyval),blank_com_name);
 			;
     break;}
 case 139:
-#line 929 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 929 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.subclass = yyvsp[0].subclass;
 			    yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 140:
-#line 934 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 934 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.subclass = yyvsp[0].subclass;
 			    yyval.line_num = yyvsp[0].line_num;
@@ -2363,60 +2363,60 @@ case 140:
 			;
     break;}
 case 141:
-#line 943 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 943 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {			   /* no comma */
 			     yyval.subclass = yyvsp[0].subclass;
 			     make_false(COMMA_FLAG,yyval.subclass);
 			;
     break;}
 case 142:
-#line 948 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 948 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {			   /* has comma */
 			     yyval.subclass = yyvsp[-1].subclass;
 			     make_true(COMMA_FLAG,yyval.subclass);
    			;
     break;}
 case 143:
-#line 955 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 955 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_com_variable(&(yyvsp[0]));
 			     primary_id_expr(&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 144:
-#line 960 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 960 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_com_variable(&(yyvsp[0]));
 			     primary_id_expr(&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 147:
-#line 977 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 977 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval = yyvsp[0];
 			;
     break;}
 case 148:
-#line 983 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 983 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_namelist(&(yyvsp[-1]),&(yyvsp[0]));
 			     yyval = yyvsp[0];
 			;
     break;}
 case 149:
-#line 990 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 990 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval = yyvsp[-1];
 			;
     break;}
 case 150:
-#line 996 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 996 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 151:
-#line 1000 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1000 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.subclass = yyvsp[0].subclass;
 			    yyval.line_num = yyvsp[0].line_num;
@@ -2425,7 +2425,7 @@ case 151:
 			;
     break;}
 case 152:
-#line 1009 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1009 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {			   /* no comma */
 			     def_namelist_item(&(yyvsp[0]));
 			     primary_id_expr(&(yyvsp[0]),&(yyval));
@@ -2433,7 +2433,7 @@ case 152:
 			;
     break;}
 case 153:
-#line 1015 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1015 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {			   /* has comma */
 			     def_namelist_item(&(yyvsp[-1]));
 			     primary_id_expr(&(yyvsp[-1]),&(yyval));
@@ -2441,19 +2441,19 @@ case 153:
 			;
     break;}
 case 154:
-#line 1024 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1024 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				current_record_hash = -1;
 			;
     break;}
 case 159:
-#line 1034 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1034 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  current_typesize = size_DEFAULT;
 			;
     break;}
 case 160:
-#line 1039 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1039 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    current_typesize = yyvsp[0].value.integer;
 #if 0 /* defunct feature */
@@ -2471,70 +2471,70 @@ case 160:
 			;
     break;}
 case 162:
-#line 1059 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1059 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_INTEGER;
 			     integer_context = TRUE;
 			;
     break;}
 case 163:
-#line 1064 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1064 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_REAL;
 			     integer_context = TRUE;
 			;
     break;}
 case 164:
-#line 1069 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1069 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_COMPLEX;
 			     integer_context = TRUE;
 			;
     break;}
 case 165:
-#line 1074 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1074 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_LOGICAL;
 			     integer_context = TRUE;
 			;
     break;}
 case 166:
-#line 1081 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1081 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_DP;
 			     current_typesize = size_DEFAULT;
 			;
     break;}
 case 167:
-#line 1086 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1086 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_DP;
 			     current_typesize = size_DEFAULT;
 			;
     break;}
 case 168:
-#line 1091 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1091 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_DCOMPLEX;
 			     current_typesize = size_DEFAULT;
 			;
     break;}
 case 169:
-#line 1096 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1096 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_DCOMPLEX;
 			     current_typesize = size_DEFAULT;
 			;
     break;}
 case 170:
-#line 1101 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1101 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_INTEGER;
 			     current_typesize = 1;
 			;
     break;}
 case 171:
-#line 1106 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1106 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
                 current_datatype = type_RECORD;
                 current_typesize = size_DEFAULT;
@@ -2542,7 +2542,7 @@ case 171:
             ;
     break;}
 case 172:
-#line 1114 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1114 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_datatype = type_STRING;
 			     current_typesize = 1;
@@ -2550,66 +2550,66 @@ case 172:
 			;
     break;}
 case 173:
-#line 1122 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1122 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     current_typesize = yyvsp[0].value.integer;
 			;
     break;}
 case 176:
-#line 1132 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1132 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[0]),
 					  current_datatype,current_typesize);
 			;
     break;}
 case 177:
-#line 1137 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1137 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[0]),
 					  current_datatype,current_typesize);
 			;
     break;}
 case 180:
-#line 1148 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1148 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[0]),
 					  current_datatype,current_typesize);
 			;
     break;}
 case 181:
-#line 1153 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1153 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[-2]),
 					  current_datatype,yyvsp[0].value.integer);
 			;
     break;}
 case 182:
-#line 1158 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1158 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[0]),
 					  current_datatype,current_typesize);
 			;
     break;}
 case 183:
-#line 1163 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1163 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     declare_type(&(yyvsp[-2]),
 					  current_datatype,yyvsp[0].value.integer);
 			;
     break;}
 case 184:
-#line 1170 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1170 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
                              current_datatype = type_POINTER;
                              current_typesize = size_DEFAULT;
                         ;
     break;}
 case 188:
-#line 1185 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1185 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {implicit_flag=TRUE;;
     break;}
 case 189:
-#line 1189 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1189 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    implicit_flag=FALSE;
 			    if(implicit_none) {
@@ -2620,7 +2620,7 @@ case 189:
 			;
     break;}
 case 190:
-#line 1199 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1199 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    implicit_flag=FALSE;
 				if(implicit_type_given) {
@@ -2631,19 +2631,19 @@ case 190:
 			;
     break;}
 case 192:
-#line 1210 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1210 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {initial_flag = TRUE;;
     break;}
 case 194:
-#line 1216 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1216 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {implicit_letter_flag = TRUE;;
     break;}
 case 195:
-#line 1217 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1217 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {implicit_letter_flag = FALSE;;
     break;}
 case 198:
-#line 1225 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1225 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  int c1 = (int)yyvsp[0].subclass;
 			   set_implicit_type(current_datatype,current_typesize,
@@ -2651,7 +2651,7 @@ case 198:
 			;
     break;}
 case 199:
-#line 1231 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1231 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  int c1 = (int)yyvsp[-2].subclass,
 			      c2 = (int)yyvsp[0].subclass;
@@ -2660,15 +2660,15 @@ case 199:
 			;
     break;}
 case 200:
-#line 1242 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1242 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {yyval.value.integer = size_ADJUSTABLE;;
     break;}
 case 201:
-#line 1244 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1244 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {yyval.value.integer = yyvsp[0].value.integer;;
     break;}
 case 202:
-#line 1246 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1246 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			      if((yyval.value.integer = yyvsp[-1].value.integer) <= 0 ){
 				warning(yyvsp[-1].line_num,yyvsp[-1].col_num,
@@ -2679,11 +2679,11 @@ case 202:
 			    ;
     break;}
 case 206:
-#line 1264 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1264 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 207:
-#line 1266 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1266 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_parameter(&(yyvsp[-3]),&(yyvsp[0]));
 			     primary_id_expr(&(yyvsp[-3]),&(yyvsp[-3]));
@@ -2692,92 +2692,92 @@ case 207:
 			;
     break;}
 case 209:
-#line 1279 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1279 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_ext_name(&(yyvsp[0]));
 			;
     break;}
 case 210:
-#line 1283 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1283 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_ext_name(&(yyvsp[0]));
 			;
     break;}
 case 212:
-#line 1293 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1293 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_intrins_name(&(yyvsp[0]));
 			;
     break;}
 case 213:
-#line 1297 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1297 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     def_intrins_name(&(yyvsp[0]));
 			;
     break;}
 case 214:
-#line 1304 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1304 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  global_save = TRUE;
 			;
     break;}
 case 218:
-#line 1315 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1315 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     save_variable(&(yyvsp[0]));
 			;
     break;}
 case 219:
-#line 1319 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1319 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     save_com_block(&(yyvsp[-1]));
 			;
     break;}
 case 224:
-#line 1334 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1334 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed=TRUE;;
     break;}
 case 225:
-#line 1336 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1336 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed=FALSE;;
     break;}
 case 229:
-#line 1345 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1345 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_lvalue(&(yyvsp[0]));
 			;
     break;}
 case 236:
-#line 1361 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1361 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_parameter(&(yyvsp[0]));
 			;
     break;}
 case 238:
-#line 1368 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1368 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_parameter(&(yyvsp[0]));
 			;
     break;}
 case 241:
-#line 1379 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1379 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_lvalue(&(yyvsp[0]));
 			;
     break;}
 case 243:
-#line 1387 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1387 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    use_implied_do_index(&(yyvsp[-3]));
 			;
     break;}
 case 246:
-#line 1398 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1398 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;
 				    in_assignment_stmt = TRUE;;
     break;}
 case 247:
-#line 1400 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1400 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  assignment_stmt_type(&(yyvsp[-3]),&(yyvsp[-2]),
 					&(yyvsp[0]));
@@ -2786,7 +2786,7 @@ case 247:
 			;
     break;}
 case 248:
-#line 1407 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1407 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				/* Clear u-b-s flags spuriously set */
 			  if(is_true(STMT_FUNCTION_EXPR, yyvsp[-5].subclass)
@@ -2795,53 +2795,53 @@ case 248:
 		        ;
     break;}
 case 250:
-#line 1417 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1417 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.dot_token = token_dup(&(yyvsp[0])); /* rigo */
 			;
     break;}
 case 254:
-#line 1429 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1429 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    do_ASSIGN(&(yyvsp[-1]));
 			;
     break;}
 case 258:
-#line 1446 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1446 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     do_assigned_GOTO(&(yyvsp[-1]));
 			;
     break;}
 case 259:
-#line 1450 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1450 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     do_assigned_GOTO(&(yyvsp[-4]));
 			;
     break;}
 case 260:
-#line 1454 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1454 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     do_assigned_GOTO(&(yyvsp[-5]));
 			;
     break;}
 case 261:
-#line 1460 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1460 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    integer_context=TRUE;
 			;
     break;}
 case 262:
-#line 1464 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1464 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    integer_context=TRUE;
 			;
     break;}
 case 268:
-#line 1486 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1486 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 269:
-#line 1487 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1487 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[-1].subclass)){
 				use_variable(&(yyvsp[-1]));
@@ -2853,11 +2853,11 @@ case 269:
 			;
     break;}
 case 271:
-#line 1500 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1500 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 272:
-#line 1501 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1501 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[-1].subclass)){
 				use_variable(&(yyvsp[-1]));
@@ -2868,7 +2868,7 @@ case 272:
 			;
     break;}
 case 277:
-#line 1531 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1531 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_lvalue(&(yyvsp[-3]));
 			     use_variable(&(yyvsp[-3]));
@@ -2893,11 +2893,11 @@ case 277:
 			;
     break;}
 case 278:
-#line 1554 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1554 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed=TRUE;;
     break;}
 case 279:
-#line 1555 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1555 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[-2].subclass)){
 				use_variable(&(yyvsp[-2]));
@@ -2907,11 +2907,11 @@ case 279:
 			;
     break;}
 case 280:
-#line 1563 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1563 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed=TRUE;;
     break;}
 case 281:
-#line 1564 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1564 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[-2].subclass)){
 				use_variable(&(yyvsp[-2]));
@@ -2921,86 +2921,86 @@ case 281:
 			;
     break;}
 case 284:
-#line 1576 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1576 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    make_true(NONSTD_USAGE_FLAG,yyval.subclass);
 			    integer_context=FALSE;
 			;
     break;}
 case 285:
-#line 1583 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1583 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class=do_bounds_type(&(yyvsp[-2]),&(yyvsp[0]),&(yyvsp[0]));
 			;
     break;}
 case 286:
-#line 1587 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1587 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class=do_bounds_type(&(yyvsp[-4]),&(yyvsp[-2]),&(yyvsp[0]));
 			;
     break;}
 case 294:
-#line 1611 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1611 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_variable(&(yyvsp[0]));
 			;
     break;}
 case 296:
-#line 1619 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1619 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = FALSE;;
     break;}
 case 298:
-#line 1621 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1621 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = FALSE;;
     break;}
 case 300:
-#line 1624 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1624 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 301:
-#line 1626 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1626 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 307:
-#line 1639 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1639 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 311:
-#line 1649 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1649 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 312:
-#line 1650 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1650 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = FALSE;;
     break;}
 case 315:
-#line 1655 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1655 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = TRUE;;
     break;}
 case 316:
-#line 1656 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1656 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {complex_const_allowed = FALSE;;
     break;}
 case 318:
-#line 1661 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1661 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    ++control_item_count;
 			;
     break;}
 case 319:
-#line 1665 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1665 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    ++control_item_count;
 			;
     break;}
 case 320:
-#line 1674 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1674 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    use_io_keyword(&(yyvsp[-2]),&(yyvsp[0]),curr_stmt_class);
 			;
     break;}
 case 321:
-#line 1678 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1678 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if( yyvsp[0].class != '*'
 			       && is_true(ID_EXPR,yyvsp[0].subclass)){
@@ -3021,7 +3021,7 @@ case 321:
 			;
     break;}
 case 322:
-#line 1704 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1704 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if( yyvsp[0].class != '*'
 			       && is_true(ID_EXPR,yyvsp[0].subclass)){
@@ -3031,32 +3031,32 @@ case 322:
 			;
     break;}
 case 323:
-#line 1712 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1712 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    use_io_keyword(&(yyvsp[-2]),&(yyvsp[0]),curr_stmt_class);
 			    ++control_item_count;
 			;
     break;}
 case 324:
-#line 1717 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1717 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    ++control_item_count;
 			;
     break;}
 case 325:
-#line 1723 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1723 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    use_io_keyword(&(yyvsp[-2]),&(yyvsp[0]),curr_stmt_class);
 			;
     break;}
 case 326:
-#line 1727 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1727 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    use_special_open_keywd(&(yyvsp[0]));
 			;
     break;}
 case 329:
-#line 1738 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1738 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				if( curr_stmt_class == tok_READ ||
@@ -3068,41 +3068,41 @@ case 329:
 			;
     break;}
 case 331:
-#line 1752 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1752 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     use_implied_do_index(&(yyvsp[-3]));
 			;
     break;}
 case 332:
-#line 1758 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1758 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 334:
-#line 1763 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1763 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 336:
-#line 1768 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1768 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 340:
-#line 1776 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1776 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 343:
-#line 1783 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1783 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 344:
-#line 1784 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1784 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 347:
-#line 1791 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1791 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {control_item_count = 0;;
     break;}
 case 350:
-#line 1805 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1805 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_variable(&(yyvsp[0]));
@@ -3110,15 +3110,15 @@ case 350:
 			;
     break;}
 case 352:
-#line 1814 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1814 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 { inside_format=TRUE; ;
     break;}
 case 353:
-#line 1815 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1815 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 { inside_format=FALSE; ;
     break;}
 case 354:
-#line 1821 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1821 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  check_stmt_sequence(&(yyvsp[-3]),SEQ_STMT_FUN);
 
@@ -3132,39 +3132,39 @@ case 354:
 			;
     break;}
 case 355:
-#line 1835 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1835 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = (Token*)NULL;
 			;
     break;}
 case 357:
-#line 1842 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1842 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 358:
-#line 1847 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1847 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token(yyvsp[-2].next_token,&(yyvsp[0]));
 			;
     break;}
 case 360:
-#line 1857 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1857 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     call_subr(&(yyvsp[0]),(Token*)NULL);
 			     complex_const_allowed = FALSE;
 			;
     break;}
 case 362:
-#line 1863 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1863 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     call_subr(&(yyvsp[-2]),(Token*)NULL);
 			     complex_const_allowed = FALSE;
 			;
     break;}
 case 364:
-#line 1869 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1869 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     call_subr(&(yyvsp[-3]),&(yyvsp[-1]));
 #ifdef DEBUG_PARSER
@@ -3175,7 +3175,7 @@ case 364:
 			;
     break;}
 case 366:
-#line 1880 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1880 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				if( current_module_hash != -1 )
 				{
@@ -3200,7 +3200,7 @@ case 366:
 			;
     break;}
 case 367:
-#line 1905 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1905 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_actual_arg(&(yyvsp[0]));
@@ -3210,13 +3210,13 @@ case 367:
 			;
     break;}
 case 368:
-#line 1913 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1913 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 369:
-#line 1917 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1917 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_actual_arg(&(yyvsp[0]));
@@ -3226,25 +3226,25 @@ case 369:
 			;
     break;}
 case 370:
-#line 1925 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1925 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token(yyvsp[-4].next_token,&(yyvsp[0]));
 			;
     break;}
 case 371:
-#line 1932 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1932 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     do_RETURN(current_module_hash,&(yyvsp[-1]));
 			;
     break;}
 case 372:
-#line 1936 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1936 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			     do_RETURN(current_module_hash,&(yyvsp[-2]));
 			;
     break;}
 case 373:
-#line 1943 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1943 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				if( highlight != -1 )
 				{
@@ -3281,7 +3281,7 @@ case 373:
 			;
     break;}
 case 374:
-#line 1980 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1980 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(complex_const_allowed)/* save context */
 			        make_true(COMPLEX_FLAG,yyval.subclass);
@@ -3292,14 +3292,14 @@ case 374:
 			;
     break;}
 case 375:
-#line 1991 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1991 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				yyval.class = 0;
 				yyval.next_token = NULL;
 			;
     break;}
 case 377:
-#line 1999 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 1999 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_actual_arg(&(yyvsp[0]));
@@ -3309,7 +3309,7 @@ case 377:
 			;
     break;}
 case 378:
-#line 2007 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2007 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_actual_arg(&(yyvsp[0]));
@@ -3319,74 +3319,74 @@ case 378:
 			;
     break;}
 case 380:
-#line 2020 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2021 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 381:
-#line 2025 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2026 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 383:
-#line 2034 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2035 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 385:
-#line 2043 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2044 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 387:
-#line 2052 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2053 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    unexpr_type(&(yyvsp[-1]),&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 389:
-#line 2060 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2061 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 391:
-#line 2070 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2071 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    unexpr_type(&(yyvsp[-1]),&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 392:
-#line 2074 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2075 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    unexpr_type(&(yyvsp[-1]),&(yyvsp[0]),&(yyval));
 			;
     break;}
 case 393:
-#line 2078 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2079 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 394:
-#line 2083 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2084 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 396:
-#line 2092 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2093 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
@@ -3398,35 +3398,35 @@ case 396:
 			;
     break;}
 case 397:
-#line 2102 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2103 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 399:
-#line 2111 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2112 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 401:
-#line 2120 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2121 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.dot_token = token_dup(&(yyvsp[0])); /* rigo */
 /* 			    $$.next_token = append_token($1.next_token,&($3)); */
 			;
     break;}
 case 402:
-#line 2125 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2126 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    binexpr_type(&(yyvsp[-2]),&(yyvsp[-1]),&(yyvsp[0])
 					 ,&(yyval));
 			;
     break;}
 case 407:
-#line 2140 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2141 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.subclass = 0;
 			    make_true(CONST_EXPR,yyval.subclass);
@@ -3436,7 +3436,7 @@ case 407:
 			;
     break;}
 case 408:
-#line 2148 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2149 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval = yyvsp[-1];
 				/* (identifier) becomes a non-identifier */
@@ -3449,21 +3449,21 @@ case 408:
 			;
     break;}
 case 409:
-#line 2163 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2164 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    /* (class is set in numeric_const productions) */
 			    yyval.size = size_DEFAULT;
 			;
     break;}
 case 410:
-#line 2168 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2169 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_STRING);
 			    /* (size is set in get_string) */
 			;
     break;}
 case 411:
-#line 2173 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2174 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_HOLLERITH);
 			    /* (size is set in get_hollerith) */
@@ -3474,44 +3474,44 @@ case 411:
 			;
     break;}
 case 412:
-#line 2182 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2183 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_LOGICAL);
 			    yyval.size = size_DEFAULT;
 			;
     break;}
 case 413:
-#line 2189 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2190 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_INTEGER);
 			;
     break;}
 case 414:
-#line 2193 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2194 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_REAL);
 			;
     break;}
 case 415:
-#line 2197 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2198 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_DP);
 			;
     break;}
 case 416:
-#line 2201 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2202 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_COMPLEX);
 			;
     break;}
 case 417:
-#line 2205 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2206 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class = type_byte(class_VAR,type_DCOMPLEX);
 			;
     break;}
 case 418:
-#line 2212 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2213 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				use_variable(&(yyvsp[0]));
@@ -3519,7 +3519,7 @@ case 418:
 			;
     break;}
 case 419:
-#line 2221 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2222 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				use_variable(&(yyvsp[0]));
@@ -3527,7 +3527,7 @@ case 419:
 			;
     break;}
 case 420:
-#line 2232 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2233 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				use_variable(&(yyvsp[0]));
@@ -3540,7 +3540,7 @@ case 420:
 			;
     break;}
 case 421:
-#line 2246 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2247 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				use_variable(&(yyvsp[0]));
@@ -3559,7 +3559,7 @@ case 421:
 			;
     break;}
 case 422:
-#line 2269 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2270 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				ref_array(&(yyvsp[-3]),&(yyvsp[-1]));
 #ifdef DEBUG_PARSER
@@ -3571,7 +3571,7 @@ case 422:
 			;
     break;}
 case 423:
-#line 2281 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2282 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				ref_array(&(yyvsp[-3]),&(yyvsp[-1]));
 #ifdef DEBUG_PARSER
@@ -3583,19 +3583,19 @@ case 423:
 			;
     break;}
 case 424:
-#line 2293 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2294 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token((Token*)NULL,&(yyvsp[0]));
 			;
     break;}
 case 425:
-#line 2297 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2298 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.next_token = append_token(yyvsp[-2].next_token,&(yyvsp[0]));
 			;
     break;}
 case 426:
-#line 2303 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2304 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    if(is_true(ID_EXPR,yyvsp[0].subclass)){
 				 use_variable(&(yyvsp[0]));
@@ -3608,7 +3608,7 @@ case 426:
 			;
     break;}
 case 427:
-#line 2317 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2318 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				   /* restore status of complex flag */
 			    if(!is_true(COMPLEX_FLAG,yyvsp[-1].subclass))
@@ -3617,53 +3617,53 @@ case 427:
 			;
     break;}
 case 428:
-#line 2325 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2326 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.size=substring_size(&(yyvsp[-1]),&(yyvsp[0]));
 			;
     break;}
 case 429:
-#line 2331 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2332 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.size=substring_size(&(yyvsp[-1]),&(yyvsp[0]));
 			;
     break;}
 case 430:
-#line 2335 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2336 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.size=substring_size(&(yyvsp[-1]),&(yyvsp[0]));
 			;
     break;}
 case 431:
-#line 2341 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2342 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class=1;
 			    yyval.subclass=0; /* 0 means LEN */
 			;
     break;}
 case 432:
-#line 2347 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2348 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class=yyvsp[-2].value.integer;
 			    yyval.subclass=0; /* 0 means LEN */
 			;
     break;}
 case 433:
-#line 2352 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2353 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    yyval.class=1;
 			    yyval.subclass=yyvsp[-1].value.integer;
 			;
     break;}
 case 434:
-#line 2357 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2358 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			      yyval.class=yyvsp[-3].value.integer;
 			      yyval.subclass=yyvsp[-1].value.integer;
 			;
     break;}
 case 435:
-#line 2364 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2365 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  if(is_true(ID_EXPR,yyvsp[0].subclass)){
 			    use_variable(&(yyvsp[0]));
@@ -3678,7 +3678,7 @@ case 435:
 			;
     break;}
 case 438:
-#line 2386 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2387 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 /* 				printf( "Scalar name: %d <%s>\n" */
 /* 					  , $1.value.integer */
@@ -3704,7 +3704,7 @@ case 438:
 			;
     break;}
 case 439:
-#line 2412 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2413 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 /* 				printf( "Array name: <%s>\n", hashtab[$1.value.integer].name ); */
 			    ref_variable(&(yyvsp[0]));
@@ -3725,7 +3725,7 @@ case 439:
 			;
     break;}
 case 440:
-#line 2435 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2436 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				if( highlight != -1 && hashtab[yyvsp[0].value.integer].define )
 				{
@@ -3742,7 +3742,7 @@ case 440:
 			;
     break;}
 case 441:
-#line 2450 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2451 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				if( highlight != -1 && hashtab[yyvsp[0].value.integer].define )
 				{
@@ -3759,7 +3759,7 @@ case 441:
 			;
     break;}
 case 448:
-#line 2480 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2481 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			  if(yyvsp[0].value.integer == 0) {
 			    warning(yyvsp[0].line_num,yyvsp[0].col_num,
@@ -3770,13 +3770,13 @@ case 448:
 			;
     break;}
 case 449:
-#line 2495 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2496 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 			    integer_context=TRUE;
 			;
     break;}
 case 450:
-#line 2502 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2503 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 {
 				integer_context=FALSE;
 				yyval.class = type_byte(class_LABEL,type_LABEL);
@@ -4005,7 +4005,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 2511 "/share/SN51/src/snavigator/parsers/fortran/fortran.y"
+#line 2512 "../../../../new_src/src/snavigator/parsers/fortran/fortran.y"
 
 void
 init_parser()			/* Initialize various flags & counters */
