@@ -1,3 +1,13 @@
+2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/sninit.tcl (sn_tcl_tk_init): Fix prepend
+	of SN bin dir to the PATH env var on startup.
+	The previous code used : as the PATH separator
+	under Windows which was causing problems with exec.
+	The problem manifested itself as a mysterious exec
+	error when attempting to build with Cygwin make.
+	[Bug 658173]
+
 2003-03-11  Steven Johnson  <sjohnson@neurizon.net>
 
 	* gui/projedit.tcl (add_files_cb): Use a foreach
