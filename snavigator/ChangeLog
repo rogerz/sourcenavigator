@@ -1,3 +1,22 @@
+2003-12-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/diff.tcl (move):
+	* gui/elix.tcl (constructor): Use centerOnScreen
+	method instead of center.
+	* gui/window.tcl (centerOnScreen, center,
+	move_to_mouse, sn_set_window_size): Remove
+	unused sn_set_window_size proc. Remove
+	center method and remove call to center
+	method from centerOnScreen. This used to
+	be needed for the Win32 version of Tk
+	but these bugs were fixed long ago. Add
+	new explicit_width and explicit_height
+	and use them if the width and height
+	are set via the -geometry property.
+	This is needed so that windows like the
+	project editor will be centered properly
+	when first created. [Bug 863275]
+
 2003-12-19  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/misc.tcl (sn_hide_show_project):

@@ -363,7 +363,7 @@ itcl::class RCSTopdiff& {
         # visible.
 
         if {${setpos}} {
-            ${this} center
+            ${this} centerOnScreen
         }
     }
 

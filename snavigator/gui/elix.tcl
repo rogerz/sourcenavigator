@@ -69,7 +69,7 @@ itcl_class Elix& {
         ${NoteBook} raise target
 
         title [sn_title [get_indep String ElixPreferences] 0]
-        ${this} center
+        ${this} centerOnScreen
     }
 
     # We'd use a radiobutton-on-a-frame widget if

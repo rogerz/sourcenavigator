@@ -97,19 +97,27 @@ itcl::class sourcenav::Window {
     public method centerOnScreen {} {
         global tcl_platform
 
-        if {$tcl_platform(platform) == "windows"} {
-            $this center
-        } else {
-# This code works fine under Unix, it should work under
-# Windows, but currently it does not. This issue needs
-# to be worked out after the Tk 8.3 upgrade.
 	update idletasks
-	set wd [winfo reqwidth $itk_component(hull)]
-	set ht [winfo reqheight $itk_component(hull)]
-	set x [expr {([winfo screenwidth $itk_component(hull)]-$wd)/2}]
-	set y [expr {([winfo screenheight $itk_component(hull)]-$ht)/2}]
+
+	# Use reqwidth/reqheight unless user explicitly set
+	# a width and height for the window via -geometry.
+	if {$explicit_width != -1} {
+	    set wd $explicit_width
+	    set explicit_width -1
+	} else {
+	    set wd [winfo reqwidth $itk_component(hull)]
+	}
+	if {$explicit_height != -1} {
+	    set ht $explicit_height
+	    set explicit_height -1
+	} else {
+	    set ht [winfo reqheight $itk_component(hull)]
+	}
+        set sw [winfo screenwidth $itk_component(hull)]
+        set sh [winfo screenheight $itk_component(hull)]
+	set x [expr {($sw-$wd)/2}]
+	set y [expr {($sh-$ht)/2}]
 	wm geometry $itk_component(hull) +$x+$y
-        }
     }
 
     public method client args {
@@ -345,56 +353,9 @@ itcl::class sourcenav::Window {
         return $itk_component(hull)
     }
 
-    # This method is targeted for removal, it
-    # works under Windows which is its only
-    # saving grace.
-
-    private method center {} {
-        global tcl_platform
-
-        #$this withdraw
-        update idletasks
-
-        set w [winfo reqwidth $itk_component(hull)]
-        set h [winfo reqheight $itk_component(hull)]
-
-        set sw [winfo screenwidth $itk_component(hull)]
-        set sh [winfo screenheight $itk_component(hull)]
-
-        set x [expr {${sw} / 2 - ${w} / 2}]
-        set y [expr {${sh} / 2 - ${h} / 2}]
-
-        set width_height ""
-
-        if {${x} < 0 || ${y} < 0} {
-            if {${x} < 0} {
-                set x 0
-                set width_height "=${sw}"
-            } else {
-                set width_height "=${w}"
-            }
-
-            if {${y} < 0} {
-                set y 0
-                append width_height "x${sh}"
-            } else {
-                append width_height "x${h}"
-            }
-        }
-        append width_height "+${x}+${y}"
-
-        for {set i 0} {${i} < 2} {incr i} {
-            wm geometry $itk_component(hull) ${width_height}
-            update idletasks
-            if {[winfo x $itk_component(hull)] == ${x}} {
-                break
-            }
-        }
-    }
-
     public method move_to_mouse {{swap 1}} {
         #we never move the window to the mouse location
-        after idle "[itcl::code ${this} center]; ${this} deiconify ; ${this} take_focus"
+        after idle "[itcl::code ${this} centerOnScreen]; ${this} deiconify ; ${this} take_focus"
     }
 
     # This procedure checks to make sure it's not stealing
@@ -477,7 +438,15 @@ itcl::class sourcenav::Window {
     }
 
     itk_option define -geometry geometry Geometry "" {
-        wm geometry $itk_component(hull) $itk_option(-geometry)
+        # Full: 200x200+144+144
+        # Short: 200x200
+        # XY:    +144+144 (ignore)
+        set geom $itk_option(-geometry)
+        if {[regexp {([0-9]+)x([0-9]+)} $geom whole width height]} {
+            set explicit_width $width
+            set explicit_height $height
+        }
+        wm geometry $itk_component(hull) $geom
     }
 
     itk_option define -iconmask iconmask IconMask "" {
@@ -500,6 +469,9 @@ itcl::class sourcenav::Window {
     protected variable leader ""
 
     protected variable old_grab ""
+
+    protected variable explicit_width -1
+    protected variable explicit_height -1
 
     common modalstack ""
 
@@ -694,55 +666,3 @@ proc sn_window_append_print {w cmd} {
     ${m}.edit insert 0 command -label [get_indep String Print]\
       -underline [get_indep Pos Print] -command ${cmd}
 }
-
-
-proc sn_set_window_size {this {x ""} {y ""} {width ""} {height ""} {geometry\
-  ""}} {
-    global sn_options
-    #Try to use the 65% size of the screen
-    if {![info exists sn_options(def,window-size)] ||\
-      $sn_options(def,window-size) == ""} {
-        set sn_options(def,window-size) 65
-    }
-
-    #use the geometry manager to set the widthxheight
-    #else it doesn't work !!!
-    if {${geometry} != ""} {
-        wm geometry ${this} ${geometry}
-    } else {
-        set geom ""
-        if {${width} == ""} {
-            set width [expr [winfo screenwidth .] *\
-              $sn_options(def,window-size) / 100]
-        }
-        if {${width} != "-"} {
-            append geom ${width}
-        }
-        if {${height} == ""} {
-            set height [expr [winfo screenheight .] *\
-              $sn_options(def,window-size) / 100]
-        }
-        if {${height} == "-"} {
-            set height [winfo reqwidth ${this}]
-        }
-        if {${height} != "-"} {
-            append geom "x${height}"
-        }
-        if {${x} != ""} {
-            append geom "+${x}"
-            append geom "+${y}"
-        }
-        if {${geom} != ""} {
-            wm geometry ${this} ${geom}
-        }
-        return [list ${width} ${height}]
-        if {${x} != ""} {
-            wm geometry ${this} [expr int(${width})]x[expr\
-              int(${height})]+${x}+${y}
-        } else {
-            wm geometry ${this} [expr int(${width})]x[expr int(${height})]
-        }
-    }
-    return [list ${width} ${height}]
-}
-
