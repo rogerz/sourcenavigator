@@ -563,6 +563,8 @@ itcl::class Retr& {
         display_contents ${this}.list [read_matched_from_db ${this}.list\
           ${scopes} -glob ${pat}]
 
+        ${this}.list sort_refresh
+
         #delete cancel button, if availiable
         Delete_Cancel_Dialog
 

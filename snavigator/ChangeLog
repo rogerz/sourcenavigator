@@ -1,3 +1,13 @@
+2003-04-02  Steven Johnson  <sjohnson@neurizon.net>
+
+	* gui/tree.tcl (sort_refresh): Added this new method,
+	to allow the sort order of a list to be reset,
+	after changes may have been made to the list contents.
+	* gui/retrieverpane.tcl (start_search): Called new
+	sort_refresh method after symbol tree is regenerated
+	(following a file save). This restores the sort
+	order that was selected prior to the save.
+
 2003-03-31  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* Makefile.in:

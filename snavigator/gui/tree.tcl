@@ -248,6 +248,12 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	return [::eval $lframe.tree search $args]
     }
 
+    method sort_refresh {} {
+	if { $actual_sortcolumn != -1 } {
+	    resort $actual_sortcolumn
+	}
+    }
+
     method resort {num {var ""}} {
 	global sn_options
 	global $thisTail-sort
