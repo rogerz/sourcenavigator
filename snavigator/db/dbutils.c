@@ -1985,7 +1985,7 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 				? local_class_name
 				: global_class_name, DB_FLDSEP_STR,
 			name,                    DB_FLDSEP_STR,
-			arg_types ? arg_types : NULL,
+			arg_types ? arg_types : "",
 			NULL);
 		length = buf.len + 1;
 	}
@@ -2101,7 +2101,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 							}
 #if BUG_TRACE
 							fprintf(trace_fp,"1 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-								scope ? scope : NULL,in_access_val,ret_type,arg_types);
+								scope ? scope : "NULL",
+								in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 							RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
 						}
@@ -2148,7 +2149,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 					}
 #if BUG_TRACE
 					fprintf(trace_fp,"2 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-						scope ? scope : NULL,in_access_val,ret_type,arg_types);
+						scope ? scope : "NULL",
+						in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 
 					RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
@@ -2203,7 +2205,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 						
 #if BUG_TRACE
 						fprintf(trace_fp,"3 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-							scope ? scope : NULL,in_access_val,ret_type,arg_types);
+							scope ? scope : "NULL",
+							in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 
 						RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
@@ -2264,7 +2267,7 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 #if BUG_TRACE
 		fprintf(trace_fp,"4 name: <%s> scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
 			buf.buf,
-			scope ? scope : NULL,
+			scope ? scope : "NULL",
 			in_access_val,
 			ret_type,
 			arg_types ? arg_types : "NULL");

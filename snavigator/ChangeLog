@@ -1,5 +1,14 @@
 2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/dbutils.c (search_for_symbol):
+	* parsers/common/parser.c (put_cross_ref):
+	Fixup some questionable uses of the ternary
+	operator. Pass "" instead of NULL to copystrings
+	function. Pass "NULL" instead of NULL to fprintf.
+	These changes do not change any of the functionality.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/cobol/skeleton.c (log_symbol_filename,
 	main):
 	* parsers/cpp/skeleton.c (log_symbol_filename,
