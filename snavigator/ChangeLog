@@ -1,3 +1,17 @@
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework the token
+	dump output so that newlines are printed
+	as \n and double quotes are printed as \".
+	* tests/parsers/php.test: Reformat token
+	tests since a newline embedded in the
+	token value is not printed as \n. Test for
+	a \" in the token value.
+	* tests/parsers/testutil.tcl (filter_tokens):
+	Split browse_tokens result on newline
+	and use a regexp to extract values.
+
 2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
@@ -13,7 +27,7 @@
 	should be more efficient since whole
 	regions of HTML text are now matched.
 	Match <? and <?php as HTML text.
-	Rename COMMENT mode to COMMEN_MODE since
+	Rename COMMENT mode to COMMENT_MODE since
 	COMMENT is now use as a token id.
 	Emit HTML token if dumping tokens and
 	parser hits EOF.

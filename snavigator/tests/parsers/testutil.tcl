@@ -166,11 +166,14 @@ proc filter_tokens { filters results } {
     # parser is a well formed Tcl list
 
     set buff ""
-    foreach {index token value start end} $results {
-        #puts "\'$index\' \'$token\' \'$value\' $start $end"
-        #puts "filters is \{$filters\}"
+
+    foreach line [split $results \n] {
+        if {![regexp {([0-9]+) ([^ ]+) (".*") ([0-9]+.[0-9]+) ([0-9]+.[0-9]+)} \
+		  $line whole index token value start end]} {
+            error "result line \"$line\" could not be matched"
+        }
         if {[lsearch -exact $filters $token] == -1} {
-            append buff "$index $token \"$value\" $start $end\n"
+            append buff "$index $token $value $start $end\n"
         }
     }
     # Remove last newline to match output from browse_tokens

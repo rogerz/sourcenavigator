@@ -301,7 +301,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   ("<?"|"<?php") {
     /* HTML -> PHP mode switch */
     #if MATCH_DUMP
-    matched_pattern("(<?|<php)", yytext);
+    matched_pattern("(<?|<?php)", yytext);
     #endif
     sn_advance_column(yyleng);
 
@@ -1487,10 +1487,26 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   if (token_dump_file) {
     FILE * dump_tokens = fopen(token_dump_file, "a");
-    
+
     for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
         fprintf(dump_tokens, "%d %s", i, TokenTypeToString(tok));
-        fprintf(dump_tokens, " \"%s\"", (tok->strval) ? tok->strval : "");
+        if (tok->strval == NULL) {
+            fprintf(dump_tokens, " \"\"");
+        } else {
+            /* Print a newline as \n and a double quote character as \" */
+            char *x;
+            fprintf(dump_tokens, " \"");
+            for (x=tok->strval; *x; x++) {
+                if (*x == '\n') {
+                    fprintf(dump_tokens, "\\n");
+                } else if (*x == '\"') {
+                    fprintf(dump_tokens, "\\\"");
+                } else {
+                    fprintf(dump_tokens, "%c", *x);
+                }
+            }
+            fprintf(dump_tokens, "\"");
+        }
         fprintf(dump_tokens, " %d.%d %d.%d",
             tok->start_line,
             tok->start_column,
