@@ -1,3 +1,13 @@
+2003-01-11 Mo DeJong  <mdejong@uncounted.org>
+
+	* etc/sn_cmp_g.pat: Add pattern to match a
+	Win32 filename like d:/filename.c:856.
+	* gui/grep.tcl (sn_goto_comp_error_or_grep):
+	Remove hack to match a win32 path name
+	like d:/filename.c:856, use regexp instead.
+	* tests/gui/grep.test: Add path name test
+	cases for sn_goto_comp_error_or_grep.
+
 2002-11-26  Mo DeJong  <mdejong@uncounted.org>
 
         * patches/libgui_print.patch: Add patch
