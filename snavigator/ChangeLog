@@ -1,6 +1,16 @@
 2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support for
+	PHP super global variables. These variables
+	are automatically seen as global even if
+	they have not been declared global.
+	* tests/parsers/php.test: Add highlight and
+	xref test for super globals.
+
+2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Reimplement array
 	variables to support arrays with complex
 	subexpressions. The previous implementation

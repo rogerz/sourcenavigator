@@ -160,6 +160,7 @@ static NestedBracket* array_nest_tail = NULL;
 static int result;
 
 static SearchTable * global_var_table = (SearchTable *) NULL;
+static SearchTable * super_global_var_table;
 
 /* Stores the contents of a special processing mode over
  * multiple lines/rules.
@@ -2351,14 +2352,16 @@ void emit_var_access(Token *tok, VarAccess acc) {
   column_end = tok->end_column;
 
   /*
-   * If we are not in a function or the variable is in the
-   * function's global table then it is a global.
+   * A var is global if not currently in a function,
+   * if the variable is in the super global table,
+   * or if in the global table.
    */
 
   entry.key = varname;
   entry.key_len = -1;
 
   if ((current_function == NULL) ||
+      (super_global_var_table->search( &super_global_var_table, entry ) != NULL) ||
       (global_var_table &&
         (global_var_table->search( &global_var_table, entry ) != NULL))) {
     ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
@@ -2465,5 +2468,25 @@ reset()
 int
 main(int argc, char *argv[])
 {
+  /* Init the super globals lookup table before starting
+   * since it will never change during parsing.
+   */
+
+  int i;
+  SearchEntry entry;
+  char* super_globals[] = {
+    "GLOBALS", "_SERVER", "_GET", "_POST", "_COOKIE",
+    "_FILES", "_ENV", "_REQUEST", "_SESSION", NULL
+  };
+  super_global_var_table =
+    SearchTableCreate(20, SEARCH_HASH_TABLE, FreeGlobalEntry);
+
+  for (i=0; super_globals[i]; i++) {
+    entry.key = super_globals[i];
+    entry.key_len = -1;
+    entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+    super_global_var_table->add( &super_global_var_table, entry );
+  }
+
   return sn_main(argc, argv, group, &yyin, yylex, reset);
 }

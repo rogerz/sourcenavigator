@@ -421,6 +421,19 @@ $arr["ind1"]['ind2']
 2 str 3.13 3.19
 3 gv 3.0 3.4}
 
+tcltest::test highlight-1.14 { highlight super global } {
+    browse_highlights [save_file f.php {
+<?
+function foo() {
+    print $_GET['num']
+}
+?>
+}]
+} {1 key 3.0 3.8
+2 key 4.4 4.9
+3 str 4.16 4.21
+4 gv 4.10 4.15}
+
 
 tcltest::test highlight-2.0 { highlight special keywords } {
     browse_highlights [save_file f.php {
@@ -1034,6 +1047,16 @@ print $var["hello"]["mello"]["fellow"];
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
 }
 
+tcltest::test var-4.7 { super global array var read xref } {
+    browse_xref [save_file f.php {
+<?
+function foo() {
+    print $_COOKIE['one'];
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>_COOKIE<>gv<>r<>000004<>f.php;<>
+}
 
 tcltest::test var-5.0 { read and write xrefs } {
     browse_xref [save_file f.php {
@@ -2536,23 +2559,13 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 #     print_r($$arrayName);
 # )
 # show('myArray');
- 
-# FIXME: Are there any cases where a DOUBLE_QUOTED_STRING
-# is accepted but a VDOUBLE_QUOTED_STRING is not or vice
-# versa. I think the include case is handled properly, but
-# what about others?
 
-# FIXME: Add test case for highlight of vars inside a double
-# quoted string once that is implemented.
+# There could be a problem with VDOUBLE_QUOTED_STRING
+# not being accepted as a default argument value
+# in a function declaration.
 
-# FIXME: When if $var['hi'] appears in heredoc does that
+# FIXME: What if $var['hi'] appears in heredoc does that
 # just match $var and ignore the rest?
-
-# FIXME: Add support for super globals, vars that are
-# global even if they are not in the global table.
-#
-# $GLOBALS, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
-# $_ENV, $_REQUEST, $_SESSION
 
 # Should the global variable access symbol be extended
 # to include the full text of the global? This would
