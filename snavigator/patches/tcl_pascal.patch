@@ -1,0 +1,25 @@
+2002-11-19  Mo DeJong  <mdejong@uncounted.org>
+
+	* win/tclWinPort.h: Remove undefine of PASCAL
+	symbol added on 2001-09-12. It caused
+	crashing problems with sockets.
+
+Index: tcl/win/tclWinPort.h
+===================================================================
+RCS file: /cvs/src/src/tcl/win/tclWinPort.h,v
+retrieving revision 1.6
+retrieving revision 1.7
+diff -u -r1.6 -r1.7
+--- tcl/win/tclWinPort.h	13 Sep 2001 18:27:55 -0000	1.6
++++ tcl/win/tclWinPort.h	13 Sep 2002 14:40:59 -0000	1.7
+@@ -73,10 +73,6 @@
+ #include <windows.h>
+ #undef WIN32_LEAN_AND_MEAN
+ 
+-#ifdef _MSC_VER
+-#define PASCAL
+-#endif
+-
+ #ifdef BUILD_tcl
+ # undef TCL_STORAGE_CLASS
+ # define TCL_STORAGE_CLASS DLLEXPORT

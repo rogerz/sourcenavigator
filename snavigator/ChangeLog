@@ -1,3 +1,11 @@
+2002-11-19  Mo DeJong  <mdejong@uncounted.org>
+
+	* patches/tcl_pascal.patch: Add patch to
+	get rid of crashes that show up under
+	windows when launching emacs. This patch
+	was already added to the CVS but it is
+	needed for the released 5.1 sources.
+
 2002-11-16  Mo DeJong  <mdejong@uncounted.org>
 
 	* gui/editorpane.tcl (m3_post_menu_update):
