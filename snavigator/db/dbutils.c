@@ -617,6 +617,8 @@ db_remove_file_def(int softdel,char *file)
 	char    filename[MAXPATHLEN + 1];
 	LongString	delkey;
 	LongString	pars;
+	LongString	pars_data;
+	char    startpos_buff[11]; /* format "%06d.%03d" */
 	int     scope_val = -1;
 	int     del;
 	int     del_fil;
@@ -658,6 +660,7 @@ db_remove_file_def(int softdel,char *file)
 
 	LongStringInit(&delkey,0);
 	LongStringInit(&pars,0);
+	LongStringInit(&pars_data,0);
 
 	/*
 	 * Add separator at the end of file to unique identify it's records
@@ -690,7 +693,31 @@ db_remove_file_def(int softdel,char *file)
 			continue;
 		}
 
+		/* Key format: file startpos scope symbol symbol_type */
 		pars.split(&pars, key.data, key.size - 1, 0, DB_FLDSEP_CHR, -1);
+		/* Data format: endpos high-startpos high-endpos arg-types */
+		pars_data.split(&pars_data, data.data, data.size - 1, 0, DB_FLDSEP_CHR, -1);
+
+		/* Reformat highlight position into long format: 1.18 -> 000001.018 */
+		{
+		        int line;
+		        int column;
+
+		        if (pars_data.field_size[1] + 1 > sizeof(startpos_buff)) {
+		                Paf_panic(PAF_PANIC_EMERGENCY);
+		        }
+		        memcpy(startpos_buff,
+			        pars_data.field_value[1],
+			        pars_data.field_size[1]);
+		        startpos_buff[pars_data.field_size[1]] = '\0';
+
+		        if (sscanf(startpos_buff, "%d.%d", &line, &column) == 2) {
+		                sprintf(startpos_buff, "%06d.%03d", line, column);
+		        } else {
+			        fprintf(stderr,"unable to scan decimal values from \"%s\"\n",
+			                startpos_buff);
+		        }
+		}
 
 		memcpy((char *)&scope_val,sc_data.data,sc_data.size);
 		switch (scope_val)
@@ -703,7 +730,7 @@ db_remove_file_def(int softdel,char *file)
 		case PAF_COMMON_MBR_VAR_DEF:
 		case PAF_CLASS_INHERIT:
 		case PAF_LOCAL_VAR_DEF:
-			/* Key format: class member lineno filename */
+			/* Key format: class member high-startpos filename */
 			delkey.copy(&delkey,
 				pars.field_value[2],
 				pars.field_size[2]);
@@ -717,8 +744,8 @@ db_remove_file_def(int softdel,char *file)
 			delkey.append(&delkey, DB_FLDSEP_STR, -1); /* Separator */
 
 			delkey.append(&delkey,
-				pars.field_value[1],
-				pars.field_size[1]);
+				startpos_buff,
+				strlen(startpos_buff));
 
 			delkey.append(&delkey, DB_FLDSEP_STR, -1); /* Separator */
 
@@ -728,15 +755,15 @@ db_remove_file_def(int softdel,char *file)
 			break;
 
 		default:
-			/* Key format: symbol lineno filename */
+			/* Key format: symbol high-startpos filename */
 			delkey.copy(&delkey,
 				pars.field_value[3],
 				pars.field_size[3]);
 			delkey.append(&delkey, DB_FLDSEP_STR, -1); /* Separator */
 
 			delkey.append(&delkey,
-				pars.field_value[1],
-				pars.field_size[1]);
+				startpos_buff,
+				strlen(startpos_buff));
 			delkey.append(&delkey, DB_FLDSEP_STR, -1); /* Separator */
 
 			delkey.append(&delkey,
@@ -774,6 +801,7 @@ db_remove_file_def(int softdel,char *file)
 
 	delkey.free(&delkey);
 	pars.free(&pars);
+	pars_data.free(&pars_data);
 }
 
 #define DB_XREF_FLD_SEP_STR DB_FLDSEP_STR

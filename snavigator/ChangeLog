@@ -1,3 +1,15 @@
+2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_remove_file_def): Rework
+	the function that removes all symbols for
+	a given file name so that it uses the symbol
+	highlight start position instead of the
+	symbol start position. This is needed to match
+	the implementation change in put_symbol made
+	on 2003-07-22. With this change, symbols are
+	correctly deleted from tables like cl and fu
+	when the containing file is reparsed.
+
 2003-11-30  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* demo/Makefile.am: 2nd attempt at removing
