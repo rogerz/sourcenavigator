@@ -1,5 +1,11 @@
 2003-08-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/misc.tcl (sn_load_xref): Use list command
+	when creating cbrowser2 command so that paths
+	with spaces in them work properly.
+
+2003-08-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (load_xref_pipe, event_LoadPipeInput):
 	Add check for the err "abnormal program termination"
 	since this seems to be included when a Win32

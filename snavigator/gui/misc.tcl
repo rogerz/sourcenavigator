@@ -942,7 +942,7 @@ proc sn_load_xref {xfer_file cbrowser_xref} {
     # parsed then just pass the file name containing
     # xref output to dbimp.
 
-    set cbr2_cmd [file join $sn_path(bindir) cbrowser2]
+    set cbr2_cmd [list [file join $sn_path(bindir) cbrowser2]]
     
     if {[string first "-l" $sn_options(sys,parser_switches)] != -1} {
         lappend cbr2_cmd -l
