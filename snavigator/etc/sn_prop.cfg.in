@@ -161,14 +161,13 @@ sn_add_parser fortran \
 	-suffix {*.f *.for *.FOR} \
 	-brow_cmd $sn_path(bindir)/fbrowser \
 	-high_cmd $sn_path(bindir)/fbrowser \
-	-brow_switch "" \
 	-high_switch "-h" \
 	-case 1
 
 # ELF
 
 #sn_add_parser elf \
-	-suffix {*.elf *.am} \
+	-suffix {*.elf} \
 	-brow_cmd $sn_path(bindir)/ebrowser \
 	-high_cmd $sn_path(bindir)/ebrowser \
 	-high_switch "-h"
@@ -176,7 +175,7 @@ sn_add_parser fortran \
 # ELF (using ApplixWare macro editor)
 
 #sn_add_parser elf \
-	-suffix {*.elf *.am} \
+	-suffix {*.elf} \
 	-brow_cmd $sn_path(bindir)/ebrowser \
 	-high_cmd $sn_path(bindir)/ebrowser \
 	-brow_switch "$asterx_home_dir/applix -macro sn_imporp -pass" \
@@ -201,68 +200,55 @@ if {$tcl_platform(platform) == "windows"} {
 sn_add_parser c++ \
 	-suffix $cpp_ext \
 	-brow_cmd $sn_path(bindir)/cbrowser \
-	-high_cmd $sn_path(bindir)/cbrowser \
-	-high_switch "-h" \
 	-macros "-m"
 
 # C
 #sn_add_parser c \
 	-suffix {*.ec *.ep *.sc *.cpc} \
 	-brow_cmd $sn_path(bindir)/cbrowser \
-	-high_cmd $sn_path(bindir)/cbrowser \
-	-brow_switch "-C" \
-	-high_switch "-C -h"
+	-brow_switch "-C"
 
 # Java
 
 sn_add_parser java \
 	-suffix {*.java} \
-	-brow_cmd $sn_path(bindir)/@JAVAEXE@ \
-	-high_cmd $sn_path(bindir)/jbrowser \
-	-high_switch "-h"
+	-brow_cmd $sn_path(bindir)/@JAVAEXE@
 
 # Tcl/Tk and [incr Tcl]
 
 sn_add_parser tcl \
 	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
-	-brow_cmd $sn_path(bindir)/tbrowser \
-	-high_cmd $sn_path(bindir)/tbrowser \
-	-high_switch "-h"
+	-brow_cmd $sn_path(bindir)/tbrowser
 
 # PowerPC 601 assembly language
 
 sn_add_parser asm \
 	-suffix {*.asm *.s *.S}\
-	-brow_cmd $sn_path(bindir)/abrowser \
-	-high_cmd $sn_path(bindir)/abrowser
+	-brow_cmd $sn_path(bindir)/abrowser
 
 # CCITT High Level Language (CHILL)
 
 #sn_add_parser chill \
 	-suffix {*.ch} \
-	-brow_cmd $sn_path(bindir)/chbrowser \
-	-high_cmd $sn_path(bindir)/chbrowser
+	-brow_cmd $sn_path(bindir)/chbrowser
 
 # Python
 
 sn_add_parser python \
 	-suffix {*.py *.pyw} \
-	-brow_cmd $sn_path(bindir)/pybrowser \
-	-high_cmd $sn_path(bindir)/pybrowser
+	-brow_cmd $sn_path(bindir)/pybrowser
 
 # M4 + autoconf files
 
 sn_add_parser m4 \
         -suffix {*.m4 *.ac configure.in} \
-        -brow_cmd $sn_path(bindir)/m4browser \
-	-high_cmd $sn_path(bindir)/m4browser
+        -brow_cmd $sn_path(bindir)/m4browser
 
 # PHP files
 
 sn_add_parser php \
 	-suffix {*.php} \
-	-brow_cmd $sn_path(bindir)/phpbrowser \
-	-high_cmd $sn_path(bindir)/phpbrowser
+	-brow_cmd $sn_path(bindir)/phpbrowser
 
 # Files without a parser
 

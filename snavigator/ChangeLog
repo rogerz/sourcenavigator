@@ -1,5 +1,18 @@
 2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* etc/sn_prop.cfg.in: Remove empty -brow_switch
+	from fortran parser config. Remove *.am from
+	commented out elf parser since this extension
+	is covered by the others rule. Remove -high_cmd
+	and -high_switch from the c, c++, java, tcl,
+	chill, and python configurations since these
+	languages have built-in syntax highlighters.
+	Remove -high_cmd and -high_switch from the
+	asm, m4, and php configurations since these
+	parsers do not support highlighting.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* db/dbutils.c (search_for_symbol):
 	* parsers/common/parser.c (put_cross_ref):
 	Fixup some questionable uses of the ternary
