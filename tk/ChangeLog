@@ -1,3 +1,9 @@
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/Makefile.in:
+	* win/Makefile.in: Add TCL_DBGX so that the
+	build works with --enable-symbols.
+
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* win/configure: Regen.
