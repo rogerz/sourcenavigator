@@ -1,3 +1,19 @@
+2003-07-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights):
+	Capture any text written to stderr by the highlighter
+	and log it instead of displaying in a msg box.
+	Replace some tabs with spaces to keep
+	formatting consistent.
+	* gui/misc.tcl (load_xref_pipe,
+	event_LoadPipeInput): If an error message is
+	written to stderr, don't display it at the
+	end of the parse. This behavior was leading
+	people to conclude that the parse did not
+	work and that the database was corrupted.
+	In fact, it may have just been one construct
+	in one file that was causing a problem.
+
 2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* hyper/services.c (class_browser_insert):

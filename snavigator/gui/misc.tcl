@@ -1012,12 +1012,22 @@ proc load_xref_pipe {xreffd xfer_file} {
 
         set err ""
         set status [catch {close ${xreffd}} err]
-        sn_log "xref pipe exit status: ${status}, ${err}"
+        sn_log "xref pipe close-exit status: ${status}, ${err}"
 
-        #xref has been crashed, report the error and the last accessed
-        #file name
-        #or xref has been cancelled by user, don't report errors
-        if {${status} && ! ${xref_cancelled}} {
+        if {$status &&
+                ([string match "*child killed*" $err] ||
+                 [string match "*child process exited abnormally*" $err])} {
+            set crashed 1
+        } else {
+            set crashed 0
+        }
+
+        # If dbimp or a second stage parser crashed, then
+        # display an error. If a warning was generated
+        # on stderr, just log it and continue. Don't
+        # report an error if the user canceled.
+
+        if {(($status && $sn_debug) || ${crashed}) && !${xref_cancelled}} {
             set errstring "Error: ${err}"
             if {[info exists xref_termometer(lastfile)] &&\
               $xref_termometer(lastfile) != ""} {
@@ -3601,6 +3611,7 @@ proc event_LoadPipeInput {eventfd sc} {
     global ProcessingCancelled
     global PafLoadPipeEnd
     global event_LoadPipeInput_last_accessed_file
+    global sn_debug
 
     #the process has been canceled by the user
     if {${ProcessingCancelled} == 2} {
@@ -3628,12 +3639,36 @@ proc event_LoadPipeInput {eventfd sc} {
         fconfigure ${eventfd} -blocking 1
         set ret [catch {close ${eventfd}} err]
         if {${ret} && !${ProcessingCancelled}} {
-            sn_error_dialog ${err}
+            sn_log "event_LoadPipeInput close : error ${err}"
+
+            # If the parser crashed, then we should show
+            # an error message to the user instead of
+            # just continuing.
+
+            if {[string match "*child killed*" $err] ||
+                    [string match "*child process exited abnormally*" $err]} {
+                set crashed 1
+            } else {
+                set crashed 0
+            }
+
+            if {$sn_debug || $crashed} {
+                sn_error_dialog ${err}
+            }
+
+            if {!$crashed} {
+                # Setting ProcessingCancelled to 3 indicates that
+                # the parsing process should continue. The next
+                # block is skipped and the user is not asked if
+                # they want to continue parsing.
+                set ProcessingCancelled 3
+            }
         }
 
         #ask the user to continue
         if {(${ret} || ${error}) && !${ProcessingCancelled}} {
-            sn_log "event_LoadPipeInput : parser crashed, ProcessingCancelled is $ProcessingCancelled"
+            sn_log "event_LoadPipeInput : parser crashed or wrote \
+                    to stderr, ProcessingCancelled is $ProcessingCancelled"
             set ProcessingCancelled 1
             sn_handle_parse_error
         }

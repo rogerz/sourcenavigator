@@ -3331,11 +3331,14 @@ itcl::class Editor& {
 
         set files_to_delete [list]
 
-	set outf [sn_tmpFileName]
-	lappend highcmd -s $outf
+        set outf [sn_tmpFileName]
+        lappend highcmd -s $outf
         lappend files_to_delete $outf
 
-	if {${mod}} {
+        set errf [sn_tmpFileName]
+        lappend files_to_delete $errf
+
+        if {${mod}} {
 	    # FIXME: It is not really clear why this logic is needed
             # since we only highlight when opening, saving, or reverting.
 
@@ -3352,15 +3355,25 @@ itcl::class Editor& {
             lappend highcmd $savef
             lappend files_to_delete $savef
         } else {
-	    lappend highcmd $itk_option(-filename)
-	}
+            lappend highcmd $itk_option(-filename)
+        }
 
 	sn_log "Highlighter: ${highcmd}"
 
-	if {[catch {eval exec -- ${highcmd}} err]} {
+	if {[catch {eval exec -- ${highcmd} 2>$errf} err]} {
 		bgerror ${err}
 		return
 	}
+
+        if {[file exists $errf] && [file size $errf] > 0} {
+            set fd [open $errf r]
+            fconfigure ${fd} \
+                -encoding $sn_options(def,system-encoding) \
+                -blocking 0
+            set data [read -nonewline ${fd} [file size $errf]]
+            close $fd
+            sn_log "highlight cmd stderr was : $data"
+        }
 
 	#if {!${mod}} {
 	#    set highfile [paf_db_f get \
