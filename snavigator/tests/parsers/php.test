@@ -72,8 +72,6 @@ PAF_GLOB_VAR_DEF;mode4<>000005.004<>f.php;5.9<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000005.004<>#<>mode4<>gv;5.9<>5.4<>5.9<>{}
 }
 
-
-
 tcltest::test var-1.0 { var write } {
     php_parse [save_file f.php {
 <?
@@ -193,6 +191,16 @@ tcltest::test comment-1.10 { insert comment xref } {
 ?>
 }]
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;********\xFF * Hello *\xFF ********\n"
+
+tcltest::test comment-1.11 { can't leave comment mode with ?> } {
+    php_parse_comment_xref [save_file f.php {
+<?
+/*Comment ?>ONE<? Text*/
+?>
+}]
+} {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment ?>ONE<? Text
+}
+
 
 
 
@@ -450,9 +458,19 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
 PAF_CROSS_REF;#<>foo_two<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
 }
 
+tcltest::test function-3.3 { exit php mode inside a function } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+   ?>HTML call()<?
+   bar();
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
+}
 
-# Need to add test that jumps out of FUNCTION mode
-# and back into INITIAL mode, then back to FUNCTION.
+
 
 # Need to add tests for string processing. Some variable
 # recognition works inside strings but I don't think

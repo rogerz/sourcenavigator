@@ -53,6 +53,8 @@ static char group[] = "php";
 /* FIXME: Can't pass NULL or "" as current function (core dump) */
 static char current_function[MAX_SIZE] = {"GLOBAL"};
 static char current_function_args[MAX_SIZE] = {""};
+
+/* line number where highlight starts and ends */
 static int  current_function_highlight_line;
 
 /* in "function fog() {}" column of 'f' in "fog" */
@@ -76,6 +78,9 @@ static int  current_function_column_end;
 static int  current_function_brace_count;
 
 static int result;
+
+/* The mode to return to after leaving HTML mode */
+static int php_entry_mode = -1;
 
 /* Stores a comment buffer that could be built over multiple lines/rules. */
 LongString cbuff;
@@ -102,8 +107,8 @@ yywrap()
 
 %option stack
 %x COMMENT
-%x PHP
 %x FUNCTION
+%x PHP
 
 ws		[ \t]
 wsn		[ \t\n]
@@ -154,13 +159,18 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
 <INITIAL,PHP,FUNCTION>\n		{ sn_advance_line(); sn_reset_column(); }
 
-<INITIAL>"<?" { /* HTML -> PHP mode */
-    yy_push_state(PHP); /*BEGIN(PHP);*/
+<INITIAL>"<?" { /* HTML -> FUNCTION,PHP mode (but not COMMENT) */
+    if (php_entry_mode == -1)
+        BEGIN(PHP);
+    else
+        BEGIN(php_entry_mode);
+
     sn_advance_column(2);
 }
 
-<PHP,FUNCTION>"?>" { /* PHP -> HTML mode */
-    yy_pop_state(); /*BEGIN(INITIAL);*/
+<PHP,FUNCTION>"?>" { /* FUNCTION,PHP -> HTML mode */
+    php_entry_mode = YY_START;
+    BEGIN(INITIAL);
     sn_advance_column(2);
 }
 

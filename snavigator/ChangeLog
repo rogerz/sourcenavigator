@@ -1,5 +1,16 @@
 2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Fixup mode switching
+	bug when we transition from a FUNCTION mode to
+	INITIAL and then back to FUNCTION.
+	* tests/parsers/php.test: Add test case for
+	FUNCTION mode swithing bug. Also test attempt
+	to switch to HTML mode inside a comment, it
+	should fail.
+
+2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/m4/m4browser.c: Regen.
 	* parsers/m4/m4browser.l: Add FUNCTION rule
 	to support read, write, and call xrefs
