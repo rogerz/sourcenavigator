@@ -1,5 +1,15 @@
 2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/tmeter.tcl (make_scale_window): Add
+	a call to sn_wait so that we sit in the
+	event loop for a little bit after the scale
+	window is mapped. This is needed to work around
+	a problem under win32 where the scale window
+	is mapped but the contents are not drawn for
+	a couple of seconds.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/cpp/cbrowser2.c (main): Print an error
 	to stdout and exit if the xref_file given does
 	not exist. Don't flush stdout after a read of
