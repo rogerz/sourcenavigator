@@ -62,5 +62,6 @@ file_d.xpm unknown.xpm \
 play.xpm rplay.xpm
 
 install-data-local:
-	$(INSTALL_DATA) $(srcdir)/@SPLASHFILE@ $(imagedir)/splash.gif
-	$(INSTALL_DATA) $(srcdir)/@X11ICON@ $(imagedir)/paf.xbm
+	$(mkinstalldirs) $(DESTDIR)$(imagedir)
+	$(INSTALL_DATA) $(srcdir)/@SPLASHFILE@ $(DESTDIR)$(imagedir)/splash.gif
+	$(INSTALL_DATA) $(srcdir)/@X11ICON@ $(DESTDIR)$(imagedir)/paf.xbm

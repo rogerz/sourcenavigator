@@ -339,7 +339,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 install-exec-local: $(bindir)/@SN_LAUNCH_SHELL@
 
 $(bindir)/@SN_LAUNCH_SHELL@: snavigator
-	$(INSTALL_SCRIPT) snavigator $(bindir)/@SN_LAUNCH_SHELL@
+	$(INSTALL_SCRIPT) snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

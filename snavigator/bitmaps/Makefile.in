@@ -333,8 +333,9 @@ mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-	$(INSTALL_DATA) $(srcdir)/@SPLASHFILE@ $(imagedir)/splash.gif
-	$(INSTALL_DATA) $(srcdir)/@X11ICON@ $(imagedir)/paf.xbm
+	$(mkinstalldirs) $(DESTDIR)$(imagedir)
+	$(INSTALL_DATA) $(srcdir)/@SPLASHFILE@ $(DESTDIR)$(imagedir)/splash.gif
+	$(INSTALL_DATA) $(srcdir)/@X11ICON@ $(DESTDIR)$(imagedir)/paf.xbm
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

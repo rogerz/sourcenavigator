@@ -205,6 +205,8 @@ ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
+sdkdir = @SN_SDK_EXEC_PREFIX@/lib
+
 SUBDIRS = api parsers
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -412,7 +414,7 @@ mostlyclean distclean maintainer-clean
 
 
 install-exec-local:
-	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ @SN_SDK_EXEC_PREFIX@/lib
+	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ $(DESTDIR)$(sdkdir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

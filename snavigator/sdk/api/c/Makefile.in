@@ -415,9 +415,9 @@ mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-	$(mkinstalldirs) $(sdkincludedir)
+	$(mkinstalldirs) $(DESTDIR)$(sdkincludedir)
 	for h in $(sdkinclude_h) ; do \
-	    cp $(top_srcdir)/../db/include/$$h $(sdkincludedir) ;\
+	    cp $(top_srcdir)/../db/include/$$h $(DESTDIR)$(sdkincludedir) ;\
 	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -42,8 +42,8 @@ CPPLibDir=$(top_builddir)/parsers/cpp/cpplib
 CPPLib=$(CPPLibDir)/libcpp2.a
 
 install-data-local:
-	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(sdkdir)/libpafdb.a
-	$(RANLIB) $(sdkdir)/libpafdb.a
+	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(DESTDIR)$(sdkdir)/libpafdb.a
+	$(RANLIB) $(DESTDIR)$(sdkdir)/libpafdb.a
 
 dbcp_SOURCES = dbcp.c
 dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a

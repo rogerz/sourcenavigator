@@ -1,3 +1,26 @@
+2002-09-12  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
+
+	* Makefile.in:
+	* bitmaps/Makefile.am:
+	* bitmaps/Makefile.in:
+	* db/Makefile.am:
+	* db/Makefile.in:
+	* demo/Makefile.am:
+	* demo/Makefile.in:
+	* doc/html/Makefile.am:
+	* doc/html/Makefile.in:
+	* packages/Makefile.am:
+	* packages/Makefile.in:
+	* sdk/Makefile.am:
+	* sdk/Makefile.in:
+	* sdk/api/c/Makefile.am:
+	* sdk/api/c/Makefile.in:
+	* snavigator/unix/Makefile.am:
+	* snavigator/unix/Makefile.in:
+	Prefix install locations with $(DESTDIR) to
+	better support installing into a
+	staging location.
+
 2002-09-12  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/classtreepane.tcl:

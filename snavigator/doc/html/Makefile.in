@@ -333,18 +333,18 @@ mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-	$(mkinstalldirs) $(htmldir)
+	$(mkinstalldirs) $(DESTDIR)$(htmldir)
 	for p in @SN_BOOKS@; do \
-		$(mkinstalldirs) $(htmldir)/$$p; \
-		rm -f $(htmldir)/$$p/*.html; \
-		rm -f $(htmldir)/$$p/*.gif; \
-		echo "copying $$p to $(htmldir)/$$p" ;\
+		$(mkinstalldirs) $(DESTDIR)$(htmldir)/$$p; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.html; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.gif; \
+		echo "copying $$p to $(DESTDIR)$(htmldir)/$$p" ;\
 		( \
 		cd $(srcdir)/@SN_DOCSET@/$$p ;\
 		$(TAR) -ch$(OLDTARFLAG) -f /tmp/$$p.tar-$$$$ *.html *.gif ;\
-		cp /tmp/$$p.tar-$$$$ $(htmldir)/$$p ;\
+		cp /tmp/$$p.tar-$$$$ $(DESTDIR)$(htmldir)/$$p ;\
 		rm /tmp/$$p.tar-$$$$ ;\
-		cd $(htmldir)/$$p ;\
+		cd $(DESTDIR)$(htmldir)/$$p ;\
 		$(TAR) -xf $$p.tar-$$$$ ;\
 		rm $$p.tar-$$$$ ;\
 		) \

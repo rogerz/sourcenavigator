@@ -220,7 +220,7 @@ CONFIG_CLEAN_FILES =
 DATA =  $(root_DATA)
 
 DIST_COMMON =  ./stamp-h.in AUTHORS ChangeLog Makefile.am Makefile.in \
-NEWS acinclude.m4 aclocal.m4 config.h.in configure configure.in \
+NEWS TODO acinclude.m4 aclocal.m4 config.h.in configure configure.in \
 install-sh missing mkinstalldirs
 
 
