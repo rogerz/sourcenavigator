@@ -1,3 +1,13 @@
+2002-07-16  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/rcs.tcl (check_in_out): Don't check
+	return value of sn_rcs.* methods since they
+	do not return booleans and we don't do anything
+	with the results of such a check.
+	* gui/version.tcl (sn_rcs_lockunlockdel): Use
+	treebind method of the Selector& class, the
+	bind method was removed long ago.
+
 2002-07-14  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/editorpane.tcl (proceed_gotoline): Save
