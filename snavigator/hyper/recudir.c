@@ -785,13 +785,13 @@ static int found;*/
 DIR*           opendir(char* pathname)
 {
     /* init the DIR structure */
-    DIR *findMarker = ckalloc(sizeof(DIR));
+    DIR *findMarker = (DIR *) ckalloc(sizeof(DIR));
     char tempPathname[MAXPATHLEN];
 
     /* search directory - not find directory */
     sprintf(tempPathname,"%s/*",pathname);
 
-    findMarker->lpFindData = ckalloc(sizeof(WIN32_FIND_DATA));
+    findMarker->lpFindData = (LPWIN32_FIND_DATA) ckalloc(sizeof(WIN32_FIND_DATA));
     findMarker->dir_handle = FindFirstFile(tempPathname,findMarker->lpFindData);
 
     findMarker->found = 0; /* ignore the first one since it will be the current dir(?). */
@@ -803,7 +803,7 @@ DIR*           opendir(char* pathname)
 
 struct dirent* readdir(DIR* findMarker)
 {
-    struct dirent * retVal = ckalloc(sizeof(struct dirent));
+    struct dirent * retVal = (struct dirent *) ckalloc(sizeof(struct dirent));
     /* Find next valid directory or file, if any. */
     if (!findMarker->found)
 	if (FindNextFile(findMarker->dir_handle,findMarker->lpFindData))
@@ -826,8 +826,8 @@ struct dirent* readdir(DIR* findMarker)
 int closedir(DIR* findMarker)
 {
     FindClose(findMarker->dir_handle);
-    ckfree(findMarker->lpFindData);
-    ckfree(findMarker);
+    ckfree((char *) findMarker->lpFindData);
+    ckfree((char *) findMarker);
     return 1;
 }
 #endif /* ifdef __MSVC__ */

@@ -1,5 +1,20 @@
 2002-04-26  Mo DeJong  <supermo@bayarea.net>
 
+	* hyper/recudir.c: Cast return values from
+	ckalloc to avoid warnings from VC++. Cast
+	values passed to ckfree for the same reason.
+	* misc/libutils/mxfuncs.h: Undefine EXTERN
+	before defining it to avoid compiler warning.
+	* parsers/cpp/cpplib/macro.c: Avoid compiler
+	warning by including longstr.h to access the
+	function prototype for SN_StrDup. Use NULL
+	instead of the literal 0.
+	* parsers/tcl/Scanner.c: Include string.h
+	to avoid compiler warning because of lack
+	of prototypes for functions like strchr.
+
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
 	* db/dbcp.c: Include compat.h before db.h
 	to avoid undefined type error when building
 	with VC++.
