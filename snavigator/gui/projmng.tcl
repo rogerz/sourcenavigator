@@ -561,7 +561,13 @@ proc sn_select_project {{waiting "wait"}} {
 
     bind ${f}.projs <Return> $return_binding
     bind ${f}.projs <space> $return_binding
-    bind ${f}.projs <Double-1> "${t}.btns.open invoke; break"
+
+    # Wait for ButtonRelease before invoking the open button.
+    # Otherwise the ButtonRelease event will be lost and it will appear
+    # as if Button-1 is being held down once the project is opened.
+ 
+    bind ${f}.projs <Double-1> "bind $f.projs <ButtonRelease-1>\
+                                \"${t}.btns.open invoke; break\";update; break"
     bind ${f}.projs <Escape> "${t}.btns.exit invoke; break"
 
     grid $f.projs -row 1 -column 1 -sticky news
