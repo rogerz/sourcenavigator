@@ -247,3 +247,4 @@
 
 /* Suite name of the product */
 #undef SUITE_NAME
+
