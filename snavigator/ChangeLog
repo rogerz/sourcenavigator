@@ -1,3 +1,7 @@
+2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Add SN-pre-doc-merge-2003-07-19 tag.
+
 2003-07-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (UpdateHighlights):
