@@ -419,43 +419,7 @@ itcl::class Editor& {
         # Sun UNDO.
 	bind ${t} <F14> [bind Text <Control-z>]
 
-	bind ${t} <Insert> "puts \"Other insert binding call\" ; Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
-
-	bind ${t} <Double-1><ButtonRelease-1> {
-			switch -- [%W get insert] {
-			\} {
-					Editor&::Insert_Mark_Bracket %W \} 0
-				}
-			\{ {
-					Editor&::Insert_Mark_Bracket %W \{ 0
-				}
-			\) {
-					Editor&::Insert_Mark_Bracket %W \) 0
-				}
-			\( {
-					Editor&::Insert_Mark_Bracket %W \( 0
-				}
-			">" {
-					Editor&::Insert_Mark_Bracket %W ">" 0
-				}
-			"<" {
-					Editor&::Insert_Mark_Bracket %W "<" 0
-				}
-			\] {
-					Editor&::Insert_Mark_Bracket %W \] 0
-				}
-			\[ {
-					Editor&::Insert_Mark_Bracket %W \[ 0
-				}
-			\" {
-					Editor&::Insert_Mark_Bracket %W \" 0
-				}
-			\' {
-					Editor&::Insert_Mark_Bracket %W \' 0
-				}
-			}
-			break
-		}
+	bind ${t} <Insert> "Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
     }
 
     method m3_post_menu {w X Y x y} {

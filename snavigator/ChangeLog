@@ -1,3 +1,10 @@
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (EditorBindings): Take puts call
+	out of Insert binding. Remove <Double-1><ButtonRelease-1>
+	binding. This binding did not function in version 5.0
+	and it was highlighting in an unexpected way under 5.1.
+
 2002-06-08  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/preferences.tcl (AddInclude): Reorder bindings
