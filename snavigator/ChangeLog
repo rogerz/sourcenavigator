@@ -1,5 +1,15 @@
 2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* hyper/services.c (class_browser_insert):
+	Fix bug related to image name used when
+	inserting a private member. The code was
+	attempting to use the image named
+	cls_br_private_image but it became broken
+	when a method was marked as virtual or
+	overridden.
+
+2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* hyper/dbsym.c (dbtclfetch): Check that the result
 	TclObj is not NULL before setting the interp
 	result. This avoids a crash when an improperly
