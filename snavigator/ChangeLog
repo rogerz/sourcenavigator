@@ -1,3 +1,9 @@
+2002-11-25  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/retriever.tcl (destructor, window_deleted):
+	Fixup window deletion by setting the window
+	var to "" when it is deleted by the user.
+
 2002-11-24  Mo DeJong  <mdejong@uncounted.org>
 
 	* configure: Regen.

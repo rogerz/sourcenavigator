@@ -79,9 +79,8 @@ itcl_class Retriever& {
     }
 
     destructor {
-        # What is this and why are we deleting it here?
         if {${window} != ""} {
-	    itcl::delete object ${window}
+	    ${this} window_deleted
 	}
 
         foreach v [::info globals "${this}-*"] {
@@ -432,6 +431,7 @@ itcl_class Retriever& {
 
     method window_deleted {} {
         itcl::delete object ${window}
+        set window ""
         set return_status -1
     }
 
