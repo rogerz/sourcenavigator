@@ -1,3 +1,7 @@
+2003-06-26  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Added SN-514-2003-06-26 tag for 5.1.4 release.
+
 2003-05-30  John Lash  <jlash@speakeasy.net>
 
 	* gui/emacs.tcl (sn_ensure_emacs_running):
@@ -56,7 +60,7 @@
 	* configure.in: Update version number from 5.1.2
 	to 5.1.4.
 
-2002-04-09  Mo DeJong  <mdejong@users.sourceforge.net>
+2003-04-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Added SN-513-2003-04-09 tag for 5.1.3 release.
 
