@@ -1,3 +1,9 @@
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen to account for --enable-symbols
+	fixes.
+	* parsers/assembly/ppc601-eabi/configure: Ditto.
+
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* INSTALL.TXT: Document building with Msys+Mingw.

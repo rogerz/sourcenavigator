@@ -1445,6 +1445,12 @@ fi
     . $TCLCONFIG
 
     
+    
+
+    eval TCL_LIB_FILE=${TCL_LIB_FILE}
+    eval TCL_LIB_FULL_PATH=${TCL_LIB_FULL_PATH}
+    eval TCL_BUILD_LIB_SPEC=\"${TCL_BUILD_LIB_SPEC}\"
+    eval TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\"
 
     
     
@@ -1497,17 +1503,17 @@ for ac_hdr in unistd.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:1501: checking for $ac_hdr" >&5
+echo "configure:1507: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1506 "configure"
+#line 1512 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1511: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1517: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1537,12 +1543,12 @@ done
 # In the cygwin32 environment, we need some additional flags and
 # libraries.
 echo $ac_n "checking for cygwin32""... $ac_c" 1>&6
-echo "configure:1541: checking for cygwin32" >&5
+echo "configure:1547: checking for cygwin32" >&5
 if eval "test \"`echo '$''{'ide_cv_os_cygwin32'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1546 "configure"
+#line 1552 "configure"
 #include "confdefs.h"
 
 #ifdef __CYGWIN32__
@@ -1564,12 +1570,12 @@ fi
 echo "$ac_t""$ide_cv_os_cygwin32" 1>&6
 
 echo $ac_n "checking for Microsoft Visual C++""... $ac_c" 1>&6
-echo "configure:1568: checking for Microsoft Visual C++" >&5
+echo "configure:1574: checking for Microsoft Visual C++" >&5
 if eval "test \"`echo '$''{'sn_cv_os_msvc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1573 "configure"
+#line 1579 "configure"
 #include "confdefs.h"
 
 #ifdef _MSC_VER
@@ -1591,12 +1597,12 @@ fi
 echo "$ac_t""$sn_cv_os_msvc" 1>&6
 
 echo $ac_n "checking for Mingw32""... $ac_c" 1>&6
-echo "configure:1595: checking for Mingw32" >&5
+echo "configure:1601: checking for Mingw32" >&5
 if eval "test \"`echo '$''{'sn_cv_os_mingw32'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1600 "configure"
+#line 1606 "configure"
 #include "confdefs.h"
 
 #ifdef __MINGW32__
@@ -1828,6 +1834,7 @@ s%@LEXLIB@%$LEXLIB%g
 s%@YACC@%$YACC%g
 s%@TCLCONFIG@%$TCLCONFIG%g
 s%@TCL_DEFS@%$TCL_DEFS%g
+s%@TCL_DBGX@%$TCL_DBGX%g
 s%@TCL_LIB_FILE@%$TCL_LIB_FILE%g
 s%@TCL_LIB_FULL_PATH@%$TCL_LIB_FULL_PATH%g
 s%@TCL_LIBS@%$TCL_LIBS%g
