@@ -2290,15 +2290,27 @@ proc sn_is_project_busy {nm intp usr hst port} {
             # The current process is using the project.
         }
         if {$tcl_platform(platform) == "unix"} {
-            if {[catch {exec kill -0 ${pid}}]} {
-                # The process does not exist any more.
+            set ret [sn_unix_check_process "hyper" $pid]
+
+            if {$ret == 1} {
                 return ""
+            } elseif {$ret == 0} {
+                # Another hyper is running, fall through to username check
+            } else {
+                # We only signal to see if other process is alive
+                # when the user names match. This avoids a problem
+                # where the kill command fails because we don't
+                # have permission to signal the process.
+                if {(${user} == [get_username]) &&
+                        [catch {exec kill -0 ${pid} 2>/dev/null}]} {
+                    return ""
+                }
             }
         } else {
-			if {![isfileused $nm]} {
-				return ""
-			}
-		}		
+            if {![isfileused $nm]} {
+                return ""
+            }
+        }
     }
 
     if {${user} == [get_username]} {
@@ -2306,6 +2318,58 @@ proc sn_is_project_busy {nm intp usr hst port} {
     }
     return "busy"
 }
+
+# Check to see if the given pid corresponds to the given
+# executable name. If we are sure it does not, 1 is returned.
+# If we are sure it does, 0 is returned. If we are unsure
+# then -1 is returned.
+
+proc sn_unix_check_process { exe pid } {
+    if {! [file isdirectory /proc]} {
+        return -1
+    }
+    if {! [file isdirectory /proc/$pid]} {
+        return 1
+    }
+
+    # Linux/BSD style /proc
+    if {[file readable /proc/$pid/cmdline]} {
+        set fd [open /proc/$pid/cmdline r]
+        fconfigure $fd -translation binary -encoding binary
+        set data [read $fd]
+        close $fd
+        set argv0 [lindex [split $data \0] 0]
+        set tail [file tail $argv0]
+        if {$tail == $exe} {
+            sn_log "found process \"$exe\" with pid $pid"
+            return 0
+        } else {
+            return 1
+        }
+    }
+
+    # Solaris /proc
+    if {[file readable /proc/$pid/psinfo]} {
+        set fd [open /proc/$pid/psinfo r]
+        fconfigure $fd -translation binary -encoding binary
+        set data [read $fd]
+        close $fd
+        # Extract null terminated string at byte offset
+        # 88, psinfo_t->pr_fname from <sys/procfs.h>
+        set null [string first \0 $data 88]
+        incr null -1
+        set argv0 [string range $data 88 $null]
+        if {$argv0 == $exe} {
+            sn_log "found process \"$exe\" with pid $pid"
+            return 0
+        } else {
+            return 1
+        } 
+    }
+
+    return -1
+}
+
 
 proc sn_choose_project {{win ""} {initdir ""} {open "open"}} {
     global sn_options

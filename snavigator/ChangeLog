@@ -1,3 +1,14 @@
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
+	* gui/misc.tcl (sn_is_project_busy,
+	sn_unix_check_process): Check to see if another
+	process that holds a db lock is still alive using
+	the /proc filesystem instead of kill -0. If we
+	don't have access to /proc then default to
+	kill -0 but only when the same user has the lock.
+	Add new method that looks at the /proc filesystem
+	for Linux, BSD, and Solaris style implementations.
+
 2002-06-04  Mo DeJong  <supermo@bayarea.net>
 
 	* patches/itk_pathname.patch: Remove patch
