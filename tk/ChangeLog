@@ -1,5 +1,11 @@
 2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* win/tkWinPort.h: Define ALWAYS_SHOW_SELECTION
+	so that the selected highlight is shown when
+	multiple windows can display a selection.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* generic/tkEvent.c (Tk_HandleEvent): Fixup button
 	press state saving code, it was incorrectly converting
 	normal motion events into button press and motion

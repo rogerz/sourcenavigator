@@ -117,6 +117,13 @@
 #define TkpGetNativeAppBitmap(display, name, w, h) None
 
 /*
+ * This macro indicates that entry and text widgets should display
+ * the selection highlight regardless of which window has the focus.
+ */
+
+#define ALWAYS_SHOW_SELECTION
+
+/*
  * timezone et al are already defined in Windows32api headers used by
  * GNU mingw32 port.
  */
