@@ -101,7 +101,7 @@ flexgen:
 	$(LEX) -t > tcl_high.c $(LFLAGS) -Ptcl_highlight_ $(srcdir)/tcl_high.l
 
 highlight.$(OBJEXT): highlight.c
-	$(COMPILE) $(TK_DEFS) -c $<
+	$(COMPILE) $(TK_DEFS) -DTK_DBGX=\"$(TK_DBGX)\" -c $<
 
 sninit.$(OBJEXT): sninit.c
 	$(COMPILE) $(TK_DEFS) -c $<

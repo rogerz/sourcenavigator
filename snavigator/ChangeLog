@@ -1,3 +1,57 @@
+2003-03-31  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* Makefile.in:
+	* configure: Regen.
+	* configure.in: Subst TK_DBGX.
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in:
+	* hyper/Makefile.am: Define TK_DBGX so that
+	we can load a tk dll built with --enable-symbols
+	under Windows.
+	* hyper/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen.
+
+
 2003-03-30  Steven Johnson  <sjohnson@neurizon.net>
 
 	*  gui/editorpane.tcl (Update_Layout): Set the cursor

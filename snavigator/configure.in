@@ -535,6 +535,8 @@ else
 fi
 AC_SUBST(SN_PLATFORM_DIR)
 
+AC_SUBST(TK_DBGX)
+
 AC_OUTPUT([Makefile
 gui/Makefile
 etc/navigato

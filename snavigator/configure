@@ -4427,6 +4427,8 @@ else
 fi
 
 
+
+
 trap '' 1 2 15
 cat > confcache <<\EOF
 # This file is a shell script that caches the results of configure
@@ -4738,6 +4740,7 @@ s%@HYPER_MAIN@%$HYPER_MAIN%g
 s%@SN_GUI_DIR@%$SN_GUI_DIR%g
 s%@SN_SDK_EXEC_PREFIX@%$SN_SDK_EXEC_PREFIX%g
 s%@SN_PLATFORM_DIR@%$SN_PLATFORM_DIR%g
+s%@TK_DBGX@%$TK_DBGX%g
 
 CEOF
 EOF
