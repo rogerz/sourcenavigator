@@ -1752,7 +1752,7 @@ proc sn_create_new_project {{import_file ""}} {
     set filenum 0
     set files_without_parser ""
     foreach file ${fil_list} {
-        set type [file_type_using_suf [file extension ${file}]]
+        set type [sn_get_file_type ${file}]
         if {$Parser_Info(${type},BROW) == "" || $Parser_Info(${type},TYPE) ==\
           "others"} {
             lappend files_without_parser ${file}
@@ -3228,7 +3228,7 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
             }
 
             if {${pars} == ""} {
-                set type [file_type_using_suf ${f}]
+                set type [sn_get_file_type ${f}]
                 if {${type} == ""} {
                     sn_log "No language type for \"${f}\", use default <others>"
                     set type "others"
@@ -3278,7 +3278,7 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
           ${name}]"
 
         if {${type} == ""} {
-            set type [file_type_using_suf [file extension ${name}]]
+            set type [sn_get_file_type ${name}]
         }
 
         lappend files_changed ${name}

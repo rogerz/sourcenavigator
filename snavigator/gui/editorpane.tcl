@@ -1838,7 +1838,7 @@ itcl::class Editor& {
 	set case -1
 	set file $itk_option(-filename)
 	if {${file} != $sn_options(noname_file)} {
-	    set type [file_type_using_suf [file extension ${file}]]
+	    set type [sn_get_file_type ${file}]
 	    set case $Parser_Info(${type},CASE)
 	}
 	if {[catch {set name [selection get]}]} {

@@ -1,5 +1,19 @@
 2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/editorpane.tcl (RetrieveObject):
+	* gui/misc.tcl (sn_create_new_project,
+	sn_parse_uptodate):
+	* gui/utilities.tcl (sn_external_editor,
+	sn_highlight_browser, file_type_using_suf,
+	sn_get_file_type): Rename file_type_using_suf
+	to sn_get_file_type and change the argument
+	type to a file name instead of a file suffix.
+	Fix all the callers of this method so that
+	they all pass a full file name. This refactoring
+	does not change any functionality.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/m4/m4browser.c: Regen.
 	* parsers/m4/m4browser.l: Remove unused COMMENT
 	mode decl. Call sn_insert_comment to write
