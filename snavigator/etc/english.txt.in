@@ -694,6 +694,9 @@ goto,Go To:
 GrepFormat,Forma[t
 GrepSearchINFO,Start grep
 GrepCancelINFO,Cancel grep
+GrepCanceledString,*** CANCELED ***
+GrepTruncatedString,*** TRUNCATED ***
+GrepFileDoesNotExist,File does not exist
 GrepFormatINFO,Format current pattern
 AllFiles,All Files
 UsedFileDialog,File dialog box

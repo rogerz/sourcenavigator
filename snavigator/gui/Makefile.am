@@ -37,7 +37,7 @@ retrieverpane.tcl greppane.tcl makepane.tcl preferences.tcl tools.tcl \
 window.tcl projedit.tcl font.tcl projmng.tcl \
 gdbtk.tcl tmeter.tcl project.tcl targetmgr.tcl buildtarget.tcl \
 targetedit.tcl toolchain.tcl conftooldlg.tcl mkfilegen.tcl \
-tree.tcl optiontrace.tcl
+tree.tcl optiontrace.tcl tclgrepdriver.tcl execgrepdriver.tcl
 
 tclIndex:
 	@echo "no tclIndex file found, run make in the snavigator/gui dir"

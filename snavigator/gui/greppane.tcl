@@ -23,11 +23,42 @@
 ##
 ########################################
 
+itcl::class sourcenav::GrepDriver {
+
+    # Invoked to begin a grep operation
+    public method start { pat files nocase max }
+
+    # Invoked after a grep has completed normally
+    public method finish {}
+
+    # Invoked when user cancels the grep
+    public method cancel {}
+
+    # Return the name of a variable that will be
+    # linked to a GUI scale display
+    public method getScaleValueVariable {}
+
+    # Tell driver where to insert results
+    public method setTextWidget {}
+
+}
+
+
 itcl::class Grep {
     inherit sourcenav::MultiChild
 
     constructor {args} {
         global sn_options
+
+        # Check for grep, fallback to Tcl grep if it is not on the PATH
+        if {![info exists ::env(SN_TCLGREP)] &&
+                [sourcenav::ExecGrepDriver::isAvailable]} {
+            set driver [sourcenav::ExecGrepDriver \
+                $itk_component(hull).grepdriver]
+        } else {
+            set driver [sourcenav::TclGrepDriver \
+                $itk_component(hull).grepdriver]
+        }
 
         # Load formats for pattern once, when the first instance is created
         if {! [info exists PatternFormats]} {
@@ -162,7 +193,7 @@ itcl::class Grep {
 
 	itk_component add search {
             button $itk_component(buttons).search \
-                -command [itcl::code ${this} ExecGrep] \
+                -command [itcl::code ${this} StartGrep] \
                 -text [get_indep String UtilSearch] \
                 -underline [get_indep Pos UtilSearch]
 	}
@@ -226,7 +257,7 @@ itcl::class Grep {
         # Slider for grep status/progress.
         itk_component add progressbar {
             ProgressBar $itk_option(-mesg_area).grep_status \
-                -variable [itcl::scope scalevalue]
+                -variable [$driver getScaleValueVariable]
 	} { }
 
 	balloon_bind_info $itk_component(progressbar) \
@@ -243,6 +274,8 @@ itcl::class Grep {
                 -wrap none \
                 -exportselection 0
 	} {}
+
+        $driver setTextWidget $itk_component(results)
  
 	itk_component add hscroll {
 	    scrollbar $itk_component(resultsframe).hscroll \
@@ -332,7 +365,7 @@ itcl::class Grep {
 
         # <Return> should start grepping independent of the widget in focus
         # Reorder bindings to deliver event to the hull first
-        bind $itk_component(hull) <Return> [itcl::code ${this} ExecGrep]
+        bind $itk_component(hull) <Return> [itcl::code ${this} StartGrep]
 
         foreach widget [list \
                            [$itk_component(limit) component entry] \
@@ -365,10 +398,7 @@ itcl::class Grep {
     }
 
     destructor {
-        # Make sure any grep process is terminated
-        if {[catch {close ${grep_fd}} err]} {
-            sn_log "caught error in Grep dtor : \"$err\""
-        }
+        itcl::delete object $driver
     }
 
     method handle_cancel {} {
@@ -452,7 +482,7 @@ itcl::class Grep {
         }
     }
 
-    public method ExecGrep {} {
+    public method StartGrep {} {
         global sn_options sn_path
         global errorInfo errorCode
 
@@ -460,7 +490,7 @@ itcl::class Grep {
         # we want to do is disable search and related widgets.
         if {${Proceed} == 0} {
             handle_proceed disabled
-            after idle [list $this ExecGrep]
+            after idle [list $this StartGrep]
             return
         }
 
@@ -520,55 +550,6 @@ itcl::class Grep {
         # Remove tabs from the pattern
         regsub -all {\\t} ${pat} "\t" pat
 
-        # grep command
-	
-	# If there is a grep in the directory with other binaries, use it.
-	# Otherwise, use whatever is on the path. This insures that we use
-	# GNU grep, but don't install our own version on linux.
-	set grep_cmd [file join $sn_path(bindir) "grep"]
-	if {![file exists $grep_cmd]} {
-	    set grep_cmd "grep"
-	}	
-        set cmd [list $grep_cmd "-n" "--with-filename"]
-
-        # Ignore case
-	if {${GrepNocase}} {
-            lappend cmd -i
-        }
-
-        # The pattern to search for
-        set activePattern ${pat}
-        lappend cmd ${pat}
-
-        sn_log "Executing: ${cmd} \$FILES"
-
-        # Add the files to search for to the
-        # grep command. We also create an array
-        # that mapps the file name to its
-        # position in the search so that we
-        # can update our % done meter. 
-
-        # Clear out old array (it could be huge!)
-        catch {unset files_Matched}
-
-        set filecount 0
-        set groupcount 0
-        set groupsize 40
-        set filegroups($groupcount) ""
-
-        set len [llength $files]
-        for {set i 0} {$i < $len} {incr i} {
-            set file [lindex $files $i]
-            set files_Matched($file) $i
-            if {$filecount > $groupsize} {
-                set filecount 0
-                incr groupcount
-                set filegroups($groupcount) ""
-	    }
-            lappend filegroups($groupcount) $file
-            incr filecount
-        }
-
         tixBusy $itk_component(results) on
         update idletasks
         $itk_component(results) config -state normal
@@ -591,75 +572,9 @@ itcl::class Grep {
 
         sn_log "GREP: detach horizontal scroll"
 
-        set scalevalue 0
-        set max_search_reached 0
-        set errorInfo ""
-        set counter 0
-        set grep_canceled 0
+        $driver start $pat $files $GrepNocase $maxmatches
 
-        for {set groupindex 0} {$groupindex <= $groupcount} {incr groupindex} {
-            sn_log "grouploop $groupindex : will run $cmd"
-            set execCmd "$cmd $filegroups($groupindex)"
-
-            if {$grep_canceled} {
-                sn_log "breaking out of group loop because of grep_canceled"
-                break
-            }
-
-            if {$max_search_reached} {
-                sn_log "breaking out of group loop because of max_search_reached"
-                break
-            }
-
-            set grep_running 1
-            ExecGrepEvent $execCmd
-            vwait [itcl::scope grep_running]
-            set scalevalue [expr $groupindex * $groupsize + $groupsize]
-	}
-
-        finish_grep 
-    }
-
-    # Private method that takes a grep command to exec and
-    # actually does the pipe open and stuff
-
-    private method ExecGrepEvent {cmd} {
-        global sn_options
-        global errorInfo errorCode env
-        global tcl_platform
-
-        #make sure we stay in project directory (different interpeters).
-        catch {cd $sn_options(sys,project-dir)}
-
-# FIXME: I think it would be better to use glob for this!
-        if {$tcl_platform(platform) != "windows"} {
-            set home $env(HOME)
-            if {[string compare ${home} "/"] != 0} {
-                append home "/"
-            }
-            regsub -all "~/" ${cmd} ${home} cmd
-        }
-
-        sn_log "Start grep : [clock format [clock seconds]]"
-
-        if {[catch {set grep_fd [open "| ${cmd}" r]} errmsg]} {
-            sn_error_dialog "-code error -errorinfo ${errorInfo}\
-              -errorcode ${errorCode} ${errmsg}"
-            return
-        }
-
-# FIXME: we should play around with the default buffer size to see
-# if we can improve the grep read performance!
-        fconfigure ${grep_fd} \
-            -encoding $sn_options(def,system-encoding) \
-            -blocking 0 \
-            -buffering full
-
-        if {[catch {fileevent ${grep_fd} readable \
-            [itcl::code ${this} grepReadableEvent]} err]} {
-            sn_log "caught error assigning fileevent : \"$err\""
-            ${this} close_grep
-        }
+        finish_grep
     }
 
     # Grab the current selection from the window system
@@ -681,31 +596,8 @@ itcl::class Grep {
     # Invoked when the user presses the Cancel button
 
     private method cancel_grep {} {
-        set grep_canceled 1
-        $this close_grep
+        ${driver} cancel
     }
-
-    # Close down the grep pipe and do everything that is needed to return
-    # the widget to the state it was in before the grep was started
-
-    private method close_grep {} {
-        global sn_options
-
-        sn_log "Done grep : [clock format [clock seconds]]"
-
-        # close older descriptor to be secure that no other grep
-        # is running
-
-# FIXME: the blocking async close behavior should be fixed
-# now but double check to make sure it is working.
-	
-        if {[catch {close ${grep_fd}} err]} {
-            sn_log "caught error while closing grep fd : \"$err\""
-        }
-        set grep_running 0
-	sn_log "closed grep fd ${grep_fd}"
-    }
-
 
     # Do everything that is needed to return the widget to the state
     # it was in before the grep was started.  Also colorize results.
@@ -715,83 +607,13 @@ itcl::class Grep {
         tixBusy $itk_component(results) on
         update idletasks
 
-	# Set progress bar/meter to 100%.
-        set scalevalue [$itk_component(progressbar) cget -maxvalue]
-
-#        sn_log "Done grep : [clock format [clock seconds]]"
-
         set t $itk_component(results)
         $t configure -state normal
 
-        set pat $activePattern
-        set pat_len [string length $pat]
-        set numlines [expr {int([$t index end]) - 1}]
-        set index_list [list]
+        $driver finish
 
-        if {$GrepNocase} {
-            set case -nocase
-        } else {
-            set case -exact
-        }
-
-        # Preform highlighing (colorization) of the results.
-
-        set patt_len 0
-        set line_index [$t search -count patt_len -regexp -- \
-                   {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)} 1.0 end]
-  
-        while {$line_index != ""} {
-
-            set start_next_line [list $line_index + 1 lines]
-            set line_index [list $line_index + $patt_len chars]
-            set index [$t search $case -- $pat $line_index $start_next_line]
-
-            if {$index == ""} {
-                 sn_log "GREP: Colorizing error at ($line_index,$start_next_line) or attempting to colorize a Formatted pattern."
-                 break
-            }
-
-            # Now that we've skipped over the filename and
-            # line number we can tag every match until the
-            # the line.
-
-            while {$index != ""} {
-                set end_index [list $index + $pat_len chars]
-                lappend index_list $index $end_index
-                set index [$t search $case -- $pat $end_index $start_next_line]
-            }
-
-            # Skip the filename and line number at the begining again.
-            # {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)}
-            # matches things like:
-            #
-            #        /home/user/work/files/project.c:108:
-            #        C:/home/user/work/files/project.c:108:
-            #
-            # So we don't color parts of the filename by mistake.
-
-	    set line_index [$t search -count patt_len -regexp \
-                       -- {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)} \
-                       $end_index end]
-        }
-
-        if {$index_list != {}} {
-            eval {$t tag add grep} ${index_list}
-        }
-
-        if {$max_search_reached} {
-          $itk_component(results) insert end \n
-          $itk_component(results) insert end "*** TRUNCATED ***"
-	} elseif {$grep_canceled} {
-          # FIXME: We might want to check to see if the last
-          # character in the last line is a \n, if not add one!
-          #$itk_component(results) insert end \n
-          $itk_component(results) insert end "*** CANCELED ***"
-        }
         $t see end
         $t configure -state disabled
-
-        sn_log "Done tagging : [clock format [clock seconds]], $numlines lines"
 
         # Add the grep info to the history
 
@@ -833,7 +655,7 @@ itcl::class Grep {
         set filepattern ${oldfilepattern}
         set GrepNocase $oldicase
         sn_log "GrepResetFromHistory $oldpattern $oldfilepattern $oldicase"
-        $this ExecGrep
+        $this StartGrep
     }
 
 # FIXME: all of this functionality needs to be in a more general superclass!
@@ -850,7 +672,7 @@ itcl::class Grep {
             set Proceed 0
 
             $itk_component(search) configure -state normal
-            bind $itk_component(hull) <Return> [itcl::code ${this} ExecGrep]
+            bind $itk_component(hull) <Return> [itcl::code ${this} StartGrep]
         } else {
             set Proceed 1
             set wasLineSelected 0
@@ -1278,67 +1100,6 @@ itcl::class Grep {
         }
     }
 
-    # Callback when line is ready to be read from grep fd.
-
-    private method grepReadableEvent {} {
-        set close_it 0
-
-        if {[catch {read ${grep_fd}} buf] || [eof ${grep_fd}]} {
-            sn_log "closing grep fd because of read error or EOF"
-            set close_it 1
-        } else {
-
-        sn_log "grepReadableEvent read [string length $buf] bytes ([llength [split $buf \n]] lines)"
-        #sn_log "\"$buf\""
-
-        $itk_component(results) config -state normal
-        $itk_component(results) insert end $buf
-
-        # Trim the grep to the maximum number of lines
-        
-        set numlines [expr {int([$itk_component(results) index end]) - 1}]
-        
-        if {$numlines > $maxmatches} {
-            set close_it 1
-            set max_search_reached 1
-            $itk_component(results) delete [list $maxmatches.0 + 1 lines] end
-            sn_log "trimmed grep result to [expr {int([$itk_component(results) index end]) - 1}] lines]"
-        }
-
-        $itk_component(results) see end
-
-        # Update the % done meter, we grab the last full
-        # line out of the match, get the file name, and
-        # then map that to the file position in the search.
-
-        set last [$itk_component(results) get {end - 2 lines} {end - 1 lines}]
-        sn_log "Last line from grep is \"$last\""
-
-        if {$last != ""} {
-	    set last_file [lindex [split $last :] 0]
-            if {[info exists files_Matched($last_file)]} {
-                sn_log "Last file in read buffer is \"$last_file\""
-                set scalevalue $files_Matched($last_file)
-                sn_log "New scale value is $scalevalue of ${files_Count}"
-            }
-        }
-
-        $itk_component(results) config -state disabled
-
-        } ; # end else block
-
-        if {$close_it} {
-          $this close_grep
-        }
-
-        # Note: It is critically important that we never
-        # call update inside this fileevent callback!
-        # If we did, it would recursively process fileevent
-        # callbacks. That could trash the stack if the
-        # grep results were large enough.
-    }
-
-
     #
     # VARIABLES
     #
@@ -1382,10 +1143,6 @@ itcl::class Grep {
 
     private variable counter 0
 
-    # Set to the pattern we are searching for only while
-    # a grep is actually active, otherwise set to ""
-    private variable activePattern ""
-
     # Variables used in implementing custom listbox like
     # bindings on the text widet
 
@@ -1412,23 +1169,10 @@ itcl::class Grep {
     protected variable textualline ""
 
     protected variable filter "*"
-    protected variable grep_fd ""
     protected variable file_list ""
     protected variable Configure_binding ""
 
     protected variable Proceed 0
-
-    # The number of files that are being searched through in a grep
-    protected variable files_Count 0
-
-    # The names of each file being grepped
-    protected variable files_Matched
-
-    # Variable linked to the progress bar display
-    private variable scalevalue 0
-
-    # Set to "1" if max seach limit is hit.
-    private variable max_search_reached
 
     # Don't close window after selecting an entry
     public variable hold 1
@@ -1437,9 +1181,9 @@ itcl::class Grep {
     public variable height 10
 
     public variable cancelcommand ""
-    private variable grep_canceled
-    private variable grep_running
 
+    # Either an ExecGrepDriver or a TclGrepDriver object
+    private variable driver
 }
 
 # FIXME: need to convert over to class decl and method bodies!

@@ -1,3 +1,25 @@
+2002-05-19  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Add GrepCanceledString,
+	GrepTruncatedString, and GrepFileDoesNotExist.
+	* gui/Makefile.am: Include tclgrepdriver.tcl
+	and execgrepdriver.tcl files.
+	* gui/Makefile.in: Ditto.
+	* gui/execgrepdriver.tcl: Add exec based implementation
+	of GrepDriver interface from greppane.tcl. This rewrite
+	includes support for versions of grep other than GNU grep.
+	* gui/greppane.tcl: Move exec based implementation of
+	grep into execgrepdriver.tcl. Add new generic driver
+	interface so we can swap out grep implementations.
+	Default to exec grep if available and SN_TCLGREP is
+	not defined in the env array.
+	* gui/tclIndex: Regen.
+	* gui/tclgrepdriver.tcl: Add Tcl 8.3 regexp implementation
+	of grep.
+	* tests/gui/execgrepdriver.test: Test ExecGrepDriver.
+	* tests/gui/line_grep.test: Test line_grep.
+	* tests/gui/tclgrepdriver.test: Test TclGrepDriver.
+
 2002-05-17  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/greppane.tcl (constructor, ExecGrep, handle_proceed):

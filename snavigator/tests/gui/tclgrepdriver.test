@@ -1,0 +1,63 @@
+package require tcltest
+
+tcltest::test simple-1 {two input files} {
+    if {[llength [itcl::find object tgd]]} {
+        itcl::delete object tgd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::TclGrepDriver tgd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {int TWO;} f2.c
+    $d start int {f1.c f2.c} 0 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int ONE\;\nf2.c:1:int TWO\;\n"
+
+tcltest::test highlight-1 {check highlighting} {
+    if {[llength [itcl::find object tgd]]} {
+        itcl::delete object tgd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::TclGrepDriver tgd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {int TWO;} f2.c
+    $d start int {f1.c f2.c} 0 10
+    $d finish
+    $t tag ranges grep
+} {1.7 1.10 2.7 2.10}
+
+tcltest::test nocase-1 {check case insensitivity} {
+    if {[llength [itcl::find object tgd]]} {
+        itcl::delete object tgd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::TclGrepDriver tgd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {INT TWO;} f2.c
+    $d start int {f1.c f2.c} 1 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int ONE\;\nf2.c:1:INT TWO\;\n"
+
+# Cleanup
+
+if {[llength [itcl::find object tgd]]} {
+    itcl::delete object tgd
+}
+if {[winfo exists .t]} {
+    destroy .t
+}
+
+eval {file delete} [glob f*.c]
