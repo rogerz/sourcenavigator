@@ -1,3 +1,15 @@
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Insert tokens
+	for PERIOD and COMMA and update global
+	and function statements to support
+	COMMA tokens.
+	* tests/parsers/php.test: Add another
+	test for the global keyword. Add
+	operator tests to check that , and .
+	generate tokens. Update FIXME notes.
+
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.

@@ -343,6 +343,23 @@ print $var2;
 PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
 }
 
+tcltest::test var-2.12 { multiple vars in global statement } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+global $var1, $var2, $var3;
+print $var1;
+print $var2;
+print $var3;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>
+PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
+PAF_CROSS_REF;#<>foo<>fu<>#<>var3<>gv<>r<>000007<>f.php;<>
+}
+
+
 
 tcltest::test var-3.0 { array var write } {
     php_parse [save_file f.php {
@@ -1650,6 +1667,32 @@ $var != 1;
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
 }
 
+tcltest::test operator-2.3 { not an assignment operator } {
+    php_parse_xref [save_file f.php {
+<?
+$var . = 1;
+$var , = 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
+}
+
+tcltest::test operator-2.4 { not an assignment operator } {knownbug} {
+    php_parse_xref [save_file f.php {
+<?
+$var > = 1;
+$var < = 1;
+$var ! = 1;
+$var and 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
+}
+
 
 
 
@@ -1705,13 +1748,14 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # Test "foo(foo());" to make sure tokens in a function
 # call are being processed and not ignored.
 
-# Should we create a token for commas and include them in the
-# parse rules for things like function declarations and global statements?
 # Also, we don't currently report a function name when inserting
 # comments. It might also be good to check the return value
 # of the sn_insert_comment if there is one.
 
 # When should we do with  <? CODE ?> when already in PHP mode?
+
+# For operators like += both a read xref and a write xref should
+# be emitted. The assigment code needs to emit a read ref for this case!
 
 # cleanup
 file delete f.php

@@ -58,6 +58,7 @@ typedef enum {
     CLOSE_BRACKET, /* ']' */
     SEMICOLON,     /* ';' */
     COMMA,         /* ',' */
+    PERIOD,        /* '.' */
 
     VARIABLE,      /* $var */
     ASSIGNMENT_OPERATOR, /* '=' */
@@ -207,9 +208,9 @@ string-token  ({dq-string-token}|{sq-string-token})
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
 
 function-argument-token  ("VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
-function-argument-tokens (" "|" "{function-argument-token}" "({function-argument-token}" ")*)
+function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
-variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
+variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 
 
 var-array-index-token ("SOMEWORD"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
@@ -669,6 +670,26 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
+<PHP>"." {
+  matched_pattern(".", yytext);
+  append_token(PERIOD, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"," {
+  matched_pattern(",", yytext);
+  append_token(COMMA, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
 <PHP>"=" {
   matched_pattern("=", yytext);
   append_token(ASSIGNMENT_OPERATOR, NULL,
@@ -823,7 +844,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         noargs = 0;
     }
 
-    free_head_token(); /* ... */
+    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
   }
 
   assert(current_function_args == NULL);
@@ -924,8 +945,8 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   /* Insert the variable name into the function's global table */
 
-  while (tokens_head->type == VARIABLE) {
-    if (current_function) {
+  while (tokens_head->type != SEMICOLON) {
+    if (current_function && (tokens_head->type == VARIABLE)) {
         entry.key = tokens_head->strval;
         entry.key_len = -1;
 
@@ -942,7 +963,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
     }
 
-    free_head_token(); /* VARIABLE */
+    free_head_token(); /* VARIABLE || COMMA */
   }
 
   free_head_token(); /* SEMICOLON */
@@ -1394,6 +1415,8 @@ char * TokenTypeToString(Token *tok) {
             return "SEMICOLON";
         case COMMA:
             return "COMMA";
+        case PERIOD:
+            return "PERIOD";
         case VARIABLE:
             return "VARIABLE";
         case ASSIGNMENT_OPERATOR:
