@@ -1,5 +1,10 @@
 2002-11-26  Mo DeJong  <mdejong@uncounted.org>
 
+        * patches/libgui_print.patch: Add patch
+	for libgui that fixes Win32 printing crash.
+
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
 	* gui/editorpane.tcl (print_file): Don't
 	attempt to delete a printer dialog object
 	if it does not exist. This fixes a problem
