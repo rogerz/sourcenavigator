@@ -1,5 +1,11 @@
 2002-06-20  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/misc.tcl (sn_title): Remove useless call to join
+	that was generating an error if the user entered
+	"HI {" as a grep pattern.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/tclgrepdriver.tcl (processNextIndex, inputReadyCallback):
 	Unset currentFileBuffer after running the grep to deallocate
 	the buffer instead of setting it to the empty string before

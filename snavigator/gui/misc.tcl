@@ -3431,8 +3431,6 @@ proc sn_title {{txt ""} {new 0}} {
     global sn_options
     global tcl_platform
 
-    set txt [join ${txt}]
-
     if {$tcl_platform(platform) == "windows"} {
         if {${txt} != ""} {
             set txt "${txt} -"
