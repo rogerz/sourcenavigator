@@ -1,5 +1,17 @@
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* etc/sn_toolchains/gnu-pro-native: Change
+	toolchain debugger name to insight instead of gdb.
+	* gui/gdbtk.tcl (sn_debugger, sn_socket_accept):
+	Debug print gdb command before exec'ing it.
+	Declare sn_options as global to avoid var
+	error when opening in an editor as the result
+	of an Insight command.
+	* gui/sninit.tcl (sn_init_globals): Default
+	debugger name now set to insight.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* configure: Regen.
 	* configure.in: Set the c preprocessor and
 	executable extensions to work around problems
