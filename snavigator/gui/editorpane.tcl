@@ -4479,7 +4479,8 @@ itcl::class Editor& {
 	    -fg $sn_options(def,edit-fg) \
 	    -bg $sn_options(def,edit-bg) \
 	    -selectforeground $sn_options(def,select-fg) \
-	    -selectbackground $sn_options(def,select-bg)
+	    -selectbackground $sn_options(def,select-bg) \
+	    -insertbackground $sn_options(def,edit-fg)
 
 	# Actual tab size.
 	set_tabsize $itk_component(editor)

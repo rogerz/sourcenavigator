@@ -1,3 +1,10 @@
+2003-03-30  Steven Johnson  <sjohnson@neurizon.net>
+
+	*  gui/editorpane.tcl (Update_Layout): Set the cursor
+	color to be the same as the default text foregorund
+	color, so that the cursor is visible when the background
+	color is changed to black (the default color).
+
 2003-03-30  Roberto Yazon  <ryazonjr@cox.net>
 
 	* gui/editorpane.tcl (InsertTab, Newline):
