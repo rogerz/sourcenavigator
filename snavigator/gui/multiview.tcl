@@ -65,7 +65,7 @@ itcl::class MultiWindow& {
         set width [expr {int([winfo screenwidth .] *
             ($sn_options(def,window-size)*0.01))}]
 
-        wm geometry $itk_component(hull) ${width}x${height}
+        $this configure -geometry ${width}x${height}
 
         # Add menu.
         AddMenu

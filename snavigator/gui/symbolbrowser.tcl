@@ -38,8 +38,8 @@ itcl_class SymBr& {
         withdraw
 
         if {${x} != ""} {
-            wm geometry  $itk_component(hull) [expr int(${width})]x[expr\
-              int(${height})]+${x}+${y}
+            $this configure -geometry [expr {int(${width})}]x[expr\
+              {int(${height})}]+${x}+${y}
         } else {
             set height [expr {int([winfo screenheight .] *
                 ($sn_options(def,window-size)*0.01))}]
@@ -49,7 +49,7 @@ itcl_class SymBr& {
             } elseif {${width} > 450} {
                 set width 450
             }
-            wm geometry $itk_component(hull) ${width}x${height}
+            $this configure -geometry ${width}x${height}
         }
 
         set Toolbar $itk_component(hull).exp
@@ -429,7 +429,7 @@ itcl_class SymBr& {
                 #don't exec filter
                 SymBr& ${nwin} -x [lindex ${win} 1] -y [lindex ${win} 2]\
                   -width [lindex ${win} 3] -height [lindex ${win} 4] -restore 1
-                wm geometry ${nwin} [lindex ${win} 5]
+                ${nwin} configure -geometry [lindex ${win} 5]
                 #restore old retriever status
                 ${nwin} Restore [lindex ${win} 6]
             }

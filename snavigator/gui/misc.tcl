@@ -600,7 +600,11 @@ proc sn_hide_show_project {cmd {mainw ""}} {
                 if {${act} == 0} {
                     if {$sn_options(def,wm_geometry) && [string range ${geo} 0\
                       2] != "1x1"} {
-                        wm geometry ${win} ${geo}
+                        if {[itcl::find objects -isa sourcenav::Window ${win}] != ""} {
+                            ${win} configure -geometry ${geo}
+                        } else {
+                            wm geometry ${win} ${geo}
+                        }
                     }
                     switch ${sta} {
                         "normal" {
@@ -620,7 +624,11 @@ proc sn_hide_show_project {cmd {mainw ""}} {
         catch {unset sn_HideShowParams}
 
         if {$sn_options(def,wm_geometry)} {
-            catch {wm geometry ${active} ${act_geom}}
+            if {[itcl::find objects -isa sourcenav::Window ${active}] != ""} {
+                ${active} configure -geometry ${act_geom}
+            } else {
+                wm geom ${active} ${act_geom}
+            }
         }
         catch {wm deiconify ${active}}
     }

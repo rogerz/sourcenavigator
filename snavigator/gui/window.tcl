@@ -83,12 +83,12 @@ itcl::class sourcenav::Window {
 
     # Widget Tk-methods.
 
-    public method geometry {{args ""}} {
-        if {$args==""} {
-	    return [wm geometry $itk_component(hull)]
-	}
-	wm geometry $itk_component(hull)
+    # Used only to query the current geometry since
+    # itcl/itk does not support a cget query method.
+    public method geometry {} {
+       return [wm geometry $itk_component(hull)]
     }
+
 
     public method aspect {args} {
         return [eval wm aspect $itk_component(hull) ${args}]

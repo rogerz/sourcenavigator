@@ -1,3 +1,15 @@
+2003-12-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_hide_show_project):
+	* gui/multiview.tcl (constructor):
+	* gui/statistics.tcl (sn_statistic):
+	* gui/symbolbrowser.tcl (constructor):
+	* gui/window.tcl (geometry): Make sure to use the
+	-geometry property when configuring the geometry
+	of a sourcenav::Window object. Don't use the geometry
+	method defined on the class to attempt to change
+	the geometry since it only returns the geometry.
+
 2003-12-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/bindings.tcl (sn_text_default_bindings):

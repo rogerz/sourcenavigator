@@ -133,7 +133,7 @@ proc sn_statistic {{files ""}} {
     sourcenav::Window ${s}
     ${s} on_close "sn_statistic_destroy ${s}"
     ${s} withdraw
-    ${s} geometry 550x450
+    ${s} configure -geometry 550x450
 
     if {${files} != ""} {
         set len [llength ${files}]
