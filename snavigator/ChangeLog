@@ -1,5 +1,17 @@
 2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/dbutils.c (put_file, put_symbol):
+	Panic if put_file is called without an open
+	output pipe. Don't call put_file_db inside
+	put_file since put_file is only invoked from
+	inside the parsers and the parsers should
+	not write directly into the database.
+	Add a panic to put_symbol to ensure that it
+	is never called without first opening the
+	pipe.
+
+2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Rework parsers to remove code that directly writes
 	into the database when the -p option is not given.
 	Remove -p option and make writing to stdout the

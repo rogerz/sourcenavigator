@@ -535,8 +535,9 @@ put_file_db(char *file_name,char *group,char *highlight_file)
 	return found;
 }
 
-/* This functions puts the file and its directory names
- * into the appropriate tables.
+/*
+ * This functions prints data for a file to the output pipe.
+ * This function is only called by the parsers.
  */
 
 int
@@ -548,29 +549,24 @@ put_file(char *file_name,char *group,char *highlight_file)
 		return -1;
 	}
 
-	if (pipe_handle != INVALID_HANDLE_VALUE)
+	if (pipe_handle == INVALID_HANDLE_VALUE)
 	{
-		Paf_Pipe_Write("%d%c%s%c%s%c%s\n",
-			PAF_FILE,      KEY_DATA_SEP_CHR,
-			file_name,     KEY_DATA_SEP_CHR,
-			group,         DB_FLDSEP_CHR,
-			highlight_file ? highlight_file : "");
-
-		return Paf_Pipe_Flush();       /* 'dbimp' can start deleting. */
+		panic("put_file called when pipe is not open");
 	}
 
-	/*
-	 * If the database import process (dbimp) is not running
-	 * we insert the name of the highlighting file directly into
-	 * the database.
-	 */
-	if (highlight_file && db_project_dir[0])
-	{
-		return put_file_db(file_name, group, highlight_file);
-	}
+	Paf_Pipe_Write("%d%c%s%c%s%c%s\n",
+		PAF_FILE,      KEY_DATA_SEP_CHR,
+		file_name,     KEY_DATA_SEP_CHR,
+		group,         DB_FLDSEP_CHR,
+		highlight_file ? highlight_file : "");
 
-	return 0;
+	return Paf_Pipe_Flush();       /* 'dbimp' can start deleting. */
 }
+
+/*
+ * This functions prints comment info to the xref file.
+ * This function is only called by the parsers.
+ */
 
 int
 put_comment(char *classn,char *func,char *filename,char *comment,int beg_line,int beg_char)
@@ -606,6 +602,11 @@ put_comment(char *classn,char *func,char *filename,char *comment,int beg_line,in
 
 	return 0;
 }
+
+/*
+ * This functions prints symbol data to the output pipe.
+ * This function is only called by the parsers.
+ */
 
 int
 put_symbol(
@@ -731,6 +732,12 @@ int     high_end_colpos)
 		high_end_lineno = start_lineno;
 		high_end_colpos = start_colpos + strlen(symbol_name);
 	}
+
+	if (pipe_handle == INVALID_HANDLE_VALUE)
+	{
+		panic("put_symbol called when pipe is not open");
+	}
+
 	Paf_Pipe_Write("%d%c%s%s%s%c%06d.%03d%c%s%c%d.%d%c0x%x%c{%s}%c{%s}%c{%s}%c{%s}\n",
 		sym_type,                        KEY_DATA_SEP_CHR,
 		scope_name ? scope_name : "",
