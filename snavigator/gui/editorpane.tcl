@@ -3773,6 +3773,8 @@ itcl::class Editor& {
 
 	if {$tcl_platform(platform) != "windows"} {
 	    upvar #0 ${print_dialog}-cmd cmd
+	    # Escape [] and $ in user input for eval in sn_print_file
+	    regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 	} else {
 	    set cmd ide_winprint
 	}
@@ -3789,7 +3791,8 @@ itcl::class Editor& {
 	global sn_options
 	global tcl_platform
 
-	set print_dialog "[winfo toplevel ${t}].printdlg"
+	set topl [winfo toplevel ${t}]
+	set print_dialog "${topl}.printdlg"
 
 	if {$tcl_platform(platform) == "windows"} {
 	    upvar #0 ${print_dialog}-ptarget target
@@ -3819,7 +3822,7 @@ itcl::class Editor& {
 	    ${print_dialog} raise
 	    return
 	}
-	set topl [winfo toplevel ${t}]
+
 	set print_dialog [sourcenav::Window ${print_dialog} \
 	    -leader ${t}]
 
@@ -3832,13 +3835,8 @@ itcl::class Editor& {
 
 	global ${print_dialog}-ptarget ${print_dialog}-cmd
 	set ${print_dialog}-ptarget "all"
-	set tit [wm title ${topl}]
-	regsub \
-	    -all {\*} ${tit} "" tit
-	regsub \
-	    -all {\[} ${tit} {\\[} tit
-	regsub \
-	    -all {\]} ${tit} {\\]} tit
+
+	set tit [${topl} cget -title]
 	set ${print_dialog}-cmd [format $sn_options(def,ascii-print-command) \
 	  ${tit}]
 	${print_dialog} configure -title [list [get_indep String Print] ${tit}]

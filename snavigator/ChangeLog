@@ -1,5 +1,17 @@
 2002-06-09  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/editorpane.tcl (print_file, print_dialog): Escape []
+	in user input to avoid an error where sn_print_file
+	tries to execute the window title as a command. Don't
+	regsub the input first since that does not protect
+	from bad user input.
+	* gui/printdialog.tcl (printit): Escape [] in user input
+	to avoid an error where sn_print_file tries to execute
+	the window title as a command.
+	* gui/tree.tcl (print_it): Ditto.
+
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/editorpane.tcl (EditorBindings): Take puts call
 	out of Insert binding. Remove <Double-1><ButtonRelease-1>
 	binding. This binding did not function in version 5.0
