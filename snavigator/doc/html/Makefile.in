@@ -77,48 +77,28 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
+CPP = @CPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
 FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -130,28 +110,20 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
-LIBIBERTY = @LIBIBERTY@
+LEXLIB = @LEXLIB@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MONOP_DEMO = @MONOP_DEMO@
 OBJEXT = @OBJEXT@
 OLDTARFLAG = @OLDTARFLAG@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 PRODUCT_NAME = @PRODUCT_NAME@
 PROGRAMMERS_REFERENCE_DIR = @PROGRAMMERS_REFERENCE_DIR@
 PROGRAMMERS_REFERENCE_INDEX = @PROGRAMMERS_REFERENCE_INDEX@
 PROGRAMMERS_REFERENCE_NAME = @PROGRAMMERS_REFERENCE_NAME@
 RANLIB = @RANLIB@
-RUNTESTDIR = @RUNTESTDIR@
 SDK_DIR = @SDK_DIR@
 SENDMAIL_PARSER = @SENDMAIL_PARSER@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 SN_BOOKS = @SN_BOOKS@
 SN_DOCSET = @SN_DOCSET@
 SN_GUI_DIR = @SN_GUI_DIR@
@@ -167,6 +139,7 @@ TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
 TCL_BUILD_LIB_SPEC = @TCL_BUILD_LIB_SPEC@
 TCL_CFLAGS = @TCL_CFLAGS@
+TCL_DBGX = @TCL_DBGX@
 TCL_DEFS = @TCL_DEFS@
 TCL_LD_FLAGS = @TCL_LD_FLAGS@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
@@ -178,13 +151,12 @@ TCL_LIB_SPEC = @TCL_LIB_SPEC@
 TCL_RANLIB = @TCL_RANLIB@
 TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
 TCL_SHLIB_LD = @TCL_SHLIB_LD@
-TIXHDIR = @TIXHDIR@
 TIX_BUILD_LIB_SPEC = @TIX_BUILD_LIB_SPEC@
-TIX_LIB_FULL_PATH = @TIX_LIB_FULL_PATH@
 TKCONFIG = @TKCONFIG@
 TKHDIR = @TKHDIR@
 TK_BUILD_INCLUDES = @TK_BUILD_INCLUDES@
 TK_BUILD_LIB_SPEC = @TK_BUILD_LIB_SPEC@
+TK_DBGX = @TK_DBGX@
 TK_DEFS = @TK_DEFS@
 TK_LIBS = @TK_LIBS@
 TK_LIB_FILE = @TK_LIB_FILE@
@@ -203,7 +175,6 @@ WINDRES = @WINDRES@
 WINFLAGS = @WINFLAGS@
 X11ICON = @X11ICON@
 YACC = @YACC@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
@@ -211,7 +182,7 @@ htmldir = $(prefix)/html
 html_DATA = cygnus1.css index-1.gif redhatlogo.png index.html
 userguidedir = $(htmldir)/userguide
 srchtmldir = $(top_srcdir)/doc/html
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 DATA =  $(html_DATA)
@@ -335,18 +306,18 @@ mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-	$(mkinstalldirs) $(htmldir)
+	$(mkinstalldirs) $(DESTDIR)$(htmldir)
 	for p in @SN_BOOKS@; do \
-		$(mkinstalldirs) $(htmldir)/$$p; \
-		rm -f $(htmldir)/$$p/*.html; \
-		rm -f $(htmldir)/$$p/*.gif; \
-		echo "copying $$p to $(htmldir)/$$p" ;\
+		$(mkinstalldirs) $(DESTDIR)$(htmldir)/$$p; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.html; \
+		rm -f $(DESTDIR)$(htmldir)/$$p/*.gif; \
+		echo "copying $$p to $(DESTDIR)$(htmldir)/$$p" ;\
 		( \
 		cd $(srcdir)/@SN_DOCSET@/$$p ;\
 		$(TAR) -ch$(OLDTARFLAG) -f /tmp/$$p.tar-$$$$ *.html *.gif ;\
-		cp /tmp/$$p.tar-$$$$ $(htmldir)/$$p ;\
+		cp /tmp/$$p.tar-$$$$ $(DESTDIR)$(htmldir)/$$p ;\
 		rm /tmp/$$p.tar-$$$$ ;\
-		cd $(htmldir)/$$p ;\
+		cd $(DESTDIR)$(htmldir)/$$p ;\
 		$(TAR) -xf $$p.tar-$$$$ ;\
 		rm $$p.tar-$$$$ ;\
 		) \

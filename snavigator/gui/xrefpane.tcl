@@ -60,7 +60,7 @@ itcl::class XRef& {
             set cross_ref_access "p r u w"
         }
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
         #when the cross reference is called without toolbar, MaxLevels
         #will be not defined.
@@ -251,9 +251,12 @@ itcl::class XRef& {
           CrossAcceptStatic] -underline [get_indep Pos CrossAcceptStatic]\
           -variable ${this}-accept_static -command " ${this} toggle_static m "
 
-        pack $itk_component(hull).scrollx -side bottom -fill x
-        pack $itk_component(hull).scrolly -side right -fill y
-        pack $itk_component(hull).can -side top -fill both -expand y
+        grid ${can} -row 0 -column 0 -sticky news
+        grid $itk_component(hull).scrollx -row 1 -column 0 -sticky ew
+        grid $itk_component(hull).scrolly -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         #Set colors and fonts
         Update_Layout
@@ -610,31 +613,31 @@ itcl::class XRef& {
             return
         }
 
-        if {$itk_option(-symbols) != ""} {
-            upvar #0 $itk_option(-symbols)-related related
+        if {$itk_option(-symbols_filter) != ""} {
+            upvar #0 $itk_option(-symbols_filter)-related related
             set qry ""
             foreach s [array names combobox_editor_scopes] {
-                upvar #0 $itk_option(-symbols)-${s} value
+                upvar #0 $itk_option(-symbols_filter)-${s} value
                 if {${all} == -1} {
-                    uplevel #0 "set $itk_option(-symbols)-${s} off"
+                    uplevel #0 "set $itk_option(-symbols_filter)-${s} off"
                     continue
                 }
                 if {${all} ||([info exists value] && ${value} != "off")} {
                     foreach db $combobox_editor_scopes(${s}) {
                         if {[::info commands paf_db_${db}] != ""} {
-                            uplevel #0 "set $itk_option(-symbols)-${s} ${s}"
+                            uplevel #0 "set $itk_option(-symbols_filter)-${s} ${s}"
                             lappend qry ${db}
                         }
                     }
                 }
             }
             #undefined scopes
-            upvar #0 $itk_option(-symbols)-ud value
+            upvar #0 $itk_option(-symbols_filter)-ud value
             if {${all} == -1} {
-                uplevel #0 "set $itk_option(-symbols)-ud off"
+                uplevel #0 "set $itk_option(-symbols_filter)-ud off"
             }\
             elseif {${all}} {
-                uplevel #0 "set $itk_option(-symbols)-ud ud"
+                uplevel #0 "set $itk_option(-symbols_filter)-ud ud"
                 lappend qry ud
             }\
             elseif {[info exists value] && ${value} != "off"} {
@@ -648,8 +651,7 @@ itcl::class XRef& {
         if {${qry} == ""} {
             $itk_option(-symbols) configure -contents ""
         } else {
-            set toplevel [winfo toplevel $itk_component(hull)]
-            $toplevel configure -cursor watch
+            ${topw} configure -cursor watch
             update idletasks
             # We need to do some simple caching or we're not
             # going very responsive if we got to do a big lookup.
@@ -659,7 +661,7 @@ itcl::class XRef& {
                 set lastupdate $qry
             }
             $itk_option(-symbols) configure -contents $xref_sym_cache
-            $toplevel configure -cursor ""
+            ${topw} configure -cursor ""
         }
     }
 
@@ -754,9 +756,12 @@ itcl::class XRef& {
 
             if {${print_dialog} == "" || [itcl_info objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.print_dialog -canvas ${can}\
-                  -leader ${topw} -modality application -file [file join $sn_options(profile_dir)\
-                  xref.ps]]
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas ${can} \
+                  -file [file join $sn_options(profile_dir) xref.ps]]
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {
@@ -2112,9 +2117,9 @@ itcl::class XRef& {
         foreach s "r w p u" {
             upvar #0 ${t}-access-${s} val
             if {[lsearch -exact ${cross_ref_access} ${s}] == -1} {
-                ::set val ""
+                set val ""
             } else {
-                ::set val ${s}
+                set val ${s}
             }
             switch ${s} {
                 "r" {
@@ -2175,9 +2180,9 @@ itcl::class XRef& {
             upvar #0 ${v} value
             if {${set}} {
                 set scope [lindex [split ${v} "-"] end]
-                ::set value ${scope}
+                set value ${scope}
             } else {
-                ::set value ""
+                set value ""
             }
         }
     }
@@ -2324,8 +2329,7 @@ itcl::class XRef& {
         return [sn_view_icon [get_indep String PafCrossRef] ${base_root}]
     }
     method SetTitle {} {
-        wm title [winfo toplevel [namespace tail ${this}]]  [Title]
-        wm iconname [winfo toplevel [namespace tail ${this}]] [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     # The filter method is invoked by the multiview class when
@@ -2724,7 +2728,7 @@ itcl::class XRef& {
     private variable xref_sym_cache ""
 
     protected variable can ""
-    protected variable topw "."
+    protected variable topw
     protected variable base_root ""
     protected variable listprefix ""
     protected variable print_dialog ""
@@ -2891,7 +2895,7 @@ proc xref_disp_tmeter {txt value} {
 }
 
 #display status of xref processing
-proc xref_termometer_disp {line} {
+proc xref_termometer_disp {file is_delete} {
     global sn_options
     global xref_termometer
 
@@ -2905,10 +2909,9 @@ proc xref_termometer_disp {line} {
     }
 
     #store the last accessed file for bug reporting
-    set i [string first " " ${line}]
-    set xref_termometer(lastfile) [string range ${line} [expr ${i} + 1] end]
+    set xref_termometer(lastfile) $file
 
-    if {[string first "Deleting " ${line}] == 0} {
+    if {$is_delete} {
         incr xref_termometer(del_index)
         upvar #0 xref_termometer(del_index) counter
         set txt "Deleting"

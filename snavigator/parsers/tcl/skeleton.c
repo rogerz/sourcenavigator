@@ -29,10 +29,16 @@ MA 02111-1307, USA.
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <config.h>
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <tcl.h>
 
 #include "sn.h"
+#include "parser.h"
+
+#include <compat.h>
 
 #ifdef WIN32
 #define       OPEN_MODE   "rb"
@@ -57,44 +63,36 @@ log_symbol_filename(FILE *fp, char *fname)
 {
   char	*outfile = NULL;
 
-  if (fname) {
-    if (yyin)
-      yyin = freopen(fname,OPEN_MODE,yyin);
-    else
-      yyin = fopen(fname,OPEN_MODE);
-    if (!yyin) {
-      printf("Error: unable to open file \"%s\",errno: %d\n", fname,errno);
-      fflush(stdout);
-      return 1;
-    }
-  } else 
-    yyin = stdin;
-
-  if (fname) {
-    if (highlight) {
-      if (hig_fp) {
-	fclose(hig_fp);
-      }
-
-      outfile = Paf_tempnam(NULL,"hj");
-      if (fp) {
-	fprintf(fp,"%s\n",outfile);
-      }
-      
-      hig_fp = fopen(outfile,"w+");
-    }
-    printf("%s\n",fname);
-    fflush(stdout);
-    
-    put_file(fname,group,outfile);
-  } else {
-    if (highlight) {
-      if (fp)
-	hig_fp = fp;
-      else
-	hig_fp = stdout;
-    }
+  if (fname == NULL) {
+    fprintf(stderr, "log_symbol_filename called with NULL fname\n");
+    exit(1);
   }
+
+  if (yyin) {
+    fclose(yyin);
+  }
+   
+  yyin = fopen(fname,OPEN_MODE);
+  if (!yyin) {
+    fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n", fname,errno);
+    return 1;
+  }
+
+  if (highlight) {
+    if (hig_fp) {
+      fclose(hig_fp);
+    }
+
+    outfile = Paf_tempnam(NULL,"hj");
+    if (fp) {
+      fprintf(fp,"%s\n",outfile);
+    }
+      
+    hig_fp = fopen(outfile,"w+");
+  }
+  
+  put_status_parsing_file(fname);
+  put_file(fname,group,outfile);
 
   return 0;
 }
@@ -107,21 +105,16 @@ main(int argc, char *argv[])
   int	opt;
   char	tmp[MAXPATHLEN];
   char	*fname;
-  char	*pipe_cmd      = NULL;
-  char	*cachesize     = NULL;
-  char	*db_prefix     = NULL;
   char	*incl_to_pipe  = NULL;
   int	case_flag      = TRUE;
   FILE	*list_fp       = NULL;
   FILE	*include_fp    = NULL;
   char	*cross_ref_file= NULL;
-  char  *hostname      = NULL;
-  char  *snpid         = NULL;
 
   /* Character set encoding (as defined by Tcl). */
   Tcl_FindExecutable(argv[0]);
 
-  while((opt = getopt(argc,argv,"e:H:O:P:I:n:s:hy:g:p:c:x:i:luB:e:tCrDS:")) != EOF) {
+  while((opt = getopt(argc,argv,"e:O:I:n:s:hy:g:x:i:luB:e:tCrDS:")) != EOF) {
     switch (opt) {
     case 's': 
       if ((out_fp = fopen(optarg,"a")) == NULL) {
@@ -131,13 +124,13 @@ main(int argc, char *argv[])
       break;
       
     case 'n':
-      db_prefix = optarg;
+      /* FIXME: Remove db prefix option later */
       break;
       
     case 'e':
       if ((encoding = Tcl_GetEncoding(NULL, optarg)) == NULL)
 	{
-	  printf("Unable to locate `%s' encoding\n", optarg);
+	  fprintf(stderr, "Unable to locate `%s' encoding\n", optarg);
 	  return 1;
 	}
       break;
@@ -148,18 +141,16 @@ main(int argc, char *argv[])
       
     case 'y':
       list_fp = fopen(optarg,"r");
+      if (!list_fp) {
+          fprintf(stderr, "Could not open: \"%s\", %s\n",
+                  optarg, strerror(errno));
+          exit(2);
+      }
+
       break;
       
     case 'I':	/* include path ignored */
       include_fp = fopen(optarg,"r");
-      break;
-      
-    case 'p':
-      pipe_cmd = optarg;
-      break;
-      
-    case 'c':
-      cachesize = optarg;
       break;
       
     case 'i':
@@ -176,7 +167,7 @@ main(int argc, char *argv[])
     case 'S':
       break;
       
-    case 'x': /* cross reference file (ignored) */
+    case 'x': /* cross reference file */
       cross_ref_file = optarg;
       break;
       
@@ -189,39 +180,28 @@ main(int argc, char *argv[])
     case 'r': /* Comment support. */
     case 'g':
     case 'D':
-    case 'H': hostname=optarg; break;
-    case 'P': snpid =optarg; break;
-
       break;
     }
   }
 
   if (cross_ref_file) {
     if (!(cross_ref_fp = fopen(cross_ref_file,"a"))) {
-      printf("Error: (open) \"%s, errno: %d\"\n",cross_ref_file,errno);
+      fprintf(stderr, "Error: (open) \"%s, errno: %d\"\n",cross_ref_file,errno);
       exit(1);
     }
   }
 
   if (optind < argc || list_fp)	{
-    if (pipe_cmd) {
-      if (Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,cachesize,
-		hostname,snpid) < 0)
-	  {
-		printf("Error: \"%s\",%s\n",pipe_cmd,strerror(errno));
-		fflush(stdout);
+    Paf_Pipe_Create(incl_to_pipe);
 
-		exit(2);
-	  }
-    } else {
-      Paf_db_init_tables(db_prefix,cachesize, NULL);
-    }
     if (list_fp) {
       /* This part is called when the project is beeing created. */
       while (fgets(tmp,sizeof(tmp) -1,list_fp))	{
 	if ((fname = strchr(tmp,'\n')))	{
 	  *fname = '\0';
 	}
+	if (!*tmp || *tmp == '#')
+	  continue;
 	
 	if (log_symbol_filename(out_fp,tmp) == 0) {
 	  start_parser(tmp,0,NULL,0);
@@ -241,10 +221,8 @@ main(int argc, char *argv[])
       }
     }
   } else {
-    /* We provide only highlighting for stdin. */
-    if (log_symbol_filename(out_fp,(char *)NULL) == 0) {
-      start_parser(NULL,0,stdout,highlight);
-    }
+    fprintf(stderr, "-y or file name required\n");
+    exit(1);
   }
   
   if (yyin)

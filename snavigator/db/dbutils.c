@@ -34,7 +34,10 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #endif
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include "dbutils.h"
 #include <setjmp.h>
@@ -43,6 +46,8 @@ MA 02111-1307, USA.
 #include "fileutils.h"
 
 #include <tcl.h>
+
+#include <compat.h>
 
 #ifndef MY_DEBUG2
 #define MY_DEBUG(x)
@@ -75,55 +80,27 @@ static	DB	*db_cached_classes;
 
 #define	INH_AC_TYPE	(PAF_PRIVATE|PAF_PROTECTED|PAF_PUBLIC)
 
-#ifndef WIN32
-typedef FILE*   HANDLE;
-#define INVALID_HANDLE_VALUE    (FILE *)0
-#else
-static  HANDLE  process_handle;
-#endif /* WIN32 */
-
-static  HANDLE  pipe_handle = INVALID_HANDLE_VALUE;
-
 static DB *db_include;
 static	char	**include_array;
 
-int	Paf_dbimp_running = FALSE;
 int	xref_fastupdate = FALSE;
-
-int	 report_local_vars = FALSE;
-FILE *cross_ref_fp;
-int  comment_database = FALSE;
-
-static int Paf_Pipe_Write MX_VARARGS(char *,str);
-static int Paf_Pipe_Flush ();
 
 static DB *db_syms[50];           /* Keep enough space */
 
 #define CREATE_ALWAYS_BTREES 1
 
 static	char	db_project_dir[MAXPATHLEN];
-static	u_int	db_cachesize;
-static	u_int	db_cross_cachesize;
+static	u_int	db_cachesize = 0;
+static	u_int	db_cross_cachesize = 0;
 
 #define DB_NO_CASE_COMPARE 1
 int	db_case_compare (const DBT *, const DBT *);
 int db_no_case_compare(const DBT *a,const DBT *b);
 int db_compare_nocase = 0;
 int db_action_is_fetching = 0; /* marks if we are in a fetching routine */
+static int db_key_in_table(int type, char* key);
 
 char *SN_StrDup(char*);
-
-static  char    *acc_strings[] = {
-	"r","w","p","u"
-};
-
-/* See paf.h for definitions! */
-static char *SN_symbol_types[] = {
-	"f", "t", "cl", "mi", "iv", "e", "con", "ma", "fu", "su",
-	"gv", "com", "cov", "in", "fil", "by", "to","md","fd","ec",
-	"un","fr","na","ex","lv","vd","iu","rem","cpp","ud",
-	"xfi",NULL,NULL,NULL,NULL,NULL,NULL
-};
 
 static  DB      *db_scopes;
 
@@ -140,31 +117,6 @@ int get_db_permission()
 		sscanf (p, "%o", &perm);
 	}
 	return perm;
-}
-
-/*
- *      We have to conver '\\' to '/'. That's all.
- */
-char *
-Paf_tempnam(char *dir,char *pref)
-{
-	static	char	tmpnm[MAXPATHLEN + 1];
-	char    *nm;
-
-	nm = tempnam(dir,pref);
-
-	if (!nm)
-		return nm;
-
-	unlink(nm);     /* Just to be very sure !!! */
-
-	strcpy (tmpnm, nm);
-	sn_internal_convert_path (tmpnm, SN_PATH_UNIX);
-	
-	/* DON'T USE ckfree */
-	free(nm);
-
-	return tmpnm;
 }
 
 /*
@@ -360,7 +312,7 @@ create_table(int type,int mode,int cachesize)
 
 	db_inf = (void *)&db_btree_info;
 
-	sprintf(fname,"%s.%s",db_project_dir,SN_symbol_types[type]);
+	sprintf(fname,"%s.%s",db_project_dir,SN_GetSymbolType(type));
 
 	dbp = dbopen(fname, mode, get_db_permission(),db_type,db_inf);
 	
@@ -399,7 +351,7 @@ create_table(int type,int mode,int cachesize)
 		db_inf = (void *)&db_btree_info;
 	}
 
-	sprintf(fname,"%s.%s",db_project_dir,SN_symbol_types[type]);
+	sprintf(fname,"%s.%s",db_project_dir,SN_GetSymbolType(type));
 
 	dbp = dbopen (fname, mode, get_db_permission(), db_type, db_inf);
 #endif
@@ -528,363 +480,6 @@ put_file_db(char *file_name,char *group,char *highlight_file)
 		return ret;
 	}
 	return found;
-}
-
-/* This functions puts the file and its directory names
- * into the appropriate tables.
- */
-
-int
-put_file(char *file_name,char *group,char *highlight_file)
-{
-	if (!file_name)
-	{
-		fprintf(stderr,"put_file: empty file name\n");
-		return -1;
-	}
-
-	if (pipe_handle != INVALID_HANDLE_VALUE)
-	{
-		Paf_Pipe_Write("%d%c%s%c%s%c%s\n",
-			PAF_FILE,      KEY_DATA_SEP_CHR,
-			file_name,     KEY_DATA_SEP_CHR,
-			group,         DB_FLDSEP_CHR,
-			highlight_file ? highlight_file : "");
-
-		return Paf_Pipe_Flush();       /* 'dbimp' can start deleting. */
-	}
-
-	/*
-	 * If the database import process (dbimp) is not running
-	 * we insert the name of the highlighting file directly into
-	 * the database.
-	 */
-	if (highlight_file && db_project_dir[0])
-	{
-		return put_file_db(file_name, group, highlight_file);
-	}
-
-	return 0;
-}
-
-int
-put_comment(char *classn,char *func,char *filename,char *comment,int beg_line,int beg_char)
-{
-	register unsigned char  *p;
-
-	if (!comment_database || !comment || !cross_ref_fp)
-	{
-		return 0;
-	}
-
-	/* We use cross_ref_fp because the comments should be inserted
-	 * only during the second phase with the cross reference together.
-	 */
-	for (p = (unsigned char *)comment; *p; p++)
-	{
-		if (*p == '\n')
-		{
-			*p = 0xff;
-		}
-	}
-
-	MY_DEBUG((Output, "put comment into file <%s>\n", filename));
-
-	fprintf(cross_ref_fp,
-		"%d%c%s%c%06d.%03d%c%s%c%s%c%s\n",
-		PAF_COMMENT_DEF,                  KEY_DATA_SEP_CHR,
-		filename,                         DB_FLDSEP_CHR,
-		beg_line, beg_char,               DB_FLDSEP_CHR,
-		classn && *classn ? classn : "#", DB_FLDSEP_CHR,
-		func && *func ? func : "#",       KEY_DATA_SEP_CHR,
-		comment);
-
-	return 0;
-}
-
-int
-put_symbol(
-int     sym_type,
-char    *scope_name,
-char    *symbol_name,
-char    *file_name,
-int     start_lineno,
-int     start_colpos,
-int     end_lineno,
-int     end_colpos,
-unsigned long   attr,
-char    *ret,
-char    *arg_types,
-char    *args,
-char    *comment,
-int     high_start_lineno,
-int     high_start_colpos,
-int     high_end_lineno,
-int     high_end_colpos)
-{
-	char	*sym_str_type = SN_symbol_types[sym_type];
-
-	if (!file_name)
-	{
-		fprintf(stderr,"Error: put_symbol argument file_name must not be NULL\n");
-		fflush(stderr);
-		return -1;
-	}
-	for (; isspace(*file_name); file_name++);
-
-	if (!sym_str_type)
-	{
-		fprintf(stderr,"Error: put_symbol unknown type: %d file: %s\n",
-			sym_type,file_name);
-		fflush(stderr);
-		return -1;
-	}
-
-	if (!symbol_name || !*symbol_name)
-	{
-		fprintf(stderr,
-			"Error: put_symbol argument #3 must not be empty, type: (%s), line: %d file: %s\n",
-			sym_str_type,start_lineno,file_name);
-		fflush(stderr);
-		return -1;
-	}
-
-	for (; isspace(*symbol_name); symbol_name++);
-
-	/* If args is just a string we take a special name. */
-	if (args && *args == '"')
-	{
-		args = "%STRING%";
-	}
-
-	if (comment_database && comment && *comment)
-	{
-		register char *p;
-
-		for (p = comment; *p; p++)
-		{
-			switch (*p)
-			{
-			case    '\n':
-				*p = (char )0xff;
-				break;
-
-			case    '{':
-			case    '}':
-				*p = DB_FLDSEP_CHR;
-				break;
-			}
-		}
-	}
-	else
-		comment = "";
-
-	switch (sym_type)
-	{
-	case	PAF_TYPE_DEF:
-	case	PAF_CLASS_DEF:
-	case	PAF_ENUM_DEF:
-	case	PAF_CONS_DEF:
-	case	PAF_MACRO_DEF:
-	case	PAF_FUNC_DEF:
-	case	PAF_GLOB_VAR_DEF:
-	case	PAF_FUNC_DCL:
-	case	PAF_UNION_DEF:
-	case	PAF_ENUM_CONST_DEF:
-		scope_name = NULL;
-		break;
-	}
-
-	/* Skip leading blanks */
-	for (;scope_name && isspace(*scope_name); scope_name++);
-
-	if (!scope_name || *scope_name == '\0')
-	{
-		scope_name = NULL;
-
-		switch (sym_type)
-		{
-		case PAF_MBR_FUNC_DEF:
-		case PAF_MBR_VAR_DEF:
-		case PAF_COMMON_MBR_VAR_DEF:
-		case PAF_CLASS_INHERIT:
-		case PAF_MBR_FUNC_DCL:
-/*		case PAF_ENUM_CONST_DEF: */
-			fprintf(stderr,
-				"Error: put_symbol argument #2 must not be empty, type: (%s), line: %d file: %s\n",
-				sym_str_type,start_lineno,file_name);
-			fflush(stderr);
-			return -1;
-			break;
-		}
-	}
-
-	if (high_start_lineno == 0)	/* Take the symbol definition. */
-	{
-		high_start_lineno = start_lineno;
-		high_start_colpos = start_colpos;
-		high_end_lineno = start_lineno;
-		high_end_colpos = start_colpos + strlen(symbol_name);
-	}
-	Paf_Pipe_Write("%d%c%s%s%s%c%06d.%03d%c%s%c%d.%d%c0x%x%c{%s}%c{%s}%c{%s}%c{%s}\n",
-		sym_type,                        KEY_DATA_SEP_CHR,
-		scope_name ? scope_name : "",
-		scope_name ? DB_FLDSEP_STR : "",
-		symbol_name,                     DB_FLDSEP_CHR,
-		start_lineno, start_colpos,      DB_FLDSEP_CHR,
-		file_name,                       KEY_DATA_SEP_CHR,
-		end_lineno, end_colpos,          DB_FLDSEP_CHR,
-		attr,                            DB_FLDSEP_CHR,
-		ret ? ret : "",                  DB_FLDSEP_CHR,
-		arg_types ? arg_types : "",      DB_FLDSEP_CHR,
-		args ? args : "",                DB_FLDSEP_CHR,
-		comment
-		);
-
-	Paf_Pipe_Write("%d%c%s%c%06d.%03d%c%s%c%s%c%s%c%d.%d%c%d.%d%c%d.%d%c{%s}\n",
-		PAF_FILE_SYMBOLS,                     KEY_DATA_SEP_CHR,
-		file_name,                            DB_FLDSEP_CHR,
-		start_lineno, start_colpos,           DB_FLDSEP_CHR,
-		scope_name ? scope_name : "#",        DB_FLDSEP_CHR,
-		symbol_name,                          DB_FLDSEP_CHR,
-		sym_str_type,                         KEY_DATA_SEP_CHR,
-		end_lineno,        end_colpos,        DB_FLDSEP_CHR,
-		high_start_lineno, high_start_colpos, DB_FLDSEP_CHR,
-		high_end_lineno,   high_end_colpos,   DB_FLDSEP_CHR,
-		arg_types ? arg_types : ""
-		);
-
-	return 0;
-}
-
-int
-put_cross_ref(
-int     type,
-int     scope_type,
-int     scope_lev,
-char    *fnc_cls,              /* caller class */
-char    *fnc,                   /* caller function/method */
-char	*fnc_arg_types,         /* caller function/method argument types */
-char    *scope,                 /* referenced class */
-char	*what,                  /* referenced member */
-char	*arg_types,		/* referenced function/method argument types */
-char	*file,
-int	lineno,
-int	acc)
-{
-	LongString	key_value;
-	LongString	data_value;
-	char	lineno_buf[10];
-
-	if ((!cross_ref_fp && !Paf_dbimp_running) || !fnc || *fnc == '\0' ||
-		(scope_lev == PAF_REF_SCOPE_LOCAL && !report_local_vars))
-	{
-		return -1;
-	}
-
-	MY_DEBUG2 ((Output, "put_cross_ref (%i, %i, %i, %s, %s, %s, %s, %s, %s, %s, %i, %i)\n",
-					type, scope_type, scope_lev,
-					fnc_cls?fnc_cls:"?",
-					fnc?fnc:"?",
-					fnc_arg_types?fnc_arg_types:"?", scope?scope:"?", what?what:"?",
-					arg_types?arg_types:"?",	file?file:"?", lineno, acc));
-
-	if (scope && *scope == '\0')
-		scope = NULL;
-	else if (scope)
-	{
-		char *_p;
-		for (; isspace(*scope); scope++);
-		
-		/*
-		 * It can happen, that the scope contains "class fld ",
-		 * so then terminate the rest after "class" */
-		if ((_p=strchr (scope, DB_FLDSEP_CHR)))
-		{
-			*_p = 0;
-		}
-		/**/
-		if (*scope == '\0')
-			scope = NULL;
-	}
-	if (fnc_cls && *fnc_cls == '\0')
-		fnc_cls = NULL;
-	else if (fnc_cls)
-	{
-		for (; isspace(*fnc_cls); fnc_cls++);
-	}
-
-	if (!file)
-	{
-		fprintf(stderr,"Filename must not be NULL\n");
-		return -1;
-	}
-	if (!what || !*what)
-	{
-		fprintf(stderr,"Input parameter (#8) must not be NULL file: %s line: %d\n",
-				file,lineno);
-		abort();
-		return -1;
-	}
-
-	for (; isspace(*what); what++);
-	for (; isspace(*file); file++);
-
-	if (type <= 0 || type > PAF_REF_UNDEFINED)
-	{
-		fprintf(stderr,"Input parameter (#1) %d is not allowed\n",
-			type);
-		return -1;
-	}
-
-	if (scope_type <= 0 || scope_type >= PAF_VAR_DCL)
-	{
-		fprintf(stderr,"Input parameter (#2) %d is not allowed\n",
-			scope_type);
-		return -1;
-	}
-
-	LongStringInit(&key_value,0);
-	LongStringInit(&data_value,0);
-
-	if (type == PAF_MBR_FUNC_DCL)
-		type = PAF_MBR_FUNC_DEF;
-
-	sprintf(lineno_buf,"%06d",lineno);
-	key_value.copystrings(&key_value,
-		fnc_cls ? fnc_cls : "#",            DB_FLDSEP_STR,
-		fnc,                                DB_FLDSEP_STR,
-		SN_symbol_types[scope_type],       DB_FLDSEP_STR,
-		scope ? scope : "#",                DB_FLDSEP_STR,
-		what,                               DB_FLDSEP_STR,
-		SN_symbol_types[type],             DB_FLDSEP_STR,
-		acc_strings[acc],                   DB_FLDSEP_STR,
-		lineno_buf,                         DB_FLDSEP_STR,
-		file,
-		NULL);
-	data_value.copystrings(&data_value,
-		fnc_arg_types ? fnc_arg_types : "", DB_FLDSEP_STR,
-		arg_types ? arg_types : NULL,
-		NULL);
-
-	if (Paf_dbimp_running)
-	{
-		MY_DEBUG2((Output, "xref entry <%s> <%s>\n", key_value.buf, data_value.buf));
-	
-		db_insert_entry(PAF_CROSS_REF, key_value.buf, data_value.buf);
-	}
-	else if (!scope || *scope != '?')
-	{
-		fprintf(cross_ref_fp, "%d%c%s%c%s\n",
-			PAF_CROSS_REF, KEY_DATA_SEP_CHR,
-			key_value.buf, KEY_DATA_SEP_CHR,
-			data_value.buf);
-	}
-
-	key_value.free(&key_value);
-	data_value.free(&data_value);
-
-	return 0;
 }
 
 void Paf_Close_Include_Dirs()
@@ -1026,7 +621,7 @@ db_remove_file_def(int softdel,char *file)
 	int     del;
 	int     del_fil;
 
-	printf("Deleting %s\n",file);	/* Informs SN which files is being deleted. */
+	fprintf(stdout, "Status: Deleting: %s\n",file);	/* Informs SN which files is being deleted. */
 	fflush(stdout);
 
 	if (!dbp)
@@ -1044,15 +639,12 @@ db_remove_file_def(int softdel,char *file)
 
 	if (!db_scopes)
 	{
-		char	**scopep;
-
 		db_scopes = dbopen (NULL, O_RDWR|O_CREAT, get_db_permission(), DB_HASH, NULL);
 		data.data = (char *)&scope_val;
 		data.size = sizeof(scope_val);
-		for (scope_val = PAF_FILE, scopep = SN_symbol_types; *scopep;
-			scopep++,scope_val++)
+		for (scope_val = PAF_FILE; scope_val < PAF_SYMBOL_TYPE_MAX; scope_val++)
 		{
-			key.data = *scopep;
+			key.data = SN_GetSymbolType(scope_val);
 			key.size = strlen(key.data);
 			if (key.size > 0)
 			{
@@ -1174,7 +766,7 @@ db_remove_file_def(int softdel,char *file)
 			fprintf(stderr,"DELETING of <%s> with size: %d type <%s> returned: %d,%d\n",
 				(char *)sc_key.data,
 				sc_key.size,
-				SN_symbol_types[scope_val],
+				SN_GetSymbolType(scope_val),
 				del_fil,
 				del);
 		}
@@ -1208,14 +800,20 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 	int key_len;
 	int line_cou = 1;
 	int delete_file = TRUE;
+	Tcl_DString sys;
 	
 	LongStringInit(&key_to,0);
 	LongStringInit(&data_buf,0);
 	LongStringInit(&key_by,0);
 	LongStringInit(&file_del_key,0);
 
-	if (!key_files || *key_files == '\0' || (fp = fopen(key_files, "r")) == NULL)
-		return;	/* Should never happen. */
+	/* File name is utf-8 encoded, pass system encoding to fopen. */
+	Tcl_UtfToExternalDString(NULL, key_files, -1, &sys);
+
+	if (!key_files || *key_files == '\0' ||
+            (fp = fopen(Tcl_DStringValue(&sys), "r")) == NULL) {
+		goto cleanup;	/* Should never happen. */
+        }
 
 	if (!dbp)
 	{
@@ -1223,7 +821,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 			db_cross_cachesize);		/* Open the table ! */
 
 		if (!dbp)
-			return;
+			goto cleanup;
 	}
 
 	if (!dbp_by)
@@ -1247,7 +845,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 		fn = file_del_key.field_value[3];
 		if (strcmp(last_del_fname, fn) != 0)
 		{
-			printf("Deleting %s\n", fn);
+			fprintf(stdout, "Status: Deleting: %s\n", fn);
 			fflush(stdout);
 			strcpy(last_del_fname, fn);
 		}
@@ -1311,7 +909,7 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 
 					if (dbp_by->del(dbp_by,&by_key,0) != 0)
 					{
-						fprintf(stdout,"Delete (BY) not found <%s>\n",(char *)by_key.data);
+						fprintf(stderr,"Delete (BY) not found <%s>\n",(char *)by_key.data);
 					}
 				}
 
@@ -1321,15 +919,18 @@ db_remove_file_xfer_using_keys(int softdel, char *key_files)
 	}
 	fclose(fp);
 
+	/* Delete the file only if its contains was ok, otherwise we need a chance
+	 * too be able to look. */
+	if (delete_file)
+		unlink(Tcl_DStringValue(&sys));
+
+cleanup:
+        Tcl_DStringFree(&sys);
 	file_del_key.free(&file_del_key);
 	key_to.free(&key_to);
 	data_buf.free(&data_buf);
 	key_by.free(&key_by);
-
-	/* Delete the file only if its contains was ok, otherwise we need a chance
-	 * too be able to look. */
-	if (delete_file)
-		unlink(key_files);
+        return;
 }
 
 void
@@ -1532,8 +1133,8 @@ db_insert_entry(int type,char *key_buf,char *data_buf)
 
 	tmp.split (&tmp,key.data, key.size -1, FALSE, DB_FLDSEP_CHR, -1);
 
-	if (tmp.field_value[5][0] != SN_symbol_types[PAF_REF_TO_LOCAL_VAR][0] ||
-		tmp.field_value[5][1] != SN_symbol_types[PAF_REF_TO_LOCAL_VAR][1])
+	if (tmp.field_value[5][0] != SN_GetSymbolType(PAF_REF_TO_LOCAL_VAR)[0] ||
+		tmp.field_value[5][1] != SN_GetSymbolType(PAF_REF_TO_LOCAL_VAR)[1])
 	{
 		dbp = db_syms[PAF_CROSS_REF_BY];
 		if (!dbp)
@@ -1588,6 +1189,90 @@ db_insert_entry(int type,char *key_buf,char *data_buf)
 			Paf_panic(PAF_PANIC_EMERGENCY);
 		}
 	}
+
+        /* If we are dealing with an xref to a global
+         * variable and the special "UNDECLARED" marker
+         * is passed then add a define for the global
+         * variable if it has not already been defined.
+         * Use the fake file name "GLOBAL". We can't
+         * define a global multiple times since the
+         * IDE would not see them as the same variable
+         * and we can leave it undefined since the
+         * variable would not appear in the symbols list.
+         */
+        if ((strncmp(tmp.field_value[5], "gv\001", 3) == 0) &&
+            (strcmp(xref_data_fields.field_value[1], "UNDECLARED") == 0)) {
+            char * field, *end;
+            char * varname;
+            LongString var_key, data_key;
+            int result;
+
+            end = field = tmp.field_value[4];
+            while (*end != '\1') {
+              end++;
+            }
+            *end = '\0';
+            varname = SN_StrDup(field);
+            *end = '\1';
+
+            /* See if this symbols already exists in the special
+             * file name GLOBAL, and insert it if not.
+             */
+
+            LongStringInit(&var_key,0);
+            LongStringInit(&data_key,0);
+
+            var_key.copystrings(&var_key,
+                varname, DB_FLDSEP_STR,
+                "000000.000", DB_FLDSEP_STR,
+                "GLOBAL",
+                NULL);
+            data_key.copystrings(&data_key,
+                "0.0", DB_FLDSEP_STR,
+                "0x0", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}", DB_FLDSEP_STR,
+                "{}",
+                NULL);
+
+            if (!db_key_in_table(PAF_GLOB_VAR_DEF, var_key.buf)) {
+                /* Insert special global variable symbol */
+
+                db_insert_entry(PAF_GLOB_VAR_DEF,
+                    var_key.buf,
+                    data_key.buf);
+
+                var_key.free(&var_key);
+                data_key.free(&data_key);
+
+                LongStringInit(&var_key,0);
+                LongStringInit(&data_key,0);
+
+                var_key.copystrings(&var_key,
+                    "GLOBAL", DB_FLDSEP_STR,
+                    "000000.000", DB_FLDSEP_STR,
+                    "#", DB_FLDSEP_STR,
+                    varname, DB_FLDSEP_STR,
+                    "gv",
+                    NULL);
+                data_key.copystrings(&data_key,
+                    "0.0", DB_FLDSEP_STR,
+                    "0.0", DB_FLDSEP_STR,
+                    "0.0", DB_FLDSEP_STR,
+                    "{}",
+                    NULL);
+
+                db_insert_entry(PAF_FILE_SYMBOLS,
+                    var_key.buf,
+                    data_key.buf);
+	    }
+
+            var_key.free(&var_key);
+            data_key.free(&data_key);
+            ckfree((char*) varname);
+        }
+
 	xref_data_fields.free(&xref_data_fields);
 	xref_data.free(&xref_data);
 	xref.free(&xref);
@@ -1602,6 +1287,9 @@ Paf_Open_Include_Dirs(char *inf_name,char *db_prefix)
 	char	*fname;
 	char	tmp[MAXPATHLEN];
 
+	/* inf_name comes from -I option to cbrowser, it
+	 * is in the native system encoding
+	 */
 	include_fp = fopen(inf_name,"r");
 	if (!include_fp)
 		return;
@@ -1932,7 +1620,7 @@ inherit_members(char *class_name,char *inherited_class, char *inh_buf)
 
 #if OPT_CLASS_TREE
 		/* Don't load members of base classes that exist in the superclass . */
-		if (inh_symbol_type[0] == SN_symbol_types[PAF_MBR_FUNC_DCL][0]
+		if (inh_symbol_type[0] == SN_GetSymbolType(PAF_MBR_FUNC_DCL)[0]
 			&& db_mbr)		/* Search for method of the superclass. */
 		{
 			/* We load (inherit) the member only if the superclass
@@ -1993,7 +1681,7 @@ load_class_members(int type, char *class_name)
 	DBT	data;
 	DBT	mbr_key;
 	DBT	mbr_data;
-	char	*symbol_type = SN_symbol_types[type];
+	char	*symbol_type = SN_GetSymbolType(type);
 	char	*mbr_type;
 	int	mbr_type_len;
 	char	*mbr_pars;
@@ -2394,7 +2082,7 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 				? local_class_name
 				: global_class_name, DB_FLDSEP_STR,
 			name,                    DB_FLDSEP_STR,
-			arg_types ? arg_types : NULL,
+			arg_types ? arg_types : "",
 			NULL);
 		length = buf.len + 1;
 	}
@@ -2510,7 +2198,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 							}
 #if BUG_TRACE
 							fprintf(trace_fp,"1 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-								scope ? scope : NULL,in_access_val,ret_type,arg_types);
+								scope ? scope : "NULL",
+								in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 							RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
 						}
@@ -2557,7 +2246,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 					}
 #if BUG_TRACE
 					fprintf(trace_fp,"2 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-						scope ? scope : NULL,in_access_val,ret_type,arg_types);
+						scope ? scope : "NULL",
+						in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 
 					RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
@@ -2612,7 +2302,8 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 						
 #if BUG_TRACE
 						fprintf(trace_fp,"3 scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
-							scope ? scope : NULL,in_access_val,ret_type,arg_types);
+							scope ? scope : "NULL",
+							in_access_val,ret_type,arg_types);
 #endif /* BUG_TRACE */
 
 						RETURN_FROM_SEARCH(PAF_MBR_FUNC_DEF);
@@ -2666,14 +2357,14 @@ search_for_symbol(char *global_class_name,char *local_class_name,
 
 		pars.free(&pars);
 
-		if (sym_type[0] == SN_symbol_types[PAF_MBR_VAR_DEF][0])		/* "iv" ? */
+		if (sym_type[0] == SN_GetSymbolType(PAF_MBR_VAR_DEF)[0])		/* "iv" ? */
 		{
 			RETURN_FROM_SEARCH(PAF_MBR_VAR_DEF);
 		}
 #if BUG_TRACE
 		fprintf(trace_fp,"4 name: <%s> scope: <%s> access: <%s> ret_type: <%s> arg_types: <%s>\n",
 			buf.buf,
-			scope ? scope : NULL,
+			scope ? scope : "NULL",
 			in_access_val,
 			ret_type,
 			arg_types ? arg_types : "NULL");
@@ -2892,7 +2583,7 @@ get_symbol(char *global_class_name,char *local_class_name,char *name,
 }
 
 void
-Paf_db_init_tables(char *proj_dir,char *cache,char *cross_cache)
+Paf_db_init_tables(const char *proj_dir,const char *cache,const char *cross_cache)
 {
 	if (proj_dir)
 	{
@@ -2902,227 +2593,10 @@ Paf_db_init_tables(char *proj_dir,char *cache,char *cross_cache)
 	{
 		db_cachesize = (u_int)(atoi(cache) * 1024);
 	}
-	else
-	{
-		db_cachesize = 0;
-	}
 	if (cross_cache)
 	{
 		db_cross_cachesize = (u_int)(atoi(cross_cache) * 1024);
 	}
-	else
-	{
-		db_cross_cachesize = 0;
-	}
-}
-
-int
-Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
-	char *cache,char *sn_host, char *sn_pid)
-{
-	pid_t   pid = -1;
-	char    tmp[1024];
-	
-#ifdef WIN32
-	int             err;
-	HANDLE          read_handle;
-	STARTUPINFO startInfo;
-	PROCESS_INFORMATION procInfo;
-	SECURITY_ATTRIBUTES secAtts;
-#else
-	int             fd;
-	int             pfd[2];
-	pid_t   fork();
-	char	*argv[50];
-	int	argc;
-#endif /* WIN32 */
-
-	/* Check whether the file exists! */
-	if (access(pipe_cmd,F_OK) != 0)
-	{
-		return -1;
-	}
-
-#ifdef WIN32
-	secAtts.nLength = sizeof(SECURITY_ATTRIBUTES);
-	secAtts.lpSecurityDescriptor = NULL;
-	secAtts.bInheritHandle = FALSE;
-
-	if (!CreatePipe(&read_handle, &pipe_handle, &secAtts, 0))
-	{
-		errno = GetLastError();
-		printf("Error: (CreatePipe) error: %d\n",errno);
-		fflush(stdout);
-		return -1;
-	}
-	startInfo.cb = sizeof(startInfo);
-	startInfo.lpReserved = NULL;
-	startInfo.lpDesktop = NULL;
-	startInfo.lpTitle = NULL;
-	startInfo.dwX = startInfo.dwY = 0;
-	startInfo.dwXSize = startInfo.dwYSize = 0;
-	startInfo.dwXCountChars = startInfo.dwYCountChars = 0;
-	startInfo.dwFillAttribute = 0;
-	startInfo.dwFlags = STARTF_USESTDHANDLES;
-	startInfo.wShowWindow = 0;
-	startInfo.cbReserved2 = 0;
-	startInfo.lpReserved2 = NULL;
-
-	secAtts.nLength = sizeof(SECURITY_ATTRIBUTES);
-	secAtts.lpSecurityDescriptor = NULL;
-	secAtts.bInheritHandle = TRUE;
-
-	DuplicateHandle(GetCurrentProcess(),
-			 (HANDLE) read_handle,
-			 GetCurrentProcess(), &startInfo.hStdInput, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	DuplicateHandle(GetCurrentProcess(),
-			 GetStdHandle(STD_OUTPUT_HANDLE),
-			 GetCurrentProcess(), &startInfo.hStdOutput, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	DuplicateHandle(GetCurrentProcess(),
-			 GetStdHandle(STD_ERROR_HANDLE),
-			 GetCurrentProcess(), &startInfo.hStdError, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	/*
-	 * Constract the command line so that argmuents or the command
-	 * itself is masked with ".." when it contains blanks
-	 */
-	tmp[0] = 0;
-	sn_append_option_to_command_line (tmp, pipe_cmd);
-
-	if (cache)
-	{
-		sn_append_option_to_command_line (tmp, "-c");
-		sn_append_option_to_command_line (tmp, cache);
-	}
-
-	if (sn_host)
-	{
-		sn_append_option_to_command_line (tmp, "-H");
-		sn_append_option_to_command_line (tmp, sn_host);
-	}
-
-	if (sn_pid)
-	{
-		sn_append_option_to_command_line (tmp, "-P");
-		sn_append_option_to_command_line (tmp, sn_pid);
-	}
-
-	sn_append_option_to_command_line (tmp, db_prefix);
-
-	memset((char *)&procInfo,0,sizeof(procInfo));
-
-	if (!CreateProcess(NULL,tmp,NULL,NULL,TRUE,DETACHED_PROCESS,
-		NULL,NULL,&startInfo, &procInfo))
-	{
-		err = GetLastError();
-	}
-	else
-		err = 0;
-	CloseHandle(read_handle);
-	CloseHandle(startInfo.hStdInput);
-	CloseHandle(startInfo.hStdOutput);
-	CloseHandle(startInfo.hStdError);
-	CloseHandle(procInfo.hThread);
-
-	pid = (int) procInfo.hProcess;
-	process_handle = procInfo.hProcess;
-	if (err)
-	{
-		errno = err;
-		printf("Error: (CreateProcess) \"%s\", error: %d\n",tmp,errno);
-		fflush(stdout);
-		return -1;
-	}
-#else /* WIN32 */
-	if (pipe(pfd) == -1)
-	{
-		printf("Error: (pipe) \"%s\", errno: %d\n",pipe_cmd,errno);
-		fflush(stdout);
-		return -1;
-	}
-	pid = fork();
-	switch (pid)
-	{
-	case 0:
-		close(0);
-		dup(pfd[0]);            /* stdin is the pipe */
-		close(pfd[0]);
-		close(pfd[1]);
-
-	/* Close every file except stdin, stdout and stderr! */
-		for (dup(0), fd = dup(0); fd > 2; fd--)
-			close(fd);
-
-		argc = 0;
-		argv[argc++] = pipe_cmd;
-
-		if (cache)
-		{
-			argv[argc++] = "-c";
-			argv[argc++] = cache;
-		}
-
-		if (sn_host)
-		{
-			argv[argc++] = "-H";
-			argv[argc++] = sn_host;
-		}
-
-		if (sn_pid)
-		{
-			argv[argc++] = "-P";
-			argv[argc++] = sn_pid;
-		}
-
-		argv[argc++] = db_prefix;
-
-		argv[argc++] = NULL;
-
-		execvp(pipe_cmd,argv);
-
-		return -1;	/* Error happend. */
-		break;
-
-	case -1:
-		printf("Error: fork error: %d\n",errno);
-		exit(1);
-		break;
-	}
-
-	if ((pipe_handle = fdopen(pfd[1],"w")) == NULL)
-	{
-		printf("Error:fdopen error, errno: %d\n",errno);
-		exit(1);
-	}
-	close(pfd[0]);
-#endif /* WIN32 */
-
-	if (incl_to_pipe)
-	{
-		FILE    *ifp;
-
-		if ((ifp = fopen(incl_to_pipe,"r")) == NULL)
-		{
-			fprintf(stderr,"Error:couldn't load \"%s\",errno: %d\n",
-				incl_to_pipe,errno);
-			exit(1);
-		}
-		while (fgets(tmp,sizeof(tmp) -1,ifp))
-		{
-			Paf_Pipe_Write(tmp);
-		}
-		Paf_Pipe_Flush();
-
-		fclose(ifp);
-
-		unlink(incl_to_pipe);   /* Nobody needs it. */
-	}
-	return (int)pid;
 }
 
 #if DB_NO_CASE_COMPARE
@@ -3202,6 +2676,42 @@ db_case_compare(register const DBT *a,register const DBT *b)
 	return ((int)a->size - (int)b->size);
 }
 
+/*
+ * Return true if the given key exists in the table.
+ */
+
+static
+int
+db_key_in_table(int type, char* key) {
+    DB *dbp = db_syms[type];
+    DBT     dbkey;
+    int csize;
+    int result;
+
+    if (type == PAF_CROSS_REF) {
+      csize = db_cross_cachesize;
+    } else {
+      csize = db_cachesize;
+    }
+
+    if (!dbp)
+        dbp = create_table(type, O_RDWR|O_CREAT, csize);
+
+    if (dbp == NULL)
+        return 0;
+
+    dbkey.data = key;
+    dbkey.size = strlen(dbkey.data) + 1;
+    result = dbp->get(dbp, &dbkey, NULL, 0);
+    if (result < 0) {
+        Paf_panic(PAF_PANIC_EMERGENCY);
+    } else if (result == 0) {
+      return 1; /* key in table */
+    } else {
+      return 0; /* key not in table */
+    }
+}
+
 /* very bad solution for error handling */
 jmp_buf	BAD_IMPL_jmp_buf;
 
@@ -3213,91 +2723,7 @@ Paf_panic(int level)
 	longjmp(BAD_IMPL_jmp_buf,level);
 }
 
-static int
-Paf_Pipe_Flush()
-{
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-		return -1;
-#ifdef  __MSVC__
-	return (int)FlushFileBuffers(pipe_handle);
-#else
-	return fflush(pipe_handle);
-#endif /* __MSVC__ */
-}
-
-int
-Paf_Pipe_Close()
-{
-	int     ret = 0;
-
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-	{
-		Paf_db_close_tables();
-
-		return 0;
-	}
-#ifdef  WIN32
-	CloseHandle(pipe_handle);
-
-	ret = WaitForSingleObject(process_handle,INFINITE);
-	process_handle = INVALID_HANDLE_VALUE;
-#else
-	fclose(pipe_handle);
-
-	wait(&ret);
-#endif /* WIN32 */
-
-	pipe_handle = INVALID_HANDLE_VALUE;
-
-	return ret;
-}
-
-static int
-Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
-{
-	va_list args;
-	char    *fmt;
-	char    tmp[10000];
-	int     len;
-	int     cou;
-	Tcl_DString utfBuffer;
-
-	if (pipe_handle == INVALID_HANDLE_VALUE)
-		return -1;
-
-	fmt = (char *)MX_VARARGS_START(char *,arg1,args);
-
-	len = vsprintf(tmp,fmt, args);
-	for (fmt = tmp; len > 0;)
-	{
-		cou = 0;
-		Tcl_ExternalToUtfDString(NULL, tmp, len, &utfBuffer);
-#ifdef _WINDOWS
-		if (WriteFile(pipe_handle,Tcl_DStringValue(&utfBuffer),
-		    Tcl_DStringLength(&utfBuffer),&cou,NULL) == FALSE)
-		{
-			Tcl_DStringFree(&utfBuffer);
-			return FALSE;
-		}
-#else
-		cou = fprintf(pipe_handle,"%s",Tcl_DStringValue(&utfBuffer));
-		if (cou == -1) {
-			Tcl_DStringFree(&utfBuffer);
-			return FALSE;
-		}
-#endif
-
-		if (cou > 0)
-		{
-			fmt += cou;
-			len -= cou;
-		}
-		Tcl_DStringFree(&utfBuffer);
-	}
-	return TRUE;
-}
-
-#ifdef __MSVC__
+#if defined(__MSVC__) || defined(__MINGW32__)
 /* This function checks for a process (with pid - proc_id).
    Returns:
         -1 if not there
@@ -3306,28 +2732,25 @@ Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
   [irox:3.3.98]
 */
 
-int kill(int dumy, DWORD proc_id) /*sn_win32_ping*/
+int kill(pid_t pid, int dummy) /*sn_win32_ping*/
 {
         HANDLE hProcess;
         char debug_str[200];
-
+        DWORD proc_id = pid;
 
         hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, proc_id);
 
         if (hProcess!=NULL)
         {
-        sprintf(debug_str,"Opened process %d.",proc_id);
+        sprintf(debug_str,"Opened process %d.", (int)proc_id);
 /*      MessageBox(NULL,debug_str,"debug InFo",MB_OK);*/
                 /* It's alive! */
                 return 1;
         } else {
-        sprintf(debug_str,"Couldn't opened process %d.",proc_id);
+        sprintf(debug_str,"Couldn't opened process %d.", (int)proc_id);
 /*      MessageBox(NULL,debug_str,"debug InFo",MB_OK);*/
                 /* I think it's dead Jim. */
                 return -1;
         }
 }
 #endif
-
-
-

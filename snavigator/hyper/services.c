@@ -1057,9 +1057,14 @@ class_browser_insert(ClientData clientData,
 	    continue;
 	}
 
-	/* finish image name */
-	strcpy (imageptr, "_image");
-	
+        /* A private member uses a special empty image */
+        if (attr & PAF_PRIVATE) {
+            strcpy (image, "cls_br_private_image");
+        } else {
+            /* finish image name */
+            strcpy (imageptr, "_image");
+        }
+
 	/* make text */
 	tag_name= strchr(actu_flds[MEMBER_POS],'(');
 	/* function */
@@ -1122,7 +1127,7 @@ class_browser_insert(ClientData clientData,
 	    strcpy (font, public_font);
 	else if (attr & PAF_PROTECTED)
 	    strcpy (font, protected_font);
-	else
+	else if (attr & PAF_PRIVATE)
 	    strcpy (font, private_font);
 	
 	/*

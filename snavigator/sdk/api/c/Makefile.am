@@ -27,8 +27,8 @@ sdkincludedir = $(datadir)/sdk/include
 sdkinclude_h = db.h cdefs.h
 
 install-data-local:
-	$(mkinstalldirs) $(sdkincludedir)
+	$(mkinstalldirs) $(DESTDIR)$(sdkincludedir)
 	for h in $(sdkinclude_h) ; do \
-	    cp $(top_srcdir)/../db/include/$$h $(sdkincludedir) ;\
+	    cp $(top_srcdir)/../db/include/$$h $(DESTDIR)$(sdkincludedir) ;\
 	done
 

@@ -30,7 +30,7 @@ itcl::class Include& {
         global sn_options
 
         # Init some values.
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
 	# All thulls should be replaced with itk_component(hull)
         set thull $itk_component(hull)
@@ -115,17 +115,18 @@ itcl::class Include& {
         scrollbar ${thull}.scrolly -command " ${can} yview "\
           -jump $sn_options(def,canvas-tree-jump)
 
-        pack ${thull}.scrollx -side bottom -fill x
-        pack ${thull}.scrolly -side right -fill y
-        pack ${can} -side top -fill both -expand y
+        grid ${can} -row 0 -column 0 -sticky news
+        grid ${thull}.scrollx -row 1 -column 0 -sticky ew
+        grid  ${thull}.scrolly -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         #Draw tree of required include
         start ${goto}
 
         #Display the built tree
         Redraw
-
-        pack ${can} -fill both -expand y
 
         Update_Layout
 
@@ -206,9 +207,12 @@ itcl::class Include& {
         } else {
             if {${print_dialog} == "" || [itcl::find objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.printdialog -canvas ${can}\
-                  -parent ${topw} -modality application -file [file join $sn_options(profile_dir)\
-                  include.ps]]
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas ${can}\
+                  -file [file join $sn_options(profile_dir) include.ps]]
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {
@@ -278,6 +282,9 @@ itcl::class Include& {
             #select current class
             set id current
             set incname [${can} itemcget ${id} -text]
+        } elseif {[string match {[0-9]*} ${incname}]} {
+            set id ${incname}
+            set incname [${can} itemcget ${id} -text]
         } else {
             #select specified name
             set id [${can} find withtag ${incname}]
@@ -321,12 +328,13 @@ itcl::class Include& {
 
     # This function assures that the item will be on the screen.
     method see_item {{cname ""}} {
-        if {[string match {[0-9]*} ${cname}] == 0} {
+        if {[string match {[0-9]*} ${cname}]} {
+            mark_item ${cname}
+            set id ${cname}
+        } else {
             set opts [mark_item ${cname}]
             set cname [lindex ${opts} 0]
             set id [lindex ${opts} 1]
-        } else {
-            set id ${cname}
         }
 
         set c ${can}
@@ -494,7 +502,6 @@ itcl::class Include& {
 
         #dump the current view into the history stack
         if {!${reset}} {
-# FIXME: if topw is a plain toplevel, how would this call to history_stack_add_point work?
             ${topw} history_stack_add_point ${this}
         }
 
@@ -1111,8 +1118,8 @@ itcl::class Include& {
         } else {
             set icon [get_indep String IncludeTree]
         }
-        wm title [winfo toplevel [namespace tail ${this}]] ${t}
-        wm iconname [winfo toplevel [namespace tail ${this}]] ${icon}
+
+        ${topw} configure -title ${t} -iconname ${icon}
     }
 
     #Filter for symbols
@@ -1311,7 +1318,7 @@ itcl::class Include& {
     private variable layoutstyle
     private variable order
 
-    protected variable topw "."
+    protected variable topw
     protected variable can ""
     protected variable baseroot ""
     protected variable parents

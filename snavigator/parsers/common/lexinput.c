@@ -38,10 +38,13 @@ MA 02111-1307, USA.
 #include <stdlib.h>
 #include <tcl.h>
 
+static size_t translate_crlf(char* buffer, size_t size);
+
 static Tcl_Encoding ascii = NULL;
 extern Tcl_Encoding encoding;
 
 static start_of_file = 1;
+static saved_cr = 0;
 extern FILE * yyin;
 
 int
@@ -54,8 +57,14 @@ sn_encoded_input(char *buf, int max_size)
 
   if (encoding == NULL)
     {
-      /* No translation necessary. */
-      return fread(buf, sizeof(char), max_size, yyin);
+      /*
+       * No translation necessary. Just look for CRLF
+       * sequences and remove the CR character.
+       */
+
+      size_t read = fread(buf, sizeof(char), max_size, yyin);
+      read -= translate_crlf(buf, read);
+      return read;
     }
       
   if (ascii == NULL)
@@ -104,6 +113,10 @@ sn_encoded_input(char *buf, int max_size)
 		    &utf8_state, utf8buf, 2 * max_size,
 		    &srcRead, &dstWrote, NULL);
 
+  /* Look for CRLF sequences and remove the CR characters */
+
+  dstWrote -= translate_crlf(utf8buf, dstWrote);
+
   /* FIXME This code assumes that an encoded stream `n' bytes long
      will always reduce down to an ASCII stream no longer than `n'
      bytes. This is a reasonable assumption, but probably not
@@ -130,5 +143,56 @@ void
 sn_reset_encoding()
 {
   start_of_file = 1;
+  saved_cr = 0;
 }
 
+/* Accept a buffer that could contain CRLF sequences and convert
+ * the CRLF to a plain LF. Return the number of CR characters
+ * that were removed as a result of the translation.
+ */
+
+size_t translate_crlf(char* buffer, size_t size)
+{
+  int removed = 0;
+  char *dtmp, *stmp;
+
+  if (size == 0)
+    {
+      return 0;
+    }
+
+  if (saved_cr)
+    {
+      if (*buffer == '\n')
+        {
+          /* Do nothing, removes CR */
+        }
+      else
+        {
+          /* A lone CR should never appear in the input */
+          panic("CR without trailing LF on buffer border");
+        }
+      saved_cr = 0;
+    }
+
+  for (dtmp = stmp = buffer; (stmp - buffer) < size ; stmp++, dtmp++)
+    {
+      if ((*stmp == '\r') && (*(stmp + 1) == '\n'))
+        {
+          stmp++;
+          removed++;
+        }
+      if (dtmp != stmp)
+        {
+          *dtmp = *stmp;
+        }
+    }
+
+  if (*stmp == '\r')
+    {
+      saved_cr = 1;
+      removed++;
+    }
+
+  return removed;
+}

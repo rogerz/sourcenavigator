@@ -31,4 +31,4 @@ bin_SCRIPTS = snscenario
 install-exec-local: $(bindir)/@SN_LAUNCH_SHELL@
 
 $(bindir)/@SN_LAUNCH_SHELL@: snavigator
-	$(INSTALL_SCRIPT) snavigator $(bindir)/@SN_LAUNCH_SHELL@
+	$(INSTALL_SCRIPT) snavigator $(DESTDIR)$(bindir)/@SN_LAUNCH_SHELL@

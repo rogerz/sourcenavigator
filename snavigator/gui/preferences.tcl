@@ -89,30 +89,43 @@ itcl_class Preferences& {
           1]
 
         #Revision Control System
-        ${NoteBook} add rcs -createcmd "${this} AddRcs ${NoteBook} rcs"\
-          -raisecmd "${this} RaiseRcs" -label [get_indep String Rcs]\
-          -under [get_indep Pos Rcs] -state [tool_availiable rcs ${new_project}]
+        ${NoteBook} add rcs \
+          -createcmd "${this} AddRcs ${NoteBook} rcs" \
+          -raisecmd "${this} RaiseRcs" \
+          -label [get_indep String Rcs] \
+          -under [get_indep Pos Rcs] \
+          -state [tool_availiable rcs ${new_project}]
 
-        ${NoteBook} add others -createcmd "${this} AddOthers ${NoteBook}\
-          others" -raisecmd "${this} RaiseOthers" -label [get_indep String\
-          Others] -under [get_indep Pos Others] -state [tool_availiable others\
-          1]
+        ${NoteBook} add others \
+          -createcmd "${this} AddOthers ${NoteBook} others" \
+          -raisecmd "${this} RaiseOthers" \
+          -label [get_indep String Others] \
+          -under [get_indep Pos Others] \
+          -state [tool_availiable others 1]
 
-        ${NoteBook} add clrfont -createcmd "${this} AddColorAndFont\
-          ${NoteBook} clrfont" -raisecmd "${this} RaiseColorAndFont"\
-          -label [get_indep String ColorAndFont] -under [get_indep Pos\
-          ColorAndFont] -state [tool_Exists clrfont 1]
+        ${NoteBook} add clrfont \
+          -createcmd "${this} AddColorAndFont ${NoteBook} clrfont" \
+          -raisecmd "${this} RaiseColorAndFont" \
+          -label [get_indep String ColorAndFont] \
+          -under [get_indep Pos ColorAndFont] \
+          -state [tool_Exists clrfont 1]
 
-        sn_motif_buttons $itk_component(hull) bottom 0 [get_indep String ok]\
-          [get_indep String Apply] [get_indep String SaveDefault]\
+        sn_motif_buttons $itk_component(hull) bottom 0 \
+          [get_indep String ok] \
+          [get_indep String Apply] \
+          [get_indep String SaveDefault] \
           [get_indep String cancel]
 
-        $itk_component(hull).button_0 config -command " ${this} apply "
-        $itk_component(hull).button_1 config -command " ${this} apply 0 "\
+        $itk_component(hull).button_0 config \
+          -command " ${this} apply "
+        $itk_component(hull).button_1 config \
+          -command " ${this} apply 0 " \
           -underline [get_indep Pos Apply]
-        $itk_component(hull).button_2 config -command " ${this} save_cb default "\
+        $itk_component(hull).button_2 config \
+          -command " ${this} save_cb default " \
           -underline [get_indep Pos SaveDefault]
-        $itk_component(hull).button_3 config -command " ${this} exitPreferences "
+        $itk_component(hull).button_3 config \
+          -command " ${this} exitPreferences "
 
         #bind Return to apply the current window
         bind $itk_component(hull) <Return> "${this} apply"
@@ -144,7 +157,7 @@ itcl_class Preferences& {
         }
 
         global preferences_wait
-        ::set preferences_wait ""
+        set preferences_wait ""
         ::tkwait variable preferences_wait
     }
 
@@ -152,7 +165,7 @@ itcl_class Preferences& {
         global preferences_wait
 
         if {${preferences_wait} == ""} {
-            ::set preferences_wait cancel
+            set preferences_wait cancel
         }
         foreach v [::info globals "${this}-*"] {
             catch {uplevel #0 unset ${v}}
@@ -178,34 +191,41 @@ itcl_class Preferences& {
         set xstep 30
 
         #project frame
-        set prj [tixLabelFrame ${Project}.prj -label [get_indep String Project]]
+        set prj [tixLabelFrame ${Project}.prj \
+          -label [get_indep String Project]]
         ${prj} config -background $sn_options(def,layout-bg)
         set win [${Project}.prj subwidget frame]
         set lbl [${Project}.prj subwidget label]
         pack ${prj} -side top -fill x
 
         #Read-Only Project
-        ::set sn_options(opt_readonly) $sn_options(readonly)
+        set sn_options(opt_readonly) $sn_options(readonly)
         set ronly ${win}.ronly
-        CheckButton& ${ronly} -labels [list ""] -balloons [list\
-          [get_indep String ReadOnly]] -variables sn_options(opt_readonly)\
-          -label [get_indep String ReadOnly] -labelunderline [get_indep Pos\
-          ReadOnly] -labelwidth ${xstep}
+        CheckButton& ${ronly} \
+          -labels [list ""] \
+          -balloons [list [get_indep String ReadOnly]] \
+          -variables sn_options(opt_readonly) \
+          -label [get_indep String ReadOnly] \
+          -labelunderline [get_indep Pos ReadOnly] \
+          -labelwidth ${xstep}
         pack ${ronly} -side top -anchor nw -fill x
 
         #Scan Project by opening
-        ::set sn_options(opt_def,refresh-project)\
+        set sn_options(opt_def,refresh-project)\
           $sn_options(def,refresh-project)
         set scan ${win}.scan
-        CheckButton& ${scan} -labels [list ""] -balloons [list\
-          [get_indep String PrefScanProjectINFO]]\
-          -variables sn_options(opt_def,refresh-project) -label\
-          [get_indep String PrefScanProject] -labelunderline [get_indep Pos\
-          PrefScanProject] -labelwidth ${xstep}
+        CheckButton& ${scan} \
+          -labels [list ""] \
+          -balloons [list [get_indep String PrefScanProjectINFO]] \
+          -variables sn_options(opt_def,refresh-project) \
+          -label [get_indep String PrefScanProject] \
+          -labelunderline [get_indep Pos PrefScanProject] \
+          -labelwidth ${xstep}
         pack ${scan} -side top -anchor nw -fill x
 
         #database frame
-        set db [tixLabelFrame ${Project}.db -label [get_indep String Database]]
+        set db [tixLabelFrame ${Project}.db \
+          -label [get_indep String Database]]
         ${db} config -background $sn_options(def,layout-bg)
         set win [${Project}.db subwidget frame]
         pack ${db} -side top -fill x
@@ -217,13 +237,17 @@ itcl_class Preferences& {
         }
 
         #database directory
-        ::set sn_options(opt_both,db-directory) $sn_options(both,db-directory)
+        set sn_options(opt_both,db-directory) $sn_options(both,db-directory)
         set dbdir ${win}.prjname
-        LabelEntryButton& ${dbdir} -text [get_indep String PafWdDir]\
-          -underline [get_indep Pos PafWdDir] -command " ${this} choose_db_dir\
-          ${dbdir} " -labelwidth ${xstep} -anchor nw\
-          -variable sn_options(opt_both,db-directory) -native 1\
-          -buttonballoon [get_indep String ChooseINFO] -state ${state}
+        LabelEntryButton& ${dbdir} \
+          -text [get_indep String PafWdDir] \
+          -underline [get_indep Pos PafWdDir] \
+          -command " ${this} choose_db_dir ${dbdir} " \
+          -labelwidth ${xstep} -anchor nw \
+          -variable sn_options(opt_both,db-directory) \
+          -native 1 \
+          -buttonballoon [get_indep String ChooseINFO] \
+          -state ${state}
         pack ${dbdir} -side top -anchor nw -fill x
 
         #database permissions
@@ -250,92 +274,121 @@ itcl_class Preferences& {
           GroupWrite] [get_indep String OthersRead] [get_indep String\
           OthersWrite]]
         set perms ${win}.perms
-        CheckButton& ${perms} -labels ${lbls} -balloons ${balloons}\
-          -variables ${vars} -label [get_indep String Permissions]\
-          -labelunderline [get_indep Pos Permissions] -labelwidth ${xstep}
+        CheckButton& ${perms} \
+          -labels ${lbls} \
+          -balloons ${balloons} \
+          -variables ${vars} \
+          -label [get_indep String Permissions] \
+          -labelunderline [get_indep Pos Permissions] \
+          -labelwidth ${xstep}
         pack ${perms} -side top -anchor nw
 
         #comment database
-        ::set sn_options(opt_both,create-comment-db)\
+        set sn_options(opt_both,create-comment-db)\
           $sn_options(both,create-comment-db)
         set commentdb ${win}.commentdb
-        CheckButton& ${commentdb} -labels [list ""] -values [list {-r ""}]\
-          -variables sn_options(opt_both,create-comment-db) -label\
-          [get_indep String CommentDB] -labelunderline [get_indep Pos\
-          CommentDB] -labelwidth ${xstep} -balloons [list [get_indep String\
-          CommentDBINFO]]
+        CheckButton& ${commentdb} \
+          -labels [list ""] \
+          -values [list {-r ""}] \
+          -variables sn_options(opt_both,create-comment-db) \
+          -label [get_indep String CommentDB] \
+          -labelunderline [get_indep Pos CommentDB] \
+          -labelwidth ${xstep} \
+          -balloons [list [get_indep String CommentDBINFO]]
         pack ${commentdb} -side top -anchor nw -fill x
 
         #database cache size is always editable
         set cache_state "normal"
 
         # database cache size
-        ::set sn_options(opt_def,db_cachesize) $sn_options(def,db_cachesize)
+        set sn_options(opt_def,db_cachesize) $sn_options(def,db_cachesize)
         set dbcache ${win}.dbcache
 
-        Entry& ${dbcache} -width 2 -labelwidth ${xstep} -label\
-          [get_indep String CacheSize] -underline [get_indep Pos CacheSize]\
+        Entry& ${dbcache} \
+          -width 2 \
+          -labelwidth ${xstep} \
+          -label [get_indep String CacheSize] \
+          -underline [get_indep Pos CacheSize] \
           -textvariable sn_options(opt_def,db_cachesize) \
 	  -state ${cache_state} -filter natural
 
-        ::pack ${dbcache} -side top -anchor nw -fill x
-        ::pack [label ${dbcache}.dbbytes -text [get_indep String KBytes]]\
+        pack ${dbcache} -side top -anchor nw -fill x
+        pack [label ${dbcache}.dbbytes -text [get_indep String KBytes]]\
           -side left -fill y
 
         #xref database cache size
-        ::set sn_options(opt_def,xref-db-cachesize)\
+        set sn_options(opt_def,xref-db-cachesize)\
           $sn_options(def,xref-db-cachesize)
         set dbxcache ${win}.dbxcache
-        Entry& ${dbxcache} -width 2 -labelwidth ${xstep} -label\
-          [get_indep String xrefCacheSize] -underline [get_indep Pos\
-          xrefCacheSize] -textvariable sn_options(opt_def,xref-db-cachesize)\
+        Entry& ${dbxcache} \
+          -width 2 \
+          -labelwidth ${xstep} \
+          -label [get_indep String xrefCacheSize] \
+          -underline [get_indep Pos xrefCacheSize] \
+          -textvariable sn_options(opt_def,xref-db-cachesize) \
           -state ${cache_state} -filter natural
 
         pack ${dbxcache} -side top -anchor nw -fill x
-        pack [label ${dbxcache}.dbbytes -text [get_indep String KBytes]]\
+        pack [label ${dbxcache}.dbbytes \
+          -text [get_indep String KBytes]] \
           -side left -fill y
 
         #Window options
-        set fr [tixLabelFrame ${Project}.projfr -label [get_indep String\
-          Window]]
+        set fr [tixLabelFrame ${Project}.projfr \
+          -label [get_indep String Window]]
         ${fr} config -background $sn_options(def,layout-bg)
         set win [${Project}.projfr subwidget frame]
         pack ${fr} -side top -fill x
 
         #Split Windows
-        ::set sn_options(opt_def,window-alighment)\
+        set sn_options(opt_def,window-alighment)\
           $sn_options(def,window-alighment)
         set aligns [list [get_indep String AlighmentHorizontal]\
           [get_indep String AlighmentVertical]]
-        Radio& ${win}.aligh -variable sn_options(opt_def,window-alighment)\
-          -labels ${aligns} -contents {horizontal vertical} -label\
-          [get_indep String SplitWindows] -labelunderline [get_indep Pos\
-          SplitWindows] -labelwidth ${xstep}
+        Radio& ${win}.aligh \
+          -variable sn_options(opt_def,window-alighment) \
+          -labels ${aligns} \
+          -contents {horizontal vertical} \
+          -label [get_indep String SplitWindows] \
+          -labelunderline [get_indep Pos SplitWindows] \
+          -labelwidth ${xstep}
         pack ${win}.aligh -fill x -expand y -side top -padx ${padx}\
           -pady ${pady}
 
         #New Windows
-        ::set sn_options(opt_def,reuse-window) $sn_options(def,reuse-window)
-        ::set sn_options(opt_def,window-switchable)\
+        set sn_options(opt_def,reuse-window) $sn_options(def,reuse-window)
+        set sn_options(opt_def,window-switchable)\
           $sn_options(def,window-switchable)
-        CheckButton& ${win}.reuse -label [get_indep String CreateNewWindow]\
-          -labelunderline [get_indep Pos CreateNewWindow] -labelwidth ${xstep}\
-          -labels [list [get_indep String Reusable] [get_indep String\
-          Switchable]] -balloons [list [get_indep String NewReusableINFO]\
-          [get_indep String NewSwitchableINFO]] -variables\
-          [list sn_options(opt_def,reuse-window)\
-          sn_options(opt_def,window-switchable)]
+        CheckButton& ${win}.reuse \
+          -label [get_indep String CreateNewWindow] \
+          -labelunderline [get_indep Pos CreateNewWindow] \
+          -labelwidth ${xstep} \
+          -labels [list \
+                    [get_indep String Reusable] \
+                    [get_indep String Switchable] \
+                  ] \
+          -balloons [list \
+                      [get_indep String NewReusableINFO] \
+                      [get_indep String NewSwitchableINFO] \
+                    ] \
+          -variables [list \
+                       sn_options(opt_def,reuse-window) \
+                       sn_options(opt_def,window-switchable)]
         pack ${win}.reuse -side top -fill x -expand y -padx ${padx}\
           -pady ${pady}
 
         #window size
-        ::set sn_options(opt_def,window-size) $sn_options(def,window-size)
+        set sn_options(opt_def,window-size) $sn_options(def,window-size)
         set winsize ${win}.winsize
 
-        Entry& ${winsize} -width 3 -labelwidth ${xstep} -label\
-          [get_indep String WindowSize] -underline [get_indep Pos WindowSize]\
-          -textvariable sn_options(opt_def,window-size) -balloon\
-          [get_indep String WindowSizeINFO] -expand n \
+        Entry& ${winsize} \
+          -width 3 \
+          -labelwidth ${xstep} \
+          -label [get_indep String WindowSize] \
+          -underline [get_indep Pos WindowSize] \
+          -textvariable sn_options(opt_def,window-size) \
+          -balloon [get_indep String WindowSizeINFO] \
+          -expand n \
 	  -filter natural
 
         pack ${winsize} -side top -anchor nw -fill x
@@ -349,9 +402,12 @@ itcl_class Preferences& {
         ${fr} config -background $sn_options(def,layout-bg)
         set intlframe [${Project}.intl subwidget frame]
         set sn_options(opt_def,encoding) $sn_options(def,encoding)
-        Combo& ${intlframe}.encodings -label [get_indep String Encoding]\
-          -labelwidth ${xstep} -underline [get_indep Pos Encoding]\
-          -contents [encoding names] -entryvariable sn_options(opt_def,encoding)
+        Combo& ${intlframe}.encodings \
+          -label [get_indep String Encoding] \
+          -labelwidth ${xstep} \
+          -underline [get_indep Pos Encoding] \
+          -contents [encoding names] \
+          -entryvariable sn_options(opt_def,encoding)
         ${intlframe}.encodings selecttext $sn_options(def,encoding)
         pack ${fr} -side top -fill x
         pack ${intlframe}.encodings -side top -anchor w -padx 4 -pady 4
@@ -365,8 +421,10 @@ itcl_class Preferences& {
         ${cls} config -value ${dir}
     }
     method choose_db_dir {cls} {
-        Editor&::DirDialog ${this} -title [get_indep String Open]\
-          -script "${this} choose_db_dir_cb ${cls}" -prefix choose_db_dir
+        Editor&::DirDialog ${this} \
+          -title [get_indep String Open] \
+          -script "${this} choose_db_dir_cb ${cls}" \
+          -prefix choose_db_dir
     }
 
     #####################################################
@@ -379,85 +437,110 @@ itcl_class Preferences& {
         set Editor ${EditorPage}
 
         #Format
-        set frmt [tixLabelFrame ${Editor}.frm -label [get_indep String Format]]
+        set frmt [tixLabelFrame ${Editor}.frm \
+          -label [get_indep String Format]]
         ${frmt} config -background $sn_options(def,layout-bg)
         set win [${Editor}.frm subwidget frame]
         pack ${frmt} -side top -anchor c -fill x
 
         #tab stop
-        ::set sn_options(opt_def,edit-tabstop) $sn_options(def,edit-tabstop)
+        set sn_options(opt_def,edit-tabstop) $sn_options(def,edit-tabstop)
         set tabstop ${win}.tabstop
 
-        Entry& ${tabstop} -width 2 -labelwidth 35 -label [get_indep String\
-          PrefTabStop] -underline [get_indep Pos PrefTabStop]\
+        Entry& ${tabstop} \
+          -width 2 \
+          -labelwidth 35 \
+          -label [get_indep String PrefTabStop] \
+          -underline [get_indep Pos PrefTabStop] \
           -textvariable sn_options(opt_def,edit-tabstop) \
 	  -filter natural
 
         pack ${tabstop} -side top -anchor nw
 
         #Auto Indent delay
-        ::set sn_options(opt_def,edit-indentwidth)\
+        set sn_options(opt_def,edit-indentwidth)\
           $sn_options(def,edit-indentwidth)
         set indent ${win}.indent
 
-        Entry& ${indent} -width 2 -labelwidth 35 -label [get_indep String\
-          AutoIndentWidth] -underline [get_indep Pos AutoIndentWidth]\
+        Entry& ${indent} \
+          -width 2 \
+          -labelwidth 35 \
+          -label [get_indep String AutoIndentWidth] \
+          -underline [get_indep Pos AutoIndentWidth] \
           -textvariable sn_options(opt_def,edit-indentwidth) \
 	  -filter natural
 
         pack ${indent} -side top -anchor nw
 
         #wrap
-        ::set sn_options(opt_def,edit-wrap) $sn_options(def,edit-wrap)
+        set sn_options(opt_def,edit-wrap) $sn_options(def,edit-wrap)
         set wrap ${win}.wrap
         set lbls [list [get_indep String None] [get_indep String Char]\
           [get_indep String Word]]
-        Radio& ${wrap} -labelwidth 35 -variable sn_options(opt_def,edit-wrap)\
-          -labels ${lbls} -contents {none char word} -label [get_indep String\
-          Wrap] -labelunderline [get_indep Pos Wrap]
+        Radio& ${wrap} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,edit-wrap) \
+          -labels ${lbls} \
+          -contents {none char word} \
+          -label [get_indep String Wrap] \
+          -labelunderline [get_indep Pos Wrap]
         pack ${wrap} -side top -expand y -fill x
 
         #Work
-        set work [tixLabelFrame ${Editor}.work -label [get_indep String Work]]
+        set work [tixLabelFrame ${Editor}.work \
+          -label [get_indep String Work]]
         ${work} config -background $sn_options(def,layout-bg)
         set win [${Editor}.work subwidget frame]
         pack ${work} -side top -anchor c -fill x
 
         #create .bak files
-        ::set sn_options(opt_def,edit-create-bak)\
+        set sn_options(opt_def,edit-create-bak)\
           $sn_options(def,edit-create-bak)
         set bak ${win}.bak
-        CheckButton& ${bak} -labels [list ""]\
-          -variables sn_options(opt_def,edit-create-bak) -label\
-          [get_indep String EditCreateBackFiles] -labelunderline\
-          [get_indep Pos EditCreateBackFiles] -labelwidth 35
+        CheckButton& ${bak} \
+          -labels [list ""] \
+          -variables sn_options(opt_def,edit-create-bak) \
+          -label [get_indep String EditCreateBackFiles] \
+          -labelunderline [get_indep Pos EditCreateBackFiles] \
+          -labelwidth 35
         pack ${bak} -side top -anchor nw
 
         #output file translation
         set ftrans ${win}.ftrans
-        ::set sn_options(opt_def,edit-file-translation)\
+        set sn_options(opt_def,edit-file-translation)\
           $sn_options(def,edit-file-translation)
-        Radio& ${ftrans} -labelwidth 35\
-          -variable sn_options(opt_def,edit-file-translation) -labels [list\
-          [get_indep String KeepLF] [get_indep String AutoLF]\
-          [get_indep String UNIXLF] [get_indep String WindowsCRLF]\
-          [get_indep String MacintoshCR]] -contents {keep auto lf crlf cr}\
-          -balloons [list [get_indep String EditorFileTranslationKeepINFO]\
-          [get_indep String EditorFileTranslationAutoINFO] [get_indep String\
-          EditorFileTranslationUnixINFO] [get_indep String\
-          EditorFileTranslationWindowsINFO] [get_indep String\
-          EditorFileTranslationCRINFO]] -label [get_indep String FileTrans]\
+        Radio& ${ftrans} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,edit-file-translation) \
+          -labels [list \
+                    [get_indep String KeepLF] \
+                    [get_indep String AutoLF] \
+                    [get_indep String UNIXLF] \
+                    [get_indep String WindowsCRLF] \
+                    [get_indep String MacintoshCR] \
+                  ] \
+          -contents {keep auto lf crlf cr} \
+          -balloons [list \
+                      [get_indep String EditorFileTranslationKeepINFO] \
+                      [get_indep String EditorFileTranslationAutoINFO] \
+                      [get_indep String EditorFileTranslationUnixINFO] \
+                      [get_indep String EditorFileTranslationWindowsINFO] \
+                      [get_indep String EditorFileTranslationCRINFO] \
+                    ] \
+          -label [get_indep String FileTrans] \
           -labelunderline [get_indep Pos FileTrans]
         pack ${ftrans} -side top -expand y -fill x
 
         #bracket delay
-        ::set sn_options(opt_def,edit-bracket-delay)\
+        set sn_options(opt_def,edit-bracket-delay)\
           $sn_options(def,edit-bracket-delay)
         set brack ${win}.bracket
 
-        Entry& ${brack} -width 4 -labelwidth 35 -label [get_indep String\
-          EditBracketMatchDelay] -underline [get_indep Pos\
-          EditBracketMatchDelay]\
+        Entry& ${brack} \
+          -width 4 \
+          -labelwidth 35 \
+          -label [get_indep String EditBracketMatchDelay] \
+          -underline [get_indep Pos EditBracketMatchDelay] \
           -textvariable sn_options(opt_def,edit-bracket-delay) \
 	  -filter natural
 
@@ -465,46 +548,58 @@ itcl_class Preferences& {
 
         #right mouse scroll/edit menu
         set rmouse ${win}.rmouse
-        ::set sn_options(opt_def,edit-rightmouse-action)\
+        set sn_options(opt_def,edit-rightmouse-action)\
           $sn_options(def,edit-rightmouse-action)
-        Radio& ${rmouse} -labelwidth 35\
-          -variable sn_options(opt_def,edit-rightmouse-action) -labels [list\
-          [get_indep String EditM3Menu] [get_indep String EditM3Scroll]]\
-          -contents {menu scroll} -label [get_indep String EditM3Sup]\
+        Radio& ${rmouse} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,edit-rightmouse-action) \
+          -labels [list \
+                    [get_indep String EditM3Menu] \
+                    [get_indep String EditM3Scroll] \
+                  ] \
+          -contents {menu scroll} \
+          -label [get_indep String EditM3Sup] \
           -labelunderline [get_indep Pos EditM3Sup]
         pack ${rmouse} -side top -expand y -fill x
 
         #Convert Inserted Tabs Into Spaces
-        ::set sn_options(opt_def,edit-tab-inserts-spaces)\
+        set sn_options(opt_def,edit-tab-inserts-spaces)\
           $sn_options(def,edit-tab-inserts-spaces)
         set tabspaces ${win}.tabspaces
-        CheckButton& ${tabspaces} -labels [list ""]\
-          -variables sn_options(opt_def,edit-tab-inserts-spaces)\
-          -label [get_indep String EditorTranslateTabs]\
-          -labelunderline [get_indep Pos EditorTranslateTabs] -labelwidth 35\
+        CheckButton& ${tabspaces} \
+          -labels [list ""]\
+          -variables sn_options(opt_def,edit-tab-inserts-spaces) \
+          -label [get_indep String EditorTranslateTabs] \
+          -labelunderline [get_indep Pos EditorTranslateTabs] \
+          -labelwidth 35 \
           -balloons [list [get_indep String EditorTranslateTabsINFO]]
         pack ${tabspaces} -side top -anchor nw
 
         #more toolbar buttons
-        ::set sn_options(opt_def,edit-more-buttons)\
+        set sn_options(opt_def,edit-more-buttons)\
           $sn_options(def,edit-more-buttons)
         set morebtns ${win}.morebtns
-        CheckButton& ${morebtns} -labels [list ""]\
-          -variables sn_options(opt_def,edit-more-buttons) -label\
-          [get_indep String MoreEditorToolbarButtons]\
-          -labelunderline [get_indep Pos MoreEditorToolbarButtons]\
-          -labelwidth 35 -balloons [list [get_indep String\
-          MoreEditorToolbarButtonsINFO]]
+        CheckButton& ${morebtns} \
+          -labels [list ""] \
+          -variables sn_options(opt_def,edit-more-buttons) \
+          -label [get_indep String MoreEditorToolbarButtons] \
+          -labelunderline [get_indep Pos MoreEditorToolbarButtons] \
+          -labelwidth 35 \
+          -balloons [list [get_indep String MoreEditorToolbarButtonsINFO]]
         pack ${morebtns} -side top -anchor nw
 
         #External editor for all files
-        ::set sn_options(opt_def,edit-external-editor)\
+        set sn_options(opt_def,edit-external-editor)\
           $sn_options(def,edit-external-editor)
         set extedit ${win}.extedit
-        LabelEntryButton& ${extedit} -text [get_indep String ExternalEditor]\
-          -underline [get_indep Pos ExternalEditor] -labelwidth 35 -anchor nw\
-          -variable sn_options(opt_def,edit-external-editor) -native 1\
-          -extensions $sn_options(executable_ext)\
+        LabelEntryButton& ${extedit} \
+          -text [get_indep String ExternalEditor] \
+          -underline [get_indep Pos ExternalEditor] \
+          -labelwidth 35 \
+          -anchor nw \
+          -variable sn_options(opt_def,edit-external-editor) \
+          -native 1 \
+          -extensions $sn_options(executable_ext) \
           -defaultextension $sn_options(executable_defaultext)
         pack ${extedit} -side top -anchor nw -fill x
 
@@ -524,92 +619,117 @@ itcl_class Preferences& {
         set ClassHierarchy ${ClassHierarchyPage}
 
         #Class browser options
-        set class [tixLabelFrame ${ClassHierarchy}.class -label\
-          [get_indep String Class]]
+        set class [tixLabelFrame ${ClassHierarchy}.class \
+          -label [get_indep String Class]]
         ${class} config -background $sn_options(def,layout-bg)
         set win [${ClassHierarchy}.class subwidget frame]
         pack ${class} -side top -anchor c -fill x
 
         #goto Def. or Impl. by selecting a method
-        ::set sn_options(opt_def,class-goto-imp) $sn_options(def,class-goto-imp)
+        set sn_options(opt_def,class-goto-imp) $sn_options(def,class-goto-imp)
         set lbls [list [get_indep String Definition] [get_indep String\
           Implementation]]
         set defimp ${win}.defimp
-        Radio& ${defimp} -labelwidth 35\
-          -variable sn_options(opt_def,class-goto-imp) -labels ${lbls}\
-          -contents {def imp} -label [get_indep String GotoDefImp]\
+        Radio& ${defimp} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,class-goto-imp) \
+          -labels ${lbls} \
+          -contents {def imp} \
+          -label [get_indep String GotoDefImp] \
           -labelunderline [get_indep Pos GotoDefImp]
         pack ${defimp} -side top -expand y -fill x
 
         #vertical/horizontal
-        ::set sn_options(opt_def,class-orientation)\
+        set sn_options(opt_def,class-orientation)\
           $sn_options(def,class-orientation)
         set lbls [list [get_indep String AlighmentHorizontal]\
           [get_indep String AlighmentVertical]]
         set classorient ${win}.classorient
-        Radio& ${classorient} -labelwidth 35\
-          -variable sn_options(opt_def,class-orientation) -labels ${lbls}\
-          -contents {horizontal vertical} -label [get_indep String\
-          Orientation] -labelunderline [get_indep Pos Orientation]
+        Radio& ${classorient} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,class-orientation) \
+          -labels ${lbls} \
+          -contents {horizontal vertical} \
+          -label [get_indep String Orientation] \
+          -labelunderline [get_indep Pos Orientation]
         pack ${classorient} -side top -expand y -fill x
 
         #members order
-        ::set sn_options(opt_def,members-order) $sn_options(def,members-order)
+        set sn_options(opt_def,members-order) $sn_options(def,members-order)
         set lbls [list [get_indep String First] [get_indep String Second]]
         set memord ${win}.memord
-        Radio& ${memord} -labelwidth 35\
-          -variable sn_options(opt_def,members-order) -labels ${lbls}\
-          -contents {first second} -label [get_indep String MembersOrder]\
+        Radio& ${memord} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,members-order) \
+          -labels ${lbls} \
+          -contents {first second} \
+          -label [get_indep String MembersOrder] \
           -labelunderline [get_indep Pos MembersOrder]
         pack ${memord} -side top -expand y -fill x
 
         #Layout
-        set layout [tixLabelFrame ${ClassHierarchy}.layout -label\
-          [get_indep String HierarchyLayout]]
+        set layout [tixLabelFrame ${ClassHierarchy}.layout \
+          -label [get_indep String HierarchyLayout]]
         ${layout} config -background $sn_options(def,layout-bg)
         set win [${ClassHierarchy}.layout subwidget frame]
         pack ${layout} -side top -anchor c -fill x
 
         #Display order
         set order ${win}.order
-        ::set sn_options(opt_def,ctree-view-order)\
+        set sn_options(opt_def,ctree-view-order)\
           $sn_options(def,ctree-view-order)
-        Radio& ${order} -labelwidth 35\
-          -variable sn_options(opt_def,ctree-view-order) -labels [list\
-          [get_indep String LeftRight] [get_indep String Topdown]]\
-          -contents {0 1} -label [get_indep String PrefDispOrder]\
+        Radio& ${order} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,ctree-view-order) \
+          -labels [list \
+                    [get_indep String LeftRight] \
+                    [get_indep String Topdown] \
+                  ] \
+          -contents {0 1} \
+          -label [get_indep String PrefDispOrder] \
           -labelunderline [get_indep Pos PrefDispOrder]
         pack ${order} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #Display format
         set frmt ${win}.frmt
-        ::set sn_options(opt_def,ctree-layout) $sn_options(def,ctree-layout)
-        Radio& ${frmt} -labelwidth 35\
-          -variable sn_options(opt_def,ctree-layout) -labels [list\
-          [get_indep String Tree] [get_indep String ISI]] -contents {isi tree}\
-          -label [get_indep String PrefDispLayout] -labelunderline\
-          [get_indep Pos PrefDispLayout]
+        set sn_options(opt_def,ctree-layout) $sn_options(def,ctree-layout)
+        Radio& ${frmt} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,ctree-layout) \
+          -labels [list\
+                    [get_indep String Tree] \
+                    [get_indep String ISI] \
+                  ] \
+          -contents {isi tree} \
+          -label [get_indep String PrefDispLayout] \
+          -labelunderline [get_indep Pos PrefDispLayout]
         pack ${frmt} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #space vertical
-        ::set sn_options(opt_def,ctree-vertspace)\
+        set sn_options(opt_def,ctree-vertspace)\
           $sn_options(def,ctree-vertspace)
         set svert ${win}.svert
 
-        Entry& ${svert} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceVertical] -underline [get_indep Pos SpaceVertical]\
+        Entry& ${svert} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceVertical] \
+          -underline [get_indep Pos SpaceVertical] \
           -textvariable sn_options(opt_def,ctree-vertspace) \
 	  -filter natural
 
         pack ${svert} -side top -anchor nw
 
         #space horizontal
-        ::set sn_options(opt_def,ctree-horizspace)\
+        set sn_options(opt_def,ctree-horizspace)\
           $sn_options(def,ctree-horizspace)
         set shoriz ${win}.shoriz
 
-        Entry& ${shoriz} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceHorizontal] -underline [get_indep Pos SpaceHorizontal]\
+        Entry& ${shoriz} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceHorizontal] \
+          -underline [get_indep Pos SpaceHorizontal] \
           -textvariable sn_options(opt_def,ctree-horizspace) \
 	  -filter natural
 
@@ -631,39 +751,48 @@ itcl_class Preferences& {
         set XReference ${XReferencePage}
 
         #XRef informations
-        set xproc [tixLabelFrame ${XReference}.xproc -label [get_indep String\
-          CrossReferencing]]
+        set xproc [tixLabelFrame ${XReference}.xproc \
+          -label [get_indep String CrossReferencing]]
         ${xproc} config -background $sn_options(def,layout-bg)
         set win [${XReference}.xproc subwidget frame]
         pack ${xproc} -side top -anchor c -fill x
 
         #generate xref
-        ::set sn_options(opt_both,xref-create) $sn_options(both,xref-create)
+        set sn_options(opt_both,xref-create) $sn_options(both,xref-create)
         set genxref ${win}.genxref
-        CheckButton& ${genxref} -balloons [list [get_indep String\
-          GenerateXRefINFO]] -labels [list ""] -values [list {-x ""}]\
-          -variables sn_options(opt_both,xref-create) -label [get_indep String\
-          GenerateXRef] -labelunderline [get_indep Pos GenerateXRef]\
-          -labelwidth 35 -command " ${this} XRef_Enable ${win}.genlocal\
-          ${win}.xrefbell "
+        CheckButton& ${genxref} \
+          -balloons [list [get_indep String GenerateXRefINFO]] \
+          -labels [list ""] \
+          -values [list {-x ""}] \
+          -variables sn_options(opt_both,xref-create) \
+          -label [get_indep String GenerateXRef] \
+          -labelunderline [get_indep Pos GenerateXRef] \
+          -labelwidth 35 \
+          -command " ${this} XRef_Enable ${win}.genlocal ${win}.xrefbell "
         pack ${genxref} -side top -anchor nw
 
         #Generate references to local variables
-        ::set sn_options(opt_both,xref-locals) $sn_options(both,xref-locals)
+        set sn_options(opt_both,xref-locals) $sn_options(both,xref-locals)
         set genlocal ${win}.genlocal
-        CheckButton& ${genlocal} -labels [list ""] -values [list {-l ""}]\
-          -variables sn_options(opt_both,xref-locals) -label [get_indep String\
-          XRefLocalVars] -labelunderline [get_indep Pos XRefLocalVars]\
+        CheckButton& ${genlocal} \
+          -labels [list ""] \
+          -values [list {-l ""}] \
+          -variables sn_options(opt_both,xref-locals) \
+          -label [get_indep String XRefLocalVars] \
+          -labelunderline [get_indep Pos XRefLocalVars] \
           -labelwidth 35
         pack ${genlocal} -side top -anchor nw
 
         #Bell after terminated XRef
-        ::set sn_options(opt_def,xref-bell) $sn_options(def,xref-bell)
+        set sn_options(opt_def,xref-bell) $sn_options(def,xref-bell)
         set xrefbell ${win}.xrefbell
-        CheckButton& ${xrefbell} -variables sn_options(opt_def,xref-bell)\
-          -labels [list ""] -balloons [list [get_indep String XRefBellINFO]]\
-          -label [get_indep String XRefBell] -labelunderline [get_indep Pos\
-          XRefBell] -labelwidth 35
+        CheckButton& ${xrefbell} \
+          -variables sn_options(opt_def,xref-bell) \
+          -labels [list ""] \
+          -balloons [list [get_indep String XRefBellINFO]] \
+          -label [get_indep String XRefBell] \
+          -labelunderline [get_indep Pos XRefBell] \
+          -labelwidth 35
         pack ${xrefbell} -side top -anchor nw
 
         XRef_Enable ${win}.genlocal ${win}.xrefbell
@@ -676,84 +805,108 @@ itcl_class Preferences& {
         pack ${layout} -side top -anchor c -fill x
 
         #Accept parameters
-        ::set sn_options(opt_both,xref-accept-param)\
+        set sn_options(opt_both,xref-accept-param)\
           $sn_options(both,xref-accept-param)
         set aparam ${win}.aparam
-        CheckButton& ${aparam} -labels [list ""]\
-          -variables sn_options(opt_both,xref-accept-param) -label\
-          [get_indep String CrossAcceptParam] -labelunderline [get_indep Pos\
-          CrossAcceptParam] -labelwidth 35
+        CheckButton& ${aparam} \
+          -labels [list ""] \
+          -variables sn_options(opt_both,xref-accept-param) \
+          -label [get_indep String CrossAcceptParam] \
+          -labelunderline [get_indep Pos CrossAcceptParam] \
+          -labelwidth 35
         pack ${aparam} -side top -anchor nw
 
         #Accept static flag
-        ::set sn_options(opt_both,xref-accept-static)\
+        set sn_options(opt_both,xref-accept-static)\
           $sn_options(both,xref-accept-static)
         set astatic ${win}.astatic
-        CheckButton& ${astatic} -labels [list ""]\
-          -variables sn_options(opt_both,xref-accept-static) -label\
-          [get_indep String CrossAcceptStatic] -labelunderline [get_indep Pos\
-          CrossAcceptStatic] -labelwidth 35
+        CheckButton& ${astatic} \
+          -labels [list ""] \
+          -variables sn_options(opt_both,xref-accept-static) \
+          -label [get_indep String CrossAcceptStatic] \
+          -labelunderline [get_indep Pos CrossAcceptStatic] \
+          -labelwidth 35
         pack ${astatic} -side top -anchor nw
 
         #Display functions parameters
-        ::set sn_options(opt_both,xref-disp-param)\
+        set sn_options(opt_both,xref-disp-param)\
           $sn_options(both,xref-disp-param)
         set dspfunc ${win}.dspfunc
-        CheckButton& ${dspfunc} -labels [list ""]\
-          -variables sn_options(opt_both,xref-disp-param) -label\
-          [get_indep String CrossDispParam] -labelunderline [get_indep Pos\
-          CrossDispParam] -labelwidth 35
+        CheckButton& ${dspfunc} \
+          -labels [list ""] \
+          -variables sn_options(opt_both,xref-disp-param) \
+          -label [get_indep String CrossDispParam] \
+          -labelunderline [get_indep Pos CrossDispParam] \
+          -labelwidth 35
         pack ${dspfunc} -side top -anchor nw
 
         #Display boxes around the symbols
-        ::set sn_options(opt_both,xref-draw-rect)\
+        set sn_options(opt_both,xref-draw-rect)\
           $sn_options(both,xref-draw-rect)
         set dspbox ${win}.dspbox
-        CheckButton& ${dspbox} -labels [list ""]\
-          -variables sn_options(opt_both,xref-draw-rect) -label\
-          [get_indep String CrossBoxes] -labelunderline [get_indep Pos\
-          CrossBoxes] -labelwidth 35
+        CheckButton& ${dspbox} \
+          -labels [list ""] \
+          -variables sn_options(opt_both,xref-draw-rect) \
+          -label [get_indep String CrossBoxes] \
+          -labelunderline [get_indep Pos CrossBoxes] \
+          -labelwidth 35
         pack ${dspbox} -side top -anchor nw
 
         #Display order
         set order ${win}.order
-        ::set sn_options(opt_def,xref-disp-order)\
+        set sn_options(opt_def,xref-disp-order)\
           $sn_options(def,xref-disp-order)
-        Radio& ${order} -labelwidth 35\
-          -variable sn_options(opt_def,xref-disp-order) -labels [list\
-          [get_indep String LeftRight] [get_indep String Topdown]]\
-          -contents {0 1} -label [get_indep String PrefDispOrder]\
+        Radio& ${order} \
+          -labelwidth 35\
+          -variable sn_options(opt_def,xref-disp-order) \
+          -labels [list \
+                    [get_indep String LeftRight] \
+                    [get_indep String Topdown] \
+                  ]\
+          -contents {0 1} \
+          -label [get_indep String PrefDispOrder] \
           -labelunderline [get_indep Pos PrefDispOrder]
         pack ${order} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #Display format
         set frmt ${win}.frmt
-        ::set sn_options(opt_def,xref-layout) $sn_options(def,xref-layout)
-        Radio& ${frmt} -labelwidth 35\
-          -variable sn_options(opt_def,xref-layout) -labels [list\
-          [get_indep String Tree] [get_indep String ISI]] -contents {isi tree}\
-          -label [get_indep String PrefDispLayout] -labelunderline\
-          [get_indep Pos PrefDispLayout]
+        set sn_options(opt_def,xref-layout) $sn_options(def,xref-layout)
+        Radio& ${frmt} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,xref-layout) \
+          -labels [list \
+                    [get_indep String Tree] \
+                    [get_indep String ISI] \
+                   ] \
+          -contents {isi tree} \
+          -label [get_indep String PrefDispLayout] \
+          -labelunderline [get_indep Pos PrefDispLayout]
         pack ${frmt} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #space vertical
-        ::set sn_options(opt_def,xref-vertspace) $sn_options(def,xref-vertspace)
+        set sn_options(opt_def,xref-vertspace) $sn_options(def,xref-vertspace)
         set svert ${win}.svert
 
-        Entry& ${svert} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceVertical] -underline [get_indep Pos SpaceVertical]\
+        Entry& ${svert} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceVertical] \
+          -underline [get_indep Pos SpaceVertical] \
           -textvariable sn_options(opt_def,xref-vertspace) \
 	  -filter natural
 
         pack ${svert} -side top -anchor nw
 
         #space horizontal
-        ::set sn_options(opt_def,xref-horizspace)\
+        set sn_options(opt_def,xref-horizspace)\
           $sn_options(def,xref-horizspace)
         set shoriz ${win}.shoriz
 
-        Entry& ${shoriz} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceHorizontal] -underline [get_indep Pos SpaceHorizontal]\
+        Entry& ${shoriz} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceHorizontal] \
+          -underline [get_indep Pos SpaceHorizontal] \
           -textvariable sn_options(opt_def,xref-horizspace) \
 	  -filter natural
 
@@ -769,7 +922,7 @@ itcl_class Preferences& {
             set state normal
         } else {
             set state disabled
-            ::set sn_options(opt_both,xref-locals) ""
+            set sn_options(opt_both,xref-locals) ""
         }
         ${genlocal}.check-0 config -state ${state}
         ${xbell}.check-0 config -state ${state}
@@ -785,60 +938,76 @@ itcl_class Preferences& {
         set Include ${IncludePage}
 
         #Layout
-        set layout [tixLabelFrame ${Include}.layout -label [get_indep String\
-          Layout]]
+        set layout [tixLabelFrame ${Include}.layout \
+          -label [get_indep String Layout]]
         ${layout} config -background $sn_options(def,layout-bg)
         set win [${Include}.layout subwidget frame]
         pack ${layout} -side top -anchor c -fill x
 
         #Display order
         set order ${win}.order
-        ::set sn_options(opt_def,include-disporder)\
+        set sn_options(opt_def,include-disporder)\
           $sn_options(def,include-disporder)
-        Radio& ${order} -labelwidth 35\
-          -variable sn_options(opt_def,include-disporder) -labels [list\
-          [get_indep String LeftRight] [get_indep String Topdown]]\
-          -contents {0 1} -label [get_indep String PrefDispOrder]\
+        Radio& ${order} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,include-disporder) \
+          -labels [list \
+                    [get_indep String LeftRight] \
+                    [get_indep String Topdown] \
+                  ] \
+          -contents {0 1} \
+          -label [get_indep String PrefDispOrder] \
           -labelunderline [get_indep Pos PrefDispOrder]
         pack ${order} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #Display format
         set frmt ${win}.frmt
-        ::set sn_options(opt_def,include-layout) $sn_options(def,include-layout)
-        Radio& ${frmt} -labelwidth 35\
-          -variable sn_options(opt_def,include-layout) -labels [list\
-          [get_indep String Tree] [get_indep String ISI]] -contents {isi tree}\
-          -label [get_indep String PrefDispLayout] -labelunderline\
-          [get_indep Pos PrefDispLayout]
+        set sn_options(opt_def,include-layout) $sn_options(def,include-layout)
+        Radio& ${frmt} \
+          -labelwidth 35 \
+          -variable sn_options(opt_def,include-layout) \
+          -labels [list \
+                    [get_indep String Tree] \
+                    [get_indep String ISI] \
+                  ] \
+          -contents {isi tree} \
+          -label [get_indep String PrefDispLayout] \
+          -labelunderline [get_indep Pos PrefDispLayout]
         pack ${frmt} -side top -expand y -fill x -padx ${padx} -pady ${pady}
 
         #space vertical
-        ::set sn_options(opt_def,include-vertspace)\
+        set sn_options(opt_def,include-vertspace)\
           $sn_options(def,include-vertspace)
         set svert ${win}.svert
 
-        Entry& ${svert} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceVertical] -underline [get_indep Pos SpaceVertical]\
+        Entry& ${svert} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceVertical] \
+          -underline [get_indep Pos SpaceVertical] \
           -textvariable sn_options(opt_def,include-vertspace) \
 	  -filter natural
 
         pack ${svert} -side top -anchor nw
 
         #space horizontal
-        ::set sn_options(opt_def,include-horizspace)\
+        set sn_options(opt_def,include-horizspace)\
           $sn_options(def,include-horizspace)
         set shoriz ${win}.shoriz
 
-        Entry& ${shoriz} -width 3 -labelwidth 35 -label [get_indep String\
-          SpaceHorizontal] -underline [get_indep Pos SpaceHorizontal]\
+        Entry& ${shoriz} \
+          -width 3 \
+          -labelwidth 35 \
+          -label [get_indep String SpaceHorizontal] \
+          -underline [get_indep Pos SpaceHorizontal] \
           -textvariable sn_options(opt_def,include-horizspace) \
 	  -filter natural
 
         pack ${shoriz} -side top -anchor nw
 
         #Include directories
-        set incdir [tixLabelFrame ${Include}.incdir -label [get_indep String\
-          PrefInclude]]
+        set incdir [tixLabelFrame ${Include}.incdir \
+          -label [get_indep String PrefInclude]]
         ${incdir} config -background $sn_options(def,layout-bg)
         set win [${Include}.incdir subwidget frame]
         pack ${incdir} -side top -anchor c -fill both -expand y
@@ -860,14 +1029,16 @@ itcl_class Preferences& {
         #`/usr/include/stdlib.h'.
         #It is added as a quick and easy way of improving performance over NFS
         #file systems.
-        ::set sn_options(opt_def,include-locatefiles)\
+        set sn_options(opt_def,include-locatefiles)\
           $sn_options(def,include-locatefiles)
         set lookforinc ${win}.lookforinc
-        CheckButton& ${lookforinc} -labels [list [get_indep String\
-          LocateIncludeFiles]] -underlines [list [get_indep Pos\
-          LocateIncludeFiles]]\
-          -variables sn_options(opt_def,include-locatefiles) -balloons [list\
-          [get_indep String LocateIncludeFilesINFO]] -label "" -labelwidth 35
+        CheckButton& ${lookforinc} \
+          -labels [list [get_indep String LocateIncludeFiles]] \
+          -underlines [list [get_indep Pos LocateIncludeFiles]] \
+          -variables sn_options(opt_def,include-locatefiles) \
+          -balloons [list [get_indep String LocateIncludeFilesINFO]] \
+          -label "" \
+          -labelwidth 35
         pack ${lookforinc} -side top -anchor nw
 
         set inc_editor ${win}.t
@@ -882,6 +1053,9 @@ itcl_class Preferences& {
         pack ${win}.y -side right -fill y
         pack ${win}.x -side bottom -fill x
         pack ${inc_editor} -side left -fill both -expand y
+
+        # Don't dismiss entire dialog when Return key is presed in editor
+        bindtags ${inc_editor} {Text all}
 
         lappend AvailTools ${Include}
     }
@@ -910,27 +1084,53 @@ itcl_class Preferences& {
         ${ext} config -background $sn_options(def,layout-bg)
         set win [${Parser}.ext subwidget frame]
         pack ${ext} -fill x -side top -anchor c
+
+        label $win.label -text [get_indep String LanguageExtLanguage]
+
+        # Figure out how many chars wide the combo should be.
+        # Default to the first parser in the list.
+        set max_width 5
+        set default_type ""
         foreach type [lsort -dictionary ${Avail_Parsers}] {
-            set fr ${win}.${type}
-            set ext ${fr}.edit
-            set externaled ${fr}.external
+            set width [string length $type]
+            if {$width > $max_width} {
+                set max_width $width
+            }
 
-            #file extensitions for there types
-            pack [frame ${fr}] -side top -fill x
-
-            Entry& ${ext} -width -1 -labelwidth 10 -label ${type}\
-              -textvariable opt_Parser_Info(${type},SUF)
-            pack ${ext} -side left -fill x -expand y
-
-            #external editors
-            LabelEntryButton& ${externaled} -text [get_indep String\
-              ExternalEditor] -width 15 -anchor ne\
-              -variable opt_Parser_Info(${type},EDIT) -native 1\
-              -buttonballoon [get_indep String ChooseINFO]\
-              -extensions $sn_options(executable_ext)\
-              -defaultextension $sn_options(executable_defaultext)
-            pack ${externaled} -side left
+            if {[string equal $default_type ""]} {
+                set default_type $type
+            }
         }
+        incr max_width 1
+
+        set extension_entry ${win}.ext_entry
+        set editor_entry ${win}.edit_entry
+        set combo ${win}.combo
+
+        combobox::combobox $combo \
+            -editable 0 \
+            -width $max_width
+
+        foreach type [lsort -dictionary ${Avail_Parsers}] {
+            $combo listinsert end $type
+        }
+
+        grid $win.label -row 0 -column 0 -sticky ew
+        grid $combo -row 0 -column 1 -sticky ew -pady 5
+
+        label $win.ext_label -text [get_indep String LanguageExtFileExtensions]
+        entry $extension_entry
+
+        grid $win.ext_label -row 1 -column 0 -sticky w -pady 5
+        grid $extension_entry -row 1 -column 1 -sticky we -columnspan 2
+
+        label $win.edit_label -text [get_indep String ExternalEditor]
+        entry $editor_entry
+
+        grid $win.edit_label -row 2 -column 0 -sticky w -pady 5
+        grid $editor_entry -row 2 -column 1 -sticky we -columnspan 2
+
+        grid columnconfigure ${win} 2 -weight 1              
 
         #Macro files
         set macfr [tixLabelFrame ${Parser}.macros -label [get_indep String\
@@ -938,7 +1138,6 @@ itcl_class Preferences& {
         ${macfr} config -background $sn_options(def,layout-bg)
         set win [${Parser}.macros subwidget frame]
         pack ${macfr} -side top -anchor c -fill x
-
         set macros ${win}.edit
         set sn_options(opt_macrofiles) $sn_options(macrofiles)
         button ${win}.add -text [get_indep String Choose] -command " ${this}\
@@ -954,10 +1153,40 @@ itcl_class Preferences& {
         ${macros} insert 0.0 [join $sn_options(opt_macrofiles) \n]
         balloon_bind_info ${macros} [get_indep String AddYourMacroFiles]
 
+        # Set parser type selected callback and invoke it once with
+        # the default type to get things in the proper state.
+
+        $combo configure -command \
+            [itcl::code parser_type_combo_changed $extension_entry $editor_entry \
+                $win.add $macros]
+
+        $combo entryset $default_type
+
+        parser_type_combo_changed $extension_entry $editor_entry \
+            $win.add $macros $combo $default_type
+
         lappend AvailTools ${Parser}
     }
     method RaiseParser {} {
         #set lastPage parser
+    }
+
+    # Invoked when a new type is selected in the parser combo box.
+    # This will set the textvar used by the extension and editor
+    # entries and disable or enable the macro widgets.
+
+    proc parser_type_combo_changed { extension_widget editor_widget
+            macro_button_widget macro_text_widget combo_widget type } {
+        $extension_widget configure -textvariable opt_Parser_Info(${type},SUF)
+        $editor_widget configure -textvariable opt_Parser_Info(${type},EDIT)
+
+        if {[string equal $::opt_Parser_Info(${type},MACRO) ""]} {
+            $macro_button_widget configure -state disabled
+            $macro_text_widget configure -state disabled
+        } else {
+            $macro_button_widget configure -state normal
+            $macro_text_widget configure -state normal
+        }
     }
 
     #add macro file, if not availiable
@@ -1054,7 +1283,7 @@ itcl_class Preferences& {
         pack ${rcsys} -fill x -side top -anchor c
 
         #choose revision control
-        ::set sn_options(opt_both,rcs-type) $sn_options(both,rcs-type)
+        set sn_options(opt_both,rcs-type) $sn_options(both,rcs-type)
         set sys ${win}.sys
         set lbls ""
         set values ""
@@ -1067,8 +1296,8 @@ itcl_class Preferences& {
         pack ${sys} -side top -expand y -fill x
 
         # Ignore directories
-        set ignoredir [tixLabelFrame ${Rcs}.ignoredir -label [get_indep String\
-          IgnoredDirectories]]
+        set ignoredir [tixLabelFrame ${Rcs}.ignoredir \
+          -label [get_indep String IgnoredDirectories]]
         ${ignoredir} config -background $sn_options(def,layout-bg)
         set win [${Rcs}.ignoredir subwidget frame]
         pack ${ignoredir} -side top -anchor c -fill both
@@ -1132,21 +1361,6 @@ itcl_class Preferences& {
               -defaultextension $sn_options(executable_defaultext)
             pack ${html} -side top -anchor nw -fill x
         }
-
-        #Bug reports
-        set bugs [tixLabelFrame ${Others}.bugs -label [get_indep String\
-          PrefBugReport]]
-        ${bugs} config -background $sn_options(def,layout-bg)
-        set win [${Others}.bugs subwidget frame]
-        pack ${bugs} -fill x -side top -anchor c
-
-        #Bug mail host
-        set sn_options(opt_def,mailhost) $sn_options(def,mailhost)
-        set mhost ${win}.mhost
-        Entry& ${mhost} -width -1 -labelwidth 15 -label [get_indep String\
-          PrefMailhost] -underline [get_indep Pos PrefMailhost]\
-          -textvariable sn_options(opt_def,mailhost)
-        pack ${mhost} -side top -anchor nw -fill x
 
         #no printer commands on windows
         if {$tcl_platform(platform) != "windows"} {
@@ -1216,11 +1430,6 @@ itcl_class Preferences& {
     method RaiseOthers {} {
         #set lastPage others
     }
-    method handle_mailhost {w mhost} {
-        global sn_options
-        set state normal
-        ${mhost} config -state ${state}
-    }
 
     #####################################################
     # Colors and Fonts
@@ -1239,85 +1448,163 @@ itcl_class Preferences& {
 
         #build schemes struct, that can be interpreted
         #from the color manager
-        set schemes [list [list [get_indep String Default] [list [list\
-          [get_indep String General] [list [list [get_indep String Standard]\
-          [list def,default-font opt_def,default-font def,default-fg\
-          opt_def,default-fg def,default-bg opt_def,default-bg]] [list\
-          [get_indep String Layout] [list def,layout-font opt_def,layout-font\
-          def,layout-fg opt_def,layout-fg def,layout-bg opt_def,layout-bg]]\
-          [list [get_indep String Highlighting] [list "" "" def,highlight-fg\
-          opt_def,highlight-fg def,highlight-bg opt_def,highlight-bg]] [list\
-          [get_indep String BoldFont] [list def,bold-font opt_def,bold-font ""\
-          "" "" ""]] [list [get_indep String Marked] [list "" "" def,select-fg\
-          opt_def,select-fg def,select-bg opt_def,select-bg]]]]] [list [list\
-          [get_indep String Editor] [list [list [get_indep String Text]\
-          [list def,edit-font opt_def,edit-font def,edit-fg opt_def,edit-fg\
-          def,edit-bg opt_def,edit-bg]] [list "[get_indep String\
-          FunctionsNoKey] (fu)" [list "" "" def,color_fu opt_def,color_fu ""\
-          ""]] [list "[get_indep String FunctionsDecNoKey] (fd)" [list ""\
-          "" def,color_fd opt_def,color_fd "" ""]] [list "[get_indep String\
-          SubroutinesNoKey] (su)" [list "" "" def,color_su opt_def,color_su ""\
-          ""]] [list [get_indep String Strings] [list "" "" def,color_str\
-          opt_def,color_str "" ""]] [list [get_indep String Comments] [list ""\
-          "" def,color_rem opt_def,color_rem "" ""]] [list [get_indep String\
-          Keywords] [list "" "" def,color_key opt_def,color_key "" ""]] [list\
-          "[get_indep String ClassesNoKey] (cl)" [list "" "" def,color_cl\
-          opt_def,color_cl "" ""]] [list "[get_indep String Typedefs] (t)"\
-          [list "" "" def,color_t opt_def,color_t "" ""]] [list\
-          "[get_indep String Enums] (e)" [list "" "" def,color_e\
-          opt_def,color_e "" ""]] [list "[get_indep String EnumConsNoKey]\
-          (ec)" [list "" "" def,color_ec opt_def,color_ec "" ""]] [list\
-          "[get_indep String MethodsNoKey] (md)" [list "" "" def,color_md\
-          opt_def,color_md "" ""]] [list "[get_indep String FriendsNoKey]\
-          (fr)" [list "" "" def,color_fr opt_def,color_fr "" ""]] [list\
-          "[get_indep String MethodImpsNoKey] (mi)" [list "" "" def,color_mi\
-          opt_def,color_mi "" ""]] [list "[get_indep String ClassVarsNoKey]\
-          (iv)" [list "" "" def,color_iv opt_def,color_iv "" ""]] [list\
-          "[get_indep String VariablesNoKey] (gv)" [list "" "" def,color_gv\
-          opt_def,color_gv "" ""]] [list "[get_indep String ConstantsNoKey]\
-          (con)" [list "" "" def,color_con opt_def,color_con "" ""]] [list\
-          "[get_indep String CommonsNoKey] (com)" [list "" "" def,color_com\
-          opt_def,color_com "" ""]] [list "[get_indep String CommonsVarsNoKey]\
-          (cov)" [list "" "" def,color_cov opt_def,color_cov "" ""]] [list\
-          "[get_indep String DefinesNoKey] (ma)" [list "" "" def,color_ma\
-          opt_def,color_ma "" ""]] [list [get_indep String Brackets] [list ""\
-          "" def,bracketmatch-bg opt_def,bracketmatch-bg "" ""]]]]] [list\
-          [list [get_indep String SplitIntoClass] [list [list\
-          [get_indep String Standard] [list def,ctree-font opt_def,ctree-font\
-          "" "" "" ""]] [list [get_indep String AbstractClass]\
-          [list def,abstract-font opt_def,abstract-font "" "" "" ""]]]]] [list\
-          [list [get_indep String HierarchyNoKey] [list [list\
-          [get_indep String Standard] [list def,class-font opt_def,class-font\
-          "" "" "" ""]] [list [get_indep String Public] [list def,public-font\
-          opt_def,public-font "" "" "" ""]] [list [get_indep String Protected]\
-          [list def,protected-font opt_def,protected-font "" "" "" ""]] [list\
-          [get_indep String Private] [list def,private-font\
-          opt_def,private-font "" "" "" ""]]]]] [list [list [get_indep String\
-          CrossReference] [list [list [get_indep String StandardFont]\
-          [list def,xref-font opt_def,xref-font "" "" "" ""]] [list\
-          [get_indep String BranchFont] [list def,xref-branch-font\
-          opt_def,xref-branch-font "" "" "" ""]]]]] [list [list\
-          [get_indep String IncludeNoKey] [list [list [get_indep String\
-          Standard] [list def,include_font opt_def,include_font "" "" ""\
-          ""]]]]] [list [list [get_indep String Drawing] [list [list\
-          [get_indep String LinesTo] [list "" "" def,canv-line-fg\
-          opt_def,canv-line-fg "" ""]] [list [get_indep String LinesBy] [list\
-          "" "" def,xref-used-by-fg opt_def,xref-by-fg "" ""]] [list\
-          [get_indep String SelectedLines] [list "" "" def,tree-select-line\
-          opt_def,tree-select-line "" ""]] [list [get_indep String\
-          BranchToLines] [list "" "" def,xref-branch-fg opt_def,xref-branch-fg\
-          "" ""]] [list [get_indep String BranchByLines] [list ""\
-          "" def,xref-list-branch-fg opt_def,xref-list-branch-fg "" ""]]]]]\
-          [list [list [get_indep String MultiGrep] [list [list\
-          [get_indep String Listing] [list def,grep-font opt_def,grep-font ""\
-          "" "" ""]] [list [get_indep String FoundText]\
-          [list def,grep-found-font opt_def,grep-found-font def,grep-found-fg\
-          opt_def,grep-found-fg "" ""]]]]] [list [list [get_indep String\
-          OthersNoKey] [list [list [get_indep String Balloon]\
-          [list def,balloon-font opt_def,balloon-font def,balloon-fg\
-          opt_def,balloon-fg def,balloon-bg opt_def,balloon-bg]] [list\
-          [get_indep String Checkbutton] [list "" "" def,checkbutton-select\
-          opt_def,checkbutton-select "" ""]]]]]]]
+
+        set schemes [list \
+          [list [get_indep String Default] \
+            [list \
+              [list [get_indep String General] \
+                [list \
+                  [list [get_indep String Standard] \
+                    [list def,default-font opt_def,default-font def,default-fg \
+                      opt_def,default-fg def,default-bg opt_def,default-bg]] \
+                  [list [get_indep String Layout] \
+                    [list def,layout-font opt_def,layout-font def,layout-fg \
+                      opt_def,layout-fg def,layout-bg opt_def,layout-bg]] \
+                  [list [get_indep String Highlighting] \
+                    [list "" "" def,highlight-fg opt_def,highlight-fg \
+                      def,highlight-bg opt_def,highlight-bg]] \
+                  [list [get_indep String BoldFont] \
+                    [list def,bold-font opt_def,bold-font "" "" "" ""]] \
+                  [list [get_indep String Marked] \
+                    [list "" "" def,select-fg opt_def,select-fg def,select-bg \
+                      opt_def,select-bg]] \
+                ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String Editor] \
+                [list \
+                  [list [get_indep String Text] \
+                    [list def,edit-font opt_def,edit-font def,edit-fg \
+                      opt_def,edit-fg def,edit-bg opt_def,edit-bg]] \
+                  [list "[get_indep String FunctionsNoKey] (fu)" \
+                    [list "" "" def,color_fu opt_def,color_fu "" ""]] \
+                  [list "[get_indep String FunctionsDecNoKey] (fd)" \
+                    [list "" "" def,color_fd opt_def,color_fd "" ""]] \
+                  [list "[get_indep String SubroutinesNoKey] (su)" \
+                    [list "" "" def,color_su opt_def,color_su "" ""]] \
+                  [list [get_indep String Strings] \
+                    [list "" "" def,color_str opt_def,color_str "" ""]] \
+                  [list [get_indep String Comments] \
+                    [list "" "" def,color_rem opt_def,color_rem "" ""]] \
+                  [list [get_indep String Keywords] \
+                    [list "" "" def,color_key opt_def,color_key "" ""]] \
+                  [list "[get_indep String ClassesNoKey] (cl)" \
+                    [list "" "" def,color_cl opt_def,color_cl "" ""]] \
+                  [list "[get_indep String Typedefs] (t)" \
+                    [list "" "" def,color_t opt_def,color_t "" ""]] \
+                  [list "[get_indep String Enums] (e)" \
+                    [list "" "" def,color_e opt_def,color_e "" ""]] \
+                  [list "[get_indep String EnumConsNoKey] (ec)" \
+                    [list "" "" def,color_ec opt_def,color_ec "" ""]] \
+                  [list "[get_indep String MethodsNoKey] (md)" \
+                    [list "" "" def,color_md opt_def,color_md "" ""]] \
+                  [list "[get_indep String FriendsNoKey] (fr)" \
+                    [list "" "" def,color_fr opt_def,color_fr "" ""]] \
+                  [list "[get_indep String MethodImpsNoKey] (mi)" \
+                    [list "" "" def,color_mi opt_def,color_mi "" ""]] \
+                  [list "[get_indep String ClassVarsNoKey] (iv)" \
+                    [list "" "" def,color_iv opt_def,color_iv "" ""]] \
+                  [list "[get_indep String VariablesNoKey] (gv)" \
+                    [list "" "" def,color_gv opt_def,color_gv "" ""]] \
+                  [list "[get_indep String PafLocVars] (lv)" \
+                    [list "" "" def,color_lv opt_def,color_lv "" ""]] \
+                  [list "[get_indep String ConstantsNoKey] (con)" \
+                    [list "" "" def,color_con opt_def,color_con "" ""]] \
+                  [list "[get_indep String CommonsNoKey] (com)" \
+                    [list "" "" def,color_com opt_def,color_com "" ""]] \
+                  [list "[get_indep String CommonsVarsNoKey] (cov)" \
+                    [list "" "" def,color_cov opt_def,color_cov "" ""]] \
+                  [list "[get_indep String DefinesNoKey] (ma)" \
+                    [list "" "" def,color_ma opt_def,color_ma "" ""]] \
+                  [list [get_indep String Brackets] \
+                    [list "" "" def,bracketmatch-bg opt_def,bracketmatch-bg "" ""]] \
+                ] \
+              ] \
+            ] \
+            [list \
+             [list [get_indep String SplitIntoClass] \
+               [list \
+                 [list [get_indep String Standard] \
+                   [list def,ctree-font opt_def,ctree-font "" "" "" ""]] \
+                 [list [get_indep String AbstractClass] \
+                   [list def,abstract-font opt_def,abstract-font "" "" "" ""]] \
+               ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String HierarchyNoKey] \
+                [list \
+                  [list [get_indep String Standard] \
+                    [list def,class-font opt_def,class-font "" "" "" ""]] \
+                  [list [get_indep String Public] \
+                    [list def,public-font opt_def,public-font "" "" "" ""]] \
+                  [list [get_indep String Protected] \
+                    [list def,protected-font opt_def,protected-font "" "" "" ""]] \
+                  [list [get_indep String Private] \
+                    [list def,private-font opt_def,private-font "" "" "" ""]] \
+                ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String CrossReference] \
+                [list \
+                  [list [get_indep String StandardFont] \
+                    [list def,xref-font opt_def,xref-font "" "" "" ""]] \
+                  [list [get_indep String BranchFont] \
+                    [list def,xref-branch-font opt_def,xref-branch-font "" "" "" ""]] \
+                ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String IncludeNoKey] \
+                [list \
+                  [list [get_indep String Standard] \
+                    [list def,include_font opt_def,include_font "" "" "" ""]] \
+                ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String Drawing] \
+                [list \
+                  [list [get_indep String LinesTo] \
+                    [list "" "" def,canv-line-fg opt_def,canv-line-fg "" ""]] \
+                  [list [get_indep String LinesBy] \
+                    [list "" "" def,xref-used-by-fg opt_def,xref-by-fg "" ""]] \
+                  [list [get_indep String SelectedLines] \
+                    [list "" "" def,tree-select-line opt_def,tree-select-line "" ""]] \
+                  [list [get_indep String BranchToLines] \
+                    [list "" "" def,xref-branch-fg opt_def,xref-branch-fg "" ""]] \
+                  [list [get_indep String BranchByLines] \
+                    [list "" "" def,xref-list-branch-fg opt_def,xref-list-branch-fg "" ""]] \
+                ] \
+              ] \
+            ]\
+            [list \
+              [list [get_indep String MultiGrep] \
+                [list \
+                  [list [get_indep String Listing] \
+                    [list def,grep-font opt_def,grep-font "" "" "" ""]] \
+                  [list [get_indep String FoundText] \
+                    [list def,grep-found-font opt_def,grep-found-font def,grep-found-fg opt_def,grep-found-fg "" ""]] \
+                ] \
+              ] \
+            ] \
+            [list \
+              [list [get_indep String OthersNoKey] \
+                [list \
+                  [list [get_indep String Balloon] \
+                    [list def,balloon-font opt_def,balloon-font \
+                      def,balloon-fg opt_def,balloon-fg def,balloon-bg \
+                      opt_def,balloon-bg]] \
+                  [list [get_indep String Checkbutton] \
+                    [list "" "" def,checkbutton-select \
+                      opt_def,checkbutton-select "" ""]] \
+                ] \
+              ] \
+            ] \
+          ] \
+        ]
 
         #store the fonts/clors into a variable to test if the
         #user has changed something.
@@ -1395,7 +1682,7 @@ itcl_class Preferences& {
             return
         }
         if {$sn_options(opt_${var}) != $sn_options(${var})} {
-            ::set sn_options(${var}) $sn_options(opt_${var})
+            set sn_options(${var}) $sn_options(opt_${var})
             incr ${trap}
             if {${def}} {
                 incr default
@@ -1438,17 +1725,17 @@ itcl_class Preferences& {
             verify_set def,window-alighment trap2 1
 
             if {$sn_options(opt_def,window-size) !=\
-              $sn_options(def,window-size)} {
-                ::set sn_options(def,window-size)\
+                    $sn_options(def,window-size)} {
+                set sn_options(def,window-size)\
                   $sn_options(opt_def,window-size)
                 if {[catch {set num [expr $sn_options(def,window-size) + 0]}]} {
-                    ::set sn_options(def,window-size) 65
+                    set sn_options(def,window-size) 65
                 }
                 if {$sn_options(def,window-size) > 100} {
-                    ::set sn_options(def,window-size) 100
+                    set sn_options(def,window-size) 100
                 }\
                 elseif {$sn_options(def,window-size) < 30} {
-                    ::set sn_options(def,window-size) 30
+                    set sn_options(def,window-size) 30
                 }
                 incr trap2 1
                 incr default
@@ -1532,7 +1819,7 @@ itcl_class Preferences& {
             if {$sn_options(include-source-directories) !=\
               $sn_options(opt_include-source-directories)} {
                 #filter unknown directories
-                ::set sn_options(include-source-directories) ""
+                set sn_options(include-source-directories) ""
                 foreach dir $sn_options(opt_include-source-directories) {
                     if {[file isdirectory ${dir}]} {
                         ::lappend sn_options(include-source-directories) ${dir}
@@ -1547,7 +1834,7 @@ itcl_class Preferences& {
 
             #macro files, filter not existing files
             set files [split [${macros} get 0.0 end] \n]
-            ::set sn_options(opt_macrofiles) ""
+            set sn_options(opt_macrofiles) ""
             foreach f ${files} {
                 if {[file isfile ${f}]} {
                     ::lappend sn_options(opt_macrofiles) ${f}
@@ -1576,10 +1863,10 @@ itcl_class Preferences& {
                     }
                 }
                 set mod 0
-                ::set opt_Parser_Info(${type},SUF) [string trimright ${ok_suf}]
+                set opt_Parser_Info(${type},SUF) [string trimright ${ok_suf}]
                 if {$opt_Parser_Info(${type},SUF) !=\
                   $Parser_Info(${type},SUF)} {
-                    ::set Parser_Info(${type},SUF) $opt_Parser_Info(${type},SUF)
+                    set Parser_Info(${type},SUF) $opt_Parser_Info(${type},SUF)
                     set mod 1
                     #after reparse
                     incr trap4
@@ -1589,7 +1876,7 @@ itcl_class Preferences& {
                   opt_Parser_Info(${type},EDIT)
                 if {$opt_Parser_Info(${type},EDIT) !=\
                   $Parser_Info(${type},EDIT)} {
-                    ::set Parser_Info(${type},EDIT)\
+                    set Parser_Info(${type},EDIT)\
                       $opt_Parser_Info(${type},EDIT)
                     set mod 1
                     incr trap1
@@ -1600,7 +1887,7 @@ itcl_class Preferences& {
         if {[winfo exists ${Rcs}]} {
             verify_set both,rcs-type trap1
 
-            ::set sn_options(opt_def,ignored-directories) ""
+            set sn_options(opt_def,ignored-directories) ""
             foreach dir [split [${ign_editor} get 0.0 end] \n] {
                 if {${dir} != ""} {
                     ::lappend sn_options(opt_def,ignored-directories) ${dir}
@@ -1612,7 +1899,6 @@ itcl_class Preferences& {
         if {[winfo exists ${Others}]} {
             verify_set both,make-command trap1
             verify_set def,html-viewer trap1
-            verify_set def,mailhost trap1
 
             #no printer commands on windows
             if {$tcl_platform(platform) != "windows"} {
@@ -1813,23 +2099,23 @@ itcl_class Preferences& {
 
         #check symbol database directory for backward compatibility
         if {$sn_options(both,db-directory) == ""} {
-            ::set sn_options(both,db-directory) [paf_db_proj get\
+            set sn_options(both,db-directory) [paf_db_proj get\
               -key sn_sym_dir]
         }
         if {$sn_options(both,db-directory) == ""} {
-            ::set sn_options(both,db-directory) ".snprj"
+            set sn_options(both,db-directory) ".snprj"
         }
 
         #check project name (title)
-        ::set sn_options(sys,project-name) [sn_constructe_name]
+        set sn_options(sys,project-name) [sn_constructe_name]
 
         if {![info exists tkeWinNumber]} {
-            ::set tkeWinNumber 0
+            set tkeWinNumber 0
         }
 
         regsub -all {[ ]+} $sn_options(def,ignored-directories) { }\
           sn_options(def,ignored-directories)
-        ::set sn_options(def,ignored-directories) [string trim\
+        set sn_options(def,ignored-directories) [string trim\
           $sn_options(def,ignored-directories)]
 
         check_some_variables
@@ -1842,7 +2128,7 @@ itcl_class Preferences& {
         global sn_options env tcl_platform
 
         if {$sn_options(both,db-directory) == ""} {
-            ::set sn_options(both,db-directory) ".snprj"
+            set sn_options(both,db-directory) ".snprj"
         }
 
         #Convert the name into a native name related to the OS, so
@@ -1861,7 +2147,7 @@ itcl_class Preferences& {
             if {[file extension ${tf}] == ".proj"} {
                 set tf [file root ${tf}]
             }
-            ::set sn_options(db_files_prefix) [file join\
+            set sn_options(db_files_prefix) [file join\
               $sn_options(both,db-directory) ${tf}]
         }
 
@@ -1897,7 +2183,7 @@ itcl_class Preferences& {
             return 0
         }
         #parser switches
-        ::set sn_options(sys,parser_switches) [eval list\
+        set sn_options(sys,parser_switches) [eval list\
           $sn_options(both,create-comment-db) $sn_options(both,xref-create)\
           $sn_options(both,xref-locals)]
         return 1
@@ -2002,7 +2288,7 @@ itcl_class Preferences& {
                     #variable masked to be empty
                     set val ""
                 }
-                ::set sn_options(${v}) ${val}
+                set sn_options(${v}) ${val}
             }
 
             LoadFileExtensions pref_db_cmd
@@ -2023,7 +2309,7 @@ itcl_class Preferences& {
         }
 
         #parser switches
-        ::set sn_options(sys,parser_switches) [eval list\
+        set sn_options(sys,parser_switches) [eval list\
           $sn_options(both,create-comment-db) $sn_options(both,xref-create)\
           $sn_options(both,xref-locals)]
 
@@ -2091,7 +2377,7 @@ itcl_class Preferences& {
         #make sure that an editor exists
         foreach type ${Avail_Parsers} {
             if {! [info exists Parser_Info(${type},EDIT)]} {
-                ::set Parser_Info(${type},EDIT) ""
+                set Parser_Info(${type},EDIT) ""
             }
         }
     }
@@ -2107,7 +2393,7 @@ itcl_class Preferences& {
         foreach v [list prj_lines_num] {
 
             global ${v}
-            ::set ${v} [paf_db_proj get -key ${v}]
+            set ${v} [paf_db_proj get -key ${v}]
         }
 
         #check project line number for correct setting
@@ -2117,12 +2403,12 @@ itcl_class Preferences& {
 
         #load history
         foreach hscope $sn_history(scopes) {
-            ::set history_List(${hscope}) [paf_db_proj get\
+            set history_List(${hscope}) [paf_db_proj get\
               -key history_${hscope}]
         }
 
         #load saved database name
-        ::set sn_options(db_files_prefix) [paf_db_proj get -key db_files_prefix]
+        set sn_options(db_files_prefix) [paf_db_proj get -key db_files_prefix]
 
         #make sure that the db prefix is correct
         init_db_files_prefix
@@ -2141,11 +2427,11 @@ itcl_class Preferences& {
                 #it means, this variable wasn't stored in the database.
                 continue
             }
-            ::set sn_options(${v}) ${val}
+            set sn_options(${v}) ${val}
         }
 
         if {$sn_options(def,include-locatefiles) == ""} {
-            ::set sn_options(def,include-locatefiles) 1
+            set sn_options(def,include-locatefiles) 1
         }
 
         #load db-perms
@@ -2165,11 +2451,11 @@ itcl_class Preferences& {
         global sn_options
         if {![catch {set fd [dbopen db_ign $sn_options(db_files_prefix).0\
           RDONLY 0640 hash]}]} {
-            ::set sn_options(ignored_words) [@@lsort -dictionary [${fd} seq\
+            set sn_options(ignored_words) [@@lsort -dictionary [${fd} seq\
               -data]]
             ${fd} close
         } else {
-            ::set sn_options(ignored_words) ""
+            set sn_options(ignored_words) ""
         }
         return $sn_options(ignored_words)
     }
@@ -2205,7 +2491,7 @@ itcl_class Preferences& {
         foreach v [list prj_lines_num] {
             global ${v}
             if {[info exists ${v}]} {
-                catch {paf_db_proj put ${v} [::set ${v}]}
+                catch {paf_db_proj put ${v} [set ${v}]}
             }
         }
 

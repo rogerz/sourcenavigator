@@ -332,24 +332,24 @@ itcl::class RCSTopdiff& {
         # Bump 'pos' (one way or the other).
 
         if {${relative}} {
-            ::set pos [expr ${pos} + ${value}]
+            set pos [expr ${pos} + ${value}]
         } else {
-            ::set pos ${value}
+            set pos ${value}
         }
 
         # Range check 'pos'.
 
         if {${pos} > [llength $g(diff)]} {
-            ::set pos [llength $g(diff)]
+            set pos [llength $g(diff)]
         }
         if {${pos} < 1} {
-            ::set pos 1
+            set pos 1
         }
 
         # Figure out which lines we need to address...
 
         scan $g(pdiff,${pos}) "%s %d %d %d %d %s" currdiff s1 e1 s2 e2 dt
-        ::set ${this}.currdiff ${currdiff}
+        set ${this}.currdiff ${currdiff}
         # Remove the 'diff' tag and add the 'curr' tag to the new 'current'
         # diff region.
 
@@ -516,8 +516,8 @@ itcl::class RCSTopdiff& {
     method wipe {} {
         global ${this}.pos ${this}.count
 
-        ::set ${this}.pos 0
-        ::set ${this}.count 0
+        set ${this}.pos 0
+        set ${this}.count 0
         set g(cfilo) ""
 
         ${fo}.text configure -state normal

@@ -38,6 +38,7 @@ MA 02111-1307, USA.
  * SCCS: @(#) winMain.c 1.28 96/07/23 16:58:12
  */
 
+#include <tclInt.h> /* For TclInitEncodingSubsystem */
 #include <tk.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -46,19 +47,14 @@ MA 02111-1307, USA.
 #include <signal.h>
 #include <locale.h>
 #include <time.h>
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "mxlogger.h"
 #include "mxdefine.h"
 #include "mxfuncs.h"
-
-/*
- * The following declarations refer to internal Tk routines.  These
- * interfaces are available for use, but are not supported.
- */
-
-EXTERN void		TkConsoleCreate _ANSI_ARGS_((void));
-EXTERN int		TkConsoleInit _ANSI_ARGS_((Tcl_Interp *interp));
 
 /*
  * Forward declarations for procedures defined later in this file:
@@ -194,15 +190,13 @@ int main(int argc2,char **argv2)
 
     /*
      * Create the console channels and install them as the standard
-     * channels.  All I/O will be discarded until TkConsoleInit is
+     * channels.  All I/O will be discarded until Tcl_CreateConsoleWindow is
      * called to attach the console to a text widget.
      */
 
     useWinConsole = TkpWinConsoleTest();
     if ( useWinConsole ) {
         TkpWinConsoleCreate();
-    } else {
-        TkConsoleCreate();
     }
 
     /*
@@ -414,7 +408,7 @@ Tcl_AppInit(interp)
 
     if ((strcmp(Tcl_GetVar(interp, "tcl_interactive", TCL_GLOBAL_ONLY), "1")
 	    == 0) || ( ! useWinConsole )) {
-	if (TkConsoleInit(interp) == TCL_ERROR) {
+	if (Tk_CreateConsoleWindow(interp) == TCL_ERROR) {
 	goto error;
 	}
 #ifdef WIN32

@@ -77,48 +77,28 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
+CPP = @CPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
 FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
 HYPER_CFLAGS = @HYPER_CFLAGS@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -130,28 +110,20 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
-LIBIBERTY = @LIBIBERTY@
+LEXLIB = @LEXLIB@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MONOP_DEMO = @MONOP_DEMO@
 OBJEXT = @OBJEXT@
 OLDTARFLAG = @OLDTARFLAG@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 PRODUCT_NAME = @PRODUCT_NAME@
 PROGRAMMERS_REFERENCE_DIR = @PROGRAMMERS_REFERENCE_DIR@
 PROGRAMMERS_REFERENCE_INDEX = @PROGRAMMERS_REFERENCE_INDEX@
 PROGRAMMERS_REFERENCE_NAME = @PROGRAMMERS_REFERENCE_NAME@
 RANLIB = @RANLIB@
-RUNTESTDIR = @RUNTESTDIR@
 SDK_DIR = @SDK_DIR@
 SENDMAIL_PARSER = @SENDMAIL_PARSER@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 SN_BOOKS = @SN_BOOKS@
 SN_DOCSET = @SN_DOCSET@
 SN_GUI_DIR = @SN_GUI_DIR@
@@ -167,6 +139,7 @@ TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
 TCL_BUILD_LIB_SPEC = @TCL_BUILD_LIB_SPEC@
 TCL_CFLAGS = @TCL_CFLAGS@
+TCL_DBGX = @TCL_DBGX@
 TCL_DEFS = @TCL_DEFS@
 TCL_LD_FLAGS = @TCL_LD_FLAGS@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
@@ -178,13 +151,12 @@ TCL_LIB_SPEC = @TCL_LIB_SPEC@
 TCL_RANLIB = @TCL_RANLIB@
 TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
 TCL_SHLIB_LD = @TCL_SHLIB_LD@
-TIXHDIR = @TIXHDIR@
 TIX_BUILD_LIB_SPEC = @TIX_BUILD_LIB_SPEC@
-TIX_LIB_FULL_PATH = @TIX_LIB_FULL_PATH@
 TKCONFIG = @TKCONFIG@
 TKHDIR = @TKHDIR@
 TK_BUILD_INCLUDES = @TK_BUILD_INCLUDES@
 TK_BUILD_LIB_SPEC = @TK_BUILD_LIB_SPEC@
+TK_DBGX = @TK_DBGX@
 TK_DEFS = @TK_DEFS@
 TK_LIBS = @TK_LIBS@
 TK_LIB_FILE = @TK_LIB_FILE@
@@ -203,21 +175,20 @@ WINDRES = @WINDRES@
 WINFLAGS = @WINFLAGS@
 X11ICON = @X11ICON@
 YACC = @YACC@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
 YFLAGS = -d
 
-toolbox = $(top_builddir)/sdk/parsers/toolbox
+toolbox = $(top_builddir)/parsers/toolbox
 common = $(top_builddir)/parsers/common
 
 noinst_PROGRAMS = chbrowser
 
-INCLUDES = -I$(top_srcdir)/hyper -I$(top_srcdir)/sdk/parsers/toolbox 		-I$(top_srcdir)/parsers/common
+INCLUDES = -I$(top_srcdir)/hyper -I$(top_srcdir)/parsers/toolbox 		-I$(top_srcdir)/parsers/common
 
 
-chbrowser_SOURCES = parser.y lexer.l common.h common.c emit.h emit.c error.c 			main.c symtab.h symtab.c stack.h stack.c
+chbrowser_SOURCES = parser.c lexer.c common.h common.c emit.h emit.c error.c 			main.c symtab.h symtab.c stack.h stack.c
 
 
 chbrowser_LDADD = -L$(toolbox) -lsnptools 		$(top_builddir)/db/libdbutils.a 		 -L$(DB_LIBDIR) -ldb $(common)/libcommon.a @LEXLIB@ 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
@@ -225,7 +196,7 @@ chbrowser_LDADD = -L$(toolbox) -lsnptools 		$(top_builddir)/db/libdbutils.a 		 -
 
 chbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 			$(top_builddir)/misc/libutils/libutils.a 			$(toolbox)/libsnptools.a $(common)/libcommon.a
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 noinst_PROGRAMS =  chbrowser$(EXEEXT)
@@ -240,13 +211,11 @@ chbrowser_OBJECTS =  parser.$(OBJEXT) lexer.$(OBJEXT) common.$(OBJEXT) \
 emit.$(OBJEXT) error.$(OBJEXT) main.$(OBJEXT) symtab.$(OBJEXT) \
 stack.$(OBJEXT)
 chbrowser_LDFLAGS = 
-LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LEXLIB = @LEXLIB@
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  README Makefile.am Makefile.in lexer.c parser.c
+DIST_COMMON =  README Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -257,7 +226,7 @@ OBJECTS = $(chbrowser_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .l .o .obj .s .y
+.SUFFIXES: .S .c .o .obj .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --cygnus parsers/chill/Makefile
 
@@ -303,15 +272,6 @@ maintainer-clean-compile:
 chbrowser$(EXEEXT): $(chbrowser_OBJECTS) $(chbrowser_DEPENDENCIES)
 	@rm -f chbrowser$(EXEEXT)
 	$(LINK) $(chbrowser_LDFLAGS) $(chbrowser_OBJECTS) $(chbrowser_LDADD) $(LIBS)
-.l.c:
-	$(LEX) $(AM_LFLAGS) $(LFLAGS) $< && mv $(LEX_OUTPUT_ROOT).c $@
-.y.c:
-	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
-	if test -f y.tab.h; then \
-	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
-	else :; fi
-parser.h: parser.c
-
 
 tags: TAGS
 
@@ -394,7 +354,6 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-test -z "lexerlparserhparserc" || rm -f lexerl parserh parserc
 mostlyclean-am:  mostlyclean-noinstPROGRAMS mostlyclean-compile \
 		mostlyclean-tags mostlyclean-generic
 
@@ -429,6 +388,16 @@ install uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+# Used to regenerate .h and .c from .y file
+bisongen:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) -o parser.c $(srcdir)/parser.y
+
+# Used to regenerate .c from .l file
+flexgen:
+	cp $(srcdir)/lexer.l .
+	$(LEX) -t $(LFLAGS) lexer.l > $(srcdir)/lexer.c
+	rm lexer.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

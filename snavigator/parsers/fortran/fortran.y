@@ -2011,6 +2011,7 @@ nonempty_fun_arg_list:	expr
 			    }
 			    $$.next_token = append_token($1.next_token,&($3));
 			}
+		;
 
 /* 74 not present: type checking not done at this level */
 

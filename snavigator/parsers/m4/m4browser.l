@@ -47,7 +47,33 @@ MA 02111-1307, USA.
 
 static char group[] = "m4";
 
-static char current_function[512] = {"GLOBAL"}; /* "" causes assert core dump */
+#define MAX_SIZE 512
+
+static char current_function[MAX_SIZE] = {""};
+
+/* line number where highlight starts and ends */
+static int  current_function_highlight_line;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'M' in "MACRO" */
+static int  current_function_highlight_column_start;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'O' in "MACRO" */
+static int  current_function_highlight_column_end;
+
+/* line where macro declaration begins */
+static int  current_function_line_start;
+
+/* line where closing paren of macro appears */
+static int  current_function_line_end;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'A' in "AC_DEFUN" */
+static int  current_function_column_start;
+
+/* in "AC_DEFUN([MACRO], [])" column of ')' in "[])" */
+static int  current_function_column_end;
+
+static int  current_function_paren_count;
+
 static int result;
 
 /*
@@ -65,62 +91,211 @@ yywrap()
   return(1);
 }
 
+void dump_function_definition();
+
+void matched_pattern(char * pattern, char * text);
+
+static void emit_var_access(char * varname, int acc);
+static void emit_func_call(char * funcname);
+
 %}
 
-%x COMMENT
+%x FUNCTION
 
 ws		[ \t]
-symbol		[a-zA-Z0-9_]+
-quoted-symbol	\[?{symbol}\]?
+symbol		[a-zA-Z_][a-zA-Z0-9_]+
+quoted-symbol	({symbol}|\[{symbol}\])
 func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
+macro-name	[A-Z][A-Z0-9_]+
 
 %%
 
-.		{ sn_advance_column(yyleng); /* eat text */ }
+<FUNCTION>\( {
+  matched_pattern("(", yytext);
+  sn_advance_column(yyleng);
+  current_function_paren_count++;
+}
 
-\\\$		{ sn_advance_column(yyleng); /* ignore \$ */ }
+<FUNCTION>\) {
+  matched_pattern(")", yytext);
+  sn_advance_column(yyleng);
+  assert(current_function_paren_count > 0);
+  current_function_paren_count--;
+  if (current_function_paren_count == 0) {
+    current_function_line_end = sn_line();
+    current_function_column_end = sn_column();
 
+    dump_function_definition();
 
-\n		{ sn_advance_line(); sn_reset_column(); }
+    BEGIN(INITIAL);
+  }
+}
 
-{ws}*(#|dnl).*\n {
+<INITIAL,FUNCTION>.		{
+  matched_pattern(".", yytext);
+  sn_advance_column(yyleng); /* eat text */
+}
+
+<INITIAL,FUNCTION>\\\$		{
+  matched_pattern("\\$", yytext);
+  sn_advance_column(yyleng); /* ignore \$ */
+}
+
+<INITIAL,FUNCTION>\n		{
+  matched_pattern("\\n", yytext);
   sn_advance_line();
   sn_reset_column();
 }
 
-\${symbol} {
+<INITIAL,FUNCTION>{ws}*("#"|"dnl"{ws}).*\n {
+  char * x = (char *) yytext;
+  char * y = x + yyleng - 1;
+
+  matched_pattern("{ws}*(#|dnl{ws}).*\\n", yytext);
+
+  while (*x == '\t' || *x == ' ') { x++; }
+
+  /* Insert comment highlight */
+
+  sn_highlight(SN_HIGH_COMMENT,
+      sn_line(),
+      sn_column() + (x - yytext),
+      sn_line(),
+      sn_column() + yyleng - 1);
+
+  if (*x == '#') {
+    x++;
+  } else if (*x == 'd') {
+    x += 3;
+  }
+  while (*x == '\t' || *x == ' ') { x++; }
+  sn_advance_column(x - yytext);
+
+  assert(*y == '\n');
+  *y = '\0';
+
+  sn_insert_comment(
+    /* classname */ NULL,
+    /* funcname */ NULL,
+    sn_current_file(),
+    x,
+    sn_line(),
+    sn_column());
+
+  sn_advance_line();
+  sn_reset_column();
+}
+
+<INITIAL,FUNCTION>"$"({symbol}|"{"{symbol}"}") {
   char * x = (char *) yytext;
 
-  /* Trim leading $ off the front of the symbol */
+  matched_pattern("${symbol}", yytext);
+
+  /* Add global var highlight */
+  
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng);
+
+  /* Trim leading $ off the front of the symbol
+   * and ignore '{' and '}' characters if there */
 
   assert(*x == '$');
   x++;
+  if (*x == '{') {
+    x++;
+    *(yytext + yyleng - 1) = '\0';
+  }
 
-  /* When reading a global variable, one simply needs to add an xref
-     for the symbol in question. */
-
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 NULL,
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_READ);
-
-  assert(result == 0);
+  emit_var_access(x, SN_REF_READ);
   sn_advance_column(yyleng);
 }
 
-{symbol}= {
+<INITIAL,FUNCTION>"${#"{symbol}"}" {
+  char * x = (char *) yytext;
+
+  matched_pattern("$\\{#{symbol}\\}", yytext);
+
+  /* Trim leading ${# of the front */
+
+  assert(*x == '$');
+  x++;
+  assert(*x == '{');
+  x++;
+  assert(*x == '#');
+  x++;
+  *(yytext + yyleng - 1) = '\0';
+
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (yyleng - 1));
+
+  emit_var_access(x, SN_REF_READ);
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>"${"{symbol}("-"|":-"|"+"|":+"|"?"|":?"|":"|"#"|"##"|"%"|"%%"|"="|":="|"/")[^\}]*"}" {
+  char * x = (char *) yytext;
+  char * y;
+  int is_read_write = 0;
+
+  matched_pattern("$\\{{symbol}(-|+|?|=|#|%){symbol}\\}", yytext);
+
+  /* Trim leading $ off the front of the symbol
+   * and ignore '{' and '}' characters if there */
+
+  assert(*x == '$');
+  x++;
+  assert(*x == '{');
+  x++;
+  *(yytext + yyleng - 1) = '\0';
+
+  /* Find separator symbol */
+  
+  for (y=x ; *y ; y++) {
+      if (*y == '-' || 
+          *y == '+' ||
+          *y == '?' ||
+          *y == '#' ||
+          *y == '%' ||
+          *y == '/') {
+          break;
+      }
+      if ((*y == '=') ||
+              ((*y == ':') &&
+               (*(y+1) == '='))) {
+          is_read_write = 1;
+          break;
+      }
+      if (*y == ':') {
+          break;
+      }
+  }
+  *y = 0;
+
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  emit_var_access(x, SN_REF_READ);
+  if (is_read_write) {
+    emit_var_access(x, SN_REF_WRITE);
+  }
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>{symbol}= {
   char * x = (char *) yytext;
   char * y;
   
+  matched_pattern("{symbol}=", yytext);
+
+  /* Add global var highlight */
+
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng - 1);
+
   /* Trim the '=' off the end of the string */
   
   for (y=x; *y ; y++) {
@@ -130,65 +305,44 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
       }
   }
 
-  /* Setting a global variable should emit
-     a symbol declaration. I am not really
-     sure if we should emit just one symbol
-     declaration, or multiple ones. Multiple
-     ones breaks xref but it does present
-     the symbol multiple times in the
-     file's symbol list which would be
-     nice if it worked correctly */
-
-  result = sn_insert_symbol(SN_GLOB_VAR_DEF,
-                            NULL,
-			    x,
-			    sn_current_file(),
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x),
-			    0,
-			    NULL,
-			    NULL,
-			    NULL,
-			    NULL,
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x));
-
-  assert(result == 0);
-
-  /* Add a read xref for this symbol name */
-
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 NULL,
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_WRITE);
-
-  assert(result == 0);
+  emit_var_access(x, SN_REF_WRITE);
   sn_advance_column(yyleng);
 }
 
-^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*, {
+<INITIAL>^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*, {
   char * x = (char *) yytext;
   char * y;
 
-  /* FIXME : Insert an xref for the AC_DEFUN call. */
+  matched_pattern("^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*,", yytext);
 
-  /* Skip AC_DEFUN( */
+  current_function_line_start = sn_line();
+  current_function_column_start = sn_column();
+
+  /* Skip {ws} */
 
   for ( ; *x ; x++) {
-      if (*x == '(') {
-          x++;
+      if (*x != ' ' &&
+          *x != '\t') {
           break;
       }
   }
+
+  /* Find '(' character after AC_DEFUN */
+  
+  for (y=x ; *y ; y++) {
+      if (*y == '(') {
+          break;
+      }
+  }
+
+  /* Highlight AC_DEFUN as a keyword, not a macro invocation */
+
+  sn_highlight(SN_HIGH_KEYWORD,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  x = y;
+  x++;
 
   /* Skip {ws} and optional [ */
 
@@ -216,29 +370,25 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
   /* x is now the name of the macro that is being defined */
 
-  /*strcpy(current_function, x);*/
+  strncpy(current_function, x, MAX_SIZE-1);
 
-  result = sn_insert_symbol(SN_FUNC_DEF, NULL, x, sn_current_file(), 
-		   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x),
-                   0 /* attribute */, NULL /* return type */,
-                   NULL /* argument types */, NULL /* argument names */,
-                   NULL /* comment */,
-                   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x) );
+  current_function_highlight_line = sn_line();
+  current_function_highlight_column_start = sn_column();
+  current_function_highlight_column_end = sn_column() + (y - x);
 
-  assert(result == 0);
+  sn_advance_column((yytext + yyleng) - x);
 
-  /* FIXME : need to declare function too, can that be done at the
-     same time or is this a bug in SN ?? */
+  current_function_paren_count = 1;
 
-  sn_advance_column(y - x);
+  BEGIN(FUNCTION);
 }
 
 
-{symbol}\( {
+<INITIAL,FUNCTION>{symbol}\( {
   char * x = (char *) yytext;
   char * y;
+
+  matched_pattern("{symbol}(", yytext);
 
   for (y=x; *y ; y++) {
       if (*y == '(') {
@@ -247,33 +397,165 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
       }
   }
 
-  /* x is now the name of the macro to be invoked */
+  emit_func_call(x);
 
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 SN_FUNC_DEF,
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  sn_advance_column(yyleng);
+
+  current_function_paren_count++;
+}
+
+<INITIAL,FUNCTION>^{macro-name}$ {
+  matched_pattern("^{macro-name}$", yytext);
+
+  emit_func_call(yytext);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng);
+
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>"AC_REQUIRE(["{symbol}"])" {
+  char * x = (char *) yytext;
+  char * y;
+
+  matched_pattern("AC_REQUIRE([{symbol}])", yytext);
+
+  /* Insert a function call xref for the AC_REQUIRE call */
+
+  for (y=x; *y ; y++) {
+      if (*y == '(') {
+          *y = 0;
+          break;
+      }
+  }
+
+  emit_func_call(x);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  /* Insert a function call xref for the macro argument */
+
+  for (y+=2, x=y; *y ; y++) {
+      if (*y == ']') {
+          *y = 0;
+          break;
+      }
+  }
+
+  emit_func_call(x);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  sn_advance_column(yyleng);
+}
+
+%%
+
+void dump_function_definition() {
+    result = sn_insert_symbol(SN_FUNC_DEF, NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            NULL /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+
+    assert(result == 0);
+
+    current_function[0] = '\0';
+}
+
+void emit_var_access(char * varname, int acc) {
+  int ref_from_scope_type;
+
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
+                 ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 current_function,
+                 (current_function[0] == '\0') ? NULL : current_function,
                  NULL,
                  NULL,
-                 x,
+                 varname, /* refsymbol */
+                 "UNDECLARED",
+                 sn_current_file(),
+                 sn_line(),
+                 acc);
+
+  assert(result == 0);
+}
+
+void emit_func_call(char * funcname) {
+  int ref_from_scope_type;
+
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_FUNCTION,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 NULL,
+                 (current_function[0] == '\0') ? NULL : current_function,
+                 NULL,
+                 NULL,
+                 funcname,
                  NULL, 
                  sn_current_file(),
                  sn_line(),
                  SN_REF_PASS);
 
   assert(result == 0);
-
-  sn_advance_column(yyleng);
 }
 
-%%
-  
+/* Helper method that will print matches as they are made */
+
+void matched_pattern(char * pattern, char * text) {
+    char * mode = "UNKNOWN";
+    int imode = YY_START;
+
+    if (imode == INITIAL) {
+        mode = "INITIAL";
+    } else if (imode == FUNCTION) {
+        mode = "FUNCTION";
+    }
+
+    if (0) {
+    fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+        pattern, text, mode, sn_line(), sn_column());
+    }
+}
+
 void
 reset()
 {
   sn_reset_line();
   sn_reset_column();
+  sn_reset_encoding();
 }
 
 int

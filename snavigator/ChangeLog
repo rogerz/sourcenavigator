@@ -1,3 +1,3303 @@
+2003-07-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Add SN-pre-doc-merge-2003-07-19 tag.
+
+2003-07-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights):
+	Capture any text written to stderr by the highlighter
+	and log it instead of displaying in a msg box.
+	Replace some tabs with spaces to keep
+	formatting consistent.
+	* gui/misc.tcl (load_xref_pipe,
+	event_LoadPipeInput): If an error message is
+	written to stderr, don't display it at the
+	end of the parse. This behavior was leading
+	people to conclude that the parse did not
+	work and that the database was corrupted.
+	In fact, it may have just been one construct
+	in one file that was causing a problem.
+
+2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/services.c (class_browser_insert):
+	Fix bug related to image name used when
+	inserting a private member. The code was
+	attempting to use the image named
+	cls_br_private_image but it became broken
+	when a method was marked as virtual or
+	overridden.
+
+2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/dbsym.c (dbtclfetch): Check that the result
+	TclObj is not NULL before setting the interp
+	result. This avoids a crash when an improperly
+	formatted -col option is passed.
+
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Don't require the
+	SEMICOLON token when matching an include
+	statement that includes parens. This fixes
+	statements like <? require_once("one.php") ?>
+	which are valid PHP but were not being
+	recognised because a semicolon was expected.
+	* tests/parsers/php.test: Add tests for
+	include line with no semicolon and include
+	with parens and no semicolon.
+
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/common/lexinput.c (sn_encoded_input,
+	translate_crlf): Add translate_crlf method
+	and use it to translate CRLF sequences to
+	LF in the buffer returned by sn_encoded_input.
+	Not having to deal with the CRLF vs LF mess
+	makes it easier to write parsers.
+	* tests/parsers/m4.test: Add CRLF test case.
+	Add FIXME notes and cleanup the hout file
+	when finishing.
+	* tests/parsers/php.test: Add CRLF test case.
+
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/assembly/ppc601-eabi/abrowser.c: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.l: Add
+	sn_reset_encoding call.
+	* parsers/chill/main.c: Add sn_reset_encoding call.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Add sn_reset_encoding call.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l:Add sn_reset_encoding call.
+	* sdk/parsers/examples/assembly/abrowser.l.in:
+	* sdk/parsers/examples/elf/ebrowser.l:
+	Add sn_reset_encoding call.
+
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Move function call
+	xref code into a helper function. Recognize
+	an plain line of text that contains only the
+	letters A-Z or the _ character as a macro
+	invocation. Recognize a macro name passed
+	to AC_REQUIRE as a function invocation.
+	* tests/parsers/m4.test: Add test cases for
+	macro names passed to AC_REQUIRE and an
+	line that contains only a macro invocation.
+
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Move xref generation into
+	the emit_var_access function. Add rules to match
+	special variable syntax like ${VAR-default},
+	${#VAR}, and a host of others.
+	* tests/parsers/m4.test: Add xref and highlight
+	tests for special variable syntax.
+
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Highlight the
+	AC_DEFUN part of a macro declaration as
+	a keyword, since it is not treated as
+	a macro invocation.
+	* tests/parsers/m4.test: Add test case for
+	keyword highlight in macro declaration.
+
+2003-07-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Highlight macro
+	invocations as functions.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Highlight
+	function invocations.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Map SN_HIGH_FUNCTION to the tag "fu".
+	* parsers/toolbox/snptools.h: Add define
+	for SN_HIGH_FUNCTION.
+	* tests/parsers/m4.test: Test for macro
+	xref highlight.
+	* tests/parsers/php.test: Test for function
+	xref highlight.
+
+2003-07-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_insert_entry): When inserting
+	xref symbols for global variables, check for
+	UNDECLARED as the argument value. This argument
+	is passed to support xrefs to global variables
+	that are not declared. A special global variable
+	will be inserted in a file named GLOBAL for
+	undeclared global variables. This is needed so
+	that refs to undeclared global variables work.
+	The previous code was inserting a special global
+	only when a write to a global occurred at the
+	global scope, but that did not work when the
+	write happened inside a function.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass the string UNDECLARED
+	as the symbol argument value for global variables.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Pass the string UNDECLARED
+	as the symbol argument value for global variables.
+	* tests/parsers/m4.test:
+	* tests/parsers/php.test: Update tests to account
+	for UNDECLARED argument being passed for global
+	variable symbols.
+
+2003-06-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/README.TXT: Mention that nested
+	functions are now supported.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support for
+	nested functions by pusing function info
+	onto a stack and then popping it off when
+	done.
+	* tests/parsers/php.test: Add nested function
+	test and remove knownbug constraint from
+	another nested function related test.
+
+2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support for
+	PHP super global variables. These variables
+	are automatically seen as global even if
+	they have not been declared global.
+	* tests/parsers/php.test: Add highlight and
+	xref test for super globals.
+
+2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Reimplement array
+	variables to support arrays with complex
+	subexpressions. The previous implementation
+	did not work with arrays like $arr["one"."two"],
+	it only matched known index values like literals,
+	strings, variables, and so on. Split the rules
+	so that plain variables are handled separately
+	from array variables. Support nested array
+	variables with a stack based approach. Add a
+	pop_head_token helper so that the token can
+	be pulled off the queue without being freed.
+	* tests/parsers/php.test: Add a series of
+	highlight tests to check for nested arrays
+	and arrays with complex subexpressions as
+	the index value. Invert the xref order for
+	tests that change as a result of the new
+	way that arrays are processed. Remove knownbug
+	constraint from tests that now pass.
+
+2003-06-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_insert_entry, db_key_in_table):
+	If the special GLOBAL ref from scope is used
+	and a global variable xref is getting inserted
+	for the first time, then emit a symbol that
+	will act like the declaration for the global
+	variable. The variable is defined in a fake
+	file named GLOBAL and the ref from scope is
+	actually a function named GLOBAL. This
+	implementation should be reworked later on
+	when namespace support has been implemented.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass the new
+	SN_GLOBAL_NAMESPACE flag to sn_insert_xref
+	when a var or func ref is found in the global
+	scope. Trim the { and } chars off the var
+	name for a var like ${foo}. Don't emit a
+	variable declaration when a global variable
+	is written. Reset current_function to ""
+	instead of "GLOBAL".
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Include the $
+	in the variable name for variables in
+	double quoted strings and heredoc strings.
+	Pass new SN_GLOBAL_NAMESPACE flag to
+	sn_insert_xref when a var or func ref
+	is found in the global scope. Don't emit a
+	variable declaration when a global variable
+	is written. Fixup highlight range for vars,
+	it was highlighting one column too many.
+	* parsers/toolbox/snptools.c (sn_insert_xref):
+	Check for special SN_GLOBAL_NAMESPACE and
+	NULL funcname values and convert them to
+	a fu type with the function name GLOBAL.
+	In dbimp, these xref values will be dealt
+	with by inserting a global variable symbol.
+	* parsers/toolbox/snptools.h: Define
+	SN_GLOBAL_NAMESPACE.
+	* tests/parsers/m4.test: Rework m4 tests
+	to account for the fact that a variable
+	write no longer defines a variable symbol.
+	Also check that {} symbols are removed
+	from a var name.
+	* tests/parsers/php.test: Add some highlight
+	range checks for global and local variables.
+	Rework many tests to account for the fact
+	that a variable write no longer emits
+	a variable symbol. It seems the only reason
+	to do that was so that the variable would
+	be highlighted, but we now have a better
+	way to handle that.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_remove_file_xfer_using_keys):
+	Convert name of keys file from utf-8 to native
+	system encoding before calling fopen or unlink.
+	Add a cleanup block and goto it instead of
+	returning directly to avoid memory leak.
+	* gui/misc.tcl (sn_load_hide_unload_files,
+	sn_parse_uptodate):
+	Use utf-8 encoding for input files and pipe
+	to cbrowser2 and dbimp. Both cbrowser2 and
+	dbimp must read and write symbols and file
+	names in utf-8 format. Reformat any entries
+	that have a -encoding option.
+	* parsers/cpp/cpplib/cp_crossref.c
+	(Paf_insert_cross_ref_qry): Convert file name from
+	utf-8 to system encoding before calling open.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/sn_prop.cfg.in: Enable browser based
+	highlight for m4 language.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Fixup symbol def
+	so that $1 is not seen as a global var
+	and so ${var} is seen as a global var.
+	Insert highlights for comments and variables.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add global and
+	local variable highlighting.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Add support for SN_HIGH_VAR_GLOBAL and
+	SN_HIGH_VAR_LOCAL highlight types.
+	* parsers/toolbox/snptools.h: Declare
+	SN_HIGH_VAR_GLOBAL and SN_HIGH_VAR_LOCAL.
+	* tests/parsers/m4.test: Add highlight
+	tests for comments and variables.
+	* tests/parsers/php.test: Add highlight
+	tests for variables and variables inside
+	strings.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Include the
+	$ character in the variable token text
+	range so that it is also highlighted.
+	* tests/parsers/php.test: Update parsing
+	and highlighting tests to account for
+	inclusion of the dollar sign in variables.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (init_tags, color_file):
+	Add basic local variable highlighting support.
+	Add lv to the list of symbols that has a highlight
+	tag created for it in the editor. Remove lv
+	from the list of symbols that is filtered out
+	before being added to the editor in color_file.
+	There does not seem to be any reason to filter
+	out lv entries, most compilers do not generate
+	them and they and having locals highlighted can't
+	hurt.
+	* gui/preferences.tcl (AddColorAndFont): Add
+	color config option for local variables.
+	* gui/sninit.tcl (sn_init_globals): Add default
+	of turquoise3 for local variable highlight.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/preferences.tcl (AddOthers): Remove
+	the "bugs" labeled frame and the mailhost
+	entry box from the others tab. These widgets
+	were not functional, they were left in the
+	5.1 release just to avoid doc impact.
+
+2003-06-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/preferences.tcl: Reformat a large number
+	of entries to make them readable. Running the
+	code through frink resulted in code that was
+	very difficult to understand.
+
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (Sn_Highlight_Text):
+	Create Tcl only implementation of the
+	Sn_Highlight_Text C command. This
+	implementation makes the highlight a file
+	operation about 30% slower, but this should
+	not even be noticeable.
+	* gui/tclIndex: Regen.
+	* hyper/exint.c (Sn_Highlight_Text): Remove
+	C impl of Sn_Highlight_Text.
+	* hyper/sninit.c (sn_init_mycommands): Remove
+	define if Sn_Highlight_Text Tcl command.
+	* misc/libutils/mxfuncs.h: Remove
+	Sn_Highlight_Text declaration.
+	* tests/gui/editorpane.test: Add test cases
+	for Sn_Highlight_Text.
+
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework the
+	highlight writing logic. Instead of
+	highlighting by looping over the tokens,
+	just process the tokens in the normal
+	way and highlight via the normal token
+	matching rules. Don't create a comment
+	token in this case, just emit a highlight
+	when the comment text is found.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	If highlighting has not been activated
+	via the -h option, then  do nothing and
+	return. This is easier that checking to
+	see if -h was passed before each call to
+	sn_highlight.
+	* tests/parsers/php.test: Fixup test that
+	check for function, global, include,
+	include_once, require, and require_once
+	keywords. They must match the known usage
+	pattern to be highlighted. The word "function"
+	by itself will not be highlighted.
+
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights,
+	sn_delete_editor_tags):
+	Add a new helper method that will delete
+	symbols tags from the editor. Use this new
+	helper to clear out old tags before calling
+	Sn_Highlight_Text instead of passing a
+	special -delete option. The sn_delete_editor_tags
+	operates a little bit differently than
+	the -delete option to Sn_Highlight_Text,
+	when symbol tags like "global1 gv" are
+	found, they are actually deleted instead
+	of just removing the valid ranges. This is
+	needed so that tags are added in the proper
+	stacking order when symbols are inserted
+	into the editor a second time.
+	* hyper/exint.c (Sn_Highlight_Text): Remove
+	code for -delete option. It is not at all
+	clear why a C impl of code to delete
+	text tags was needed.
+
+2003-06-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (sn_db_create_symbol_tags):
+	Sort tags for classes, methods, functions,
+	and macros so that they get moved lower in
+	the display order than any other symbols inserted
+	by this method. This fixes a bug where a global
+	var name does not appear in the combobox when the
+	cursor is moved over the var. The bug was being
+	triggered when an earlier instance of the same
+	symbol lead to the variable being seen as lower
+	in the display order than the enclosing function.
+	* tests/gui/editorpane.test: Add tests for
+	symbol sorting based on type, for tag ranges,
+	and for symbol types like classes or macros.
+
+2003-06-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (sn_db_create_symbol_tags):
+	Create a Tcl only implementation of the
+	sn_db_create_symbol_tags. This implementation
+	is about 3 times slower than the C implementation,
+	but having less C code to support wins out here.
+	* gui/tclIndex: Regen.
+	* hyper/exint.c (get_line_column, sn_db_create_symbol_tags):
+	Remove C implementation of sn_db_create_symbol_tags
+	method along with a helper method used only by this
+	function.
+	* hyper/sninit.c (sn_init_mycommands): Remove
+	sn_db_create_symbol_tags decl. Remove define of
+	sn_db_create_symbol_tags Tcl command.
+	* tests/gui/editorpane.test: Add test cases
+	for sn_db_create_symbol_tags command.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/README.TXT: Add README file
+	for the PHP source code browser.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Support each
+	of the keywords defined in the PHP manual
+	appendix G. Pass the SN_HIGH_KEYWORD
+	highlight option to sn_highlight for
+	each of these tokens.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Add SN_HIGH_KEYWORD support and fix compiler
+	error that was a result of a previous change.
+	* parsers/toolbox/snptools.h: Add SN_HIGH_KEYWORD
+	to sn_highlights enum.
+	* tests/parsers/php.test: Add tests for
+	various keywords and keyword tokens. A side
+	effect of this keyword fix is that constructs
+	like "if (1) {}" are no longer seen as a call
+	to the function if. Add tests to verify that
+	no pass xref is generated for these common
+	cases.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for php mode entry tokens like "<?=" and
+	"<?PHP".
+	* tests/parsers/php.test: Add more tests
+	for php entry mode tokens.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a new token
+	VDOUBLE_QUOTED_STRING to support strings
+	that contain a variable. Add read access
+	support to the emit_var_access method.
+	Add a vars member to the Token structure
+	so that a list of embedded variable token
+	can be attached to a string token. Include
+	VDOUBLE_QUOTED_STRING in the array construct
+	matching pattern. Add some helper methods
+	to make dealing with double quoted string
+	tokens easier. Rework the DQSTRING mode so
+	that variables embedded in a double quoted
+	string are recognized. Rework heredoc mode
+	rules so that embedded variables are recognized.
+	Escape the escape char again when dumping
+	token descriptions. Free embedded variable
+	tokens in the FreeToken method.
+	* tests/parsers/php.test: Add additional
+	double quoted string token parsing tests.
+	Use xref tests instead of variable define
+	tests when possible since the var define
+	on var write feature will likely be removed.
+	Test for double quoted string as array index.
+	Add tests for double quoted strings with
+	embedded variables. Check that a quoted
+	string containing a variable is not seen
+	as a valid include file since it depends
+	on runtime interpretation of a variable.
+
+2003-06-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Update call
+	to sn_highlight to use type enum instead
+	of passing the editor tag directly since
+	a parser author should not need to know
+	what the tags are.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Pass an enum as the first argument to
+	sn_highlight instead of forcing the browser
+	author to know what the editor tags are.
+	* parsers/toolbox/snptools.h: Define the
+	sn_highlights enum passed as the first
+	argument to sn_highlight. Update the
+	declaration for sn_highlight.
+	* tests/parsers/php.test: Add a couple of
+	token parsing tests for heredoc comments.
+	Add a test for a known crasher bug that
+	has to do with nested functions.
+
+2003-06-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/Makefile.am: Add Tcl include dir
+	to include list so that tcl.h is found. This
+	was compiling on my machine only because a
+	tcl.h was in /usr/include.
+	* parsers/php/Makefile.in: Regen.
+
+2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/sn_prop.cfg.in: Enable text highlighting
+	for phpbrowser.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: When the -h option
+	is passed to phpbrowser, emit comment tokens
+	and write highlight info to a file using
+	the new sn_highlight function. Currently,
+	only comments and strings are highlighted.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options, sn_highlight,
+	sn_register_filename, sn_close):
+	Add support for -h command line option.
+	This option will create a highlight file
+	that can be written to using sn_highlight.
+	Pass this highlight file name to put_file
+	and write it to the file name passed in
+	the -s option, if there was one.
+	* parsers/toolbox/snptools.h: Add
+	SN_OPT_HIGHLIGHT and a decl for
+	sn_highlight.
+	* tests/parsers/php.test: Add file
+	highlight tests.
+	* tests/parsers/testutil.tcl (browse_highlights):
+	Add helper function to browse the contents
+	of a highlight file generated with the -h
+	and -s options.
+
+2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: When text that does
+	not match a known pattern is found, emit an
+	UNKNOWN token and continue processing. Also
+	emit a SOMEWORD token for a \$ sequence.
+	* tests/parsers/php.test: Add test for UNKNOWN
+	token and remove knownbug constraint from test
+	that was failing. Add some FIXME notes.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Split the handling
+	of ASSIGNMENT_OPERATOR and ASSIGNMENT_OPERATORS
+	into two rules. This makes the var assignment
+	simpler since the code does not need to
+	inspect the matched tokens to determine what
+	kind of access it was.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Insert both
+	a read xref and a write xref for variable
+	operations like $var+=1.
+	* tests/parsers/php.test: Remove knownbug
+	constraint from var-5.6 since it now passes.
+	Fixup operator-1.3 since both read and write
+	xrefs are now being inserted.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for variable pre and post increment
+	and decrement operators. Move the logic
+	in the variable assignment block into a
+	helper function named emit_var_access.
+	Invoke this method from the new pattern
+	that will match a variable increment
+	and decrement tokens.
+	* tests/parsers/php.test: Add token
+	parsing tests for increment operators.
+	Check that xrefs are being generated
+	properly for increment operators.
+
+2003-06-05  John Lash  <jlash@speakeasy.net>
+
+	* gui/editorpane.tcl (EditFile): Remove
+	gnudoit as string to match external editor on.
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	gnudoit	is deprecated, change call to "gnudoit"
+	to "gnuclient -batch -eval". Remove other
+	places where the string gnudoit appears.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Invoke sn_unset_tmp_dir before running gnudoit
+	and invoke sn_set_tmp_dir when finished. This
+	avoids a problem that was causing gnudoit to
+	fail because it was not finding unix domain
+	sockets when the TMPDIR environment variable
+	was set to .snprj instead of /tmp.
+	* gui/misc.tcl (sn_unset_tmp_dir): Add helper
+	to undo the changes made by sn_set_tmp_dir.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Remove conflict with gnudoit over the TMPDIR
+	environment variable. It appears that gnudoit
+	will fail when TMPDIR is set to .../.snprj
+	so avoid setting it.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for &, the reference operator. Update
+	function arguments pattern to support
+	use of a reference operator before
+	a variable in the argument list.
+	Remove {ws} from the front of the
+	line comment rule since this is
+	now handled by the greedy {wsn} rule.
+	* tests/parsers/php.test: Add token
+	parsing test for reference operator.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a rule that
+	matches any series of space, tab, and
+	newline characters. Remove the rule that
+	matched a plain newline since this is now
+	handled by the new rule. This new implementation
+	does not execute the default character
+	rule for each white space matched so
+	it should execute more quickly.
+
+2003-06-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework the token
+	dump output so that newlines are printed
+	as \n and double quotes are printed as \".
+	* tests/parsers/php.test: Reformat token
+	tests since a newline embedded in the
+	token value is not printed as \n. Test for
+	a \" in the token value.
+	* tests/parsers/testutil.tcl (filter_tokens):
+	Split browse_tokens result on newline
+	and use a regexp to extract values.
+
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a special
+	token dump mode that will parse all input,
+	including HTML and COMMENT blocks, into
+	tokens and dump the to the file name passed
+	as the value of the -T command line option.
+	Conditionally compile matched_pattern
+	calls. Fix minor line command bug,
+	a line can end with \n or ?>.
+	Add a special mode for HTML text that
+	should be more efficient since whole
+	regions of HTML text are now matched.
+	Match <? and <?php as HTML text.
+	Rename COMMENT mode to COMMENT_MODE since
+	COMMENT is now use as a token id.
+	Emit HTML token if dumping tokens and
+	parser hits EOF.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Add support for
+	"-T tokenfile" option to dump tokens
+	to a file.
+	* parsers/toolbox/snptools.h: Add 
+	SN_OPT_DUMP_TOKENS enum.
+	* tests/parsers/php.test: Add a series
+	of token tests. Make use of new helper
+	browse_tokens which passes -T to the
+	browser. Directly reading the token
+	values has uncovered a number of
+	bugs that were not detectable
+	previously.
+	* tests/parsers/testutil.tcl: Add
+	browse_tokens and filter_tokens
+	helper methods.
+
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* tests/parsers/m4.test: Use browse instead
+	of m4_parse and use browse_xref instead of
+	m4_parse_xref. Remove m4_parse_comment_xref
+	and pass -r option to m4_parse_xref.
+	* tests/parsers/php.test: Use browse
+	instead of php_parse and use browse_xref
+	instead of php_parse_xref. Remove
+	php_parse_comment_xref and php_parse_local_xref
+	and pass -r or -l option to php_parse_xref.
+	* tests/parsers/testutil.tcl (m4_parse,
+	m4_parse_xref, m4_parse_comment_xref,
+	php_parse, php_parse_multi, php_parse_xref,
+	php_parse_comment_xref, php_parse_local_xref,
+	browse, browse_xref): Replace browser
+	specific helper functions with a generic pair
+	of functions named browse and browse_xref.
+	These helpers will lookup the browser type
+	based on the file extension and accept
+	browser command line args. Do utf-8
+	conversion of exec results in browse.
+
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Insert tokens
+	for PERIOD and COMMA and update global
+	and function statements to support
+	COMMA tokens.
+	* tests/parsers/php.test: Add another
+	test for the global keyword. Add
+	operator tests to check that , and .
+	generate tokens. Update FIXME notes.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Emit a token
+	for each comparison operator. This fixes
+	a bug where "$var == 5;" was being
+	interpreted as a variable write.
+	Removed unused ARRAY_VARIABLE token.
+	* tests/parsers/php.test: Add a series of
+	operator tests.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Implement array vars.
+	This matching approach works with empty indexes,
+	constants, single and double quoted strings,
+	and other variables. It fails to match array
+	variables that have complex subexpressions as
+	the index.
+	* tests/parsers/php.test: Add a series of tests
+	for reading and writing of array variables.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework line comment
+	rule so that line comments can be started
+	with // or #. If ?> is found before the newline
+	then send the text starting with the ?> back
+	and finish the comment there.
+	* tests/parsers/php.test: Add test cases for
+	# and ?> to terminate a line comment early.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights):
+	Delete all the tags in the editor when a file
+	that has no built-in highlighter and no browser
+	based highlighter is saved. The symbols parsed
+	by the browser are highlighted, but the one
+	from the previous save were not getting deleted.
+	A call to Sn_Highlight_Text with the -delete
+	flag and an empty file argument is made to
+	implement this change.
+	* hyper/exint.c (Sn_Highlight_Text): Rename
+	highlight local var to text_widget to avoid
+	confusion. If an empty file name is passed
+	and the -delete flag is given, then just
+	delete the tags in the text widget and return.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/common/parser.c (put_symbol): Convert
+	a newline in the symbol_name to 0xFF to avoid
+	printing a newline in the output.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add line end
+	and column end members to the Token struct
+	to support quoted strings that span multiple
+	lines. Add special processing modes for
+	double quoted strings, single quoted strings,
+	and heredoc strings. Handle EOF condition in
+	each of these modes.
+	* tests/parsers/php.test: Add a series of tests
+	for single quoted strings, double quoted string,
+	and heredoc string.
+	* tests/parsers/testutil.tcl (php_parse):
+	Convert results of exec from utf-8 so
+	that a newline character is encoded properly.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rename cbuff
+	to mode_buff, rename cbuff_start_line to
+	mode_start_line and rename cbuff_start_column
+	to mode_start_column.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Emit an
+	unfinished function declaration
+	on EOF, fixes case where close bracket
+	is missing.
+	* tests/parsers/php.test: Add test cases
+	for function that has no closing brace.
+
+2003-06-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rewrite browser
+	so that it works in two passes. The first
+	phase splits the file into tokens, removes
+	comments, and so on. The second phase will
+	look for known patterns in the input tokens.
+	This approach is significantly better than
+	trying to parse symbols out of the text
+	directly. One does not need to maintain
+	complex state information while creating
+	tokens, and it avoids having to add a flex
+	mode for each processing state.
+	* tests/parsers/php.test: Add a couple of
+	additional tests. Update a test that is
+	failing because comment processing is
+	now done during token generation.
+	Remove knownbug constraint from include-1.9
+	since this test now passes. Add a test to
+	process multiple files via the -y option.
+	* tests/parsers/testutil.tcl (php_parse_multi):
+	Add helper to run phpbrowser with -y option.
+
+2003-05-31  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* tests/parsers/php.test: Add an additional
+	test for function with default arguments
+	and some FIXME notes at the end of the file.
+
+2003-05-30  John Lash  <jlash@speakeasy.net>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Add missing \ at end of line so that
+	exec of gnudoit does not fail.
+
+2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_create_new_project):
+	Introduce a short delay between the file
+	parse and the invocation of the xref
+	process. This lets the symbol browser
+	be mapped before any xref files are
+	scanned under Win95/98.
+
+2003-05-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/window.tcl (center): Use reqwidth and
+	reqheight when calculating window size during
+	window centering operation. The previous code
+	tried to query the configured width and height
+	of the window. This approach was failing under
+	Win32 because the default platform window min
+	size was being returned in the interval before
+	the window was mapped.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add basic
+	local variable support. Use the searchtable
+	implementation that was just moved into
+	libcommon.a to support variable lookups.
+	Add support for the global keyword.
+	Add FUNCTION condition support to variable
+	read and write rules.
+	* tests/parsers/php.test: Add a series of
+	variable definition and xref tests. Check
+	global variable, local variable, and the
+	global keyword.
+	* tests/parsers/testutil.tcl: Add new
+	php_parse_local_xref helper method that
+	passes the -l flag to phpbrowser.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (load_xref_pipe): Switch xref
+	pipe back to blocking mode before closing
+	so that stderr messages are not lost due to
+	a nasty Tcl bug.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/Makefile.am: Remove ref to srchtbl.c.
+	* db/Makefile.in: Regen.
+	* db/srchtbl.c:
+	* db/srchtbl.h: Moved to parsers/common
+	so that each of the browsers have
+	access to a hashtable implementation.
+	* parsers/common/Makefile.am: Add srchtbl.c
+	and srchtbl.h to libcommon_a_SOURCES.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/common/srchtbl.c:
+	* parsers/common/srchtbl.h: Moved from db.
+	* parsers/cpp/cpplib/Makefile.am: Add
+	parsers/common to list of include directories.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Set the report_local_vars
+	global variable defined in the libcommon.a
+	when the -l option is passed to a SN parser.
+	This allows xrefs to global variables to
+	be written by a toolbox based parser.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cpp/cbrowser2.c (main): Fix the -l
+	option so that it does not require an
+	argument. This fixes a problem when xref
+	was not running when local vars is enabled.
+
+2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add include
+	file support. The browser recognizes
+	the include, include_once, require, and
+	require_once keywords.
+	* tests/parsers/php.test: Add a series of
+	include keyword tests.
+
+2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a simple debug
+	dump function that can be used to print out
+	matched rules and text as they are made.
+
+2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass SN_FUNC_DEF
+	as the second argument to sn_insert_xref
+	for a global variable access. The docs
+	indicate the SN_REF_TO_GLOB_VAR was not
+	a valid context to be passing there.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Ditto.
+	* tests/parsers/m4.test: Update an xref
+	output that was expecting "gv" instead
+	of "fu" for a GLOBAL call from scope.
+	* tests/parsers/php.test: Add a easy
+	mode check and a couple of global var
+	xref tests to test for SN_FUNC_DEF change.
+
+2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Fixup mode switching
+	bug when we transition from a FUNCTION mode to
+	INITIAL and then back to FUNCTION.
+	* tests/parsers/php.test: Add test case for
+	FUNCTION mode swithing bug. Also test attempt
+	to switch to HTML mode inside a comment, it
+	should fail.
+
+2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Add FUNCTION rule
+	to support read, write, and call xrefs
+	inside macros. Set the function declaration
+	to include the entire text of the macro
+	instead of just the macro name.
+	* tests/parsers/m4.test: Add new var test
+	cases for var xrefs in macros. Update
+	macro definition test cases so that
+	whole function is included, not just name.
+	Add test for comments in macros.
+
+2003-05-20  John Lash  <jkl@speakeasy.net>
+
+	* gui/misc.tcl (sn_session, sn_nosplash):
+	* gui/sninit.tcl (sn_read_commandline_arguments):
+	Add option --nosplash to turn off splash screen.
+	Helps when running over a slow link.
+
+2003-05-20  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add code to parse
+	function bodies and generate xrefs for
+	function calls inside a function declaration.
+	Add new FUNCTION state and use parser state
+	stacks so that we can push a mode like COMMENT
+	and then pop back into a mode like FUNCTION.
+	Handle newlines in addition to spaces and
+	tabs as a separator character.
+	* tests/parsers/php.test: Add tests for
+	functions and comments in functions.
+
+2003-05-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cobol/skeleton.c (main):
+	* parsers/cpp/skeleton.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	Remove incorrect comment that claimed the
+	-x option to the parsers was ignored.
+
+2003-05-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tmeter.tcl (make_scale_window,
+	hide_loading_message, sn_loading_message): Remove
+	some pointless catch calls.
+
+2003-05-15  John Lash  <jlash@speakeasy.net>
+
+	* gui/tmeter.tcl (sn_loading_message):
+	Remove raise call from gui/tmeter.tcl. This eliminates
+	a repeated two second pause during the initial
+	loading screen. The problem has been seen using both
+	gnome and kde desktops and is a bug in the respective
+	window managers.
+
+2003-05-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cobol/skeleton.c (main):
+	* parsers/fortran/ftnchek.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	* parsers/toolbox/snptools.c (sn_process_options):
+	Check to make sure the file name passed as
+	the -y argument actually exists. This avoids
+	a problem where a typo in the file name
+	generates a usage message.
+
+2003-05-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_create_new_project): Check each
+	import directory to see if it exists and generate
+	an error if it does not. This avoids a problem
+	where a typo in a directory name will create
+	an empty project instead of telling you that the
+	import dir does not exist.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/sn_prop.cfg.in: Remove empty -brow_switch
+	from fortran parser config. Remove *.am from
+	commented out elf parser since this extension
+	is covered by the others rule. Remove -high_cmd
+	and -high_switch from the c, c++, java, tcl,
+	chill, and python configurations since these
+	languages have built-in syntax highlighters.
+	Remove -high_cmd and -high_switch from the
+	asm, m4, and php configurations since these
+	parsers do not support highlighting.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (search_for_symbol):
+	* parsers/common/parser.c (put_cross_ref):
+	Fixup some questionable uses of the ternary
+	operator. Pass "" instead of NULL to copystrings
+	function. Pass "NULL" instead of NULL to fprintf.
+	These changes do not change any of the functionality.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cobol/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/cpp/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main):
+	* parsers/java/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/tcl/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/toolbox/snptools.c (sn_register_filename,
+	sn_main):
+	Rework parser command line logic so that either a
+	-y option or a file name is required. The parsers
+	no longer try to read from stdin since the
+	functionality is no longer needed by the IDE
+	and results is pointless complexity. Rework
+	the log_symbol_filename implementations so
+	they more closely match each other.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/fortran/forlex.c (IncludeFileStack,
+	push_include_file, pop_include_file, advance):
+	Rename input_fd to yyin.
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main):
+	Move fclose(hig_fp) call just before hig_fp
+	is reset, that better matches the logic in
+	other implementations of log_symbol_filename.
+	Avoid calling freopen() to change the fd
+	associated with stdin. Call fclose() and
+	fopen() to manipulate the yyin file pointer.
+	Don't set input_fd since this is handled
+	by the yyin logic in log_symbol_filename.
+	Close yyin at the end of main.
+	* parsers/fortran/ftnchek.h: Rename input_fd
+	to yyin.
+
+2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights): Comment
+	out code that checks in the database for a
+	highlight file. This code worked on the
+	assumption that the parser would write an
+	entry into the database for a highlight file.
+	Since the parsers were modified so that they
+	don't write into the database, this is never
+	going to happen. Don't pass the -n option
+	to the highlighter, the c/c++ parser is
+	the only one that requires a -n option and
+	it has an in-process syntax highlighter already.
+	Rework the logic when a file has been modified
+	outside the IDE so that we save the data
+	into another file before invoking the highligher.
+	This avoids code that would exec the parser
+	and have it read the editor contents from
+	stdin. The reading from stdin logic in the
+	parsers is really flaky and should be removed.
+
+2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (UpdateHighlights): Add
+	-delete flag to Sn_Highlight_Text calls so
+	that existing text tags get deleted before
+	new ones are added. This problem only effected
+	file types like fortran, which do not have
+	a built-in syntax highlighter.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen.
+	* configure.in: Generate parsers/php/Makefile.
+	* etc/sn_prop.cfg.in: Add *.php suffix parser.
+	* parsers/Makefile.am: Add php to SUBDIRS.
+	* parsers/Makefile.in: Regen.
+	* parsers/php/Makefile.am:
+	* parsers/php/Makefile.in:
+	* parsers/php/phpbrowser.c:
+	* parsers/php/phpbrowser.l: Add initial version
+	of PHP parser. It only handles global variables,
+	function declarations, comments, and HTML->PHP
+	mode conversions at this point.
+	* tests/parsers/php.test: Add test cases for
+	PHP parser.
+	* tests/parsers/testutil.tcl: Add php parser
+	helper functions.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/sn_prop.cfg.in: Add *.c++ to cpp file
+	extensions. Enable the m4 parser by default.
+	Set the m4 file pattern to {*.m4 *.ac configure.in},
+	this depends on sn_get_file_type being able
+	to match a pattern exactly. Add *.am and *.in
+	patterns to the others rule.
+	* gui/utilities.tcl (sn_get_file_type): Use the
+	last component of the file name instead of
+	just the extension so that exact matches
+	like "configure.in" can be made. Earlier
+	attempts at using "*.in" in the m4 rule
+	were matching too many files like "Makefile.in".
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (RetrieveObject):
+	* gui/misc.tcl (sn_create_new_project,
+	sn_parse_uptodate):
+	* gui/utilities.tcl (sn_external_editor,
+	sn_highlight_browser, file_type_using_suf,
+	sn_get_file_type): Rename file_type_using_suf
+	to sn_get_file_type and change the argument
+	type to a file name instead of a file suffix.
+	Fix all the callers of this method so that
+	they all pass a full file name. This refactoring
+	does not change any functionality.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Remove unused COMMENT
+	mode decl. Call sn_insert_comment to write
+	comments into the database.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options): Set the global variable
+	comment_database defined in libcommon.a
+	when the -r command line option is passed.
+	This fixes insertion of comments into the
+	database with the toolbox library.
+	* tests/parsers/m4.test: Add comment
+	xref tests.
+	* tests/parsers/testutil.tcl
+	(m4_parse_comment_xref): Add helper method
+	to generate an xref with comments.
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/english.txt.in: Add LanguageExtLanguage
+	and LanguageExtFileExtensions strings.
+	* gui/preferences.tcl (AddParser,
+	parser_type_combo_changed): Modify the GUI
+	of the Parser tab in the project preferences.
+	There is now a combo box that can be used to
+	select options for a specific parser. This
+	is an improvement over the previous
+	implementation since it will now be possible
+	to add a new parser without having to update
+	screen shots in the documentation. The
+	macro input box is only enabled when c
+	or c++ is selected as the language type.
+
+2003-05-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Fix quoted-symbol
+	define so that "SYMBOL" and "[SYMBOL]" are
+	accepted but "[SYMBOL" and "SYMBOL]" are not.
+	Fix dnl comment rule so that a line that
+	begins with "dnl TEXT" is accepted but
+	"dnlTEXT" is not.
+	* tests/parsers/m4.test: Add basic set of
+	regression tests for the m4 parser.
+	* tests/parsers/testutil.tcl: Add helper
+	utils that are used to test parsers.
+
+2003-05-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tools.tcl (select_file): When a
+	LabelEntryButton& widget is used to select
+	a directory, start in the directory named
+	in the entry. The previous implementation
+	would start one directory up.
+
+2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_load_xref, sn_create_new_project,
+	sn_parse_uptodate): Add a new cbrowser_xref
+	argument to the sn_load_xref procedure. If this
+	argument is true, cbrowser2 is run over the
+	xref output before passing the data to dbimp.
+	If the argument is false, the output of the
+	parsers is passed directly to dbimp. Check to
+	see if a C/C++ file will be parsed in the
+	sn_create_new_project and sn_parse_uptodate
+	methods and call sn_load_xref accordingly.
+
+2003-05-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_create_new_project):
+	Move the call to sn_set_tmp_dir before the
+	sn_tmpFileName call that gets a tmp file name
+	for the xref tmp file. This creates the tmp
+	file that is passed as the -x option to the
+	parser in the .snprj directory instead of
+	/tmp on Unix systems.
+
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* MAINTAINERS: Update Mo's email address.
+
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/libjcreuse/Errors.c: Include
+	string.h to avoid compiler warning.
+	* parsers/python/pybrowser.c: Regen.
+	* parsers/python/pybrowser.l: Define YY_SKIP_YYWRAP
+	to avoid compiler warning.
+
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Rework flex invocations via the "make flexgen"
+	target so that generated .c files include only
+	the file name of the .l file instead of the
+	fully qualified path. Also, generate
+	the c files directly in the srcdir.
+
+	* hyper/Makefile.am:
+	* hyper/Makefile.in: Regen.
+	* hyper/c_high.c: Regen.
+	* hyper/ch_high.c: Regen.
+	* hyper/j_high.c: Regen.
+	* hyper/py_high.c: Regen.
+	* hyper/tcl_high.c: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am:
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.c: Regen.
+	* parsers/chill/Makefile.am:
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/m4/Makefile.am:
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/python/Makefile.am:
+	* parsers/python/Makefile.in: Regen.
+	* parsers/python/pybrowser.c: Regen.
+	* parsers/sendmail/Makefile.am:
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/sendmail/sbrowser.c: Regen.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/common/parser.c (put_cross_ref):
+	Fix mistake made when moving code over from
+	dbutils.c, do nothing when the cross_ref_fp
+	global var is not set.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tmeter.tcl (make_scale_window): Add
+	a call to sn_wait so that we sit in the
+	event loop for a little bit after the scale
+	window is mapped. This is needed to work around
+	a problem under win32 where the scale window
+	is mapped but the contents are not drawn for
+	a couple of seconds.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cpp/cbrowser2.c (main): Print an error
+	to stdout and exit if the xref_file given does
+	not exist. Don't flush stdout after a read of
+	a non-cppref line. Performance will be much
+	better if the buffer is allowed to fill up before
+	it is flushed.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Split parser functionality out of db/dbutils.c
+	and move it into parsers/common/parser.c.
+	With this change, a parser need only be linked
+	to libcommon.a. Parsers will no longer need
+	to link to libdbutils.a and libdb.a, with the
+	exception of the evil C/C++ parser which does
+	things its own way.
+
+	* db/Makefile.am: Remove longstr.c in
+	libdbutils_a_SOURCES.
+	* db/Makefile.in: Regen.
+	* db/dbutils.c (pipe_handle, Paf_dbimp_running,
+	report_local_vars, cross_ref_fp, comment_database,
+	acc_strings, SN_symbol_types, Paf_tempnam,
+	create_table, put_file, put_comment, put_symbol,
+	put_cross_ref, db_remove_file_def, db_insert_entry,
+	inherit_members, load_class_members,
+	search_for_symbol, Paf_Pipe_Create, Paf_Pipe_Flush,
+	Paf_Pipe_Close, Paf_Pipe_Write, put_status_parsing_file):
+	Move all parser related functionality into
+	misc/libutils/longstr.c. Move the SN_symbol_types
+	into strs.c and turn it into an access function
+	called SN_GetSymbolType since it is needed in
+	both the db and parser layers. Remove the
+	Paf_dbimp_running logic since it is never used.
+	* db/longstr.c: Moved to misc/libutils.
+	* db/longstr.h: Moved to misc/libutils.
+	* hyper/Makefile.am: Reorder the libutils.a
+	link since it must appear after libdbutils.a.
+	* hyper/Makefile.in: Regen.
+	* hyper/sn.h: Define new PAF_SYMBOL_TYPE_MAX
+	value used when iterating over members with
+	the SN_GetSymbolType functions. Move declarations
+	for put_symbol, put_cross_ref, put_file, put_comment,
+	put_status_parsing_file, Paf_Pipe_Create,
+	Paf_Pipe_Close, and Paf_tempnam into parser.h.
+	Remove unused Paf_Macro decl and add a decl
+	for SN_GetSymbolType.
+	* misc/libutils/Makefile.am: Add longstr.h and
+	longstr.c to libutils_a_SOURCES.
+	* misc/libutils/Makefile.in: Regen.
+	* misc/libutils/longstr.c:
+	* misc/libutils/longstr.h: Moved longstr functions
+	from db subdir since these functions are used in
+	both the database and parser layers.
+	* misc/libutils/strs.c (SN_GetSymbolType):
+	Move SN_symbol_types here and create a access
+	method called SN_GetSymbolType for it.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Don't
+	link with libdbutils.a and libdb.a, libcommon.a
+	is all that is needed now.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/cobol/Makefile.am: Add parsers/common
+	to the include dirs so we can find parser.h.
+	Link with libcommon.a and not with libdbutils.a
+	and libdb.a.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/cobol/skeleton.c: Include parser.h.
+	* parsers/common/Makefile.am: Add misc/libutils
+	and hyper the the include search dirs. Add
+	parser.h and parser.c to libcommon_a_SOURCES.
+	Add $(WINFLAGS) to INCLUDES to match db/Makefile.am
+	so that things compile with VC++.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/common/parser.c (acc_strings, pipe_handle,
+	comment_database, cross_ref_fp, report_local_vars,
+	Paf_Pipe_Create, Paf_Pipe_Close, Paf_Pipe_Write,
+	Paf_Pipe_Flush, put_status_parsing_file, put_file,
+	put_symbol, put_comment, put_cross_ref, Paf_tempnam):
+	Move parser support functions from dbutils.c over
+	to this file. Remove unused Paf_dbimp_running logic
+	from put_cross_ref so that there are no dependencies
+	on the database layer.
+	* parsers/common/parser.h: Declare Paf_Pipe_Create,
+	Paf_Pipe_Close, put_status_parsing_file, put_file,
+	put_symbol, put_comment, put_cross_ref, and Paf_tempnam.
+	* parsers/cpp/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/skeleton.c: Include parser.h.
+	* parsers/cpp/cpplib/Makefile.am: Add misc/libutils
+	to the include search dir so that longstr.h can
+	be found.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/fortran/ftnchek.c: Include parser.h.
+	* parsers/java/Makefile.am: Add parsers/common to
+	the include search dirs and link with libcommon.a.
+	Don't link to libdbutils.a and libdb.a.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/java/skeleton.c: Include parser.h.
+	* parsers/m4/Makefile.am: Link libcommon.a before
+	libutils.a.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.am: Don't link with
+	libdbutils.a or libdb.a.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.am: Don't link with
+	libdbutils.a or libdb.a.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.am: Add parsers/common
+	to include search dir. Link to libcommon.a
+	and not libdbutils.a or libdb.a.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/tcl/skeleton.c: Include parser.h.
+	* parsers/toolbox/Makefile.am: Add parsers/common
+	to the include search dirs.
+	* parsers/toolbox/Makefile.in: Regen.
+	* parsers/toolbox/snptools.c: Include parser.h
+
+2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Tear the C/C++ xref generation code out of
+	dbimp. This change will make it significantly
+	easier to debug the xref parser and dbimp
+	executables since they will be two separate
+	executables.
+
+	* db/Makefile.am: Don't link to libcpp2.a
+	when compiling dbimp since the xref
+	functionality has been moved into cbrowser2.
+	* db/Makefile.in: Regen.
+	* db/dbimp.c (encoding, filename_g, yylineno,
+	yycharno, report_local_vars, yyfd, Paf_dbimp_running,
+	my_panic, main):
+	Remove use of the encoding, filename_g, yylineno,
+	yycharno, and yyfd global vars from libcpp2.a.
+	Don't set Paf_dbimp_running, it is not needed since
+	the C/C++ parser is not linked into dbimp anymore.
+	Don't accept the -l or -m command line arguments,
+	these are now handled by cbrowser2. Panic if a
+	PAF_CROSS_REF_CPP input is found instead of calling
+	the libcpp2.a method Paf_insert_cross_ref_qry.
+	* db/dbutils.c (db_remove_file_def): Print
+	"Status: Deleting: ..." instead of "Deleting ..."
+	so that status messages can be passed through
+	dbimp and can be read by the IDE.
+	* gui/misc.tcl (wait_xref_end, sn_load_xref,
+	load_xref_pipe, event_LoadPipeInput):
+	Check for "Status: Scanning:" or "Status: Deleting:"
+	messages from the xref + dbimp pipe, ignore these
+	same messages if they arrive on the first pass pipe.
+	Run the cbrowser2 command in a pipe and have it
+	output to the dbimp executable. Pass the
+	-l (local vars) and -m (macro files) options to
+	the cbrowser2 executable instead of dbimp.
+	* gui/xrefpane.tcl (xref_termometer_disp):
+	Pass a file name and a boolean flag to
+	xref_termometer_disp instead of doing further
+	pipe output parsing in this function.
+	* parsers/cpp/Makefile.am: Compile the new
+	cbrowser2 executable.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cbrowser2.c: Add code for
+	cbrowser2 executable, this program does the
+	xref generation for C/C++ files that used
+	to be done inside dbimp.
+	* parsers/cpp/cpplib/cp_crossref.c
+	(Paf_insert_cross_ref_qry):
+	Output "Status: Scanning: ..." instead of
+	"Scanning ..." for each file that is
+	processed by the xref stage 2 in cbrowser2.
+
+2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_load_xref): Set the encoding
+	of the dbimp pipe to utf-8 instead of the
+	platform encoding. This fixes reading of file
+	names outside the ascii range in status messages
+	from the cross ref process.
+
+2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (put_file, put_symbol):
+	Panic if put_file is called without an open
+	output pipe. Don't call put_file_db inside
+	put_file since put_file is only invoked from
+	inside the parsers and the parsers should
+	not write directly into the database.
+	Add a panic to put_symbol to ensure that it
+	is never called without first opening the
+	pipe.
+
+2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Rework parsers to remove code that directly writes
+	into the database when the -p option is not given.
+	Remove -p option and make writing to stdout the
+	default. Also remove the -c, -H, and -P options
+	to each of the parsers.
+
+	* db/dbutils.c (db_cachesize, db_cross_cachesize,
+	Paf_db_init_tables, Paf_Pipe_Create, Paf_Pipe_Close):
+	Explicitly initialize the db_cachesize and
+	db_cross_cachesize members to 0. Avoid initializing
+	to 0 in Paf_db_init_tables since these vars are
+	already initialized to a default value. This change
+	just makes it more clear that Paf_db_init_tables
+	does not actually need to be called, it should not
+	change any runtime functionality.
+	Rewrite Paf_Pipe_Create to support defualt pipe
+	output for parsers. The parsers no longer take
+	a -p option, so output always goes to stdout.
+	Don't call Paf_db_close_tables from inside
+	Paf_Pipe_Close, this is no longer needed since
+	the parsers don't ever call Paf_db_init_tables.
+	* gui/misc.tcl (sn_load_part_files): Don't pass
+	-c, -H, -P, or -p command line options to the
+	parsers.
+	* hyper/sn.h: Redefine args to Paf_Pipe_Create.
+	* parsers/cobol/skeleton.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Ignore the -n option. Don't call Paf_db_init_tables,
+	instead always call Paf_Pipe_Create.
+	* parsers/cpp/skeleton.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Don't call Paf_db_init_tables, instead
+	always call Paf_Pipe_Create. Keep -n option
+	since the cpp parser uses it to create an
+	include database.
+	* parsers/fortran/ftnchek.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Ignore the -n option. Don't call Paf_db_init_tables,
+	instead always call Paf_Pipe_Create.
+	* parsers/java/skeleton.c (main): Ditto.
+	* parsers/tcl/skeleton.c (main): Ditto.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options, sn_init): Ditto.
+	* parsers/toolbox/snptools.h: Remove unused sn_options
+	enum values.
+
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (Paf_Pipe_Create, Paf_Pipe_Close):
+	Remove the custom pipe code for win32
+	and unix from the Paf_Pipe_Create method.
+	Instead, send pipe output to stdout when
+	the -p stdout is passed. Make the Paf_Pipe_Create
+	method void since it does not return any
+	useful info. Remove the pipe wait code in
+	Paf_Pipe_Close since we just write to stdout.
+	* gui/misc.tcl (sn_load_part_files):
+	Pass the proper options to the parser and
+	dbimp executable so that these programs
+	can be run in a pipe managed by Tcl.
+	* hyper/sn.h: Change return type of
+	Paf_Pipe_Create decl to void.
+	* parsers/cpp/skeleton.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/fortran/ftnchek.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/tcl/skeleton.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/toolbox/snptools.c (sn_init): Ignore
+ 	return value of Paf_Pipe_Create.
+
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_load_part_files): Set the
+	pipe used to communicate with the parser
+	and dbimp so that it uses the utf-8 encoding.
+	The recent change that piped status messages
+	through dbimp broke the display of non-ascii
+	file names, that problem is fixed by this change.
+	This change could result in some garbled file
+	names in error messages from the parsers,
+	since they could still write file names
+	in the local encoding to stderr.
+
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/sninit.c (sn_log): Convert log messages
+	to the local system encoding before printing
+	them to stderr or a log file. Also, remove some
+	DOS style CRLF line endings.
+
+2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbimp.c (main): Pass a line that starts
+	with "Status:" on to stdout. This is used by
+	a parser that wants to pass a status message
+	to SN through the pipe to dbimp.
+	* db/dbutils.c (put_status_parsing_file):
+	Use the Paf_Pipe_Write method to write to the
+	dbimp pipe instead of writing a status
+	message to stdout. Also use a new status
+	format so that dbimp knows what input should
+	be passed on to SN.
+	* gui/misc.tcl (event_LoadPipeInput):
+	Rename res local var to eof. Check for
+	empty input line earlier on in method.
+	Check for a status message that starts
+	with "Status: Parsing:" since this is now
+	used by the parsers and dbimp.
+
+2003-04-19  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbimp.c (main): Print error message to
+	stderr instead of stdout. Slight change to
+	a couple of error messages.
+	* db/dbutils.c (db_remove_file_def,
+	db_remove_file_xfer_using_keys,
+	Paf_Pipe_Create):
+	Use fprintf instead of printf when printing
+	status message to stdout. Print error msg
+	to stderr instead of stdout in a couple
+	of functions.
+	* parsers/cobol/skeleton.c (log_symbol_filename,
+	main):
+	Print error messages to stderr instead of stdout.
+	This is critical for parsers since we are going
+	to be redirecting the stdout of parsers into
+	dbimp later on.
+	* parsers/cpp/skeleton.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/java/skeleton.c (log_symbol_filename,
+	main): Ditto.
+	* parsers/tcl/skeleton.c (log_symbol_filename,
+	main): Ditto.
+
+2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cobol/skeleton.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	* parsers/toolbox/snptools.c (sn_parse_all):
+	Skip empty lines and lines that start
+	with the # character when processing a
+	file name passed in via the -y option.
+	This makes the other parsers match
+	the cpp parser implementation.
+
+2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (put_status_parsing_file):
+	Add a util method that prints a file status message.
+	Currently this just prints the file name to
+	stdout, this message is later read by the ide
+	when updating the parser status bar.
+	* hyper/sn.h: Declare put_status_parsing_file.
+	* parsers/cobol/skeleton.c (log_symbol_filename):
+	* parsers/cpp/skeleton.c (log_symbol_filename):
+	* parsers/fortran/ftnchek.c (log_symbol_filename):
+	* parsers/java/skeleton.c (log_symbol_filename):
+	* parsers/tcl/skeleton.c (log_symbol_filename):
+	* parsers/toolbox/snptools.c (sn_register_filename):
+	Invoke put_status_parsing_file function to print
+	a file parsing status message. This only changes
+	the status message printed by parsers that use the
+	toolbox, the file names are no longer printed
+	with three periods after them.
+
+2003-04-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* mkdist.sh: Grab the version number out of the
+	configure.in file and check it against the version
+	in the configure file in an attempt to avoid
+	releasing a dist with the wrong version info.
+	Update the list of copied files to account for
+	changes from move to sourceforge CVS.
+
+2003-04-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/projmng.tcl (sn_new_project_cb): Don't delete
+	a project file that was created in batch mode. The
+	sn_create_new_project proc returns zero on a
+	normal exit when in batch mode, so we were deleting
+	the project file just after it had been created.
+	[Bug 656067]
+
+2003-04-02  Steven Johnson  <sjohnson@neurizon.net>
+
+	* gui/tree.tcl (sort_refresh): Added this new method,
+	to allow the sort order of a list to be reset,
+	after changes may have been made to the list contents.
+	* gui/retrieverpane.tcl (start_search): Called new
+	sort_refresh method after symbol tree is regenerated
+	(following a file save). This restores the sort
+	order that was selected prior to the save.
+	[Bug 577348]
+
+2003-03-31  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* Makefile.in:
+	* configure: Regen.
+	* configure.in: Subst TK_DBGX.
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in:
+	* hyper/Makefile.am: Define TK_DBGX so that
+	we can load a tk dll built with --enable-symbols
+	under Windows.
+	* hyper/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen.
+
+
+2003-03-30  Steven Johnson  <sjohnson@neurizon.net>
+
+	*  gui/editorpane.tcl (Update_Layout): Set the cursor
+	color to be the same as the default text foregorund
+	color, so that the cursor is visible when the background
+	color is changed to black (the default color).
+
+2003-03-30  Roberto Yazon  <ryazonjr@cox.net>
+
+	* gui/editorpane.tcl (InsertTab, Newline):
+	Insert only the right amount of spaces to move cursor
+	to next tab column. Read the edit-tabstop property
+	to determine the equivalent number of spaces for a tab.
+
+2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/sninit.tcl (sn_tcl_tk_init): Fix prepend
+	of SN bin dir to the PATH env var on startup.
+	The previous code used : as the PATH separator
+	under Windows which was causing problems with exec.
+	The problem manifested itself as a mysterious exec
+	error when attempting to build with Cygwin make.
+	[Bug 658173]
+
+2003-03-11  Steven Johnson  <sjohnson@neurizon.net>
+
+	* gui/projedit.tcl (add_files_cb): Use a foreach
+	loop instead of an array set call since the
+	join optimization used in the method broke
+	when processing files where the name included
+	a space.
+
+2003-03-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/editorpane.tcl (InsertTab, Newline):
+	Use string repeat instead of a for loop since
+	it is more clear and executes more quickly.
+	Re-implement the Newline proc, it was doing
+	extra work when it was not needed and creating
+	extra variables for no reason. Incorporate
+	the translate tabs to spaces patch submitted
+	by sjohnson@neurizon.net. [Bug 685173]
+
+2003-02-22  Ian Roxborough  <irox@ix.netcom.com>
+
+	* gui/editorpane.tcl (Editor&::SearchForNext
+	Editor&::Replace_String Editor&::insert_file_cb
+	Editor&::SetFondPos Editor&::Indent):
+	* gui/text.tcl (tkTextSelectTo tkTextSelectAll
+	tkTextKeySelect tkTextMarkPara):
+	* gui/multiview.tcl (MultiWindow&::edit_selectall):
+	When setting the selection, raise the selection to
+	highest level, otherwise the selected text will not
+	have the selection foreground color and maybe be
+	unreadable (i.e. light yellow text with a slightly
+	different light yellow background).
+
+2003-02-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/classtreepane.tcl (constructor):
+	* gui/editorpane.tcl (constructor):
+	* gui/includepane.tcl (constructor):
+	* gui/xrefpane.tcl (constructor): Grid scrollbars
+	and main window so that x scroll does not extend
+	below the y scroll. This makes the Edit, Hierarchy,
+	Xref, and Include tabs look correct.
+
+2003-02-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/fortran/fortran.c: Regen.
+	* parsers/fortran/fortran.y: Add patch from
+	bug report 658664 to fix error generated by
+	bison 1.75.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* patches/README.TXT:
+	* patches/tk_select.patch: Remove last patch
+	and README.TXT file.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* patches/libgui_print.patch: Remove libgui patch
+	since it was just added to the libgui CVS.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* patches/itk_component.patch: Remove itk patch
+	since it was just added to the itk CVS.
+
+2003-02-17  Ian Roxborough  <irox@ix.netcom.com>
+
+	* gui/text.tcl (tkTextUndoPop): When they are no
+	more undo operations on the undo stack, tell the
+	editor to reset the modified status to unmodified.
+
+2003-02-17  Ian Roxborough  <irox@ix.netcom.com>
+
+	* gui/projmng.tcl (sn_select_project): On a
+	Double click, don't invoke the open project
+	proc until a ButtonRelease event is received.
+	
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen to account for --enable-symbols
+	fixes.
+	* parsers/assembly/ppc601-eabi/configure: Ditto.
+
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* INSTALL.TXT: Document building with Msys+Mingw.
+	Update Cygwin with VC++ build process and include
+	note about broken grep and how to work around it.
+	Remove instructions that set CC and CFLAGS before
+	running configure since that is no longer needed.
+	* configure: Regen.
+	* configure.in: Set CC and CFLAGS to support
+	building with VC++.
+	* db/Makefile.am: Don't pass CFLAGS to linker
+	since that makes no sense and results in
+	warnings from the linker. Don't set CFLAGS
+	in a conditional block, the CFLAGS settings
+	need to come from configure.
+	* db/Makefile.in: Regen.
+	* hyper/Makefile.am: Don't pass CFLAGS to the
+	linker.
+	* hyper/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Set
+	CC and CFLAGS to support building with VC++. Add
+	AC_CONFIG_AUX_DIR and AC_CANONICAL_HOST.
+
+2003-02-13  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/multiview.tcl (AddStatusbar): Anchor the
+	text used to display the name of the file
+	currently being edited to the east. This
+	will still display the text file name when
+	the window is too small to display the entire
+	file path.
+
+2003-02-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Regenerate all Makefile.in files because I
+	forgot to add clsbr_private.xpm. It needed
+	it anyway.
+
+	* Makefile.in:
+	* bitmaps/Makefile.am: Add clsbr_private.xpm.
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in:
+	* hyper/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* etc/sn_toolchains/gnu-pro-native: Change
+	toolchain debugger name to insight instead of gdb.
+	* gui/gdbtk.tcl (sn_debugger, sn_socket_accept):
+	Debug print gdb command before exec'ing it.
+	Declare sn_options as global to avoid var
+	error when opening in an editor as the result
+	of an Insight command.
+	* gui/sninit.tcl (sn_init_globals): Default
+	debugger name now set to insight.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen.
+	* configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/makepane.tcl (sn_make): Fix build dialog
+	so that it does not flash on screen when first
+	mapped. The toplevel must be withdrawn and
+	then mapped after idle calculations are done.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/dialog.tcl (tk_dialog_with_widgets): Fix
+	fast create dialog so that it is centered properly.
+	The call to update idletasks needs to happen
+	before the req width and height are calculated.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/makepane.tcl (ExecMake): Pass only the Makefile
+	name to the -f argument instead of passing a fully
+	qualified path name. This should not change any
+	functionality since the ExecMake command should
+	cd to the proper directory first. Add some debug
+	output and comments.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* bitmaps/clsbr_private.xpm: Add small empty
+	image to represent a private class member.
+	* gui/utilities.tcl: Define cls_br_private_image
+	with date from clsbr_private.xpm.
+	* hyper/services.c (class_browser_insert): Use
+	cls_br_private_image as the image when a member
+	with PAF_PRIVATE access is found. Check for
+	PAF_PRIVATE explicitly instead of just assuming
+	that a non-public and non-protected member is
+	private.
+
+2003-01-31  Earnie Boyd  <earnie@users.sf.net>
+
+	* db/dbutils.c (Paf_Pipe_Flush): Use FlushFileBuffers
+	for mingw32 host.
+
+2003-01-29  Mo DeJong  <mdejong@uncounted.org>
+
+	* INSTALL.TXT: Remove install file comment about
+	needing bison and flex to build.
+	* Makefile.am: Add flexgen and bisongen
+	targets that can be used to regenerate
+	.c file in the build dir. This should be
+	run on a developers machine that has flex
+	and bison installed.
+	* Makefile.in: Regen.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Regen.
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add flexgen target and remove
+	old .l.c conversions since these required that
+	flex be installed at build time.
+	* hyper/Makefile.in: Regen.
+	* hyper/c_high.c: Add flex generated file.
+	* hyper/ch_high.c: Add flex generated file.
+	* hyper/j_high.c: Add flex generated file.
+	* hyper/py_high.c: Add flex generated file.
+	* hyper/tcl_high.c: Add flex generated file.
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Replace
+	.l file with .c file in dep to support building
+	on systems that don't have flex. Add flexgen target.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.c: Add flex
+	generated file.
+	* parsers/assembly/ppc601-eabi/aclocal.m4: Regen.
+	* parsers/assembly/ppc601-eabi/config.h.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Don't
+	invoke AM_PROG_LEX and AC_PROG_YACC, just hard code
+	flex and bison.
+	* parsers/chill/Makefile.am: Fixup includes and deps
+	and add bisongen and flexgen targets. This directory
+	is not currently part of the build.
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.am: Use .c file in deps
+	and add bisongen target.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/fortran/fortran.c: Add bison generated file.
+	* parsers/fortran/fortran.h: Add bison generated file.
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.am: Use .c file in deps
+	and add flexgen target.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/m4/m4browser.c: Add flex generated file.
+	* parsers/python/Makefile.am: Remove LEXLIB since
+	it is not needed to build. Replace .l file with .c
+	file in deps. Add flexgen target.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/python/pybrowser.c: Add flex generated file.
+	* parsers/sendmail/Makefile.am: Remove LEXLIB since
+	it is not needed to build. Replace .l file with .c
+	file in deps. Add flexgen target.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/sendmail/sbrowser.c: Add flex generated file.
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen.
+
+2003-01-11  Ian Roxborough  <irox@sbcglobal.net>
+
+	* gui/projedit.tcl (print_file): Where possible
+	use the directory of the first source file in
+	a project as the default directory for the
+	"Add Files" file selection dialog.
+
+2003-01-11  Mo DeJong  <mdejong@uncounted.org>
+
+	* etc/sn_cmp_g.pat: Add pattern to match a
+	Win32 filename like d:/filename.c:856.
+	* gui/grep.tcl (sn_goto_comp_error_or_grep):
+	Remove hack to match a win32 path name
+	like d:/filename.c:856, use regexp instead.
+	* tests/gui/grep.test: Add path name test
+	cases for sn_goto_comp_error_or_grep.
+
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
+        * patches/libgui_print.patch: Add patch
+	for libgui that fixes Win32 printing crash.
+
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/Makefile.am: Add winprint.tcl.
+	* gui/Makefile.in: Regen.
+	* gui/editorpane.tcl (print_file): Don't
+	attempt to delete a printer dialog object
+	if it does not exist. This fixes a problem
+	printing the grep pane under Windows.
+	* gui/tclIndex: Regen.
+	* gui/winprint.tcl: Resurrect windows
+	printing file that was erroneously removed
+	on 2000-05-26. These methods are used
+	by the utilities.tcl file.
+
+2002-11-25  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/retriever.tcl (destructor, window_deleted):
+	Fixup window deletion by setting the window
+	var to "" when it is deleted by the user.
+
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
+	* configure.in:
+	* mkdist.sh: Update version number
+	to 5.2.0.
+
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/multiview.tcl (toolbar_post_scope_menu):
+	Fix state of Related, All, All, and None buttons
+	inside the symbol combo to match the comments
+	and the documentation.
+	* gui/xrefpane.tcl (fill): Use variables
+	prefixed by $itk_option(-symbols_filter) not
+	$itk_option(-symbols) when setting values
+	for the combobox. This fixes symbol filtering
+	while the xref tab is active.
+
+2002-11-20  Mo DeJong  <mdejong@uncounted.org>
+
+	* INSTALL.TXT: Inform users that GNU tools
+	are required to build Source-Navigator.
+	* configure: Regen.
+	* configure.in: Require GNU flex and
+	bison when building.
+	* hyper/Makefile.am: Remove generated
+	.c files as a results of 'make clean'.
+	* hyper/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Add
+	missing backslash.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/m4/Makefile.am: Add missing backslash.
+	* parsers/m4/Makefile.in: Regen.
+
+2002-11-16  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (m3_post_menu_update):
+	Invert undo menu state so that it is normal
+	when the file has changed.
+	* gui/multiview.tcl (edit_post): Make the
+	state of the undo and redo menu items
+	depend on the -file_changed option from
+	the editor to match the implementation
+	in the editor class.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
+	* db/dbimp.c (check_running): Add declaration
+	of kill function when compiling under Win32.
+	Fix check_running comment since this method
+	does not check for the process using a socket.
+	Reverse order of arguments to kill.
+	* db/dbutils.c (kill): Reverse order of
+	arguments to Win32 version of kill so they
+	match the Unix implementation.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
+	* db/dbdump.c:
+	* db/dbimp.c:
+	* db/dbutils.c:
+	* db/dbutils.h: 
+	* hyper/dbsym.c:
+	* hyper/sn.h:
+	* hyper/sninit.c:
+	* hyper/tkTreeTable.c:
+	* hyper/win/winMain.c:
+	* parsers/cpp/skeleton.c:
+	* parsers/cpp/cpplib/macread.c:
+	* snavigator/win/winCon.c:
+	Fix compiler warnings by adding casts
+	and consts where needed. Also init some
+	variables that could have been used
+	without an init. No functional changes.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
+	* Makefile.in: Regen.
+	* configure: Regen.
+	* configure.in: Invoke AC_CANONICAL_HOST
+	and AC_CHECK_TOOL so that cross compiling
+	works correctly. Invoke AC_CONFIG_AUX_DIR
+	so configure knows where to look for
+	config.sub and config.guess.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.in: Regen.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/libutils/Makefile.in: Regen.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/toolbox/Makefile.in: Regen.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-11-14  Mo DeJong  <mdejong@uncounted.org>
+
+	* misc/compat.h: Include winsock.h when compiling
+	with mingw to avoid u_char related errors.
+
+2002-11-14  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (toolbar_grep): Invoke search_grep
+	method from the multiwin parent instead of broken
+	sn_grep procedure. [Bug 610449]
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* db/dbutils.c: Use Win32 version of kill()
+	when compiling with VC++ or Mingw.
+	* misc/libutils/fileutils.c: Invert test
+	so that Cygwin specific code is only
+	used when __CYGWIN32__ is defined instead
+	of testing for #ifndef __MSVC__. This
+	fixes the build under Mingw.
+	* parsers/fortran/ftnchek.c: Include
+	sys/param.h when HAVE_SYS_PARAM_H is
+	defined instead of depending on __MSVC__.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* Makefile.in: Regen.
+	* config.h.in: Regen.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.in: Regen.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add .o target that
+	does not use cygpath to support building
+	with mingw.
+	* hyper/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/libutils/Makefile.in: Regen.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/toolbox/Makefile.in: Regen.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.am: Fix incorrectly quoted
+	-D argument to the compiler.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
+	* configure.in: Include sys/times.h in
+	the headers we check for.
+	* parsers/libjcreuse/rSystem.c: Include
+	sys/times.h based on HAVE_SYS_TIMES_H
+	instead of _MSC_VER. This fixes
+	compilation problems under mingw.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
+	* configure.in: Check for cygpath and
+	don't attempt path conversions if it
+	is not found. This fix is needed to
+	be able to cross compile for windows.
+
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/makepane.tcl (ExecMake): Pipe stdout
+	and stderr from make to cat and read the
+	results from the pipe. The old code used
+	2>@stdout in an attempt to do this, but
+	that fails under Windows with Tcl 8.3.
+
+2002-11-10  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/emacs.tcl (sn_ensure_emacs_running):
+	Remove 2>@stdout argument to exec since
+	this is failing under Windows with Tcl 8.3.
+	Log subprocess errors if they occur.
+
+2002-09-13  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tk_wmwithdraw.patch: Removed
+	patch file since it has been incorporated
+	into the CVS.
+
+2002-09-13  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (make_editor_bindings):
+	Move Editor bindings after instance bindings
+	to avoid a problem with highlighting when
+	indenting text when events are processed
+	in the wrong order.
+	[Bug 597660]
+
+2002-09-12  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
+
+	* Makefile.in:
+	* bitmaps/Makefile.am:
+	* bitmaps/Makefile.in:
+	* db/Makefile.am:
+	* db/Makefile.in:
+	* demo/Makefile.am:
+	* demo/Makefile.in:
+	* doc/html/Makefile.am:
+	* doc/html/Makefile.in:
+	* packages/Makefile.am:
+	* packages/Makefile.in:
+	* sdk/Makefile.am:
+	* sdk/Makefile.in:
+	* sdk/api/c/Makefile.am:
+	* sdk/api/c/Makefile.in:
+	* snavigator/unix/Makefile.am:
+	* snavigator/unix/Makefile.in:
+	Prefix install locations with $(DESTDIR) to
+	better support installing into a
+	staging location.
+
+2002-09-12  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classtreepane.tcl:
+	* gui/diff.tcl:
+	* gui/editorpane.tcl:
+	* gui/elix.tcl:
+	* gui/gdbtk.tcl:
+	* gui/multiview.tcl:
+	* gui/preferences.tcl:
+	* gui/printdialog.tcl:
+	* gui/projedit.tcl:
+	* gui/rcs.tcl:
+	* gui/retrieverpane.tcl:
+	* gui/selector.tcl:
+	* gui/tools.tcl:
+	* gui/tree.tcl:
+	* gui/xrefpane.tcl:
+	Replace pointless use of ::set with set.
+
+2002-09-12  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh:
+	Rework toplevel directory test so it
+	checks for tcl and tk directories.
+	Remove any .rej files from dest dir
+	after patching.
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-511-2002-09-11 tag.
+	
+2002-09-05  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/text.tcl (tkTextInsertChar): Sync so that
+	highlighted region is deleted in other editors
+	when a character is typed.
+
+2002-09-04  Chris Drexler  <ckolumbus@users.sourceforge.net>
+
+	* demo/c++_demo/contrib/perl/sample_client:
+	Change hard coded path name of perl so that
+	rpm will not complain at install time.
+
+2002-09-04  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/text.tcl (tkTextInsert): Sync other
+	editors when pasting into a text widget.
+	[Bug 594678]
+
+2002-08-05  Chris Drexler  <ckolumbus@users.sourceforge.net>
+
+	* configure: Regen.
+	* configure.in: Avoid evaluating ${prefix} or
+	${exec_prefix} in variables passed into the
+	Makefiles. This will better support setting
+	the prefix or exec_prefix and install time.
+
+2002-07-30  Mo DeJong  <supermo@bayarea.net>
+
+	* tcl_configure.patch: Remove patch since
+ 	it has been committed to the CVS.
+
+2002-07-30  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (filter): Sort symbols before
+	inserting them into the editor combo box. This
+	reverses an accidental gui change introduced
+	in 5.0 as part of the combo rewrite.
+	[Bug 579570]
+
+2002-07-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/mkfilegen.tcl (WriteRuleTarget): Escape
+	variable name that is meant to be evaluated
+	when make is run.
+	[Bug 585568]
+
+2002-07-16  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/rcs.tcl (check_in_out): Don't check
+	return value of sn_rcs.* methods since they
+	do not return booleans and we don't do anything
+	with the results of such a check.
+	* gui/version.tcl (sn_rcs_lockunlockdel): Use
+	treebind method of the Selector& class, the
+	bind method was removed long ago.
+	[Bug 570492]
+
+2002-07-14  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (proceed_gotoline): Save
+	and reset the -linenumber_var value before hiding
+	the goto line dialog since this invokes Focus_In
+	and changes the value. This was causing the Win32
+	version to fail.
+	[Bug 579168]
+
+2002-07-09  David Philippi  <lists@torangan.de>
+
+	* hyper/c_high.l: Added all missing keywords
+	from ISO C++ (according to a list from
+	"The Complete Reference C++" by Herbert Schildt).
+	Removed the obsolete keyword "overload" and
+	the non-existing keyword "interface".
+
+2002-07-02  Mo DeJong  <supermo@bayarea.net>
+
+	Added SN-510-2002-07-02 and SN-51-branch tags.
+
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Update version to 5.1.0.
+
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
+	* hyper/highlight.c (tk_text_buffer): Update hack used
+	to extract text from a Tk text widget before passing
+	it to the lexer. This function has the name of the
+	tk dll hard coded inside it, and it needed to be
+	updated. The method also lacked error checking for
+	the case where the dll could not be found.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tk_wmwithdraw.patch: Add patch that fixes
+	win32 initial mapping problems. This fixes the forward
+	button in the tools window, it was not painting when
+	the window was first mapped. This also fixes problems
+	with dialogs that get mapped at one size but then
+	get moved or resized at idle time.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (search_grep): Invoke StartGrep not
+	ExecGrep on the grep widget.
+
+2002-06-24  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (constructor): Base the initial size
+	of the tools window on the user pref percent.
+	* gui/symbolbrowser.tcl (constructor): Cleanup height
+	calculation so that it uses floating point arithmetic.
+
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (start, finish, grepReadableEvent):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Add a newline after the truncated or canceled message
+	so the test cases get a uniform output. If the search
+	has been canceled, look back at the last line to see
+	if it ends in a \n and add one if missing. This avoids
+	a problem where the canceled message shows up on
+	the same line as the last line of data.
+	Walk backward over the characters in the buffer to
+	find the last line of text when seeing if the max
+	number of matches has been reached.
+	* gui/greppane.tcl (finish_grep, incr_selected_line):
+	Don't change the -state of the text widget in finish_grep
+	since the drivers finish method now does it.
+	When moving the selected line up or down, check for the
+	last line by walking backwards over the buffer until
+	we find a non newline character. This fixes a problem
+	where you would have to hit the next button twice before
+	the selection would wrap around.
+	* gui/tclgrepdriver.tcl (start, finish, doneReadingData):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Check to see if adding next line would put us over the
+	max matches limit and truncate if it would.
+	* tests/gui/execgrepdriver.test: Add truncation tests.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (destructor, close, start, isAvailable):
+	Invoke isAvailable if it has not been called so that the
+	grep_exe variable will be set. Set the grep_fd to "" when
+	closing. Don't try to close a grep_fd unless it is not "".
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/execgrepdriver.tcl (isValidPattern, start, isAvailable):
+	Add isValidPattern method, it lets the user ask the driver if
+	a given pattern can be used before actually invoking the driver.
+	Pass -- to the grep command after the -n and -i flags so user
+	can type in a pattern that starts with the - character.
+	* gui/greppane.tcl (GrepDriver, StartGrep): Add isValidPattern
+	method declaration to the driver interface. Use new isValidPattern
+	method to provide the user with a error dialog box in the
+	case of an invalid pattern. Remove check for - character at
+	the beginning of a pattern since this needs to be handled in
+	the driver.
+	* gui/tclgrepdriver.tcl (isValidPattern): Add isValidPattern
+	method, it lets the user ask the driver if a given pattern can
+	be used before actually invoking the driver.
+	* tests/gui/execgrepdriver.test: Test pattern that starts with -.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/misc.tcl (sn_title): Remove useless call to join
+	that was generating an error if the user entered
+	"HI {" as a grep pattern.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (processNextIndex, inputReadyCallback):
+	Unset currentFileBuffer after running the grep to deallocate
+	the buffer instead of setting it to the empty string before
+	running the next grep. Just set the buffer in the fileevent
+	callback instead of appending to an empty variable. This
+	can cut the amount in memory needed in half since it avoids
+	doubling the allocated size in the append command. Check to
+	see if all bytes have been read by checking the size of the
+	buffer instead of decrementing after a read.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (line_grep): Fix search for last
+	character in buffer as well as bad variable access introduced
+	by my last checkin.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (line_grep): Rework line_grep
+	method so that it works for buffers that do not end
+	with a newline. This lets us get rid of the need to
+	append a newline on the end of the buffer and
+	making an extra copy of a potentially large buffer.
+	* tests/gui/line_grep.test: Add more test cases for
+	buffers that do not end with a newline.
+
+2002-06-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (processNextIndex, line_grep):
+	Don't use Tcl IO subststem to filter crlf into lf,
+	instead handle crlf sequences directly in line_grep.
+	* tests/gui/line_grep.test:
+	* tests/gui/tclgrepdriver.test: Add test cases for crlf
+	EOL style.
+
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (print_file, print_dialog): Escape []
+	in user input to avoid an error where sn_print_file
+	tries to execute the window title as a command. Don't
+	regsub the input first since that does not protect
+	from bad user input.
+	* gui/printdialog.tcl (printit): Escape [] in user input
+	to avoid an error where sn_print_file tries to execute
+	the window title as a command.
+	* gui/tree.tcl (print_it): Ditto.
+
+2002-06-09  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (EditorBindings): Take puts call
+	out of Insert binding. Remove <Double-1><ButtonRelease-1>
+	binding. This binding did not function in version 5.0
+	and it was highlighting in an unexpected way under 5.1.
+
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/preferences.tcl (AddInclude): Reorder bindings
+	on "Include Directories" text widget so that hitting
+	Return in the text widget no longer dismisses the
+	project prefs dialog.
+
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Remove unused Email, Web,
+	BugReport, LimitScanMsg, LimMsg, ReportBugs,
+	EditionCannotOpenThisProject, SplashSupportText,
+	ButtonBugReport, and ButtonMail strings. Removed
+	mention of old support email from the string
+	NewerProjectCannotBeOpened.
+	* etc/german.txt: Ditto.
+	* etc/japanese.txt: Ditto.
+	* gui/bugreport.tcl (mail_send_bug_report,
+	web_send_bug_report, mail_bug_report, sn_drop_mail_line,
+	sn_send_mail): Remove all old email and web based
+	bug reporting code.
+	* gui/misc.tcl: Remove commented out use of the string
+	SplashSupportText.
+	* gui/preferences.tcl (AddOthers, handle_mailhost):
+	Disconnect the mailhost entry box from the
+	sn_options(def,mailhost) variable. The gui elements were
+	not removed to avoid doc impact of a gui change.
+	Remove unused method handle_mailhost.
+	* gui/sninit.tcl (sn_init_globals): Remove mailhost,
+	cygnus-home-http, and bug-mail-address sn_options
+	values. Remove any old cygnus references.
+	* gui/tmeter.tcl: Use copyright not cygnus_copyright.
+
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/multiview.tcl (AddMenu):
+	* gui/projedit.tcl (AddMenu): Pass $itk_component(hull)
+	instead of $this to AddWindowsMenu method to avoid
+	a problem in sn_hide_show_project where all the project
+	windows were withdrawn via Windows->Iconize Project.
+	Ditto for AddHelpMenu.
+
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/includepane.tcl (mark_item, see_item): Set -fill to red
+	for connecting lines when a "to" or "by" relationship is
+	added. Call mark_item when a canvas id is passed to see_item
+	and correctly deal with a canvas id passed to mark_item.
+
+2002-06-07  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
+
+	* etc/Makefile.am: Add german.txt to etc_DATA.
+	* etc/Makefile.in: Regen.
+	* etc/english.txt.in: Remove unused ToUpgrade
+	and fix minor typo.
+	* etc/german.txt: Sync keywords with english.txt.in.
+	Partially update the translations.
+	* etc/japanese.txt: Sync keywords with english.txt.in.
+
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
+	* etc/english.txt.in: Remove PafProjBusy and ProjAlreayOpened.
+	Add ProjAlreadyOpenedThisProcess, ProjAlreadyOpenedOtherSystem,
+	ProjAlreadyOpenedThisUser, and ProjAlreadyOpenedThisSystem.
+	* etc/german.txt: Ditto, with empty place holders.
+	* etc/japanese.txt: Ditto, with empty place holders.
+	* gui/misc.tcl (sn_is_project_busy, sn_open_project,
+	sn_read_project): Set a pid value so that callers can
+	display the locked process pid. Return a more descriptive
+	set of values so that callers can display more information
+	about why the db is locked.
+	* gui/projedit.tcl (can_create_project):
+	* gui/projmng.tcl (sn_delete_project): Display a more
+	descriptive set of errors after calling sn_is_project_busy.
+
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
+	* gui/misc.tcl (sn_is_project_busy,
+	sn_unix_check_process): Check to see if another
+	process that holds a db lock is still alive using
+	the /proc filesystem instead of kill -0. If we
+	don't have access to /proc then default to
+	kill -0 but only when the same user has the lock.
+	Add new method that looks at the /proc filesystem
+	for Linux, BSD, and Solaris style implementations.
+
+2002-06-04  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/itk_pathname.patch: Remove patch
+	since it has been integrated into the CVS
+	at sources.redhat.com.
+
+2002-06-01  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/tcl_configure.patch: Add patch for
+	tcl/win/configure so that mkdist.sh will
+	generate a dist file that compiles under Windows.
+
+2002-05-31  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Automatically apply patches
+	from src/snavigator/patches to clean CVS
+	checkout before making dist file.
+	* patches/README.TXT:
+	* patches/itk_component.patch:
+	* patches/itk_pathname.patch:
+	* patches/tcl_configure.patch:
+	* patches/tk_select.patch: Add patch
+	files that need to be applied to sources CVS.
+
+2002-05-31  John Lash  <jlash@speakeasy.net>
+
+	* gui/retrieverpane.tcl (handle_all_none): Fix broken
+	checkbutton variable setting in the filter dialog.
+	Deselect the files checkbutton when the None button
+	is pressed.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/projedit.tcl (add_files_cb): Rewrite the add_files_cb
+	method to avoid invoking [lsearch -nocase $files $file].
+	This lsearch option was a local hack that is not in Tcl 8.3.
+	To speed things up and support no case searching, we create
+	a map that is checked as we loop over added files. Pass
+	a list of file names to add_files_cb instead of wasting
+	time in a useless eval.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/dialog.tcl (tk_dialog_with_widgets): Don't set .
+	as the transient for the dialog. This keeps the dialog
+	from being mapped when . is withdrawn under Win32/Tk 8.3.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classtreepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/dialog.tcl: Remove the poorly named -parent
+	option for the Dialog class. A transient window
+	should set its master using Window::transient.
+	* gui/includepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/targetmgr.tcl (edit_target): Invoke the
+	Window::transient method instead of using -parent.
+	* gui/xrefpane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classpane.tcl:
+	* gui/classtreepane.tcl:
+	* gui/editorpane.tcl:
+	* gui/greppane.tcl:
+	* gui/includepane.tcl:
+	* gui/makepane.tcl:
+	* gui/projedit.tcl:
+	* gui/retrieverpane.tcl:
+	* gui/xrefpane.tcl: Rework use of $topw member
+	variable in pane windows. Use $itk_component(hull)
+	instead of namespace tail ${this}. Use the
+	-title and -iconname options from the Window class.
+	Don't set a default value for topw so we can be sure
+	it is set before use. Move itk_initialize in the
+	Editor& class after variable initilizations because
+	the -filename property invokes editfile. Use $topw
+	member instead of makeing another call to wm toplevel.
+
+2002-05-28  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Don't subst install/Makefile
+ 	since it no longer exists.
+	* mkdist.sh: Use 5.1a2 as tar ball name.
+	No need to make a zip file since we require
+	Cygwin to do the build.
+
+2002-05-19  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Add GrepCanceledString,
+	GrepTruncatedString, and GrepFileDoesNotExist.
+	* gui/Makefile.am: Include tclgrepdriver.tcl
+	and execgrepdriver.tcl files.
+	* gui/Makefile.in: Ditto.
+	* gui/execgrepdriver.tcl: Add exec based implementation
+	of GrepDriver interface from greppane.tcl. This rewrite
+	includes support for versions of grep other than GNU grep.
+	* gui/greppane.tcl: Move exec based implementation of
+	grep into execgrepdriver.tcl. Add new generic driver
+	interface so we can swap out grep implementations.
+	Default to exec grep if available and SN_TCLGREP is
+	not defined in the env array.
+	* gui/tclIndex: Regen.
+	* gui/tclgrepdriver.tcl: Add Tcl 8.3 regexp implementation
+	of grep.
+	* tests/gui/execgrepdriver.test: Test ExecGrepDriver.
+	* tests/gui/line_grep.test: Test line_grep.
+	* tests/gui/tclgrepdriver.test: Test TclGrepDriver.
+
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/greppane.tcl (constructor, ExecGrep, handle_proceed):
+	Use bindtags and a <Return> binding on the hull to implement
+	starting grep via the keyboard. Fix the filtercombo and max
+	lines entries so that they support this binding. Reenable the
+	widgets before leaving the ExecGrep method because of user
+	error. Set or remove the <Return> binding in the handle_proceed
+	method so that ExecGrep cannot be reentered by hitting the
+	Return key twice in a row.
+
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/greppane.tcl (ExecGrep, finish_grep): Disable the Serach
+	button along with other widgets as soon as the user clicks.
+	Snap the horizontal scrollbar to the left side after the
+	grep has completed.
+
+2002-05-16  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Add script to create source
+	distribution archives.
+
+2002-05-09  Mo DeJong  <supermo@bayarea.net>
+
+	* INSTALL.TXT: Minor wording change. Tell folks to
+	add -nologo flag to VC++ CFLAGS.
+	* MAINTAINERS: Syd has resigned as a maintainer,
+	remove him and update Ian's email address.
+	* Makefile.am: Remove install/ from SUBDIRS. Add
+	README.TXT INSTALL.TXT to list of file that get
+	included by the `make dist` target.
+	* Makefile.in: Regen.
+	* README.TXT: Update info and URLs to account for
+	change of project hosting location. Added readme
+	contents from the outdated install/README.TXT.
+	* install/Makefile.am: Remove.
+	* install/Makefile.in: Remove.
+	* install/README.JAPAN.TXT: Remove.
+	* install/README.TXT: Remove.
+
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Add ButtonDismiss and
+	ErrorOccured strings.	
+	* gui/bugreport.tcl (display_bug_report): Add a
+	new method to replace mail_send_bug_report. This
+	error handler simply displays bug information in
+	a text box instead of sending an email to the
+	cygnus support email address.
+	* gui/sninit.tcl: Call display_bug_report instead
+	of mail_send_bug_report and avoid the initial
+	bug report dialog.
+	* gui/tclIndex: Regen to account for addition of
+	the display_bug_report procedure.
+
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl (cb_add_lib): Change tk_getOpenFile
+	call to Editor&::FileDialog so that the same file selection
+	dialog is used throughout the target editor dialog.
+
+2002-05-02  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/targetedit.tcl: Remove hack at top of file
+	that sources combobox.tcl. This is not needed
+	since this procedure is auto-loaded from libgui.
+	This command has become broken because the
+	.../share/cygnus install directory in libgui was
+	renamed to .../share/redhat recently.
+
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Bump version to 5.1.0.
+
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (FileDialog): Remove the
+	-multiple argument to the file dialog boxes.
+	This was a local modification to the Tk 8.1
+	sources for tkFDialog and tk_getOpenFile.
+	* gui/projedit.tcl (add_files): Remove the
+	-multiple argument to Editor&::FileDialog.
+	* gui/targetedit.tcl (import_files): Ditto.
+
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
+	* hyper/recudir.c: Cast return values from
+	ckalloc to avoid warnings from VC++. Cast
+	values passed to ckfree for the same reason.
+	* misc/libutils/mxfuncs.h: Undefine EXTERN
+	before defining it to avoid compiler warning.
+	* parsers/cpp/cpplib/macro.c: Avoid compiler
+	warning by including longstr.h to access the
+	function prototype for SN_StrDup. Use NULL
+	instead of the literal 0.
+	* parsers/tcl/Scanner.c: Include string.h
+	to avoid compiler warning because of lack
+	of prototypes for functions like strchr.
+
+2002-04-26  Mo DeJong  <supermo@bayarea.net>
+
+	* db/dbcp.c: Include compat.h before db.h
+	to avoid undefined type error when building
+	with VC++.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.am: Remove BUILD_GREP conditional
+	install rule.
+	* Makefile.in: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Check for sys/param.h header.
+	Check for u_char type. Remove special VC++ flags
+	from WINFLAGS since they are no longer needed.
+	Add WINFLAGS settings for mingw.
+	Remove check of the system's grep, we no longer
+	include a grep module so this is not needed.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.am: Add snavigator/misc
+	to include search directories. Fixup CFLAGS
+	assignment to use = instead of +=.
+	* db/Makefile.in: Regen.
+	* db/dbcp.c: Include <compat.h>.
+	* db/dbimp.c: Include <config.h> and <compat.h>.
+	Conditionally include <unistd.h>
+	* db/dbutils.c: Ditto.
+	* db/dbutils.h: Remove WIN32 conditional around
+	<config.h> include.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.am: Add warning message in case
+	the tclIndex file does not exist.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* hyper/Makefile.in: Regen.
+	* hyper/dbsym.c: Remove WIN32 conditional around
+	<config.h> include. Include <compat.h>.
+	* hyper/win/winMain.c: Include <config.h> and
+	conditionally include <unistd.h>
+	* install/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/compat.h: Add new file.
+	* misc/libutils/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* misc/libutils/Makefile.in: Regen.
+	* misc/libutils/realpath.c: Include <config.h>.
+	Conditionally include <sys/param.h>. Include
+	<compat.h>.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Add
+	mingw compiler check and WINFLAGS. Remove unneeded
+	VC++ WINFLAGS that include files from the db package.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/cobol/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/cpp/cpplib/cp_crossref.c: Remove _MSC_VER
+	conditional around <config.h> include. Conditionally
+	include <unistd.h>. Include <compat.h>.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/java/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.am: Add snavigator/misc
+	to include search directories.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/tcl/skeleton.c: Include <config.h> and
+	<compat.h>. Conditionally include <sys/param.h>.
+	* parsers/toolbox/Makefile.in: Regen.
+	* parsers/toolbox/snptools.c: Include <config.h>.
+	Conditionally include <unistd.h> and <sys/param.h>.
+	* parsers/toolbox/snptools.h: Include <config.h>.
+	Conditionally include <unistd.h>.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Avoid using AC_TYPE_* macros
+	since they muck with #defines of the type name.
+	Use AC_TRY_COMPILE and AC_DEFINE to create newer
+	autoconf style HAVE_* defines. These calls to
+	AC_TRY_COMPILE can be replaced by the commented
+	out AC_CHECK_TYPES call when upgrading to 2.5X.
+	The effected types are ssize_t, size_t, mode_t,
+	off_t, and pid_t. Remove useless call of
+	AC_TYPE_GETGROUPS.
+
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Check for Windows compiler type
+	using AC_EGREP_CPP instead of looking at the
+	value of ac_cv_prog_CC. Call AC_PROG_CPP before
+	hand since this is required for Autoconf 2.13.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Set the executable extension before
+	running AC_EXEEXT since autoconf 2.13 gets this
+	wrong with VC++.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Call AC_CONFIG_SUBDIRS with
+	a plain path argument instead of a variable
+	argument. This will allow us to use autoconf
+	2.5X when the time comes.
+
+2002-04-23  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.in: Regen.
+	* acconfig.h: Remove.
+	* acinclude.m4: Use 3 argument form of
+	AC_DEFINE so that acconfig.h is no longer
+	required.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Use 3 argument form of
+	AC_DEFINE so that acconfig.h is no longer
+	required.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	* parsers/assembly/ppc601-eabi/Makefile.in:
+	* parsers/assembly/ppc601-eabi/aclocal.m4:
+	* parsers/assembly/ppc601-eabi/autogen.sh:
+	* parsers/assembly/ppc601-eabi/config.h.in:
+	* parsers/assembly/ppc601-eabi/configure: Update
+	build files to autoconf 2.13 and automake 1.4.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	* Makefile.in:
+	* autogen.sh: Add new file.
+	* config.h.in:
+	* configure:
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in:
+	* hyper/Makefile.in:
+	* install/Makefile.in:
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in:
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in:
+	* parsers/fortran/Makefile.in:
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in:
+	* parsers/m4/Makefile.in:
+	* parsers/python/Makefile.in:
+	* parsers/sendmail/Makefile.in:
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen with net release of
+	autoconf 2.13 and automake 1.4
+
+2002-04-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclIndex: Add file that got
+	ignored by the cvs import.
+
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
+	* configure.in: Avoid setting HYPER_CONSOLE.
+	* hyper/Makefile.am: Avoid using HYPER_CONSOLE
+	when linking hyper.exe.
+	* hyper/Makefile.in: Ditto.
+	* hyper/win/winMain.c (WinMain, Tcl_AppInit):
+	Use public Tk_CreateConsoleWindow instead of
+	internal TkConsoleCreate and TkConsoleInit
+	functions. This removes the need to link
+	to the HYPER_CONSOLE object from tk which
+	should make it easier to build with an
+	already installed version of Tk.
+
+2002-04-19  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/preferences.tcl (AddParser): Use a grid layout
+	for the "Language Extensions" entries in the Parser tab.
+	The previous implementation would grow the left entry
+	at the expense of the right entry. One could make the
+	right entry vanish by typing a lot of text into the
+	left entry.
+
 2002-02-21  Mo DeJong  <supermo@bayarea.net>
 
         * gui/preferences.tcl (AddProject): Change

@@ -57,6 +57,16 @@ itcl::class MultiWindow& {
 
 	eval itk_initialize $args
 
+        # Set initial size based on user prefs.
+
+        set height [expr {int([winfo screenheight .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        set width [expr {int([winfo screenwidth .] *
+            ($sn_options(def,window-size)*0.01))}]
+
+        wm geometry $itk_component(hull) ${width}x${height}
+
         # Add menu.
         AddMenu
 
@@ -169,7 +179,7 @@ itcl::class MultiWindow& {
         #save related for now active tool
         if {${ActiveWidget} != ""} {
             upvar #0 ${ActiveWidget}-related rel
-            ::set rel ${related}
+            set rel ${related}
 
             #dump current position
             history_stack_add_point ${ActiveWidget}
@@ -181,7 +191,7 @@ itcl::class MultiWindow& {
             set variable [${btn} cget -variable]
             upvar #0 ${variable} value
             upvar #0 ${ActiveWidget}-Filter(${btn}) var
-            ::set var ${value}
+            set var ${value}
         }
 
         #get selection from current tool, only when keep
@@ -208,11 +218,11 @@ itcl::class MultiWindow& {
         }
 
         #restore the information about related
-        if {[catch {::set related ${toolrel}}]} {
+        if {[catch {set related ${toolrel}}]} {
             if {[${tool} whoami] == "edit"} {
-                ::set related 1
+                set related 1
             } else {
-                ::set related 0
+                set related 0
             }
         }
 
@@ -228,7 +238,7 @@ itcl::class MultiWindow& {
                 set variable [${btn} cget -variable]
 		upvar #0 ${variable} var
                 upvar #0 ${ActiveWidget}-Filter(${btn}) value
-                ::set var ${value}
+                set var ${value}
             }
         }
 
@@ -1083,7 +1093,7 @@ itcl::class MultiWindow& {
         AddHistMenu $itk_component(menu)
 
         ##Windows
-        AddWindowsMenu $itk_component(menu) ${this} 1 1
+        AddWindowsMenu $itk_component(menu) $itk_component(hull) 1 1
 
         ##Help menu
         AddHelpMenu $itk_component(menu) $itk_component(hull)
@@ -1393,14 +1403,25 @@ itcl::class MultiWindow& {
 
         pack $itk_component(linenum) -fill y -side left
 
+        # Create a frame with a groove and a border width of
+        # 2 so that the message entry maintains the same look
+        # that it had with earlier versions. This is needed
+        # so that the file info can be anchored east so that
+        # the file name still displays when the window is
+        # too small to display the whole file name.
+
+        set message_frame [frame $itk_component(statusbar).mf \
+            -relief groove -bd 2]
+
 	itk_component add message {
-	    label $itk_component(statusbar).message\
+	    label $itk_component(statusbar).mf.message\
 		    -font $sn_options(def,layout-font)\
-		    -relief groove -bd 2 -anchor w\
+		    -relief flat -bd 0 -anchor e \
 		    -textvar [itcl::scope message]
 	}
 
-	pack $itk_component(message) -expand y -fill both -side left
+        pack $message_frame -expand y -fill both -side left
+	pack $itk_component(message) -side left -anchor e
 
         pack $itk_component(statusbar) -side bottom -fill x
     }   
@@ -1597,6 +1618,7 @@ itcl::class MultiWindow& {
         if {${ed} == ""} {
             set state disabled
             set modstate disabled
+            set dostate disabled
         } else {
             set state normal
             if {[${ed} canModify]} {
@@ -1604,10 +1626,15 @@ itcl::class MultiWindow& {
             } else {
                 set modstate disabled
             }
+            if {[${ed} cget -file_changed]} {
+                set dostate normal
+            } else {
+                set dostate disabled
+            }
         }
 
-        ${m} entryconfig [get_indep String EditUndo] -state ${modstate}
-        ${m} entryconfig [get_indep String EditRedo] -state ${modstate}
+        ${m} entryconfig [get_indep String EditUndo] -state ${dostate}
+        ${m} entryconfig [get_indep String EditRedo] -state ${dostate}
         ${m} entryconfig [get_indep String EditCut] -state ${modstate}
         ${m} entryconfig [get_indep String EditCopy] -state ${state}
         ${m} entryconfig [get_indep String EditPaste] -state ${modstate}
@@ -1752,6 +1779,7 @@ itcl::class MultiWindow& {
             return
         }
         [${ed} editor] tag add sel 0.0 end
+        [${ed} editor] tag raise sel
     }
 
     method edit_clear {} {
@@ -1981,7 +2009,7 @@ itcl::class MultiWindow& {
         #sn_grep
         $itk_component(notebook) raise grep
         $itk_component(grep) setPatternFromClipboard
-	$itk_component(grep) ExecGrep
+	$itk_component(grep) StartGrep
     }
 
     method search_goto_post {m} {
@@ -2889,8 +2917,8 @@ itcl::class MultiWindow& {
 
         if {[${ActiveWidget} whoami] == "edit"} {
             #enable buttons (All,Related,All,None)
-            foreach btn [eval list $AllFilterOptions(radio)\
-              $AllFilterOptions(checkbutton)] {
+            foreach btn [concat $AllFilterOptions(radio)\
+              $AllFilterOptions(button)] {
                 ${btn} configure -state normal
             }
             foreach grp [lsort [array names combobox_editor_scopes]] {
@@ -2915,12 +2943,12 @@ itcl::class MultiWindow& {
         }\
         elseif {[${ActiveWidget} whoami] == "xref"} {
             # Disable All, Related.
-            foreach btn $AllFilterOptions(button) {
+            foreach btn $AllFilterOptions(radio) {
                 ${btn} configure -state disabled
             }
 
             # Enable buttons (All,None).
-            foreach btn $AllFilterOptions(radio) {
+            foreach btn $AllFilterOptions(button) {
                 ${btn} configure -state normal
             }
 
@@ -2951,7 +2979,7 @@ itcl::class MultiWindow& {
             }
 
             # Disable filter options (buttons and checkbuttons).
-            foreach btn [eval list $AllFilterOptions(radio)\
+            foreach btn [concat $AllFilterOptions(button)\
               $AllFilterOptions(checkbutton)] {
                 ${btn} configure -state disabled
             }

@@ -142,7 +142,7 @@ itcl_class Tree {
 		    -width 3 \
 		    -textvariable $thisTail-filter
 	    global $thisTail-filter
-	    ::set $thisTail-filter $filter
+	    set $thisTail-filter $filter
 	    $entry icursor 0
 
 	    ::bind $entry <Return> "$this fill"
@@ -248,6 +248,12 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	return [::eval $lframe.tree search $args]
     }
 
+    method sort_refresh {} {
+	if { $actual_sortcolumn != -1 } {
+	    resort $actual_sortcolumn
+	}
+    }
+
     method resort {num {var ""}} {
 	global sn_options
 	global $thisTail-sort
@@ -320,7 +326,7 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	if {![info exists colfilters($num)]} {
 	    set colfilters($num) "*"
 	}
-	::set $thisTail-filterentry $colfilters($num)
+	set $thisTail-filterentry $colfilters($num)
 
 	#if there is no label, no filter
 	if {[$w cget -text] == ""} {
@@ -586,7 +592,7 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	}
 	if {$state == "disabled"} {
 	    global $thisTail-filter
-	    ::set $thisTail-filter "*"
+	    set $thisTail-filter "*"
 	}
 	$entry config -state $state
     }
@@ -671,7 +677,7 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	if {$filter == ""} {
 	    set filter "*"
 	
-	    ::set $thisTail-filter "*"
+	    set $thisTail-filter "*"
 	    $entry icursor 0
 	}
 
@@ -1291,13 +1297,13 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	$print_dialog.button_1 config -command "itcl::delete object $print_dialog"
 
 	global $print_dialog-ptarget $print_dialog-cmd
-	::set $print_dialog-ptarget "all"
+	set $print_dialog-ptarget "all"
 	
 	set tit [wm title $toplw]
 	if {$sub_tit != ""} {
 	    append tit " " $sub_tit
 	}
-	::set $print_dialog-cmd [format $sn_options(def,ascii-print-command) $tit]
+	set $print_dialog-cmd [format $sn_options(def,ascii-print-command) $tit]
 	$print_dialog title [list [get_indep String Print] $tit]
 
 	frame $print_dialog.txt
@@ -1398,6 +1404,9 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	fconfigure $fd -encoding $sn_options(def,system-encoding) -blocking 0
 	puts $fd $lst
 	close $fd
+
+	# Escape [] and $ in user input for eval in sn_print_file
+	regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 
 	sn_print_file $cmd $tmpf
 
@@ -1753,7 +1762,7 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
     public filter {*} {
 	if {[winfo exists $entry]} {
 	    global $thisTail-filter
-	    ::set $thisTail-filter $filter
+	    set $thisTail-filter $filter
 	    $entry icursor 0
 	    if {$contents != ""} {
 		$this fill

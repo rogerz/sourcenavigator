@@ -1,0 +1,21 @@
+package require tcltest
+
+tcltest::test grep-1 {gcc error} {
+    sn_goto_comp_error_or_grep {/tmp/foo.c:10}
+} {/tmp/foo.c 10}
+
+tcltest::test grep-2 {VC++ error} {
+    sn_goto_comp_error_or_grep {d:\dir_1\file2.c(123) : error C2059 ...}
+} {{d:\dir_1\file2.c} 123}
+
+tcltest::test grep-3 {VC++ error} {
+    sn_goto_comp_error_or_grep {..\dir_1\file2.c(123) : error C2059 ...}
+} {{..\dir_1\file2.c} 123}
+
+tcltest::test grep-4 {win32/gcc error} {
+    sn_goto_comp_error_or_grep {d:/dir_1/file2.c:200}
+} {d:/dir_1/file2.c 200}
+
+tcltest::test grep-5 {win32/gcc error} {
+    sn_goto_comp_error_or_grep {../dir_1/file2.c:200}
+} {../dir_1/file2.c 200}

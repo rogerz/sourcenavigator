@@ -21,8 +21,9 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
+sdkdir = @SN_SDK_EXEC_PREFIX@/lib
+
 SUBDIRS = api parsers
 
 install-exec-local:
-	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ @SN_SDK_EXEC_PREFIX@/lib
-
+	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ $(DESTDIR)$(sdkdir)

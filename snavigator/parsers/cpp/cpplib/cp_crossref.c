@@ -25,7 +25,8 @@ MA 02111-1307, USA.
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef _MSC_VER
+#include <config.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <string.h>
@@ -48,6 +49,8 @@ MA 02111-1307, USA.
 #define  OPEN_MODE   O_RDONLY
 #include <sys/param.h>
 #endif /* WIN32 */
+
+#include <compat.h>
 
 #include "crossrefP.h"
 
@@ -143,7 +146,7 @@ extern void Paf_insert_cross_ref_qry( char *pcLine )
    }
    if (strcmp(file_g,prev_filename) != 0)
    {
-      printf("Scanning %s\n",file_g);  /* Informs SN which file is being parsed. */
+      printf("Status: Scanning: %s\n",file_g);  /* Informs SN which file is being parsed. */
       fflush(stdout);
 
       strcpy(prev_filename,file_g);
@@ -163,7 +166,16 @@ extern void Paf_insert_cross_ref_qry( char *pcLine )
          test_fp = 0;
       }
 
-      yyfd = open( file_g, OPEN_MODE );
+      /* The filename is utf-8 encoded at this point, so
+       * convert it to the native system encoding before
+       * sending to open().
+       */
+      {
+         Tcl_DString sys;
+         Tcl_UtfToExternalDString(NULL, file_g, -1, &sys);
+         yyfd = open( Tcl_DStringValue(&sys), OPEN_MODE );
+         Tcl_DStringFree(&sys);
+      }
 
       if( yyfd == -1 )
       {

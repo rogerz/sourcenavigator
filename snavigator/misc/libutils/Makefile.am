@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = cygnus
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 sdk_LIBRARIES = libutils.a
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/db $(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/db -I$(top_srcdir)/misc $(TCLHDIR)
 
 if HAVE_REALPATH
 REALPATH =
@@ -40,5 +40,6 @@ endif
 
 
 libutils_a_SOURCES = homedir.c mxdefine.h mxfuncs.h \
+longstr.h longstr.c \
 fileutils.h fileutils.c mxlogger.h strs.c $(GETOPT) $(REALPATH)
 

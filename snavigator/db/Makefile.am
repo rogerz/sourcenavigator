@@ -21,16 +21,13 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-SUBDIRS = ../parsers/cpp/cpplib
-
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper \
-		-I$(DB_INCDIR) $(TCLHDIR)
+		-I$(DB_INCDIR) $(TCLHDIR) -I$(top_srcdir)/misc
 
 if MSVC
-LINK = link -DEBUG $(CFLAGS) $(LDFLAGS) -OUT:$@
+LINK = link -DEBUG $(LDFLAGS) -OUT:$@
 else
-CFLAGS += -Wall
-LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 endif
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
@@ -38,12 +35,9 @@ sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 bin_PROGRAMS = dbcp dbdump dbimp
 sdk_LIBRARIES = libdbutils.a
 
-CPPLibDir=$(top_builddir)/parsers/cpp/cpplib
-CPPLib=$(CPPLibDir)/libcpp2.a
-
 install-data-local:
-	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(sdkdir)/libpafdb.a
-	$(RANLIB) $(sdkdir)/libpafdb.a
+	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(DESTDIR)$(sdkdir)/libpafdb.a
+	$(RANLIB) $(DESTDIR)$(sdkdir)/libpafdb.a
 
 dbcp_SOURCES = dbcp.c
 dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
@@ -57,16 +51,16 @@ dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 
 dbimp_SOURCES = dbimp.c
 if MSVC
-dbimp_LDADD = $(CPPLib) libdbutils.a $(DB_LIBDIR)/libdb.a \
+dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
 else
-dbimp_LDADD = -L$(CPPLibDir) -lcpp2  -L. -ldbutils -L$(DB_LIBDIR) -ldb \
+dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
 endif
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
-libdbutils_a_SOURCES = dbutils.c dbutils.h longstr.c srchtbl.c
+libdbutils_a_SOURCES = dbutils.c dbutils.h
 

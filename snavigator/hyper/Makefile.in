@@ -77,47 +77,27 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
+CPP = @CPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
 FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -129,28 +109,20 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
-LIBIBERTY = @LIBIBERTY@
+LEXLIB = @LEXLIB@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MONOP_DEMO = @MONOP_DEMO@
 OBJEXT = @OBJEXT@
 OLDTARFLAG = @OLDTARFLAG@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 PRODUCT_NAME = @PRODUCT_NAME@
 PROGRAMMERS_REFERENCE_DIR = @PROGRAMMERS_REFERENCE_DIR@
 PROGRAMMERS_REFERENCE_INDEX = @PROGRAMMERS_REFERENCE_INDEX@
 PROGRAMMERS_REFERENCE_NAME = @PROGRAMMERS_REFERENCE_NAME@
 RANLIB = @RANLIB@
-RUNTESTDIR = @RUNTESTDIR@
 SDK_DIR = @SDK_DIR@
 SENDMAIL_PARSER = @SENDMAIL_PARSER@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 SN_BOOKS = @SN_BOOKS@
 SN_DOCSET = @SN_DOCSET@
 SN_GUI_DIR = @SN_GUI_DIR@
@@ -166,6 +138,7 @@ TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
 TCL_BUILD_LIB_SPEC = @TCL_BUILD_LIB_SPEC@
 TCL_CFLAGS = @TCL_CFLAGS@
+TCL_DBGX = @TCL_DBGX@
 TCL_DEFS = @TCL_DEFS@
 TCL_LD_FLAGS = @TCL_LD_FLAGS@
 TCL_LD_SEARCH_FLAGS = @TCL_LD_SEARCH_FLAGS@
@@ -177,13 +150,12 @@ TCL_LIB_SPEC = @TCL_LIB_SPEC@
 TCL_RANLIB = @TCL_RANLIB@
 TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
 TCL_SHLIB_LD = @TCL_SHLIB_LD@
-TIXHDIR = @TIXHDIR@
 TIX_BUILD_LIB_SPEC = @TIX_BUILD_LIB_SPEC@
-TIX_LIB_FULL_PATH = @TIX_LIB_FULL_PATH@
 TKCONFIG = @TKCONFIG@
 TKHDIR = @TKHDIR@
 TK_BUILD_INCLUDES = @TK_BUILD_INCLUDES@
 TK_BUILD_LIB_SPEC = @TK_BUILD_LIB_SPEC@
+TK_DBGX = @TK_DBGX@
 TK_DEFS = @TK_DEFS@
 TK_LIBS = @TK_LIBS@
 TK_LIB_FILE = @TK_LIB_FILE@
@@ -202,11 +174,10 @@ WINDRES = @WINDRES@
 WINFLAGS = @WINFLAGS@
 X11ICON = @X11ICON@
 YACC = @YACC@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 @MSVC_TRUE@LINK = link -DEBUG $(LDFLAGS) -OUT:$@
-@MSVC_FALSE@LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+@MSVC_FALSE@LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 @MSVC_TRUE@TCL_DIR = 
 
 HYPER_CFLAGS = @HYPER_CFLAGS@
@@ -217,7 +188,7 @@ LibUtils = $(LibUtilsDir)/libutils.a
 DBUtilsLibDir = ../db
 DBUtilsLib = $(DBUtilsLibDir)/libdbutils.a
 
-INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win $(TCLHDIR) $(TK_XINCLUDES) -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic -I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src
+INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win $(TCLHDIR) $(TK_XINCLUDES) -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic -I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src -I$(top_srcdir)/misc
 
 
 sdkincludedir = $(datadir)/sdk/include
@@ -229,11 +200,11 @@ hyper_SOURCES = compare.h compare.c dbsym.c exint.c recudir.c services.c sninit.
 
 
 hyper_LDFLAGS = $(WIN32LDAPP)
-@MSVC_TRUE@hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ $(LibUtilsDir)/libutils.a $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TCL_BUILD_STUB_LIB_SPEC)
-@MSVC_FALSE@hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ -L$(LibUtilsDir) -lutils -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
-hyper_DEPENDENCIES = @HYPER_MAIN@ $(LibUtils) $(DBUtilsLib) $(DB_LIBDIR)/libdb.a $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
+@MSVC_TRUE@hyper_LDADD = @HYPER_MAIN@ $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(LibUtils) $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
+@MSVC_FALSE@hyper_LDADD = @HYPER_MAIN@ -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(LibUtilsDir) -lutils -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
+hyper_DEPENDENCIES = @HYPER_MAIN@ $(DBUtilsLib) $(DB_LIBDIR)/libdb.a $(LibUtils) $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 bin_PROGRAMS =  hyper$(EXEEXT)
@@ -469,23 +440,27 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 tkTreeTable.$(OBJEXT): tkTreeTable.c tkTreeTable.h
 	$(COMPILE) $(TK_DEFS) -c $<
 
-j_high.c: j_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pjava_highlight_ $<
-
-py_high.c: py_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Ppy_highlight_ $<
-
-c_high.c: c_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pc_highlight_ $<
-
-ch_high.c: ch_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pch_highlight_ $<
-
-tcl_high.c: tcl_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Ptcl_highlight_ $<
+# This target will regenerate .c files from .l files. it
+# must never depend on a timestamp for .l files because
+# this would fail to compile on an end users system that
+# did not have flex installed if the timestamps got hosed.
+# Note that we copy to the local dir so that include
+# directives include only the file name and not a path.
+flexgen:
+	cp $(srcdir)/j_high.l .
+	cp $(srcdir)/py_high.l .
+	cp $(srcdir)/c_high.l .
+	cp $(srcdir)/ch_high.l .
+	cp $(srcdir)/tcl_high.l .
+	$(LEX) -t $(LFLAGS) -Pjava_highlight_ j_high.l > $(srcdir)/j_high.c
+	$(LEX) -t $(LFLAGS) -Ppy_highlight_ py_high.l > $(srcdir)/py_high.c
+	$(LEX) -t $(LFLAGS) -Pc_highlight_ c_high.l > $(srcdir)/c_high.c
+	$(LEX) -t $(LFLAGS) -Pch_highlight_ ch_high.l  > $(srcdir)/ch_high.c
+	$(LEX) -t $(LFLAGS) -Ptcl_highlight_ tcl_high.l > $(srcdir)/tcl_high.c
+	rm j_high.l py_high.l c_high.l ch_high.l tcl_high.l
 
 highlight.$(OBJEXT): highlight.c
-	$(COMPILE) $(TK_DEFS) -c $<
+	$(COMPILE) $(TK_DEFS) -DTK_DBGX=\"$(TK_DBGX)\" -c $<
 
 sninit.$(OBJEXT): sninit.c
 	$(COMPILE) $(TK_DEFS) -c $<
@@ -493,8 +468,13 @@ sninit.$(OBJEXT): sninit.c
 tclfileutils.$(OBJEXT): tclfileutils.c
 	$(COMPILE) $(TK_DEFS) -c $<
 
-winMain.$(OBJEXT): win/winMain.c
+# Only use cygpath when compiling with VC++
+
+winMain.obj: win/winMain.c
 	$(COMPILE) -c `cygpath -w $<`
+
+winMain.o: win/winMain.c
+	$(COMPILE) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

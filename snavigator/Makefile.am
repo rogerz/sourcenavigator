@@ -22,15 +22,30 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
-snavigator bitmaps install
+snavigator bitmaps
 
 install-exec-local:
 	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
-if BUILD_GREP
-	$(INSTALL_PROGRAM) ../grep/src/grep$(EXEEXT) $(bindir)
-endif
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)
 	(cd ../itcl; $(MAKE) install-libraries)
 	(cd ../libgui; $(MAKE) install)
+
+rootdir = $(prefix)
+
+root_DATA = README.TXT INSTALL.TXT
+
+EXTRA_DIST = $(DATA)
+
+flexgen:
+	cd hyper ; $(MAKE) flexgen
+	cd parsers/assembly/ppc601-eabi ; $(MAKE) flexgen
+	cd parsers/chill ; $(MAKE) flexgen
+	cd parsers/m4 ; $(MAKE) flexgen
+	cd parsers/python ; $(MAKE) flexgen
+	cd parsers/sendmail ; $(MAKE) flexgen
+
+bisongen:
+	cd parsers/chill ; $(MAKE) bisongen
+	cd parsers/fortran ; $(MAKE) bisongen

@@ -31,12 +31,14 @@ MA 02111-1307, USA.
 
 extern	int	optind;
 #ifdef WIN32
-extern	const char	*optarg;
+typedef const char	*ARGTYPE;
 #else
-extern	char	*optarg;
+typedef char	*ARGTYPE;
 #endif /* WIN32 */
 
-static	char	*sep = ";";
+extern ARGTYPE	optarg;
+
+static	ARGTYPE sep = ";";
 extern	int	db_case_compare __P((const DBT *, const DBT *));
 
 static	void
