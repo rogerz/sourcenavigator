@@ -4,7 +4,7 @@
 # Source-Navigator. It should be run from the src/ directory
 # at the root of a clean CVS checkout.
 
-DIR=/tmp/sourcenav
+DIR=/share/SN51/dist
 RELEASE=sourcenav-5.1.1
 RELEASEDIR=$DIR/$RELEASE
 
@@ -43,6 +43,7 @@ cd $RELEASEDIR
 find . -name CVS -exec rm -rf {} \; > /dev/null 2>&1
 find . -name ".#*" -exec rm -f {} \; > /dev/null 2>&1
 find . -name "*~" -exec rm -f {} \; > /dev/null 2>&1
+find . -name "*.rej" -exec rm -f {} \; > /dev/null 2>&1
 
 cp snavigator/README.TXT .
 cp snavigator/INSTALL.TXT .
