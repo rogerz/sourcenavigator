@@ -1,5 +1,11 @@
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* snavigator/win/snavigator.rc:
+	* snavigator/win/snavwindres.rc:
+	Oops, fix typo in file name from last checkin.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* bitmaps/Makefile.am: Copy sourcenav.ico to
 	the install dir so that it can be loaded
 	at runtime via wm iconbitmap.
