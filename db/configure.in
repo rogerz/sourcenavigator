@@ -46,7 +46,7 @@ AC_CACHE_CHECK([for Microsoft Visual C++], sn_cv_os_msvc,
 coool
 #endif],[sn_cv_os_msvc=yes],[sn_cv_os_msvc=no])])
 if test $sn_cv_os_msvc = yes; then
-  WINFLAGS="-DWIN32 -D__MSVC__ -FI\$(srcdir)/win32/NTunixstubs.h -I\$(srcdir)/win32/include"
+  WINFLAGS="-DWIN32 -D__MSVC__ -I\$(srcdir)/Win32/include"
 fi
 
 AC_SUBST(WINFLAGS)

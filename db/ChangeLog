@@ -1,5 +1,16 @@
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
+	* configure: Regen.
+	* configure.in: Don't include the NTunixstubs.h
+	header directly on the command line. Correct
+	case of directory name in -I compiler directive.
+	* PORT/Win32/NTunixstubs.h: Removed.
+	* PORT/Win32/include/NTunixstubs.h: Added.
+	* PORT/include/compat.h: Include NTunixstubs.h
+	when compiling with VC++.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
 	* acinclude.m4 (AC_C_BIGENDIAN_CROSS): Add new
 	AC_C_BIGENDIAN_CROSS macro from the autoconf
 	macro archive to support cross compiling.

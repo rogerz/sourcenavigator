@@ -1589,7 +1589,7 @@ fi
 
 echo "$ac_t""$sn_cv_os_msvc" 1>&6
 if test $sn_cv_os_msvc = yes; then
-  WINFLAGS="-DWIN32 -D__MSVC__ -FI\$(srcdir)/win32/NTunixstubs.h -I\$(srcdir)/win32/include"
+  WINFLAGS="-DWIN32 -D__MSVC__ -I\$(srcdir)/Win32/include"
 fi
 
 
