@@ -628,6 +628,19 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.34<>3.9<>3.12<>{}
 tcltest::test function-2.3 { function definition w arguments } {
     php_parse [save_file f.php {
 <?
+function foo($arg1 = "default", $arg2=1, $arg3 = 'default') {}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;3.62<>0x0<>{}<>{}<>{arg1,arg2,arg3}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.62<>3.9<>3.12<>{}
+}
+
+
+tcltest::test function-2.4 { function definition w arguments } {
+    php_parse [save_file f.php {
+<?
 function foo(&$arg1) {}
 ?>
 }]
@@ -637,7 +650,7 @@ PAF_FUNC_DEF;foo<>000003.000<>f.php;3.23<>0x0<>{}<>{}<>{arg1}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.23<>3.9<>3.12<>{}
 }
 
-tcltest::test function-2.4 { function definition w arguments } {
+tcltest::test function-2.5 { function definition w arguments } {
     php_parse [save_file f.php {
 <?
 function foo(
@@ -919,8 +932,31 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 # Add checks for include or require statements, so that
 # the include browser can show file include relationships.
 
-# Need to support newline in var assignment {wsn} no {ws}.
+# Need to check strings that span multiple lines.
 
+# FIXME: Add check for function call inside function arguments,
+# is that valid?
+
+# FIXME: Check for parens inside function argument, what if
+# they are not matched?
+
+# FIXME: I think we would loop forever if there was an extra
+# OPEN_PAREN token in the function arg loop! (out of date)
+
+# FIXME: What if a function call includes a syntax error,
+# should we still see this as a function invocation?
+# for example "foo(];" or "foo(;" does the close paren
+# need to be there for a function call to be seen?
+
+# Test "foo(foo());" to make sure tokens in a function
+# call are being processed and not ignored.
+
+# Test global statement with more than one variable.
+
+# Test function argument init with string, single quoted string, and literals
+
+# Should we create a token for commas and include them in the
+# parse rules for things like function declarations and global statements?
 
 # cleanup
 file delete f.php
