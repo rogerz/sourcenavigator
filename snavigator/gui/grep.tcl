@@ -146,18 +146,11 @@ proc sn_make_edit_file {line} {
 }
 
 # This function tries to figure out the name of a file
-# and position from a line.
+# and position from a line. It returns a pair consisting
+# of a file name and a line number.
 proc sn_goto_comp_error_or_grep {sym} {
     global grep_compiled_err_patterns
     global tcl_platform sn_options
-
-    if {$tcl_platform(platform) == "windows" && [string range ${sym} 1 1] ==\
-      ":"} {
-        set pars [split ${sym} ":"]
-        set file [lindex ${pars} 0]:[lindex ${pars} 1]
-        set pos [lindex ${pars} 2]
-        return [list ${file} ${pos}]
-    }
 
     if {![info exists grep_compiled_err_patterns]} {
         set name [sn_search_file sn_cmp_g.pat]
