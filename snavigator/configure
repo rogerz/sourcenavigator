@@ -2107,7 +2107,7 @@ rm -f conftest*
 
 if test $tk_ok = no; then
     cat >> confdefs.h <<\EOF
-#define NO_STDLIB_H 1
+#define NO_STDLIB_H 
 EOF
 
 fi
@@ -2457,7 +2457,7 @@ fi
 echo "$ac_t""$sn_cv_lib_glibc" 1>&6
 if test x$sn_cv_lib_glibc = xyes; then
    cat >> confdefs.h <<\EOF
-#define HAVE_GLIBC 1
+#define HAVE_GLIBC 
 EOF
 
 fi
@@ -2471,7 +2471,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   egrep "strncasecmp" >/dev/null 2>&1; then
   rm -rf conftest*
   cat >> confdefs.h <<\EOF
-#define HAVE_STRNCASECMP_DECL 1
+#define HAVE_STRNCASECMP_DECL 
 EOF
 
 fi
@@ -2850,7 +2850,7 @@ fi
 echo "$ac_t""$ac_cv_func_setpgrp_void" 1>&6
   if test $ac_cv_func_setpgrp_void = yes; then
     cat >> confdefs.h <<\EOF
-#define SETPGRP_VOID 1
+#define SETPGRP_VOID 
 EOF
 
   fi
@@ -3621,42 +3621,42 @@ fi
   then
     case $type in
 	int8_t)		cat >> confdefs.h <<\EOF
-#define HAVE_INT8_T 1
+#define HAVE_INT8_T 
 EOF
 
 			;;
 	u_int8_t)	cat >> confdefs.h <<\EOF
-#define HAVE_UINT8_T 1
+#define HAVE_UINT8_T 
 EOF
 
 			;;
 	int16_t)	cat >> confdefs.h <<\EOF
-#define HAVE_INT16_T 1
+#define HAVE_INT16_T 
 EOF
 
 			;;
 	u_int16_t)	cat >> confdefs.h <<\EOF
-#define HAVE_UINT16_T 1
+#define HAVE_UINT16_T 
 EOF
 
 			;;
 	int32_t)	cat >> confdefs.h <<\EOF
-#define HAVE_INT32_T 1
+#define HAVE_INT32_T 
 EOF
 
 			;;
 	u_int32_t)	cat >> confdefs.h <<\EOF
-#define HAVE_UINT32_T 1
+#define HAVE_UINT32_T 
 EOF
 
 			;;
 	int64_t)	cat >> confdefs.h <<\EOF
-#define HAVE_INT64_T 1
+#define HAVE_INT64_T 
 EOF
 
 			;;
 	u_int64_t)	cat >> confdefs.h <<\EOF
-#define HAVE_UINT64_T 1
+#define HAVE_UINT64_T 
 EOF
 
 			;;

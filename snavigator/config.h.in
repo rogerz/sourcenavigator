@@ -74,42 +74,6 @@
 /* Define if lex declares yytext as a char * by default, not a char[].  */
 #undef YYTEXT_POINTER
 
-/* Define this if we link against GNU libc. */
-#undef HAVE_GLIBC
-
-/* Set this if Tk's stdlib.h should be used.  */
-#undef NO_STDLIB_H
-
-/* Define if int8_t is defined in <sys/types.h> (used by Berkeley db).  */
-#undef HAVE_INT8_T
-
-/* Define if u_int8_t is defined in <sys/types.h>.  */
-#undef HAVE_UINT8_T
-
-/* Define if int16_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT16_T
-
-/* Define if u_int16_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT16_T
-
-/* Define if int32_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT32_T
-
-/* Define if u_int32_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT32_T
-
-/* Define if int64_t and friends are in <sys/types.h>.  */
-#undef HAVE_INT64_T
-
-/* Define if u_int64_t and friends are in <sys/types.h>.  */
-#undef HAVE_UINT64_T
-
-/* Define this if <string.h> declares strncasecmp().  */
-#undef HAVE_STRNCASECMP_DECL
-
-/* Define this if we are building with elix features. */
-#undef SN_ELIX
-
 /* Define if you have the drand48 function.  */
 #undef HAVE_DRAND48
 
@@ -242,9 +206,51 @@
 /* Version number of package */
 #undef VERSION
 
+/* Define this if we are building with elix features. */
+#undef SN_ELIX
+
+/* Define this if we are building with elix features. */
+#undef SN_ELIX
+
 /* Name of the product */
 #undef PRODUCT_NAME
 
 /* Suite name of the product */
 #undef SUITE_NAME
+
+/* Set this if Tk's stdlib.h should be used. */
+#undef NO_STDLIB_H
+
+/* Define this if we link against GNU libc. */
+#undef HAVE_GLIBC
+
+/* Define this if <string.h> declares strncasecmp(). */
+#undef HAVE_STRNCASECMP_DECL
+
+/* Define this if <unistd.h> declares setpgrp with no arguments. */
+#undef SETPGRP_VOID
+
+/* Define if int8_t and friends are in <sys/types.h>. */
+#undef HAVE_INT8_T
+
+/* Define if u_int8_t is defined in <sys/types.h>. */
+#undef HAVE_UINT8_T
+
+/* Define if int16_t and friends are in <sys/types.h>. */
+#undef HAVE_INT16_T
+
+/* Define if u_int16_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT16_T
+
+/* Define if int32_t and friends are in <sys/types.h>. */
+#undef HAVE_INT32_T
+
+/* Define if u_int32_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT32_T
+
+/* Define if int64_t and friends are in <sys/types.h>. */
+#undef HAVE_INT64_T
+
+/* Define if u_int64_t and friends are in <sys/types.h>. */
+#undef HAVE_UINT64_T
 

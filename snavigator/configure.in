@@ -24,7 +24,7 @@ X11ICON=paf.xbm
 SN_DOCSET=enterprise
 SN_BOOKS="userguide progref"
 SN_LAUNCH_SHELL=snavigator
-AC_DEFINE(SN_ELIX, 0)
+AC_DEFINE(SN_ELIX, 0, [Define this if we are building with elix features.])
 C_DEMO=c++_demo
 ASM_DEMO=asm_demo
 COB_DEMO=cob_demo
@@ -49,7 +49,7 @@ AC_ARG_ENABLE(elix, [  --enable-elix          Enable EL/IX specific features.],e
 AM_CONDITIONAL(SNEDK, test x$enable_elix = xyes)
 
 if test x$enable_elix = xyes; then
-   AC_DEFINE(SN_ELIX, 1)
+   AC_DEFINE(SN_ELIX, 1, [Define this if we are building with elix features.])
    SN_LAUNCH_SHELL=snedk
    ASM_DEMO=
    COB_DEMO=
@@ -178,7 +178,7 @@ AC_HEADER_EGREP(strtol, stdlib.h, tk_ok=yes, tk_ok=no)
 AC_HEADER_EGREP(strtoul, stdlib.h, , tk_ok=no)
 AC_HEADER_EGREP(strtod, stdlib.h, , tk_ok=no)
 if test $tk_ok = no; then
-    AC_DEFINE(NO_STDLIB_H)
+    AC_DEFINE(NO_STDLIB_H,,[Set this if Tk's stdlib.h should be used.])
 fi
 AC_MSG_RESULT($tk_ok)
 
@@ -203,14 +203,14 @@ AC_CACHE_CHECK([for GNU libc],sn_cv_lib_glibc,[AC_EGREP_CPP(yes, [
 # endif
 #endif], sn_cv_lib_glibc=yes, sn_cv_lib_glibc=no)])
 if test x$sn_cv_lib_glibc = xyes; then
-   AC_DEFINE(HAVE_GLIBC)
+   AC_DEFINE(HAVE_GLIBC,,[Define this if we link against GNU libc.])
 fi
 
 dnl Tcl ensures that strncasecmp is provided everywhere.  But in some
 dnl situations we might need to declare it.  We check for that case
 dnl here.
 AC_EGREP_CPP(strncasecmp, [#include <string.h>],
-  AC_DEFINE(HAVE_STRNCASECMP_DECL))
+  AC_DEFINE(HAVE_STRNCASECMP_DECL,,[Define this if <string.h> declares strncasecmp().]))
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA
@@ -224,7 +224,7 @@ if test "$cross_compiling" = yes; then
   [getpgrp (0); setpgrp (0, 0);],
   ac_cv_func_setpgrp_void=no, ac_cv_func_setpgrp_void=yes))
   if test $ac_cv_func_setpgrp_void = yes; then
-    AC_DEFINE(SETPGRP_VOID)
+    AC_DEFINE(SETPGRP_VOID,,[Define this if <unistd.h> declares setpgrp with no arguments.])
   fi
 else
   AC_FUNC_SETPGRP
