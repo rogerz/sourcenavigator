@@ -45,17 +45,18 @@ proc sn_ensure_emacs_running {editcmd} {
         if {[regexp "(gnuclient|gnudoit)" ${editcmd}]} {
             # First try via gnuclient.  If that fails,
             # then start a new Emacs.
-            if {! [catch {exec gnudoit ${lisp_commands} 2>@ stdout}]} {
+            if {! [catch {exec gnudoit ${lisp_commands}} err]} {
                 # It worked.  So send the magic command.
                 sn_log "Emacs: connected via gnudoit"
-                catch {exec gnudoit "(sn-startup nil \"${host}\" nil ${port})"\
-                  2>@ stdout}
+                if {[catch {exec gnudoit
+                        "(sn-startup nil \"${host}\" nil ${port})"} err]} {
+                    sn_log "exec gnudoit startup failed : $err"
+                }
                 set emacs_connection 1
             } else {
+                sn_log "Emacs: exec gnudoit failed : $err"
                 # Assume "emacs" is in path.
                 set editcmd emacs
-# FIXME: We should not try to start emacs if they put gnuclient in the
-# start box. IF we do try this we could also check for Xemacs!
             }
         }
 
