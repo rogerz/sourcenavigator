@@ -1,3 +1,10 @@
+2002-07-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/mkfilegen.tcl (WriteRuleTarget): Escape
+	variable name that is meant to be evaluated
+	when make is run.
+	[Bug 585568]
+
 2002-07-16  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/rcs.tcl (check_in_out): Don't check
