@@ -1,6 +1,16 @@
 2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Split the handling
+	of ASSIGNMENT_OPERATOR and ASSIGNMENT_OPERATORS
+	into two rules. This makes the var assignment
+	simpler since the code does not need to
+	inspect the matched tokens to determine what
+	kind of access it was.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Insert both
 	a read xref and a write xref for variable
 	operations like $var+=1.

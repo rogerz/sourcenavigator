@@ -282,45 +282,45 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 66
-#define YY_END_OF_BUFFER 67
+#define YY_NUM_RULES 67
+#define YY_END_OF_BUFFER 68
 static yyconst short int yy_accept[1092] =
     {   0,
         0,    0,    8,    8,    2,    2,   15,   15,   23,   23,
-        0,    0,    0,    0,    0,    0,   67,   66,    8,    9,
+        0,    0,    0,    0,    0,    0,   68,   67,    8,    9,
        10,    2,    3,    4,   15,   16,   20,   19,   23,   24,
-       28,   27,   66,   30,   53,   51,   51,   53,   14,   53,
+       28,   27,   67,   30,   53,   51,   51,   53,   14,   53,
        53,   53,   41,   22,   31,   32,   53,   53,   39,   53,
        38,   53,   49,   37,   42,   40,   42,   53,   33,   53,
        34,   53,   49,   49,   49,   49,   49,   49,   49,   35,
-       53,   36,   65,   64,   63,   63,   63,   63,   63,   63,
-       63,   63,    8,    9,   10,   11,   10,   12,    2,    3,
+       53,   36,   66,   65,   64,   64,   64,   64,   64,   64,
+       64,   64,    8,    9,   10,   11,   10,   12,    2,    3,
         5,   15,   16,   17,   23,   24,   25,    0,   30,   51,
 
        42,   13,    0,    6,    0,   50,   43,   21,   44,    7,
         0,   49,    0,   42,   42,    0,    1,   52,   49,   49,
-       49,   49,   48,   49,   49,   63,   63,   63,   63,   63,
-       63,   63,   63,    0,   17,   18,    0,    0,   25,   26,
-        0,    0,    6,    0,   49,   49,   49,   49,   63,   63,
-       63,   63,   63,   63,   63,    0,    0,    0,   49,   49,
-       49,   49,   63,   63,   63,   63,   63,   63,   63,   63,
-        5,   29,   49,   49,   49,   49,   63,   63,   63,   63,
-       63,   63,   63,   63,   49,   46,   49,   49,   63,   63,
-       63,   63,   63,   63,   63,   63,   49,   47,   47,   63,
+       49,   49,   48,   49,   49,   64,   64,   64,   64,   64,
+       64,   64,   64,    0,   17,   18,    0,    0,   25,   26,
+        0,    0,    6,    0,   49,   49,   49,   49,   64,   64,
+       64,   64,   64,   64,   64,    0,    0,    0,   49,   49,
+       49,   49,   64,   64,   64,   64,   64,   64,   64,   64,
+        5,   29,   49,   49,   49,   49,   64,   64,   64,   64,
+       64,   64,   64,   64,   49,   46,   49,   49,   64,   64,
+       64,   64,   64,   64,   64,   64,   49,   47,   47,   64,
 
-       63,   63,   63,   63,   63,   63,   63,   45,   49,   49,
-       63,   63,   63,   63,   63,   63,   63,   62,   49,   49,
-       63,   63,   63,   63,   63,   63,    0,    0,   49,   49,
-       63,   63,   63,   63,   63,   55,    0,    0,    0,    0,
-       49,   49,   56,   63,   63,   63,   63,    0,    0,    0,
-        0,   47,   63,   63,   63,   63,    0,    0,    0,    0,
-       63,   63,   63,   63,    0,    0,    0,    0,   63,   63,
-       63,   63,    0,    0,    0,    0,   63,    0,   63,   63,
-        0,    0,    0,    0,   63,    0,    0,   63,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,   63,    0,    0,
+       64,   64,   64,   64,   64,   64,   64,   45,   49,   49,
+       64,   64,   64,   64,   64,   64,   64,   63,   49,   49,
+       64,   64,   64,   64,   64,   64,    0,    0,   49,   49,
+       64,   64,   64,   64,   64,   55,    0,    0,    0,    0,
+       49,   49,   56,   64,   64,   64,   64,    0,    0,    0,
+        0,   47,   64,   64,   64,   64,    0,    0,    0,    0,
+       64,   64,   64,   64,    0,    0,    0,    0,   64,   64,
+       64,   64,    0,    0,    0,    0,   64,    0,   64,   64,
+        0,    0,    0,    0,   64,    0,    0,   64,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,   64,    0,    0,
 
-        0,    0,    0,    0,    0,    0,    0,   63,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,   63,   59,    0,
+        0,    0,    0,    0,    0,    0,    0,   64,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,   64,   59,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -332,8 +332,8 @@ static yyconst short int yy_accept[1092] =
 
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,   60,   61,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,   61,   60,
+        0,    0,    0,    0,   60,   62,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,   62,   61,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -369,7 +369,7 @@ static yyconst short int yy_accept[1092] =
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,   61,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,   62,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -398,7 +398,7 @@ static yyconst short int yy_accept[1092] =
 
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,   61,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,   62,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -2734,36 +2734,9 @@ YY_RULE_SETUP
   
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
-  fprintf(tokenout, "match text is \"%s\", match num tokens is %d\n", yytext, get_num_tokens_matched(yytext));
 #endif
 
-  {
-    /* Figure out if this was a plain write ($var = 1) or
-     * a read/write ($var += 1) type of operation.
-     */
-
-    Token *last_tok = tokens_head;
-    VarAccess acc;
-    int num = get_num_tokens_matched(yytext) - 1;
-    for (; num > 0; num--) {
-      last_tok = last_tok->next;
-    }
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "last match token type was %s\n", TokenTypeToString(last_tok));
-#endif
-
-    assert((last_tok->type == ASSIGNMENT_OPERATOR) ||
-             (last_tok->type == ASSIGNMENT_OPERATORS));
-
-    if (last_tok->type == ASSIGNMENT_OPERATOR) {
-      acc = WRITE;
-    } else if (last_tok->type == ASSIGNMENT_OPERATORS) {
-      acc = READWRITE;
-    }
-
-    emit_var_access(tokens_head, acc);
-  }
+  emit_var_access(tokens_head, WRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -2772,13 +2745,36 @@ YY_RULE_SETUP
    */
 
   free_head_token(); /* VARIABLE */
-  offset = strlen("VARIABLE"); /* send back everything after the VARIABLE token */
-  yyless(offset);
+  offset = strlen("VARIABLE");
+  yyless(offset); /* send back everything after the VARIABLE token */
 }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 1317 "phpbrowser.l"
+#line 1290 "phpbrowser.l"
+{
+  int offset;
+  
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
+#endif
+
+  emit_var_access(tokens_head, READWRITE);
+
+  /* Eat the variable token and send the rest of the tokens
+   * back for further matching. This is needed so that
+   * expressions like "$var[$one] += 1;" generate both
+   * a read/write xref for $var and a read xref for $one.
+   */
+
+  free_head_token(); /* VARIABLE */
+  offset = strlen("VARIABLE");
+  yyless(offset); /* send back everything after the VARIABLE token */
+}
+	YY_BREAK
+case 62:
+YY_RULE_SETUP
+#line 1310 "phpbrowser.l"
 {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
@@ -2808,9 +2804,9 @@ YY_RULE_SETUP
   yyless(offset); /* send back everything after the VARIABLE token */
 }
 	YY_BREAK
-case 62:
+case 63:
 YY_RULE_SETUP
-#line 1346 "phpbrowser.l"
+#line 1339 "phpbrowser.l"
 {
   char* varname = tokens_head->strval;
   SearchEntry entry;
@@ -2880,9 +2876,9 @@ YY_RULE_SETUP
   free_head_token(); /* VARIABLE */
 }
 	YY_BREAK
-case 63:
+case 64:
 YY_RULE_SETUP
-#line 1415 "phpbrowser.l"
+#line 1408 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate token %d %s", token_index,
@@ -2896,14 +2892,14 @@ YY_RULE_SETUP
   free_head_token(); /* ... */
 }
 	YY_BREAK
-case 64:
-YY_RULE_SETUP
-#line 1428 "phpbrowser.l"
-
-	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1430 "phpbrowser.l"
+#line 1421 "phpbrowser.l"
+
+	YY_BREAK
+case 66:
+YY_RULE_SETUP
+#line 1423 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -2911,7 +2907,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 1436 "phpbrowser.l"
+#line 1429 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -2943,7 +2939,7 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 1461 "phpbrowser.l"
+#line 1454 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -3068,9 +3064,9 @@ case YY_STATE_EOF(HDSTRING):
   BEGIN(TOKEN);
 }
 	YY_BREAK
-case 66:
+case 67:
 YY_RULE_SETUP
-#line 1585 "phpbrowser.l"
+#line 1578 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -3958,7 +3954,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1585 "phpbrowser.l"
+#line 1578 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */
@@ -4353,6 +4349,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
           ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
 
     /* Generate just a write xref or a read/write pair of xrefs */
+    /* FIXME: Why can't we pass an option like SN_REF_READWRITE ? */
 
     if (acc == READWRITE) {
         result = sn_insert_xref(ref_to_symbol_type,

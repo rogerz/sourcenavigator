@@ -1267,41 +1267,14 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* OPEN_PAREN */
 }
 
-<TOKEN>"VARIABLE"{var-array-tokens}("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
+<TOKEN>"VARIABLE"{var-array-tokens}"ASSIGNMENT_OPERATOR" {
   int offset;
   
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
-  fprintf(tokenout, "match text is \"%s\", match num tokens is %d\n", yytext, get_num_tokens_matched(yytext));
 #endif
 
-  {
-    /* Figure out if this was a plain write ($var = 1) or
-     * a read/write ($var += 1) type of operation.
-     */
-
-    Token *last_tok = tokens_head;
-    VarAccess acc;
-    int num = get_num_tokens_matched(yytext) - 1;
-    for (; num > 0; num--) {
-      last_tok = last_tok->next;
-    }
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "last match token type was %s\n", TokenTypeToString(last_tok));
-#endif
-
-    assert((last_tok->type == ASSIGNMENT_OPERATOR) ||
-             (last_tok->type == ASSIGNMENT_OPERATORS));
-
-    if (last_tok->type == ASSIGNMENT_OPERATOR) {
-      acc = WRITE;
-    } else if (last_tok->type == ASSIGNMENT_OPERATORS) {
-      acc = READWRITE;
-    }
-
-    emit_var_access(tokens_head, acc);
-  }
+  emit_var_access(tokens_head, WRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1310,8 +1283,28 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
    */
 
   free_head_token(); /* VARIABLE */
-  offset = strlen("VARIABLE"); /* send back everything after the VARIABLE token */
-  yyless(offset);
+  offset = strlen("VARIABLE");
+  yyless(offset); /* send back everything after the VARIABLE token */
+}
+
+<TOKEN>"VARIABLE"{var-array-tokens}"ASSIGNMENT_OPERATORS" {
+  int offset;
+  
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
+#endif
+
+  emit_var_access(tokens_head, READWRITE);
+
+  /* Eat the variable token and send the rest of the tokens
+   * back for further matching. This is needed so that
+   * expressions like "$var[$one] += 1;" generate both
+   * a read/write xref for $var and a read xref for $one.
+   */
+
+  free_head_token(); /* VARIABLE */
+  offset = strlen("VARIABLE");
+  yyless(offset); /* send back everything after the VARIABLE token */
 }
 
 <TOKEN>("INCREMENT_OPERATORS VARIABLE"{var-array-tokens}|"VARIABLE"{var-array-tokens}"INCREMENT_OPERATORS") {
@@ -1976,6 +1969,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
           ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
 
     /* Generate just a write xref or a read/write pair of xrefs */
+    /* FIXME: Why can't we pass an option like SN_REF_READWRITE ? */
 
     if (acc == READWRITE) {
         result = sn_insert_xref(ref_to_symbol_type,
