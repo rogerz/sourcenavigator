@@ -1,3 +1,10 @@
+2003-06-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/preferences.tcl: Reformat a large number
+	of entries to make them readable. Running the
+	code through frink resulted in code that was
+	very difficult to understand.
+
 2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/editorpane.tcl (Sn_Highlight_Text):
