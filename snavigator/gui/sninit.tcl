@@ -904,12 +904,13 @@ proc sn_tcl_tk_init {} {
         set sn_options(iscolor) 0
     }
 
-    set cwd [pwd]
-    # It is just a test!
-
-    if {[catch {set env(PATH) $sn_path(bindir):$env(PATH)}]} {
-        set env(PATH) $sn_path(bindir)
+    # Prepend SN bin dir to PATH env var
+    if {$tcl_platform(platform) == "windows"} {
+        set SEP \;
+    } else {
+        set SEP :
     }
+    set env(PATH) "$sn_path(bindir)${SEP}$env(PATH)"
 
     if {$tcl_platform(platform) == "windows"} {
         if {![info exists env(LOGNAME)] && [catch {set env(LOGNAME)\
