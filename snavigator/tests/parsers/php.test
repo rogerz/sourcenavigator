@@ -2160,7 +2160,27 @@ PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
-tcltest::test function-4.2 { syntax error leads to nested function } {knownbug} {
+tcltest::test function-4.2 { nested functions } {
+    browse [save_file f.php {
+<?
+function foo() {
+    function bar() {
+        function baz() {}
+    }
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;baz<>000005.008<>f.php;5.25<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.008<>#<>baz<>fu;5.25<>5.17<>5.20<>{}
+PAF_FUNC_DEF;bar<>000005.008<>f.php;6.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.008<>#<>bar<>fu;6.5<>4.13<>4.16<>{}
+PAF_FUNC_DEF;foo<>000004.004<>f.php;7.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.004<>#<>foo<>fu;7.1<>3.9<>3.12<>{}
+}
+
+tcltest::test function-4.3 { syntax error leads to nested function } {
     browse [save_file f.php {
 <?
 function foo() {'}
@@ -2170,10 +2190,10 @@ function bar() {}
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;foo<>000003.000<>f.php;6.0<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.0<>3.9<>3.12<>{}
-PAF_FUNC_DEF;foo<>000005.000<>f.php;5.17<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>bar<>fu;5.17<>3.9<>3.12<>{}
+PAF_FUNC_DEF;bar<>000005.000<>f.php;5.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>bar<>fu;5.17<>5.9<>5.12<>{}
+PAF_FUNC_DEF;foo<>000005.000<>f.php;7.0<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>foo<>fu;7.0<>3.9<>3.12<>{}
 }
 
 
@@ -2578,6 +2598,11 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # the end of the file. The input layer should convert
 # \r\n to \n and add a \n to the end of the file if
 # one does not exist!
+
+# display order for nested functions is messed up.
+# The outer function needs to be added first so
+# that the tag is visible. Not sure how we can
+# work this since the function stack causes it.
 
 # cleanup
 file delete f.php

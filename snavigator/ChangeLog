@@ -1,3 +1,16 @@
+2003-06-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/README.TXT: Mention that nested
+	functions are now supported.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support for
+	nested functions by pusing function info
+	onto a stack and then popping it off when
+	done.
+	* tests/parsers/php.test: Add nested function
+	test and remove knownbug constraint from
+	another nested function related test.
+
 2003-06-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.

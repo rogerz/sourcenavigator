@@ -106,6 +106,20 @@ typedef struct NestedBracket {
     struct NestedBracket* next;
 } NestedBracket;
 
+typedef struct NestedFunction {
+    char* name;
+    char* args;
+    int   high_line;
+    int   high_col_start;
+    int   high_col_end;
+    int   line_start;
+    int   line_end;
+    int   col_start;
+    int   col_end;
+    int   brace_count;
+    struct NestedFunction* next;
+} NestedFunction;
+
 /* Uncomment this to see debug output in token parsing stage */
 /* #define TOKEN_DEBUG */
 
@@ -150,6 +164,10 @@ static int  current_function_column_start;
 static int  current_function_column_end;
 
 static int  current_function_brace_count;
+
+static NestedFunction* function_nest_head = NULL;
+static NestedFunction* function_nest_tail = NULL;
+
 
 static int current_array_bracket_count = 0;
 static Token* current_array_token = NULL;
@@ -198,6 +216,8 @@ Token* pop_head_token();
 void free_head_token();
 void push_bracket_counter();
 void pop_bracket_counter();
+void push_function();
+void pop_function();
 void append_token(TokenType type,
                   char* strval,
                   long start_line,
@@ -1226,9 +1246,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   free_head_token(); /* FUNCTION_KEYWORD */
 
-  /* FIXME: It would be better to create a state stack and push
-     the current state onto that (class, function, namespace) */
-  assert(!current_function);
+  if (current_function != NULL) {
+    push_function();
+  }
   current_function = SN_StrDup(tokens_head->strval);
 
   current_function_highlight_line = tokens_head->start_line;
@@ -1297,6 +1317,8 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     current_function_column_end = tokens_head->end_column;
 
     emit_function_declaration();
+
+    pop_function(); /* in case of nested function */
   }
 
   free_head_token(); /* CLOSE_BRACE */
@@ -2094,6 +2116,57 @@ void pop_bracket_counter() {
         current_array_bracket_count = nbp->count;
         current_array_prefix_incr = nbp->prefix_incr;
         ckfree((char*) nbp);
+    }
+}
+
+/*
+ * This method is invoked when a nested function is
+ * encountered.
+ */
+
+void push_function() {
+    NestedFunction* n = (NestedFunction*) ckalloc(sizeof(NestedFunction));
+
+    n->name = current_function;
+    n->args = current_function_args;
+    n->high_line = current_function_highlight_line;
+    n->high_col_start = current_function_highlight_column_start;
+    n->high_col_end = current_function_highlight_column_end;
+    n->line_start = current_function_line_start;
+    n->line_end = current_function_line_end;
+    n->col_start = current_function_column_start;
+    n->col_end = current_function_column_end;
+    n->brace_count = current_function_brace_count;
+
+    if (function_nest_head == NULL) {
+        function_nest_head = function_nest_tail = n;
+    } else {
+        n->next = function_nest_head;
+        function_nest_head = n;
+    }
+}
+
+void pop_function() {
+    if (function_nest_head != NULL) {
+        NestedFunction* n = function_nest_head;
+        if (function_nest_head == function_nest_tail) {
+            function_nest_head = function_nest_tail = (NestedFunction*) NULL;
+        } else {
+            function_nest_head = function_nest_head->next;
+        }
+
+        current_function = n->name;
+        current_function_args = n->args;
+        current_function_highlight_line = n->high_line;
+        current_function_highlight_column_start = n->high_col_start;
+        current_function_highlight_column_end = n->high_col_end;
+        current_function_line_start = n->line_start;
+        current_function_line_end = n->line_end;
+        current_function_column_start = n->col_start;
+        current_function_column_end = n->col_end;
+        current_function_brace_count = n->brace_count;
+
+        ckfree((char*) n);
     }
 }
 

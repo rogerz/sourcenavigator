@@ -14,15 +14,16 @@ Mode Switching: Use "<?" to switch to PHP mode and "?> to
 Comments: // # and /**/ style comments are supported.
           Comments are highlighted in the editor.
 
-Variables: Both global variables and local variables are
+Variables: Global, super global, and local variables are
            supported. Cross referencing works for scalar
            variables and array variables. Simple variables
            within double quoted string and heredoc strings
-           are also supported.
+           are also supported. Variables are highlighted
+           inside the editor.
 
-Functions: Functions are supported, but functions defined
-           in other functions are not. Functions are
-           highlighted in the editor.
+Functions: Functions are fully supported. Nested functions
+           are also supported. Functions are highlighted
+           inside the editor.
 
 Include: The keywords include, include_once, require, and 
          require_once are recognized as include relationship
