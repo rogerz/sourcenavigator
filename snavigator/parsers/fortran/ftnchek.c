@@ -58,7 +58,6 @@ MA 02111-1307, USA.
 
 #if defined(__MSVC__)
 #define	MAXPATHLEN _MAX_PATH
-typedef	unsigned int pid_t;
 #endif /* __MSVC__ */
 
 #define MAIN
@@ -307,7 +306,6 @@ main(int argc, char *argv[])
 	char	tmp[500];
 	char	*pipe_cmd = NULL;
 	char	*cachesize = NULL;
-	pid_t	pid = 0;
 	char	dirname[MAXPATHLEN];
 	char	*db_prefix = NULL;
 	char	*incl_to_pipe = NULL;
@@ -444,7 +442,7 @@ main(int argc, char *argv[])
 	{
 		if (pipe_cmd)
 		{
-			pid = Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
+			Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
 				cachesize,sn_host,sn_pid);
 		}
 #ifndef NO_DATABASE

@@ -2921,193 +2921,21 @@ Paf_db_init_tables(const char *proj_dir,const char *cache,const char *cross_cach
 	}
 }
 
-int
+void
 Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 	char *cache,char *sn_host, char *sn_pid)
 {
-	pid_t   pid = -1;
 	char    tmp[1024];
-	
+
+	if (strcmp(pipe_cmd, "stdout") != 0) {
+		fprintf(stderr, "\"-p %s\" : stdout is the only valid -p option\n", pipe_cmd);
+		Paf_panic(PAF_PANIC_SIMPLE);
+	}
+
 #ifdef WIN32
-	int             err;
-	HANDLE          read_handle;
-	STARTUPINFO startInfo;
-	PROCESS_INFORMATION procInfo;
-	SECURITY_ATTRIBUTES secAtts;
+	pipe_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 #else
-	int             fd;
-	int             pfd[2];
-	pid_t   fork();
-	char	*argv[50];
-	int	argc;
-#endif /* WIN32 */
-
-	/* Check whether the file exists! */
-	if (access(pipe_cmd,F_OK) != 0)
-	{
-		return -1;
-	}
-
-#ifdef WIN32
-	secAtts.nLength = sizeof(SECURITY_ATTRIBUTES);
-	secAtts.lpSecurityDescriptor = NULL;
-	secAtts.bInheritHandle = FALSE;
-
-	if (!CreatePipe(&read_handle, &pipe_handle, &secAtts, 0))
-	{
-		errno = GetLastError();
-		fprintf(stderr, "Error: (CreatePipe) error: %s\n", errno);
-		fflush(stderr);
-		return -1;
-	}
-	startInfo.cb = sizeof(startInfo);
-	startInfo.lpReserved = NULL;
-	startInfo.lpDesktop = NULL;
-	startInfo.lpTitle = NULL;
-	startInfo.dwX = startInfo.dwY = 0;
-	startInfo.dwXSize = startInfo.dwYSize = 0;
-	startInfo.dwXCountChars = startInfo.dwYCountChars = 0;
-	startInfo.dwFillAttribute = 0;
-	startInfo.dwFlags = STARTF_USESTDHANDLES;
-	startInfo.wShowWindow = 0;
-	startInfo.cbReserved2 = 0;
-	startInfo.lpReserved2 = NULL;
-
-	secAtts.nLength = sizeof(SECURITY_ATTRIBUTES);
-	secAtts.lpSecurityDescriptor = NULL;
-	secAtts.bInheritHandle = TRUE;
-
-	DuplicateHandle(GetCurrentProcess(),
-			 (HANDLE) read_handle,
-			 GetCurrentProcess(), &startInfo.hStdInput, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	DuplicateHandle(GetCurrentProcess(),
-			 GetStdHandle(STD_OUTPUT_HANDLE),
-			 GetCurrentProcess(), &startInfo.hStdOutput, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	DuplicateHandle(GetCurrentProcess(),
-			 GetStdHandle(STD_ERROR_HANDLE),
-			 GetCurrentProcess(), &startInfo.hStdError, 0, TRUE,
-			 DUPLICATE_SAME_ACCESS);
-
-	/*
-	 * Constract the command line so that argmuents or the command
-	 * itself is masked with ".." when it contains blanks
-	 */
-	tmp[0] = 0;
-	sn_append_option_to_command_line (tmp, pipe_cmd);
-
-	if (cache)
-	{
-		sn_append_option_to_command_line (tmp, "-c");
-		sn_append_option_to_command_line (tmp, cache);
-	}
-
-	if (sn_host)
-	{
-		sn_append_option_to_command_line (tmp, "-H");
-		sn_append_option_to_command_line (tmp, sn_host);
-	}
-
-	if (sn_pid)
-	{
-		sn_append_option_to_command_line (tmp, "-P");
-		sn_append_option_to_command_line (tmp, sn_pid);
-	}
-
-	sn_append_option_to_command_line (tmp, db_prefix);
-
-	memset((char *)&procInfo,0,sizeof(procInfo));
-
-	if (!CreateProcess(NULL,tmp,NULL,NULL,TRUE,DETACHED_PROCESS,
-		NULL,NULL,&startInfo, &procInfo))
-	{
-		err = GetLastError();
-	}
-	else
-		err = 0;
-	CloseHandle(read_handle);
-	CloseHandle(startInfo.hStdInput);
-	CloseHandle(startInfo.hStdOutput);
-	CloseHandle(startInfo.hStdError);
-	CloseHandle(procInfo.hThread);
-
-	pid = (int) procInfo.hProcess;
-	process_handle = procInfo.hProcess;
-	if (err)
-	{
-		errno = err;
-		fprintf(stderr, "Error: (CreateProcess) \"%s\", error: %d\n",
-		        tmp,errno);
-		fflush(stderr);
-		return -1;
-	}
-#else /* WIN32 */
-	if (pipe(pfd) == -1)
-	{
-		fprintf(stderr, "Error: (pipe) \"%s\", error: %d\n",
-		        pipe_cmd,errno);
-		fflush(stderr);
-		return -1;
-	}
-	pid = fork();
-	switch (pid)
-	{
-	case 0:
-		close(0);
-		dup(pfd[0]);            /* stdin is the pipe */
-		close(pfd[0]);
-		close(pfd[1]);
-
-	/* Close every file except stdin, stdout and stderr! */
-		for (dup(0), fd = dup(0); fd > 2; fd--)
-			close(fd);
-
-		argc = 0;
-		argv[argc++] = pipe_cmd;
-
-		if (cache)
-		{
-			argv[argc++] = "-c";
-			argv[argc++] = cache;
-		}
-
-		if (sn_host)
-		{
-			argv[argc++] = "-H";
-			argv[argc++] = sn_host;
-		}
-
-		if (sn_pid)
-		{
-			argv[argc++] = "-P";
-			argv[argc++] = sn_pid;
-		}
-
-		argv[argc++] = db_prefix;
-
-		argv[argc++] = NULL;
-
-		execvp(pipe_cmd,argv);
-
-		return -1;	/* Error happend. */
-		break;
-
-	case -1:
-		fprintf(stderr, "Error: fork error: \"%s\"\n", strerror(errno));
-		fflush(stderr);
-		exit(1);
-		break;
-	}
-
-	if ((pipe_handle = fdopen(pfd[1],"w")) == NULL)
-	{
-		fprintf(stderr, "Error: fdopen error: \"%s\"\n", strerror(errno));
-		exit(1);
-	}
-	close(pfd[0]);
+	pipe_handle = stdout;
 #endif /* WIN32 */
 
 	if (incl_to_pipe)
@@ -3121,7 +2949,7 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 			fflush(stderr);
 			exit(1);
 		}
-		while (fgets(tmp,sizeof(tmp) -1,ifp))
+		while (fgets(tmp,sizeof(tmp)-1,ifp))
 		{
 			Paf_Pipe_Write(tmp);
 		}
@@ -3131,7 +2959,6 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 
 		unlink(incl_to_pipe);   /* Nobody needs it. */
 	}
-	return (int)pid;
 }
 
 #if DB_NO_CASE_COMPARE
@@ -3245,16 +3072,6 @@ Paf_Pipe_Close()
 
 		return 0;
 	}
-#ifdef  WIN32
-	CloseHandle(pipe_handle);
-
-	ret = WaitForSingleObject(process_handle,INFINITE);
-	process_handle = INVALID_HANDLE_VALUE;
-#else
-	fclose(pipe_handle);
-
-	wait(&ret);
-#endif /* WIN32 */
 
 	pipe_handle = INVALID_HANDLE_VALUE;
 

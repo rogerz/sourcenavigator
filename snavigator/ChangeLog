@@ -1,5 +1,30 @@
 2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/dbutils.c (Paf_Pipe_Create, Paf_Pipe_Close):
+	Remove the custom pipe code for win32
+	and unix from the Paf_Pipe_Create method.
+	Instead, send pipe output to stdout when
+	the -p stdout is passed. Make the Paf_Pipe_Create
+	method void since it does not return any
+	useful info. Remove the pipe wait code in
+	Paf_Pipe_Close since we just write to stdout.
+	* gui/misc.tcl (sn_load_part_files):
+	Pass the proper options to the parser and
+	dbimp executable so that these programs
+	can be run in a pipe managed by Tcl.
+	* hyper/sn.h: Change return type of
+	Paf_Pipe_Create decl to void.
+	* parsers/cpp/skeleton.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/fortran/ftnchek.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/tcl/skeleton.c (main): Ignore
+	return value of Paf_Pipe_Create.
+	* parsers/toolbox/snptools.c (sn_init): Ignore
+ 	return value of Paf_Pipe_Create.
+
+2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (sn_load_part_files): Set the
 	pipe used to communicate with the parser
 	and dbimp so that it uses the utf-8 encoding.

@@ -243,13 +243,8 @@ main(int argc, char *argv[])
    {
       if (pipe_cmd)
       {
-         if (Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
-            cachesize,sn_host,sn_pid) < 0)
-         {
-            fprintf(stderr, "Error: (PIPE) \"%s\",%d\n",pipe_cmd,errno);
-            fflush(stdout);
-            exit(2);
-         }
+         Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
+            cachesize,sn_host,sn_pid);
       }
       else
          Paf_db_init_tables(db_prefix,cachesize,NULL);

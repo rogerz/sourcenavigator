@@ -208,14 +208,8 @@ main(int argc, char *argv[])
 
   if (optind < argc || list_fp)	{
     if (pipe_cmd) {
-      if (Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,cachesize,
-		hostname,snpid) < 0)
-	  {
-		fprintf(stderr, "Error: \"%s\",%s\n",pipe_cmd,strerror(errno));
-		fflush(stderr);
-
-		exit(2);
-	  }
+      Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,cachesize,
+		hostname,snpid);
     } else {
       Paf_db_init_tables(db_prefix,cachesize, NULL);
     }

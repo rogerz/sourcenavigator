@@ -3739,21 +3739,28 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
     } else {
         set swi $sn_options(sys,parser_switches)
     }
-    lappend cmd -n $sn_options(db_files_prefix) -y ${coll} -p ${pipe}
+    lappend cmd -n $sn_options(db_files_prefix) -y ${coll}
     if {${swi} != ""} {
         eval lappend cmd ${swi}
     }
-    lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
 
     #look for the location of included headers
     if {$sn_options(def,include-locatefiles)} {
         lappend cmd -I ${incl}
     }
 
-    # Character set encoding (if non-default).
+    # Character set encoding (if non-default), used by a parser when
+    # reading a source file.
     if {[string compare $sn_options(def,encoding) "iso8859-1"] != 0} {
         lappend cmd -e $sn_options(def,encoding)
     }
+
+    # The -c -H -P options need to be passed to both the parser and
+    # the dbimp executable.
+    lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
+    lappend cmd -p stdout | ${pipe}
+    lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
+    lappend cmd $sn_options(db_files_prefix)
 
     sn_log "Parsing command: ${cmd}"
 

@@ -428,12 +428,8 @@ sn_init()
 {
   if (pipecmd != NULL)
   {
-    if (Paf_Pipe_Create(pipecmd, dbprefix, incl_to_pipe, cachesize,
-                        sn_host, sn_pid) < 0)
-    {
-      sn_message("Pipe error: %s\n", pipecmd);
-      sn_panic();
-    }
+    Paf_Pipe_Create(pipecmd, dbprefix, incl_to_pipe, cachesize,
+                        sn_host, sn_pid);
   }
   else
   {
