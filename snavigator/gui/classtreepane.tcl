@@ -27,7 +27,7 @@ itcl::class ClassTree& {
     constructor {args} {
         global sn_options
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
         # Set default layout and order for classtree.
         global ${this}-layoutstyle
@@ -730,8 +730,7 @@ itcl::class ClassTree& {
         return [sn_view_icon [get_indep String ClassHierarchy] ${base_root}]
     }
     method SetTitle {} {
-        wm title ${topw} [Title]
-        wm iconname ${topw} [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     # Fill combobox with the correct entries
@@ -996,7 +995,7 @@ itcl::class ClassTree& {
     }
 
     protected variable print_dialog ""
-    protected variable topw "."
+    protected variable topw
     protected variable displayed 0
     protected variable CanDraw
     protected variable RelativClass ""

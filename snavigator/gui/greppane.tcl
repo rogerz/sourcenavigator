@@ -747,12 +747,8 @@ itcl::class Grep {
     }
 
     method SetTitle {} {
-	# FIXME: this is a bit of a hack
-	set top [winfo toplevel $itk_component(hull)]
-
-# FIXME: If we change to -title in Window class, this needs fixing.
-        ${top} title [Title]
-        ${top} configure -iconname [Icon]
+	set topw [winfo toplevel $itk_component(hull)]
+	${topw} configure -title [Title] -iconname [Icon]
     }
 
     # A single click will select a given line, if we have
@@ -923,8 +919,6 @@ itcl::class Grep {
             text_select_line $nextline
         }
     }
-
-# FIXME: Printing support for this widget?
 
     method print {} {
         if {$itk_option(-next) != ""} {

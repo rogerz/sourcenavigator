@@ -1306,7 +1306,6 @@ itcl::class Project& {
         }
     }
 
-    protected variable topw "."
     protected variable Toolbar ""
     protected variable Statusbar ""
     protected variable Reuse ""

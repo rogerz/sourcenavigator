@@ -49,15 +49,16 @@ itcl::class Editor& {
 	    rename -state -editstate editState State
 	}
 
-	eval itk_initialize $args
-
 	# Init some variables.
 	set editor $itk_component(hull).editor
 
-	set topw [winfo toplevel [namespace tail ${this}]]
+	set topw [winfo toplevel $itk_component(hull)]
 
 	# Init some local/global variables.
 	init_Editor
+
+        # Init options after setting up class variables
+	eval itk_initialize $args
 
 	# Add menu entries, if availiable.
 	if {$itk_option(-menu) != ""} {
@@ -170,10 +171,6 @@ itcl::class Editor& {
 	    -orient horizontal
 	scrollbar $itk_component(hull).yview \
 	    -command "$itk_component(editor) yview"
-
-	# Load file into editor.
-	editfile $itk_option(-filename) \
-	    -1 "" 0
 
 	pack $itk_component(hull).xview \
 	    -side bottom \
@@ -3244,11 +3241,8 @@ itcl::class Editor& {
     method SetTitle {} {
 	global sn_options sn_root
 
-	#toplevel window
-	set win [winfo toplevel $itk_component(editor)]
+	${topw} configure -title [Title] -iconname [Icon]
 
-	wm title ${win} [Title]
-	wm iconname ${win} [Icon]
 	set lines 0
 	scan [$itk_component(editor) index "end-1c"] %d lines
 
@@ -4602,8 +4596,8 @@ itcl::class Editor& {
     itk_option define -file_changed file_changed File_Changed 0
     public variable highlight y
     itk_option define -findcombo findcombo Findcombo ""
-    #for readonly-projects
-    public variable topw ""
+
+    protected variable topw
     
     private variable edit_SearchNoCase
     private variable edit_SearchMethod

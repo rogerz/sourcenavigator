@@ -30,7 +30,7 @@ itcl::class Include& {
         global sn_options
 
         # Init some values.
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
 	# All thulls should be replaced with itk_component(hull)
         set thull $itk_component(hull)
@@ -494,7 +494,6 @@ itcl::class Include& {
 
         #dump the current view into the history stack
         if {!${reset}} {
-# FIXME: if topw is a plain toplevel, how would this call to history_stack_add_point work?
             ${topw} history_stack_add_point ${this}
         }
 
@@ -1111,8 +1110,8 @@ itcl::class Include& {
         } else {
             set icon [get_indep String IncludeTree]
         }
-        wm title [winfo toplevel [namespace tail ${this}]] ${t}
-        wm iconname [winfo toplevel [namespace tail ${this}]] ${icon}
+
+        ${topw} configure -title ${t} -iconname ${icon}
     }
 
     #Filter for symbols
@@ -1311,7 +1310,7 @@ itcl::class Include& {
     private variable layoutstyle
     private variable order
 
-    protected variable topw "."
+    protected variable topw
     protected variable can ""
     protected variable baseroot ""
     protected variable parents

@@ -1,3 +1,23 @@
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/classpane.tcl:
+	* gui/classtreepane.tcl:
+	* gui/editorpane.tcl:
+	* gui/greppane.tcl:
+	* gui/includepane.tcl:
+	* gui/makepane.tcl:
+	* gui/projedit.tcl:
+	* gui/retrieverpane.tcl:
+	* gui/xrefpane.tcl: Rework use of $topw member
+	variable in pane windows. Use $itk_component(hull)
+	instead of namespace tail ${this}. Use the
+	-title and -iconname options from the Window class.
+	Don't set a default value for topw so we can be sure
+	it is set before use. Move itk_initialize in the
+	Editor& class after variable initilizations because
+	the -filename property invokes editfile. Use $topw
+	member instead of makeing another call to wm toplevel.
+
 2002-05-28  Mo DeJong  <supermo@bayarea.net>
 
 	* configure: Regen.

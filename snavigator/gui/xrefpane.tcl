@@ -60,7 +60,7 @@ itcl::class XRef& {
             set cross_ref_access "p r u w"
         }
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
 
         #when the cross reference is called without toolbar, MaxLevels
         #will be not defined.
@@ -648,8 +648,7 @@ itcl::class XRef& {
         if {${qry} == ""} {
             $itk_option(-symbols) configure -contents ""
         } else {
-            set toplevel [winfo toplevel $itk_component(hull)]
-            $toplevel configure -cursor watch
+            ${topw} configure -cursor watch
             update idletasks
             # We need to do some simple caching or we're not
             # going very responsive if we got to do a big lookup.
@@ -659,7 +658,7 @@ itcl::class XRef& {
                 set lastupdate $qry
             }
             $itk_option(-symbols) configure -contents $xref_sym_cache
-            $toplevel configure -cursor ""
+            ${topw} configure -cursor ""
         }
     }
 
@@ -2324,8 +2323,7 @@ itcl::class XRef& {
         return [sn_view_icon [get_indep String PafCrossRef] ${base_root}]
     }
     method SetTitle {} {
-        wm title [winfo toplevel [namespace tail ${this}]]  [Title]
-        wm iconname [winfo toplevel [namespace tail ${this}]] [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     # The filter method is invoked by the multiview class when
@@ -2724,7 +2722,7 @@ itcl::class XRef& {
     private variable xref_sym_cache ""
 
     protected variable can ""
-    protected variable topw "."
+    protected variable topw
     protected variable base_root ""
     protected variable listprefix ""
     protected variable print_dialog ""

@@ -655,8 +655,7 @@ itcl::class Retr& {
         return [sn_view_icon ${Retr_Title}]
     }
     method SetTitle {} {
-        catch {[winfo toplevel $itk_component(hull)] title [Title]}
-        [winfo toplevel $itk_component(hull)] configure -iconname [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     method print {} {
@@ -878,7 +877,7 @@ itcl::class Retr& {
     }
 
     protected variable searchbtn ""
-    protected variable topw "."
+    protected variable topw
     protected variable tree ""
     protected variable treew ""
     protected variable ScopesFilter
