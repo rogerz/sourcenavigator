@@ -1,5 +1,16 @@
 2002-05-17  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/greppane.tcl (constructor, ExecGrep, handle_proceed):
+	Use bindtags and a <Return> binding on the hull to implement
+	starting grep via the keyboard. Fix the filtercombo and max
+	lines entries so that they support this binding. Reenable the
+	widgets before leaving the ExecGrep method because of user
+	error. Set or remove the <Return> binding in the handle_proceed
+	method so that ExecGrep cannot be reentered by hitting the
+	Return key twice in a row.
+
+2002-05-17  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/greppane.tcl (ExecGrep, finish_grep): Disable the Serach
 	button along with other widgets as soon as the user clicks.
 	Snap the horizontal scrollbar to the left side after the

@@ -330,18 +330,20 @@ itcl::class Grep {
 
         [$itk_component(pattern) component entry] select to end
 
-        # It would be better to bind to the hull and reorder the events.
+        # <Return> should start grepping independent of the widget in focus
+        # Reorder bindings to deliver event to the hull first
+        bind $itk_component(hull) <Return> [itcl::code ${this} ExecGrep]
+
         foreach widget [list \
                            [$itk_component(limit) component entry] \
                            [$itk_component(pattern) component entry] \
-                           [$itk_component(filepattern) component entry]] {
-            bind $widget <Return> [itcl::code ${this} ExecGrep]
+                           [$itk_component(filepattern) component entry] \
+                           [$itk_component(filtercombo) component entry]] {
+            bindtags $widget [concat $itk_component(hull) [bindtags $widget]]
         }
 
-# FIMXE: Tag for the text widget?
 	$itk_component(results) tag config sel -background $sn_options(def,select-bg)
 
-# FIXME : why would we care about tabs in this widget?
         Editor&::set_tab $itk_component(results) 2
 
         # Lock down bindings for this widget so we only use ours
@@ -464,6 +466,7 @@ itcl::class Grep {
 
         set pat ${pattern}
         if {[string compare [string trim ${pat}] ""] == 0} {
+            handle_proceed normal
             return
         }
 
@@ -490,6 +493,7 @@ itcl::class Grep {
         # No files matched the file filter
         if {$files_Count == 0} {
             sn_error_dialog "[get_indep String ErrorNoMatches] \"${filepattern}\" !"
+            handle_proceed normal
             return
         }
 
@@ -846,12 +850,14 @@ itcl::class Grep {
             set Proceed 0
 
             $itk_component(search) configure -state normal
+            bind $itk_component(hull) <Return> [itcl::code ${this} ExecGrep]
         } else {
             set Proceed 1
             set wasLineSelected 0
 
             $itk_component(search) configure -state ${state}
             $itk_component(cancel) configure -state normal
+            bind $itk_component(hull) <Return> {}
 
             # Display the state of the grep command
             pack $itk_component(progressbar) -side right -fill y
