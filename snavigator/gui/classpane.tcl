@@ -29,7 +29,7 @@ itcl::class Class& {
     constructor {args} {
         global sn_options
 
-        set topw [winfo toplevel [namespace tail ${this}]]
+        set topw [winfo toplevel $itk_component(hull)]
         set cls [info class]
 
 	itk_component add panedwindow {
@@ -149,7 +149,6 @@ itcl::class Class& {
 
 	$itk_component(memberlist) config \
 		-fillcommand [itcl::code $this fillcbwrapper]
-        set topw [winfo toplevel [namespace tail ${this}]]
 
 	itk_component add overridden {
 	    checkbutton $itk_component(memberlist).filter.overridden\
@@ -371,8 +370,7 @@ itcl::class Class& {
     }
 
     method SetTitle {} {
-        wm title [winfo toplevel $itk_component(hull)] [Title]
-        wm iconname [winfo toplevel $itk_component(hull)] [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     #don't change the status of overridden/overloaded
@@ -1422,7 +1420,7 @@ itcl::class Class& {
         }
     }
 
-    protected variable topw "."
+    protected variable topw
     protected variable displayed 0
     protected variable base_classes ""
     protected variable all_base_classes ""

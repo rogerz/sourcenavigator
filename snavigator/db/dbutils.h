@@ -27,10 +27,7 @@ MA 02111-1307, USA.
 
 #define  _DBUTILS_
 
-#ifndef WIN32
-/* Once we start using confiure we can get rid of this. */
 #include <config.h>
-#endif
 
 #include "mxdefine.h"
 #include "mxfuncs.h"

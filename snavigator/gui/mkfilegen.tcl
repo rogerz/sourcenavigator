@@ -448,9 +448,9 @@ itcl::class MakefileGen {
               $(${TargetName}${tmpstr2})\n"
         } else {
             puts ${file_d} "${outputfile}: \$(${TargetName}${tmpstr})"
-            puts ${file_d} "\t$(LINKER) ${basicflags} ${outputfile}\
-              $(LINKER_ENTRY) $(LINKER_FLAGS) $(${TargetName}${tmpstr})\
-              $(${TargetName}${tmpstr2})\n"
+            puts ${file_d} "\t\$(LINKER) ${basicflags} ${outputfile}\
+              \$(LINKER_ENTRY) \$(LINKER_FLAGS) \$(${TargetName}${tmpstr})\
+              \$(${TargetName}${tmpstr2})\n"
         }
     }
 

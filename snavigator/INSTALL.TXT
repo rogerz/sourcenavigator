@@ -10,7 +10,7 @@ the snavigator.exe executable in the Windows Explorer.
 Generic Build Notes:
 
 These build/install instructions assume that you have already
-downloaded and extracted the files from the zip or tar file.
+downloaded and extracted the source files from the zip or tar file.
 
 We suggest building outside of the src directory, this might
 be a new concept for most users, but it is really quite simple
@@ -27,6 +27,12 @@ on. By installing into an application specific directory
 like /opt/sourcenav, these problems can be avoided.
 
 UNIX Build:
+
+GNU tools must be on the PATH before the configure script
+is run. GNU make, gcc, bison, and flex are required to build
+Source-Navigator. If the GNU make executable on your system
+is installed as gmake, type gmake instead of make in the
+following instructions.
 
 To build under a UNIX system, simply create a build directory
 and run the configure script. The following commands assume
@@ -46,6 +52,10 @@ Building under Windows is more tricky when compared to the UNIX
 build. Be sure to follow the build instructions exactly. Note
 that VC++ 6.0 is the only supported compiler at this time.
 
+Note that this build process has only been tested on binmode
+Cygwin mount points. Since binmode is the default mount type,
+it should just work by default.
+
 Windows versions of Source-Navigator are created using the VC++
 compiler and Cygwin. One needs to run the vcvars32.bat script
 to setup the needed env vars. Typically, this is done by starting
@@ -53,11 +63,35 @@ command.com on Windows 95/98 or cmd.exe under NT, then
 run the vcvars32.bat script in the VC++ bin directory.
 
 After VC++ env vars are setup, start a bash shell by cd'ing to
-the Cygwin root directory and running cygwin.bat. In the bash
-shell, run the following commands.
+the Cygwin root directory and running cygwin.bat. This will
+start the bash shell where unix like commands can be entered.
+
+Unfortunately, the current Cygwin grep.exe executable does not
+deal with a input CRLF sequence properly. This issue needs
+to be worked around by installing a version of grep that does
+deal with CRLF sequences, otherwise the configure script will
+generate an error since it checks the grep executable for
+this problem.
+
+A working Win32 grep executable can be found here:
+
+http://unxutils.sourceforge.net/UnxUtils.zip
+
+Unzip the archive in a temp directory, you won't need
+all these utilities, only the grep.exe is needed. Now
+create an empty directory grep will be saved, something
+like ~/grep should work. Copy the usr/local/wbin/grep.exe
+executable from the temp directory into ~/grep and finally
+put the grep directory at the front of your PATH env var
+so that it is used instead of the Cygwin version of grep.
+
+export PATH=$HOME/grep:${PATH}
+
+Once that is done, you will need to set the CC and CFLAGS
+env vars, like so:
 
 % export CC=cl
-% export CFLAGS="-Z7 -Od -MD"
+% export CFLAGS="-Z7 -Od -MD -nologo"
 
 You can now run the configure script in the normal way. Of course,
 there are a couple of things to take note of. First, the configure

@@ -46,7 +46,8 @@ sn-text.gif cygsol.gif cygcont.gif \
 boxes.xpm clsbr.xpm clsbr_+-.xpm clsbr_+.xpm clsbr_-.xpm clsbr_p+-.xpm \
 clsbr_p+.xpm clsbr_p-.xpm clsbr_p.xpm clsbr_pv+-.xpm clsbr_pv+.xpm \
 clsbr_pv-.xpm clsbr_pv.xpm clsbr_s.xpm clsbr_v+-.xpm clsbr_v+.xpm \
-clsbr_v-.xpm clsbr_v.xpm cross_by.xpm cross_dispparam.xpm cross_param.xpm \
+clsbr_v-.xpm clsbr_v.xpm clsbr_private.xpm \
+cross_by.xpm cross_dispparam.xpm cross_param.xpm \
 cross_static.xpm cross_to.xpm dbg_redisp.xpm dir.xpm \
 file.xpm key.xpm minus.xpm plus.xpm updir.xpm \
 type_cl.xpm type_cl+.xpm type_cl-.xpm type_con.xpm \

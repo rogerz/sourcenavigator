@@ -291,6 +291,7 @@ proc sn_load_pixmaps {} {
         image create ${pixmap} cls_br_p+_image -file ${bitd}/clsbr_p+.${xpm}
         image create ${pixmap} cls_br_p+-_image -file ${bitd}/clsbr_p+-.${xpm}
         image create ${pixmap} cls_br_p-_image -file ${bitd}/clsbr_p-.${xpm}
+        image create ${pixmap} cls_br_private_image -file ${bitd}/clsbr_private.${xpm}
 
         #retriever images
         image create ${pixmap} type_cl_image -file ${bitd}/type_cl.${xpm}

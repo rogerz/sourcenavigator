@@ -72,8 +72,6 @@ proc sn_splash_dialog {type} {
     ${w}.text insert end [get_indep String SplashCopyrightText] {center large}
     ${w}.text insert end "\n"
     if {${type} == "about"} {
-        #	$w.text insert end [get_indep String SplashSupportText] {center large}
-
         ${w}.text insert end "\n\n" {center small}
         ${w}.text insert end [get_indep String SplashSubCopyrightText]\
           {center small}
@@ -957,9 +955,17 @@ proc load_xref_pipe {xreffd xfer_file} {
         # It has to be called before sn_db_open_files!
         catch {unset SN_cross_pid}
 
+# FIXME : Tcl fails to raise an error
+# during a call to the close command
+# when the program on the other end
+# of a non-blocking pipe crashes.
+# We work around this by putting the
+# pipe back in blocking mode.
+        fconfigure ${xreffd} -blocking 1
+
         set err ""
         set status [catch {close ${xreffd}} err]
-        sn_log "Exit status: ${status}, ${err}"
+        sn_log "xref pipe exit status: ${status}, ${err}"
 
         #xref has been crashed, report the error and the last accessed
         #file name
@@ -1819,7 +1825,7 @@ proc sn_create_new_project {{import_file ""}} {
     #generate Xref information
     if {${xfer_file} != "" && [file exists ${xfer_file}] && [file size\
       ${xfer_file}] > 0} {
-        sn_load_xref ${xfer_file}
+        after 1000 [list sn_load_xref ${xfer_file}]
     }
 
     catch {paf_db_proj sync}
@@ -2238,7 +2244,11 @@ proc sn_delete_current_project {{interactive 1}} {
     return 1
 }
 
-proc sn_is_project_busy {nm intp usr hst port} {
+# Check lock information in the database, check to see if
+# the other process is active, and return the found info
+# by setting variables in the caller's scope.
+
+proc sn_is_project_busy {nm intp usr hst port p} {
     global sn_options
     global tcl_platform errorCode
 
@@ -2246,10 +2256,12 @@ proc sn_is_project_busy {nm intp usr hst port} {
     upvar ${usr} user
     upvar ${hst} host
     upvar ${port} tcp_ip_port
+    upvar ${p} pid
 
     set in ""
     set user ""
     set host ""
+    set pid ""
 
     if {[catch {cd [file dirname ${nm}]}] || ![file exists ${nm}] ||\
       [file size ${nm}] == 0} {
@@ -2286,26 +2298,92 @@ proc sn_is_project_busy {nm intp usr hst port} {
     if {${host} == [info hostname]} {
         # We are on the same machine.
         if {${pid} == [pid]} {
-            return "me"
             # The current process is using the project.
+            return "thisprocess"
         }
         if {$tcl_platform(platform) == "unix"} {
-            if {[catch {exec kill -0 ${pid}}]} {
-                # The process does not exist any more.
+            set ret [sn_unix_check_process "hyper" $pid]
+
+            if {$ret == 1} {
                 return ""
+            } elseif {$ret == 0} {
+                # Another hyper is running, fall through to username check
+            } else {
+                # We only signal to see if other process is alive
+                # when the user names match. This avoids a problem
+                # where the kill command fails because we don't
+                # have permission to signal the process.
+                if {(${user} == [get_username]) &&
+                        [catch {exec kill -0 ${pid} 2>/dev/null}]} {
+                    return ""
+                }
             }
         } else {
-			if {![isfileused $nm]} {
-				return ""
-			}
-		}		
+            if {![isfileused $nm]} {
+                return ""
+            }
+        }
+    } else {
+        return "othersystem"
     }
 
     if {${user} == [get_username]} {
-        return "me"
+        return "thisuser"
     }
-    return "busy"
+    return "thissystem"
 }
+
+# Check to see if the given pid corresponds to the given
+# executable name. If we are sure it does not, 1 is returned.
+# If we are sure it does, 0 is returned. If we are unsure
+# then -1 is returned.
+
+proc sn_unix_check_process { exe pid } {
+    if {! [file isdirectory /proc]} {
+        return -1
+    }
+    if {! [file isdirectory /proc/$pid]} {
+        return 1
+    }
+
+    # Linux/BSD style /proc
+    if {[file readable /proc/$pid/cmdline]} {
+        set fd [open /proc/$pid/cmdline r]
+        fconfigure $fd -translation binary -encoding binary
+        set data [read $fd]
+        close $fd
+        set argv0 [lindex [split $data \0] 0]
+        set tail [file tail $argv0]
+        if {$tail == $exe} {
+            sn_log "found process \"$exe\" with pid $pid"
+            return 0
+        } else {
+            return 1
+        }
+    }
+
+    # Solaris /proc
+    if {[file readable /proc/$pid/psinfo]} {
+        set fd [open /proc/$pid/psinfo r]
+        fconfigure $fd -translation binary -encoding binary
+        set data [read $fd]
+        close $fd
+        # Extract null terminated string at byte offset
+        # 88, psinfo_t->pr_fname from <sys/procfs.h>
+        set null [string first \0 $data 88]
+        incr null -1
+        set argv0 [string range $data 88 $null]
+        if {$argv0 == $exe} {
+            sn_log "found process \"$exe\" with pid $pid"
+            return 0
+        } else {
+            return 1
+        } 
+    }
+
+    return -1
+}
+
 
 proc sn_choose_project {{win ""} {initdir ""} {open "open"}} {
     global sn_options
@@ -2341,16 +2419,30 @@ proc sn_open_project {{nm ""}} {
     }
     tmp_proj close
 
-    set ret [sn_is_project_busy ${nm} in remuser remhost port]
+    set ret [sn_is_project_busy ${nm} in remuser remhost port pid]
     switch -- ${ret} {
-        "me" {
-                sn_error_dialog [format [get_indep String ProjAlreayOpened]\
-                  ${nm}]
+        "othersystem" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedOtherSystem] \
+                    ${remuser} ${nm} ${remhost}]
+                 return
+            }
+        "thisprocess" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisProcess] \
+                    ${nm}]
+                 return
+            }
+        "thisuser" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisUser]\
+                    ${nm} ${pid}]
                 return
             }
-        "busy" {
-                sn_error_dialog [format [get_indep String PafProjBusy] ${nm}\
-                  "${remuser}@${remhost}"]
+        "thissystem" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisSystem] \
+                    ${remuser} ${nm} ${pid}]
                 return
             }
         "error" {
@@ -2748,24 +2840,38 @@ proc sn_read_project {projfile} {
     set interactive 1
     while {${interactive}} {
         set ret [sn_is_project_busy $sn_options(sys,project-file) in user host\
-          port]
+          port pid]
         switch -- ${ret} {
-            "me" {
-                    sn_error_dialog [format [get_indep String ProjAlreayOpened] \
-                        $sn_options(sys,project-file)] 
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${user} $sn_options(sys,project-file) ${host}]
                     return -1
             }
-            "busy" {
-	            sn_error_dialog [format [get_indep String PafProjBusy] \
-                        $sn_options(sys,project-file) ${user}@${host}]
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        $sn_options(sys,project-file)]
+                    return -1
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        $sn_options(sys,project-file) ${pid}] 
+                    return -1
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${user} $sn_options(sys,project-file) ${pid}]
                     return -1
             }
             "error" {
                     return 0
-                }
+            }
             default {
                     break
-                }
+            }
         }
     }
 
@@ -3332,8 +3438,6 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
 proc sn_title {{txt ""} {new 0}} {
     global sn_options
     global tcl_platform
-
-    set txt [join ${txt}]
 
     if {$tcl_platform(platform) == "windows"} {
         if {${txt} != ""} {

@@ -170,6 +170,8 @@ proc sn_debugger {{working_dir ""} {dbg_program ""} {gdb_command ""}} {
         unset env(TCL_LIBRARY)
     }
 
+    sn_log "now to exec gdb command : ${cmd}"
+
     #gdb command line
     if {[catch {eval exec ${cmd}} msg] != 0} {
         sn_error_dialog ${msg} [get_indep String DbgTitle]
@@ -371,7 +373,7 @@ proc sn_socket_close {name} {
 }
 
 proc sn_socket_accept {name channel ip port} {
-    global sn_sockets
+    global sn_sockets sn_options
 
     #store channel value
     set sn_sockets(${name},channel) ${channel}

@@ -35,6 +35,7 @@ MA 02111-1307, USA.
 #include "cplex.h"
 #include "cpkeyw.h"
 #include "sn.h"
+#include "longstr.h"
 
 #define my_isxdigit(x) (isxdigit(x))
 #define my_isdigit(x) (isdigit(x))
@@ -1059,7 +1060,7 @@ static void __TokenPrint( Token_t Token )
 static char *Strdup( char *pc )
 {
    if( pc ) return SN_StrDup( pc );
-   else     return 0;
+   else     return NULL;
 }
 
 extern void f_TokenOnePrint( Token_t Token )

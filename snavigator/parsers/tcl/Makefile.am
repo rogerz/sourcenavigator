@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 bin_PROGRAMS = tbrowser
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper \
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
 	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
 
 tbrowser_SOURCES = Scanner.c Parser.c Tree.c Eval.c Trafo.c itcl.c skeleton.c

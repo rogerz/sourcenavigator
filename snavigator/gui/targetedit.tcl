@@ -25,14 +25,6 @@
 ##
 ################################################
 
-# FIXME: see if this is working now!
-#This hack will be removed when the build
-#automatically takes care of the libgui tcl files
-
-if {![info exists combobox::combobox]} {
-    source ${sn_home}/share/cygnus/gui/combobox.tcl
-}
-
 itcl::class snEditTarget {
     inherit sourcenav::Dialog
 
@@ -609,7 +601,7 @@ itcl::class snEditTarget {
 
     public method import_files {} {
 
-        set importedSrcFiles [Editor&::FileDialog $itk_component(hull) -multiple 1]
+        set importedSrcFiles [Editor&::FileDialog $itk_component(hull)]
 
         if {${importedSrcFiles} != ""} {
             ${b_target} AddSourceFiles ${importedSrcFiles}
@@ -1304,7 +1296,7 @@ itcl::class snEditTarget {
     }
 
     public method cb_add_lib {} {
-        set libfiles [tk_getOpenFile]
+        set libfiles [Editor&::FileDialog $itk_component(hull)]
 	# FIXME : this is dangerous, a file named foo[exit]bar.txt could exit the IDE!
         eval {$itk_component(liblbx) insert end} $libfiles
         HandleLibsTabState

@@ -116,6 +116,12 @@ proc make_scale_window {filenum {enable_cancel 0}} {
 
     window_configure ${thull} deiconify ${thull}.scale
 
+    # Ugh! Why does the window get mapped without
+    # having the contents drawn under Windows?
+    if {$::tcl_platform(platform) == "windows"} {
+        sn_wait 300
+    }
+
     return ${thull}
 }
 
@@ -349,10 +355,10 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
         pack ${w}.m -fill both -expand y
 
         if {${first_interp}} {
-            global cygnus_copyright
+            global copyright
             label ${w}.m.copyr -bg ${bg} -fg black\
               -font $sn_options(def,layout-font) -cursor ${cursor}\
-              -anchor center -text ${cygnus_copyright}
+              -anchor center -text ${copyright}
             pack ${w}.m.copyr -pady 5 -fill x -expand y -side top
         }
 
@@ -387,7 +393,9 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
 
         set older_sn_loading_message_title ${title}
     } else {
-        raise ${w}
+        # Don't call raise here since it can cause a two second
+        # timeout with some broken window managers (kde, gnome).
+        #raise ${w}
     }
 
     if {${older_sn_loading_message_title} != ${title}} {

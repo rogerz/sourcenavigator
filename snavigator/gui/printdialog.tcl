@@ -669,6 +669,8 @@ itcl::class PrintDialog {
 
         if {$tcl_platform(platform) != "windows"} {
             set print_cmd [set PrinterCmd]
+            # Escape [] and $ in user input for eval in sn_print_file
+            regsub -all {(\$|\[|\])} $print_cmd {\\&} print_cmd
             set file [set file]
             set file [file nativename ${file}]
         } else {

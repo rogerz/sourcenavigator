@@ -244,7 +244,7 @@ itcl::class Make {
         set exec_error ""
 
         if {${target} == "<External Makefile>"} {
-            # The users is building with a external Mkefile.
+            # The users is building with a external Makefile.
             # We should bring up the debug dialog.
             sn_debugger
         } else {
@@ -445,8 +445,10 @@ itcl::class Make {
             set mkgen [MakefileGen .mkg ${target}]
 
             set mkfile [${mkgen} GenerateMakefile]
-
             itcl::delete object ${mkgen}
+            # Only pass the last component of the
+            # Makefile path as the -f argument.
+            set mkfile [file tail $mkfile]
             set make_cmd "${make_cmd} -f ${mkfile}"
 
             # If we are building an embedded target
@@ -492,8 +494,10 @@ itcl::class Make {
         #on window we must mask all "\"
         regsub -all {\\} ${make_cmd} {\\\\} make_cmd
 
-        lappend make_cmd 2>@stdout
-
+        # Bah! Tcl provides no way to read both
+        # stdout and stderr from a pipe so we
+        # pipe them both to cat and read that.
+        lappend make_cmd |& cat
 
         #1. store last used make directory
         if {[file isdirectory ${startdir}]} {
@@ -504,7 +508,7 @@ itcl::class Make {
         }
 
         #2. start command
-        sn_log "Executing make: ${make_cmd}"
+        sn_log "Executing make: ${make_cmd} in directory [pwd]"
         set ret [catch {set make_fd [open "| ${make_cmd}" r]} msg]
 
         #3. cd back to the project directory
@@ -624,9 +628,8 @@ itcl::class Make {
     }
 
     method SetTitle {} {
-	set top [winfo toplevel [namespace tail ${this}]]
-        ${top} title [Title]
-        ${top} configure -iconname [Icon]
+	set top [winfo toplevel $itk_component(hull)]
+	${top} configure -title [Title] -iconname [Icon]
     }
 
     method handle_return {} {
@@ -1034,13 +1037,18 @@ proc sn_make {} {
 
         Make ${s}.make -toolbar ${s}.exp -mesg_area ${s}.status.msg
         pack ${s}.make -expand y -fill both -side left
-        ${s} centerOnScreen
         set menu [${s} cget -menu]
 
         set toolmenu [menu .make_tool_menu${tkeWinNumber} -tearoff 0]
 # FIXME: Add to string table
         ${menu} insert 3 cascade -menu ${toolmenu} -label "Tools"
         add_make_tools_menu ${toolmenu} ${s}.make
+
+        # FIXME : This should be converted to a non-modal Dialog.
+        ${s} withdraw
+        ${s} centerOnScreen
+        ${s} deiconify
+        ${s} raise
     } else {
         ${s} raise
     }

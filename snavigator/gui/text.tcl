@@ -1060,6 +1060,7 @@ proc tkTextInsertChar {w s} {
     if {$tkBind(delSel) && [${w} tag nextrange sel 1.0 end] != "" &&\
       [${w} compare sel.first <= insert] && [${w} compare sel.last >= insert]} {
         set cutbuf [tkTextCopyTagBuffer ${w} sel.first sel.last]
+        SyncEditors $w delete sel.first sel.last
         catch {${w} delete sel.first sel.last}
     }\
     elseif $tkText(${w},ovwrt) {
@@ -1132,6 +1133,7 @@ proc tkTextInsert {w ndx args} {
     set ndx [${w} index ${ndx}]
     ${w} mark set insert ${ndx}
 
+    eval "SyncEditors $w insert insert ${args}"
     eval "${w} insert insert ${args}"
     synch_highlight ${w} ${ndx}
 
@@ -2166,6 +2168,20 @@ proc tkTextUndoPop {w} {
         tkTextUndoBeginGroup ${w} ${grp} -2.0
     }
     ${w} see insert
+
+    # If this is the last undo we can tell the editor that
+    # the file is no longer modified.
+    if {$tkText($w,undoPtr) == 0} {
+        # Find editor
+        set undone_editor ""
+        foreach editor_object [itcl::find objects -class Editor&] {
+            if {[$editor_object editor]==$w} {
+                $editor_object setmodified 0
+                $editor_object SetTitle
+                break
+            }
+        }
+    }
 
     return ${retval}
 }
