@@ -1,3 +1,11 @@
+2002-04-20  Mo DeJong  <supermo@bayarea.net>
+
+	* btree/bt_open.c:
+	* mpool/mpool.c:
+	* recno/rec_open.c: Cast the second argument
+	of fstat to struct stat * to avoid a compiler
+	warning.
+
 2000-09-26  Ben Elliston  <bje@redhat.com>
 
 	* hash/hash.h: Undefine Automake's VERSION macro.
