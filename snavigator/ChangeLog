@@ -1,5 +1,9 @@
 2002-06-25  Mo DeJong  <supermo@bayarea.net>
 
+	* mkdist.sh: Update version to 5.1.0.
+
+2002-06-25  Mo DeJong  <supermo@bayarea.net>
+
 	* hyper/highlight.c (tk_text_buffer): Update hack used
 	to extract text from a Tk text widget before passing
 	it to the lexer. This function has the name of the
