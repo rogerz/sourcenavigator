@@ -105,8 +105,7 @@ log_symbol_filename(FILE *fp,char *fname)
 
          hig_fp = fopen(outfile,"w+");
       }
-      printf("%s\n",fname);
-      fflush(stdout);
+      put_status_parsing_file(fname);
 
       if (parse_cplpl)
       {

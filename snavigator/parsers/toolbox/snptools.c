@@ -485,7 +485,7 @@ sn_register_filename(FILE ** lexstream, char * filename)
     else
     {
       strcpy(currentFilename, filename);
-      sn_message("%s...\n", filename);
+      put_status_parsing_file(filename);
       put_file(filename, group, NULL);
     }
   }

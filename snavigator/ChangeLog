@@ -1,3 +1,23 @@
+2003-04-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (put_status_parsing_file):
+	Add a util method that prints a file status message.
+	Currently this just prints the file name to
+	stdout, this message is later read by the ide
+	when updating the parser status bar.
+	* hyper/sn.h: Declare put_status_parsing_file.
+	* parsers/cobol/skeleton.c (log_symbol_filename):
+	* parsers/cpp/skeleton.c (log_symbol_filename):
+	* parsers/fortran/ftnchek.c (log_symbol_filename):
+	* parsers/java/skeleton.c (log_symbol_filename):
+	* parsers/tcl/skeleton.c (log_symbol_filename):
+	* parsers/toolbox/snptools.c (sn_register_filename):
+	Invoke put_status_parsing_file function to print
+	a file parsing status message. This only changes
+	the status message printed by parsers that use the
+	toolbox, the file names are no longer printed
+	with three periods after them.
+
 2003-04-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* mkdist.sh: Grab the version number out of the

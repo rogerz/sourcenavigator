@@ -3340,3 +3340,15 @@ int kill(pid_t pid, int dummy) /*sn_win32_ping*/
 
 
 
+/* This functions writes out a file parsing status line.
+ * It is invoked by the various parser routines to write
+ * out a line of input that is parsed by the
+ * Source-Navigator procudure event_LoadPipeInput.
+ */
+
+void
+put_status_parsing_file(char *fname) {
+    fprintf(stdout, "%s\n", fname);
+    fflush(stdout);
+}
+

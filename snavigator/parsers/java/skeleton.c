@@ -97,10 +97,7 @@ log_symbol_filename(FILE *fp, char *fname)
 
 			hig_fp = fopen(outfile,"w+");
 		}
-		/* print file name only */
-		printf("%s\n",fname);
-		fflush(stdout);
-
+		put_status_parsing_file(fname);
 		put_file(fname,group,outfile);
 	}
 	else
