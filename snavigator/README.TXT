@@ -14,8 +14,9 @@ A number of public mailing lists are available to answer general end
 user questions, as well as developer's questions. Go to the project
 website to find more information about the mailing lists.
 
-One can find Source-Navigator documentation in the snavigator/doc/html
-directory. Documentation is available in HTML format only.
+One can find Source-Navigator documentation at the following URL:
+
+http://sourcenav.sourceforge.net/online-docs/index.html
 
 Consult the INSTALL.TXT file to learn how to build and install
 binaries of Source-Navigator.

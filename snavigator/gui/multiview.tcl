@@ -4120,7 +4120,7 @@ proc AddHelpMenu {m topw} {
 
     ${m}.help configure -font $sn_options(def,layout-font)
 
-    ${m}.help add command -command " sn_help "\
+    ${m}.help add command -command "sn_help http://sourcenav.sourceforge.net/online-docs"\
 	    -label [get_indep String HelpContents]\
 	    -underline [get_indep Pos HelpContents]
 

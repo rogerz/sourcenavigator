@@ -574,8 +574,6 @@ snavigator/unix/Makefile
 snavigator/unix/snavigator
 snavigator/unix/snscenario
 snavigator/win/Makefile
-demo/Makefile
-doc/Makefile
-doc/html/Makefile])
+demo/Makefile])
 
 

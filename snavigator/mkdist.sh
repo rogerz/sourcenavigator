@@ -40,6 +40,9 @@ cp -p -R config db itcl libgui snavigator tcl tix tk $RELEASEDIR
 
 cd $RELEASEDIR
 
+# Don't ship broken docs with this release
+rm -rf snavigator/doc
+
 find . -name CVS -exec rm -rf {} \; > /dev/null 2>&1
 find . -name ".#*" -exec rm -f {} \; > /dev/null 2>&1
 find . -name "*~" -exec rm -f {} \; > /dev/null 2>&1

@@ -1,5 +1,20 @@
 2002-11-25  Mo DeJong  <mdejong@uncounted.org>
 
+	* Makefile.am: Ignore doc subdir.
+	* Makefile.in: Regen.
+	* README.TXT: Mention sourceforge URL
+ 	for online docs.
+	* configure: Regen.
+	* configure.in: Don't generate Makefiles
+	in doc subdir.
+	* mkdist.sh: Don't copy doc subdir.
+	* gui/multiview.tcl (AddHelpMenu):
+	Open sourceforge online docs. The
+	existing documentation is corrupted
+	so leave them out of the distribution.
+
+2002-11-25  Mo DeJong  <mdejong@uncounted.org>
+
 	* gui/retriever.tcl (destructor, window_deleted):
 	Fixup window deletion by setting the window
 	var to "" when it is deleted by the user.

@@ -205,7 +205,7 @@ ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
-SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc snavigator bitmaps
+SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo etc snavigator bitmaps
 
 
 rootdir = $(prefix)

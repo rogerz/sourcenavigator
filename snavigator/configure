@@ -4629,9 +4629,7 @@ snavigator/unix/Makefile
 snavigator/unix/snavigator
 snavigator/unix/snscenario
 snavigator/win/Makefile
-demo/Makefile
-doc/Makefile
-doc/html/Makefile config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+demo/Makefile config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -4869,9 +4867,7 @@ snavigator/unix/Makefile
 snavigator/unix/snavigator
 snavigator/unix/snscenario
 snavigator/win/Makefile
-demo/Makefile
-doc/Makefile
-doc/html/Makefile"}
+demo/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

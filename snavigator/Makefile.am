@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
+SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo etc \
 snavigator bitmaps
 
 install-exec-local:
