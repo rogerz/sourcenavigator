@@ -1,3 +1,12 @@
+2002-09-13  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (make_editor_bindings):
+	Move Editor bindings after instance bindings
+	to avoid a problem with highlighting when
+	indenting text when events are processed
+	in the wrong order.
+	[Bug 597660]
+
 2002-09-12  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
 
 	* Makefile.in:

@@ -390,7 +390,7 @@ itcl::class Editor& {
 	bind ${t} <Control-less> "Editor&::Indent ${this} outdent; break"
 
 	# Define the queue, how the event are handled.
-	sn_add_tags $itk_component(editor) Editor
+	sn_add_tags $itk_component(editor) Editor 2
     }
 
     # Default bindings for the text editor.
