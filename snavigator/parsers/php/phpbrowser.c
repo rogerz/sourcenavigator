@@ -902,15 +902,17 @@ YY_RULE_SETUP
   assert(*x == '$');
   x++;
 
-  /* When reading a global variable, one simply needs to add an xref
-     for the symbol in question. */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
+                 current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -925,7 +927,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 239 "phpbrowser.l"
+#line 241 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -978,14 +980,17 @@ YY_RULE_SETUP
 
   assert(result == 0);
 
-  /* Add a read xref for this symbol name */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
+                 current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -1000,7 +1005,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 311 "phpbrowser.l"
+#line 316 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -1099,7 +1104,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 407 "phpbrowser.l"
+#line 412 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -1158,7 +1163,7 @@ YY_RULE_SETUP
 
 case 14:
 YY_RULE_SETUP
-#line 463 "phpbrowser.l"
+#line 468 "phpbrowser.l"
 {
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
@@ -1170,7 +1175,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 471 "phpbrowser.l"
+#line 476 "phpbrowser.l"
 {
     #if COMMENT_DUMP
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
@@ -1184,7 +1189,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 481 "phpbrowser.l"
+#line 486 "phpbrowser.l"
 {
     #if COMMENT_DUMP
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
@@ -1197,7 +1202,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 490 "phpbrowser.l"
+#line 495 "phpbrowser.l"
 {
     #if COMMENT_DUMP
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
@@ -1211,7 +1216,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 500 "phpbrowser.l"
+#line 505 "phpbrowser.l"
 {
     char * comment;
 
@@ -1249,7 +1254,7 @@ YY_RULE_SETUP
 
 case 19:
 YY_RULE_SETUP
-#line 535 "phpbrowser.l"
+#line 540 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -2142,7 +2147,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 535 "phpbrowser.l"
+#line 540 "phpbrowser.l"
 
   
 void

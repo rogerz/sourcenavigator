@@ -183,12 +183,14 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   assert(*x == '$');
   x++;
 
-  /* When reading a global variable, one simply needs to add an xref
-     for the symbol in question. */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
                  current_function,
@@ -244,11 +246,14 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
   assert(result == 0);
 
-  /* Add a read xref for this symbol name */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
                  current_function,
@@ -395,7 +400,7 @@ void matched_pattern(char * pattern, char * text) {
     }
 
     if (0) {
-    fprintf(stderr, "Matched pattern \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+    fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
         pattern, text, mode, sn_line(), sn_column());
     }
 }

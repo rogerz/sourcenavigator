@@ -1,3 +1,20 @@
+2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass SN_FUNC_DEF
+	as the second argument to sn_insert_xref
+	for a global variable access. The docs
+	indicate the SN_REF_TO_GLOB_VAR was not
+	a valid context to be passing there.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Ditto.
+	* tests/parsers/m4.test: Update an xref
+	output that was expecting "gv" instead
+	of "fu" for a GLOBAL call from scope.
+	* tests/parsers/php.test: Add a easy
+	mode check and a couple of global var
+	xref tests to test for SN_FUNC_DEF change.
+
 2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.

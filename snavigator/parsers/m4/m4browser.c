@@ -863,12 +863,14 @@ YY_RULE_SETUP
   assert(*x == '$');
   x++;
 
-  /* When reading a global variable, one simply needs to add an xref
-     for the symbol in question. */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
                  current_function,
@@ -886,7 +888,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 207 "m4browser.l"
+#line 209 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -927,11 +929,14 @@ YY_RULE_SETUP
 
   assert(result == 0);
 
-  /* Add a read xref for this symbol name */
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
 
   result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 SN_REF_TO_GLOB_VAR, /* PASSING 0 causes function to fail, what is the global var setting ??? */
-		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
+                 SN_FUNC_DEF, /* Not really in a function definition */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
                  current_function,
@@ -949,7 +954,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 267 "m4browser.l"
+#line 272 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -1011,7 +1016,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 327 "m4browser.l"
+#line 332 "m4browser.l"
 {
   char * x = (char *) yytext;
   char * y;
@@ -1049,7 +1054,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 362 "m4browser.l"
+#line 367 "m4browser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1940,7 +1945,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 362 "m4browser.l"
+#line 367 "m4browser.l"
 
 
 void dump_function_definition() {
@@ -1977,7 +1982,7 @@ void matched_pattern(char * pattern, char * text) {
     }
 
     if (0) {
-    fprintf(stderr, "Matched pattern \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+    fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
         pattern, text, mode, sn_line(), sn_column());
     }
 }

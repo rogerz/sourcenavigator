@@ -35,7 +35,7 @@ tcltest::test var-2.1 { var write xref } {
     m4_parse_xref [save_file f.m4 {
 var=value
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>gv<>#<>var<>gv<>w<>000002<>f.m4;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
 }
 
 
@@ -54,7 +54,7 @@ tcltest::test var-4.0 { var read xref } {
     m4_parse_xref [save_file f.m4 {
 $var
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>gv<>#<>var<>gv<>r<>000002<>f.m4;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>
 }
 
 tcltest::test var-4.1 { not a var read } {
@@ -67,14 +67,14 @@ tcltest::test var-5.0 { var read xref in macro } {
     m4_parse_xref [save_file f.m4 {
 AC_DEFUN([MACRO], $var)
 }]
-} {PAF_CROSS_REF;#<>MACRO<>gv<>#<>var<>gv<>r<>000002<>f.m4;<>
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>
 }
 
 tcltest::test var-5.1 { var write xref in macro } {
     m4_parse_xref [save_file f.m4 {
 AC_DEFUN([MACRO], var=2)
 }]
-} {PAF_CROSS_REF;#<>MACRO<>gv<>#<>var<>gv<>w<>000002<>f.m4;<>
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>
 }
 
 tcltest::test var-5.2 { var read xref in macro } {
@@ -82,8 +82,8 @@ tcltest::test var-5.2 { var read xref in macro } {
 AC_DEFUN([MACRO], $var1)
 $var2
 }]
-} {PAF_CROSS_REF;#<>MACRO<>gv<>#<>var1<>gv<>r<>000002<>f.m4;<>
-PAF_CROSS_REF;#<>GLOBAL<>gv<>#<>var2<>gv<>r<>000003<>f.m4;<>
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var1<>gv<>r<>000002<>f.m4;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var2<>gv<>r<>000003<>f.m4;<>
 }
 
 tcltest::test var-5.3 { var read xref in macro } {
@@ -91,8 +91,8 @@ tcltest::test var-5.3 { var read xref in macro } {
 AC_DEFUN([MACRO], var1=1)
 var2=2
 }]
-} {PAF_CROSS_REF;#<>MACRO<>gv<>#<>var1<>gv<>w<>000002<>f.m4;<>
-PAF_CROSS_REF;#<>GLOBAL<>gv<>#<>var2<>gv<>w<>000003<>f.m4;<>
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var1<>gv<>w<>000002<>f.m4;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var2<>gv<>w<>000003<>f.m4;<>
 }
 
 
