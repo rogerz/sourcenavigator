@@ -1,3 +1,12 @@
+2003-04-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/projmng.tcl (sn_new_project_cb): Don't delete
+	a project file that was created in batch mode. The
+	sn_create_new_project proc returns zero on a
+	normal exit when in batch mode, so we were deleting
+	the project file just after it had been created.
+	[Bug 656067]
+
 2003-04-02  Steven Johnson  <sjohnson@neurizon.net>
 
 	* gui/tree.tcl (sort_refresh): Added this new method,
