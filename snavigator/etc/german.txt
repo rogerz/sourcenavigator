@@ -72,12 +72,9 @@ Protected,Protected
 Virtual,Virtual
 Private,Private
 Related,Relativ
-Email,Email
-Web,World Wide Wib
 Loading,Laden...
 Untitled,(unbekannt)
 AllRightsReserved,Alle Rechte vorbehalten
-BugReport,Fehlerreport
 Internationalization,Internationalisierung
 Encoding,Zeichensatz-Encoding
 WaitingForXref,Warten auf das Ende der Cross-Referenz
@@ -422,10 +419,8 @@ DbgTitle,Deb[ugger
 Windows,[Fenster
 Root,Wurzel:
 TakeRoot,als Wurzel nehmen
-LimitScanMsg,Bei der Developer's Edition können nur die ersten %s Dateien bearbeitet werden, dabei sind nur %s Quellcode-Zeilen zugelassen.
 LimitOpenProjError,Dieses Projekt kann von der Developer's Edition nicht geöffnet werden.
 ChangeFontSize,Ändert Fontgröße
-LimMsg,Diese Funktionalität ist in der Developer's Edition nicht erlaubt, für ein Upgrade\nkontaktieren Sie: "sn-support@cygnus.com" or +1-408-5429600!
 
 Warning,Warnung
 SelMrkFiles,Übernimmt die markierten Dateien
@@ -693,7 +688,6 @@ New,[Neu
 SaveDefault,Speichern als Default
 MultiHierAll,Alle anzeigen
 SearchImplementation,Finde [Implementation
-ReportBugs,[Berichte Fehler via
 SearchSetMark,Marke [setzen
 EditClear,[Deselektieren
 FastCreateProjectQuestion,Möchten Sie ein Projekt basierend auf die folgenden Informationen automatisch erstellen:
@@ -821,7 +815,6 @@ PrintSelection,Möchten Sie den gesamten Text drucken?
 UnableToReparse,Source-Navigator kann das Projekt nicht neu parsen, unbekannter Fehler.
 OlderProjectOpened,Dieses Projekt wurde mit einer älteren Version von Source-Navigator erstellt.\nUm mit dem Projekt arbeiten zu können, müssen Sie das Projekt new parsen.\nManche Projekt Einstellungen können dabei verloren gehen.
 NewerProjectCannotBeOpened,Ein mit einer neueren Source-Navigator Version erstelltes Projekt kann\nnicht mit einer älteren Version von Source-Navigator geöffnet werden.
-EditionCannotOpenThisProject,Dieses Projekt wurde mit einer anderen S-N Edition erstellt.\nDie S-N Edition, die Sie benutzen kann das Projekt nicht öffnen.\nNur die Enterprise Edition kann Projekte anderer Editionen öffnen.\nBitte kontaktieren Sie unseren Customer Support "sn-support@cygnus.com" für ein Upgrade.
 CurrentLinesOfSourceCode,Projekt hat %s Source-Code Zeilen.
 ScanningCanceld,Wollen Sie wirklich das Durchsuchen nach Source-Code Dateien stoppen?
 DatabaseFilesCouldNotBeDeleted,Source-Navigator kann die alten Projekt-Datenbankdateien aus\neinem unbekannten Grund nicht löschen.
@@ -830,7 +823,6 @@ WrongDatabaseDirectory,Falsches Datenbankverzeichnis '%s'
 SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.\nFür Support, kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
 SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,Alle Rechte vorbehalten. Source-NavigatorTM, das Source-NavigatorTM Logo und Cygnus Solutions Logo sind Trademarks von Red Hat, Inc. Alle anderen Produktnamen sind Trademarks ihrer rechtmäßigen Inhaber.
-SplashSupportText,Für Support kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
 FileModifiedOutsideTitle,Datei geändert
 FileModifiedOutside,Datei %s wurde von außen geändert.\nMöchten Sie es jedenfalls überschreiben?
 
@@ -886,8 +878,6 @@ Checkbutton,Checkbutton
 UnionsNoKey,Unions
 ClassNoKey,Klassen-Browser
 
-ButtonBugReport,Bug Report
-ButtonMail,Mail
 ButtonDismiss,Verwerfen
 ErrorOccured,Ein Fehler ist aufgetreten:
 

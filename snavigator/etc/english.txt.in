@@ -72,12 +72,9 @@ Protected,Protected
 Virtual,Virtual
 Private,Private
 Related,Related
-Email,E-mail
-Web,World Wide Web
 Loading,Loading...
 Untitled,(untitled)
 AllRightsReserved,All rights reserved.
-BugReport,Bug report
 Internationalization,Internationalization
 Encoding,Character set encodin[g
 WaitingForXref,Waiting for cross-referencing to complete
@@ -168,10 +165,8 @@ SelectOnly,Select only "%s"
 Windows,[Windows
 Root,Root:
 TakeRoot,[Make Current To Root
-LimitScanMsg,Only the first %s files can be processed.\nProjects built with this version can only have %s lines.\n\nTo upgrade, please contact support@cygnus.com.
 LimitOpenProjError,This version of @PRODUCT_NAME@ cannot open this project.
 ChangeFontSize,Changes font size
-LimMsg,This version of @PRODUCT_NAME@ does not support this feature. To upgrade,\n please contact support@cygnus.com.
 
 Warning,Warning
 SelMrkFiles,Select marked files
@@ -644,7 +639,6 @@ LanguageExt,Language Extensions
 ExternalEditor,Externa[l Editor
 ExternalEditors,External Editors
 PrefRcs,Version control system
-ReportBugs,Report [bugs via
 PrefMailhost,[Mailhost
 PrefBugReport,Bug reports
 Orientation,Ori[entation
@@ -822,16 +816,14 @@ EditorTranslateTabsINFO,Replace tabs with spaces
 CannotFindDllLibrary,@PRODUCT_NAME@ needs the '%s' library to print in PostScript Format.\nPrinting has been cancelled.
 PrintSelection,Do you want to print the entire file?
 OlderProjectOpened,This project was created with an older version of @PRODUCT_NAME@.\nYou must reparse the project. Some preferences might be lost.
-NewerProjectCannotBeOpened,This project was created with a newer version of @PRODUCT_NAME@. To upgrade,\nplease contact support@cygnus.com.
+NewerProjectCannotBeOpened,This project was created with a newer version of @PRODUCT_NAME@.
 UnableToReparse,@PRODUCT_NAME@ is unable to reparse this project. You must rebuild it.
-EditionCannotOpenThisProject,This project was not created with the correct version of @PRODUCT_NAME@.\nTo upgrade, please contact support@cygnus.com.
 CurrentLinesOfSourceCode,Project has %s lines of code.
 ScanningCanceld,Do you really want to stop scanning?
 DatabaseFilesCouldNotBeDeleted,@PRODUCT_NAME@ was unable to delete older database files.\nDo you wish to continue?
 WrongProjectName,Invalid project name '%s'
 WrongDatabaseDirectory,Invalid database directory name '%s'
 SplashCopyrightText,Copyright (c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.
-SplashSupportText,For support, please contact <support@cygnus.com> or visit our webpage at http://support.cygnus.com.
 SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n
 SplashAllRightsReserved,All rights reserved. Red Hat Embedded DevKit, Source-Navigator, the Source-Navigator logo, and the "shadow man" logo are trademarks of Red Hat, Inc.. All other product names are trademarks or their respective owners.
 FileModifiedOutsideTitle,File Modified
@@ -890,8 +882,6 @@ Checkbutton,Checkbutton
 UnionsNoKey,Unions
 ClassNoKey,Class
 
-ButtonBugReport,Bug Report
-ButtonMail,Mail
 ButtonDismiss,Dismiss
 ErrorOccured,An error has occured:
 

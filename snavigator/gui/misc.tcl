@@ -72,8 +72,6 @@ proc sn_splash_dialog {type} {
     ${w}.text insert end [get_indep String SplashCopyrightText] {center large}
     ${w}.text insert end "\n"
     if {${type} == "about"} {
-        #	$w.text insert end [get_indep String SplashSupportText] {center large}
-
         ${w}.text insert end "\n\n" {center small}
         ${w}.text insert end [get_indep String SplashSubCopyrightText]\
           {center small}

@@ -73,12 +73,9 @@ Protected,プロテクト
 Virtual,仮想
 Private,プライベート
 Related,関係している
-Email,Email
-Web,ウェブ
 Loading,ローディング中...
 Untitled,(名称なし)
 AllRightsReserved,登録済
-BugReport,障害レポート
 Internationalization,国際化
 Encoding,文字セット変換([G)
 FileModifiedOutside,%s ファイルは修正されています。\n保存しますか?
@@ -167,10 +164,8 @@ SelectOnly,"%s" だけを選択
 Windows,ウィンドウ([W)
 Root,ルート:
 TakeRoot,現在のシンボルをルートにする([M)
-LimitScanMsg,最初の %s ファイルだけが処理可能です。\nこのバージョンでビルドできるプロジェクトは %s 行までです。\n\nアップグレードするには sn-support@cygnus.co.jp にご連絡ください。
 LimitOpenProjError,このバージョンの Source-Navigator ではこのプロジェクトは開けません。
 ChangeFontSize,フォント サイズを変更
-LimMsg,このバージョンの Source-Navigator はこの機能をサポートしていません。 アップグレードするには\nsn-support@cygnus.co.jp にご連絡ください。
 
 Warning,警告
 SelMrkFiles,マークしたファイルを選択
@@ -634,7 +629,6 @@ LanguageExt,言語拡張子
 ExternalEditor,外部エディタ([L)
 ExternalEditors,外部エディタ
 PrefRcs,バージョン管理システム
-ReportBugs,障害報告方法([B):
 PrefMailhost,メールホスト([M)
 PrefBugReport,障害レポート
 Orientation,方向([E)
@@ -818,14 +812,12 @@ PrintSelection,ファイル全体を印刷しますか?
 OlderProjectOpened,このプロジェクトは古いバージョンの Source-Navigator で作成されています。\nプロジェクトを再度パーサーで処理する必要があります。 設定が一部失われる可能性があります。
 NewerProjectCannotBeOpened,このプロジェクトは新しいバージョンの Source-Navigator で作成されています。 アップグレードするには\nsn-support@cygnus.co.jp にご連絡ください。
 UnableToReparse,Source-Navigator はこのプロジェクトを再度パーサー処理することができません。 再ビルドが必要です。
-EditionCannotOpenThisProject,このプロジェクトは正しいバージョンの Source-Navigator で作成されていません。\nアップグレードするには sn-support@cygnus.co.jp にご連絡ください。
 CurrentLinesOfSourceCode,プロジェクトには %s 行のコードがあります。
 ScanningCanceld,スキャンを停止してよろしいですか?
 DatabaseFilesCouldNotBeDeleted,Source-Navigator は古いデータベース ファイルを削除できませんでした。\n処理を続けますか?
 WrongProjectName,プロジェクト名 '%s' は有効ではありません
 WrongDatabaseDirectory,データベース ディレクトリ名 '%s' は有効ではありません
 SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.
-SplashSupportText,サポートに関しては <sn-support@cygnus.co.jp> にご連絡いただくか、http://www.cygnus.com のウェブ サイトをご覧ください。
 SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,All rights reserved. Source-NavigatorTM, the Source-NavigatorTM ロゴ および Red Hat, Inc. ロゴは米国 Cygnus Solutions 社の商標です。 その他のすべての製品名は、各社の商標です。
 SDK_UnknownRequest,Source-Navigator has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
@@ -874,9 +866,6 @@ FoundText,検索結果
 Checkbutton,チェックボタン
 UnionsNoKey,ユニオン
 ClassNoKey,クラス
-
-ButtonBugReport,バグ レポート
-ButtonMail,メール
 
 #Ide strings
 BuildTargetManager,??? [Build Setup...

@@ -147,7 +147,7 @@
 #        -Reasonable for not tcl users.
 #
 #   Just now exported variables are:
-#        readonly, xref, html-viewer, mailhost, make-command,
+#        readonly, xref, html-viewer, make-command,
 #        ascii-print-command, browser-spacing, gdb-command,
 #        rcs-type, language, encoding, parser-ext
 #
@@ -185,7 +185,7 @@
 #         More older projects need to be reparsed.
 #################################################################################
 
-set cygnus_copyright "Copyright (c) 1997-2000 Red Hat, Inc.\n All rights\
+set copyright "Copyright (c) 1997-2000 Red Hat, Inc.\n All rights\
   reserved."
 
 #force flag
@@ -580,9 +580,6 @@ proc sn_init_globals {} {
         #networking
         sn_add_option def html-viewer "netscape -remote openURL(%s)"
 
-        #still support sn_mailhost
-        sn_add_option def mailhost "mailhost" "" "" "" {sn_mailhost}
-
         #option needs to be there for backward compatibility.
         set sn_options(def,send-bugs-via-mail) 0
 
@@ -628,7 +625,6 @@ proc sn_init_globals {} {
         set sn_options(def,wm_geometry) 0
 
         set sn_options(Scann_Files_At_Once) 50
-        set sn_options(def,cygnus-home-http) "http://support.cygnus.com/"
         set sn_options(def,canvas-tree-jump) 0
 
         #scopes supported in SN.
@@ -689,9 +685,6 @@ proc sn_init_globals {} {
         #history for make
         set sn_options(make_history_cmd) ""
         set sn_options(make_history_dir) ""
-
-        #default bug address
-        set sn_options(sys,bug-mail-address) "support@cygnus.com"
 
         #editor search/replace default parameters
         set sn_options(search) ""

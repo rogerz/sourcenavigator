@@ -1,3 +1,29 @@
+2002-06-08  Mo DeJong  <supermo@bayarea.net>
+
+	* etc/english.txt.in: Remove unused Email, Web,
+	BugReport, LimitScanMsg, LimMsg, ReportBugs,
+	EditionCannotOpenThisProject, SplashSupportText,
+	ButtonBugReport, and ButtonMail strings. Removed
+	mention of old support email from the string
+	NewerProjectCannotBeOpened.
+	* etc/german.txt: Ditto.
+	* etc/japanese.txt: Ditto.
+	* gui/bugreport.tcl (mail_send_bug_report,
+	web_send_bug_report, mail_bug_report, sn_drop_mail_line,
+	sn_send_mail): Remove all old email and web based
+	bug reporting code.
+	* gui/misc.tcl: Remove commented out use of the string
+	SplashSupportText.
+	* gui/preferences.tcl (AddOthers, handle_mailhost):
+	Disconnect the mailhost entry box from the
+	sn_options(def,mailhost) variable. The gui elements were
+	not removed to avoid doc impact of a gui change.
+	Remove unused method handle_mailhost.
+	* gui/sninit.tcl (sn_init_globals): Remove mailhost,
+	cygnus-home-http, and bug-mail-address sn_options
+	values. Remove any old cygnus references.
+	* gui/tmeter.tcl: Use copyright not cygnus_copyright.
+
 2002-06-07  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/multiview.tcl (AddMenu):

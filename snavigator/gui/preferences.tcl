@@ -1134,6 +1134,9 @@ itcl_class Preferences& {
             pack ${html} -side top -anchor nw -fill x
         }
 
+# FIXME: The mailhost frame and entry should be removed post 5.1.
+# The widget has been disconnected from any variables and has no
+# function but it was left in to avoid GUI changes with doc impact.
         #Bug reports
         set bugs [tixLabelFrame ${Others}.bugs -label [get_indep String\
           PrefBugReport]]
@@ -1142,11 +1145,9 @@ itcl_class Preferences& {
         pack ${bugs} -fill x -side top -anchor c
 
         #Bug mail host
-        set sn_options(opt_def,mailhost) $sn_options(def,mailhost)
         set mhost ${win}.mhost
         Entry& ${mhost} -width -1 -labelwidth 15 -label [get_indep String\
-          PrefMailhost] -underline [get_indep Pos PrefMailhost]\
-          -textvariable sn_options(opt_def,mailhost)
+          PrefMailhost] -underline [get_indep Pos PrefMailhost]
         pack ${mhost} -side top -anchor nw -fill x
 
         #no printer commands on windows
@@ -1216,11 +1217,6 @@ itcl_class Preferences& {
     }
     method RaiseOthers {} {
         #set lastPage others
-    }
-    method handle_mailhost {w mhost} {
-        global sn_options
-        set state normal
-        ${mhost} config -state ${state}
     }
 
     #####################################################
@@ -1613,7 +1609,6 @@ itcl_class Preferences& {
         if {[winfo exists ${Others}]} {
             verify_set both,make-command trap1
             verify_set def,html-viewer trap1
-            verify_set def,mailhost trap1
 
             #no printer commands on windows
             if {$tcl_platform(platform) != "windows"} {
