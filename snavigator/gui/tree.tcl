@@ -248,6 +248,12 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	return [::eval $lframe.tree search $args]
     }
 
+    method sort_refresh {} {
+	if { $actual_sortcolumn != -1 } {
+	    resort $actual_sortcolumn
+	}
+    }
+
     method resort {num {var ""}} {
 	global sn_options
 	global $thisTail-sort
@@ -1398,6 +1404,9 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 	fconfigure $fd -encoding $sn_options(def,system-encoding) -blocking 0
 	puts $fd $lst
 	close $fd
+
+	# Escape [] and $ in user input for eval in sn_print_file
+	regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 
 	sn_print_file $cmd $tmpf
 

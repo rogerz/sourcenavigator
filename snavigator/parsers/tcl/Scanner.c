@@ -52,6 +52,7 @@ extern "C" {
 #if defined __STDC__ | defined __cplusplus
 #include <stdlib.h>
 #endif
+#include <string.h>
 
 #define yyStart(State)	{ yyPreviousStart = yyStartState; yyStartState = State;}
 #define yyPrevious	{ yyStateRange s = yyStartState; \

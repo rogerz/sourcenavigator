@@ -563,6 +563,8 @@ itcl::class Retr& {
         display_contents ${this}.list [read_matched_from_db ${this}.list\
           ${scopes} -glob ${pat}]
 
+        ${this}.list sort_refresh
+
         #delete cancel button, if availiable
         Delete_Cancel_Dialog
 
@@ -602,19 +604,28 @@ itcl::class Retr& {
     }
 
     method handle_all_none {prefix all} {
+        global sn_scopes
         upvar #0 ${this}-exclusive excl
-        ::set excl 0
+        set excl 0
         ${this}-mixer.button_0 config -state normal
-        foreach v [::info globals ${prefix}-*] {
+        foreach sc ${sn_scopes} {
             if {${all}} {
-                set sc [string range ${v} [expr [string last "-" ${v}] + 1] end]
-                if {[::info commands paf_db_${sc}] == ""} {
-                    set sc ""
+                if {[info commands paf_db_${sc}] == ""} {
+                    set val ""
+                } else {
+                    set val ${sc}
                 }
             } else {
-                set sc ""
+                set val ""
             }
-            uplevel #0 "set ${v} [list ${sc}]"
+            set ::${prefix}-${sc} ${val}
+        }
+
+        # Note: The "files" option is not selected by all but
+        # it is deselected by none.
+
+        if {!$all} {
+            set ::${prefix}-files ""
         }
     }
 
@@ -655,8 +666,7 @@ itcl::class Retr& {
         return [sn_view_icon ${Retr_Title}]
     }
     method SetTitle {} {
-        catch {[winfo toplevel $itk_component(hull)] title [Title]}
-        [winfo toplevel $itk_component(hull)] configure -iconname [Icon]
+        ${topw} configure -title [Title] -iconname [Icon]
     }
 
     method print {} {
@@ -878,7 +888,7 @@ itcl::class Retr& {
     }
 
     protected variable searchbtn ""
-    protected variable topw "."
+    protected variable topw
     protected variable tree ""
     protected variable treew ""
     protected variable ScopesFilter

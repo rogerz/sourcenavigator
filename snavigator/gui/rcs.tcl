@@ -307,34 +307,22 @@ itcl::class RevisionCtrl& {
 
         switch ${cmd} {
             "ci" {
-                    if {![sn_rcs_checkin ${files}]} {
-                        continue
-                    }
+                    sn_rcs_checkin ${files}
                 }
             "co" {
-                    if {![sn_rcs_checkout ${files}]} {
-                        continue
-                    }
+                    sn_rcs_checkout ${files}
                 }
             "unco" {
-                    if {![sn_rcs_discard ${files}]} {
-                        continue
-                    }
+                    sn_rcs_discard ${files}
                 }
             "lock" {
-                    if {![sn_rcs_lockunlockdel lock ${files}]} {
-                        continue
-                    }
+                    sn_rcs_lockunlockdel lock ${files}
                 }
             "unlock" {
-                    if {![sn_rcs_lockunlockdel unlock ${files}]} {
-                        continue
-                    }
+                    sn_rcs_lockunlockdel unlock ${files}
                 }
             "del" {
-                    if {![sn_rcs_lockunlockdel del ${files}]} {
-                        continue
-                    }
+                    sn_rcs_lockunlockdel del ${files}
                 }
         }
 

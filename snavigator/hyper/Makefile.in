@@ -83,10 +83,10 @@ AWK = @AWK@
 BFDHDIR = @BFDHDIR@
 BFDLIB = @BFDLIB@
 BUG_ADDRESS = @BUG_ADDRESS@
-BUILD_GREP = @BUILD_GREP@
 CC = @CC@
 CC_FOR_BUILD = @CC_FOR_BUILD@
 COB_DEMO = @COB_DEMO@
+CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 C_DEMO = @C_DEMO@
@@ -101,10 +101,8 @@ FOR_DEMO = @FOR_DEMO@
 GETTING_STARTED_DIR = @GETTING_STARTED_DIR@
 GETTING_STARTED_INDEX = @GETTING_STARTED_INDEX@
 GETTING_STARTED_NAME = @GETTING_STARTED_NAME@
-GREP = @GREP@
 GUILIB = @GUILIB@
 HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
-HYPER_CONSOLE = @HYPER_CONSOLE@
 HYPER_MAIN = @HYPER_MAIN@
 IDEHDIR = @IDEHDIR@
 IDELIB = @IDELIB@
@@ -217,7 +215,7 @@ LibUtils = $(LibUtilsDir)/libutils.a
 DBUtilsLibDir = ../db
 DBUtilsLib = $(DBUtilsLibDir)/libdbutils.a
 
-INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win $(TCLHDIR) $(TK_XINCLUDES) -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic -I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src
+INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win $(TCLHDIR) $(TK_XINCLUDES) -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic -I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src -I$(top_srcdir)/misc
 
 
 sdkincludedir = $(datadir)/sdk/include
@@ -229,8 +227,8 @@ hyper_SOURCES = compare.h compare.c dbsym.c exint.c recudir.c services.c sninit.
 
 
 hyper_LDFLAGS = $(WIN32LDAPP)
-@MSVC_TRUE@hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ $(LibUtilsDir)/libutils.a $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TCL_BUILD_STUB_LIB_SPEC)
-@MSVC_FALSE@hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ -L$(LibUtilsDir) -lutils -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
+@MSVC_TRUE@hyper_LDADD = @HYPER_MAIN@ $(LibUtilsDir)/libutils.a $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a $(top_builddir)/../libgui/src/libgui.a $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
+@MSVC_FALSE@hyper_LDADD = @HYPER_MAIN@ -L$(LibUtilsDir) -lutils -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb -L$(top_builddir)/../libgui/src -lgui $(WIN32LIBS) $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) $(TIX_BUILD_LIB_SPEC) $(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TK_LIBS)
 hyper_DEPENDENCIES = @HYPER_MAIN@ $(LibUtils) $(DBUtilsLib) $(DB_LIBDIR)/libdb.a $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -316,8 +314,6 @@ uninstall-binPROGRAMS:
 mostlyclean-compile:
 	-rm -f *.o core *.core
 	-rm -f *.$(OBJEXT)
-
-clean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -483,6 +479,9 @@ ch_high.c: ch_high.l
 
 tcl_high.c: tcl_high.l
 	$(LEX) -t > $@ $(LFLAGS) -Ptcl_highlight_ $<
+
+clean-compile:
+	-rm -f j_high.c py_high.c c_high.c ch_high.c tcl_high.c
 
 highlight.$(OBJEXT): highlight.c
 	$(COMPILE) $(TK_DEFS) -c $<

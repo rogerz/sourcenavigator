@@ -235,13 +235,6 @@ proc tk_dialog_with_widgets {w title text bitmap default create_widgets args} {
     #bind escape/close event
     on_close ${w} "set tkPriv(${w},button) -1"
 
-    # The following command means that the dialog won't be posted if
-    # [winfo parent $w] is iconified, but it's really needed;  otherwise
-    # the dialog can become obscured by other windows in the application,
-    # even though its grab keeps the rest of the application from being used.
-
-    wm transient ${w} [winfo toplevel [winfo parent ${w}]]
-
     frame ${w}.bot
     frame ${w}.top
     if {$tcl_platform(platform) == "unix"} {
@@ -333,13 +326,13 @@ proc tk_dialog_with_widgets {w title text bitmap default create_widgets args} {
 
     wm withdraw ${w}
 
+    update idletasks
+
     set x [expr [winfo screenwidth ${w}]/2 - [winfo reqwidth ${w}]/2 -\
       [winfo vrootx [winfo parent ${w}]]]
     set y [expr [winfo screenheight ${w}]/2 - [winfo reqheight ${w}]/2\
       - [winfo vrooty [winfo parent ${w}]]]
     wm geom ${w} +${x}+${y}
-
-    update idle
 
     wm deiconify ${w}
 
@@ -399,7 +392,6 @@ itcl::class sourcenav::Dialog {
     # Hide the on_close method so that it can't be invoked!
     private method on_close { {cmd ""} }
 
-    itk_option define -parent parent Parent .
     itk_option define -modality modality Modality application {
         if {$_active} {
             error "Cannot change -modality while Dialog is active."
@@ -430,7 +422,7 @@ itcl::body sourcenav::Dialog::constructor { args } {
 
     on_close [itcl::code $this deactivate]
 
-    eval itk_initialize $args 
+    eval itk_initialize $args
 }
 
 itcl::body sourcenav::Dialog::destructor { } {
@@ -459,11 +451,6 @@ itcl::body sourcenav::Dialog::activate { } {
     set _active 1
 
     $this PushModalStack $itk_component(hull)
-
-    if {($itk_option(-parent) != {}) && \
-            [winfo exists $itk_option(-parent)]} {
-	${this} transient $itk_option(-parent)
-    }
 
     ${this} centerOnScreen
     ${this} deiconify
