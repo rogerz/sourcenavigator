@@ -39,7 +39,9 @@ It is also returned by the \fBinfo nameofexecutable\fR command.
 .PP
 On UNIX platforms this procedure is typically invoked as the very
 first thing in the application's main program;  it must be passed
-\fIargv[0]\fR as its argument.  \fBTcl_FindExecutable\fR uses \fIargv0\fR
+\fIargv[0]\fR as its argument.  It is important not to change the
+working directory before the invocation.
+\fBTcl_FindExecutable\fR uses \fIargv0\fR
 along with the \fBPATH\fR environment variable to find the
 application's executable, if possible.  If it fails to find
 the binary, then future calls to \fBinfo nameofexecutable\fR
@@ -54,4 +56,3 @@ computed or unknown.
 
 .SH KEYWORDS
 binary, executable file
-

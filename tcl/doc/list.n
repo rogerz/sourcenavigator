@@ -21,7 +21,7 @@ list \- Create a list
 .PP
 This command returns a list comprised of all the \fIarg\fRs,
 or an empty string if no \fIarg\fRs are specified.
-Braces and backslashes get added as necessary, so that the \fBindex\fR command
+Braces and backslashes get added as necessary, so that the \fBlindex\fR command
 may be used on the result to re-extract the original arguments, and also
 so that \fBeval\fR may be used to execute the resulting list, with
 \fIarg1\fR comprising the command's name and the other \fIarg\fRs comprising
@@ -40,6 +40,10 @@ while \fBconcat\fR with the same arguments will return
 .CS
 \fBa b c d e f {g h}\fR
 .CE
+
+.SH "SEE ALSO"
+lappend(n), lindex(n), linsert(n), llength(n), lsearch(n), lsort(n),
+lrange(n), lreplace(n)
 
 .SH KEYWORDS
 element, list

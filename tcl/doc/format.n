@@ -210,5 +210,8 @@ converted as if the \fBl\fR modifier were present (i.e. type
 If the \fBh\fR modifier is specified then integer values are truncated
 to \fBshort\fR before conversion.
 
+.SH "SEE ALSO"
+sprintf(3), string(n)
+
 .SH KEYWORDS
 conversion specifier, format, sprintf, string, substitution

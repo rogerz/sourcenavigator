@@ -127,8 +127,7 @@ portion of the expression that wasn't matched), then the corresponding
 has been specified or to an empty string otherwise.
 
 .SH "SEE ALSO"
-re_syntax(n)
+re_syntax(n), regsub(n)
 
 .SH KEYWORDS
 match, regular expression, string
-

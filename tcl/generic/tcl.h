@@ -59,10 +59,10 @@ extern "C" {
 #define TCL_MAJOR_VERSION   8
 #define TCL_MINOR_VERSION   3
 #define TCL_RELEASE_LEVEL   TCL_FINAL_RELEASE
-#define TCL_RELEASE_SERIAL  2
+#define TCL_RELEASE_SERIAL  5
 
 #define TCL_VERSION	    "8.3"
-#define TCL_PATCH_LEVEL	    "8.3.2"
+#define TCL_PATCH_LEVEL	    "8.3.5"
 
 /*
  * The following definitions set up the proper options for Windows
@@ -70,8 +70,11 @@ extern "C" {
  */
 
 #ifndef __WIN32__
-#   if defined(_WIN32) || defined(WIN32)
+#   if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__BORLANDC__)
 #	define __WIN32__
+#	ifndef WIN32
+#	    define WIN32
+#	endif
 #   endif
 #endif
 
@@ -89,16 +92,6 @@ extern "C" {
 #	define USE_PROTOTYPE 1
 #   endif
 
-/*
- * Under Windows we need to call Tcl_Alloc in all cases to avoid competing
- * C run-time library issues.
- */
-
-#   if !defined(__CYGWIN__) || defined(__WIN32__)
-#       ifndef USE_TCLALLOC
-#	    define USE_TCLALLOC 1
-#       endif 
-#   endif /* __CYGWIN__ */
 #endif /* __WIN32__ */
 
 /*
@@ -107,6 +100,7 @@ extern "C" {
  */
 
 #ifdef MAC_TCL
+#include <ConditionalMacros.h>
 #   ifndef HAS_STDARG
 #	define HAS_STDARG 1
 #   endif
@@ -227,7 +221,7 @@ extern "C" {
 # define DLLIMPORT
 # define DLLEXPORT
 #else
-# if defined(__WIN32__) && (defined(_MSC_VER) || ((defined(BUILD_tcl) || defined(BUILD_tk) || defined(USE_TCL_STUBS)) && defined(__declspec)))
+# if (defined(__WIN32__) && (defined(_MSC_VER) || (defined(__GNUC__) && defined(__declspec)))) || (defined(MAC_TCL) && FUNCTION_DECLSPEC)
 #   define DLLIMPORT __declspec(dllimport)
 #   define DLLEXPORT __declspec(dllexport)
 # else
@@ -249,7 +243,7 @@ extern "C" {
  * name of a library we are building, is set on the compile line for sources
  * that are to be placed in the library.  When this macro is set, the
  * storage class will be set to DLLEXPORT.  At the end of the header file, the
- * storage class will be reset to DLLIMPORt.
+ * storage class will be reset to DLLIMPORT.
  */
 
 #undef TCL_STORAGE_CLASS
@@ -587,7 +581,7 @@ typedef int (Tcl_MathProc) _ANSI_ARGS_((ClientData clientData,
 	Tcl_Interp *interp, Tcl_Value *args, Tcl_Value *resultPtr));
 typedef void (Tcl_NamespaceDeleteProc) _ANSI_ARGS_((ClientData clientData));
 typedef int (Tcl_ObjCmdProc) _ANSI_ARGS_((ClientData clientData,
-	Tcl_Interp *interp, int objc, struct Tcl_Obj *CONST objv[]));
+	Tcl_Interp *interp, int objc, struct Tcl_Obj * CONST * objv));
 typedef int (Tcl_PackageInitProc) _ANSI_ARGS_((Tcl_Interp *interp));
 typedef void (Tcl_PanicProc) _ANSI_ARGS_(TCL_VARARGS(char *, format));
 typedef void (Tcl_TcpAcceptProc) _ANSI_ARGS_((ClientData callbackData,
@@ -601,6 +595,7 @@ typedef char *(Tcl_VarTraceProc) _ANSI_ARGS_((ClientData clientData,
 typedef void (Tcl_CreateFileHandlerProc) _ANSI_ARGS_((int fd, int mask,
 	Tcl_FileProc *proc, ClientData clientData));
 typedef void (Tcl_DeleteFileHandlerProc) _ANSI_ARGS_((int fd));
+typedef void (Tcl_MainLoopProc) _ANSI_ARGS_((void));
 
 /*
  * The following structure represents a type of object, which is a
@@ -1712,4 +1707,3 @@ EXTERN int		Tcl_AppInit _ANSI_ARGS_((Tcl_Interp *interp));
 #endif
     
 #endif /* _TCL */
-

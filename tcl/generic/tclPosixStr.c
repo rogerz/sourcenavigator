@@ -1172,4 +1172,3 @@ Tcl_SignalMsg(sig)
     }
     return "unknown signal";
 }
-

@@ -321,4 +321,3 @@ Tcl_GetBoolean(interp, string, boolPtr)
     }
     return TCL_OK;
 }
-

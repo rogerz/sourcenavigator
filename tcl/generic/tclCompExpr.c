@@ -384,6 +384,7 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
     OperatorDesc *opDescPtr;
     Tcl_HashEntry *hPtr;
     char *operator;
+    char savedChar;
     int maxDepth, objIndex, opIndex, length, code;
     char buffer[TCL_UTF_MAX];
 
@@ -473,18 +474,28 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
 	    tokenPtr += (tokenPtr->numComponents + 1);
 	    break;
 	    
-        case TCL_TOKEN_OPERATOR: {
-	    Tcl_DString operatorDString;
+        case TCL_TOKEN_OPERATOR:
+	    /*
+	     * Look up the operator. Temporarily overwrite the character
+	     * just after the end of the operator with a 0 byte. If the
+	     * operator isn't found, treat it as a math function.
+	     */
 
-	    Tcl_DStringInit(&operatorDString);
-	    Tcl_DStringAppend(&operatorDString, tokenPtr->start,
-		    tokenPtr->size);
-	    operator = Tcl_DStringValue(&operatorDString);
+	    /*
+	     * TODO: Note that the string is modified in place.  This is unsafe
+	     * and will break if any of the routines called while the string is
+	     * modified have side effects that depend on the original string
+	     * being unmodified (e.g. adding an entry to the literal table).
+	     */
+
+	    operator = tokenPtr->start;
+	    savedChar = operator[tokenPtr->size];
+	    operator[tokenPtr->size] = 0;
 	    hPtr = Tcl_FindHashEntry(&opHashTable, operator);
 	    if (hPtr == NULL) {
 		code = CompileMathFuncCall(exprTokenPtr, operator, infoPtr,
 			envPtr, &endPtr);
-		Tcl_DStringFree(&operatorDString);
+		operator[tokenPtr->size] = (char) savedChar;
 		if (code != TCL_OK) {
 		    goto done;
 		}
@@ -494,7 +505,7 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
 		infoPtr->exprIsComparison = 0;
 		break;
 	    }
-	    Tcl_DStringFree(&operatorDString);
+	    operator[tokenPtr->size] = (char) savedChar;
 	    opIndex = (int) Tcl_GetHashValue(hPtr);
 	    opDescPtr = &(operatorTable[opIndex]);
 
@@ -602,7 +613,6 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
 	    infoPtr->exprIsJustVarRef = 0;
 	    infoPtr->exprIsComparison = 0;
 	    break;
-	}
 
         default:
 	    panic("CompileSubExpr: unexpected token type %d\n",

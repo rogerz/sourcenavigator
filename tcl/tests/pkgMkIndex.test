@@ -165,7 +165,7 @@ proc pkgtest::createIndex { args } {
  
     if {[catch {
 	file delete [file join $dirPath pkgIndex.tcl]
-	eval pkg_mkIndex $options $dirPath $patternList
+	eval pkg_mkIndex $options [list $dirPath] $patternList
     } err]} {
 	return [list 1 $err]
     }
@@ -362,11 +362,30 @@ test pkgMkIndex-13.1 {proc names with embedded spaces} {
     pkgtest::runIndex -lazy $fullPkgPath spacename.tcl
 } {0 {{spacename:1.0 {tclPkgSetup {spacename.tcl source {{a b} {c d}}}}}}}
 
+# Test the pkg_compareExtension helper function
+test pkgMkIndex-14.1 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo.so .so
+} 1
+test pkgMkIndex-14.2 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo.so.bar .so
+} 0
+test pkgMkIndex-14.3 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo.so.1 .so
+} 1
+test pkgMkIndex-14.4 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo.so.1.2 .so
+} 1
+test pkgMkIndex-14.5 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo .so
+} 0
+test pkgMkIndex-14.6 {pkg_compareExtension} {unixOnly} {
+    pkg_compareExtension foo.so.1.2.bar .so
+} 0
+
 # cleanup
 
 namespace delete pkgtest
 cd $origDir
 ::tcltest::cleanupTests
 return
-
 

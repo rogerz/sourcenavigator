@@ -63,7 +63,7 @@ be used in an event-driven fashion with the \fBfileevent\fR command
 via a file event that the channel is ready for more output data).
 
 .SH "SEE ALSO"
-fileevent(n)
+file(n), fileevent(n)
 
 .SH KEYWORDS
 channel, newline, output, write

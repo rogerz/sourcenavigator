@@ -404,4 +404,3 @@ test tcltest-20.1 {PrintError} {unixOrPc} {
 # cleanup
 ::tcltest::cleanupTests
 return
-

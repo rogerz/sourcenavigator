@@ -55,5 +55,8 @@ no command or variable substitutions are performed on them;  this makes
 the behavior of the second form different than the first form in some
 cases.
 
+.SH "SEE ALSO"
+switch(n)
+
 .SH KEYWORDS
 case, match, regular expression

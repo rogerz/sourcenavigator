@@ -23,5 +23,3 @@ if errorlevel 1 goto end
 echo deleted directory %1
 
 :end
-
-

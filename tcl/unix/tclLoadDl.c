@@ -181,4 +181,3 @@ TclGuessPackageName(fileName, bufPtr)
 {
     return 0;
 }
-

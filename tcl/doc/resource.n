@@ -149,7 +149,7 @@ numbers if the name is NULL.
 The resource command is only available on Macintosh.
 
 .SH "SEE ALSO"
-open
+open(n)
 
 .SH KEYWORDS
 open, resource

@@ -1,11 +1,6 @@
 dnl	This file is an input file used by the GNU "autoconf" program to
 dnl	generate the file "configure", which is run to configure the
 dnl	Makefile in this directory.
-
-dnl CYGNUS LOCAL, need 2.5 or higher for --bindir et al
-AC_PREREQ(2.5)
-dnl END CYGNUS LOCAL
-
 AC_INIT(pkga.c)
 # RCS: @(#) $Id$
 
@@ -32,15 +27,7 @@ TCL_LIBS=$TCL_LIBS
 AC_SUBST(TCL_LIBS)
 TCL_VERSION=$TCL_VERSION
 AC_SUBST(TCL_VERSION)
-
-# Tcl8.1 requires writable strings for gcc
-
-# if test "$GCC" = "yes"; then
-#   TCL_CFLAGS=-fwritable-strings
-#else
-#   TCL_CFLAGS=
-#fi
-#AC_SUBST(TCL_CFLAGS)
+TCL_DBGX=$TCL_DBGX
+AC_SUBST(TCL_DBGX)
 
 AC_OUTPUT(Makefile)
-

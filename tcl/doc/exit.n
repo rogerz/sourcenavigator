@@ -24,5 +24,8 @@ system as the exit status.
 If \fIreturnCode\fR isn't specified then it defaults
 to 0.
 
+.SH "SEE ALSO"
+exec(n), tclvars(n)
+
 .SH KEYWORDS
 exit, process

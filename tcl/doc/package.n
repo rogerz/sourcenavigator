@@ -189,6 +189,8 @@ Once you've done this, packages will be loaded automatically
 in response to \fBpackage require\fR commands.
 See the documentation for \fBpkg_mkIndex\fR for details.
 
+.SH "SEE ALSO"
+msgcat(n), packagens(n), pkgMkIndex(n)
+
 .SH KEYWORDS
 package, version
-

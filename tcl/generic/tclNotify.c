@@ -1078,4 +1078,3 @@ Tcl_ThreadAlert(threadId)
     }
     Tcl_MutexUnlock(&listLock);
 }
-

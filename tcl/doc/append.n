@@ -28,5 +28,8 @@ variables incrementally.
 For example, ``\fBappend a $b\fR'' is much more efficient than
 ``\fBset a $a$b\fR'' if \fB$a\fR is long.
 
+.SH "SEE ALSO"
+concat(n), lappend(n)
+
 .SH KEYWORDS
 append, variable

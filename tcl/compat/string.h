@@ -59,12 +59,13 @@ extern int		strncmp _ANSI_ARGS_((CONST char *s1, CONST char *s2,
 			    size_t nChars));
 extern char *		strncpy _ANSI_ARGS_((char *dst, CONST char *src,
 			    size_t numChars));
-extern char *		strpbrk _ANSI_ARGS_((CONST char *string, char *chars));
+extern char *		strpbrk _ANSI_ARGS_((CONST char *string,
+			    CONST char *chars));
 extern char *		strrchr _ANSI_ARGS_((CONST char *string, int c));
 extern size_t		strspn _ANSI_ARGS_((CONST char *string,
 			    CONST char *chars));
 extern char *		strstr _ANSI_ARGS_((CONST char *string,
 			    CONST char *substring));
-extern char *		strtok _ANSI_ARGS_((CONST char *s, CONST char *delim));
+extern char *		strtok _ANSI_ARGS_((char *s, CONST char *delim));
 
 #endif /* _STRING */

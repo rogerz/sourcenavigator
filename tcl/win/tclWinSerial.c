@@ -1046,7 +1046,7 @@ SerialSetOptionProc(instanceData, interp, optionName, value)
 {
     SerialInfo *infoPtr;
     DCB dcb;
-    int len;
+    size_t len;
     BOOL result;
     Tcl_DString ds;
     TCHAR *native;
@@ -1122,7 +1122,7 @@ SerialGetOptionProc(instanceData, interp, optionName, dsPtr)
 {
     SerialInfo *infoPtr;
     DCB dcb;
-    int len;
+    size_t len;
     int valid = 0;  /* flag if valid option parsed */
 
     infoPtr = (SerialInfo *) instanceData;
@@ -1156,7 +1156,7 @@ SerialGetOptionProc(instanceData, interp, optionName, dsPtr)
             char buf[2 * TCL_INTEGER_SPACE + 16];
 
             parity = 'n';
-            if (dcb.Parity < 4) {
+            if (dcb.Parity <= 4) {
                 parity = "noems"[dcb.Parity];
             }
 
@@ -1203,4 +1203,3 @@ SerialGetOptionProc(instanceData, interp, optionName, dsPtr)
 		"mode pollinterval lasterror");
     }
 }
-

@@ -18,7 +18,7 @@ includes C and Tcl functions which can aid with debugging
 memory leaks, memory allocation overruns, and other memory related
 errors.
 
-.SH ENABLING MEMORY DEBUGGING
+.SH "ENABLING MEMORY DEBUGGING"
 .PP
 To enable memory debugging, Tcl should be recompiled from scratch with
 \fBTCL_MEM_DEBUG\fR defined.  This will also compile in a non-stub
@@ -34,14 +34,15 @@ functions \fBTcl_ValidateAllMemory\fR, and \fBTcl_DumpActiveMemory\fR,
 and the Tcl \fBmemory\fR command can be used to validate and examine
 memory usage.
 
-.SH GUARD ZONES
+.SH "GUARD ZONES"
 .PP
 When memory debugging is enabled, whenever a call to \fBckalloc\fR is
 made, slightly more memory than requested is allocated so the memory debugging
 code can keep track of the allocated memory, and eight-byte ``guard
 zones'' are placed in front of and behind the space that will be
-returned to the caller.  (The size of the guard zone is defined by the
-C #define \fBGUARD_SIZE\fR in \fIbaseline/src/ckalloc.c\fR -- it can
+returned to the caller.  (The sizes of the guard zones are defined by the
+C #define \fBLOW_GUARD_SIZE\fR and #define \fBHIGH_GUARD_SIZE\fR
+in the file \fIgeneric/tclCkalloc.c\fR -- it can
 be extended if you suspect large overwrite problems, at some cost in
 performance.)  A known pattern is written into the guard zones and, on
 a call to \fBckfree\fR, the guard zones of the space being freed are
@@ -54,7 +55,7 @@ This allows you to detect the common sorts of one-off problems, where
 not enough space was allocated to contain the data written, for
 example.
 
-.SH DEBUGGING DIFFICULT MEMORY CORRUPTION PROBLEMS
+.SH "DEBUGGING DIFFICULT MEMORY CORRUPTION PROBLEMS"
 .PP
 Normally, Tcl compiled with memory debugging enabled will make it easy
 to isolate a corruption problem.  Turning on memory validation with

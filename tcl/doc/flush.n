@@ -29,7 +29,7 @@ flushed; the remainder will be flushed in the background as fast as the
 underlying file or device is able to absorb it.
 
 .SH "SEE ALSO"
-open(n), socket(n)
+file(n), open(n), socket(n)
 
 .SH KEYWORDS
 blocking, buffer, channel, flush, nonblocking, output

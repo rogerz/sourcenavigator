@@ -21,16 +21,12 @@
 #endif
 
 #ifdef CHECK_UNICODE_CALLS
-
-#define _UNICODE
-#define UNICODE
-
-#define __TCHAR_DEFINED
-typedef float *_TCHAR;
-
-#define _TCHAR_DEFINED
-typedef float *TCHAR;
-
+#   define _UNICODE
+#   define UNICODE
+#   define __TCHAR_DEFINED
+    typedef float *_TCHAR;
+#   define _TCHAR_DEFINED
+    typedef float *TCHAR;
 #endif
 
 /*
@@ -60,18 +56,20 @@ typedef float *TCHAR;
 #ifndef __MWERKS__
 #include <sys/stat.h>
 #include <sys/timeb.h>
-#include <sys/utime.h>
+#   ifdef __BORLANDC__
+#	include <utime.h>
+#   else
+#	include <sys/utime.h>
+#   endif
 #endif
 
 #include <time.h>
 
-#include <winsock2.h>
-
-
 #define WIN32_LEAN_AND_MEAN
-#define __USE_W32_SOCKETS
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
+
+#include <winsock2.h>
 
 #ifdef BUILD_tcl
 # undef TCL_STORAGE_CLASS
@@ -200,22 +198,6 @@ typedef float *TCHAR;
 #endif
 #ifndef EREMOTE
 #define EREMOTE		66	/* The object is remote */
-#endif
-
-/* On cygwin, we just use the supplied malloc and free, rather than
-   using tclAlloc.c.  The cygwin32 malloc is derived from the same
-   sources as tclAlloc.c, anyhow.  */
-#if defined(__CYGWIN__) && !defined(__WIN32__)
-#define TclpAlloc(size)		malloc(size)
-#define TclpFree(ptr)		free(ptr)
-#define TclpRealloc(ptr, size)	realloc(ptr, size)
-#else
-#define TclpSysAlloc(size, isBin)	((void*)HeapAlloc(GetProcessHeap(), \
-					    (DWORD)0, (DWORD)size))
-#define TclpSysFree(ptr)		(HeapFree(GetProcessHeap(), \
-					    (DWORD)0, (HGLOBAL)ptr))
-#define TclpSysRealloc(ptr, size)	((void*)HeapReAlloc(GetProcessHeap(), \
-					    (DWORD)0, (LPVOID)ptr, (DWORD)size))
 #endif
 
 /*
@@ -362,13 +344,21 @@ typedef float *TCHAR;
 #    endif
 #endif /* _MSC_VER || __MINGW32__ */
 
+/*
+ * Borland's timezone and environ functions.
+ */
+
+#ifdef  __BORLANDC__
+#   define timezone _timezone
+#   define environ  _environ
+#endif /* __BORLANDC__ */
+
 #ifdef __CYGWIN__
-/* On cygwin32, the environment is imported from the cygwin32 DLL.  */
-__declspec(dllimport) extern char **__cygwin_environ;
+/* On Cygwin, the environment is imported from the Cygwin DLL. */
+     DLLIMPORT extern char **__cygwin_environ;
 #    define environ __cygwin_environ
 #    define putenv TclCygwinPutenv
 #    define timezone _timezone
-extern int chdir (const char*);
 #endif /* __CYGWIN__ */
 
 /*
@@ -404,12 +394,18 @@ extern int chdir (const char*);
  * use by tclAlloc.c.
  */
 
-#define TclpSysAlloc(size, isBin)	((void*)HeapAlloc(GetProcessHeap(), \
+#ifdef __CYGWIN__
+#   define TclpSysAlloc(size, isBin)	malloc((size))
+#   define TclpSysFree(ptr)		free((ptr))
+#   define TclpSysRealloc(ptr, size)	realloc((ptr), (size))
+#else
+#   define TclpSysAlloc(size, isBin)	((void*)HeapAlloc(GetProcessHeap(), \
 					    (DWORD)0, (DWORD)size))
-#define TclpSysFree(ptr)		(HeapFree(GetProcessHeap(), \
+#   define TclpSysFree(ptr)		(HeapFree(GetProcessHeap(), \
 					    (DWORD)0, (HGLOBAL)ptr))
-#define TclpSysRealloc(ptr, size)	((void*)HeapReAlloc(GetProcessHeap(), \
+#   define TclpSysRealloc(ptr, size)	((void*)HeapReAlloc(GetProcessHeap(), \
 					    (DWORD)0, (LPVOID)ptr, (DWORD)size))
+#endif
 
 /*
  * The following defines map from standard socket names to our internal
@@ -478,4 +474,3 @@ typedef int TclpMutex;
 # define TCL_STORAGE_CLASS DLLIMPORT
 
 #endif /* _TCLWINPORT */
-

@@ -1249,7 +1249,7 @@ Tcl_MacEvalResource(
     short saveRef, fileRef = -1;
     char idStr[64];
     FSSpec fileSpec;
-    Tcl_DString buffer;
+    Tcl_DString ds, buffer;
     char *nativeName;
 
     saveRef = CurResFile();
@@ -1257,12 +1257,14 @@ Tcl_MacEvalResource(
     if (fileName != NULL) {
 	OSErr err;
 	
-	nativeName = Tcl_TranslateFileName(interp, fileName, &buffer);
-	if (nativeName == NULL) {
+	if (Tcl_TranslateFileName(interp, fileName, &buffer) == NULL) {
 	    return TCL_ERROR;
 	}
+	nativeName = Tcl_UtfToExternalDString(NULL, Tcl_DStringValue(&buffer), 
+    	    Tcl_DStringLength(&buffer), &ds);
 	err = FSpLocationFromPath(strlen(nativeName), nativeName,
                 &fileSpec);
+	Tcl_DStringFree(&ds);
 	Tcl_DStringFree(&buffer);
 	if (err != noErr) {
 	    Tcl_AppendResult(interp, "Error finding the file: \"", 
@@ -1294,9 +1296,12 @@ Tcl_MacEvalResource(
      * Load the resource by name or ID
      */
     if (resourceName != NULL) {
-	strcpy((char *) rezName + 1, resourceName);
-	rezName[0] = strlen(resourceName);
+	Tcl_DString ds;
+	Tcl_UtfToExternalDString(NULL, resourceName, -1, &ds);
+	strcpy((char *) rezName + 1, Tcl_DStringValue(&ds));
+	rezName[0] = (unsigned) Tcl_DStringLength(&ds);
 	sourceText = GetNamedResource('TEXT', rezName);
+	Tcl_DStringFree(&ds);
     } else {
 	sourceText = GetResource('TEXT', (short) resourceNumber);
     }
@@ -1383,21 +1388,25 @@ Tcl_MacConvertTextResource(
 {
     int i, size;
     char *resultStr;
+    Tcl_DString dstr;
 
     size = GetResourceSizeOnDisk(resource);
     
-    resultStr = ckalloc(size + 1);
+    Tcl_ExternalToUtfDString(NULL, *resource, size, &dstr);
+
+    size = Tcl_DStringLength(&dstr) + 1;
+    resultStr = (char *) ckalloc((unsigned) size);
+    
+    memcpy((VOID *) resultStr, (VOID *) Tcl_DStringValue(&dstr), (size_t) size);
+    
+    Tcl_DStringFree(&dstr);
     
     for (i=0; i<size; i++) {
-	if ((*resource)[i] == '\r') {
+	if (resultStr[i] == '\r') {
 	    resultStr[i] = '\n';
-	} else {
-	    resultStr[i] = (*resource)[i];
 	}
     }
     
-    resultStr[size] = '\0';
-
     return resultStr;
 }
 
@@ -1463,15 +1472,19 @@ Tcl_MacFindResource(
 	    resource = GetResource(resourceType, resourceNumber);
 	}
     } else {
-	c2pstr(resourceName);
+    Str255 rezName;
+	Tcl_DString ds;
+	Tcl_UtfToExternalDString(NULL, resourceName, -1, &ds);
+	strcpy((char *) rezName + 1, Tcl_DStringValue(&ds));
+	rezName[0] = (unsigned) Tcl_DStringLength(&ds);
 	if (limitSearch) {
 	    resource = Get1NamedResource(resourceType,
-		    (StringPtr) resourceName);
+		    rezName);
 	} else {
 	    resource = GetNamedResource(resourceType,
-		    (StringPtr) resourceName);
+		    rezName);
 	}
-	p2cstr((StringPtr) resourceName);
+	Tcl_DStringFree(&ds);
     }
     
     if (*resource == NULL) {

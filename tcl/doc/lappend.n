@@ -31,5 +31,8 @@ large lists.  For example, ``\fBlappend a $b\fR'' is much
 more efficient than ``\fBset a [concat $a [list $b]]\fR'' when
 \fB$a\fR is long.
 
+.SH "SEE ALSO"
+list(n), lindex(n), linsert(n), llength(n), lsort(n), lrange(n)
+
 .SH KEYWORDS
 append, element, list, variable

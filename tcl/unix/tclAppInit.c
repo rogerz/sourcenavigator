@@ -180,5 +180,3 @@ Tcl_AppInit(interp)
     Tcl_SetVar(interp, "tcl_rcFileName", "~/.tclshrc", TCL_GLOBAL_ONLY);
     return TCL_OK;
 }
-
-

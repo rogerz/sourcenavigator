@@ -129,8 +129,7 @@ behavior of this varies from system to system (some systems may
 detect the redundant loads, others may not).
 
 .SH "SEE ALSO"
-\fBinfo sharedlibextension\fR, Tcl_StaticPackage, safe(n)
+\fBinfo sharedlibextension\fR, Tcl_StaticPackage(3), safe(n)
 
 .SH KEYWORDS
 binary code, loading, safe interpreter, shared library
-

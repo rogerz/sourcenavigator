@@ -1016,6 +1016,7 @@ TclFinalizeMemorySubsystem()
     }
     if (curTagPtr != NULL) {
 	TclpFree((char *) curTagPtr);
+	curTagPtr = NULL;
     }
     allocHead = NULL;
     Tcl_MutexUnlock(ckallocMutexPtr);
@@ -1025,4 +1026,3 @@ TclFinalizeMemorySubsystem()
     TclFinalizeAllocSubsystem(); 
 #endif
 }
-

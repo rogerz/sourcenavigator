@@ -110,4 +110,3 @@ TclSockMinimumBuffers(sock, size)
     }
     return TCL_OK;
 }
-

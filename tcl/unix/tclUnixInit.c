@@ -29,6 +29,15 @@
  */
 #include "tclInitScript.h"
 
+/*
+ * Tcl tries to use standard and homebrew methods to guess the right
+ * encoding on the platform.  However, there is always a final fallback,
+ * and this value is it.  Make sure it is a real Tcl encoding.
+ */
+
+#ifndef TCL_DEFAULT_ENCODING
+#define TCL_DEFAULT_ENCODING "iso8859-1"
+#endif
 
 /*
  * Default directory in which to look for Tcl library scripts.  The
@@ -58,6 +67,7 @@ typedef struct LocaleTable {
 static CONST LocaleTable localeTable[] = {
     {"ja_JP.SJIS",	"shiftjis"},
     {"ja_JP.EUC",	"euc-jp"},
+    {"ja_JP.eucJP",     "euc-jp"},
     {"ja_JP.JIS",	"iso2022-jp"},
     {"ja_JP.mscode",	"shiftjis"},
     {"ja_JP.ujis",	"euc-jp"},
@@ -207,10 +217,8 @@ CONST char *path;		/* Path to the executable in native
      * is installed.  The developLib computes the path as though the
      * executable is run from a develpment directory.
      */
-
-    /* CYGNUS LOCAL */
-    sprintf(installLib, "share/tcl%s", TCL_VERSION);
-    /* END CYGNUS LOCAL */
+     
+    sprintf(installLib, "lib/tcl%s", TCL_VERSION);
     sprintf(developLib, "tcl%s/library",
 	    ((TCL_RELEASE_LEVEL < 2) ? TCL_PATCH_LEVEL : TCL_VERSION));
 
@@ -282,46 +290,64 @@ CONST char *path;		/* Path to the executable in native
      *		(e.g. /usr/src/tcl8.2/unix/solaris-sparc/../../../tcl8.2/library)
      */
      
+
+     /*
+      * The variable path holds an absolute path.  Take care not to
+      * overwrite pathv[0] since that might produce a relative path.
+      */
+
     if (path != NULL) {
 	Tcl_SplitPath(path, &pathc, &pathv);
-	if (pathc > 1) {
+	if (pathc > 2) {
+	    str = pathv[pathc - 2];
 	    pathv[pathc - 2] = installLib;
 	    path = Tcl_JoinPath(pathc - 1, pathv, &ds);
-	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
-	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
-	    Tcl_DStringFree(&ds);
-	}
-	if (pathc > 2) {
-	    pathv[pathc - 3] = installLib;
-	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
-	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
-	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
-	    Tcl_DStringFree(&ds);
-	}
-	if (pathc > 1) {
-	    pathv[pathc - 2] = "library";
-	    path = Tcl_JoinPath(pathc - 1, pathv, &ds);
-	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
-	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
-	    Tcl_DStringFree(&ds);
-	}
-	if (pathc > 2) {
-	    pathv[pathc - 3] = "library";
-	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
-	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
-	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
-	    Tcl_DStringFree(&ds);
-	}
-	if (pathc > 1) {
-	    pathv[pathc - 3] = developLib;
-	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
+	    pathv[pathc - 2] = str;
 	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
 	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
 	    Tcl_DStringFree(&ds);
 	}
 	if (pathc > 3) {
+	    str = pathv[pathc - 3];
+	    pathv[pathc - 3] = installLib;
+	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
+	    pathv[pathc - 3] = str;
+	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
+	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
+	    Tcl_DStringFree(&ds);
+	}
+	if (pathc > 2) {
+	    str = pathv[pathc - 2];
+	    pathv[pathc - 2] = "library";
+	    path = Tcl_JoinPath(pathc - 1, pathv, &ds);
+	    pathv[pathc - 2] = str;
+	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
+	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
+	    Tcl_DStringFree(&ds);
+	}
+	if (pathc > 3) {
+	    str = pathv[pathc - 3];
+	    pathv[pathc - 3] = "library";
+	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
+	    pathv[pathc - 3] = str;
+	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
+	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
+	    Tcl_DStringFree(&ds);
+	}
+	if (pathc > 3) {
+	    str = pathv[pathc - 3];
+	    pathv[pathc - 3] = developLib;
+	    path = Tcl_JoinPath(pathc - 2, pathv, &ds);
+	    pathv[pathc - 3] = str;
+	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
+	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
+	    Tcl_DStringFree(&ds);
+	}
+	if (pathc > 4) {
+	    str = pathv[pathc - 4];
 	    pathv[pathc - 4] = developLib;
 	    path = Tcl_JoinPath(pathc - 3, pathv, &ds);
+	    pathv[pathc - 4] = str;
 	    objPtr = Tcl_NewStringObj(path, Tcl_DStringLength(&ds));
 	    Tcl_ListObjAppendElement(NULL, pathPtr, objPtr);
 	    Tcl_DStringFree(&ds);
@@ -428,7 +454,7 @@ TclpSetInitialEncodings()
 	}
     }
     if (encoding == NULL) {
-	encoding = "iso8859-1";
+	encoding = TCL_DEFAULT_ENCODING;
     }
 
     Tcl_SetSystemEncoding(NULL, encoding);
@@ -780,4 +806,3 @@ TclpCheckStackSpace()
 
     return 1;
 }
-

@@ -184,11 +184,13 @@ typedef struct Namespace {
 				  * namespace has already cached a Command *
 				  * pointer; this causes all its cached
 				  * Command* pointers to be invalidated. */
-    int resolverEpoch;		 /* Incremented whenever the name resolution
-				  * rules change for this namespace; this
-				  * invalidates all byte codes compiled in
-				  * the namespace, causing the code to be
-				  * recompiled under the new rules. */
+    int resolverEpoch;		 /* Incremented whenever (a) the name resolution
+				  * rules change for this namespace or (b) a 
+				  * newly added command shadows a command that
+				  * is compiled to bytecodes.
+				  * This invalidates all byte codes compiled
+				  * in the namespace, causing the code to be
+				  * recompiled under the new rules.*/
     Tcl_ResolveCmdProc *cmdResProc;
 				 /* If non-null, this procedure overrides
 				  * the usual command resolution mechanism
@@ -1549,6 +1551,8 @@ extern Tcl_Obj *	tclFreeObjList;
 #ifdef TCL_COMPILE_STATS
 extern long		tclObjsAlloced;
 extern long		tclObjsFreed;
+#define TCL_MAX_SHARED_OBJ_STATS 5
+extern long		tclObjsShared[TCL_MAX_SHARED_OBJ_STATS];
 #endif /* TCL_COMPILE_STATS */
 
 /*
@@ -1625,6 +1629,7 @@ EXTERN void		TclFinalizeIOSubsystem _ANSI_ARGS_((void));
 EXTERN void		TclFinalizeLoad _ANSI_ARGS_((void));
 EXTERN void		TclFinalizeMemorySubsystem _ANSI_ARGS_((void));
 EXTERN void		TclFinalizeNotifier _ANSI_ARGS_((void));
+EXTERN void		TclFinalizeAsync _ANSI_ARGS_((void));
 EXTERN void		TclFinalizeSynchronization _ANSI_ARGS_((void));
 EXTERN void		TclFinalizeThreadData _ANSI_ARGS_((void));
 EXTERN void		TclFindEncodings _ANSI_ARGS_((CONST char *argv0));
@@ -2098,6 +2103,37 @@ EXTERN int	TclCompileWhileCmd _ANSI_ARGS_((Tcl_Interp *interp,
 	TclIncrObjsFreed(); \
     }
 
+#elif defined(PURIFY)
+
+/*
+ * The PURIFY mode is like the regular mode, but instead of doing block
+ * Tcl_Obj allocation and keeping a freed list for efficiency, it always
+ * allocates and frees a single Tcl_Obj so that tools like Purify can
+ * better track memory leaks
+ */
+
+#  define TclNewObj(objPtr) \
+    (objPtr) = (Tcl_Obj *) Tcl_Ckalloc(sizeof(Tcl_Obj)); \
+    (objPtr)->refCount = 0; \
+    (objPtr)->bytes    = tclEmptyStringRep; \
+    (objPtr)->length   = 0; \
+    (objPtr)->typePtr  = NULL; \
+    TclIncrObjsAllocated();
+
+#  define TclDecrRefCount(objPtr) \
+    if (--(objPtr)->refCount <= 0) { \
+	if (((objPtr)->bytes != NULL) \
+		&& ((objPtr)->bytes != tclEmptyStringRep)) { \
+	    ckfree((char *) (objPtr)->bytes); \
+	} \
+	if (((objPtr)->typePtr != NULL) \
+		&& ((objPtr)->typePtr->freeIntRepProc != NULL)) { \
+	    (objPtr)->typePtr->freeIntRepProc(objPtr); \
+	} \
+	ckfree((char *) (objPtr)); \
+	TclIncrObjsFreed(); \
+    }
+
 #else /* not TCL_MEM_DEBUG */
 
 #ifdef TCL_THREADS
@@ -2185,5 +2221,4 @@ extern Tcl_Mutex tclObjMutex;
 # define TCL_STORAGE_CLASS DLLIMPORT
 
 #endif /* _TCLINT */
-
 

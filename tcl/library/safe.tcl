@@ -496,7 +496,7 @@ proc ::safe::interpAddToAccessPath {slave path} {
 		if {[lsearch -exact $res $dir]<0} {
 		    lappend res $dir
 		}
-		foreach sub [glob -nocomplain -- [file join $dir *]] {
+		foreach sub [glob -directory $dir -nocomplain *] {
 		    if {([file isdirectory $sub]) \
 			    && ([lsearch -exact $res $sub]<0) } {
 			# new sub dir, add it !

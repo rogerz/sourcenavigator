@@ -26,6 +26,15 @@
 #include <Strings.h>
 #include "tclMacInt.h"
 
+#if defined(TCL_REGISTER_LIBRARY) && defined(USE_TCL_STUBS)
+#error "Can't use TCL_REGISTER_LIBRARY and USE_TCL_STUBS at the same time!"
+/*
+ * Can't register a library with Tcl when using stubs in the current
+ * implementation, since Tcl_InitStubs hasn't been called yet
+ *  when OpenLibraryResource is executing. 
+ */
+#endif
+
 /*
  * These function are not currently defined in any header file.  The
  * only place they should be used is in the Initialization and

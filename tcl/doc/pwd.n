@@ -21,5 +21,8 @@ pwd \- Return the current working directory
 .PP
 Returns the path name of the current working directory.
 
+.SH "SEE ALSO"
+file(n), cd(n), glob(n), filename(n)
+
 .SH KEYWORDS
 working directory

@@ -50,5 +50,3 @@ _matherr(xPtr)
     }
     return 1;
 }
-
-

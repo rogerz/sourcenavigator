@@ -53,7 +53,7 @@
  *----------------------------------------------------------------------
  */
  
-#if defined(THINK_C) || defined(__MWERKS__)
+#if defined(THINK_C)
 double hypotd(double x, double y);
 
 double
@@ -420,7 +420,7 @@ FSpPathFromLocation(
 /*
  *----------------------------------------------------------------------
  *
- * GetGlobalMouse --
+ * GetGlobalMouseTcl --
  *
  *	This procedure obtains the current mouse position in global
  *	coordinates.
@@ -435,7 +435,7 @@ FSpPathFromLocation(
  */
 
 void
-GetGlobalMouse(
+GetGlobalMouseTcl(
     Point *mouse)		/* Mouse position. */
 {
     EventRecord event;
@@ -444,3 +444,20 @@ GetGlobalMouse(
     *mouse = event.where;
 }
 
+pascal OSErr	FSpGetDirectoryIDTcl (CONST FSSpec * spec, 
+				long * theDirID, Boolean * isDirectory)
+{
+	return(FSpGetDirectoryID(spec, theDirID, isDirectory));
+}
+
+pascal short	FSpOpenResFileCompatTcl (CONST FSSpec * spec, SignedByte permission)
+{
+	return(FSpOpenResFileCompat(spec,permission));
+}
+
+pascal void	FSpCreateResFileCompatTcl (
+				CONST FSSpec * spec, OSType creator, 
+				OSType fileType, ScriptCode scriptTag)
+{
+	FSpCreateResFileCompat (spec,creator,fileType,scriptTag);
+}

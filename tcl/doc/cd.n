@@ -24,5 +24,8 @@ home directory (as specified in the HOME environment variable) if
 \fIdirName\fR is not given.
 Returns an empty string.
 
+.SH "SEE ALSO"
+filename(n), glob(n), pwd(n)
+
 .SH KEYWORDS
 working directory

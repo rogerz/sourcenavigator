@@ -50,27 +50,18 @@ proc auto_reset {} {
 #	initScript	Initialization script to source (e.g., tk.tcl)
 #	enVarName	environment variable to honor (e.g., TK_LIBRARY)
 #	varName		Global variable to set when done (e.g., tk_library)
-#       CYGNUS LOCAL:   We have funny things like gdb having different library
-#                       names before & after install (and neither of them is gdb
-#                       or gdb$version... 
-#       srcLibName      The name of the library directory in the build tree (assumed to be 
-#                       under the basename directory.
-#       instLibName     The name of the installed library directory
-#       pkgName         The package name (for cases like Itcl where you have
-#                       several subpackages under one package...
-#       debug_startup   Run the startup proc through debugger_eval?
 
-proc tcl_findLibrary {basename version patch initScript 
-                      enVarName varName {srcLibName {}} {instLibName {}} 
-		      {pkgName {}} {debug_startup 0}} {
+proc tcl_findLibrary {basename version patch initScript enVarName varName} {
     upvar #0 $varName the_library
     global env errorInfo
 
     set dirs {}
     set errors {}
+
     # The C application may have hardwired a path, which we honor
     
-    if {[info exist the_library] && [string compare $the_library {}]} {
+    set variableSet [info exists the_library]
+    if {$variableSet && [string compare $the_library {}]} {
 	lappend dirs $the_library
     } else {
 
@@ -83,16 +74,19 @@ proc tcl_findLibrary {basename version patch initScript
         }
 
 	# 2. Relative to the Tcl library
-       
-        if {$srcLibName == ""} {
-	  set srcLibName library
-	}
-	if {$instLibName == ""} {
-	  set instLibName $basename$version
-        }
 
         lappend dirs [file join [file dirname [info library]] \
 		$basename$version]
+
+	# 3. Various locations relative to the executable
+	# ../lib/foo1.0		(From bin directory in install hierarchy)
+	# ../../lib/foo1.0	(From bin/arch directory in install hierarchy)
+	# ../library		(From unix directory in build hierarchy)
+	# ../../library		(From unix/arch directory in build hierarchy)
+	# ../../foo1.0b1/library
+	#		(From unix directory in parallel build hierarchy)
+	# ../../../foo1.0b1/library
+	#		(From unix/arch directory in parallel build hierarchy)
 
         set parentDir [file dirname [file dirname [info nameofexecutable]]]
         set grandParentDir [file dirname $parentDir]
@@ -106,7 +100,6 @@ proc tcl_findLibrary {basename version patch initScript
         lappend dirs [file join $grandParentDir $basename$ver library]
         lappend dirs [file join [file dirname $grandParentDir] $basename$ver library]
     }
-
     foreach i $dirs {
         set the_library $i
         set file [file join $i $initScript]
@@ -115,21 +108,15 @@ proc tcl_findLibrary {basename version patch initScript
 	# we have a source command, but no file exists command
 
         if {[interp issafe] || [file exists $file]} {
-	    if {$debug_startup} {
-	    
-	      if {![catch {uplevel \#0 debugger_eval [list [list source $file]]} msg]} {
-	            return
-                } else {
-	            append errors "$file: $msg\n$errorInfo\n"
-                }
-	    } else {
-                if {![catch {uplevel \#0 [list source $file]} msg]} {
-	            return
-                } else {
-	            append errors "$file: $msg\n$errorInfo\n"
-                }
-	    }
-	}
+            if {![catch {uplevel #0 [list source $file]} msg]} {
+                return
+            } else {
+                append errors "$file: $msg\n$errorInfo\n"
+            }
+        }
+    }
+    if {!$variableSet} {
+	unset the_library
     }
     set msg "Can't find a usable $initScript in the following directories: \n"
     append msg "    $dirs\n\n"
@@ -137,6 +124,7 @@ proc tcl_findLibrary {basename version patch initScript
     append msg "This probably means that $basename wasn't installed properly.\n"
     error $msg
 }
+
 
 # ----------------------------------------------------------------------
 # auto_mkindex

@@ -1265,6 +1265,7 @@ Tcl_Import(interp, namespacePtr, pattern, allowOverwrite)
 			        "import pattern \"", pattern,
 				"\" would create a loop containing command \"",
 				Tcl_DStringValue(&ds), "\"", (char *) NULL);
+			Tcl_DStringFree(&ds);
 			return TCL_ERROR;
 		    }
 		}
@@ -1277,6 +1278,7 @@ Tcl_Import(interp, namespacePtr, pattern, allowOverwrite)
 		dataPtr->realCmdPtr = cmdPtr;
 		dataPtr->selfPtr = (Command *) importedCmd;
 		dataPtr->selfPtr->compileProc = cmdPtr->compileProc;
+		Tcl_DStringFree(&ds);
 
 		/*
 		 * Create an ImportRef structure describing this new import
@@ -2275,6 +2277,17 @@ TclResetShadowedCmdRefs(interp, newCmdPtr)
             hPtr = Tcl_FindHashEntry(&shadowNsPtr->cmdTable, cmdName);
             if (hPtr != NULL) {
                 nsPtr->cmdRefEpoch++;
+
+		/* 
+		 * If the shadowed command was compiled to bytecodes, we
+		 * invalidate all the bytecodes in nsPtr, to force a new
+		 * compilation. We use the resolverEpoch to signal the need
+		 * for a fresh compilation of every bytecode.
+		 */
+
+		if ((((Command *) Tcl_GetHashValue(hPtr))->compileProc) != NULL) {
+		    nsPtr->resolverEpoch++;
+		}
             }
         }
 
@@ -2877,7 +2890,7 @@ NamespaceEvalCmd(dummy, interp, objc, objv)
     Tcl_Obj *CONST objv[];	/* Argument objects. */
 {
     Tcl_Namespace *namespacePtr;
-    Tcl_CallFrame frame;
+    CallFrame frame;
     Tcl_Obj *objPtr;
     char *name;
     int length, result;
@@ -2915,11 +2928,13 @@ NamespaceEvalCmd(dummy, interp, objc, objv)
      * the command(s).
      */
 
-    result = Tcl_PushCallFrame(interp, &frame, namespacePtr,
-	    /*isProcCallFrame*/ 0);
+    result = Tcl_PushCallFrame(interp, (Tcl_CallFrame *) &frame, 
+            namespacePtr, /*isProcCallFrame*/ 0);
     if (result != TCL_OK) {
         return TCL_ERROR;
     }
+    frame.objc = objc;
+    frame.objv = objv;  /* ref counts do not need to be incremented here */
 
     if (objc == 4) {
         result = Tcl_EvalObjEx(interp, objv[3], 0);
@@ -3880,4 +3895,3 @@ UpdateStringOfNsName(objPtr)
     }
     objPtr->length = length;
 }
-

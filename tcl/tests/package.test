@@ -69,4 +69,3 @@ test package-1.16 {pkg::create gives correct output for 1 direct, 1 lazy} {
 
 ::tcltest::cleanupTests
 return
-

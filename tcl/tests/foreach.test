@@ -210,6 +210,15 @@ test foreach-5.4 {break tests} {
     catch {break foo} msg
     set msg
 } {wrong # args: should be "break"}
+# Check for bug #406709 
+test foreach-5.5 {break tests} {
+    proc a {} {
+	set a 1
+	foreach b b {list [concat a; break]; incr a}
+	incr a
+    }
+    a
+} {2}
 
 # Test for incorrect "double evaluation" semantics
 
@@ -229,7 +238,6 @@ catch {unset a}
 catch {unset x}
 ::tcltest::cleanupTests
 return
-
 
 
 

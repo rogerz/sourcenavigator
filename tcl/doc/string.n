@@ -334,5 +334,8 @@ or underscore (Unicode connector punctuation) characters, or any
 single character other than these.
 .VE 8.1
 
+.SH "SEE ALSO"
+expr(n), list(n)
+
 .SH KEYWORDS
 case conversion, compare, index, match, pattern, string, word, equal, ctype

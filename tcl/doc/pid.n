@@ -30,5 +30,8 @@ If no \fIfileId\fR argument is given then \fBpid\fR returns the process
 identifier of the current process.
 All process identifiers are returned as decimal strings.
 
+.SH "SEE ALSO"
+exec(n), open(n)
+
 .SH KEYWORDS
 file, pipeline, process identifier

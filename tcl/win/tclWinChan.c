@@ -40,6 +40,8 @@ typedef struct FileInfo {
     int flags;			/* State flags, see above for a list. */
     HANDLE handle;		/* Input/output file. */
     struct FileInfo *nextPtr;	/* Pointer to next registered file. */
+    int dirty;                  /* Boolean flag. Set if the OS may have data
+				 * pending on the channel */
 } FileInfo;
 
 typedef struct ThreadSpecificData {
@@ -115,6 +117,11 @@ static Tcl_ChannelType fileChannelType = {
     NULL,			/* flush proc. */
     NULL,			/* handler proc. */
 };
+
+#ifdef HAVE_NO_SEH
+static void *ESP;
+static void *EBP;
+#endif /* HAVE_NO_SEH */
 
 
 /*
@@ -557,7 +564,7 @@ FileOutputProc(instanceData, buf, toWrite, errorCode)
         *errorCode = errno;
         return -1;
     }
-    FlushFileBuffers(infoPtr->handle);
+    infoPtr->dirty = 1;
     return bytesWritten;
 }
 
@@ -673,9 +680,6 @@ TclpOpenFileChannel(interp, fileName, modeString, permissions)
     char channelName[16 + TCL_INTEGER_SPACE];
     TclFile readFile = NULL;
     TclFile writeFile = NULL;
-#ifdef __CYGWIN__
-    char winbuf[MAX_PATH];
-#endif
 
     mode = TclGetOpenMode(interp, modeString, &seekFlag);
     if (mode == -1) {
@@ -687,15 +691,6 @@ TclpOpenFileChannel(interp, fileName, modeString, permissions)
     }
     nativeName = Tcl_WinUtfToTChar(Tcl_DStringValue(&ds), 
 	    Tcl_DStringLength(&ds), &buffer);
-
-#ifdef __CYGWIN__
-    /* In the Cygwin world, call conv_to_win32_path in order to use
-       the mount table to translate the file name into something
-       Windows will understand.  */
-    cygwin_conv_to_win32_path(nativeName, winbuf);
-    Tcl_DStringFree(&buffer);
-    Tcl_DStringAppend(&buffer, winbuf, -1);
-#endif
 
     switch (mode & (O_RDONLY | O_WRONLY | O_RDWR)) {
 	case O_RDONLY:
@@ -891,15 +886,20 @@ Tcl_MakeFileChannel(rawHandle, mode)
     char channelName[16 + TCL_INTEGER_SPACE];
     Tcl_Channel channel = NULL;
     HANDLE handle = (HANDLE) rawHandle;
+    HANDLE dupedHandle;
     DCB dcb;
-    DWORD consoleParams;
-    DWORD type;
+    DWORD consoleParams, type;
     TclFile readFile = NULL;
     TclFile writeFile = NULL;
+    BOOL result;
 
     if (mode == 0) {
 	return NULL;
     }
+
+    /*
+     * GetFileType() returns FILE_TYPE_UNKNOWN for invalid handles.
+     */
 
     type = GetFileType(handle);
 
@@ -942,23 +942,109 @@ Tcl_MakeFileChannel(rawHandle, mode)
 
     case FILE_TYPE_DISK:
     case FILE_TYPE_CHAR:
-    case FILE_TYPE_UNKNOWN:
 	channel = TclWinOpenFileChannel(handle, channelName, mode, 0);
 	break;
 	
+    case FILE_TYPE_UNKNOWN:
     default:
 	/*
-	 * The handle is of an unknown type, probably /dev/nul equivalent
-	 * or possibly a closed handle.
+	 * The handle is of an unknown type.  Test the validity of this OS
+	 * handle by duplicating it, then closing the dupe.  The Win32 API
+	 * doesn't provide an IsValidHandle() function, so we have to emulate
+	 * it here.  This test will not work on a console handle reliably,
+	 * which is why we can't test every handle that comes into this
+	 * function in this way.
 	 */
-	
-	channel = NULL;
-	break;
 
+	result = DuplicateHandle(GetCurrentProcess(), handle,
+		GetCurrentProcess(), &dupedHandle, 0, FALSE,
+		DUPLICATE_SAME_ACCESS);
+
+	if (result != 0) {
+	    /* 
+	     * Unable to make a duplicate. It's definately invalid at this
+	     * point.
+	     */
+
+	    return NULL;
+	}
+
+	/*
+	 * Use structured exception handling (Win32 SEH) to protect the close
+	 * of this duped handle which might throw EXCEPTION_INVALID_HANDLE.
+	 */
+
+#ifdef HAVE_NO_SEH
+        __asm__ __volatile__ (
+                "movl  %esp, _ESP" "\n\t"
+                "movl  %ebp, _EBP");
+
+        __asm__ __volatile__ (
+                "pushl $__except_makefilechannel_handler" "\n\t"
+                "pushl %fs:0" "\n\t"
+                "mov   %esp, %fs:0");
+
+        result = 0;
+#else
+	__try {
+#endif /* HAVE_NO_SEH */
+	    CloseHandle(dupedHandle);
+#ifdef HAVE_NO_SEH
+        __asm__ __volatile__ (
+                "jmp   makefilechannel_pop" "\n"
+                "makefilechannel_reentry:" "\n\t"
+                "movl  _ESP, %esp" "\n\t"
+                "movl  _EBP, %ebp");
+
+        result = 1;  /* True when exception was raised */
+
+        __asm__ __volatile__ (
+                "makefilechannel_pop:" "\n\t"
+                "mov   (%esp), %eax" "\n\t"
+                "mov   %eax, %fs:0" "\n\t"
+                "add   $8, %esp");
+
+        if (result)
+            return NULL;
+#else
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER) {
+	    /*
+	     * Definately an invalid handle.  So, therefore, the original
+	     * is invalid also.
+	     */
+
+	    return NULL;
+	}
+#endif /* HAVE_NO_SEH */
+
+	/* Fall through, the handle is valid. */
+
+	/*
+	 * Create the undefined channel, anyways, because we know the handle
+	 * is valid to something.
+	 */
+
+	channel = TclWinOpenFileChannel(handle, channelName, mode, 0);
     }
 
     return channel;
 }
+#ifdef HAVE_NO_SEH
+static
+__attribute__ ((cdecl))
+EXCEPTION_DISPOSITION
+_except_makefilechannel_handler(
+    struct _EXCEPTION_RECORD *ExceptionRecord,
+    void *EstablisherFrame,
+    struct _CONTEXT *ContextRecord,
+    void *DispatcherContext)
+{
+    __asm__ __volatile__ (
+            "jmp makefilechannel_reentry");
+    return 0; /* Function does not return */
+}
+#endif
 
 /*
  *----------------------------------------------------------------------
@@ -986,6 +1072,7 @@ TclpGetDefaultStdChannel(type)
     int mode;
     char *bufMode;
     DWORD handleId;		/* Standard handle to retrieve. */
+
 
     switch (type) {
 	case TCL_STDIN:
@@ -1015,15 +1102,15 @@ TclpGetDefaultStdChannel(type)
      * is not a console mode application, even though this is not a valid
      * handle.
      */
-    
+
     if ((handle == INVALID_HANDLE_VALUE) || (handle == 0)) {
-	return NULL;
+	return (Tcl_Channel) NULL;
     }
-    
+
     channel = Tcl_MakeFileChannel(handle, mode);
 
     if (channel == NULL) {
-	return NULL;
+	return (Tcl_Channel) NULL;
     }
 
     /*
@@ -1093,7 +1180,7 @@ TclWinOpenFileChannel(handle, channelName, permissions, appendMode)
     infoPtr->watchMask = 0;
     infoPtr->flags = appendMode;
     infoPtr->handle = handle;
-	
+    infoPtr->dirty = 0;
     wsprintfA(channelName, "file%lx", (int) infoPtr);
     
     infoPtr->channel = Tcl_CreateChannel(&fileChannelType, channelName,
@@ -1111,3 +1198,44 @@ TclWinOpenFileChannel(handle, channelName, permissions, appendMode)
 }
 
 
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclWinOpenFileChannel --
+ *
+ *	Constructs a File channel for the specified standard OS handle.
+ *      This is a helper function to break up the construction of 
+ *      channels into File, Console, or Serial.
+ *
+ * Results:
+ *	Returns the new channel, or NULL.
+ *
+ * Side effects:
+ *	May open the channel and may cause creation of a file on the
+ *	file system.
+ *
+ *----------------------------------------------------------------------
+ */
+
+void
+TclWinFlushDirtyChannels ()
+{
+    FileInfo *infoPtr;
+    ThreadSpecificData *tsdPtr;
+
+    tsdPtr = FileInit();
+
+    /*
+     * Flush all channels which are dirty, i.e. may have data pending
+     * in the OS
+     */
+    
+    for (infoPtr = tsdPtr->firstFilePtr;
+	 infoPtr != NULL; 
+	 infoPtr = infoPtr->nextPtr) {
+	if (infoPtr->dirty) {
+	    FlushFileBuffers(infoPtr->handle);
+	    infoPtr->dirty = 0;
+	}
+    }
+}

@@ -14,13 +14,6 @@
  */
 
 #include "tclWinInt.h"
-#include <winsock.h>
-
-/*
- * The follwing static indicates whether this module has been initialized.
- */
-
-static int initialized = 0;
 
 #define INTERVAL_TIMER 1	/* Handle of interval timer. */
 
@@ -150,16 +143,28 @@ Tcl_FinalizeNotifier(clientData)
 {
     ThreadSpecificData *tsdPtr = (ThreadSpecificData *) clientData;
 
-    DeleteCriticalSection(&tsdPtr->crit);
-    CloseHandle(tsdPtr->event);
-
     /*
-     * Clean up the timer and messaging window for this thread.
+     * Only finalize the notifier if a notifier was installed in the
+     * current thread; there is a route in which this is not
+     * guaranteed to be true (when tclWin32Dll.c:DllMain() is called
+     * with the flag DLL_PROCESS_DETACH by the OS, which could be
+     * doing so from a thread that's never previously been involved
+     * with Tcl, e.g. the task manager) so this check is important.
+     *
+     * Fixes Bug #217982 reported by Hugh Vu and Gene Leache.
      */
+    if (tsdPtr != NULL) {
+        DeleteCriticalSection(&tsdPtr->crit);
+        CloseHandle(tsdPtr->event);
 
-    if (tsdPtr->hwnd) {
-	KillTimer(tsdPtr->hwnd, INTERVAL_TIMER);
-	DestroyWindow(tsdPtr->hwnd);
+        /*
+         * Clean up the timer and messaging window for this thread.
+         */
+
+        if (tsdPtr->hwnd) {
+	    KillTimer(tsdPtr->hwnd, INTERVAL_TIMER);
+            DestroyWindow(tsdPtr->hwnd);
+        }
     }
 
     /*
@@ -168,8 +173,7 @@ Tcl_FinalizeNotifier(clientData)
      */
 
     Tcl_MutexLock(&notifierMutex);
-    notifierCount--;
-    if (notifierCount == 0) {
+    if (notifierCount && !(--notifierCount)) {
 	UnregisterClassA("TclNotifier", TclWinGetTclInstance());
     }
     Tcl_MutexUnlock(&notifierMutex);
@@ -468,7 +472,7 @@ Tcl_WaitForEvent(
 	     * propagate the quit message and start unwinding.
 	     */
 
-	    PostQuitMessage(msg.wParam);
+	    PostQuitMessage((int) msg.wParam);
 	    status = -1;
 	} else if (result == -1) {
 	    /*
@@ -512,5 +516,3 @@ Tcl_Sleep(ms)
 {
     Sleep(ms);
 }
-
-

@@ -105,6 +105,8 @@ were found and replaced.
 See the manual entry for \fBregexp\fR for details on the interpretation
 of regular expressions.
 
+.SH "SEE ALSO"
+regexp(n), re_syntax(n)
+
 .SH KEYWORDS
 match, pattern, regular expression, substitute
-

@@ -231,16 +231,20 @@ static int		WaitForConnect _ANSI_ARGS_((TcpState *statePtr,
  */
 
 static Tcl_ChannelType fileChannelType = {
-    "file",				/* Type name. */
-    FileBlockModeProc,			/* Set blocking/nonblocking mode.*/
-    FileCloseProc,			/* Close proc. */
-    FileInputProc,			/* Input proc. */
-    FileOutputProc,			/* Output proc. */
-    FileSeekProc,			/* Seek proc. */
-    NULL,				/* Set option proc. */
-    NULL,				/* Get option proc. */
-    FileWatchProc,			/* Initialize notifier. */
-    FileGetHandleProc,			/* Get OS handles out of channel. */
+    "file",			/* Type name. */
+    TCL_CHANNEL_VERSION_2,	/* v2 channel */
+    FileCloseProc,		/* Close proc. */
+    FileInputProc,		/* Input proc. */
+    FileOutputProc,		/* Output proc. */
+    FileSeekProc,		/* Seek proc. */
+    NULL,			/* Set option proc. */
+    NULL,			/* Get option proc. */
+    FileWatchProc,		/* Initialize notifier. */
+    FileGetHandleProc,		/* Get OS handles out of channel. */
+    NULL,			/* close2proc. */
+    FileBlockModeProc,		/* Set blocking or non-blocking mode.*/
+    NULL,			/* flush proc. */
+    NULL,			/* handler proc. */
 };
 
 #ifdef SUPPORTS_TTY
@@ -250,16 +254,20 @@ static Tcl_ChannelType fileChannelType = {
  */
 
 static Tcl_ChannelType ttyChannelType = {
-    "tty",				/* Type name. */
-    FileBlockModeProc,			/* Set blocking/nonblocking mode.*/
-    TtyCloseProc,			/* Close proc. */
-    FileInputProc,			/* Input proc. */
-    FileOutputProc,			/* Output proc. */
-    NULL,				/* Seek proc. */
-    TtySetOptionProc,			/* Set option proc. */
-    TtyGetOptionProc,			/* Get option proc. */
-    FileWatchProc,			/* Initialize notifier. */
-    FileGetHandleProc,			/* Get OS handles out of channel. */
+    "tty",			/* Type name. */
+    TCL_CHANNEL_VERSION_2,	/* v2 channel */
+    TtyCloseProc,		/* Close proc. */
+    FileInputProc,		/* Input proc. */
+    FileOutputProc,		/* Output proc. */
+    NULL,			/* Seek proc. */
+    TtySetOptionProc,		/* Set option proc. */
+    TtyGetOptionProc,		/* Get option proc. */
+    FileWatchProc,		/* Initialize notifier. */
+    FileGetHandleProc,		/* Get OS handles out of channel. */
+    NULL,			/* close2proc. */
+    FileBlockModeProc,		/* Set blocking or non-blocking mode.*/
+    NULL,			/* flush proc. */
+    NULL,			/* handler proc. */
 };
 #endif	/* SUPPORTS_TTY */
 
@@ -269,16 +277,20 @@ static Tcl_ChannelType ttyChannelType = {
  */
 
 static Tcl_ChannelType tcpChannelType = {
-    "tcp",				/* Type name. */
-    TcpBlockModeProc,			/* Set blocking/nonblocking mode.*/
-    TcpCloseProc,			/* Close proc. */
-    TcpInputProc,			/* Input proc. */
-    TcpOutputProc,			/* Output proc. */
-    NULL,				/* Seek proc. */
-    NULL,				/* Set option proc. */
-    TcpGetOptionProc,			/* Get option proc. */
-    TcpWatchProc,			/* Initialize notifier. */
-    TcpGetHandleProc,			/* Get OS handles out of channel. */
+    "tcp",			/* Type name. */
+    TCL_CHANNEL_VERSION_2,	/* v2 channel */
+    TcpCloseProc,		/* Close proc. */
+    TcpInputProc,		/* Input proc. */
+    TcpOutputProc,		/* Output proc. */
+    NULL,			/* Seek proc. */
+    NULL,			/* Set option proc. */
+    TcpGetOptionProc,		/* Get option proc. */
+    TcpWatchProc,		/* Initialize notifier. */
+    TcpGetHandleProc,		/* Get OS handles out of channel. */
+    NULL,			/* close2proc. */
+    TcpBlockModeProc,		/* Set blocking or non-blocking mode.*/
+    NULL,			/* flush proc. */
+    NULL,			/* handler proc. */
 };
 
 
@@ -411,6 +423,15 @@ FileOutputProc(instanceData, buf, toWrite, errorCodePtr)
     int written;
 
     *errorCodePtr = 0;
+    if (toWrite == 0) {
+      /* SF Tcl Bug 465765.
+       * Do not try to write nothing into a file. STREAM based
+       * implementations will considers this as EOF (if there is a
+       * pipe behind the file).
+       */
+
+      return 0;
+    }
     written = write(fsPtr->fd, buf, (size_t) toWrite);
     if (written > -1) {
         return written;
@@ -1269,6 +1290,9 @@ TclpOpenFileChannel(interp, fileName, modeString, permissions)
     char channelName[16 + TCL_INTEGER_SPACE];
     Tcl_DString ds, buffer;
     Tcl_ChannelType *channelTypePtr;
+#ifdef SUPPORTS_TTY
+    int ctl_tty;
+#endif
     ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
 
     mode = TclGetOpenMode(interp, modeString, &seekFlag);
@@ -1299,6 +1323,9 @@ TclpOpenFileChannel(interp, fileName, modeString, permissions)
     }
     native = Tcl_UtfToExternalDString(NULL, native, -1, &ds);
     fd = open(native, mode, permissions);		/* INTL: Native. */
+#ifdef SUPPORTS_TTY
+    ctl_tty = (strcmp (native, "/dev/tty") == 0);
+#endif
     Tcl_DStringFree(&ds);    
     Tcl_DStringFree(&buffer);
 
@@ -1320,7 +1347,7 @@ TclpOpenFileChannel(interp, fileName, modeString, permissions)
     sprintf(channelName, "file%d", fd);
     
 #ifdef SUPPORTS_TTY
-    if (isatty(fd)) {
+    if (!ctl_tty && isatty(fd)) {
 	/*
 	 * Initialize the serial port to a set of sane parameters.
 	 * Especially important if the remote device is set to echo and
@@ -1415,7 +1442,7 @@ Tcl_MakeFileChannel(handle, mode)
      * Look to see if a channel with this fd and the same mode already exists.
      * If the fd is used, but the mode doesn't match, return NULL.
      */
-    
+
     for (fsPtr = tsdPtr->firstFilePtr; fsPtr != NULL; fsPtr = fsPtr->nextPtr) {
 	if (fsPtr->fd == fd) {
 	    return ((mode|TCL_EXCEPTION) == fsPtr->validMask) ?
@@ -1424,9 +1451,9 @@ Tcl_MakeFileChannel(handle, mode)
     }
 
     fsPtr = (FileState *) ckalloc((unsigned) sizeof(FileState));
+
     fsPtr->nextPtr = tsdPtr->firstFilePtr;
     tsdPtr->firstFilePtr = fsPtr;
-
     fsPtr->fd = fd;
     fsPtr->validMask = mode | TCL_EXCEPTION;
     fsPtr->channel = Tcl_CreateChannel(&fileChannelType, channelName,
@@ -2733,5 +2760,3 @@ TclUnixWaitForFile(fd, mask, timeout)
     }
     return result;
 }
-
-

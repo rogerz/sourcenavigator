@@ -102,7 +102,7 @@ buggy handlers.
 by Mark Diekhans.
 
 .SH "SEE ALSO"
-bgerror, fconfigure, gets, puts, read
+bgerror(n), fconfigure(n), gets(n), puts(n), read(n)
 
 .SH KEYWORDS
 asynchronous I/O, blocking, channel, event handler, nonblocking, readable,

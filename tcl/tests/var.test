@@ -324,6 +324,16 @@ test var-6.3 {Tcl_GlobalObjCmd, variable named {} qualified by a namespace name}
     }
     p
 } {24}
+test var-6.4 {Tcl_GlobalObjCmd, variable name matching :*} {
+    # Test for Tcl Bug 480176
+    set :v broken
+    proc p {} {
+	global :v
+	set :v fixed
+    }
+    p
+    set :v
+} {fixed}
 
 test var-7.1 {Tcl_VariableObjCmd, create and initialize one new ns variable} {
     catch {namespace delete test_ns_var}
@@ -663,4 +673,3 @@ catch {unset aaaaa}
 # cleanup
 ::tcltest::cleanupTests
 return
-

@@ -154,6 +154,8 @@ assumes the directory separator for the entire pattern is the standard
 ``:''.  When not using these options, glob examines each pattern argument
 and uses ``/'' unless the pattern contains a ``:''.
 
+.SH "SEE ALSO"
+file(n)
 
 .SH KEYWORDS
 exist, file, glob, pattern

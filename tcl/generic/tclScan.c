@@ -539,7 +539,8 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 {
     char *format;
     int numVars, nconversions, totalVars = -1;
-    int objIndex, offset, i, value, result, code;
+    int objIndex, offset, i, result, code;
+    long value;
     char *string, *end, *baseString;
     char op = 0;
     int base = 0;
@@ -644,7 +645,7 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 	    if (*end == '$') {
 		format = end+1;
 		format += Tcl_UtfToUniChar(format, &ch);
-		objIndex = value - 1;
+		objIndex = (int) value - 1;
 	    }
 	}
 
@@ -694,12 +695,12 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 	    case 'o':
 		op = 'i';
 		base = 8;
-		fn = (long (*)())strtol;
+		fn = (long (*)())strtoul;
 		break;
 	    case 'x':
 		op = 'i';
 		base = 16;
-		fn = (long (*)())strtol;
+		fn = (long (*)())strtoul;
 		break;
 	    case 'u':
 		op = 'i';
@@ -854,10 +855,17 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 			 * a number.  If we are unsure of the base, it
 			 * indicates that we are in base 8 or base 16 (if it is
 			 * followed by an 'x').
+			 *
+			 * 8.1 - 8.3.4 incorrectly handled 0x... base-16
+			 * cases for %x by not reading the 0x as the
+			 * auto-prelude for base-16. [Bug #495213]
 			 */
 			case '0':
 			    if (base == 0) {
 				base = 8;
+				flags |= SCAN_XOK;
+			    }
+			    if (base == 16) {
 				flags |= SCAN_XOK;
 			    }
 			    if (flags & SCAN_NOZERO) {
@@ -954,12 +962,16 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 
 		if (!(flags & SCAN_SUPPRESS)) {
 		    *end = '\0';
-		    value = (int) (*fn)(buf, NULL, base);
+		    value = (long) (*fn)(buf, NULL, base);
 		    if ((flags & SCAN_UNSIGNED) && (value < 0)) {
-			sprintf(buf, "%u", value); /* INTL: ISO digit */
+			sprintf(buf, "%lu", value); /* INTL: ISO digit */
 			objPtr = Tcl_NewStringObj(buf, -1);
 		    } else {
-			objPtr = Tcl_NewIntObj(value);
+			if ((unsigned long) value > UINT_MAX) {
+			    objPtr = Tcl_NewLongObj(value);
+			} else {
+			    objPtr = Tcl_NewIntObj(value);
+			}
 		    }
 		    Tcl_IncrRefCount(objPtr);
 		    objs[objIndex++] = objPtr;
@@ -1112,7 +1124,9 @@ Tcl_ScanObjCmd(dummy, interp, objc, objv)
 	    }
 	}
     }
-    ckfree((char*) objs);
+    if (objs != NULL) {
+	ckfree((char*) objs);
+    }
     if (code == TCL_OK) {
 	if (underflow && (nconversions == 0)) {
 	    if (numVars) {

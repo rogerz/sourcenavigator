@@ -44,5 +44,8 @@ was invoked to declare \fIvarName\fR to be global,
 or unless a \fBvariable\fR command
 was invoked to declare \fIvarName\fR to be a namespace variable.
 
+.SH "SEE ALSO"
+expr(n), proc(n), trace(n), unset(n)
+
 .SH KEYWORDS
 read, write, variable

@@ -265,6 +265,7 @@ Tcl_SetListObj(objPtr, objc, objv)
 	objPtr->typePtr = &tclListType;
     } else {
 	objPtr->bytes = tclEmptyStringRep;
+	objPtr->length = 0;
     }
 }
 

@@ -33,15 +33,4 @@
 
 #include "tclMacCommonPch.h"
 
-/* #define TCL_REGISTER_LIBRARY 1 */
 #define USE_TCL_STUBS
-
-/*
- * Place any includes below that will are needed by the majority of the
- * and is OK to be in any file in the system.  The pragma's are used
- * to control what functions are exported in the Tcl shared library.
- */
-
-#pragma export on
-#pragma export off
-

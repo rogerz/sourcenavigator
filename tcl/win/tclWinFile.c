@@ -16,7 +16,6 @@
 
 #include "tclWinInt.h"
 #include <sys/stat.h>
-
 #include <shlobj.h>
 #include <lmaccess.h>		/* For TclpGetUserHome(). */
 
@@ -327,13 +326,20 @@ TclpMatchFilesTypes(
 
 	fname = Tcl_DStringValue(dirPtr);
 	nativeName = Tcl_WinUtfToTChar(fname, Tcl_DStringLength(dirPtr), &ds);
-	attr = (*tclWinProcs->getFileAttributesProc)(nativeName);
-	Tcl_DStringFree(&ds);
+
+	/*
+	 * 'attr' represents the attributes of the file, but we only
+	 * want to retrieve this info if it is absolutely necessary
+	 * because it is an expensive call.
+	 */
+
+	attr = 0;
 
 	if (tail == NULL) {
 	    int typeOk = 1;
 	    if (types != NULL) {
 		if (types->perm != 0) {
+		    attr = (*tclWinProcs->getFileAttributesProc)(nativeName);
 		    if (
 			((types->perm & TCL_GLOB_PERM_RONLY) &&
 				!(attr & FILE_ATTRIBUTE_READONLY)) ||
@@ -390,13 +396,22 @@ TclpMatchFilesTypes(
 		Tcl_ListObjAppendElement(interp, resultPtr, 
 			Tcl_NewStringObj(fname, Tcl_DStringLength(dirPtr)));
 	    }
-	} else if (attr & FILE_ATTRIBUTE_DIRECTORY) {
-	    Tcl_DStringAppend(dirPtr, "/", 1);
-	    result = TclDoGlob(interp, separators, dirPtr, tail, types);
-	    if (result != TCL_OK) {
-		break;
+	} else {
+	    attr = (*tclWinProcs->getFileAttributesProc)(nativeName);
+	    if (attr & FILE_ATTRIBUTE_DIRECTORY) {
+		Tcl_DStringAppend(dirPtr, "/", 1);
+		result = TclDoGlob(interp, separators, dirPtr, tail, types);
+		if (result != TCL_OK) {
+		    break;
+		}
 	    }
 	}
+	/*
+	 * Free ds here to ensure that nativeName is valid above.
+	 */
+
+	Tcl_DStringFree(&ds);
+
 	Tcl_DStringSetLength(dirPtr, dirLength);
     }
 
@@ -711,7 +726,7 @@ TclpReadlink(path, linkPtr)
     Tcl_DStringFree(&ds);
     
     if (length < 0) {
-       return NULL;
+	return NULL;
     }
 
     Tcl_ExternalToUtfDString(NULL, link, length, linkPtr);
@@ -842,6 +857,14 @@ TclpStat(path, statPtr)
 	Tcl_SetErrno(ENOENT);
 	return -1;
     }
+
+    /*
+     * Ensure correct file sizes by forcing the OS to write any
+     * pending data to disk. This is done only for channels which are
+     * dirty, i.e. have been written to since the last flush here.
+     */
+
+    TclWinFlushDirtyChannels ();
 
     nativePath = Tcl_WinUtfToTChar(path, -1, &ds);
     handle = (*tclWinProcs->findFirstFileProc)(nativePath, &data);
@@ -1078,5 +1101,3 @@ TclWinResolveShortcut(bufferPtr)
     return 0;
 }
 #endif
-
-

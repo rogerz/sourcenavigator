@@ -18,14 +18,6 @@
 #include "tclRegexp.h"
 
 /*
- * The following regular expression matches the root portion of a Windows
- * absolute or volume relative path.  It will match both UNC and drive relative
- * paths.
- */
-
-#define WIN_ROOT_PATTERN "^(([a-zA-Z]:)|[/\\\\][/\\\\]+([^/\\\\]+)[/\\\\]+([^/\\\\]+)|([/\\\\]))([/\\\\])*"
-
-/*
  * The following regular expression matches the root portion of a Macintosh
  * absolute path.  It will match degenerate Unix-style paths, tilde paths,
  * Unix-style paths, and Mac paths.
@@ -161,9 +153,6 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 				 * stored. */
     Tcl_PathType *typePtr;	/* Where to store pathType result */
 {
-    FileNameInit();
-
-
     if (path[0] == '/' || path[0] == '\\') {
 	/* Might be a UNC or Vol-Relative path */
 	char *host, *share, *tail;
@@ -173,10 +162,10 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 	    *typePtr = TCL_PATH_VOLUME_RELATIVE;
 	    Tcl_DStringAppend(resultPtr, "/", 1);
 	    return &path[1];
-    }
+	}
 	host = (char *)&path[2];
 
-	/* Skip seperators */
+	/* Skip separators */
 	while (host[0] == '/' || host[0] == '\\') host++;
 
 	for (hlen = 0; host[hlen];hlen++) {
@@ -184,6 +173,18 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 		break;
 	}
 	if (host[hlen] == 0 || host[hlen+1] == 0) {
+	    /* 
+	     * The path given is simply of the form 
+	     * '/foo', '//foo', '/////foo' or the same
+	     * with backslashes.  If there is exactly
+	     * one leading '/' the path is volume relative
+	     * (see filename man page).  If there are more
+	     * than one, we are simply assuming they
+	     * are superfluous and we trim them away.
+	     * (An alternative interpretation would
+	     * be that it is a host name, but we have
+	     * been documented that that is not the case).
+	     */
 	    *typePtr = TCL_PATH_VOLUME_RELATIVE;
 	    Tcl_DStringAppend(resultPtr, "/", 1);
 	    return &path[2];
@@ -191,7 +192,7 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 	Tcl_DStringSetLength(resultPtr, offset);
 	share = &host[hlen];
 
-	/* Skip seperators */
+	/* Skip separators */
 	while (share[0] == '/' || share[0] == '\\') share++;
 
 	for (slen = 0; share[slen];slen++) {
@@ -205,12 +206,12 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 
 	tail = &share[slen];
 
-	/* Skip seperators */
+	/* Skip separators */
 	while (tail[0] == '/' || tail[0] == '\\') tail++;
 
 	*typePtr = TCL_PATH_ABSOLUTE;
 	return tail;
-    } else if (path[1] == ':') {
+    } else if (*path && path[1] == ':') {
 	/* Might be a drive sep */
 	Tcl_DStringSetLength(resultPtr, offset);
 
@@ -218,17 +219,17 @@ ExtractWinRoot(path, resultPtr, offset, typePtr)
 	    *typePtr = TCL_PATH_VOLUME_RELATIVE;
 	    Tcl_DStringAppend(resultPtr, path, 2);
 	    return &path[2];
-    } else {
+	} else {
 	    char *tail = (char*)&path[3];
 
-	    /* Skip seperators */
-	    while (tail[0] == '/' || tail[0] == '\\') tail++;
+	    /* Skip separators */
+	    while (*tail && (tail[0] == '/' || tail[0] == '\\')) tail++;
 
 	    *typePtr = TCL_PATH_ABSOLUTE;
 	    Tcl_DStringAppend(resultPtr, path, 2);
-	Tcl_DStringAppend(resultPtr, "/", 1);
+	    Tcl_DStringAppend(resultPtr, "/", 1);
 
-    return tail;
+	    return tail;
 	}
     } else {
 	*typePtr = TCL_PATH_RELATIVE;
@@ -1009,8 +1010,6 @@ Tcl_TranslateFileName(interp, name, bufferPtr)
     Tcl_DString *bufferPtr;	/* Uninitialized or free DString filled
 				 * with name after tilde substitution. */
 {
-    register char *p;
-
     /*
      * Handle tilde substitutions, if needed.
      */
@@ -1053,15 +1052,32 @@ Tcl_TranslateFileName(interp, name, bufferPtr)
      * some system interfaces don't accept forward slashes.
      */
 
-#ifndef __CYGWIN__
     if (tclPlatform == TCL_PLATFORM_WINDOWS) {
+#if defined(__CYGWIN__) && defined(__WIN32__)
+	extern int cygwin_conv_to_win32_path 
+	    _ANSI_ARGS_((CONST char *, char *));
+	char winbuf[MAX_PATH];
+
+	/*
+	 * In the Cygwin world, call conv_to_win32_path in order to use the
+	 * mount table to translate the file name into something Windows will
+	 * understand.  Take care when converting empty strings!
+	 */
+	if (Tcl_DStringLength(bufferPtr)) {
+	    cygwin_conv_to_win32_path(Tcl_DStringValue(bufferPtr), winbuf);
+	    Tcl_DStringFree(bufferPtr);
+	    Tcl_DStringAppend(bufferPtr, winbuf, -1);
+	}
+#else /* __CYGWIN__ && __WIN32__ */
+
+	register char *p;
 	for (p = Tcl_DStringValue(bufferPtr); *p != '\0'; p++) {
 	    if (*p == '/') {
 		*p = '\\';
 	    }
 	}
+#endif /* __CYGWIN__ && __WIN32__ */
     }
-#endif
     return Tcl_DStringValue(bufferPtr);
 }
 
@@ -1910,6 +1926,25 @@ TclDoGlob(interp, separators, headPtr, tail, types)
 	     * element.  Add an extra slash if this is a UNC path.
 	     */
 
+#if defined(__CYGWIN__) && defined(__WIN32__)
+	    {
+
+	    extern int cygwin_conv_to_win32_path 
+	    	_ANSI_ARGS_((CONST char *, char *));
+	    char winbuf[MAX_PATH];
+
+	    /*
+	     * In the Cygwin world, call conv_to_win32_path in order to use
+	     * the mount table to translate the file name into something
+	     * Windows will understand.
+	     */
+	    cygwin_conv_to_win32_path(Tcl_DStringValue(headPtr), winbuf);
+	    Tcl_DStringFree(headPtr);
+	    Tcl_DStringAppend(headPtr, winbuf, -1);
+
+	    }
+#endif /* __CYGWIN__ && __WIN32__ */
+
 	    if (*name == ':') {
 		Tcl_DStringAppend(headPtr, ":", 1);
 		if (count > 1) {
@@ -2077,8 +2112,7 @@ TclDoGlob(interp, separators, headPtr, tail, types)
 	}
 	case TCL_PLATFORM_WINDOWS: {
 	    int exists;
-#ifndef __CYGWIN__
-
+	    
 	    /*
 	     * We need to convert slashes to backslashes before checking
 	     * for the existence of the file.  Once we are done, we need
@@ -2099,7 +2133,6 @@ TclDoGlob(interp, separators, headPtr, tail, types)
 		    }
 		}
 	    }
-#endif
 	    name = Tcl_DStringValue(headPtr);
 	    exists = (TclpAccess(name, F_OK) == 0);
 
@@ -2133,4 +2166,3 @@ TclDoGlob(interp, separators, headPtr, tail, types)
 
     return TCL_OK;
 }
-

@@ -128,25 +128,19 @@ TclIntStubs tclIntStubs = {
     TclOpenFileChannelDeleteProc, /* 66 */
     TclOpenFileChannelInsertProc, /* 67 */
     TclpAccess, /* 68 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     TclpAlloc, /* 69 */
-#endif
     TclpCopyFile, /* 70 */
     TclpCopyDirectory, /* 71 */
     TclpCreateDirectory, /* 72 */
     TclpDeleteFile, /* 73 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     TclpFree, /* 74 */
-#endif
     TclpGetClicks, /* 75 */
     TclpGetSeconds, /* 76 */
     TclpGetTime, /* 77 */
     TclpGetTimeZone, /* 78 */
     TclpListVolumes, /* 79 */
     TclpOpenFileChannel, /* 80 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     TclpRealloc, /* 81 */
-#endif
     TclpRemoveDirectory, /* 82 */
     TclpRenameFile, /* 83 */
     NULL, /* 84 */
@@ -244,6 +238,8 @@ TclIntStubs tclIntStubs = {
     TclpMatchFilesTypes, /* 160 */
     TclChannelTransform, /* 161 */
     TclChannelEventScriptInvoker, /* 162 */
+    TclGetInstructionTable, /* 163 */
+    TclExpandCodeArray, /* 164 */
 };
 
 TclIntPlatStubs tclIntPlatStubs = {
@@ -283,12 +279,13 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclpMakeFile, /* 18 */
     TclpOpenFile, /* 19 */
     TclWinAddProcess, /* 20 */
-    TclpAsyncMark, /* 21 */
+    NULL, /* 21 */
     TclpCreateTempFile, /* 22 */
     TclpGetTZName, /* 23 */
     TclWinNoBackslash, /* 24 */
     TclWinGetPlatform, /* 25 */
     TclWinSetInterfaces, /* 26 */
+    TclWinFlushDirtyChannels, /* 27 */
 #endif /* __WIN32__ */
 #ifdef MAC_TCL
     TclpSysAlloc, /* 0 */
@@ -298,10 +295,10 @@ TclIntPlatStubs tclIntPlatStubs = {
     FSpGetDefaultDir, /* 4 */
     FSpSetDefaultDir, /* 5 */
     FSpFindFolder, /* 6 */
-    GetGlobalMouse, /* 7 */
-    FSpGetDirectoryID, /* 8 */
-    FSpOpenResFileCompat, /* 9 */
-    FSpCreateResFileCompat, /* 10 */
+    GetGlobalMouseTcl, /* 7 */
+    FSpGetDirectoryIDTcl, /* 8 */
+    FSpOpenResFileCompatTcl, /* 9 */
+    FSpCreateResFileCompatTcl, /* 10 */
     FSpLocationFromPath, /* 11 */
     FSpPathFromLocation, /* 12 */
     TclMacExitHandler, /* 13 */
@@ -315,7 +312,7 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclMacUnRegisterResourceFork, /* 21 */
     TclMacCreateEnv, /* 22 */
     TclMacFOpenHack, /* 23 */
-    NULL, /* 24 */
+    TclpGetTZName, /* 24 */
     TclMacChmod, /* 25 */
 #endif /* MAC_TCL */
 };
@@ -689,7 +686,7 @@ TclStubs tclStubs = {
     Tcl_StackChannel, /* 281 */
     Tcl_UnstackChannel, /* 282 */
     Tcl_GetStackedChannel, /* 283 */
-    NULL, /* 284 */
+    Tcl_SetMainLoop, /* 284 */
     NULL, /* 285 */
     Tcl_AppendObjToObj, /* 286 */
     Tcl_CreateEncoding, /* 287 */
@@ -820,4 +817,3 @@ TclStubs tclStubs = {
 };
 
 /* !END!: Do not edit above this line. */
-

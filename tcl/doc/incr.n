@@ -27,5 +27,8 @@ integer) is added to the value of variable \fIvarName\fR;  otherwise
 The new value is stored as a decimal string in variable \fIvarName\fR
 and also returned as result.
 
+.SH "SEE ALSO"
+expr(n)
+
 .SH KEYWORDS
 add, increment, variable, value

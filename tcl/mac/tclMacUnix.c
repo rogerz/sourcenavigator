@@ -206,7 +206,7 @@ Tcl_LsObjCmd(
 
     resultObjPtr = Tcl_GetObjResult(interp);
     Tcl_IncrRefCount(resultObjPtr);
-    if (Tcl_ListObjGetElements(interp, resultObjPtr, &objc, &objv) != TCL_OK) {
+    if (Tcl_ListObjGetElements(interp, resultObjPtr, &objc, (Tcl_Obj ***)&objv) != TCL_OK) {
     	Tcl_DecrRefCount(resultObjPtr);
     	return TCL_ERROR;
     }

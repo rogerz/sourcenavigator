@@ -171,7 +171,7 @@ struct ResultBuffer {
  * out information waiting in buffers (fileevent support).
  */
 
-#define DELAY (5)
+#define FLUSH_DELAY (5)
 
 /*
  * Convenience macro to make some casts easier to use.
@@ -1046,7 +1046,7 @@ TransformWatchProc (instanceData, mask)
 	 * to flush that.
 	 */
 
-	dataPtr->timer = Tcl_CreateTimerHandler (DELAY,
+	dataPtr->timer = Tcl_CreateTimerHandler (FLUSH_DELAY,
 		TransformChannelHandlerTimer, (ClientData) dataPtr);
     }
 }

@@ -32,6 +32,9 @@ If \fIindex\fR has the value \fBend\fR, it refers to the last element
 in the list, and \fBend\-\fIinteger\fR refers to the last element in
 the list minus the specified integer offset.
 
+.SH "SEE ALSO"
+list(n), lappend(n), linsert(n), llength(n), lsearch(n), lsort(n),
+lrange(n), lreplace(n)
 
 .SH KEYWORDS
 element, index, list

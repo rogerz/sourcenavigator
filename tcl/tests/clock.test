@@ -38,16 +38,16 @@ test clock-2.2 {clock clicks tests} {
 test clock-2.3 {clock clicks tests} {
     list [catch {clock clicks foo} msg] $msg
 } {1 {bad switch "foo": must be -milliseconds}}
-test clock-2.3 {clock clicks tests} {
+test clock-2.4 {clock clicks tests} {
     expr [clock clicks -milliseconds]+1
     concat {}
 } {}
-test clock-2.2 {clock clicks tests, millisecond timing test} {
+test clock-2.5 {clock clicks tests, millisecond timing test} {
     set start [clock clicks -milli]
     after 10
     set end [clock clicks -milli]
-    # assume, even with slow interp'ing, the diff is less than 60 msecs
-    expr {($end > $start) && (($end - $start) < 60)}
+    # 60 msecs seems to be the max time slice under Windows 95/98
+    expr {($end > $start) && (($end - $start) <= 60)}
 } {1}
 
 # clock format
@@ -112,6 +112,14 @@ test clock-3.11 {clock format tests} {
 test clock-3.12 {clock format tests} {
     clock format 123 -format ""
 } ""
+test clock-3.13 {clock format with non-ASCII character in the format string} {
+    set oldenc [encoding system] 
+    encoding system iso8859-1
+    set res [clock format 0 -format \u00c4]
+    encoding system $oldenc
+    unset oldenc
+    set res
+} "\u00c4"
 
 # clock scan
 test clock-4.1 {clock scan tests} {
@@ -418,8 +426,29 @@ test clock-7.3 {clock scan next monthname} {
 	    -format %m.%Y
 } "05.2001"
 
+# We use 5am PST, 31-12-1999 as the base for these scans because irrespective
+# of your local timezone it should always give us times on December 31
+set 5amPST 946645200
+test clock-8.1 {clock scan midnight/gmt range bug 413397} {
+    set fmt "%m/%d"
+    list [clock format [clock scan year -base $5amPST -gmt 0] -format $fmt] \
+	    [clock format [clock scan year -base $5amPST -gmt 1] -format $fmt]
+} {12/31 12/31}
+
+set ::tcltest::testConstraints(needPST) \
+	[regexp {^(Pacific.*|P[DS]T)$} [clock format 1 -format %Z]]
+test clock-9.1 {%s gmt testing} {needPST} {
+    # We need PST to guarantee the difference value below.
+    set s 100000
+    set a [clock format $s -format %s -gmt 0]
+    set b [clock format $s -format %s -gmt 1]
+    # This should be the offset in seconds between current locale and GMT.
+    # This didn't seem to be correctly on Windows until the fix for
+    # Bug #559376, which fiddled with env(TZ) when -gmt 1 was used.
+    # It's hard-coded to check P[SD]T now. (8 hours)
+    set c [expr {$b-$a}]
+} {28800}
+
 # cleanup
 ::tcltest::cleanupTests
 return
-
-

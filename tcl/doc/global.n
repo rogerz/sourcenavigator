@@ -27,9 +27,13 @@ For the duration of the current procedure
 (and only while executing in the current procedure),
 any reference to any of the \fIvarname\fRs
 will refer to the global variable by the same name.
+.PP
+Please note that this is done by creating local variables that are
+linked to the global variables, and therefore that these variables
+will be listed by \fBinfo locals\fR like all other local variables.
 
 .SH "SEE ALSO"
-namespace(n), variable(n)
+namespace(n), upvar(n), variable(n)
 
 .SH KEYWORDS
 global, namespace, procedure, variable

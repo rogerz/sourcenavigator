@@ -577,4 +577,3 @@ Tcl_MutexUnlock(mutexPtr)
 {
 }
 #endif
-

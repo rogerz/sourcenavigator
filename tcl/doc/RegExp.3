@@ -166,7 +166,7 @@ of characters that matched the entire pattern;  otherwise,
 information is returned about the range of characters that matched the
 \fIindex\fR'th parenthesized subexpression within the pattern.
 If there is no range corresponding to \fIindex\fR then NULL
-is stored in \fI*firstPtr\fR and \fI*lastPtr\fR.
+is stored in \fI*startPtr\fR and \fI*endPtr\fR.
 .PP
 .VS 8.1
 \fBTcl_GetRegExpFromObj\fR, \fBTcl_RegExpExecObj\fR, and
@@ -344,4 +344,3 @@ match might occur if additional text is appended to the string.
 re_syntax(n)
 .SH KEYWORDS
 match, pattern, regular expression, string, subexpression, Tcl_RegExpIndices, Tcl_RegExpInfo
-

@@ -733,7 +733,6 @@ MakeDdeConnection(
 {
     HSZ ddeTopic, ddeService;
     HCONV ddeConv;
-    ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
     
     ddeService = DdeCreateStringHandle(ddeInstance, "TclEval", 0);
     ddeTopic = DdeCreateStringHandle(ddeInstance, name, 0);

@@ -48,6 +48,8 @@ specified.
 .PP
 At least one \fB\-load\fR or \fB\-source\fR paramter must be given.
 
+.SH "SEE ALSO"
+package(n)
+
 .SH KEYWORDS
 auto-load, index, package, version
-

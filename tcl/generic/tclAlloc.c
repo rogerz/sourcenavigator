@@ -30,12 +30,9 @@
 #endif
 
 /*
- * With gcc this will already be defined. This should really
- * make use of AC_CHECK_TYPE(caddr_t) but that can wait
- * until we use config.h properly.
+ * On Unix this will already be defined
  */
-
-#if defined(MAC_TCL) || defined(_MSC_VER) || defined(__MINGW32__)
+#if defined(WIN32) || defined(MAC_TCL)
 typedef unsigned long caddr_t;
 #endif
 
@@ -723,4 +720,3 @@ TclpRealloc(cp, nbytes)
 }
 
 #endif /* !USE_TCLALLOC */
-

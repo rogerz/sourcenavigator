@@ -70,5 +70,8 @@ executed in the procedure's body.
 If an error occurs while executing the procedure
 body, then the procedure-as-a-whole will return that same error.
 
+.SH "SEE ALSO"
+info(n), unknown(n)
+
 .SH KEYWORDS
 argument, procedure

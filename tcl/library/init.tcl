@@ -30,8 +30,9 @@ package require -exact Tcl 8.3
 # The parent directory of tcl_library. Adding the parent
 # means that packages in peer directories will be found automatically.
 #
-# Also add the directory where the executable is located, plus ../lib
-# relative to that path.
+# Also add the directory ../lib relative to the directory where the
+# executable is located.  This is meant to find binary packages for the
+# same architecture as the current executable.
 #
 # tcl_pkgPath, which is set by the platform-specific initialization routines
 #	On UNIX it is compiled in
@@ -45,66 +46,66 @@ if {![info exists auto_path]} {
 	set auto_path ""
     }
 }
-if {[string compare [info library] {}]} {
-    foreach __dir [list [info library] [file dirname [info library]]] {
-	if {[lsearch -exact $auto_path $__dir] < 0} {
-	    lappend auto_path $__dir
+namespace eval tcl {
+    variable Dir
+    if {[string compare [info library] {}]} {
+	foreach Dir [list [info library] [file dirname [info library]]] {
+	    if {[lsearch -exact $::auto_path $Dir] < 0} {
+		lappend ::auto_path $Dir
+	    }
 	}
     }
-}
-set __dir [file join [file dirname [file dirname \
-	[info nameofexecutable]]] lib]
-if {[lsearch -exact $auto_path $__dir] < 0} {
-    lappend auto_path $__dir
-}
-if {[info exist tcl_pkgPath]} {
-    foreach __dir $tcl_pkgPath {
-	if {[lsearch -exact $auto_path $__dir] < 0} {
-	    lappend auto_path $__dir
+    set Dir [file join [file dirname [file dirname \
+	    [info nameofexecutable]]] lib]
+    if {[lsearch -exact $::auto_path $Dir] < 0} {
+	lappend ::auto_path $Dir
+    }
+    if {[info exist ::tcl_pkgPath]} {
+	foreach Dir $::tcl_pkgPath {
+	    if {[lsearch -exact $::auto_path $Dir] < 0} {
+		lappend ::auto_path $Dir
+	    }
 	}
     }
-}
-if {[info exists __dir]} {
-    unset __dir
 }
   
 # Windows specific end of initialization
 
 if {(![interp issafe]) && [string equal $tcl_platform(platform) "windows"]} {
     namespace eval tcl {
-	proc envTraceProc {lo n1 n2 op} {
+	proc EnvTraceProc {lo n1 n2 op} {
 	    set x $::env($n2)
 	    set ::env($lo) $x
 	    set ::env([string toupper $lo]) $x
 	}
-    }
-    foreach p [array names env] {
-	set u [string toupper $p]
-	if {[string compare $u $p]} {
-	    switch -- $u {
-		COMSPEC -
-		PATH {
-		    if {![info exists env($u)]} {
-			set env($u) $env($p)
+	proc InitWinEnv {} {
+	    global env tcl_platform
+	    foreach p [array names env] {
+		set u [string toupper $p]
+		if {[string compare $u $p]} {
+		    switch -- $u {
+			COMSPEC -
+			PATH {
+			    if {![info exists env($u)]} {
+				set env($u) $env($p)
+			    }
+			    trace variable env($p) w \
+				    [namespace code [list EnvTraceProc $p]]
+			    trace variable env($u) w \
+				    [namespace code [list EnvTraceProc $p]]
+			}
 		    }
-		    trace variable env($p) w [list tcl::envTraceProc $p]
-		    trace variable env($u) w [list tcl::envTraceProc $p]
+		}
+	    }
+	    if {![info exists env(COMSPEC)]} {
+		if {[string equal $tcl_platform(os) "Windows NT"]} {
+		    set env(COMSPEC) cmd.exe
+		} else {
+		    set env(COMSPEC) command.com
 		}
 	    }
 	}
-    }
-    if {[info exists p]} {
-	unset p
-    }
-    if {[info exists u]} {
-	unset u
-    }
-    if {![info exists env(COMSPEC)]} {
-	if {[string equal $tcl_platform(os) "Windows NT"]} {
-	    set env(COMSPEC) cmd.exe
-	} else {
-	    set env(COMSPEC) command.com
-	}
+	InitWinEnv
     }
 }
 
@@ -165,7 +166,7 @@ proc unknown args {
     set cmd [lindex $args 0]
     if {[regexp "^namespace\[ \t\n\]+inscope" $cmd] && [llength $cmd] == 4} {
         set arglist [lrange $args 1 end]
-	set ret [catch {uplevel $cmd $arglist} result]
+	set ret [catch {uplevel 1 ::$cmd $arglist} result]
         if {$ret == 0} {
             return $result
         } else {
@@ -188,7 +189,7 @@ proc unknown args {
 	    return -code error "self-referential recursion in \"unknown\" for command \"$name\"";
 	}
 	set unknown_pending($name) pending;
-	set ret [catch {auto_load $name [uplevel 1 {namespace current}]} msg]
+	set ret [catch {auto_load $name [uplevel 1 {::namespace current}]} msg]
 	unset unknown_pending($name);
 	if {$ret != 0} {
 	    append errorInfo "\n    (autoloading \"$name\")"
@@ -228,7 +229,7 @@ proc unknown args {
 		if {[string equal [info commands console] ""]} {
 		    set redir ">&@stdout <@stdin"
 		}
-		return [uplevel exec $redir $new [lrange $args 1 end]]
+		return [uplevel 1 exec $redir $new [lrange $args 1 end]]
 	    }
 	}
 	set errorCode $savedErrorCode
@@ -244,7 +245,7 @@ proc unknown args {
 	if {[info exists newcmd]} {
 	    tclLog $newcmd
 	    history change $newcmd 0
-	    return [uplevel $newcmd]
+	    return [uplevel 1 $newcmd]
 	}
 
 	set ret [catch {set cmds [info commands $name*]} msg]
@@ -256,7 +257,7 @@ proc unknown args {
 		"error in unknown while checking if \"$name\" is a unique command abbreviation: $msg"
 	}
 	if {[llength $cmds] == 1} {
-	    return [uplevel [lreplace $args 0 0 $cmds]]
+	    return [uplevel 1 [lreplace $args 0 0 $cmds]]
 	}
 	if {[llength $cmds]} {
 	    if {[string equal $name ""]} {
@@ -286,7 +287,7 @@ proc auto_load {cmd {namespace {}}} {
     global auto_index auto_oldpath auto_path
 
     if {[string length $namespace] == 0} {
-	set namespace [uplevel {namespace current}]
+	set namespace [uplevel 1 [list ::namespace current]]
     }
     set nameList [auto_qualify $cmd $namespace]
     # workaround non canonical auto_index entries that might be around
@@ -461,15 +462,16 @@ proc auto_import {pattern} {
 	return
     }
 
-    set ns [uplevel namespace current]
+    set ns [uplevel 1 [list ::namespace current]]
     set patternList [auto_qualify $pattern $ns]
 
     auto_load_index
 
     foreach pattern $patternList {
-        foreach name [array names auto_index] {
-            if {[string match $pattern $name] && \
-		    [string equal "" [info commands $name]]} {
+        foreach name [array names auto_index $pattern] {
+            if {[string equal "" [info commands $name]]
+		    && [string equal [namespace qualifiers $pattern] \
+				     [namespace qualifiers $name]]} {
                 uplevel #0 $auto_index($name)
             }
         }
@@ -509,13 +511,26 @@ proc auto_execok name {
 	# NT includes the 'start' built-in
 	lappend shellBuiltins "start"
     }
+    if {[info exists env(PATHEXT)]} {
+	# Add an initial ; to have the {} extension check first.
+	set execExtensions [split ";$env(PATHEXT)" ";"]
+    } else {
+	set execExtensions [list {} .com .exe .bat]
+    }
 
     if {[lsearch -exact $shellBuiltins $name] != -1} {
-	return [set auto_execs($name) [list $env(COMSPEC) /c $name]]
+	# When this is command.com for some reason on Win2K, Tcl won't
+	# exec it unless the case is right, which this corrects.  COMSPEC
+	# may not point to a real file, so do the check.
+	set cmd $env(COMSPEC)
+	if {[file exists $cmd]} {
+	    set cmd [file attributes $cmd -shortname]
+	}
+	return [set auto_execs($name) [list $cmd /c $name]]
     }
 
     if {[llength [file split $name]] != 1} {
-	foreach ext {{} .com .exe .bat} {
+	foreach ext $execExtensions {
 	    set file ${name}${ext}
 	    if {[file exists $file] && ![file isdirectory $file]} {
 		return [set auto_execs($name) [list $file]]
@@ -545,7 +560,7 @@ proc auto_execok name {
 	# Skip already checked directories
 	if {[info exists checked($dir)] || [string equal {} $dir]} { continue }
 	set checked($dir) {}
-	foreach ext {{} .com .exe .bat} {
+	foreach ext $execExtensions {
 	    set file [file join $dir ${name}${ext}]
 	    if {[file exists $file] && ![file isdirectory $file]} {
 		return [set auto_execs($name) [list $file]]
@@ -585,4 +600,3 @@ proc auto_execok name {
 }
 
 }
-

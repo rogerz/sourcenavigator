@@ -124,18 +124,22 @@ Tcl_CreateThread(idPtr, proc, clientData, stackSize, flags)
 {
     HANDLE tHandle;
 
-#ifdef __CYGWIN__
-    tHandle = CreateThread(NULL, (DWORD) stackSize,
-        (LPTHREAD_START_ROUTINE) proc, (LPVOID) clientData,
-        (DWORD) 0, (LPDWORD)idPtr);
-    if (tHandle == NULL) {
+#if defined(__MSVCRT__) || defined(__BORLANDC__)
+    tHandle = (HANDLE) _beginthreadex(NULL, (unsigned) stackSize, proc,
+	clientData, 0, (unsigned *)idPtr);
 #else
-      tHandle = (HANDLE) _beginthreadex(NULL, (unsigned)stackSize, proc,
-        clientData, (unsigned) 0, (unsigned *)idPtr);
-    if (tHandle == 0) {
-#endif /* __CYGWIN__ */
+    tHandle = CreateThread(NULL, (DWORD) stackSize,
+	    (LPTHREAD_START_ROUTINE) proc, (LPVOID) clientData,
+	    (DWORD) 0, (LPDWORD)idPtr);
+#endif
+
+    if (tHandle == NULL) {
 	return TCL_ERROR;
     } else {
+	/*
+	 * The only purpose of this is to decrement the reference count so the
+	 * OS resources will be reaquired when the thread closes.
+	 */
 	CloseHandle(tHandle);
 	return TCL_OK;
     }
@@ -161,11 +165,11 @@ void
 TclpThreadExit(status)
     int status;
 {
-#ifdef __CYGWIN__
-    ExitThread((DWORD) status);
-#else
+#if defined(__MSVCRT__) || defined(__BORLANDC__)
     _endthreadex((unsigned) status);
-#endif /* __CYGWIN__ */
+#else
+    ExitThread((DWORD) status);
+#endif
 }
 
 
@@ -439,6 +443,7 @@ TclpFinalizeMutex(mutexPtr)
 {
     CRITICAL_SECTION *csPtr = *(CRITICAL_SECTION **)mutexPtr;
     if (csPtr != NULL) {
+	DeleteCriticalSection(csPtr);
 	ckfree((char *)csPtr);
 	*mutexPtr = NULL;
     }
@@ -907,6 +912,7 @@ TclpFinalizeCondition(condPtr)
      */
 
     if (winCondPtr != NULL) {
+	DeleteCriticalSection(&winCondPtr->condLock);
 	ckfree((char *)winCondPtr);
 	*condPtr = NULL;
     }

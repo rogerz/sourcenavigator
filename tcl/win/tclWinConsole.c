@@ -503,7 +503,9 @@ ConsoleCloseProc(
      */
     
     if (consolePtr->writeThread) {
-	WaitForSingleObject(consolePtr->writable, INFINITE);
+	if (consolePtr->toWrite) {
+	    WaitForSingleObject(consolePtr->writable, INFINITE);
+	}
 
 	/*
 	 * Forcibly terminate the background thread.  We cannot rely on the
@@ -626,11 +628,11 @@ ConsoleInputProc(
 	 */
 
 	if (bufSize < (infoPtr->bytesRead - infoPtr->offset)) {
-	    memcpy(buf, &infoPtr->buffer[infoPtr->offset], bufSize);
+	    memcpy(buf, &infoPtr->buffer[infoPtr->offset], (size_t) bufSize);
 	    bytesRead = bufSize;
 	    infoPtr->offset += bufSize;
 	} else {
-	    memcpy(buf, &infoPtr->buffer[infoPtr->offset], bufSize);
+	    memcpy(buf, &infoPtr->buffer[infoPtr->offset], (size_t) bufSize);
 	    bytesRead = infoPtr->bytesRead - infoPtr->offset;
 
 	    /*
@@ -724,9 +726,9 @@ ConsoleOutputProc(
 		ckfree(infoPtr->writeBuf);
 	    }
 	    infoPtr->writeBufLen = toWrite;
-	    infoPtr->writeBuf = ckalloc(toWrite);
+	    infoPtr->writeBuf = ckalloc((unsigned int) toWrite);
 	}
-	memcpy(infoPtr->writeBuf, buf, toWrite);
+	memcpy(infoPtr->writeBuf, buf, (size_t) toWrite);
 	infoPtr->toWrite = toWrite;
 	ResetEvent(infoPtr->writable);
 	SetEvent(infoPtr->startWriter);
@@ -1076,7 +1078,7 @@ ConsoleReaderThread(LPVOID arg)
 	 * that are not KEY_EVENTs 
 	 */
 	if (ReadConsole(handle, infoPtr->buffer, CONSOLE_BUFFER_SIZE,
-		&infoPtr->bytesRead, NULL) != FALSE) {
+		(LPDWORD) &infoPtr->bytesRead, NULL) != FALSE) {
 	    /*
 	     * Data was stored in the buffer.
 	     */
@@ -1266,4 +1268,3 @@ TclWinOpenConsoleChannel(handle, channelName, permissions)
 
     return infoPtr->channel;
 }
-

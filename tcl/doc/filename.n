@@ -195,3 +195,6 @@ more than 3 characters.
 .SH KEYWORDS
 current directory, absolute file name, relative file name,
 volume-relative file name, portability
+
+.SH "SEE ALSO"
+file(n), glob(n)

@@ -92,7 +92,6 @@ typedef struct TclWinProcs {
 } TclWinProcs;
 
 EXTERN TclWinProcs *tclWinProcs;
-EXTERN Tcl_Encoding tclWinTCharEncoding;
 
 /*
  * Declarations of functions that are not accessible by way of the
@@ -107,5 +106,3 @@ EXTERN void		TclWinInit(HINSTANCE hInst);
 #include "tclIntPlatDecls.h"
 
 #endif	/* _TCLWININT */
-
-

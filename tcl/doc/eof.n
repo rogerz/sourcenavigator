@@ -23,5 +23,8 @@ Returns 1 if an end of file condition occurred during the most
 recent input operation on \fIchannelId\fR (such as \fBgets\fR),
 0 otherwise.
 
+.SH "SEE ALSO"
+file(n), open(n), close(n), fblocked(n)
+
 .SH KEYWORDS
 channel, end of file

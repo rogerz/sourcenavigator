@@ -75,7 +75,7 @@ typedef struct TcpState {
 				    * TCL_WRITABLE as set by an asynchronous
 				    * event handler. */
     int watchMask;		   /* OR'ed combination of TCL_READABLE and
-				    * TCL_WRITABLE as set by Tcl_WatchFile. */
+				    * TCL_WRITABLE as set by TcpWatch. */
     Tcl_TcpAcceptProc *acceptProc; /* Proc to call on accept. */
     ClientData acceptProcData;	   /* The data for the accept proc. */
     wdsEntry dataSegment[2];       /* List of buffers to be written async. */
@@ -196,7 +196,7 @@ pascal void NotifyRoutine (
 
 static Tcl_ChannelType tcpChannelType = {
     "tcp",			/* Type name. */
-    TcpBlockMode,		/* Set blocking or
+    (Tcl_ChannelTypeVersion)TcpBlockMode,		/* Set blocking or
                                  * non-blocking mode.*/
     TcpClose,			/* Close proc. */
     TcpInput,			/* Input proc. */
@@ -1354,13 +1354,14 @@ TcpGetOptionProc(
                                          * value; initialized by caller. */
 {
     TcpState *statePtr = (TcpState *) instanceData;
-    int doPeerName = false, doSockName = false, doAll = false;
+    int doPeerName = false, doSockName = false, doError = false, doAll = false;
     ip_addr tcpAddress;
     char buffer[128];
     OSErr err;
     Tcl_DString dString;
     TCPiopb statusPB;
     int errorCode;
+    size_t len = 0;
 
     /*
      * If an asynchronous connect is in progress, attempt to wait for it
@@ -1388,13 +1389,38 @@ TcpGetOptionProc(
     if (optionName == (char *) NULL || optionName[0] == '\0') {
         doAll = true;
     } else {
-	if (!strcmp(optionName, "-peername")) {
+	len = strlen(optionName);
+	if (!strncmp(optionName, "-peername", len)) {
 	    doPeerName = true;
-	} else if (!strcmp(optionName, "-sockname")) {
+	} else if (!strncmp(optionName, "-sockname", len)) {
 	    doSockName = true;
+	} else if (!strncmp(optionName, "-error", len)) {
+	    /* SF Bug #483575 */
+	    doError = true;
 	} else {
 	    return Tcl_BadChannelOption(interp, optionName, 
-	    		"peername sockname");
+		        "error peername sockname");
+	}
+    }
+
+    /*
+     * SF Bug #483575
+     *
+     * Return error information. Currently we ignore
+     * this option. IOW, we always return the empty
+     * string, signaling 'no error'.
+     *
+     * FIXME: Get a mac/socket expert to write a correct
+     * FIXME: implementation.
+     */
+
+    if (doAll || doError) {
+	if (doAll) {
+	    Tcl_DStringAppendElement(dsPtr, "-error");
+	    Tcl_DStringAppendElement(dsPtr, "");
+	} else {
+	    Tcl_DStringAppend (dsPtr, "", -1);
+	    return TCL_OK;
 	}
     }
 

@@ -1199,10 +1199,11 @@ TclCompileTokens(interp, tokenPtr, count, envPtr)
 		    code = TclCompileTokens(interp, tokenPtr+2,
 			    tokenPtr->numComponents-1, envPtr);
 		    if (code != TCL_OK) {
-			sprintf(buffer,
+			char errorBuffer[150];
+			sprintf(errorBuffer,
 			        "\n    (parsing index for array \"%.*s\")",
 				((nameBytes > 100)? 100 : nameBytes), name);
-			Tcl_AddObjErrorInfo(interp, buffer, -1);
+			Tcl_AddObjErrorInfo(interp, errorBuffer, -1);
 			goto error;
 		    }
 		    depthForVar += envPtr->maxStackDepth;
@@ -1895,10 +1896,12 @@ TclInitCompiledLocals(interp, framePtr, nsPtr)
  */
 
 void
-TclExpandCodeArray(envPtr)
-    CompileEnv *envPtr;		/* Points to the CompileEnv whose code array
+TclExpandCodeArray(envArgPtr)
+    void *envArgPtr;		/* Points to the CompileEnv whose code array
 				 * must be enlarged. */
 {
+    CompileEnv *envPtr = (CompileEnv*) envArgPtr;	/* Points to the CompileEnv whose code array
+							 * must be enlarged. */
     /*
      * envPtr->codeNext is equal to envPtr->codeEnd. The currently defined
      * code bytes are stored between envPtr->codeStart and
@@ -2497,7 +2500,7 @@ TclFixupForwardJump(envPtr, jumpFixupPtr, jumpDist, distThreshold)
  *----------------------------------------------------------------------
  */
 
-InstructionDesc *
+void * /* == InstructionDesc* == */
 TclGetInstructionTable()
 {
     return &instructionTable[0];
@@ -3395,4 +3398,3 @@ RecordByteCodeStats(codePtr)
     statsPtr->currentCmdMapBytes += (double) codePtr->numCmdLocBytes;
 }
 #endif /* TCL_COMPILE_STATS */
-

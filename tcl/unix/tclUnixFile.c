@@ -694,4 +694,3 @@ TclpStat(path, bufPtr)
     return result;
 }
 
-

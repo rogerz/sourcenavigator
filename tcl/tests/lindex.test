@@ -80,4 +80,3 @@ test lindex-3.4 {quoted elements} {
 # cleanup
 ::tcltest::cleanupTests
 return
-

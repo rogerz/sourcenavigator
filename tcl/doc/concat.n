@@ -36,5 +36,8 @@ as its result.
 .PP
 If no \fIarg\fRs are supplied, the result is an empty string.
 
+.SH "SEE ALSO"
+append(n), eval(n)
+
 .SH KEYWORDS
 concatenate, join, lists

@@ -37,6 +37,11 @@ typedef VOID (WINAPI UTUNREGISTER)(HANDLE hModule);
 static HINSTANCE hInstance;	/* HINSTANCE of this DLL. */
 static int platformId;		/* Running under NT, or 95/98? */
 
+#ifdef HAVE_NO_SEH
+static void *ESP;
+static void *EBP;
+#endif /* HAVE_NO_SEH */
+
 /*
  * The following function tables are used to dispatch to either the
  * wide-character or multi-byte versions of the operating system calls,
@@ -118,7 +123,7 @@ static TclWinProcs unicodeProcs = {
 };
 
 TclWinProcs *tclWinProcs;
-Tcl_Encoding tclWinTCharEncoding;
+static Tcl_Encoding tclWinTCharEncoding;
 
 /*
  * The following declaration is for the VC++ DLL entry point.
@@ -127,14 +132,6 @@ Tcl_Encoding tclWinTCharEncoding;
 BOOL APIENTRY		DllMain(HINSTANCE hInst, DWORD reason, 
 				LPVOID reserved);
 
-/* CYGNUS LOCAL */
-#ifdef __CYGWIN__0
-/* CYGWIN requires an impure pointer variable, which must be
-   explicitly initialized when the DLL starts up.  */
-struct _reent *_impure_ptr;
-extern struct _reent __declspec(dllimport) reent_data;
-#endif
-/* END CYGNUS LOCAL */
 
 #ifdef __WIN32__
 #ifndef STATIC_BUILD
@@ -190,14 +187,6 @@ DllMain(hInst, reason, reserved)
     DWORD reason;		/* Reason this function is being called. */
     LPVOID reserved;		/* Not used. */
 {
-    /* CYGNUS LOCAL */
-#ifdef __CYGWIN__0
-    /* Cygwin requires the impure data pointer to be initialized
-       when the DLL starts up.  */
-    _impure_ptr = &reent_data;
-#endif
-    /* END CYGNUS LOCAL */
-
     switch (reason) {
     case DLL_PROCESS_ATTACH:
 	TclWinInit(hInst);
@@ -354,6 +343,8 @@ TclWinNoBackslash(
 int
 TclpCheckStackSpace()
 {
+    int retval = 0;
+
     /*
      * We can recurse only if there is at least TCL_WIN_STACK_THRESHOLD
      * bytes of stack space left.  alloca() is cheap on windows; basically
@@ -361,19 +352,56 @@ TclpCheckStackSpace()
      * exception if the stack pointer is set below the bottom of the stack.
      */
 
-#ifndef __GNUC__
-    __try {
-	alloca(TCL_WIN_STACK_THRESHOLD);
-	return 1;
-    /* CYGNUS LOCAL */
-    } __except (1) {}
+#ifdef HAVE_NO_SEH
+    __asm__ __volatile__ (
+            "movl  %esp, _ESP" "\n\t"
+            "movl  %ebp, _EBP");
+
+    __asm__ __volatile__ (
+            "pushl $__except_checkstackspace_handler" "\n\t"
+            "pushl %fs:0" "\n\t"
+            "mov   %esp, %fs:0");
 #else
-    return alloca(TCL_WIN_STACK_THRESHOLD) != NULL;
-#endif
+    __try {
+#endif /* HAVE_NO_SEH */
+	alloca(TCL_WIN_STACK_THRESHOLD);
+	retval = 1;
+#ifdef HAVE_NO_SEH
+    __asm__ __volatile__ (
+            "jmp   checkstackspace_pop" "\n"
+            "checkstackspace_reentry:" "\n\t"
+            "movl  _ESP, %esp" "\n\t"
+            "movl  _EBP, %ebp");
 
-    return 0;
+    __asm__ __volatile__ (
+            "checkstackspace_pop:" "\n\t"
+            "mov   (%esp), %eax" "\n\t"
+            "mov   %eax, %fs:0" "\n\t"
+            "add   $8, %esp");
+#else
+    } __except (EXCEPTION_EXECUTE_HANDLER) {}
+#endif /* HAVE_NO_SEH */
+
+    /*
+     * Avoid using control flow statements in the SEH guarded block!
+     */
+    return retval;
 }
-
+#ifdef HAVE_NO_SEH
+static
+__attribute__ ((cdecl))
+EXCEPTION_DISPOSITION
+_except_checkstackspace_handler(
+    struct _EXCEPTION_RECORD *ExceptionRecord,
+    void *EstablisherFrame,
+    struct _CONTEXT *ContextRecord,
+    void *DispatcherContext)
+{
+    __asm__ __volatile__ (
+            "jmp checkstackspace_reentry");
+    return 0; /* Function does not return */
+}
+#endif /* HAVE_NO_SEH */
 
 /*
  *----------------------------------------------------------------------
@@ -511,6 +539,3 @@ Tcl_WinTCharToUtf(string, len, dsPtr)
     return Tcl_ExternalToUtfDString(tclWinTCharEncoding, 
 	    (CONST char *) string, len, dsPtr);
 }
-
-
-

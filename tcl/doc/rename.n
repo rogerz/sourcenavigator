@@ -28,5 +28,8 @@ If a command is renamed into a different namespace,
 future invocations of it will execute in the new namespace.
 The \fBrename\fR command returns an empty string as result.
 
+.SH "SEE ALSO"
+namespace(n), proc(n)
+
 .SH KEYWORDS
 command, delete, namespace, rename

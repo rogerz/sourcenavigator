@@ -36,9 +36,9 @@ test macFCmd-1.1 {GetFileFinderAttributes - no file} {macOnly} {
 test macFCmd-1.2 {GetFileFinderAttributes - creator} {macOnly} {
     catch {file delete -force foo.file}
     catch {close [open foo.file w]}
-    list [catch {file attributes foo.file -creator} msg] $msg \
-	    [file delete -force foo.file]
-} {0 {MPW } {}}
+    list [catch {file attributes foo.file -creator} msg] \
+	    [regexp {MPW |CWIE} $msg] [file delete -force foo.file]
+} {0 1 {}}
 test macFCmd-1.3 {GetFileFinderAttributes - type} {macOnly} {
     catch {file delete -force foo.file}
     catch {close [open foo.file w]}
@@ -195,7 +195,6 @@ test macFCmd-4.7 {SetFileReadOnly - directory readonly} {macOnly notFileSharing}
 # cleanup
 ::tcltest::cleanupTests
 return
-
 
 
 

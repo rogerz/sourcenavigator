@@ -23,10 +23,6 @@ TCL_CC='@CC@'
 # -D flags for use with the C compiler.
 TCL_DEFS='@DEFS@'
 
-# Extensions written in gcc need -fwritable-strings. Use TCL_CFLAGS for
-# any other flags required for extensions.
-TCL_CFLAGS='@CFLAGS@'
-
 # If TCL was built with debugging symbols, generated libraries contain
 # this string at the end of the library name (before the extension).
 TCL_DBGX=@TCL_DBGX@
@@ -44,9 +40,6 @@ TCL_SHARED_BUILD=@TCL_SHARED_BUILD@
 
 # The name of the Tcl library (may be either a .a file or a shared library):
 TCL_LIB_FILE='@TCL_LIB_FILE@'
-
-# The fullpath of the Tcl library (used for dependency checking)
-TCL_LIB_FULL_PATH='@TCL_LIB_FULL_PATH@'
 
 # Flag to indicate whether shared libraries need export files.
 TCL_NEEDS_EXP_FILE=@TCL_NEEDS_EXP_FILE@
@@ -80,7 +73,7 @@ TCL_EXTRA_CFLAGS='@EXTRA_CFLAGS@'
 # Base command to use for combining object files into a shared library:
 TCL_SHLIB_LD='@SHLIB_LD@'
 
-# Base command to use for combining object files into a shared library:
+# Base command to use for combining object files into a static library:
 TCL_STLIB_LD='@STLIB_LD@'
 
 # Either '$LIBS' (if dependent libraries should be included when linking
@@ -90,10 +83,6 @@ TCL_SHLIB_LD_LIBS='@SHLIB_LD_LIBS@'
 
 # Suffix to use for the name of a shared library.
 TCL_SHLIB_SUFFIX='@SHLIB_SUFFIX@'
-
-# Suffix to use in the name of an unshared library.
-# FIXME: Comments in tcl.m4 about this var are incorrect!
-TCL_LIB_SUFFIX='@TCL_LIB_SUFFIX@'
 
 # Library file(s) to include in tclsh and other base applications
 # in order to provide facilities needed by DLOBJ above.
@@ -181,6 +170,3 @@ TCL_BUILD_STUB_LIB_PATH='@TCL_BUILD_STUB_LIB_PATH@'
 
 # Path to the Tcl stub library in the install directory.
 TCL_STUB_LIB_PATH='@TCL_STUB_LIB_PATH@'
-
-# Vendor prefix to be added to lib names
-TCL_VENDOR_PREFIX=@VENDORPREFIX@

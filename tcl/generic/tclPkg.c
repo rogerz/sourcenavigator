@@ -503,7 +503,7 @@ Tcl_PackageObjCmd(dummy, interp, objc, objv)
 		keyString = Tcl_GetString(objv[i]);
 		hPtr = Tcl_FindHashEntry(&iPtr->packageTable, keyString);
 		if (hPtr == NULL) {
-		    return TCL_OK;
+		    continue;	
 		}
 		pkgPtr = (Package *) Tcl_GetHashValue(hPtr);
 		Tcl_DeleteHashEntry(hPtr);

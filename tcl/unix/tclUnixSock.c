@@ -133,4 +133,3 @@ TclpHasSockets(interp)
 {
     return TCL_OK;
 }
-

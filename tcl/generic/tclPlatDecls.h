@@ -12,6 +12,24 @@
 #ifndef _TCLPLATDECLS
 #define _TCLPLATDECLS
 
+/*
+ *  Pull in the typedef of TCHAR for windows.
+ */
+#if defined(__CYGWIN__)
+    typedef char TCHAR;
+#elif defined(__WIN32__) && !defined(_TCHAR_DEFINED)
+#   include <tchar.h>
+#   ifndef _TCHAR_DEFINED
+	/* Borland seems to forget to set this. */
+        typedef _TCHAR TCHAR;
+#	define _TCHAR_DEFINED
+#   endif
+#   if defined(_MSC_VER) && defined(__STDC__)
+	/* MSVC++ misses this. */
+	typedef _TCHAR TCHAR;
+#   endif
+#endif
+
 /* !BEGIN!: Do not edit below this line. */
 
 /*

@@ -42,7 +42,6 @@ test binary-1.4 {Tcl_BinaryObjCmd: format} {
 } {}
 
 
-
 test binary-2.1 {Tcl_BinaryObjCmd: format} {
     list [catch {binary format a } msg] $msg
 } {1 {not enough arguments for all format specifiers}}
@@ -1464,16 +1463,3 @@ test binary-42.1 {Tcl_BinaryObjCmd: bad arguments} {} {
 # cleanup
 ::tcltest::cleanupTests
 return
-
-
-
-
-
-
-
-
-
-
-
-
-

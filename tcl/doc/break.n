@@ -30,5 +30,8 @@ Break exceptions are also handled in a few other situations, such
 as the \fBcatch\fR command, Tk event bindings, and the outermost
 scripts of procedure bodies.
 
+.SH "SEE ALSO"
+catch(n), continue(n), for(n), foreach(n), while(n)
+
 .SH KEYWORDS
 abort, break, loop

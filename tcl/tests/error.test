@@ -179,4 +179,3 @@ test error-6.1 {catch must reset error state} {
 catch {rename p ""}
 ::tcltest::cleanupTests
 return 
-

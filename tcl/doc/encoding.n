@@ -73,7 +73,7 @@ would return the Unicode string "\\u306F", which is the Hiragana
 letter HA.
 
 .SH "SEE ALSO"
-Tcl_GetEncoding
+Tcl_GetEncoding(3)
 
 .SH KEYWORDS
 encoding

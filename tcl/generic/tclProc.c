@@ -415,6 +415,7 @@ TclCreateProc(interp, nsPtr, procName, argsPtr, bodyPtr, procPtrPtr)
             }
             strcpy(localPtr->name, fieldValues[0]);
 	}
+
         ckfree((char *) fieldValues);
     }
 

@@ -385,4 +385,3 @@ each time the expression is executed.
 
 .SH KEYWORDS
 arithmetic, boolean, compare, expression, fuzzy comparison
-

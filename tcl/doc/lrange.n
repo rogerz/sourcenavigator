@@ -35,5 +35,8 @@ same result as ``\fBlindex \fIlist first\fR'' (although it often does
 for simple fields that aren't enclosed in braces); it does, however,
 produce exactly the same results as ``\fBlist [lindex \fIlist first\fB]\fR''
 
+.SH "SEE ALSO"
+lappend(n), lindex(n), linsert(n), list(n), llength(n), lreplace(n)
+
 .SH KEYWORDS
 element, list, range, sublist

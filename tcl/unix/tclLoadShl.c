@@ -23,7 +23,7 @@
 #   undef EXTERN
 #endif
 
-#include "tcl.h"
+#include "tclInt.h"
 
 /*
  *----------------------------------------------------------------------
@@ -172,4 +172,3 @@ TclGuessPackageName(fileName, bufPtr)
 {
     return 0;
 }
-

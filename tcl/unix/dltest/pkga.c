@@ -128,5 +128,3 @@ Pkga_Init(interp)
 	    (ClientData) 0, (Tcl_CmdDeleteProc *) NULL);
     return TCL_OK;
 }
-
-

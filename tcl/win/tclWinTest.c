@@ -188,5 +188,3 @@ TestvolumetypeCmd(clientData, interp, objc, objv)
     return TCL_OK;
 #undef VOL_BUF_SIZE
 }
-
-

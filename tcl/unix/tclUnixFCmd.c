@@ -1090,7 +1090,7 @@ GetGroupAttribute(interp, objIndex, fileName, attributePtrPtr)
 
     groupPtr = getgrgid(statBuf.st_gid);		/* INTL: Native. */
     if (groupPtr == NULL) {
-	*attributePtrPtr = Tcl_NewIntObj(statBuf.st_gid);
+	*attributePtrPtr = Tcl_NewIntObj((int) statBuf.st_gid);
     } else {
 	Tcl_DString ds;
 	CONST char *utf;
@@ -1141,7 +1141,7 @@ GetOwnerAttribute(interp, objIndex, fileName, attributePtrPtr)
 
     pwPtr = getpwuid(statBuf.st_uid);			/* INTL: Native. */
     if (pwPtr == NULL) {
-	*attributePtrPtr = Tcl_NewIntObj(statBuf.st_uid);
+	*attributePtrPtr = Tcl_NewIntObj((int) statBuf.st_uid);
     } else {
 	Tcl_DString ds;
 	CONST char *utf;
@@ -1609,5 +1609,3 @@ GetModeFromPermString(interp, modeStringPtr, modePtr)
     }
     return TCL_OK;
 }
-
-

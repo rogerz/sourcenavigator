@@ -49,8 +49,10 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
 	if {[info exists env(TCL_LIBRARY)]} {\n\
 	    lappend dirs $env(TCL_LIBRARY)\n\
 	}\n\
-	lappend dirs $tclDefaultLibrary\n\
-	unset tclDefaultLibrary\n\
+	catch {\n\
+	    lappend dirs $tclDefaultLibrary\n\
+	    unset tclDefaultLibrary\n\
+	}\n\
         set dirs [concat $dirs $tcl_libPath]\n\
     }\n\
     foreach i $dirs {\n\
@@ -62,7 +64,6 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
 	    } else {\n\
 		append errors \"$tclfile: $msg\n$errorInfo\n\"\n\
 	    }\n\
-            set tcl_pkgPath [lreplace $tcl_pkgPath end end]\n\
 	}\n\
     }\n\
     set msg \"Can't find a usable init.tcl in the following directories: \n\"\n\

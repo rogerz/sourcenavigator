@@ -301,9 +301,7 @@ The \fBexec\fR command is not implemented and does not exist under Macintosh.
 The \fBexec\fR command is fully functional and works as described.
 
 .SH "SEE ALSO"
-open(n)
-.VE
+error(n), open(n)
 
 .SH KEYWORDS
 execute, pipeline, redirection, subprocess
-

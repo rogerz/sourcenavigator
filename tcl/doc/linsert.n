@@ -29,5 +29,8 @@ elements in the list, then the new elements are appended to the list.
 \fBend\-\fIinteger\fR refers to the last element in the list minus the
 specified integer offset.
 
+.SH "SEE ALSO"
+list(n), lappend(n), llength(n)
+
 .SH KEYWORDS
 element, insert, list

@@ -266,9 +266,6 @@ FormatClock(interp, clockVal, useGMT, format)
 #ifndef HAVE_TM_ZONE
     int savedTimeZone = 0;	/* lint. */
     char *savedTZEnv = NULL;	/* lint. */
-#  ifndef timezone
-    int timezone=0;
-#  endif
 #endif
 
 #ifdef HAVE_TZSET
@@ -292,11 +289,12 @@ FormatClock(interp, clockVal, useGMT, format)
 	return TCL_OK;
     }
 
-#ifndef HAVE_TM_ZONE
+#if !defined(HAVE_TM_ZONE) && !defined(WIN32)
     /*
      * This is a kludge for systems not having the timezone string in
      * struct tm.  No matter what was specified, they use the local
-     * timezone string.
+     * timezone string.  We don't do this on Windows because setting
+     * env vars there is a known mem leak in msvcrt.dll. [Bug #559376]
      */
 
     if (useGMT) {
@@ -330,15 +328,18 @@ FormatClock(interp, clockVal, useGMT, format)
 	    bufSize++;
 	}
     }
+    Tcl_DStringInit(&uniBuffer);
+    Tcl_UtfToExternalDString(NULL, format, -1, &uniBuffer);
     Tcl_DStringInit(&buffer);
     Tcl_DStringSetLength(&buffer, bufSize);
 
     Tcl_MutexLock(&clockMutex);
-    result = TclpStrftime(buffer.string, (unsigned int) bufSize, format,
-	    timeDataPtr);
+    result = TclpStrftime(buffer.string, (unsigned int) bufSize,
+	    Tcl_DStringValue(&uniBuffer), timeDataPtr, useGMT);
     Tcl_MutexUnlock(&clockMutex);
+    Tcl_DStringFree(&uniBuffer);
 
-#ifndef HAVE_TM_ZONE
+#if !defined(HAVE_TM_ZONE) && !defined(WIN32)
     if (useGMT) {
         if (savedTZEnv != NULL) {
             Tcl_SetVar2(interp, "env", "TZ", savedTZEnv, TCL_GLOBAL_ONLY);
@@ -376,5 +377,4 @@ FormatClock(interp, clockVal, useGMT, format)
     Tcl_DStringFree(&buffer);
     return TCL_OK;
 }
-
 

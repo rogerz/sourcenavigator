@@ -233,4 +233,3 @@ test thread-4.5 {TclThreadSend preserve errorCode} {testthread} {
 # cleanup
 ::tcltest::cleanupTests
 return
-

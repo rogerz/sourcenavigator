@@ -117,7 +117,6 @@ TclCompileCatchCmd(interp, parsePtr, envPtr)
     char *name;
     int localIndex, nameChars, range, maxDepth, startOffset, jumpDist;
     int code;
-    char buffer[32 + TCL_INTEGER_SPACE];
 
     envPtr->maxStackDepth = 0;
     if ((parsePtr->numWords != 2) && (parsePtr->numWords != 3)) {
@@ -179,11 +178,7 @@ TclCompileCatchCmd(interp, parsePtr, envPtr)
     code = TclCompileCmdWord(interp, cmdTokenPtr+1,
 	    cmdTokenPtr->numComponents, envPtr);
     if (code != TCL_OK) {
-	if (code == TCL_ERROR) {
-	    sprintf(buffer, "\n    (\"catch\" body line %d)",
-		    interp->errorLine);
-            Tcl_AddObjErrorInfo(interp, buffer, -1);
-        }
+	code = TCL_OUT_LINE_COMPILE;
 	goto done;
     }
     maxDepth = envPtr->maxStackDepth;

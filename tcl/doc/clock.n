@@ -212,4 +212,3 @@ an ``epoch''.  You shouldn't assume the value of the epoch.
 
 .SH KEYWORDS
 clock, date, time
-

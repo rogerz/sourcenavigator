@@ -71,5 +71,8 @@ Under normal circumstances the return value from \fBunknown\fR
 is the return value from the command that was eventually
 executed.
 
+.SH "SEE ALSO"
+info(n), proc(n)
+
 .SH KEYWORDS
 error, non-existent command

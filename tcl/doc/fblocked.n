@@ -25,8 +25,9 @@ characters available for input and no end-of-line sequence, \fBgets\fR
 returns an empty string and a subsequent call to \fBfblocked\fR will
 return 1.
 .PP
+
 .SH "SEE ALSO"
-gets(n), read(n)
+gets(n), open(n), read(n)
 
 .SH KEYWORDS
 blocking, nonblocking

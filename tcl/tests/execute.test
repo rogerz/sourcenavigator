@@ -583,6 +583,12 @@ test execute-6.1 {UpdateStringOfCmdName: called for duplicate of empty cmdName o
     p
 } {}
 
+test execute-6.2 {Evaluate an expression in a variable; compile the first time, do not the second} {
+    set w {3*5}
+    proc a {obj} {expr $obj}
+    set res "[a $w]:[a $w]"
+} {15:15}
+
 # cleanup
 catch {eval namespace delete [namespace children :: test_ns_*]}
 catch {rename foo ""}
@@ -594,7 +600,6 @@ catch {unset y}
 catch {unset msg}
 ::tcltest::cleanupTests
 return
-
 
 
 

@@ -128,8 +128,9 @@ without adding the \fB&\fR to place the process in the background).
 If for any reason the event queue is not flushed, DDE commands may
 hang until the event queue is flushed.  This can create a deadlock
 situation.
+
 .SH "SEE ALSO"
-tk, winfo, send
+tk(n), winfo(n), send(n)
+
 .SH KEYWORDS
 application, dde, name, remote execution
-

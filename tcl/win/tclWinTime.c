@@ -440,5 +440,3 @@ ComputeGMT(tp)
 
     return tmPtr;
 }
-
-

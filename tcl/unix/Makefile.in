@@ -37,7 +37,8 @@ mandir			= @mandir@
 # when installing files.
 INSTALL_ROOT		=
 
-TCL_LIBRARY =	@datadir@/tcl$(VERSION)
+# Path for the platform independent Tcl scripting libraries:
+TCL_LIBRARY		= $(prefix)/lib/tcl$(VERSION)
 
 # Path to use at runtime to refer to LIB_INSTALL_DIR:
 LIB_RUNTIME_DIR		= $(libdir)
@@ -46,19 +47,16 @@ LIB_RUNTIME_DIR		= $(libdir)
 BIN_INSTALL_DIR		= $(INSTALL_ROOT)$(bindir)
 
 # Directory in which to install libtcl.so or libtcl.a:
-LIB_INSTALL_DIR =	$(INSTALL_ROOT)@libdir@
+LIB_INSTALL_DIR		= $(INSTALL_ROOT)$(libdir)
 
 # Path name to use when installing library scripts.
 SCRIPT_INSTALL_DIR	= $(INSTALL_ROOT)$(TCL_LIBRARY)
 
-# Directory in which to install the program tclsh:
-BIN_INSTALL_DIR =	$(INSTALL_ROOT)@bindir@
-
 # Directory in which to install the include file tcl.h:
-INCLUDE_INSTALL_DIR =	$(INSTALL_ROOT)@includedir@
+INCLUDE_INSTALL_DIR	= $(INSTALL_ROOT)$(includedir)
 
 # Top-level directory in which to install manual entries:
-MAN_INSTALL_DIR =	$(INSTALL_ROOT)@mandir@
+MAN_INSTALL_DIR		= $(INSTALL_ROOT)$(mandir)
 
 # Directory in which to install manual entry for tclsh:
 MAN1_INSTALL_DIR	= $(MAN_INSTALL_DIR)/man1
@@ -86,17 +84,15 @@ CFLAGS_OPTIMIZE		= @CFLAGS_OPTIMIZE@
 
 # To change the compiler switches, for example to change from optimization to
 # debugging symbols, change the following line:
-#TCL_CFLAGS			= $(CFLAGS_DEBUG)
-#TCL_CFLAGS			= $(CFLAGS_OPTIMIZE)
-#TCL_CFLAGS			= $(CFLAGS_DEBUG) $(CFLAGS_OPTIMIZE)
-TCL_CFLAGS			= @CFLAGS_DEFAULT@
-
-CFLAGS = @CFLAGS@
+#CFLAGS			= $(CFLAGS_DEBUG)
+#CFLAGS			= $(CFLAGS_OPTIMIZE)
+#CFLAGS			= $(CFLAGS_DEBUG) $(CFLAGS_OPTIMIZE)
+CFLAGS			= @CFLAGS@ @CFLAGS_DEFAULT@
 
 # Flags to pass to the linker
-LDFLAGS_DEBUG          = @LDFLAGS_DEBUG@
-LDFLAGS_OPTIMIZE       = @LDFLAGS_OPTIMIZE@
-LDFLAGS                        = @LDFLAGS@ @LDFLAGS_DEFAULT@
+LDFLAGS_DEBUG		= @LDFLAGS_DEBUG@
+LDFLAGS_OPTIMIZE	= @LDFLAGS_OPTIMIZE@
+LDFLAGS			= @LDFLAGS@ @LDFLAGS_DEFAULT@
 
 # To disable ANSI-C procedure prototypes reverse the comment characters
 # on the following lines:
@@ -135,9 +131,10 @@ NOTIFY_OBJS = tclUnixNotfy.o
 #NOTIFY_OBJS =
 
 # To enable memory debugging reverse the comment characters on the following
-# lines.  Warning:  if you enable memory debugging, you must do it
-# *everywhere*, including all the code that calls Tcl, and you must use
-# ckalloc and ckfree everywhere instead of malloc and free.
+# lines or configure with --enable-symbols=mem.
+# Warning:  if you enable memory debugging, you must do it *everywhere*,
+# including all the code that calls Tcl, and you must use ckalloc and
+# ckfree everywhere instead of malloc and free.
 MEM_DEBUG_FLAGS		=
 #MEM_DEBUG_FLAGS	= -DTCL_MEM_DEBUG
 
@@ -150,10 +147,9 @@ TCL_STUB_LIB_FILE	= @TCL_STUB_LIB_FILE@
 TCL_STUB_LIB_FLAG	= @TCL_STUB_LIB_FLAG@
 #TCL_STUB_LIB_FLAG	= -ltclstub
 
-# To enable compilation debugging reverse the comment characters on
-# one of the following lines.
+# To enable compilation debugging reverse the comment characters on one
+# of the following lines or configure with --enable-symbols=compile.
 COMPILE_DEBUG_FLAGS	=
-#COMPILE_DEBUG_FLAGS	= -DTCL_COMPILE_STATS
 #COMPILE_DEBUG_FLAGS	= -DTCL_COMPILE_DEBUG -DTCL_COMPILE_STATS
 
 # To compile without backward compatibility and deprecated code
@@ -163,30 +159,19 @@ NO_DEPRECATED_FLAGS	=
 
 # Some versions of make, like SGI's, use the following variable to
 # determine which shell to use for executing commands:
-SHELL = @SHELL@
+SHELL			= /bin/sh
 
 # Tcl used to let the configure script choose which program to use
 # for installing, but there are just too many different versions of
 # "install" around;  better to use the install-sh script that comes
 # with the distribution, which is slower but guaranteed to work.
 
-INSTALL =		@srcdir@/install-sh -c
-INSTALL_PROGRAM =	@INSTALL_PROGRAM@
-INSTALL_DATA =		@INSTALL_DATA@
-
-# The following symbol defines additional compiler flags to enable
-# Tcl itself to be a shared library.  If Tcl isn't going to be a
-# shared library then the symbol has an empty definition.
-
-TCL_SHLIB_CFLAGS = @TCL_SHLIB_CFLAGS@
-#TCL_SHLIB_CFLAGS =
-
-# The following symbol defines additional compiler flags to enable
-# writable strings, since Tcl_Eval2 writes into its arguments. Only
-# applicable for GCC
+INSTALL_STRIP_PROGRAM   = -s
+INSTALL_STRIP_LIBRARY  = -S -S
 
 INSTALL			= @srcdir@/install-sh -c
 INSTALL_PROGRAM		= ${INSTALL}
+INSTALL_LIBRARY		= ${INSTALL}
 INSTALL_DATA		= ${INSTALL} -m 644
 
 # The following specifies which Tcl executable to use for make targets
@@ -202,17 +187,12 @@ TCL_EXE			= tclsh
 # configure script.  You shouldn't normally need to modify any of
 # these definitions by hand.
 
-STLIB_LD = @STLIB_LD@
-SHLIB_LD = @SHLIB_LD@
-SHLIB_CFLAGS = @SHLIB_CFLAGS@
+STLIB_LD		= @STLIB_LD@
+SHLIB_LD		= @SHLIB_LD@
+SHLIB_CFLAGS		= @SHLIB_CFLAGS@
 
-SHLIB_SUFFIX = @SHLIB_SUFFIX@
-#SHLIB_SUFFIX =
-
-TCL_SHARED_LIB_SUFFIX = @TCL_SHARED_LIB_SUFFIX@
-TCL_UNSHARED_LIB_SUFFIX = @TCL_UNSHARED_LIB_SUFFIX@
-TCL_SHARED_LIB_FILE = @TCL_SHARED_LIB_FILE@
-TCL_UNSHARED_LIB_FILE = @TCL_UNSHARED_LIB_FILE@
+SHLIB_SUFFIX		= @SHLIB_SUFFIX@
+#SHLIB_SUFFIX		=
 
 DLTEST_TARGETS		= dltest/pkg5${SHLIB_SUFFIX} dltest/Makefile
 
@@ -243,7 +223,7 @@ COMPAT_OBJS		= @LIBOBJS@
 
 AC_FLAGS		= @EXTRA_CFLAGS@ @DEFS@
 AR			= @AR@
-TCL_RANLIB		= @RANLIB@
+RANLIB			= @RANLIB@
 SRC_DIR			= @srcdir@
 TOP_DIR			= @srcdir@/..
 GENERIC_DIR		= $(TOP_DIR)/generic
@@ -255,8 +235,8 @@ DLTEST_DIR		= @TCL_SRC_DIR@/unix/dltest
 # Must be absolute to so the corresponding tcltest's tcl_library is absolute.
 TCL_BUILDTIME_LIBRARY	= @TCL_SRC_DIR@/library
 
-#CC			= purify -best-effort @CC@
 CC			= @CC@
+#CC			= purify -best-effort @CC@ -DPURIFY
 
 #----------------------------------------------------------------
 # The information below should be usable as is.  The configure
@@ -265,18 +245,18 @@ CC			= @CC@
 #----------------------------------------------------------------
 
 
-CC_SWITCHES = ${CFLAGS} ${TCL_CFLAGS} ${CFLAGS_WARNING} ${SHLIB_CFLAGS} \
+CC_SWITCHES = ${CFLAGS} ${CFLAGS_WARNING} ${SHLIB_CFLAGS} \
 -I${GENERIC_DIR} -I${SRC_DIR} \
 ${AC_FLAGS} ${MATH_FLAGS} ${GENERIC_FLAGS} ${PROTO_FLAGS} ${MEM_DEBUG_FLAGS} \
 ${COMPILE_DEBUG_FLAGS} ${NO_DEPRECATED_FLAGS} ${ENV_FLAGS} \
 -DTCL_SHLIB_EXT=\"${SHLIB_SUFFIX}\"
 
-STUB_CC_SWITCHES = ${CFLAGS} ${TCL_CFLAGS} ${CFLAGS_WARNING} ${SHLIB_CFLAGS} \
+STUB_CC_SWITCHES = ${CFLAGS} ${CFLAGS_WARNING} ${SHLIB_CFLAGS} \
 -I${GENERIC_DIR} -I${SRC_DIR} \
 ${AC_FLAGS} ${MATH_FLAGS} ${GENERIC_FLAGS} ${PROTO_FLAGS} ${MEM_DEBUG_FLAGS} \
 ${COMPILE_DEBUG_FLAGS} ${ENV_FLAGS} -DTCL_SHLIB_EXT=\"${SHLIB_SUFFIX}\"
 
-LIBS		= @DL_LIBS@ @LIBS@ $(MATH_LIBS) -lc
+LIBS		= @DL_LIBS@ @LIBS@ $(MATH_LIBS)
 
 DEPEND_SWITCHES	= ${CFLAGS} -I${GENERIC_DIR} -I${SRC_DIR} \
 ${AC_FLAGS} ${MATH_FLAGS} \
@@ -438,12 +418,12 @@ doc:
 ${TCL_LIB_FILE}: ${OBJS} ${STUB_LIB_FILE}
 	rm -f ${TCL_LIB_FILE}
 	@MAKE_LIB@
-	$(TCL_RANLIB) ${TCL_LIB_FILE}
+	$(RANLIB) ${TCL_LIB_FILE}
 
 ${STUB_LIB_FILE}: ${STUB_LIB_OBJS}
 	rm -f ${STUB_LIB_FILE}
 	@MAKE_STUB_LIB@
-	$(TCL_RANLIB) ${STUB_LIB_FILE}
+	$(RANLIB) ${STUB_LIB_FILE}
 
 # Make target which outputs the list of the .o contained in the Tcl lib
 # usefull to build a single big shared library containing Tcl and other
@@ -465,25 +445,49 @@ tcltest: ${TCLTEST_OBJS} ${TCL_LIB_FILE} ${BUILD_DLTEST}
 	${CC} ${LDFLAGS} ${TCLTEST_OBJS} @TCL_BUILD_LIB_SPEC@ ${LIBS} \
 		@TCL_LD_SEARCH_FLAGS@ -o tcltest
 
-
 # Note, in the target below TCL_LIBRARY needs to be set or else
 # "make test" won't work in the case where the compilation directory
 # isn't the same as the source directory.
+# Specifying TESTFLAGS on the command line is the standard way to pass
+# args to tcltest, ie:
+#	% make test TESTFLAGS="-verbose bps -file fileName.test"
 
 test: tcltest
 	LD_LIBRARY_PATH=`pwd`:${LD_LIBRARY_PATH}; export LD_LIBRARY_PATH; \
+	DYLD_LIBRARY_PATH=`pwd`:${DYLD_LIBRARY_PATH}; export DYLD_LIBRARY_PATH; \
 	LIBPATH=`pwd`:${LIBPATH}; export LIBPATH; \
 	SHLIB_PATH=`pwd`:${SHLIB_PATH}; export SHLIB_PATH; \
 	TCL_LIBRARY="${TCL_BUILDTIME_LIBRARY}"; export TCL_LIBRARY; \
-	./tcltest $(TOP_DIR)/tests/all.tcl $(TCLTESTARGS)
+	./tcltest $(TOP_DIR)/tests/all.tcl $(TESTFLAGS) $(TCLTESTARGS)
 
 # Useful target to launch a built tcltest with the proper path,...
 runtest: tcltest
 	LD_LIBRARY_PATH=`pwd`:${LD_LIBRARY_PATH}; export LD_LIBRARY_PATH; \
+	DYLD_LIBRARY_PATH=`pwd`:${DYLD_LIBRARY_PATH}; export DYLD_LIBRARY_PATH; \
 	LIBPATH=`pwd`:${LIBPATH}; export LIBPATH; \
 	SHLIB_PATH=`pwd`:${SHLIB_PATH}; export SHLIB_PATH; \
 	TCL_LIBRARY="${TCL_BUILDTIME_LIBRARY}"; export TCL_LIBRARY; \
 	./tcltest
+
+# This target can be used to run tclsh from the build directory
+# via `make shell SCRIPT=/tmp/foo.tcl`
+shell: tclsh
+	@LD_LIBRARY_PATH=`pwd`:${LD_LIBRARY_PATH}; export LD_LIBRARY_PATH; \
+	DYLD_LIBRARY_PATH=`pwd`:${DYLD_LIBRARY_PATH}; export DYLD_LIBRARY_PATH; \
+	LIBPATH=`pwd`:${LIBPATH}; export LIBPATH; \
+	SHLIB_PATH=`pwd`:${SHLIB_PATH}; export SHLIB_PATH; \
+	TCL_LIBRARY="${TCL_BUILDTIME_LIBRARY}"; export TCL_LIBRARY; \
+	./tclsh $(SCRIPT)
+
+# This target can be used to run tclsh inside either gdb or insight
+gdb: tclsh
+	@echo "set env LD_LIBRARY_PATH=`pwd`:${LD_LIBRARY_PATH}" > gdb.run
+	@echo "set env DYLD_LIBRARY_PATH=`pwd`:${DYLD_LIBRARY_PATH}" > gdb.run
+	@echo "set env LIBPATH=`pwd`:${LIBPATH}" >> gdb.run
+	@echo "set env SHLIB_PATH=`pwd`:${SHLIB_PATH}" >> gdb.run
+	@echo "set env TCL_LIBRARY=${TCL_BUILDTIME_LIBRARY}" >> gdb.run
+	gdb ./tclsh --command=gdb.run
+	rm gdb.run
 
 # The following target outputs the name of the top-level source directory
 # for Tcl (it is used by Tk's configure script, for example).  The
@@ -522,18 +526,19 @@ gendate:
 
 dltest/pkg5${SHLIB_SUFFIX}: dltest/Makefile
 	if test ! -f tclsh; then $(MAKE) tclsh; else true; fi
-	libdir=`cd $(TOP_DIR)/library && pwd`; cd dltest; \
-	PATH=..:${PATH} TCL_LIBRARY=$$libdir $(MAKE)
+	cd dltest; PATH=..:${PATH} TCL_LIBRARY=../../library $(MAKE)
 
 dltest/Makefile: $(DLTEST_DIR)/configure $(DLTEST_DIR)/Makefile.in tclConfig.sh
 	if test ! -d dltest; then mkdir dltest; else true; fi
-	dldir=`cd $(DLTEST_DIR) && pwd`; cd dltest; \
-	if test -f configure; then ./configure; else $$dldir/configure; fi
+	cd dltest; if test -f configure; then ./configure; else \
+	    $(DLTEST_DIR)/configure; fi
 
 install: install-binaries install-libraries install-doc
 
 install-strip:
-	$(MAKE) install INSTALL_PROGRAM="$(INSTALL_PROGRAM) -s"
+	$(MAKE) install \
+		INSTALL_PROGRAM="$(INSTALL_PROGRAM) ${INSTALL_STRIP_PROGRAM}" \
+		INSTALL_LIBRARY="$(INSTALL_LIBRARY) ${INSTALL_STRIP_LIBRARY}"
 
 # Note: before running ranlib below, must cd to target directory because
 # some ranlibs write to current directory, and this might not always be
@@ -553,8 +558,8 @@ install-binaries: binaries
 	    chmod +x $(SRC_DIR)/install-sh; \
 	    fi
 	@echo "Installing $(TCL_LIB_FILE) to $(LIB_INSTALL_DIR)/"
-	@$(INSTALL_DATA) $(TCL_LIB_FILE) $(LIB_INSTALL_DIR)/$(TCL_LIB_FILE)
-	@(cd $(LIB_INSTALL_DIR); $(TCL_RANLIB) $(TCL_LIB_FILE))
+	@$(INSTALL_LIBRARY) $(TCL_LIB_FILE) $(LIB_INSTALL_DIR)/$(TCL_LIB_FILE)
+	@(cd $(LIB_INSTALL_DIR); $(RANLIB) $(TCL_LIB_FILE))
 	@chmod 555 $(LIB_INSTALL_DIR)/$(TCL_LIB_FILE)
 	@if test "$(TCL_BUILD_EXP_FILE)" != ""; then \
 	    echo "Installing $(TCL_EXP_FILE) to $(LIB_INSTALL_DIR)/"; \
@@ -567,13 +572,12 @@ install-binaries: binaries
 	@$(INSTALL_DATA) tclConfig.sh $(LIB_INSTALL_DIR)/tclConfig.sh
 	@if test "$(TCL_STUB_LIB_FILE)" != "" ; then \
 	    echo "Installing $(TCL_STUB_LIB_FILE) to $(LIB_INSTALL_DIR)/"; \
-	    $(INSTALL_DATA) $(STUB_LIB_FILE) \
+	    $(INSTALL_LIBRARY) $(STUB_LIB_FILE) \
 			 $(LIB_INSTALL_DIR)/$(TCL_STUB_LIB_FILE); \
 	    fi
 
-install-libraries:
-	@for i in $(INSTALL_ROOT)@datadir@ $(INCLUDE_INSTALL_DIR) \
-		$(SCRIPT_INSTALL_DIR) ; \
+install-libraries: libraries
+	@for i in $(INCLUDE_INSTALL_DIR) $(SCRIPT_INSTALL_DIR); \
 	    do \
 	    if [ ! -d $$i ] ; then \
 		echo "Making directory $$i"; \
@@ -582,7 +586,7 @@ install-libraries:
 		else true; \
 		fi; \
 	    done;
-	@for i in http2.3 http1.0 opt0.4 encoding msgcat1.0 tcltest1.0; \
+	@for i in http2.4 http1.0 opt0.4 encoding msgcat1.1 tcltest1.0; \
 	    do \
 	    if [ ! -d $(SCRIPT_INSTALL_DIR)/$$i ] ; then \
 		echo "Making directory $(SCRIPT_INSTALL_DIR)/$$i"; \
@@ -595,7 +599,8 @@ install-libraries:
 	    chmod +x $(SRC_DIR)/install-sh; \
 	    fi
 	@echo "Installing header files";
-	@for i in $(GENERIC_DIR)/tcl.h $(GENERIC_DIR)/tclDecls.h ; \
+	@for i in $(GENERIC_DIR)/tcl.h $(GENERIC_DIR)/tclDecls.h \
+		$(GENERIC_DIR)/tclPlatDecls.h ; \
 	    do \
 	    $(INSTALL_DATA) $$i $(INCLUDE_INSTALL_DIR); \
 	    done;
@@ -604,13 +609,30 @@ install-libraries:
 	    do \
 	    $(INSTALL_DATA) $$i $(SCRIPT_INSTALL_DIR); \
 	    done;
-	@for i in http2.3 http1.0 opt0.4 msgcat1.0 tcltest1.0; \
+	@echo "Installing library http1.0 directory";
+	@for j in $(TOP_DIR)/library/http1.0/*.tcl ; \
 	    do \
-	    echo "Installing library $$i directory"; \
-	    for j in $(TOP_DIR)/library/$$i/*.tcl ; \
-		do \
-		$(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/$$i; \
-		done; \
+	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/http1.0; \
+	    done;
+	@echo "Installing library http2.4 directory";
+	@for j in $(TOP_DIR)/library/http/*.tcl ; \
+	    do \
+	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/http2.4; \
+	    done;
+	@echo "Installing library opt0.4 directory";
+	@for j in $(TOP_DIR)/library/opt/*.tcl ; \
+	    do \
+	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/opt0.4; \
+	    done;
+	@echo "Installing library msgcat1.1 directory";
+	@for j in $(TOP_DIR)/library/msgcat/*.tcl ; \
+	    do \
+	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/msgcat1.1; \
+	    done;
+	@echo "Installing library tcltest1.0 directory";
+	@for j in $(TOP_DIR)/library/tcltest1.0/*.tcl ; \
+	    do \
+	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/tcltest1.0; \
 	    done;
 	@echo "Installing library encoding directory";
 	@for i in $(TOP_DIR)/library/encoding/*.enc ; do \
@@ -636,7 +658,7 @@ install-doc: doc
 	    rm -f $(MAN1_INSTALL_DIR)/$$i; \
 	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
 		    $$i > $(MAN1_INSTALL_DIR)/$$i; \
-	    chmod 644 $(MAN1_INSTALL_DIR)/$$i; \
+	    chmod 444 $(MAN1_INSTALL_DIR)/$$i; \
 	    done;
 	@echo "Cross-linking top-level (.1) docs";
 	@$(UNIX_DIR)/mkLinks $(MAN1_INSTALL_DIR)
@@ -646,7 +668,7 @@ install-doc: doc
 	    rm -f $(MAN3_INSTALL_DIR)/$$i; \
 	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
 		    $$i > $(MAN3_INSTALL_DIR)/$$i; \
-	    chmod 644 $(MAN3_INSTALL_DIR)/$$i; \
+	    chmod 444 $(MAN3_INSTALL_DIR)/$$i; \
 	    done;
 	@echo "Cross-linking C API (.3) docs";
 	@$(UNIX_DIR)/mkLinks $(MAN3_INSTALL_DIR)
@@ -655,19 +677,15 @@ install-doc: doc
 	    do \
 	    rm -f $(MANN_INSTALL_DIR)/$$i; \
 	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
-		    $$i > $(MAN3_INSTALL_DIR)/$$i; \
-	    chmod 644 $(MAN3_INSTALL_DIR)/$$i; \
+		    $$i > $(MANN_INSTALL_DIR)/$$i; \
+	    chmod 444 $(MANN_INSTALL_DIR)/$$i; \
 	    done;
 	@echo "Cross-linking command (.n) docs";
 	@$(UNIX_DIR)/mkLinks $(MANN_INSTALL_DIR)
 
-Makefile: $(UNIX_DIR)/Makefile.in config.status
+Makefile: $(UNIX_DIR)/Makefile.in
 	$(SHELL) config.status
 
-config.status: $(UNIX_DIR)/configure
-	./config.status --recheck
-
-mostlyclean: clean
 clean:
 	rm -f *.a *.o libtcl* core errs *~ \#* TAGS *.E a.out \
 		errors tclsh tcltest lib.exp
@@ -680,9 +698,6 @@ distclean: clean
 
 depend:
 	makedepend -- $(DEPEND_SWITCHES) -- $(SRCS)
-
-bp: $(UNIX_DIR)/bp.c
-	$(CC) $(CC_SWITCHES) $(UNIX_DIR)/bp.c -o bp
 
 # Test binaries.  The rules for tclTestInit.o and xtTestInit.o are
 # complicated because they are compiled from tclAppInit.c.  Can't use
@@ -927,7 +942,7 @@ tclStubInit.o: $(GENERIC_DIR)/tclStubInit.c
 tclUtil.o: $(GENERIC_DIR)/tclUtil.c
 	$(CC) -c $(CC_SWITCHES) $(GENERIC_DIR)/tclUtil.c
 
-tclUtf.o: $(GENERIC_DIR)/tclUtf.c
+tclUtf.o: $(GENERIC_DIR)/tclUtf.c $(GENERIC_DIR)/tclUniData.c
 	$(CC) -c $(CC_SWITCHES) $(GENERIC_DIR)/tclUtf.c
 
 tclVar.o: $(GENERIC_DIR)/tclVar.c
@@ -981,21 +996,8 @@ tclUnixThrd.o: $(UNIX_DIR)/tclUnixThrd.c
 tclUnixTime.o: $(UNIX_DIR)/tclUnixTime.c
 	$(CC) -c $(CC_SWITCHES) $(UNIX_DIR)/tclUnixTime.c
 
-# CYGNUS LOCAL
-
-# Don't burn a TCL_LIBRARY path into tclUnixInit.o.
-# We need Tcl to be location independent and a compiled
-# in path just masks problems with the search algo.
-
-# FIXME: The TCL_PACKAGE_PATH is still compiled in,
-# the only effect seems to be that the compiled in
-# dir name appears on the auto_path after the tree
-# has been moved.
-
-# END CYGNUS LOCAL
-
 tclUnixInit.o: $(UNIX_DIR)/tclUnixInit.c $(GENERIC_DIR)/tclInitScript.h tclConfig.sh
-	$(CC) -c $(CC_SWITCHES) -DTCL_LIBRARY=\"\" \
+	$(CC) -c $(CC_SWITCHES) -DTCL_LIBRARY=\"${TCL_LIBRARY}\" \
 		-DTCL_PACKAGE_PATH="\"${TCL_PACKAGE_PATH}\"" \
 		$(UNIX_DIR)/tclUnixInit.c
 
@@ -1024,9 +1026,6 @@ tclXtTest.o: $(UNIX_DIR)/tclXtTest.c
 
 fixstrtod.o: $(COMPAT_DIR)/fixstrtod.c
 	$(CC) -c $(STUB_CC_SWITCHES) $(COMPAT_DIR)/fixstrtod.c
-
-getcwd.o: $(COMPAT_DIR)/getcwd.c
-	$(CC) -c $(STUB_CC_SWITCHES) $(COMPAT_DIR)/getcwd.c
 
 opendir.o: $(COMPAT_DIR)/opendir.c
 	$(CC) -c $(STUB_CC_SWITCHES) $(COMPAT_DIR)/opendir.c
@@ -1125,6 +1124,11 @@ rpm: all /bin/rpm
 	mv RPMS/i386/*.rpm .
 	rm -rf RPMS THIS.TCL.SPEC
 
+mklinks:
+	$(TCL_EXE) $(UNIX_DIR)/mkLinks.tcl \
+		$(UNIX_DIR)/../doc/*.[13n] > $(UNIX_DIR)/mkLinks
+	chmod +x $(UNIX_DIR)/mkLinks
+
 #
 # Target to create a proper Tcl distribution from information in the
 # master source directory.  DISTDIR must be defined to indicate where
@@ -1137,26 +1141,22 @@ ZIPNAME =	tcl@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@@TCL_PATCH_LEVEL@.zip
 DISTDIR =	$(DISTROOT)/$(DISTNAME)
 $(UNIX_DIR)/configure: $(UNIX_DIR)/configure.in
 	autoconf $(UNIX_DIR)/configure.in > $(UNIX_DIR)/configure
-dist: $(UNIX_DIR)/configure
+
+dist: $(UNIX_DIR)/configure mklinks
 	rm -rf $(DISTDIR)
-	mkdir $(DISTDIR)
-	mkdir $(DISTDIR)/unix
+	mkdir -p $(DISTDIR)/unix
 	cp -p $(UNIX_DIR)/*.c $(UNIX_DIR)/*.h $(DISTDIR)/unix
-	rm -f $(DISTDIR)/unix/bp.c
 	cp $(UNIX_DIR)/Makefile.in $(DISTDIR)/unix
 	chmod 664 $(DISTDIR)/unix/Makefile.in
 	cp $(UNIX_DIR)/configure $(UNIX_DIR)/configure.in \
 		$(UNIX_DIR)/tcl.m4 $(UNIX_DIR)/aclocal.m4 \
 		$(UNIX_DIR)/tclConfig.sh.in $(UNIX_DIR)/install-sh \
 		$(UNIX_DIR)/README $(UNIX_DIR)/ldAix $(UNIX_DIR)/tcl.spec \
+		$(UNIX_DIR)/mkLinks \
 		$(DISTDIR)/unix
 	chmod 775 $(DISTDIR)/unix/configure $(DISTDIR)/unix/configure.in
 	chmod 775 $(DISTDIR)/unix/ldAix
 	chmod +x $(DISTDIR)/unix/install-sh
-
-	$(TCL_EXE) $(UNIX_DIR)/mkLinks.tcl \
-		$(UNIX_DIR)/../doc/*.[13n] > $(DISTDIR)/unix/mkLinks
-	chmod +x $(DISTDIR)/unix/mkLinks
 	mkdir $(DISTDIR)/generic
 	cp -p $(GENERIC_DIR)/*.c $(GENERIC_DIR)/*.h $(DISTDIR)/generic
 	cp -p $(GENERIC_DIR)/*.decls $(DISTDIR)/generic
@@ -1167,7 +1167,7 @@ dist: $(UNIX_DIR)/configure
 	mkdir $(DISTDIR)/library
 	cp -p $(TOP_DIR)/license.terms $(TOP_DIR)/library/*.tcl \
 		$(TOP_DIR)/library/tclIndex $(DISTDIR)/library
-	for i in http2.3 http1.0 opt0.4 msgcat1.0 reg1.0 dde1.1 tcltest1.0; \
+	for i in http http1.0 opt msgcat reg1.0 dde1.1 tcltest1.0; \
 	    do \
 		mkdir $(DISTDIR)/library/$$i ;\
 		cp -p $(TOP_DIR)/library/$$i/*.tcl $(DISTDIR)/library/$$i; \
@@ -1191,25 +1191,25 @@ dist: $(UNIX_DIR)/configure
 	cp -p $(TOP_DIR)/tests/pkg/*.tcl $(DISTDIR)/tests/pkg
 	mkdir $(DISTDIR)/win
 	cp $(TOP_DIR)/win/Makefile.in $(DISTDIR)/win
-	cp $(TOP_DIR)/win/configure.in \
-		$(TOP_DIR)/win/configure \
+	cp $(TOP_DIR)/win/configure.in $(TOP_DIR)/win/configure \
 		$(TOP_DIR)/win/tclConfig.sh.in \
 		$(TOP_DIR)/win/tcl.m4 $(TOP_DIR)/win/aclocal.m4 \
 		$(DISTDIR)/win
-	cp -p $(TOP_DIR)/win/*.c $(TOP_DIR)/win/*.h $(TOP_DIR)/win/*.rc \
-		$(TOP_DIR)/win/*.ico $(DISTDIR)/win
+	cp -p $(TOP_DIR)/win/*.c $(TOP_DIR)/win/*.h \
+		$(TOP_DIR)/win/*.ico $(TOP_DIR)/win/*.rc \
+		$(DISTDIR)/win
 	cp -p $(TOP_DIR)/win/*.bat $(DISTDIR)/win
 	cp -p $(TOP_DIR)/win/makefile.* $(DISTDIR)/win
+	cp -p $(TOP_DIR)/win/tcl.hpj.in $(DISTDIR)/win
 	cp -p $(TOP_DIR)/win/README $(DISTDIR)/win
 	cp -p $(TOP_DIR)/license.terms $(DISTDIR)/win
 	mkdir $(DISTDIR)/mac
-	cp -p $(TOP_DIR)/mac/tclMacProjects.sea.hqx $(DISTDIR)/mac
-	cp -p $(TOP_DIR)/mac/*.c $(TOP_DIR)/mac/*.h $(TOP_DIR)/mac/*.r \
+	cp -p $(TOP_DIR)/mac/tcl*.sea.hqx \
+		$(TOP_DIR)/mac/*.c $(TOP_DIR)/mac/*.h $(TOP_DIR)/mac/*.r \
 		$(DISTDIR)/mac
 	cp -p $(TOP_DIR)/mac/porting.notes $(TOP_DIR)/mac/README $(DISTDIR)/mac
-	cp -p $(TOP_DIR)/mac/*.exp $(TOP_DIR)/mac/*.pch $(DISTDIR)/mac
-	cp -p $(TOP_DIR)/mac/*.doc $(DISTDIR)/mac
-	cp -p $(TOP_DIR)/mac/*.html $(DISTDIR)/mac
+	cp -p $(TOP_DIR)/mac/*.pch $(DISTDIR)/mac
+	cp -p $(TOP_DIR)/mac/*.doc $(TOP_DIR)/mac/*.html $(DISTDIR)/mac
 	cp -p $(TOP_DIR)/license.terms $(DISTDIR)/mac
 	mkdir $(DISTDIR)/unix/dltest
 	cp -p $(UNIX_DIR)/dltest/*.c $(UNIX_DIR)/dltest/Makefile.in \
@@ -1217,14 +1217,11 @@ dist: $(UNIX_DIR)/configure
 	cp -p $(UNIX_DIR)/dltest/configure.in $(UNIX_DIR)/dltest/configure \
 		$(UNIX_DIR)/dltest/README $(DISTDIR)/unix/dltest
 	mkdir $(DISTDIR)/tools
-	cp -p $(TOP_DIR)/tools/Makefile.in \
-	    $(TOP_DIR)/tools/README \
-	    $(TOP_DIR)/tools/configure.in \
-	    $(TOP_DIR)/tools/*.tcl \
-	    $(TOP_DIR)/tools/man2tcl.c \
-	    $(TOP_DIR)/tools/tcl.wse.in \
-	    $(TOP_DIR)/tools/*.bmp \
-	    $(TOP_DIR)/tools/tcl.hpj.in \
+	cp -p $(TOP_DIR)/tools/Makefile.in $(TOP_DIR)/tools/README \
+		$(TOP_DIR)/tools/configure $(TOP_DIR)/tools/configure.in \
+		$(TOP_DIR)/tools/*.tcl $(TOP_DIR)/tools/man2tcl.c \
+		$(TOP_DIR)/tools/tcl.wse.in $(TOP_DIR)/tools/*.bmp \
+		$(TOP_DIR)/tools/tcl.hpj.in \
 		$(DISTDIR)/tools
 
 #

@@ -30,5 +30,8 @@ Catch exceptions are also handled in a few other situations, such
 as the \fBcatch\fR command and the outermost scripts of procedure
 bodies.
 
+.SH "SEE ALSO"
+break(n), for(n), foreach(n), while(n)
+
 .SH KEYWORDS
 continue, iteration, loop

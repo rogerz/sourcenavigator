@@ -99,6 +99,11 @@ typedef struct ThreadSpecificData {
 static Tcl_ThreadDataKey dataKey;
 
 /*
+ * Common string for the library path for sharing across threads.
+ */
+char *tclLibraryPathStr;
+
+/*
  * Prototypes for procedures referenced only in this file:
  */
 
@@ -596,6 +601,12 @@ TclSetLibraryPath(pathPtr)
 	Tcl_DecrRefCount(tsdPtr->tclLibraryPath);
     }
     tsdPtr->tclLibraryPath = pathPtr;
+
+    /*
+     *  No mutex locking is needed here as up the stack we're within
+     *  TclpInitLock().
+     */
+    tclLibraryPathStr = Tcl_GetStringFromObj(pathPtr, NULL);
 }
 
 /*
@@ -619,6 +630,17 @@ Tcl_Obj *
 TclGetLibraryPath()
 {
     ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
+
+    if (tsdPtr->tclLibraryPath == NULL) {
+	/*
+	 * Grab the shared string and place it into a new thread specific
+	 * Tcl_Obj.
+	 */
+	tsdPtr->tclLibraryPath = Tcl_NewStringObj(tclLibraryPathStr, -1);
+
+	/* take ownership */
+	Tcl_IncrRefCount(tsdPtr->tclLibraryPath);
+    }
     return tsdPtr->tclLibraryPath;
 }
 
@@ -744,9 +766,10 @@ Tcl_Finalize()
     ThreadSpecificData *tsdPtr;
 
     TclpInitLock();
-    tsdPtr = TCL_TSD_INIT(&dataKey);
     if (subsystemsInitialized != 0) {
 	subsystemsInitialized = 0;
+
+	tsdPtr = TCL_TSD_INIT(&dataKey);
 
 	/*
 	 * Invoke exit handlers first.
@@ -770,15 +793,6 @@ Tcl_Finalize()
 	}    
 	firstExitPtr = NULL;
 	Tcl_MutexUnlock(&exitMutex);
-
-	/*
-	 * Clean up the library path now, before we invalidate thread-local
-	 * storage.
-	 */
-	if (tsdPtr->tclLibraryPath != NULL) {
-	    Tcl_DecrRefCount(tsdPtr->tclLibraryPath);
-	    tsdPtr->tclLibraryPath = NULL;
-	}
 
 	/*
 	 * Clean up after the current thread now, after exit handlers.
@@ -870,6 +884,17 @@ Tcl_FinalizeThread()
 	 */
 
 	tsdPtr->inExit = 1;
+
+	/*
+	 * Clean up the library path now, before we invalidate thread-local
+	 * storage or calling thread exit handlers.
+	 */
+
+	if (tsdPtr->tclLibraryPath != NULL) {
+	    Tcl_DecrRefCount(tsdPtr->tclLibraryPath);
+	    tsdPtr->tclLibraryPath = NULL;
+	}
+
 	for (exitPtr = tsdPtr->firstExitPtr; exitPtr != NULL;
 		exitPtr = tsdPtr->firstExitPtr) {
 	    /*
@@ -884,6 +909,7 @@ Tcl_FinalizeThread()
 	}
 	TclFinalizeIOSubsystem();
 	TclFinalizeNotifier();
+	TclFinalizeAsync();
 
 	/*
 	 * Blow away all thread local storage blocks.
@@ -912,8 +938,12 @@ Tcl_FinalizeThread()
 int
 TclInExit()
 {
-    ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
-    return tsdPtr->inExit;
+    ThreadSpecificData *tsdPtr = TclThreadDataKeyGet(&dataKey);
+    if (tsdPtr == NULL) {
+	return inFinalize;
+    } else {
+	return tsdPtr->inExit;
+    }
 }
 
 /*
@@ -1055,4 +1085,3 @@ Tcl_UpdateObjCmd(clientData, interp, objc, objv)
     Tcl_ResetResult(interp);
     return TCL_OK;
 }
-

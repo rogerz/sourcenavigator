@@ -22,7 +22,7 @@
 #   include <console.h>
 #elif defined(__MWERKS__)
 #   include <SIOUX.h>
-short InstallConsole _ANSI_ARGS_((short fd));
+EXTERN short InstallConsole _ANSI_ARGS_((short fd));
 #endif
 
 #ifdef TCL_TEST
@@ -189,6 +189,7 @@ MacintoshInit()
     SIOUXSettings.autocloseonquit = true;
     SIOUXSettings.showstatusline = true;
     SIOUXSettings.asktosaveonclose = false;
+    SIOUXSettings.wasteusetempmemory = true;    
     InstallConsole(0);
     SIOUXSetTitle("\pTcl Interpreter");
 		

@@ -8,11 +8,13 @@ used on the PC or Mac platform too, but they all depend on UNIX
 (POSIX/ANSI C) interfaces and some of them only make sense under UNIX.
 
 Updated forms of the information found in this file is available at:
-	http://dev.scriptics.com/doc/howto/compile.html#unix
+
+	http://www.tcl-tk.net/doc/howto/compile.html#unix
 
 For information on platforms where Tcl is known to compile, along
 with any porting notes for getting it to work on those platforms, see:
-	http://dev.scriptics.com/software/tcltk/platforms.html
+
+	http://www.tcl-tk.net/software/tcltk/platforms.html
 
 The rest of this file contains instructions on how to do this.  The
 release should compile and run either "out of the box" or with trivial
@@ -123,11 +125,11 @@ information on the test suite.  Note: don't run the tests as superuser:
 this will cause several of them to fail.  If a test is failing
 consistently, please send us a bug report with as much detail as you
 can manage.  Please use the online database at
-	http://dev.scriptics.com/ticket/
+
+	http://tcl.sourceforge.net/
 
 The Tcl test suite is very sensitive to proper implementation of
 ANSI C library procedures such as sprintf and sscanf.  If the test
 suite generates errors, most likely they are due to non-conformance
 of your system's ANSI C library;  such problems are unlikely to
 affect any real applications so it's probably safe to ignore them.
-

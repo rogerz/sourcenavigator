@@ -301,6 +301,14 @@ test pkg-3.5 {Tcl_PackageCmd procedure, "forget" option} {
     package forget a c
     lappend result [lsort [package names]]
 } {{a b c} b}
+test pkg-3.5.1 {Tcl_PackageCmd procedure, "forget" option} {
+    # Test for Bug 415273
+    package ifneeded a 1 "I should have been forgotten"
+    package forget no-such-package a
+    set x [package ifneeded a 1]
+    package forget a
+    set x
+} {}
 test pkg-3.6 {Tcl_PackageCmd procedure, "ifneeded" option} {
     list [catch {package ifneeded a} msg] $msg
 } {1 {wrong # args: should be "package ifneeded package version ?script?"}}
@@ -643,7 +651,6 @@ concat
 interp delete $i
 ::tcltest::cleanupTests
 return
-
 
 
 

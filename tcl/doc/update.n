@@ -44,6 +44,8 @@ the application to respond to events such as user interactions;  if
 you occasionally call \fBupdate\fR then user input will be processed
 during the next call to \fBupdate\fR.
 
+.SH "SEE ALSO"
+after(n), bgerror(n)
+
 .SH KEYWORDS
 event, flush, handler, idle, update
-

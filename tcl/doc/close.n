@@ -55,5 +55,8 @@ that all output is correctly flushed before the process exits.
 The command returns an empty string, and may generate an error if
 an error occurs while flushing output.
 
+.SH "SEE ALSO"
+file(n), open(n), socket(n), eof(n)
+
 .SH KEYWORDS
 blocking, channel, close, nonblocking

@@ -368,4 +368,3 @@ proc history {args} {
     set i [HistIndex $event]
     set history($i) $cmd
 }
-

@@ -110,5 +110,8 @@ will return \fB1\fR, and
 .CE
 will return \fB3\fR.
 
+.SH "SEE ALSO"
+for(n), if(n), regexp(n)
+
 .SH KEYWORDS
 switch, match, regular expression

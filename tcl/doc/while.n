@@ -51,5 +51,8 @@ while {$x<10} {
 }
 .CE
 
+.SH "SEE ALSO"
+break(n), continue(n), for(n), foreach(n)
+
 .SH KEYWORDS
 boolean value, loop, test, while

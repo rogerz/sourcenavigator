@@ -754,4 +754,3 @@ test for-6.16 {Tcl_ForObjCmd: for command result} {
 ::tcltest::cleanupTests
 return
 
-

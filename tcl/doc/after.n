@@ -103,7 +103,7 @@ In applications that are not normally event-driven, such as
 and \fBupdate\fR commands.
 
 .SH "SEE ALSO"
-bgerror
+bgerror(n), concat(n), update(n), vwait(n)
 
 .SH KEYWORDS
 cancel, delay, idle callback, sleep, time

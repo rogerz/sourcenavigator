@@ -15,7 +15,7 @@ pkg_mkIndex \- Build an index for automatic loading of packages
 .SH SYNOPSIS
 .nf
 .VS 8.3.0
-\fBpkg_mkIndex ?\fI\-lazy\fR? ?\fI\-load pkgPat\fR? ?\fI\-verbose\fR? \fIdir\fR ?\fIpattern pattern ...\fR?
+\fBpkg_mkIndex ?\fI\-direct\fR?  ?\fI\-lazy\fR?  ?\fI\-load pkgPat\fR? ?\fI\-verbose\fR? \fIdir\fR ?\fIpattern pattern ...\fR?
 .VE
 .fi
 .BE
@@ -101,6 +101,10 @@ interpreters.
 
 .SH OPTIONS
 The optional switches are:
+.TP 15
+\fB\-direct\fR
+The generated index will implement direct loading of the package
+upon \fBpackage require\fR.  This is the default.
 .TP 15
 \fB\-lazy\fR
 The generated index will manage to delay loading the package until the
@@ -231,6 +235,9 @@ other files that provide part of the same package.
 If you must use \fB\-load\fP,
 then you must specify the scripts first; otherwise the package loaded from
 the binary file may mask the package defined by the scripts.
+
+.SH "SEE ALSO"
+package(n)
 
 .SH KEYWORDS
 auto-load, index, package, version

@@ -135,7 +135,7 @@ Unicode string.  Storage for the return value is appended to the
 end of the \fBTcl_DString\fR.
 .PP
 \fBTcl_UtfToUniCharDString\fR coverts the given UTF-8 string to Unicode,
-storing the result in the previously-initialized \fBTcl_Dstring\fR.
+storing the result in the previously-initialized \fBTcl_DString\fR.
 you may either specify the length of the given UTF-8 string or "-1",
 in which case \fBTcl_UtfToUniCharDString\fR uses \fBstrlen\fR to
 calculate the length.  The return value is a pointer to the Unicode
@@ -230,4 +230,3 @@ supported by \fBTcl_UtfBackslash\fR.
 
 .SH KEYWORDS
 utf, unicode, backslash
-

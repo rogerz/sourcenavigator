@@ -44,7 +44,7 @@ The \fBeof\fR and \fBfblocked\fR commands can be used to distinguish
 these three cases.
 
 .SH "SEE ALSO"
-eof(n), fblocked(n)
+file(n), eof(n), fblocked(n)
 
 .SH KEYWORDS
 blocking, channel, end of file, end of line, line, nonblocking, read

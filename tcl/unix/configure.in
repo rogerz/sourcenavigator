@@ -2,18 +2,15 @@
 dnl	This file is an input file used by the GNU "autoconf" program to
 dnl	generate the file "configure", which is run during Tcl installation
 dnl	to configure the system for the local environment.
-
-# CYGNUS LOCAL, need 2.5 or higher for --bindir et al
-AC_PREREQ(2.5)
-# END CYGNUS LOCAL
+#
+# RCS: @(#) $Id$
 
 AC_INIT(../generic/tcl.h)
-# RCS: @(#) $Id$
 
 TCL_VERSION=8.3
 TCL_MAJOR_VERSION=8
 TCL_MINOR_VERSION=3
-TCL_PATCH_LEVEL=".2"
+TCL_PATCH_LEVEL=".5"
 VERSION=${TCL_VERSION}
 
 #------------------------------------------------------------------------
@@ -26,35 +23,23 @@ fi
 if test "${exec_prefix}" = "NONE"; then
     exec_prefix=$prefix
 fi
+# libdir must be a fully qualified path and (not ${exec_prefix}/lib)
+eval libdir="$libdir"
 TCL_SRC_DIR=`cd $srcdir/..; pwd`
 
 #------------------------------------------------------------------------
 # Standard compiler checks
 #------------------------------------------------------------------------
 
-AC_PROG_CC
+# If the user did not set CFLAGS, set it now to keep
+# the AC_PROG_CC macro from adding "-g -O2".
+if test "${CFLAGS+set}" != "set" ; then
+    CFLAGS=""
+fi
+
 AC_PROG_RANLIB
-
+SC_ENABLE_GCC
 AC_HAVE_HEADERS(unistd.h limits.h)
-
-# CYGNUS LOCAL
-# dje/win32
-AR=${AR-ar}
-# We need this for substitutions in Makefile.in.
-AC_PROG_INSTALL
-# END CYGNUS LOCAL
-
-#--------------------------------------------------------------------
-# CYGNUS LOCAL:
-# This is for LynxOS, which needs a flag to force true POSIX when
-# building. It's weirder than that, cause the flag varies depending
-# how old the compiler is. So...
-# -X is for the old "cc" and "gcc" (based on 1.42)
-# -mposix is for the new gcc (at least 2.5.8)
-# This modifies the value of $CC to have the POSIX flag added
-# so everything will configure correctly.
-#--------------------------------------------------------------------
-CY_AC_TCL_LYNX_POSIX
 
 #------------------------------------------------------------------------
 # Threads support
@@ -85,18 +70,18 @@ fi
 #--------------------------------------------------------------------
 
 # Check if Posix compliant getcwd exists, if not we'll use getwd.
-AC_CHECK_FUNCS(getcwd, , AC_DEFINE(USEGETWD))
+AC_CHECK_FUNCS(getcwd, , [AC_DEFINE(USEGETWD)])
 # Nb: if getcwd uses popen and pwd(1) (like SunOS 4) we should really
 # define USEGETWD even if the posix getcwd exists. Add a test ?
 
 AC_REPLACE_FUNCS(opendir strstr)
 
 AC_REPLACE_FUNCS(strtol tmpnam waitpid)
-AC_CHECK_FUNC(strerror, , AC_DEFINE(NO_STRERROR))
-AC_CHECK_FUNC(getwd, , AC_DEFINE(NO_GETWD))
-AC_CHECK_FUNC(wait3, , AC_DEFINE(NO_WAIT3))
-AC_CHECK_FUNC(uname, , AC_DEFINE(NO_UNAME))
-AC_CHECK_FUNC(realpath, , AC_DEFINE(NO_REALPATH))
+AC_CHECK_FUNC(strerror, , [AC_DEFINE(NO_STRERROR)])
+AC_CHECK_FUNC(getwd, , [AC_DEFINE(NO_GETWD)])
+AC_CHECK_FUNC(wait3, , [AC_DEFINE(NO_WAIT3)])
+AC_CHECK_FUNC(uname, , [AC_DEFINE(NO_UNAME)])
+AC_CHECK_FUNC(realpath, , [AC_DEFINE(NO_REALPATH)])
 
 #--------------------------------------------------------------------
 #	Supply substitutes for missing POSIX header files.  Special
@@ -152,7 +137,7 @@ SC_TIME_HANDLER
 #	in struct stat.  But we might be able to use fstatfs instead.
 #--------------------------------------------------------------------
 AC_STRUCT_ST_BLKSIZE
-AC_CHECK_FUNC(fstatfs, , AC_DEFINE(NO_FSTATFS))
+AC_CHECK_FUNC(fstatfs, , [AC_DEFINE(NO_FSTATFS)])
 
 #--------------------------------------------------------------------
 #       Some system have no memcmp or it does not work with 8 bit
@@ -165,7 +150,7 @@ AC_FUNC_MEMCMP
 #       have no memmove (we assume they have bcopy instead).
 #       {The replacement define is in compat/string.h}
 #--------------------------------------------------------------------
-AC_CHECK_FUNC(memmove, , AC_DEFINE(NO_MEMMOVE) AC_DEFINE(NO_STRING_H))
+AC_CHECK_FUNC(memmove, , [AC_DEFINE(NO_MEMMOVE) AC_DEFINE(NO_STRING_H)])
 
 #--------------------------------------------------------------------
 #	On some systems strstr is broken: it returns a pointer even
@@ -262,7 +247,7 @@ AC_TYPE_UID_T
 #	provided.  This version only works with V7-style directories.
 #--------------------------------------------------------------------
 
-AC_CHECK_FUNC(opendir, , AC_DEFINE(USE_DIRENT2_H))
+AC_CHECK_FUNC(opendir, , [AC_DEFINE(USE_DIRENT2_H)])
 
 #--------------------------------------------------------------------
 #	The check below checks whether <sys/wait.h> defines the type
@@ -301,54 +286,6 @@ if test $tcl_ok = yes; then
 fi
 
 #--------------------------------------------------------------------
-#	Check to see whether the system provides a vfork kernel call.
-#	If not, then use fork instead.  Also, check for a problem with
-#	vforks and signals that can cause core dumps if a vforked child
-#	resets a signal handler.  If the problem exists, then use fork
-#	instead of vfork.
-#--------------------------------------------------------------------
-
-AC_TYPE_SIGNAL()
-AC_CHECK_FUNC(vfork, tcl_ok=1, tcl_ok=0)
-if test "$tcl_ok" = 1; then
-    AC_MSG_CHECKING([vfork/signal bug]);
-    AC_TRY_RUN([
-#include <stdio.h>
-#include <signal.h>
-#include <sys/wait.h>
-int gotSignal = 0;
-sigProc(sig)
-    int sig;
-{
-    gotSignal = 1;
-}
-main()
-{
-    int pid, sts;
-    (void) signal(SIGCHLD, sigProc);
-    pid = vfork();
-    if (pid <  0) {
-	exit(1);
-    } else if (pid == 0) {
-	(void) signal(SIGCHLD, SIG_DFL);
-	_exit(0);
-    } else {
-	(void) wait(&sts);
-    }
-    exit((gotSignal) ? 0 : 1);
-}], tcl_ok=1, tcl_ok=0, tcl_ok=0)
-    if test "$tcl_ok" = 1; then
-	AC_MSG_RESULT(ok)
-    else
-	AC_MSG_RESULT([buggy, using fork instead])
-    fi
-fi
-rm -f core
-if test "$tcl_ok" = 0; then
-    AC_DEFINE(vfork, fork)
-fi
-
-#--------------------------------------------------------------------
 #	Check whether there is an strncasecmp function on this system.
 #	This is a bit tricky because under SCO it's in -lsocket and
 #	under Sequent Dynix it's in -linet.
@@ -376,8 +313,10 @@ fi
 #	   declare it.
 #--------------------------------------------------------------------
 
-AC_CHECK_FUNC(BSDgettimeofday, AC_DEFINE(HAVE_BSDGETTIMEOFDAY),
-	AC_CHECK_FUNC(gettimeofday, , AC_DEFINE(NO_GETTOD)))
+AC_CHECK_FUNC(BSDgettimeofday,
+    [AC_DEFINE(HAVE_BSDGETTIMEOFDAY)], [
+    AC_CHECK_FUNC(gettimeofday, , [AC_DEFINE(NO_GETTOD)])
+])
 AC_MSG_CHECKING([for gettimeofday declaration])
 AC_EGREP_HEADER(gettimeofday, sys/time.h, AC_MSG_RESULT(present), [
     AC_MSG_RESULT(missing)
@@ -400,7 +339,6 @@ AC_MSG_RESULT($tcl_ok)
 if test $tcl_ok = yes; then
     AC_DEFINE(HAVE_SIGNED_CHAR)
 fi
-
 
 #--------------------------------------------------------------------
 # Look for libraries that we will need when compiling the Tcl shell
@@ -443,25 +381,18 @@ TCL_SHARED_LIB_SUFFIX=${SHARED_LIB_SUFFIX}
 
 SC_ENABLE_SHARED
 
+TCL_LD_SEARCH_FLAGS="${LD_SEARCH_FLAGS}"
 if test "${SHARED_BUILD}" = "1" -a "${SHLIB_SUFFIX}" != "" ; then
     TCL_SHLIB_CFLAGS="${SHLIB_CFLAGS}"
-    TCL_LD_SEARCH_FLAGS="${LD_SEARCH_FLAGS}"
-    TCL_TOOL_SHARED_LIB_LONGNAME(TCL_LIB_FILE, tcl, ${TCL_SHARED_LIB_SUFFIX})
-    
-    # FIXME: Why does MAKE_LIB not use a generic LIB_FILE variable
-    # that is replaced with the Makefiles specific stub lib name?
-    if test "x$DL_OBJS" = "xtclLoadAout.o"; then
-	MAKE_LIB="\${STLIB_LD} \${TCL_LIB_FILE} \${OBJS}"
-    else
-	MAKE_LIB="\${SHLIB_LD} -o \${TCL_LIB_FILE} \${OBJS} ${SHLIB_LD_LIBS}"
-	RANLIB=":"
-    fi
+    eval "TCL_LIB_FILE=libtcl${TCL_SHARED_LIB_SUFFIX}"
+    MAKE_LIB="\${SHLIB_LD} ${TCL_SHLIB_LD_EXTRAS} -o \[$]@ \${OBJS} ${SHLIB_LD_LIBS}"
+    RANLIB=:
 else
     case $system in
         BSD/OS*)
 	    ;;
 
-	AIX-*)
+	AIX-[[1-4]].*)
             ;;
 
         *)
@@ -469,10 +400,16 @@ else
 	    ;;
     esac
     TCL_SHLIB_CFLAGS=""
-    TCL_LD_SEARCH_FLAGS="${LD_SEARCH_FLAGS}"
-    TCL_TOOL_STATIC_LIB_LONGNAME(TCL_LIB_FILE, tcl, ${TCL_UNSHARED_LIB_SUFFIX})    
-    MAKE_LIB="\${STLIB_LD} \${TCL_LIB_FILE} \${OBJS}"
+    eval "TCL_LIB_FILE=libtcl${TCL_UNSHARED_LIB_SUFFIX}"
+    MAKE_LIB="\${STLIB_LD} \[$]@ \${OBJS}"
 fi
+
+# tclConfig.sh needs a version of the _LIB_SUFFIX that has been eval'ed
+# so that the backslashes quoting the DBX braces are dropped.
+
+# Trick to replace DBGX with TCL_DBGX
+DBGX='${TCL_DBGX}'
+eval "TCL_LIB_FILE=${TCL_LIB_FILE}"
 
 # Note:  in the following variable, it's important to use the absolute
 # path name of the Tcl directory rather than "..":  this is because
@@ -480,28 +417,28 @@ fi
 # up the Tcl library.
 
 if test "$SHARED_BUILD" = "0" -o $TCL_NEEDS_EXP_FILE = 0; then
-    TCL_TOOL_LIB_SHORTNAME(TCL_LIB_FLAG, tcl, $TCL_VERSION)
-    TCL_TOOL_LIB_SPEC(TCL_BUILD_LIB_SPEC, `pwd`, ${TCL_LIB_FLAG})
-    TCL_TOOL_LIB_SPEC(TCL_LIB_SPEC, ${exec_prefix}/lib, ${TCL_LIB_FLAG})
+    if test "${TCL_LIB_VERSIONS_OK}" = "ok"; then
+        TCL_LIB_FLAG="-ltcl${TCL_VERSION}\${TCL_DBGX}"
+    else
+        TCL_LIB_FLAG="-ltcl`echo ${TCL_VERSION} | tr -d .`\${TCL_DBGX}"
+    fi
+    TCL_BUILD_LIB_SPEC="-L`pwd` ${TCL_LIB_FLAG}"
+    TCL_LIB_SPEC="-L${libdir} ${TCL_LIB_FLAG}"
 else
-    # FIXME: This if branch needs to be updated with respect
-    # to the library macro changes above!
     TCL_BUILD_EXP_FILE="lib.exp"
     eval "TCL_EXP_FILE=libtcl${TCL_EXPORT_FILE_SUFFIX}"
 
     # Replace DBGX with TCL_DBGX
     eval "TCL_EXP_FILE=\"${TCL_EXP_FILE}\""
     
-    if test "$using_gcc" = "yes" ; then
+    if test "$GCC" = "yes" ; then
 	TCL_BUILD_LIB_SPEC="-Wl,-bI:`pwd`/${TCL_BUILD_EXP_FILE} -L`pwd`"
-	TCL_LIB_SPEC="-Wl,-bI:${exec_prefix}/lib/${TCL_EXP_FILE} -L`pwd`"    
+	TCL_LIB_SPEC="-Wl,-bI:${libdir}/${TCL_EXP_FILE} -L`pwd`"
     else
 	TCL_BUILD_LIB_SPEC="-bI:`pwd`/${TCL_BUILD_EXP_FILE}"
-	TCL_LIB_SPEC="-bI:${exec_prefix}/lib/${TCL_EXP_FILE}"    
+	TCL_LIB_SPEC="-bI:${libdir}/${TCL_EXP_FILE}"
     fi
 fi
-TCL_TOOL_LIB_PATH(TCL_LIB_FULL_PATH, `pwd`, ${TCL_LIB_FILE})
-
 VERSION='${VERSION}'
 eval "CFG_TCL_SHARED_LIB_SUFFIX=${TCL_SHARED_LIB_SUFFIX}"
 eval "CFG_TCL_UNSHARED_LIB_SUFFIX=${TCL_UNSHARED_LIB_SUFFIX}"
@@ -516,27 +453,33 @@ VERSION=${TCL_VERSION}
 #--------------------------------------------------------------------
 
 if test "$prefix" != "$exec_prefix"; then
-    TCL_PACKAGE_PATH="${exec_prefix}/lib ${prefix}/lib"
+    TCL_PACKAGE_PATH="${libdir} ${prefix}/lib"
 else
     TCL_PACKAGE_PATH="${prefix}/lib"
 fi
 
 #--------------------------------------------------------------------
 #       The statements below define various symbols relating to Tcl
-#       stub support. Note that the STUB_LIB_FILE variable must
-#       be set in the Makefile before running MAKE_STUB_LIB.
+#       stub support.
 #--------------------------------------------------------------------
 
-MAKE_STUB_LIB="\${STLIB_LD} \${STUB_LIB_FILE} \${STUB_LIB_OBJS}"
+# Replace ${VERSION} with contents of ${TCL_VERSION}
+eval "TCL_STUB_LIB_FILE=libtclstub${TCL_UNSHARED_LIB_SUFFIX}"
+# Replace DBGX with TCL_DBGX
+eval "TCL_STUB_LIB_FILE=\"${TCL_STUB_LIB_FILE}\""
 
-TCL_TOOL_STATIC_LIB_LONGNAME(TCL_STUB_LIB_FILE, tclstub, ${TCL_UNSHARED_LIB_SUFFIX})
+MAKE_STUB_LIB="\${STLIB_LD} \[$]@ \${STUB_LIB_OBJS}"
 
-TCL_TOOL_LIB_SHORTNAME(TCL_STUB_LIB_FLAG, tclstub, $TCL_VERSION)
-TCL_TOOL_LIB_SPEC(TCL_BUILD_STUB_LIB_SPEC, `pwd`, ${TCL_STUB_LIB_FLAG})
-TCL_TOOL_LIB_SPEC(TCL_STUB_LIB_SPEC, ${exec_prefix}/lib, ${TCL_STUB_LIB_FLAG})
+if test "${TCL_LIB_VERSIONS_OK}" = "ok"; then
+    TCL_STUB_LIB_FLAG="-ltclstub${TCL_VERSION}\${TCL_DBGX}"
+else
+    TCL_STUB_LIB_FLAG="-ltclstub`echo ${TCL_VERSION} | tr -d .`\${TCL_DBGX}"
+fi
 
-TCL_TOOL_LIB_PATH(TCL_BUILD_STUB_LIB_PATH, `pwd`, ${TCL_STUB_LIB_FILE})
-TCL_TOOL_LIB_PATH(TCL_STUB_LIB_PATH, ${exec_prefix}/lib, ${TCL_STUB_LIB_FILE})
+TCL_BUILD_STUB_LIB_SPEC="-L`pwd` ${TCL_STUB_LIB_FLAG}"
+TCL_STUB_LIB_SPEC="-L${libdir} ${TCL_STUB_LIB_FLAG}"
+TCL_BUILD_STUB_LIB_PATH="`pwd`/${TCL_STUB_LIB_FILE}"
+TCL_STUB_LIB_PATH="${libdir}/${TCL_STUB_LIB_FILE}"
 
 #------------------------------------------------------------------------
 # tclConfig.sh refers to this by a different name
@@ -544,56 +487,61 @@ TCL_TOOL_LIB_PATH(TCL_STUB_LIB_PATH, ${exec_prefix}/lib, ${TCL_STUB_LIB_FILE})
 
 TCL_SHARED_BUILD=${SHARED_BUILD}
 
+AC_SUBST(TCL_VERSION)
+AC_SUBST(TCL_MAJOR_VERSION)
+AC_SUBST(TCL_MINOR_VERSION)
+AC_SUBST(TCL_PATCH_LEVEL)
+
+AC_SUBST(TCL_LIB_FILE)
+AC_SUBST(TCL_LIB_FLAG)
+AC_SUBST(TCL_LIB_SPEC)
 AC_SUBST(TCL_STUB_LIB_FILE)
 AC_SUBST(TCL_STUB_LIB_FLAG)
-AC_SUBST(TCL_BUILD_STUB_LIB_SPEC)
 AC_SUBST(TCL_STUB_LIB_SPEC)
-AC_SUBST(TCL_BUILD_STUB_LIB_PATH)
 AC_SUBST(TCL_STUB_LIB_PATH)
-AC_SUBST(MAKE_STUB_LIB)
+AC_SUBST(TCL_BUILD_STUB_LIB_SPEC)
+AC_SUBST(TCL_BUILD_STUB_LIB_PATH)
 
-AC_SUBST(BUILD_DLTEST)
-AC_SUBST(CFLAGS_DEFAULT)
+AC_SUBST(TCL_SRC_DIR)
+AC_SUBST(TCL_BIN_DIR)
+AC_SUBST(TCL_DBGX)
 AC_SUBST(CFG_TCL_SHARED_LIB_SUFFIX)
 AC_SUBST(CFG_TCL_UNSHARED_LIB_SUFFIX)
 AC_SUBST(CFG_TCL_EXPORT_FILE_SUFFIX)
-AC_SUBST(TCL_DBGX)
-AC_SUBST(DL_OBJS)
+
+AC_SUBST(CFLAGS)
+AC_SUBST(CFLAGS_DEFAULT)
 AC_SUBST(EXTRA_CFLAGS)
+AC_SUBST(DL_OBJS)
+
+AC_SUBST(LDFLAGS)
 AC_SUBST(LDFLAGS_DEFAULT)
 AC_SUBST(LDFLAGS_DEBUG)
 AC_SUBST(LDFLAGS_OPTIMIZE)
 AC_SUBST(AR)
 AC_SUBST(RANLIB)
-AC_SUBST(MAKE_LIB)
-AC_SUBST(TCL_SHARED_BUILD)
-AC_SUBST(SHLIB_CFLAGS)
-AC_SUBST(SHLIB_LD)
+
 AC_SUBST(STLIB_LD)
+AC_SUBST(SHLIB_LD)
 AC_SUBST(SHLIB_LD_LIBS)
+AC_SUBST(SHLIB_CFLAGS)
 AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(TCL_SHARED_BUILD)
+
 AC_SUBST(TCL_BUILD_LIB_SPEC)
 AC_SUBST(TCL_LD_SEARCH_FLAGS)
-AC_SUBST(TCL_LDFLAGS_DEBUG)
-AC_SUBST(TCL_LDFLAGS_OPTIMIZE)
-AC_SUBST(TCL_LIB_FILE)
-AC_SUBST(TCL_LIB_FULL_PATH)
-AC_SUBST(TCL_LIB_FLAG)
 AC_SUBST(TCL_NEEDS_EXP_FILE)
 AC_SUBST(TCL_BUILD_EXP_FILE)
 AC_SUBST(TCL_EXP_FILE)
-AC_SUBST(TCL_LIB_SPEC)
+
 AC_SUBST(TCL_LIB_VERSIONS_OK)
-AC_SUBST(TCL_MAJOR_VERSION)
-AC_SUBST(TCL_MINOR_VERSION)
-AC_SUBST(TCL_PACKAGE_PATH)
-AC_SUBST(TCL_PATCH_LEVEL)
 AC_SUBST(TCL_SHARED_LIB_SUFFIX)
 AC_SUBST(TCL_SHLIB_CFLAGS)
-AC_SUBST(TCL_SRC_DIR)
 AC_SUBST(TCL_UNSHARED_LIB_SUFFIX)
-AC_SUBST(TCL_VERSION)
-AC_SUBST(VENDORPREFIX)
+
+AC_SUBST(MAKE_LIB)
+AC_SUBST(MAKE_STUB_LIB)
+AC_SUBST(BUILD_DLTEST)
+AC_SUBST(TCL_PACKAGE_PATH)
 
 AC_OUTPUT(Makefile tclConfig.sh)
-

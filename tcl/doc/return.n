@@ -85,5 +85,8 @@ a value for the \fBerrorCode\fR variable.
 If the option is not specified then \fBerrorCode\fR will
 default to \fBNONE\fR.
 
+.SH "SEE ALSO"
+break(n), continue(n), error(n), proc(n)
+
 .SH KEYWORDS
 break, continue, error, procedure, return

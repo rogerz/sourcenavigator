@@ -48,15 +48,6 @@ Tcl_Mutex tclObjMutex;
 static char emptyString;
 char *tclEmptyStringRep = &emptyString;
 
-/*
- * The number of Tcl objects ever allocated (by Tcl_NewObj) and freed
- * (by TclFreeObj).
- */
-
-#ifdef TCL_COMPILE_STATS
-long tclObjsAlloced = 0;
-long tclObjsFreed = 0;
-#endif /* TCL_COMPILE_STATS */
 
 /*
  * Prototypes for procedures defined later in this file:
@@ -409,12 +400,15 @@ Tcl_NewObj()
      */
 
     Tcl_MutexLock(&tclObjMutex);
+#ifdef PURIFY
+    objPtr = (Tcl_Obj *) Tcl_Ckalloc(sizeof(Tcl_Obj));
+#else
     if (tclFreeObjList == NULL) {
 	TclAllocateFreeObjects();
     }
     objPtr = tclFreeObjList;
     tclFreeObjList = (Tcl_Obj *) tclFreeObjList->internalRep.otherValuePtr;
-    
+#endif    
     objPtr->refCount = 0;
     objPtr->bytes    = tclEmptyStringRep;
     objPtr->length   = 0;
@@ -523,10 +517,7 @@ Tcl_DbNewObj(file, line)
 void
 TclAllocateFreeObjects()
 {
-    Tcl_Obj tmp[2];
-    size_t objSizePlusPadding =	/* NB: this assumes byte addressing. */
-	((int)(&(tmp[1])) - (int)(&(tmp[0])));
-    size_t bytesToAlloc = (OBJS_TO_ALLOC_EACH_TIME * objSizePlusPadding);
+    size_t bytesToAlloc = (OBJS_TO_ALLOC_EACH_TIME * sizeof(Tcl_Obj));
     char *basePtr;
     register Tcl_Obj *prevPtr, *objPtr;
     register int i;
@@ -536,10 +527,10 @@ TclAllocateFreeObjects()
 
     prevPtr = NULL;
     objPtr = (Tcl_Obj *) basePtr;
-    for (i = 0;  i < OBJS_TO_ALLOC_EACH_TIME;  i++) {
+    for (i = 0; i < OBJS_TO_ALLOC_EACH_TIME; i++) {
 	objPtr->internalRep.otherValuePtr = (VOID *) prevPtr;
 	prevPtr = objPtr;
-	objPtr = (Tcl_Obj *) (((char *)objPtr) + objSizePlusPadding);
+	objPtr++;
     }
     tclFreeObjList = prevPtr;
 }
@@ -594,7 +585,7 @@ TclFreeObj(objPtr)
      */
 
     Tcl_MutexLock(&tclObjMutex);
-#ifdef TCL_MEM_DEBUG
+#if defined(TCL_MEM_DEBUG) || defined(PURIFY)
     ckfree((char *) objPtr);
 #else
     objPtr->internalRep.otherValuePtr = (VOID *) tclFreeObjList;
@@ -648,15 +639,7 @@ Tcl_DuplicateObj(objPtr)
     if (objPtr->bytes == NULL) {
 	dupPtr->bytes = NULL;
     } else if (objPtr->bytes != tclEmptyStringRep) {
-	int len = objPtr->length;
-	
-	dupPtr->bytes = (char *) ckalloc((unsigned) len+1);
-	if (len > 0) {
-	    memcpy((VOID *) dupPtr->bytes, (VOID *) objPtr->bytes,
-		   (unsigned) len);
-	}
-	dupPtr->bytes[len] = '\0';
-	dupPtr->length = len;
+	TclInitStringRep(dupPtr, objPtr->bytes, objPtr->length);
     }
     
     if (typePtr != NULL) {
@@ -1003,7 +986,8 @@ SetBooleanFromAny(interp, objPtr)
     char lowerCase[10];
     int newBool, length;
     register int i;
-    double dbl;
+    double dblValue;
+    long intValue;
 
     /*
      * Get the string representation. Make it up-to-date if necessary.
@@ -1060,15 +1044,36 @@ SetBooleanFromAny(interp, objPtr)
 	}
     } else {
         /*
-         * Still might be a string containing the characters representing an
-         * int or double that wasn't handled above. This would be a string
-         * like "27" or "1.0" that is non-zero and not "1". Such a string
-         * whould result in the boolean value true. We try converting to
-         * double. If that succeeds and the resulting double is non-zero, we
-         * have a "true". Note that numbers can't have embedded NULLs.
+         * Still might be a string containing the characters
+         * representing an int or double that wasn't handled above.
+         * This would be a string like "27", "1.0" or "0xac" that is
+         * non-zero and not "1".  Such a string whould result in the
+         * boolean value true.  We try converting to long and then to
+         * double.  If either succeeds and the resulting value is
+         * non-zero, we have a "true".  Note that numbers can't have
+         * embedded NULLs.
+	 *
+	 * (Int handling added because of Bug 548686)
 	 */
 
-	dbl = strtod(string, &end);
+	intValue = strtol(string, &end, 0);
+	if (end != string) {
+	    /*
+	     * Make sure the string has no garbage after the end of
+	     * the int.
+	     */
+	
+	    while ((end < (string+length))
+		   && isspace(UCHAR(*end))) { /* INTL: ISO only */
+		end++;
+	    }
+	    if (end == (string+length)) {
+		newBool = (intValue != 0);
+		goto goodBoolean;
+	    }
+	}
+
+	dblValue = strtod(string, &end);
 	if (end == string) {
 	    goto badBoolean;
 	}
@@ -1084,9 +1089,10 @@ SetBooleanFromAny(interp, objPtr)
 	if (end != (string+length)) {
 	    goto badBoolean;
 	}
-	newBool = (dbl != 0.0);
+	newBool = (dblValue != 0.0);
     }
 
+    goodBoolean:
     /*
      * Free the old internalRep before setting the new one. We do this as
      * late as possible to allow the conversion code, in particular

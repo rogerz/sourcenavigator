@@ -136,4 +136,3 @@ test lreplace-3.1 {lreplace won't modify shared argument objects} {
 catch {unset foo}
 ::tcltest::cleanupTests
 return
-

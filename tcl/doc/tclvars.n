@@ -87,7 +87,7 @@ The path to the trash directory.
 \fBSTART_UP_FOLDER\fR
 The path to the start up directory.
 .TP
-\fBPWD\fR
+\fBHOME\fR
 The path to the application's default directory.
 .PP
 You can also create your own environment variables for the Macintosh.
@@ -393,6 +393,9 @@ incompatibilities and changes to \fIy\fR represent small enhancements and
 bug fixes that retain backward compatibility.
 The value of this variable is returned by the \fBinfo tclversion\fR
 command.
+
+.SH "SEE ALSO"
+eval(n)
 
 .SH KEYWORDS
 arithmetic, bytecode, compiler, error, environment, POSIX, precision, subprocess, variables

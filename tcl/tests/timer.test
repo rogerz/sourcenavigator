@@ -28,7 +28,7 @@ test timer-1.1 {Tcl_CreateTimerHandler procedure} {
     foreach i {100 200 1000 50 150} {
 	after $i lappend x $i
     }
-    after 200
+    after 210
     update
     set x
 } {50 100 150 200}
@@ -43,7 +43,7 @@ test timer-2.1 {Tcl_DeleteTimerHandler procedure} {
     }
     after cancel lappend x 150
     after cancel lappend x 50
-    after 200
+    after 210
     update
     set x
 } {100 200}
@@ -67,7 +67,7 @@ test timer-3.2 {TimerHandlerEventProc procedure: multiple timers} {
     foreach i {200 600 1000} {
 	after $i lappend x $i
     }
-    after 200
+    after 210
     set result ""
     set x ""
     update
@@ -99,7 +99,7 @@ test timer-3.4 {TimerHandlerEventProc procedure: all expired timers fire} {
     after 100 lappend x a
     after 200 lappend x b
     after 300 lappend x c
-    after 300
+    after 310
     vwait x
     set x
 } {a b c}
@@ -541,7 +541,6 @@ test timer-9.1 {AfterCleanupProc procedure} {
 # cleanup
 ::tcltest::cleanupTests
 return
-
 
 
 

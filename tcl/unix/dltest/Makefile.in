@@ -13,11 +13,8 @@ SHLIB_SUFFIX =		@SHLIB_SUFFIX@
 SHLIB_VERSION =		@SHLIB_VERSION@
 SRC_DIR =		@srcdir@
 TCL_VERSION=		@TCL_VERSION@
-TCL_CFLAGS=		@TCL_CFLAGS@
 
 CFLAGS = -g
-#CC_SWITCHES = $(CFLAGS) ${TCL_CFLAGS} -I${SRC_DIR}/../../generic \
-#        -DTCL_MEM_DEBUG ${SHLIB_CFLAGS}
 CC_SWITCHES = $(CFLAGS) -I${SRC_DIR}/../../generic -DTCL_MEM_DEBUG \
 	${SHLIB_CFLAGS} -DUSE_TCL_STUBS ${AC_FLAGS}
 
@@ -44,8 +41,7 @@ pkge${SHLIB_SUFFIX}: $(SRC_DIR)/pkge.c
 	${SHLIB_LD} -o pkge${SHLIB_SUFFIX} pkge.o ${LIBS}
 
 clean:
-	rm -f *.o *${SHLIB_SUFFIX} lib.exp
+	rm -f *.o *${SHLIB_SUFFIX} config.cache config.log config.status lib.exp
 
 distclean: clean
-	rm -f Makefile config.cache config.log config.status
-
+	rm -f Makefile

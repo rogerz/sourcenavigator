@@ -1031,5 +1031,3 @@ NotifierThreadProc(clientData)
     Tcl_MutexUnlock(&notifierMutex);
 }
 #endif
-
-

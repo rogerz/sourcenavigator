@@ -79,11 +79,11 @@ test info-2.4 {info body option} {
         list [info body p] [info body q]
     }
 } {{return "x=$x"} {return "y=$y"}}
+# Prior to 8.3.0 this would cause a crash because [info body]
+# would return the bytecompiled version of foo, which the catch
+# would then try and eval out of the foo context, accessing
+# compiled local indices
 test info-2.5 {info body option, returning bytecompiled bodies} {
-    # Prior to 8.3.0 this would cause a crash because [info body]
-    # would return the bytecompiled version of foo, which the catch
-    # would then try and eval out of the foo context, accessing
-    # compiled local indices
     catch {unset args}
     proc foo {args} {
 	foreach v $args {
@@ -94,6 +94,14 @@ test info-2.5 {info body option, returning bytecompiled bodies} {
     foo a
     list [catch [info body foo] msg] $msg
 } {1 {can't read "args": no such variable}}
+# Fix for problem tested for in info-2.5 caused problems when
+# procedure body had no string rep (i.e. was not yet bytecode)
+# causing an empty string to be returned [Bug #545644]
+test info-2.6 {info body option, returning list bodies} {
+    proc foo args [list subst bar]
+    list [string bytelength [info body foo]] \
+	    [foo; string bytelength [info body foo]]
+} {9 9}
 
 # "info cmdcount" is no longer accurate for compiled commands!
 # The expected result for info-3.1 used to be "3" and is now "1"
@@ -330,6 +338,11 @@ test info-9.9 {info level option} {
     proc t1 {x} {info level $x}
     list [catch {t1 -3} msg] $msg
 } {1 {bad level "-3"}}
+test info-9.10 {info level option, namespaces} {
+    set msg [namespace eval t {info level 0}]
+    namespace delete t
+    set msg
+} {namespace eval t {info level 0}}
 
 set savedLibrary $tcl_library
 test info-10.1 {info library option} {
@@ -594,4 +607,3 @@ test info-20.5 {miscellaneous error conditions} {
 catch {namespace delete test_ns_info1 test_ns_info2}
 ::tcltest::cleanupTests
 return
-

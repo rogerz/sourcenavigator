@@ -10,6 +10,8 @@
 # 
 # RCS: @(#) $Id$
 
+package require Tcl 8
+
 namespace eval genStubs {
     # libraryName --
     #

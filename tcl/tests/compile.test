@@ -190,6 +190,14 @@ test compile-10.1 {BLACKBOX: exception stack overflow} {
     }
 } {}
 
+# Test to catch buffer overrun in TclCompileTokens from bug 530320
+# Backported from Tcl8.4 - hence the non-sequential numbering.
+test compile-12.3 {check for a buffer overrun} {
+    proc crash {} {
+	puts $array([expr {a+2}])
+    }
+    list [catch crash msg] $msg
+} {1 {syntax error in expression "a+2"}}
 
 
 # cleanup
@@ -200,7 +208,6 @@ catch {unset y}
 catch {unset a}
 ::tcltest::cleanupTests
 return
-
 
 
 

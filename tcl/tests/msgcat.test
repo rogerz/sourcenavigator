@@ -410,4 +410,3 @@ test msgcat-7.4 {::msgcat::mc, extra args are given to unknown} {
 
 ::tcltest::cleanupTests
 return
-

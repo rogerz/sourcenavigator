@@ -509,12 +509,13 @@ test fCmd-6.20 {CopyRenameOneFile: errno == EXDEV} {pcOnly} {
     catch {file delete -force c:/tcl8975@ d:/tcl8975@}
     file mkdir c:/tcl8975@
     if [catch {file rename c:/tcl8975@ d:/}] {
-	list d:/tcl8975@
+	set msg d:/tcl8975@
     } else {
 	set msg [glob c:/tcl8975@ d:/tcl8975@]
 	file delete -force d:/tcl8975@
-	set msg
     }
+    file delete -force c:/tcl8975@
+    set msg
 } {d:/tcl8975@}
 test fCmd-6.21 {CopyRenameOneFile: copy/rename: S_ISDIR(source)} \
 	{unixOnly notRoot} {
@@ -2156,7 +2157,6 @@ test fCmd-27.6 {TclFileAttrsCmd - setting more than one option} {foundGroup} {
 cleanup
 ::tcltest::cleanupTests
 return
-
 
 
 

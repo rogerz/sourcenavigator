@@ -11,6 +11,8 @@
 #
 # RCS: @(#) $Id$
 
+TCL_DLL_FILE="@TCL_DLL_FILE@"
+
 # Tcl's version number.
 TCL_VERSION='@TCL_VERSION@'
 TCL_MAJOR_VERSION='@TCL_MAJOR_VERSION@'
@@ -40,9 +42,6 @@ TCL_SHARED_BUILD=@TCL_SHARED_BUILD@
 
 # The name of the Tcl library (may be either a .a file or a shared library):
 TCL_LIB_FILE='@TCL_LIB_FILE@'
-
-# The fullpath of the Tcl library (used for dependency checking)
-TCL_LIB_FULL_PATH='@TCL_LIB_FULL_PATH@'
 
 # Flag to indicate whether shared libraries need export files.
 TCL_NEEDS_EXP_FILE=@TCL_NEEDS_EXP_FILE@
@@ -84,11 +83,8 @@ TCL_STLIB_LD='@STLIB_LD@'
 # explanation.
 TCL_SHLIB_LD_LIBS='@SHLIB_LD_LIBS@'
 
-# Suffix to use in the name of a shared library.
-TCL_SHLIB_SUFFIX='@DLLSUFFIX@'
-
-# Suffix to use in the name of an unshared library.
-TCL_LIB_SUFFIX='@LIBSUFFIX@'
+# Suffix to use for the name of a shared library.
+TCL_SHLIB_SUFFIX='@SHLIB_SUFFIX@'
 
 # Library file(s) to include in tclsh and other base applications
 # in order to provide facilities needed by DLOBJ above.
@@ -176,10 +172,3 @@ TCL_BUILD_STUB_LIB_PATH='@TCL_BUILD_STUB_LIB_PATH@'
 
 # Path to the Tcl stub library in the install directory.
 TCL_STUB_LIB_PATH='@TCL_STUB_LIB_PATH@'
-
-TCL_DLL_FILE="@TCL_DLL_FILE@"
-TCL_STUB_LIB_FILE="@TCL_STUB_LIB_FILE@"
-
-# Vendor prefix to be added to lib names
-TCL_VENDOR_PREFIX=@VENDORPREFIX@
-

@@ -453,7 +453,8 @@ EXTERN int		TclpHasSockets _ANSI_ARGS_((Tcl_Interp * interp));
 EXTERN struct tm *	TclpGetDate _ANSI_ARGS_((TclpTime_t time, int useGMT));
 /* 134 */
 EXTERN size_t		TclpStrftime _ANSI_ARGS_((char * s, size_t maxsize, 
-				CONST char * format, CONST struct tm * t));
+				CONST char * format, CONST struct tm * t, 
+				int useGMT));
 /* 135 */
 EXTERN int		TclpCheckStackSpace _ANSI_ARGS_((void));
 /* Slot 136 is reserved */
@@ -530,6 +531,10 @@ EXTERN int		TclChannelTransform _ANSI_ARGS_((Tcl_Interp * interp,
 /* 162 */
 EXTERN void		TclChannelEventScriptInvoker _ANSI_ARGS_((
 				ClientData clientData, int flags));
+/* 163 */
+EXTERN void *		TclGetInstructionTable _ANSI_ARGS_((void));
+/* 164 */
+EXTERN void		TclExpandCodeArray _ANSI_ARGS_((void * envPtr));
 
 typedef struct TclIntStubs {
     int magic;
@@ -620,25 +625,19 @@ typedef struct TclIntStubs {
     int (*tclOpenFileChannelDeleteProc) _ANSI_ARGS_((TclOpenFileChannelProc_ * proc)); /* 66 */
     int (*tclOpenFileChannelInsertProc) _ANSI_ARGS_((TclOpenFileChannelProc_ * proc)); /* 67 */
     int (*tclpAccess) _ANSI_ARGS_((CONST char * path, int mode)); /* 68 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     char * (*tclpAlloc) _ANSI_ARGS_((unsigned int size)); /* 69 */
-#endif
     int (*tclpCopyFile) _ANSI_ARGS_((CONST char * source, CONST char * dest)); /* 70 */
     int (*tclpCopyDirectory) _ANSI_ARGS_((CONST char * source, CONST char * dest, Tcl_DString * errorPtr)); /* 71 */
     int (*tclpCreateDirectory) _ANSI_ARGS_((CONST char * path)); /* 72 */
     int (*tclpDeleteFile) _ANSI_ARGS_((CONST char * path)); /* 73 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     void (*tclpFree) _ANSI_ARGS_((char * ptr)); /* 74 */
-#endif
     unsigned long (*tclpGetClicks) _ANSI_ARGS_((void)); /* 75 */
     unsigned long (*tclpGetSeconds) _ANSI_ARGS_((void)); /* 76 */
     void (*tclpGetTime) _ANSI_ARGS_((Tcl_Time * time)); /* 77 */
     int (*tclpGetTimeZone) _ANSI_ARGS_((unsigned long time)); /* 78 */
     int (*tclpListVolumes) _ANSI_ARGS_((Tcl_Interp * interp)); /* 79 */
     Tcl_Channel (*tclpOpenFileChannel) _ANSI_ARGS_((Tcl_Interp * interp, char * fileName, char * modeString, int permissions)); /* 80 */
-#if !defined(__CYGWIN__) || defined(__MINGW32__)
     char * (*tclpRealloc) _ANSI_ARGS_((char * ptr, unsigned int size)); /* 81 */
-#endif
     int (*tclpRemoveDirectory) _ANSI_ARGS_((CONST char * path, int recursive, Tcl_DString * errorPtr)); /* 82 */
     int (*tclpRenameFile) _ANSI_ARGS_((CONST char * source, CONST char * dest)); /* 83 */
     void *reserved84;
@@ -707,7 +706,7 @@ typedef struct TclIntStubs {
     void (*tcl_SetNamespaceResolvers) _ANSI_ARGS_((Tcl_Namespace * namespacePtr, Tcl_ResolveCmdProc * cmdProc, Tcl_ResolveVarProc * varProc, Tcl_ResolveCompiledVarProc * compiledVarProc)); /* 131 */
     int (*tclpHasSockets) _ANSI_ARGS_((Tcl_Interp * interp)); /* 132 */
     struct tm * (*tclpGetDate) _ANSI_ARGS_((TclpTime_t time, int useGMT)); /* 133 */
-    size_t (*tclpStrftime) _ANSI_ARGS_((char * s, size_t maxsize, CONST char * format, CONST struct tm * t)); /* 134 */
+    size_t (*tclpStrftime) _ANSI_ARGS_((char * s, size_t maxsize, CONST char * format, CONST struct tm * t, int useGMT)); /* 134 */
     int (*tclpCheckStackSpace) _ANSI_ARGS_((void)); /* 135 */
     void *reserved136;
     int (*tclpChdir) _ANSI_ARGS_((CONST char * dirName)); /* 137 */
@@ -736,6 +735,8 @@ typedef struct TclIntStubs {
     int (*tclpMatchFilesTypes) _ANSI_ARGS_((Tcl_Interp * interp, char * separators, Tcl_DString * dirPtr, char * pattern, char * tail, GlobTypeData * types)); /* 160 */
     int (*tclChannelTransform) _ANSI_ARGS_((Tcl_Interp * interp, Tcl_Channel chan, Tcl_Obj * cmdObjPtr)); /* 161 */
     void (*tclChannelEventScriptInvoker) _ANSI_ARGS_((ClientData clientData, int flags)); /* 162 */
+    void * (*tclGetInstructionTable) _ANSI_ARGS_((void)); /* 163 */
+    void (*tclExpandCodeArray) _ANSI_ARGS_((void * envPtr)); /* 164 */
 } TclIntStubs;
 
 #ifdef __cplusplus
@@ -1391,10 +1392,17 @@ extern TclIntStubs *tclIntStubsPtr;
 #define TclChannelEventScriptInvoker \
 	(tclIntStubsPtr->tclChannelEventScriptInvoker) /* 162 */
 #endif
+#ifndef TclGetInstructionTable
+#define TclGetInstructionTable \
+	(tclIntStubsPtr->tclGetInstructionTable) /* 163 */
+#endif
+#ifndef TclExpandCodeArray
+#define TclExpandCodeArray \
+	(tclIntStubsPtr->tclExpandCodeArray) /* 164 */
+#endif
 
 #endif /* defined(USE_TCL_STUBS) && !defined(USE_TCL_STUB_PROCS) */
 
 /* !END!: Do not edit above this line. */
 
 #endif /* _TCLINTDECLS */
-

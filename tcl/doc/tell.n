@@ -28,5 +28,8 @@ that this value is in terms of bytes, not characters like \fBread\fR.
 The value returned is -1 for channels that do not support
 seeking.
 
+.SH "SEE ALSO"
+file(n), open(n), close(n), gets(n), seek(n)
+
 .SH KEYWORDS
 access position, channel, seeking

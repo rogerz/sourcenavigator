@@ -17,6 +17,7 @@
 
 #include <Events.h>
 #include <Controls.h>
+#include <ControlDefinitions.h>
 #include <Windows.h>
 #include <TextEdit.h>
 #include <Fonts.h>
@@ -151,7 +152,7 @@ MacPanic(
 		    	part = FindControl(event.where, macWinPtr,
 				&okButtonHandle);
     	
-			if ((inButton == part) && 
+			if ((kControlButtonPart == part) && 
 				(TrackControl(okButtonHandle,
 					event.where, NULL))) {
 			    done = true;
@@ -175,7 +176,7 @@ MacPanic(
 		    if (stopIconHandle != NULL) {
 			PlotIcon(&iconRect, stopIconHandle);
 		    }
-		    TextBox(msg, strlen(msg), &textRect, teFlushDefault);
+		    TETextBox(msg, strlen(msg), &textRect, teFlushDefault);
 		    DrawControls(macWinPtr);
 		    EndUpdate(macWinPtr);
 	    }

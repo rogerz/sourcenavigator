@@ -706,4 +706,3 @@ TestgotsigCmd(clientData, interp, argc, argv)
     gotsig = "0";
     return TCL_OK;
 }
-

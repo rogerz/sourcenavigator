@@ -21,7 +21,7 @@ Tcltest \- Test harness support code and utilities
 .sp
 \fB::tcltest::cleanupTests \fI?runningMultipleTests?\fR
 .sp
-\fB::tcltest::getMatchingTestFiles\fR
+\fB::tcltest::getMatchingFiles\fR
 .sp
 \fB::tcltest::loadTestedCommands\fR
 .sp
@@ -93,7 +93,7 @@ files are generally used to run multiple tests.  For more details on how to
 run multiple tests, please see the section \fI"Running test files"\fR.
 This proc has no defined return value.
 .TP
-\fB::tcltest::getMatchingTestFiles\fP
+\fB::tcltest::getMatchingFiles\fP
 This command is used when you want to run multiple test files.  It returns
 the list of tests that should be sourced in an 'all.tcl' file.  See the
 section \fI"Running test files"\fR for more information.
@@ -735,7 +735,7 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
 set ::tcltest::testSingleFile false
 set ::tcltest::testsDirectory [file dir [info script]]
 
-foreach file [::tcltest::getMatchingTestFiles] {
+foreach file [::tcltest::getMatchingFiles] {
     if {[catch {source $file} msg]} {
         puts stdout $msg
     }

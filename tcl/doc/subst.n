@@ -44,5 +44,8 @@ subst {xyz {$a}}\fR
 .CE
 returns ``\fBxyz {44}\fR'', not ``\fBxyz {$a}\fR''.
 
+.SH "SEE ALSO"
+eval(n)
+
 .SH KEYWORDS
 backslash substitution, command substitution, variable substitution

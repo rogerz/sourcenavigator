@@ -62,6 +62,10 @@ test util-4.4 {Tcl_ConcatObj - backslash-space at end of argument} {
 test util-4.5 {Tcl_ConcatObj - backslash-space at end of argument} {
     concat a { } c
 } {a c}
+test util-4.6 {Tcl_ConcatObj - utf-8 sequence with "whitespace" char} {
+    # Check for Bug #227512.  If this violates C isspace, then it returns \xc3.
+    concat \xe0
+} \xe0
 
 test util-5.1 {Tcl_StringMatch} {
     string match ab*c abc
@@ -293,7 +297,6 @@ set tcl_precision 12
 # cleanup
 ::tcltest::cleanupTests
 return
-
 
 
 

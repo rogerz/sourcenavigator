@@ -39,5 +39,8 @@ The return value from the command is the result of the body script
 that was executed, or an empty string
 if none of the expressions was non-zero and there was no \fIbodyN\fR.
 
+.SH "SEE ALSO"
+expr(n), for(n), foreach(n)
+
 .SH KEYWORDS
 boolean, conditional, else, false, if, true

@@ -25,6 +25,12 @@
 #include <MoreFiles.h>
 #include <MoreFilesExtras.h>
 
+#ifdef __MSL__
+#include <unix.mac.h>
+#define TCL_FILE_CREATOR (__getcreator(0))
+#else
+#define TCL_FILE_CREATOR 'MPW '
+#endif
 
 /*
  * The following are flags returned by GetOpenMode.  They
@@ -136,7 +142,7 @@ static int		StdReady _ANSI_ARGS_((ClientData instanceData,
 
 static Tcl_ChannelType consoleChannelType = {
     "file",			/* Type name. */
-    StdIOBlockMode,		/* Set blocking/nonblocking mode.*/
+    (Tcl_ChannelTypeVersion)StdIOBlockMode,		/* Set blocking/nonblocking mode.*/
     StdIOClose,			/* Close proc. */
     StdIOInput,			/* Input proc. */
     StdIOOutput,		/* Output proc. */
@@ -153,7 +159,7 @@ static Tcl_ChannelType consoleChannelType = {
 
 static Tcl_ChannelType fileChannelType = {
     "file",			/* Type name. */
-    FileBlockMode,		/* Set blocking or
+    (Tcl_ChannelTypeVersion)FileBlockMode,		/* Set blocking or
                                  * non-blocking mode.*/
     FileClose,			/* Close proc. */
     FileInput,			/* Input proc. */
@@ -862,7 +868,7 @@ OpenFileChannel(
     }
 
     if ((err == fnfErr) && (mode & TCL_CREAT)) {
-	err = HCreate(fileSpec.vRefNum, fileSpec.parID, fileSpec.name, 'MPW ', 'TEXT');
+	err = HCreate(fileSpec.vRefNum, fileSpec.parID, fileSpec.name, TCL_FILE_CREATOR, 'TEXT');
 	if (err != noErr) {
 	    *errorCodePtr = errno = TclMacOSErrorToPosixError(err);
 	    Tcl_SetErrno(errno);

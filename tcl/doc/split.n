@@ -40,5 +40,8 @@ returns \fB"comp unix misc"\fR and
 .CE
 returns \fB"H e l l o { } w o r l d"\fR.
 
+.SH "SEE ALSO"
+join(n), list(n), string(n)
+
 .SH KEYWORDS
 list, split, string

@@ -1094,6 +1094,56 @@ test namespace-38.1 {UpdateStringOfNsName} {
          [namespace eval {} {namespace current}]
 } {:: ::}
 
+
+test namespace-41.1 {Shadowing byte-compiled commands, Bug: 231259} {
+    set res {}
+    namespace eval ns {
+	set res {}
+	proc test {} {
+	    set ::g 0
+	}  
+	lappend ::res [test]
+	proc set {a b} {
+	    ::set a [incr b]
+	}
+	lappend ::res [test]
+    }
+    namespace delete ns
+    set res
+} {0 1}
+
+# These tests were back-ported with the patch to [Bug 231259]
+test namespace-41.2 {Shadowing byte-compiled commands, Bug: 231259} {
+    set res {}
+    namespace eval ns {}
+    proc ns::a {i} {
+	variable b
+	proc set args {return "New proc is called"}
+	return [set b $i]
+    }
+    ns::a 1
+    set res [ns::a 2]
+    namespace delete ns
+    set res
+} {New proc is called}
+
+test namespace-41.3 {Shadowing byte-compiled commands, Bug: 231259} {knownbug} {
+    set res {}
+    namespace eval ns {
+	variable b 0
+    }
+
+    proc ns::a {i} {
+	variable b
+	proc set args {return "New proc is called"}
+	return [set b $i]
+    }
+    
+    set res [list [ns::a 1] $ns::b]
+    namespace delete ns
+    set res
+} {{New proc is called} 0}
+
 # cleanup
 catch {rename cmd1 {}}
 catch {unset l}
@@ -1102,7 +1152,6 @@ catch {unset trigger}
 eval namespace delete [namespace children :: test_ns_*]
 ::tcltest::cleanupTests
 return
-
 
 
 
