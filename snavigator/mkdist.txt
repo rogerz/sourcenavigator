@@ -1,0 +1,37 @@
+This file contains a checklist of steps that need to
+be taken to create a Source-Navigator release. All
+of the source code is located in the CVS repository.
+The assumption here is that a CVS tag has already
+been created for a particular release, and now the
+release file needs to be created.
+
+1. Check the code out of the CVS.
+
+Replace RELEASE_TAG with the tag for this specific
+release. It is important to checkout a clean CVS
+repo so that extra files that do not exist in the
+CVS do not get included in the released file.
+
+% setenv CVSROOT :pserver:anonymous@cvs.sourcenav.sourceforge.net:/cvsroot/sourcenav
+% cvs checkout -r RELEASE_TAG snavigator
+
+2. Double check the release number.
+
+The src/snavigator/configure.in script contains an
+entry like "AM_INIT_AUTOMAKE(sn,5.2a1)". Make sure
+the release number is updated correctly since this
+number will be used when creating the archive file.
+
+3. Run the release shell script.
+
+% cd src
+% sh snavigator/mkdist.sh
+
+The commands above will create a tar/gz file in
+the dist dir (defaults is /share/SN51/dist)
+
+4. FTP to upload.sourceforge.net
+
+5. Admin files for release on SourceForge site.
+
+6. Remove the checked out files

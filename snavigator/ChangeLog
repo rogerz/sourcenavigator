@@ -1,3 +1,8 @@
+2003-07-25  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* mkdist.txt: Add short description of steps
+	on must take to create a SN dist file.
+
 2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Add SN-52A1-2003-07-23 tag.
