@@ -1059,13 +1059,11 @@ class_browser_insert(ClientData clientData,
 
         /* A private member uses a special empty image */
         if (attr & PAF_PRIVATE) {
-            char * pstr = "private";
-            strcpy (imageptr, pstr);
-            imageptr += strlen(pstr);
+            strcpy (image, "cls_br_private_image");
+        } else {
+            /* finish image name */
+            strcpy (imageptr, "_image");
         }
-
-	/* finish image name */
-	strcpy (imageptr, "_image");
 
 	/* make text */
 	tag_name= strchr(actu_flds[MEMBER_POS],'(');
