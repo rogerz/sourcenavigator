@@ -1,5 +1,11 @@
 2003-02-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* unix/Makefile.in:
+	* win/Makefile.in: Install http2.0 not http2.3
+	directory since http2.3 does not exist.
+
+2003-02-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* unix/configure:
 	* win/configure: Regen to fix problem with timestamps
 	after import from sources.
