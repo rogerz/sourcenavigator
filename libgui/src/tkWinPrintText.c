@@ -277,7 +277,7 @@ PrintTextCmd(clientData, interp, argc, argv)
     }
 
     /*
-     * The second arg is the canvas widget.
+     * The second arg is the text widget.
      */
     if (!Tcl_GetCommandInfo(interp, argv[1], &textCmd)) {
 	Tcl_AppendResult(interp, "couldn't get text information for \"",
@@ -295,9 +295,22 @@ PrintTextCmd(clientData, interp, argc, argv)
     sprintf((char*)lpdi->lpszDocName,"SN - Printing\0");
     lpdi->lpszOutput=NULL;
 
-    textPtr = (TkText *)(textCmd.clientData);
+    /*
+     * Maintain compatibility if/when text is objectified.
+     */
+
+    if (textCmd.isNativeObjectProc)
+        textPtr = (TkText *)(textCmd.objClientData);
+    else
+        textPtr = (TkText *)(textCmd.clientData);
  
     tkwin = textPtr->tkwin;
+    /* Can't print unless we have a native window */
+    if (Tk_WindowId(tkwin) == None) {
+        Tcl_AppendResult(interp, "text was never mapped" , (char *) NULL);
+	goto error;
+    }
+
     dInfoPtr = textPtr->dInfoPtr;
     dlPtr=dInfoPtr->dLinePtr;
     memset(&pd,0,sizeof( PRINTDLG ));

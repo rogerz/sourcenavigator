@@ -1,3 +1,13 @@
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* src/tkWinPrintCanvas.c (PrintCanvasCmd):
+	* src/tkWinPrintText.c (PrintTextCmd): Check to
+	see if the Tcl command is object based and access
+	objClientData instead of clientData if it is.
+	Raise an error if the widget was never mapped.
+	This fixes a crash when printing canvas objects
+	under Windows.
+
 2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* libgui/configure: Regen to account for

@@ -78,8 +78,22 @@ PrintCanvasCmd(clientData, interp, argc, argv)
     sprintf((char*)lpdi->lpszDocName,"SN - Printing\0");
     lpdi->lpszOutput=NULL;
 
-    canvasPtr = (TkCanvas *)(canvCmd.clientData);
-  tkwin = canvasPtr->tkwin;
+    /*
+     * Canvas was objectified in Tk 8.3, keep backwards compatibility.
+     */
+
+    if (canvCmd.isNativeObjectProc)
+        canvasPtr = (TkCanvas *)(canvCmd.objClientData);
+    else
+        canvasPtr = (TkCanvas *)(canvCmd.clientData);
+
+    tkwin = canvasPtr->tkwin;
+    /* Can't print unless we have a native window */
+    if (Tk_WindowId(tkwin) == None) {
+        Tcl_AppendResult(interp, "canvas was never mapped" , (char *) NULL);
+	goto error;
+    }
+
     memset(&pd,0,sizeof( PRINTDLG ));
     pd.lStructSize  = sizeof( PRINTDLG );
     pd.hwndOwner    = NULL;
