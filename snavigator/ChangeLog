@@ -1,3 +1,28 @@
+2003-07-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* db/dbutils.c (db_insert_entry): When inserting
+	xref symbols for global variables, check for
+	UNDECLARED as the argument value. This argument
+	is passed to support xrefs to global variables
+	that are not declared. A special global variable
+	will be inserted in a file named GLOBAL for
+	undeclared global variables. This is needed so
+	that refs to undeclared global variables work.
+	The previous code was inserting a special global
+	only when a write to a global occurred at the
+	global scope, but that did not work when the
+	write happened inside a function.
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Pass the string UNDECLARED
+	as the symbol argument value for global variables.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Pass the string UNDECLARED
+	as the symbol argument value for global variables.
+	* tests/parsers/m4.test:
+	* tests/parsers/php.test: Update tests to account
+	for UNDECLARED argument being passed for global
+	variable symbols.
+
 2003-06-22  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/README.TXT: Mention that nested

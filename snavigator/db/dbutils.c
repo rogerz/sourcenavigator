@@ -1190,20 +1190,18 @@ db_insert_entry(int type,char *key_buf,char *data_buf)
 		}
 	}
 
-        /* If the ref from scope is the global namespace and
-         * the symbol is a global variable, then insert a
-         * special symbol that will act as the definition
-         * for the global variable. Use the GLOBAL file
-         * name and a function named GLOBAL as the special
-         * global namespace identifiers. We can't define
-         * a global variable multiple times in one file or
-         * in multiple files since the IDE would not see
-         * them as the same variable. A single variable
-         * definition will be emitted for each global var
-         * with the same name.
+        /* If we are dealing with an xref to a global
+         * variable and the special "UNDECLARED" marker
+         * is passed then add a define for the global
+         * variable if it has not already been defined.
+         * Use the fake file name "GLOBAL". We can't
+         * define a global multiple times since the
+         * IDE would not see them as the same variable
+         * and we can leave it undefined since the
+         * variable would not appear in the symbols list.
          */
-        if ((strncmp(tmp.field_value[1], "GLOBAL\001fu\001", 10) == 0) &&
-            (strncmp(tmp.field_value[5], "gv\001", 3) == 0)) {
+        if ((strncmp(tmp.field_value[5], "gv\001", 3) == 0) &&
+            (strcmp(xref_data_fields.field_value[1], "UNDECLARED") == 0)) {
             char * field, *end;
             char * varname;
             LongString var_key, data_key;

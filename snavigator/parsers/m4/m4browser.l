@@ -218,7 +218,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
                  NULL,
                  NULL,
                  x, /* refsymbol */
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  sn_line(),
                  SN_REF_READ);
@@ -264,7 +264,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
                  NULL,
                  NULL,
                  x, /* refsymbol */
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  sn_line(),
                  SN_REF_WRITE);

@@ -2474,7 +2474,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  NULL,
                  NULL,
                  varname,
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  line_start,
                  SN_REF_READ);
@@ -2491,7 +2491,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  NULL,
                  NULL,
                  varname,
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  line_start,
                  SN_REF_WRITE);

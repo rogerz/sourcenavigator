@@ -911,7 +911,7 @@ YY_RULE_SETUP
                  NULL,
                  NULL,
                  x, /* refsymbol */
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  sn_line(),
                  SN_REF_READ);
@@ -960,7 +960,7 @@ YY_RULE_SETUP
                  NULL,
                  NULL,
                  x, /* refsymbol */
-                 NULL,
+                 "UNDECLARED",
                  sn_current_file(),
                  sn_line(),
                  SN_REF_WRITE);

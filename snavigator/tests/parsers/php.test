@@ -775,7 +775,7 @@ tcltest::test var-2.0 { var write xref } {
 $var=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.1 { var read xref } {
@@ -784,7 +784,7 @@ tcltest::test var-2.1 { var read xref } {
 print $var;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.2 { global statement is not a var read } {
@@ -806,7 +806,7 @@ $var=1;
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>w<>000005<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.4 { global var read xref } {
@@ -818,7 +818,7 @@ print $var;
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>r<>000005<>f.php;<>UNDECLARED
 }
 
 
@@ -840,7 +840,7 @@ $var=1;
 }
 ?>
 }] {-l}
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000004<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000004<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.7 { no local var xref by default } {
@@ -861,7 +861,7 @@ print $var;
 }
 ?>
 }] {-l}
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000004<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000004<>f.php;<>UNDECLARED
 }
 
 
@@ -874,7 +874,7 @@ $var=1;
 }
 ?>
 }] {-l}
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000005<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000005<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.10 { local var read xref } {
@@ -886,7 +886,7 @@ print $var;
 }
 ?>
 }] {-l}
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000005<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000005<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.11 { multiple vars in global statement } {
@@ -899,8 +899,8 @@ print $var2;
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>
-PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-2.12 { multiple vars in global statement } {
@@ -914,9 +914,9 @@ print $var3;
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>
-PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
-PAF_CROSS_REF;#<>foo<>fu<>#<>var3<>gv<>r<>000007<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var1<>gv<>r<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>foo<>fu<>#<>var3<>gv<>r<>000007<>f.php;<>UNDECLARED
 }
 
 
@@ -926,7 +926,7 @@ tcltest::test var-3.0 { array var write xref } {
 $var[]=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.1 { array var write xref } {
@@ -935,7 +935,7 @@ tcltest::test var-3.1 { array var write xref } {
 $var[0]=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.2 { array var write xref } {
@@ -944,7 +944,7 @@ tcltest::test var-3.2 { array var write xref } {
 $var['name']=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.3 { array var write xref } {
@@ -953,7 +953,7 @@ tcltest::test var-3.3 { array var write xref } {
 $var["name"]=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.4 { array var write xref } {
@@ -962,7 +962,7 @@ tcltest::test var-3.4 { array var write xref } {
 $var[1][]=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.5 { array var write xref } {
@@ -971,7 +971,7 @@ tcltest::test var-3.5 { array var write xref } {
 $var[1][0]=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-3.6 { array var write xref } {
@@ -980,7 +980,7 @@ tcltest::test var-3.6 { array var write xref } {
 $var["hello"]['there']=1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 
@@ -990,7 +990,7 @@ tcltest::test var-4.0 { array var read xref } {
 print $var[];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.1 { array var read xref } {
@@ -999,7 +999,7 @@ tcltest::test var-4.1 { array var read xref } {
 print $var[0];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.2 { array var read xref } {
@@ -1008,7 +1008,7 @@ tcltest::test var-4.2 { array var read xref } {
 print $var['one'];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.3 { array var read xref } {
@@ -1017,7 +1017,7 @@ tcltest::test var-4.3 { array var read xref } {
 print $var["one"];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.4 { array var read xref } {
@@ -1026,7 +1026,7 @@ tcltest::test var-4.4 { array var read xref } {
 print $var[0][];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.5 { array var read xref } {
@@ -1035,7 +1035,7 @@ tcltest::test var-4.5 { array var read xref } {
 print $var["hello"][0];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.6 { array var read xref } {
@@ -1044,7 +1044,7 @@ tcltest::test var-4.6 { array var read xref } {
 print $var["hello"]["mello"]["fellow"];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-4.7 { super global array var read xref } {
@@ -1055,7 +1055,7 @@ function foo() {
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>_COOKIE<>gv<>r<>000004<>f.php;<>
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>_COOKIE<>gv<>r<>000004<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.0 { read and write xrefs } {
@@ -1064,8 +1064,8 @@ tcltest::test var-5.0 { read and write xrefs } {
 $var[$one] = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.1 { read and write xrefs } {
@@ -1074,8 +1074,8 @@ tcltest::test var-5.1 { read and write xrefs } {
 $var[$one];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.2 { read and write xrefs } {
@@ -1084,8 +1084,8 @@ tcltest::test var-5.2 { read and write xrefs } {
 $var[$one=0];
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.3 { read and write xrefs } {
@@ -1094,8 +1094,8 @@ tcltest::test var-5.3 { read and write xrefs } {
 $var++;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.4 { read and write xrefs } {
@@ -1107,14 +1107,14 @@ $var+=1;
 --$var;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.5 { read and write xrefs } {
@@ -1123,8 +1123,8 @@ tcltest::test var-5.5 { read and write xrefs } {
 $var["$str"] = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>str<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>str<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.6 { read and write xrefs } {
@@ -1133,8 +1133,8 @@ tcltest::test var-5.6 { read and write xrefs } {
 $var[0] += 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.7 { read and write xrefs } {
@@ -1143,8 +1143,8 @@ tcltest::test var-5.7 { read and write xrefs } {
 $var[$one=0] = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.8 { read and write xrefs } {
@@ -1153,7 +1153,7 @@ tcltest::test var-5.8 { read and write xrefs } {
 $var["one"."two"] = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.9 { read and write xrefs } {
@@ -1162,8 +1162,8 @@ tcltest::test var-5.9 { read and write xrefs } {
 $var[0]++
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.10 { read and write xrefs } {
@@ -1172,8 +1172,8 @@ tcltest::test var-5.10 { read and write xrefs } {
 ++$var["two"]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.11 { read and write xrefs } {
@@ -1182,8 +1182,8 @@ tcltest::test var-5.11 { read and write xrefs } {
 $var["one"."two"]++
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-5.12 { read and write xrefs } {
@@ -1192,8 +1192,8 @@ tcltest::test var-5.12 { read and write xrefs } {
 --$var["one"."two"]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 
@@ -1203,8 +1203,8 @@ tcltest::test var-6.0 { really a syntax error } {
 --$var["two"]++
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.1 { really a syntax error } {
@@ -1213,7 +1213,7 @@ tcltest::test var-6.1 { really a syntax error } {
 --$var["two"] = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.2 { prefix increment an array } {
@@ -1222,8 +1222,8 @@ tcltest::test var-6.2 { prefix increment an array } {
 --$var["two"]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.3 { nested array variables } {
@@ -1232,8 +1232,8 @@ tcltest::test var-6.3 { nested array variables } {
 $arr1[$arr2[0]]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.4 { nested array variables } {
@@ -1242,9 +1242,9 @@ tcltest::test var-6.4 { nested array variables } {
 $arr1[++$arr2[0]]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>w<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>w<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.5 { nested array variables } {
@@ -1253,9 +1253,9 @@ tcltest::test var-6.5 { nested array variables } {
 $arr1[$arr2[0] . $arr3[0]]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr3<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr3<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test var-6.6 { nested array variables } {
@@ -1264,19 +1264,19 @@ tcltest::test var-6.6 { nested array variables } {
 $arr1[$arr2[$arr3[0]]]
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr3<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr3<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr2<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>arr1<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
-tcltest::test var-6.6 { function call as index } {
+tcltest::test var-6.7 { function call as index } {
     browse_xref [save_file f.php {
 <?
 $var[foo()]
 ?>
 }]
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>foo<>fu<>p<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test comment-1.0 { comment } {
@@ -1831,7 +1831,7 @@ tcltest::test string-7.6 { var in double quoted string read xref } {
 print "$var";
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test string-7.7 { var in heredoc string read xref } {
@@ -1842,7 +1842,7 @@ $var
 END;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
 }
 
 tcltest::test string-7.8 { var in heredoc string read xref } {
@@ -1854,9 +1854,9 @@ $var
 END;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>UNDECLARED
 }
 
 
@@ -2415,7 +2415,7 @@ tcltest::test operator-1.0 { assignment operator } {
 $var = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test operator-1.3 { assignment operators } {
@@ -2434,28 +2434,28 @@ $var <<= 1;
 $var >>= 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000007<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000007<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000008<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000008<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000009<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000009<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000010<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000010<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000011<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000011<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000012<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000012<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000013<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000013<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000007<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000007<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000008<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000008<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000009<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000009<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000010<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000010<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000011<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000011<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000012<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000012<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000013<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000013<>f.php;<>UNDECLARED
 }
 
 
@@ -2466,7 +2466,7 @@ tcltest::test operator-2.0 { not an assignment operator } {
 $var == 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test operator-2.1 { not an assignment operator } {
@@ -2475,7 +2475,7 @@ tcltest::test operator-2.1 { not an assignment operator } {
 $var === 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test operator-2.2 { not an assignment operator } {
@@ -2484,7 +2484,7 @@ tcltest::test operator-2.2 { not an assignment operator } {
 $var != 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
 }
 
 tcltest::test operator-2.3 { not an assignment operator } {
@@ -2494,8 +2494,8 @@ $var . = 1;
 $var , = 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
 }
 
 tcltest::test operator-2.4 { not an assignment operator } {
@@ -2507,10 +2507,10 @@ $var ! = 1;
 $var and 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
-PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>UNDECLARED
 }
 
 
@@ -2603,6 +2603,14 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # The outer function needs to be added first so
 # that the tag is visible. Not sure how we can
 # work this since the function stack causes it.
+# Also, columns and lines for nested functions
+# seems to be hosed.
+# function foo() {
+#  function bar() {
+#    print hi;
+#  }
+# }
+
 
 # cleanup
 file delete f.php
