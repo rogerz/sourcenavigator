@@ -12,6 +12,13 @@ AC_ARG_PROGRAM
 dnl Configure setup.
 AC_PROG_CC
 AC_PROG_CPP
+
+dnl Autoconf 2.13 get the executable suffix wrong with VC++
+case "$host" in
+  *windows32*)
+    ac_cv_exeext=".exe"
+    ;;
+esac
 AC_EXEEXT
 AC_OBJEXT
 

@@ -1,3 +1,17 @@
+2002-04-24  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Explicitly set ac_cv_exeext
+	when compiling with VC++ since the AC_EXEEXT
+	from autoconf 2.13 incorrectly detects .pdb
+	as the executable extension.
+	* include/cdefs.h: When compiling with VC++,
+	use standard keywords and don't muck with
+	__inline because it is used in Windows
+	header files. This problem did not show
+	up until now because the Windows headers
+	used to be pulled in before cdef.h.
+
 2002-04-22  Mo DeJong  <supermo@bayarea.net>
 
 	Add mingw native/cross build support.
