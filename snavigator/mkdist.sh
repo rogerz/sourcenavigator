@@ -5,7 +5,7 @@
 # at the root of a clean CVS checkout.
 
 DIR=/tmp/sourcenav
-RELEASE=sourcenav-5.1.0
+RELEASE=sourcenav-5.1.1
 RELEASEDIR=$DIR/$RELEASE
 
 PWD=`pwd`

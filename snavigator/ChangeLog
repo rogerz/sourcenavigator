@@ -1,5 +1,9 @@
 2002-09-11  Mo DeJong  <supermo@bayarea.net>
 
+	* mkdist.sh: Update version to 5.1.1.
+
+2002-09-11  Mo DeJong  <supermo@bayarea.net>
+
 	* patches/tcl_configure.patch: Undo deletion of
 	configure patch since we do need it
 	to build using tcl module from 5.1.0.
