@@ -1,3 +1,8 @@
+2003-02-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* iwidgets3.0.0/configure: Regenerate to fix timestamp
+	that was messed up by the import from sources.
+
 2002-09-05  Keith Seitz  <keiths@redhat.com>
 
 	* itk/Makefile.in (distclean): Remove pkgIndex.tcl and
