@@ -1,5 +1,18 @@
 2002-11-13  Mo DeJong  <mdejong@uncounted.org>
 
+	* db/dbutils.c: Use Win32 version of kill()
+	when compiling with VC++ or Mingw.
+	* misc/libutils/fileutils.c: Invert test
+	so that Cygwin specific code is only
+	used when __CYGWIN32__ is defined instead
+	of testing for #ifndef __MSVC__. This
+	fixes the build under Mingw.
+	* parsers/fortran/ftnchek.c: Include
+	sys/param.h when HAVE_SYS_PARAM_H is
+	defined instead of depending on __MSVC__.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
 	* Makefile.in: Regen.
 	* config.h.in: Regen.
 	* bitmaps/Makefile.in: Regen.

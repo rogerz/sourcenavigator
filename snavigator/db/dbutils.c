@@ -3302,7 +3302,7 @@ Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
 	return TRUE;
 }
 
-#ifdef __MSVC__
+#if defined(__MSVC__) || defined(__MINGW32__)
 /* This function checks for a process (with pid - proc_id).
    Returns:
         -1 if not there
