@@ -142,10 +142,6 @@ itcl::class Editor& {
 	            -command "${this} toolbar_grep"
             }
 	    
-# FIXME: The above toolbar_grep needs to be replaced by a call
-# that will switch to the greppane and do a grep, I was thinking
-# of calling sn_grep here, but that API needs to get replaced
-
 	    bind_history $itk_component(grep) grep
 	    balloon_bind_info $itk_component(grep) [get_indep String INFOGrep]
 	    pack $itk_component(grep) \
@@ -257,19 +253,9 @@ itcl::class Editor& {
 	}
     }
 
-#FIXME : This toolbar_grep method needs to be replaced by something
-# that will just switch to the active grep pane!
-
-    #Execute grep with selection, when there is no selection,
-    #call grep dialog box
+    #Execute grep with selection
     method toolbar_grep {} {
-	#something must be selected
-	if {[catch {set pat [string trim [selection get]]}]} {
-	    sn_error_dialog [get_indep String NoSelection] [get_indep String \
-	      MultiGrep]
-	    return
-	}
-	sn_grep 1 ${pat}
+	$itk_option(-parent) search_grep
     }
     ############################################
 
@@ -337,7 +323,6 @@ itcl::class Editor& {
 	bind ${t} <Tab> {Editor&::InsertTab %W; break}
 	bind ${t} <Return> {Editor&::Newline %W; break}
 
-# FIXME : need to be replaced with call to switch to the grep pane!
 	# Grep accelerator.
 	bind ${t} <Shift-Control-G> "${this} toolbar_grep; break"
 
