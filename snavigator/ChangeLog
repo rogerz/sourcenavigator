@@ -1,5 +1,12 @@
 2002-11-24  Mo DeJong  <mdejong@uncounted.org>
 
+	* configure: Regen.
+	* configure.in:
+	* mkdist.sh: Update version number
+	to 5.2.0.
+
+2002-11-24  Mo DeJong  <mdejong@uncounted.org>
+
 	* gui/multiview.tcl (toolbar_post_scope_menu):
 	Fix state of Related, All, All, and None buttons
 	inside the symbol combo to match the comments

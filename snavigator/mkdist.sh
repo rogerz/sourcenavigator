@@ -5,7 +5,7 @@
 # at the root of a clean CVS checkout.
 
 DIR=/share/SN51/dist
-RELEASE=sourcenav-5.1.0
+RELEASE=sourcenav-5.2.0
 RELEASEDIR=$DIR/$RELEASE
 
 if test ! -d tcl || test ! -d tk ; then
