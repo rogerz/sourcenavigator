@@ -89,6 +89,7 @@ COB_DEMO = @COB_DEMO@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
@@ -212,7 +213,7 @@ AUTOMAKE_OPTIONS = cygnus
 @WINDOWS_TRUE@snavigator_LDADD = snavres.$(OBJEXT) $(WIN32LIBS)
 @WINDOWS_TRUE@snsdk_SOURCES = winCon.c
 @WINDOWS_TRUE@snsdk_LDADD = $(WIN32LIBS)
-@WINDOWS_TRUE@snsdk_CFLAGS = -DAPPNAME=\"..\\bin\\hyper.exe\"
+@WINDOWS_TRUE@snsdk_CFLAGS = -DAPPNAME=\"..\\\\bin\\\\hyper.exe\"
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 

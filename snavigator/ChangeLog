@@ -1,5 +1,59 @@
 2002-11-13  Mo DeJong  <mdejong@uncounted.org>
 
+	* Makefile.in: Regen.
+	* config.h.in: Regen.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.in: Regen.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add .o target that
+	does not use cygpath to support building
+	with mingw.
+	* hyper/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/libutils/Makefile.in: Regen.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/toolbox/Makefile.in: Regen.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.am: Fix incorrectly quoted
+	-D argument to the compiler.
+	* snavigator/win/Makefile.in: Regen.
+
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
 	* configure: Regen.
 	* configure.in: Include sys/times.h in
 	the headers we check for.

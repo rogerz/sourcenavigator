@@ -89,6 +89,7 @@ COB_DEMO = @COB_DEMO@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
@@ -220,7 +221,7 @@ CONFIG_CLEAN_FILES =
 DATA =  $(root_DATA)
 
 DIST_COMMON =  ./stamp-h.in AUTHORS ChangeLog Makefile.am Makefile.in \
-NEWS TODO acinclude.m4 aclocal.m4 config.h.in configure configure.in \
+NEWS acinclude.m4 aclocal.m4 config.h.in configure configure.in \
 install-sh missing mkinstalldirs
 
 

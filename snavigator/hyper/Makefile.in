@@ -89,6 +89,7 @@ COB_DEMO = @COB_DEMO@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CYGPATH = @CYGPATH@
 C_DEMO = @C_DEMO@
 DB_INCDIR = @DB_INCDIR@
 DB_LIBDIR = @DB_LIBDIR@
@@ -491,8 +492,13 @@ sninit.$(OBJEXT): sninit.c
 tclfileutils.$(OBJEXT): tclfileutils.c
 	$(COMPILE) $(TK_DEFS) -c $<
 
-winMain.$(OBJEXT): win/winMain.c
+# Only use cygpath when compiling with VC++
+
+winMain.obj: win/winMain.c
 	$(COMPILE) -c `cygpath -w $<`
+
+winMain.o: win/winMain.c
+	$(COMPILE) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
