@@ -48,7 +48,7 @@ proc sn_ensure_emacs_running {editcmd} {
             if {! [catch {exec gnudoit ${lisp_commands}} err]} {
                 # It worked.  So send the magic command.
                 sn_log "Emacs: connected via gnudoit"
-                if {[catch {exec gnudoit
+                if {[catch {exec gnudoit\
                         "(sn-startup nil \"${host}\" nil ${port})"} err]} {
                     sn_log "exec gnudoit startup failed : $err"
                 }
