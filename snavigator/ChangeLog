@@ -1,5 +1,10 @@
+2003-02-19  Ian Roxborough  <irox@ix.netcom.com>
 
-2003-02-17  Ian Roxborough  <irox@ix.netcom.com>
+	* bitmaps/Makefile.am: Install executable and
+	library icons.
+	* bitmaps/Makefile.in: Regenerated.
+
+2003-02-19  Ian Roxborough  <irox@ix.netcom.com>
 	
 	* gui/buildtarget.tcl (GetTargetType, GetTargetSources):
 	New procs for getting target data for the UI.
@@ -20,7 +25,7 @@
 	* bitmaps/exe_-.xpm:
 	* bitmaps/exe_+.xpm:
 	* bitmaps/lib_-.xpm:
-	* bitmaps/lib_+.xpm: New icons for symbol browser.
+	* bitmaps/lib_+.xpm: New icon files for symbol browser.
 	* etc/english.txt.in: Added new strings.
 	* etc/german.txt: Added new strings (place markers
         in English).
