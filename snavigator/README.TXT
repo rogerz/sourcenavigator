@@ -20,6 +20,9 @@ directory. Documentation is available in HTML format only.
 Consult the INSTALL.TXT file to learn how to build and install
 binaries of Source-Navigator.
 
+Consult the NEWS file to learn about recent modifications to
+Source-Navigator.
+
 USING SOURCE-NAVIGATOR:
 
 We have removed the license manager from Source-Navigator. You will no

@@ -462,7 +462,7 @@ proc snpdbg_readable { fd } {
         set snpdbg_pipewait 1
     } else {
         set data [read -nonewline $fd]
-        puts "read data \"$data\" from pipe"
+        #puts "read data \"$data\" from pipe"
         append snpdbg_piperead $data
     }
 }
