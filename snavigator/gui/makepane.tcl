@@ -1037,13 +1037,18 @@ proc sn_make {} {
 
         Make ${s}.make -toolbar ${s}.exp -mesg_area ${s}.status.msg
         pack ${s}.make -expand y -fill both -side left
-        ${s} centerOnScreen
         set menu [${s} cget -menu]
 
         set toolmenu [menu .make_tool_menu${tkeWinNumber} -tearoff 0]
 # FIXME: Add to string table
         ${menu} insert 3 cascade -menu ${toolmenu} -label "Tools"
         add_make_tools_menu ${toolmenu} ${s}.make
+
+        # FIXME : This should be converted to a non-modal Dialog.
+        ${s} withdraw
+        ${s} centerOnScreen
+        ${s} deiconify
+        ${s} raise
     } else {
         ${s} raise
     }
