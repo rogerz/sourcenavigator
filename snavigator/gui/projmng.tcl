@@ -324,7 +324,7 @@ proc sn_new_project_cb {{t ""}} {
     #create the project
     set ret [sn_create_new_project $sn_arguments(import-file)]
     if {${ret} == 0 || ${ProcessingCancelled}} {
-        if {${ret} == 0} {
+        if {${ret} == 0 && ![sn_batch_mode]} {
             # If a half-created project is sitting around, delete it!
             if {[file exists $sn_options(sys,project-file)]} {
                 sn_delete_project $sn_options(sys,project-file)
