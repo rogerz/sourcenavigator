@@ -1,3 +1,13 @@
+2002-06-07  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
+
+	* etc/Makefile.am: Add german.txt to etc_DATA.
+	* etc/Makefile.in: Regen.
+	* etc/english.txt.in: Remove unused ToUpgrade
+	and fix minor typo.
+	* etc/german.txt: Sync keywords with english.txt.in.
+	Partially update the translations.
+	* etc/japanese.txt: Sync keywords with english.txt.in.
+
 2002-06-07  John Lash  <jlash@speakeasy.net>
 
 	* etc/english.txt.in: Remove PafProjBusy and ProjAlreayOpened.

@@ -80,7 +80,6 @@ AllRightsReserved,All rights reserved.
 BugReport,Bug report
 Internationalization,Internationalization
 Encoding,Character set encodin[g
-ToUpgrade,To upgrade, please contact support@cygnus.com.
 WaitingForXref,Waiting for cross-referencing to complete
 ProjectBatchBuilt,Project has been built
 ScanningFile,Scanning: %s
@@ -89,7 +88,7 @@ DefaultTitle,Select file(s)
 SelFileColHelp,You have to select at least one directory or file.
 Error,Error
 ErrorInvalidProjectFile,Error while opening project.  Please check that %s is a valid project file.
-ErrorImportFileDoesNotExists,Error while opening import file, %s does not exists.
+ErrorImportFileDoesNotExists,Error while opening import file, %s does not exist.
 ErrorImportFileIsADirectory,Error while opening import file, %s is a directory.
 FileExists,File already exists.
 File,File

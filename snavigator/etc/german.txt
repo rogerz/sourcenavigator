@@ -48,12 +48,7 @@
 #
 ###############################################################################
 
-#Edition Strings
-DeveloperEdition,Developer Edition
-EnterpriseEdition,Enterprise Edition
-DemoEdition,Demo Version
-
-Format,Fortm[at
+Format,Form[at
 Work,[Arbeit
 Layout,[Layout
 Project,Projekt
@@ -85,11 +80,6 @@ AllRightsReserved,Alle Rechte vorbehalten
 BugReport,Fehlerreport
 Internationalization,Internationalisierung
 Encoding,Zeichensatz-Encoding
-ToUpgrade,Um die Lizenz zu aktualisieren, kontaktieren Sie bitte sn-support@cygnus.com\noder rufen Sie +1-408-5429600 an
-EvalExpires,Die Evaluations-Lizenz läuft in %d Tagen ab.
-EvalExpiresTonight,Die Evaluations-Lizenz läuft Heute um Mitternacht ab.
-EvalLicense,Source-Navigator Evaluation
-NoLicenseFound,Keine Lizenz gefunden
 WaitingForXref,Warten auf das Ende der Cross-Referenz
 ProjectBatchBuilt,Projekt erstellt
 ScanningFile,Scannen: %s
@@ -97,6 +87,9 @@ Continue,Fortfahren
 DefaultTitle,Datei(en) auswählen
 SelFileColHelp,Sie müssen mindestens ein Verzeichnis/eine Datei auswählen!
 Error,Fehler
+ErrorInvalidProjectFile,Fehler beim Öffnen des Projektes.  Bitte überprüfen, ob %s eine gültige Projekt-Datei ist.
+ErrorImportFileDoesNotExists,Fehler beim Öffnen der Import-Datei, %s existiert nicht.
+ErrorImportFileIsADirectory,Fehler beim Öffnen der Import-Datei, %s existiert nicht.
 FileExists,Datei existiert bereits!
 File,Datei
 Filter,Filter:
@@ -216,7 +209,7 @@ RegExp,Regexp
 HasBeenModified,wurde geändert !
 NewFile,[Neue Datei
 OpenFile,Datei [öffnen
-OpenProj,Projekt [öffnen...
+BrowseProj,[Browsen...
 RevertFile,Datei [verwerfen
 Revert,[Verwerfen
 Exit,[Beenden
@@ -389,6 +382,7 @@ Passed,weitergegeben
 Unused,nicht verwendet
 IgnoreWS,Leerzeichen ignorieren
 Comment,Kommentar:
+WaitForStatistics,Statistiken werden berechnet. Bitte warten.
 Statistics,Statistik
 DrawProjTree,Projekt-Baum ...
 HTMLDoc,[HTML Dokumentation
@@ -405,6 +399,7 @@ SelectAll,Alles [wählen
 SelectOnly,Nur "%s" wählen
 INFOStartClassBrw,Startet Klassen-Browser für die markierte Klasse
 
+IncludeLaunch,Starte Include-Browser für die aktuelle Datei
 IncludeTree,Include-Baum
 IncLevelTit,[Levels
 Includes,[Inkludiert
@@ -516,7 +511,6 @@ SearchGoto,[Gehe zu...
 SearchFind,[Suche...
 AskForNewView,Der angegebene View ist nicht vorhanden.\nMöchten Sie einen neuen View definieren?
 TkINFO,Verwende Tk Look&Feel
-GrepFormatINFO,Formatiert den aktuellen Ausdruck
 PrefMake,[Make
 PrefOverwrite,[Überschreiben
 Directory,Verzeichnis
@@ -584,7 +578,8 @@ FontCursive,[Kursiv
 ScanRecursiveINFO,Fügt alle Dateien aus dem Verzeichnis und allen seinen Unterverzeichnissen hinzu.
 ExclusiveModeINFO,Setzt den Filter nur für eine Kategorie und startet das Suchen automatisch.
 UsedFileDialog,Dateidialog
-MultiGrepFormat,Format:
+MultiGrepFormat,F[ormat:
+MultiGrepMaxMatches,Find f[irst:
 RetrieverINFO,Suche alle zutreffenden Symbole in der Projektdatenbank.
 GotoNextPosition,Gehe zur nächsten Seite
 SearchGotoLine,Gehe zur Zeile...
@@ -652,6 +647,7 @@ MultiEditor,Edit[or
 RetrieverSearchINFO,Starte Suche für die angegebenen Filer-Informationen
 LoadFromProject,Projekt hinzufügen...
 Reset,[Reset
+BuildMenuItem,[Build
 SplitDeleteLast,[Entfernt den letzten View
 AddDirectory,Ordner hinzufügen
 Implementation,[Implementation
@@ -668,7 +664,6 @@ MembersOrder,[Members anzeigen
 MakeEntry,Make Kommando
 MultiXRef,[X-Ref
 Definition,[Deklaration
-MultiGrepBreakBy,[Suche erste:
 LoadDirectoryINFO,Füge alle Dateien in einem Ordner hinzu
 RecentProjects,Vorhandene Pro[jekte
 PrefTabWidth,Eingefügte Tab-Breite:
@@ -686,7 +681,12 @@ Others,[Verschiedenes
 Start,[Starte
 Views,[Vorhandene Views
 ProjectEditor,Projekteditor
-GrepSearchINFO,Starte grep für den angegebenen Ausdruck
+GrepSearchINFO,Starte grep
+GrepCancelINFO,Grep abbrechen
+GrepCanceledString,*** ABGEBROCHEN ***
+GrepTruncatedString,*** VERSTÜMMELT ***
+GrepFileDoesNotExist,Datei existiert nicht
+GrepFormatINFO,Formatiere aktuellen Ausdruck
 ChooseFont,Font selektieren
 PrefInNewWindows,Einige eingestellte Optionen wirken sich nur in neuen Fenstern aus.
 New,[Neu
@@ -706,7 +706,6 @@ SplitWindows,Fenster [teilen:
 MultiInclude,I[nclude
 PrefInclude,I[nclude Verzeichnisse
 ColorAndFont,[Farben&Fonts
-ContinueProcessing,Möchten Sie das Projekt mit den bisherigen Konfigurationen öffnen?
 Unload,[Entfernen
 Categorie,[Kategorie
 MakeStartDir,[Ordner
@@ -732,6 +731,8 @@ MultiHierRel,Zeige Su[bklassen
 TermoGenerateXRef,Button betätigen, um Cross-Referenz abzubrechen
 WindowsNewClassEditor,[Klassen - Editor
 UsedFileDialogSN,[S-N
+
+SaveBufferAs,Puffer speichern als
 SaveAsFastSaveTitle,Speichern [als...
 ScanRecursive,Addiere Unterverzeichnisse
 ExclusiveMode,E[xklusives Suchen
@@ -739,6 +740,9 @@ EditSaveAll,Sc[hnell Speichern Alle
 MultiGrepPattern,Ausdruck:
 MoreEditorToolbarButtonsINFO,Zusätzliche Editor-Buttons im Toolbar
 RCS,[Versionskontrolle
+DiscardNotSupported,Dieses Versionskontroll-System hat keinen Befehl um Änderungen zu verwerfen.
+RCSRelativePathWarning,Fehler beim Ableiten eines relativen Pfadnames.
+
 BgColor,[Hintergrund
 XRefIsRunning,Source-Navigator erzeugt die Cross-Referenz-Datenbank
 WantToFastSave,Möchten Sie geänderte Dateien vor dem Starten\ndes Make Kommandos schnell speichern?
@@ -767,7 +771,6 @@ ProjectOkINFO,Änderungen übernehmen und Projekt schließen
 MultiHierDefINFO,Zeigt Klassen, Basisklassen und Superklassen an
 UnloadINFO,Entfernt selektierte Dateien aus dem Projekt
 MakeStartDirINFO,Startverzeichnis
-GrepCancelINFO,Grep-Prozeß abbrechen
 PrefAfterReparse,Einige eingestellte Optionen haben ihre Wirkung, wenn das Projekt neu geparst wird.
 KeepINFO,Behalte den Kontext für den aktuellen Symbol auch in den nächsten Views
 PrefAsciiPrintCommand,[ASCII Druck-Kommando
@@ -788,7 +791,6 @@ WaitOrCancelXRef,Cross-Referenz Informationen werden aus der Datenbank gelesen.\
 WaitOrCancelRetriever,Symbole werden aus der Datenbank gelesen.\nBitte warten...
 ActiveSymbol,Aktives Symbol im aktuellen View
 ListRelatedSymbols,Listet alle view-spezifischen Symbole
-LimitLightVersion,Sie brauchen die Vollversion, um diesen Vorgang auszuführen.
 Compile,[Kompilieren
 CompileINFO,Kompiliere aktuelle Datei
 FilesNotFound,Source-Navigator konnte die folgenden Projektdateien nicht finden.\nMöchten Sie diese Dateien aus dem Projekt entfernen?\n\n
@@ -821,16 +823,13 @@ OlderProjectOpened,Dieses Projekt wurde mit einer älteren Version von Source-Nav
 NewerProjectCannotBeOpened,Ein mit einer neueren Source-Navigator Version erstelltes Projekt kann\nnicht mit einer älteren Version von Source-Navigator geöffnet werden.
 EditionCannotOpenThisProject,Dieses Projekt wurde mit einer anderen S-N Edition erstellt.\nDie S-N Edition, die Sie benutzen kann das Projekt nicht öffnen.\nNur die Enterprise Edition kann Projekte anderer Editionen öffnen.\nBitte kontaktieren Sie unseren Customer Support "sn-support@cygnus.com" für ein Upgrade.
 CurrentLinesOfSourceCode,Projekt hat %s Source-Code Zeilen.
-LimitedEdition,Mit dieser Version erstellten Projekte sind auf maximal %s Source-Code Zeilen limitiert.
 ScanningCanceld,Wollen Sie wirklich das Durchsuchen nach Source-Code Dateien stoppen?
 DatabaseFilesCouldNotBeDeleted,Source-Navigator kann die alten Projekt-Datenbankdateien aus\neinem unbekannten Grund nicht löschen.
 WrongProjectName,Falscher Projektname '%s'
 WrongDatabaseDirectory,Falsches Datenbankverzeichnis '%s'
-IDEProductName,Flik 1.0
 SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.\nFür Support, kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
 SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,Alle Rechte vorbehalten. Source-NavigatorTM, das Source-NavigatorTM Logo und Cygnus Solutions Logo sind Trademarks von Red Hat, Inc. Alle anderen Produktnamen sind Trademarks ihrer rechtmäßigen Inhaber.
-ThisProjectIsTooBig,Das Projekt überschreitet das Limit der aktuellen Source-Navigator Edition.\nDas Projekt kann nicht geöffnet werden.
 SplashSupportText,Für Support kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
 FileModifiedOutsideTitle,Datei geändert
 FileModifiedOutside,Datei %s wurde von außen geändert.\nMöchten Sie es jedenfalls überschreiben?
@@ -889,9 +888,11 @@ ClassNoKey,Klassen-Browser
 
 ButtonBugReport,Bug Report
 ButtonMail,Mail
+ButtonDismiss,Verwerfen
+ErrorOccured,Ein Fehler ist aufgetreten:
 
 #Ide strings
-BuildTargetManager,???? [Build Setup...
+BuildTargetManager,Build [Settings...
 
 #target manager (gui/targetmgr.tcl)
 IDETargetMgrTitle,Build Settings
@@ -900,7 +901,7 @@ IDETMCreateTarget,[Create
 IDETMCopyTarget,D[uplicate
 IDETMRenameTarget,[Rename
 IDETMEditTarget,[Edit
-IDETMDeleteTarget,[Delete
+IDETMDeleteTarget,[Löschen
 IDETargetMgrDone,D[one
 
 #target editor
@@ -909,7 +910,7 @@ IDETEBuildDir,Build [Directory:
 IDETETargetType,[Target Type:
 IDETEToolChain,Tool [Chain:
 IDETEOK,OK
-IDETECancel,Cancel
+IDETECancel,Abbruch
 
 #target editor -> Source Files page
 IDETESourceFilesTab,[Source Files
@@ -939,6 +940,7 @@ IDETEBuildRuleEdit,"Ed[it Rule"
 #target editor -> Link Rules tab
 IDETELinkRulesTab,Link [Rules
 IDETELinkOutputFile,[Output File:
+IDETELinkEntryPoint,Entry Point:
 IDETELinkFlags,Link [flags:
 IDETELinkerExe,Li[nker:
 IDETELaunchSettingsLabel,Debug/Execute Settings:
@@ -952,7 +954,7 @@ IDEBRSettingsTab,[Settings
 IDEBRIncludesTab,[Includes
 IDEBRDefinesTab,[Defines
 IDEBROK,OK
-IDEBRCancel,Cancel
+IDEBRCancel,Abbruch
 #Settings tab
 IDEBRDebugCombo,Debug:
 IDEBROptimizationCombo,Optimization:
@@ -964,10 +966,54 @@ IDEBRExecLocation,Executable:
 IDEBRAutoGenPathsLabel,Auto-Generated Include Paths:
 IDEBRUserGenPathsLabel,User Specified Include Paths:
 IDEBRGeneratePaths,[Generate
-IDEBRDeletePath,D[elete
+IDEBRDeletePath,[Löschen
 IDEBRAddPath,[Add...
 #defines tab
 IDEBRMacroDefinesLabel,Macro defines:
-IDEBRDeleteMacro,D[elete
-IDEBRCreateMacro,[New
-IDEBRChangeMacro,[Change
+IDEBRDeleteMacro,[Löschen
+IDEBRCreateMacro,[Neu
+IDEBRChangeMacro,[Ändern
+
+# EL/IX
+ElixFilesys,Filesystem
+ElixDebug,Debugging
+ElixKernel,Kernel
+ElixTarget,Target
+ElixPreferences,ED[K Preferences...
+ElixEthernet,Ethernet
+ElixSerial,Seriell
+ElixTargetname,Target Hostname
+ElixPortnumber,Port Nummer
+ElixTargetport,Target Port
+ElixHostport,Host Port
+ElixSpeed,Speed (bps)
+ElixKernelArgs,Argumente
+ElixKernelImage,Image
+ElixKernelSources,Source Pfad
+ElixROMfs,RAM-Disk / ROMfs
+ElixNFS,NFS Root
+ElixMinix,RAM-Disk / Minix
+ElixKernelModules,Module
+ElixKernelAll,Alle Module
+ElixKernelMonolithic,Monolythisch
+ElixKernelModuleList,Modul-Optionen
+ElixKernelSome,Named Module
+ElixTargetKernel,Kernel
+ElixTargetDHCP,DHCP
+ElixTargetStatic,Statisch
+ElixTargetIP,Networking IP
+ElixTargetStaticIP,IP Addresse
+ElixTargetStaticMask,Maske
+ElixTargetStaticBroadcast,Broadcast
+ElixTargetStaticGateway,Gateway
+ElixTargetHostname,Hostname
+ElixFilesysROMPath,Template-Verzeichnis
+ElixFilesysNFSPath,Root-Verzeichnis
+ElixFilesysMinixPath,Template-Verzeichnis
+ElixFilesysBootimage,Boot-Image
+ElixRelative,Relative Grösse
+ElixAbsolute,Absolute Grösse
+ElixExtra,Extra Space (Prozentual)
+ElixBlocks,Blöcke
+ElixInodes,Inodes
+ElixMounts,Mount Points

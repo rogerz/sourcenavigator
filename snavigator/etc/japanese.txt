@@ -48,11 +48,6 @@
 #
 ###############################################################################
 
-#Edition Strings
-DeveloperEdition,Developer Edition
-EnterpriseEdition,Enterprise Edition
-DemoEdition,Demo Version
-
 EditPreferences,İ’è‚ğ•\¦([F)...
 Format,ƒtƒH[ƒ}ƒbƒg
 Work,ƒ[ƒN
@@ -88,11 +83,6 @@ Internationalization,‘Û‰»
 Encoding,•¶šƒZƒbƒg•ÏŠ·([G)
 FileModifiedOutside,%s ƒtƒ@ƒCƒ‹‚ÍC³‚³‚ê‚Ä‚¢‚Ü‚·B\n•Û‘¶‚µ‚Ü‚·‚©?
 FileModifiedOutsideTitle,ƒtƒ@ƒCƒ‹‚ÌC³
-ToUpgrade,ƒAƒbƒvƒOƒŒ[ƒh‚·‚é‚É‚Í sn-support@cygnus.co.jp ‚Ü‚Å‚²˜A—‚­‚¾‚³‚¢B
-EvalExpires,‚±‚Ì•]‰¿”Åƒ‰ƒCƒZƒ“ƒX‚Í %d “ú‚ÅŠúŒÀØ‚ê‚É‚È‚è‚Ü‚·B
-EvalExpiresTonight,•]‰¿”Åƒ‰ƒCƒZƒ“ƒX‚ÍŒß‘O 0 ‚ÅŠúŒÀ‚ªØ‚ê‚Ü‚·B
-EvalLicense,Source-Navigator •]‰¿”Å
-NoLicenseFound,ƒ‰ƒCƒZƒ“ƒX‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B
 WaitingForXref,ƒNƒƒXƒŠƒtƒ@ƒŒƒ“ƒX‚ÌŠ®—¹‚ğ‘Ò‚Á‚Ä‚¢‚Ü‚·B
 ProjectBatchBuilt,ƒvƒƒWƒFƒNƒg‚Ìƒrƒ‹ƒh‚ªŠ®—¹‚µ‚Ü‚µ‚½B
 ScanningFile,ƒXƒLƒƒƒ“’†: %s
@@ -530,7 +520,6 @@ MultiBrowser,ƒVƒ“ƒ{ƒ‹([S)
 MultiRetriever,ƒŠƒgƒŠ[ƒo([V)
 RetrieverINFO,ˆê’v‚µ‚½ƒVƒ“ƒ{ƒ‹‚ğƒvƒƒWƒFƒNƒg ƒf[ƒ^ƒx[ƒX‚ÅŒŸõ
 
-OpenProject,ƒvƒƒWƒFƒNƒg‚ğŠJ‚­([O)...
 SaveProject,ƒvƒƒWƒFƒNƒg‚ğ•Û‘¶([J)
 CloseProject,ƒvƒƒWƒFƒNƒg‚ğ•Â‚¶‚é([L)
 
@@ -609,7 +598,6 @@ MultiGrep,[Grep
 MultiMake,Make([M)
 MultiGrepPattern,ƒpƒ^[ƒ“([P):
 MultiGrepFormat,ƒtƒH[ƒ}ƒbƒg([O):
-MultiGrepBreakBy,Å‰‚Ì
 MultiGrepLines,ƒGƒ“ƒgƒŠ‚ğŒŸõ([F)
 MultiGrepStop,’â~([S)
 MultiMisc,‚»‚Ì‘¼([M)
@@ -753,7 +741,6 @@ ScanningHasBeenCanceled,ƒp[ƒT[‚Ìˆ—‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚Ü‚·‚©?\n‚Ü‚¾ˆ—‚³‚ê‚Ä‚¢‚È‚
 ErrorByScanning,ƒp[ƒT[‚Ìˆ—’†‚ÉƒGƒ‰[‚ªŒŸo‚³‚ê‚Ü‚µ‚½B\nƒtƒ@ƒCƒ‹‚ğƒXƒLƒbƒv‚µ‚Äƒp[ƒT[‚Ìˆ—‚ğ‘±‚¯‚Ü‚·‚©?
 Stop,’â~([S)
 Processing,ƒvƒƒWƒFƒNƒg‚ğƒp[ƒT[‚Åˆ—([Pj
-ContinueProcessing,‚±‚ê‚Ü‚Å‚ÉûW‚³‚ê‚½î•ñ‚ÅƒvƒƒWƒFƒNƒg‚ğŠJ‚«‚Ü‚·‚©?
 ContinueParsingOtherTypes,ƒp[ƒT[‚Ìˆ—‚ª’â~‚µ‚Ü‚µ‚½B\nƒp[ƒT[‚Åˆ—‚·‚é’Ç‰Á‚ÌŒ¾Œêƒtƒ@ƒCƒ‹‚ª‚ ‚é‰Â”\«‚ª‚ ‚è‚Ü‚·B\n’Ç‰Á‚ÌŒ¾Œê‚à‘±‚¯‚Äƒp[ƒT[‚Åˆ—‚µ‚Ü‚·‚©?
 XRefHasBeenCrashed,Source-Navigator ‚ÌƒNƒƒXƒŠƒtƒ@ƒŒƒ“ƒX¶¬‚É–â‘è‚ª”­¶‚µ‚Ü‚µ‚½B\nƒNƒƒXƒŠƒtƒ@ƒŒƒ“ƒXî•ñ‚ÍŠ®‘S‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
 UnableToExecuteParser,Source-Navigator ‚ª“Á’è‚ÌŒ¾Œê‚Ìƒp[ƒT[‚ğŒ©‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ‚Å‚µ‚½B\nc‚è‚Ìƒtƒ@ƒCƒ‹‚ğƒp[ƒT[‚Åˆ—‚µ‚Ü‚·‚©?
@@ -801,7 +788,6 @@ WaitOrCancelXRef,ƒNƒƒXƒŠƒtƒ@ƒŒƒ“ƒXî•ñ‚ğƒ[ƒh’†‚Å‚·B\n‚µ‚Î‚ç‚­‚¨‘Ò‚¿‚­‚¾‚³‚¢
 WaitOrCancelRetriever,ƒVƒ“ƒ{ƒ‹‚ğƒ[ƒh’†‚Å‚·B\n‚µ‚Î‚ç‚­‚¨‘Ò‚¿‚­‚¾‚³‚¢B
 ActiveSymbol,ƒrƒ…[“à‚ÌƒAƒNƒeƒBƒu‚ÈƒVƒ“ƒ{ƒ‹
 ListRelatedSymbols,ƒrƒ…[‚ÉŠÖ˜A‚µ‚½•Ê‚ÌƒVƒ“ƒ{ƒ‹‚ğ‘I‘ğ
-LimitLightVersion,‚±‚ÌƒAƒNƒVƒ‡ƒ“‚ğ‘±‚¯‚é‚É‚ÍƒGƒ“ƒ^[ƒvƒ‰ƒCƒY”Å‚Ì Source-Navigator ‚ª•K—v‚Å‚·B
 Compile,ƒRƒ“ƒpƒCƒ‹([C)
 CompileINFO,‚±‚Ìƒtƒ@ƒCƒ‹‚ğƒRƒ“ƒpƒCƒ‹
 FilesNotFound,ˆÈ‰º‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B\nƒvƒƒWƒFƒNƒg‚©‚çíœ‚µ‚Ü‚·‚©?
@@ -834,17 +820,14 @@ NewerProjectCannotBeOpened,‚±‚ÌƒvƒƒWƒFƒNƒg‚ÍV‚µ‚¢ƒo[ƒWƒ‡ƒ“‚Ì Source-Navigator
 UnableToReparse,Source-Navigator ‚Í‚±‚ÌƒvƒƒWƒFƒNƒg‚ğÄ“xƒp[ƒT[ˆ—‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB Äƒrƒ‹ƒh‚ª•K—v‚Å‚·B
 EditionCannotOpenThisProject,‚±‚ÌƒvƒƒWƒFƒNƒg‚Í³‚µ‚¢ƒo[ƒWƒ‡ƒ“‚Ì Source-Navigator ‚Åì¬‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB\nƒAƒbƒvƒOƒŒ[ƒh‚·‚é‚É‚Í sn-support@cygnus.co.jp ‚É‚²˜A—‚­‚¾‚³‚¢B
 CurrentLinesOfSourceCode,ƒvƒƒWƒFƒNƒg‚É‚Í %s s‚ÌƒR[ƒh‚ª‚ ‚è‚Ü‚·B
-LimitedEdition,‚±‚Ìƒo[ƒWƒ‡ƒ“‚Åì¬‚³‚ê‚½ƒvƒƒWƒFƒNƒg‚ÍA%s s‚Ü‚Å‚ÌƒR[ƒh‚µ‚©‚Â‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB
 ScanningCanceld,ƒXƒLƒƒƒ“‚ğ’â~‚µ‚Ä‚æ‚ë‚µ‚¢‚Å‚·‚©?
 DatabaseFilesCouldNotBeDeleted,Source-Navigator ‚ÍŒÃ‚¢ƒf[ƒ^ƒx[ƒX ƒtƒ@ƒCƒ‹‚ğíœ‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B\nˆ—‚ğ‘±‚¯‚Ü‚·‚©?
 WrongProjectName,ƒvƒƒWƒFƒNƒg–¼ '%s' ‚Í—LŒø‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
 WrongDatabaseDirectory,ƒf[ƒ^ƒx[ƒX ƒfƒBƒŒƒNƒgƒŠ–¼ '%s' ‚Í—LŒø‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
-IDEProductName,Flik 1.0
 SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.
 SplashSupportText,ƒTƒ|[ƒg‚ÉŠÖ‚µ‚Ä‚Í <sn-support@cygnus.co.jp> ‚É‚²˜A—‚¢‚½‚¾‚­‚©Ahttp://www.cygnus.com ‚ÌƒEƒFƒu ƒTƒCƒg‚ğ‚²——‚­‚¾‚³‚¢B
 SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,All rights reserved. Source-NavigatorTM, the Source-NavigatorTM ƒƒS ‚¨‚æ‚Ñ Red Hat, Inc. ƒƒS‚Í•Ä‘ Cygnus Solutions Ğ‚Ì¤•W‚Å‚·B ‚»‚Ì‘¼‚Ì‚·‚×‚Ä‚Ì»•i–¼‚ÍAŠeĞ‚Ì¤•W‚Å‚·B
-ThisProjectIsTooBig,ƒvƒƒWƒFƒNƒg‚ªƒfƒxƒƒbƒp[”Å‚Ì§ŒÀ‚ğ‰z‚¦‚Ä‚¢‚Ü‚·B\nƒvƒƒWƒFƒNƒg‚ğŠJ‚­‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB
 SDK_UnknownRequest,Source-Navigator has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
 
 #Others tab in Preferences (those not in other places)
@@ -975,3 +958,62 @@ IDEBRMacroDefinesLabel,Macro defines:
 IDEBRDeleteMacro,D[elete
 IDEBRCreateMacro,[New
 IDEBRChangeMacro,[Change
+ElixMinix,???? RAM Disk / Minix
+ElixKernelModuleList,???? Module Options
+ElixTarget,???? Target
+ElixTargetname,???? Target Hostname
+ElixTargetport,???? Target Port
+ElixTargetKernel,???? Kernel
+ElixTargetDHCP,???? DHCP
+ElixTargetStatic,???? Static
+ElixTargetIP,???? Networking IP
+ElixTargetStaticIP,???? IP Address
+ElixTargetStaticMask,???? Mask
+ElixTargetStaticBroadcast,???? Broadcast
+ElixTargetStaticGateway,???? Gateway
+ElixTargetHostname,???? Hostname
+SaveBufferAs,???? Save Buffer As
+ElixPortnumber,???? Port Number
+ElixSerial,???? Serial
+ElixBlocks,???? Blocks
+IncludeLaunch,???? Launch Include Browser for selected file
+GrepCanceledString,???? *** CANCELED ***
+BrowseProj,???? [Browse...
+ElixAbsolute,???? Absolute Size
+ElixKernel,???? Kernel
+ElixKernelArgs,???? Arguments
+ElixKernelImage,???? Image
+ElixKernelSources,???? Source Path
+ElixKernelModules,???? Modules
+ElixKernelAll,???? All Modules
+ElixKernelMonolithic,???? Monolithic
+ElixKernelSome,???? Named Modules
+GrepFileDoesNotExist,???? File does not exist
+BuildMenuItem,???? [Build
+ElixRelative,???? Relative Size
+ElixFilesysBootimage,???? Boot Image
+ElixFilesysMinixPath,???? Template Directory
+ElixFilesysNFSPath,???? Root Directory
+ErrorImportFileIsADirectory,???? Error while opening import file, %s is a directory.
+ErrorInvalidProjectFile,???? Error while opening project.  Please check that %s is a valid project file.
+IDETELinkEntryPoint,???? Entry Point:
+ErrorOccured,???? An error has occured:
+GrepTruncatedString,???? *** TRUNCATED ***
+ButtonDismiss,???? Dismiss
+ElixHostport,???? Host Port
+ErrorImportFileDoesNotExists,???? Error while opening import file, %s does not exist.
+ElixDebug,???? Debugging
+MultiGrepMaxMatches,???? Find f[irst:
+ElixSpeed,???? Speed (bps)
+ElixEthernet,???? Ethernet
+ElixInodes,???? Inodes
+DiscardNotSupported,???? This version control system does not have a command to discard changes.
+ElixFilesys,???? Filesystem
+ElixFilesysROMPath,???? Template Directory
+RCSRelativePathWarning,???? Error while deriving relative pathname.
+ElixNFS,???? NFS Root
+ElixROMfs,???? RAM Disk / ROMfs
+ElixPreferences,???? ED[K Preferences...
+ElixExtra,???? Extra Space (Percentage)
+WaitForStatistics,???? Statistics are being calculated. Please Wait.
+ElixMounts,???? Mount Points
