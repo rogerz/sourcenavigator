@@ -1,5 +1,28 @@
 2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* tests/parsers/m4.test: Use browse instead
+	of m4_parse and use browse_xref instead of
+	m4_parse_xref. Remove m4_parse_comment_xref
+	and pass -r option to m4_parse_xref.
+	* tests/parsers/php.test: Use browse
+	instead of php_parse and use browse_xref
+	instead of php_parse_xref. Remove
+	php_parse_comment_xref and php_parse_local_xref
+	and pass -r or -l option to php_parse_xref.
+	* tests/parsers/testutil.tcl (m4_parse,
+	m4_parse_xref, m4_parse_comment_xref,
+	php_parse, php_parse_multi, php_parse_xref,
+	php_parse_comment_xref, php_parse_local_xref,
+	browse, browse_xref): Replace browser
+	specific helper functions with a generic pair
+	of functions named browse and browse_xref.
+	These helpers will lookup the browser type
+	based on the file extension and accept
+	browser command line args. Do utf-8
+	conversion of exec results in browse.
+
+2003-06-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Insert tokens
 	for PERIOD and COMMA and update global

@@ -2,7 +2,7 @@ source testutil.tcl
 
 
 tcltest::test mode-1.0 { skip html code } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <HTML>
 My HTML is $cash=money.
 </HTML>
@@ -13,7 +13,7 @@ PAF_FILE;f.php;php<>
 
 
 tcltest::test mode-1.1 { skip html code } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <HTML>
 function foo() {}
 </HTML>
@@ -24,7 +24,7 @@ PAF_FILE;f.php;php<>
 
 
 tcltest::test mode-2.0 { php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $mode="php";
 ?>
@@ -36,7 +36,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>mode<>gv;3.5<>3.1<>3.5<>{}
 }
 
 tcltest::test mode-2.1 { php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <? $mode1="php"; ?>
 $mode2="html";
 }]
@@ -47,7 +47,7 @@ PAF_FILE_SYMBOLS;f.php<>000002.004<>#<>mode1<>gv;2.9<>2.4<>2.9<>{}
 }
 
 tcltest::test mode-2.2 { php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 $mode1="html";
 <? $mode2="php"; ?>
 }]
@@ -58,7 +58,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.004<>#<>mode2<>gv;3.9<>3.4<>3.9<>{}
 }
 
 tcltest::test mode-2.3 { html->php->html->php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 $mode1="html";
 <? $mode2="php"; ?>
 $mode3="html";
@@ -73,7 +73,7 @@ PAF_FILE_SYMBOLS;f.php<>000005.004<>#<>mode4<>gv;5.9<>5.4<>5.9<>{}
 }
 
 tcltest::test mode-2.4 { php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?php
 $mode="php";
 ?>
@@ -85,7 +85,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>mode<>gv;3.5<>3.1<>3.5<>{}
 }
 
 tcltest::test mode-2.5 { php mode } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <? function foo() {} ?>
 }]
 } {Status: Parsing: f.php
@@ -95,7 +95,7 @@ PAF_FILE_SYMBOLS;f.php<>000002.003<>#<>foo<>fu;2.20<>2.12<>2.15<>{}
 }
 
 tcltest::test var-1.0 { var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var=1;
 ?>
@@ -107,7 +107,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-1.1 { var read } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 print $var;
 ?>
@@ -117,7 +117,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test var-1.2 { 2 var writes, checks column } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var=1;$var=1;
 ?>
@@ -131,7 +131,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.008<>#<>var<>gv;3.11<>3.8<>3.11<>{}
 }
 
 tcltest::test var-1.2 { read then write, checks column } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var;$var=1;
 ?>
@@ -145,7 +145,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.006<>#<>var<>gv;3.9<>3.6<>3.9<>{}
 # FIXME: Should the global statement act as the variable define here?
 
 tcltest::test var-1.3 { var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
 global $var;
@@ -162,7 +162,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
 }
 
 tcltest::test var-1.4 { var read } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
 global $var;
@@ -180,7 +180,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
 # the -l flag is passed. Should we do this too?
 
 tcltest::test var-1.5 { local var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
 $var = 1;
@@ -196,7 +196,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
 tcltest::test var-1.6 { local var read } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
 print $var;
@@ -210,7 +210,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
 tcltest::test var-2.0 { var write xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var=1;
 ?>
@@ -219,7 +219,7 @@ $var=1;
 }
 
 tcltest::test var-2.1 { var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var;
 ?>
@@ -228,7 +228,7 @@ print $var;
 }
 
 tcltest::test var-2.2 { global statement is not a var read } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
     global $var;
@@ -238,7 +238,7 @@ function foo() {
 } {}
 
 tcltest::test var-2.3 { global var write xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $var;
@@ -250,7 +250,7 @@ $var=1;
 }
 
 tcltest::test var-2.4 { global var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $var;
@@ -263,7 +263,7 @@ print $var;
 
 
 tcltest::test var-2.5 { no local var xref by default } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 $var=1;
@@ -273,18 +273,18 @@ $var=1;
 } {}
 
 tcltest::test var-2.6 { local var write xref } {
-    php_parse_local_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 $var=1;
 }
 ?>
-}]
+}] {-l}
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000004<>f.php;<>
 }
 
 tcltest::test var-2.7 { no local var xref by default } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 print $var;
@@ -294,43 +294,43 @@ print $var;
 } {}
 
 tcltest::test var-2.8 { local var read xref } {
-    php_parse_local_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 print $var;
 }
 ?>
-}]
+}] {-l}
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000004<>f.php;<>
 }
 
 
 tcltest::test var-2.9 { local var write xref } {
-    php_parse_local_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $nar;
 $var=1;
 }
 ?>
-}]
+}] {-l}
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000005<>f.php;<>
 }
 
 tcltest::test var-2.10 { local var read xref } {
-    php_parse_local_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $nar;
 print $var;
 }
 ?>
-}]
+}] {-l}
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000005<>f.php;<>
 }
 
 tcltest::test var-2.11 { multiple vars in global statement } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $var1, $var2;
@@ -344,7 +344,7 @@ PAF_CROSS_REF;#<>foo<>fu<>#<>var2<>gv<>r<>000006<>f.php;<>
 }
 
 tcltest::test var-2.12 { multiple vars in global statement } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 global $var1, $var2, $var3;
@@ -362,7 +362,7 @@ PAF_CROSS_REF;#<>foo<>fu<>#<>var3<>gv<>r<>000007<>f.php;<>
 
 
 tcltest::test var-3.0 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var[]=1;
 ?>
@@ -374,7 +374,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.1 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var[0]=1;
 ?>
@@ -386,7 +386,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.2 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var['name']=1;
 ?>
@@ -398,7 +398,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.3 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var["name"]=1;
 ?>
@@ -410,7 +410,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.4 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var[1][]=1;
 ?>
@@ -422,7 +422,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.5 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var[1][0]=1;
 ?>
@@ -434,7 +434,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test var-3.6 { array var write } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var["hello"]['there']=1;
 ?>
@@ -447,7 +447,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 
 
 tcltest::test var-4.0 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var[];
 ?>
@@ -456,7 +456,7 @@ print $var[];
 }
 
 tcltest::test var-4.1 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var[0];
 ?>
@@ -465,7 +465,7 @@ print $var[0];
 }
 
 tcltest::test var-4.2 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var['one'];
 ?>
@@ -474,7 +474,7 @@ print $var['one'];
 }
 
 tcltest::test var-4.3 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var["one"];
 ?>
@@ -483,7 +483,7 @@ print $var["one"];
 }
 
 tcltest::test var-4.4 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var[0][];
 ?>
@@ -492,7 +492,7 @@ print $var[0][];
 }
 
 tcltest::test var-4.5 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var["hello"][0];
 ?>
@@ -501,7 +501,7 @@ print $var["hello"][0];
 }
 
 tcltest::test var-4.6 { array var read xref } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 print $var["hello"]["mello"]["fellow"];
 ?>
@@ -512,7 +512,7 @@ print $var["hello"]["mello"]["fellow"];
 
 
 tcltest::test var-5.0 { read and write xrefs } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var[$one] = 1;
 ?>
@@ -522,7 +522,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
 }
 
 tcltest::test var-5.1 { read and write xrefs } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var[$one];
 ?>
@@ -532,7 +532,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>r<>000003<>f.php;<>
 }
 
 tcltest::test var-5.2 { read and write xrefs } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var[$one=0];
 ?>
@@ -549,7 +549,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
 # a write xref and generate a read xref instead.
 
 tcltest::test var-5.3 { read and write xrefs } {knownbug} {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var[$one=0] = 1;
 ?>
@@ -559,7 +559,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>one<>gv<>w<>000003<>f.php;<>
 }
 
 tcltest::test var-5.4 { read and write xrefs } {knownbug} {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var["one"."two"] = 1;
 ?>
@@ -570,7 +570,7 @@ $var["one"."two"] = 1;
 
 
 tcltest::test comment-1.0 { comment } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 //$var=1;
 ?>
@@ -580,7 +580,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test comment-1.1 { comment } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 	//$var=1;
 ?>
@@ -590,25 +590,25 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test comment-1.2 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 //$var=1;
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;$var=1;
 }
 
 tcltest::test comment-1.3 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 	//$var=1;
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.003<>#<>#;$var=1;
 }
 
 tcltest::test comment-1.4 { comment } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 /*$var=1;*/
 ?>
@@ -618,73 +618,73 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test comment-1.5 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*$var=1;*/
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;$var=1;
 }
 
 tcltest::test comment-1.6 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*
 $var=1;
 */
 ?>
-}]
+}] {-r}
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;\xFF\$var=1;\xFF\n"
 
 
 tcltest::test comment-1.7 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {<?/*
+    browse_xref [save_file f.php {<?/*
  * Hello
  */?>
-}]
+}] {-r}
 } "PAF_COMMENT_DEF;f.php<>000001.004<>#<>#;\xFF * Hello\xFF \n"
 
 tcltest::test comment-1.8 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {<?
+    browse_xref [save_file f.php {<?
 /*
 * Hello
 */
 ?>
-}]
+}] {-r}
 } "PAF_COMMENT_DEF;f.php<>000002.002<>#<>#;\xFF* Hello\xFF\n"
 
 tcltest::test comment-1.9 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*
  * Comments *
  * With * //* Stuff in them
  * are tricky */
 ?>
-}]
+}] {-r}
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;\xFF * Comments *\xFF * With * //* Stuff in them\xFF * are tricky \n"
 
 tcltest::test comment-1.10 { insert comment xref } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*********
  * Hello *
  *********/
 ?>
-}]
+}] {-r}
 } "PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;********\xFF * Hello *\xFF ********\n"
 
 tcltest::test comment-1.11 { can't leave multi line comment mode with ?> } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*Comment ?>ONE<? Text*/
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment ?>ONE<? Text
 }
 
 tcltest::test comment-1.12 { hit EOF in comment } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 /*
 ?>
@@ -694,65 +694,65 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test comment-1.13 { hit EOF in comment } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*
 ?>
-}]
+}] {-r}
 } [format {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;%s%s%s%s} \xFF ?> \xFF \n]
 
 tcltest::test comment-1.14 { double quotes in comment } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 /*Comment "Text"*/
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment "Text"
 }
 
 tcltest::test comment-1.14 { no ws before // } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 "s";//Comment
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.006<>#<>#;Comment
 }
 
 tcltest::test comment-1.15 { shell style comment } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 #Comment
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000003.001<>#<>#;Comment
 }
 
 tcltest::test comment-1.16 { line comment ends at ?> } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?//Comment?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000002.004<>#<>#;Comment
 }
 
 tcltest::test comment-1.17 { line comment ends at ?> } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?#Comment?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000002.003<>#<>#;Comment
 }
 
 tcltest::test comment-1.18 { line comment ends at ?> } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?//Comment1?>HTML<?#Comment2?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000002.004<>#<>#;Comment1
 PAF_COMMENT_DEF;f.php<>000002.021<>#<>#;Comment2
 }
 
 
 tcltest::test comment-2.0 { function with a comment } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() { /* no-op */ }
 ?>
@@ -764,51 +764,51 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.30<>3.9<>3.12<>{}
 }
 
 tcltest::test comment-2.1 { insert comment xref in a function } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 //no-op
     return;
 }
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000004.002<>#<>#;no-op
 }
 
 tcltest::test comment-2.2 { insert comment xref in a function } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
 /*no-op*/
     return;
 }
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000004.002<>#<>#;no-op
 }
 
 tcltest::test comment-2.3 { insert comment xref in a function } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
     /*no-op*/
     bar();
 }
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000004.006<>#<>#;no-op
 PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
 }
 
 tcltest::test comment-2.4 { insert comment xref in a function } {
-    php_parse_comment_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
     bar();
     /*no-op*/
 }
 ?>
-}]
+}] {-r}
 } {PAF_COMMENT_DEF;f.php<>000005.006<>#<>#;no-op
 PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
 }
@@ -816,7 +816,7 @@ PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
 
 
 tcltest::test string-1.0 { double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = "";
 ?>
@@ -828,7 +828,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test string-1.1 { single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = '';
 ?>
@@ -840,7 +840,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test string-1.2 { double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = "value";
 ?>
@@ -852,7 +852,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test string-1.3 { single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = 'value';
 ?>
@@ -864,7 +864,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test string-1.4 { double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = "value";
 $var2 = "value";
@@ -879,7 +879,7 @@ PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
 }
 
 tcltest::test string-1.5 { single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = 'value';
 $var2 = 'value';
@@ -894,7 +894,7 @@ PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
 }
 
 tcltest::test string-1.6 { double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = "\"" .
     "\"";
@@ -910,7 +910,7 @@ PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
 }
 
 tcltest::test string-1.7 { single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = '\'' .
     '\'';
@@ -926,7 +926,7 @@ PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
 }
 
 tcltest::test string-1.8 { double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = "HELLO
     THERE";
@@ -942,7 +942,7 @@ PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
 }
 
 tcltest::test string-1.9 { single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var1 = 'HELLO
     THERE';
@@ -958,7 +958,7 @@ PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
 }
 
 tcltest::test string-2.0 { escape characters } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = "val\n";
 ?>
@@ -970,7 +970,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
 tcltest::test string-2.1 { escape characters } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 $var = 'val\n';
 ?>
@@ -983,7 +983,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 
 
 tcltest::test string-3.0 {  string spans multiple lines } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include "I am
 a file";
@@ -996,7 +996,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>I am%sa file<>iu;4.6<>3.9<>4.6<>{}
 } \xFF \xFF]
 
 tcltest::test string-3.1 {  string spans multiple lines } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include 'I am
 a file';
@@ -1009,7 +1009,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>I am%sa file<>iu;4.6<>3.9<>4.6<>{}
 } \xFF \xFF]
 
 tcltest::test string-4.0 { hit EOF in double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 "
 ?>
@@ -1019,7 +1019,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test string-4.1 { hit EOF in single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 '
 ?>
@@ -1029,7 +1029,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test string-5.0 { heredoc ignores all characters } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 print <<<END
 "HI
@@ -1046,7 +1046,7 @@ PAF_FILE_SYMBOLS;f.php<>000007.001<>#<>var<>gv;7.4<>7.1<>7.4<>{}
 
 
 tcltest::test string-5.1 { hit EOF in heredoc string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 print <<< END
 ?>
@@ -1056,7 +1056,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test string-6.0 { no comments in double quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include("/*not-comment*/");
 ?>
@@ -1068,7 +1068,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;3.24<>3.9<>3.24<>{}
 }
 
 tcltest::test string-6.1 { no comments in single quoted string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include('/*not-comment*/');
 ?>
@@ -1088,7 +1088,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;3.24<>3.9<>3.24<>{}
 # handle a range inside the token boundry.
 
 tcltest::test string-6.2 { no comments in heredoc string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include <<<END
 /*not-comment*/
@@ -1102,7 +1102,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>/*not-comment*/<>iu;5.2<>3.9<>5.2<>{}
 }
 
 tcltest::test string-6.3 { newlines in heredoc string } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include <<<END
 /*not-comment*/
@@ -1125,7 +1125,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>%s%s%s<>iu;6.2<>3.9<>6.2<>{}
 
 
 tcltest::test function-1.0 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {}
 ?>
@@ -1137,7 +1137,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
 }
 
 tcltest::test function-1.1 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
 }
@@ -1150,7 +1150,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.1<>3.9<>3.12<>{}
 }
 
 tcltest::test function-1.2 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function
 foo() {
@@ -1164,7 +1164,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>4.0<>4.3<>{}
 }
 
 tcltest::test function-1.3 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function
 foo()
@@ -1179,7 +1179,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>4.0<>4.3<>{}
 }
 
 tcltest::test function-1.4 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo 
 () {}
@@ -1192,7 +1192,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;4.5<>3.9<>3.12<>{}
 }
 
 tcltest::test function-1.5 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
   function	stop_go()	{} 
 ?>
@@ -1204,7 +1204,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>stop_go<>fu;3.23<>3.11<>3.18<>{}
 }
 
 tcltest::test function-1.6 { function definition } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo() {
   if (1) {}
@@ -1220,7 +1220,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 
 
 tcltest::test function-2.0 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo($arg1) {}
 ?>
@@ -1232,7 +1232,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.22<>3.9<>3.12<>{}
 }
 
 tcltest::test function-2.1 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo($arg1,$arg2) {}
 ?>
@@ -1244,7 +1244,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.28<>3.9<>3.12<>{}
 }
 
 tcltest::test function-2.2 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo($arg1 = "default") {}
 ?>
@@ -1256,7 +1256,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.34<>3.9<>3.12<>{}
 }
 
 tcltest::test function-2.3 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo($arg1 = "default", $arg2=1, $arg3 = 'default') {}
 ?>
@@ -1269,7 +1269,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.62<>3.9<>3.12<>{}
 
 
 tcltest::test function-2.4 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo(&$arg1) {}
 ?>
@@ -1281,7 +1281,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;3.23<>3.9<>3.12<>{}
 }
 
 tcltest::test function-2.5 { function definition w arguments } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 function foo(
 	$arg1,
@@ -1299,7 +1299,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.10<>3.9<>3.12<>{}
 
 
 tcltest::test function-3.0 { xref to function in function } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
     bar();
@@ -1310,7 +1310,7 @@ function foo() {
 }
 
 tcltest::test function-3.1 { xref to function in function } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 bar
 ();
@@ -1324,7 +1324,7 @@ PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000006<>f.php;<>
 }
 
 tcltest::test function-3.2 { reset current function name } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo_one() {bar();}
 bar();
@@ -1337,7 +1337,7 @@ PAF_CROSS_REF;#<>foo_two<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
 }
 
 tcltest::test function-3.3 { exit php mode inside a function } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 function foo() {
    ?>HTML call()<?
@@ -1351,7 +1351,7 @@ function foo() {
 
 
 tcltest::test function-4.0 { function not finished at EOF } {
-    php_parse [save_file f.php "
+    browse [save_file f.php "
 <?
 function foo() \{
 ?>
@@ -1379,7 +1379,7 @@ f1.php
 f2.php
 }
 
-    set results [php_parse_multi files]
+    set results [browse .php {-y files}]
     file delete files f1.php f2.php
     set results
 } {Status: Parsing: f1.php
@@ -1398,7 +1398,7 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 
 tcltest::test include-1.0 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
     include("f2.php");
 ?>
@@ -1410,7 +1410,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.013<>#<>f2.php<>iu;3.19<>3.13<>3.19<>{}
 }
 
 tcltest::test include-1.1 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
     include ("f2.php");
 ?>
@@ -1422,7 +1422,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 }
 
 tcltest::test include-1.2 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 	include "f2.php";
 ?>
@@ -1434,7 +1434,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
 }
 
 tcltest::test include-1.3 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 	include 'f2.php';
 ?>
@@ -1446,7 +1446,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
 }
 
 tcltest::test include-1.4 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include
 'f2.php';
@@ -1459,7 +1459,7 @@ PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>f2.php<>iu;4.7<>4.1<>4.7<>{}
 }
 
 tcltest::test include-1.5 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include( "f2.php" );
 ?>
@@ -1471,7 +1471,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
 }
 
 tcltest::test include-1.6 { include a file } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include(	"f2.php"	);
 ?>
@@ -1483,7 +1483,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
 }
 
 tcltest::test include-1.7 { include two files } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include('one.php');
 include('two.php');
@@ -1498,7 +1498,7 @@ PAF_FILE_SYMBOLS;f.php<>000004.009<>#<>two.php<>iu;4.16<>4.9<>4.16<>{}
 }
 
 tcltest::test include-1.8 { include two files } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include('one.php'); include('two.php');
 ?>
@@ -1518,7 +1518,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.029<>#<>two.php<>iu;3.36<>3.29<>3.36<>{}
 # bnf based parser.
 
 tcltest::test include-1.9 { include two files } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include('one.php');include('two.php');
 ?>
@@ -1532,7 +1532,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.028<>#<>two.php<>iu;3.35<>3.28<>3.35<>{}
 }
 
 tcltest::test include-1.10 { not an include keyword } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 notinclude 'f1.php';
 ?>
@@ -1542,7 +1542,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test include-1.11 { not an include keyword } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 not_include 'f1.php';
 ?>
@@ -1552,7 +1552,7 @@ PAF_FILE;f.php;php<>
 }
 
 tcltest::test include-2.0 { other include keywords } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include("f2.php");
 ?>
@@ -1564,7 +1564,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>f2.php<>iu;3.15<>3.9<>3.15<>{}
 }
 
 tcltest::test include-2.1 { other include keywords } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 include_once("f2.php");
 ?>
@@ -1576,7 +1576,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 }
 
 tcltest::test include-2.3 { other include keywords } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 require("f2.php");
 ?>
@@ -1588,7 +1588,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>f2.php<>iu;3.15<>3.9<>3.15<>{}
 }
 
 tcltest::test include-2.4 { other include keywords } {
-    php_parse [save_file f.php {
+    browse [save_file f.php {
 <?
 require_once("f2.php");
 ?>
@@ -1601,7 +1601,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 
 
 tcltest::test operator-1.0 { assignment operator } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var = 1;
 ?>
@@ -1610,7 +1610,7 @@ $var = 1;
 }
 
 tcltest::test operator-1.3 { assignment operators } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var += 1;
 $var -= 1;
@@ -1641,7 +1641,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000013<>f.php;<>
 
 
 tcltest::test operator-2.0 { not an assignment operator } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var == 1;
 ?>
@@ -1650,7 +1650,7 @@ $var == 1;
 }
 
 tcltest::test operator-2.1 { not an assignment operator } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var === 1;
 ?>
@@ -1659,7 +1659,7 @@ $var === 1;
 }
 
 tcltest::test operator-2.2 { not an assignment operator } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var != 1;
 ?>
@@ -1668,7 +1668,7 @@ $var != 1;
 }
 
 tcltest::test operator-2.3 { not an assignment operator } {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var . = 1;
 $var , = 1;
@@ -1679,7 +1679,7 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
 }
 
 tcltest::test operator-2.4 { not an assignment operator } {knownbug} {
-    php_parse_xref [save_file f.php {
+    browse_xref [save_file f.php {
 <?
 $var > = 1;
 $var < = 1;
@@ -1714,7 +1714,7 @@ f1.php
 f2.php
 }
 
-    set results [php_parse_multi files]
+    set results [browse .php {-y files}]
     file delete files f1.php f2.php
     set results
 } {Status: Parsing: f1.php

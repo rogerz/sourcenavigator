@@ -84,50 +84,55 @@ proc paf_subst { data } {
     return [string map {\1 <>} $buf]
 }
 
-proc m4_parse { fname } {
-    return [paf_subst [exec m4browser $fname]]
+# Return the browser that will handle the given file
+# extension.
+
+proc get_browser { fname } {
+    global Parser_Info
+    set type [sn_get_file_type $fname]
+    if {$type == "others"} {
+        error "can't find specific browser for \"$fname\""
+    }
+    return $Parser_Info($type,BROW)
 }
 
-proc m4_parse_xref { fname } {
+
+proc browse { fname {options {}} } {
+    set debug 0
+
+    set browser [get_browser $fname]
+    # Pass just the extension (like .c) when using -y filename
+    if {[string match ".*" $fname]} {
+        set cmd [list exec $browser]
+        foreach opt $options {
+            lappend cmd $opt
+        }
+    } else {
+        set cmd [list exec $browser]
+        foreach opt $options {
+            lappend cmd $opt
+        }
+        lappend cmd $fname
+    }
+    if {$debug} {
+        puts "now to eval \"$cmd\""
+    }
+    set results [eval $cmd]
+    if {$debug} {
+        puts "got results\n$results\n"
+    }
+    set results [paf_subst $results]
+    set results [encoding convertfrom utf-8 $results]
+    if {$debug} {
+        puts "returning\n$results\n"
+    }
+    return $results
+}
+
+proc browse_xref { fname {options {}} } {
     file delete xout
     save_file xout ""
-    set r [exec m4browser -x xout $fname]
+    lappend options -x xout
+    browse $fname $options
     return [paf_subst [read_file xout]]
 }
-
-proc m4_parse_comment_xref { fname } {
-    file delete xout
-    save_file xout ""
-    set r [exec m4browser -r -x xout $fname]
-    return [paf_subst [read_file xout]]
-}
-
-proc php_parse { fname } {
-    return [paf_subst [encoding convertfrom utf-8 [exec phpbrowser $fname]]]
-}
-
-proc php_parse_multi { fname } {
-    return [paf_subst [exec phpbrowser -y $fname]]
-}
-
-proc php_parse_xref { fname } {
-    file delete xout
-    save_file xout ""
-    set r [exec phpbrowser -x xout $fname]
-    return [paf_subst [read_file xout]]
-}
-
-proc php_parse_comment_xref { fname } {
-    file delete xout
-    save_file xout ""
-    set r [exec phpbrowser -r -x xout $fname]
-    return [paf_subst [read_file xout]]
-}
-
-proc php_parse_local_xref { fname } {
-    file delete xout
-    save_file xout ""
-    set r [exec phpbrowser -l -x xout $fname]
-    return [paf_subst [read_file xout]]
-}
-
