@@ -1,3 +1,10 @@
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/tkWinWm.c: Back port of wm iconbitmap
+	feature from Tk 8.4. This feature provides the
+	ability to set a Windows icon for toplevel
+	windows.
+
 2003-04-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* generic/tkBind.c (TkpGetBindingXEvent): Add helper method
