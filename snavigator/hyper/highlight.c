@@ -429,15 +429,16 @@ tk_text_buffer(Tcl_DString *buf, int buf_size, void *idx1, void *idx2)
       
       first = 0;
       
-      sprintf(dllname, "sntk%d%d.dll", TK_MAJOR_VERSION, TK_MINOR_VERSION);
+      sprintf(dllname, "rhtk%d%d.dll", TK_MAJOR_VERSION, TK_MINOR_VERSION);
       LOGGER((LOGFP,"GetModuleHandle: <%s>\n", dllname));
       tkdll = LoadLibrary(dllname);
+
+      if (!tkdll) {
+          panic("could not load dll \"%s\"\n", dllname);
+      }
       
       tk_text_tp = (Tk_SegType *) GetProcAddress(tkdll,"tkTextCharType");
-      
-      if (tkdll) {
-    FreeLibrary(tkdll);
-      }
+      FreeLibrary(tkdll);
     }
 #endif /* WIN32 */
   

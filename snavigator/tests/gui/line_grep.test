@@ -1,0 +1,113 @@
+package require tcltest
+
+# WTF? [namespace import sourcenav::line_grep] does not
+# make the line_grep command available in hyper ???
+
+tcltest::test single-1 {empty buffer} {
+    sourcenav::line_grep FOO ""
+} {}
+
+tcltest::test single-2 {single line} {
+    sourcenav::line_grep FOO "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test single-3 {single line, needs newline} {
+    sourcenav::line_grep FOO "FOO"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test single-4 {single line} {
+    sourcenav::line_grep FOO "1 FOO 2\n"
+} {{1 {1 FOO 2} {{FOO 2}}}}
+
+tcltest::test single-5 {single line, crlf} {
+    sourcenav::line_grep FOO "1 FOO 2\r\n"
+} {{1 {1 FOO 2} {{FOO 2}}}}
+
+tcltest::test multi-1 {single line, multiple matches} {
+    sourcenav::line_grep FOO "1 FOO 2 FOO 3\n"
+} {{1 {1 FOO 2 FOO 3} {{FOO 2} {FOO 8}}}}
+
+tcltest::test multi-2 {multiple lines, single match on each} {
+    sourcenav::line_grep FOO "1\nFOO\n2 FOO\n"
+} {{2 FOO {{FOO 0}}} {3 {2 FOO} {{FOO 2}}}}
+
+tcltest::test multi-3 {multiple lines/matches} {
+    sourcenav::line_grep FOO "FOO\nA FOO 2 FOO\n"
+} {{1 FOO {{FOO 0}}} {2 {A FOO 2 FOO} {{FOO 2} {FOO 8}}}}
+
+tcltest::test multi-4 {multiple lines/matches} {
+    sourcenav::line_grep FOO "BE FOO 2 FOO 3 FOO\n"
+} {{1 {BE FOO 2 FOO 3 FOO} {{FOO 3} {FOO 9} {FOO 15}}}}
+
+tcltest::test multi-5 {multiple lines, crlf} {
+    sourcenav::line_grep FOO "FOO1\r\nFOO2\r\nFOO3\r\n"
+} {{1 FOO1 {{FOO 0}}} {2 FOO2 {{FOO 0}}} {3 FOO3 {{FOO 0}}}}
+
+tcltest::test multi-6 {multiple lines, both lf and crlf} {
+    sourcenav::line_grep FOO "FOO1\nFOO2\r\nFOO3\n"
+} {{1 FOO1 {{FOO 0}}} {2 FOO2 {{FOO 0}}} {3 FOO3 {{FOO 0}}}}
+
+tcltest::test multi-7 {multipl lines, needs newline} {
+    sourcenav::line_grep FOO "FOO\nFOO FOO"
+} {{1 FOO {{FOO 0}}} {2 {FOO FOO} {{FOO 0} {FOO 4}}}}
+
+tcltest::test multi-8 {multiple lines, single match on each, needs newline} {
+    sourcenav::line_grep FOO "1\nFOO\n2 FOO"
+} {{2 FOO {{FOO 0}}} {3 {2 FOO} {{FOO 2}}}}
+
+tcltest::test pat-1 {newline sensitive matching} {
+    sourcenav::line_grep .*FOO "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-2 {newline sensitive matching} {
+    sourcenav::line_grep F.* "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-3 {newline sensitive matching} {
+    sourcenav::line_grep .*F.* "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-4 {newline sensitive matching, crlf} {
+    sourcenav::line_grep .*F.* "FOO\r\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-5 {matching} {
+    sourcenav::line_grep F.. "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-6 {matching} {
+    sourcenav::line_grep FOO? "FOO\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-7 {matching, crlf} {
+    sourcenav::line_grep FO.* "FOO\r\n"
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test pat-8 {filter out matched subexpression} {
+    sourcenav::line_grep "FOO (BAR )?FAR" "FOO BAR FAR\n"
+} {{1 {FOO BAR FAR} {{{FOO BAR FAR} 0}}}}
+
+tcltest::test pat-9 {filter out matched subexpression, crlf} {
+    sourcenav::line_grep "FOO (.*)" "FOO BAR\r\n"
+} {{1 {FOO BAR} {{{FOO BAR} 0}}}}
+
+tcltest::test pat-10 {filter out unmatched subexpression} {
+    sourcenav::line_grep "FOO (BAR )?FAR" "FOO FAR\n"
+} {{1 {FOO FAR} {{{FOO FAR} 0}}}}
+
+tcltest::test pat-11 {filter out matched/unmatched subexpressions} {
+    sourcenav::line_grep "(FOO)? (BAR)? (FAR)?.*" "FOO BAR \n"
+} {{1 {FOO BAR } {{{FOO BAR } 0}}}}
+
+tcltest::test pat-12 {filter out matched/unmatched subexpressions, crlf} {
+    sourcenav::line_grep "(FOO)? (BAR)? (FAR)?.*" "FOO BAR \r\n"
+} {{1 {FOO BAR } {{{FOO BAR } 0}}}}
+
+tcltest::test nocase-1 {case insensitive matching} {
+    sourcenav::line_grep foo "FOO\n" 1
+} {{1 FOO {{FOO 0}}}}
+
+tcltest::test nocase-2 {case insensitive matching, crlf} {
+    sourcenav::line_grep foo "FOO\r\n" 1
+} {{1 FOO {{FOO 0}}}}
+

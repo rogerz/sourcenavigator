@@ -225,7 +225,7 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 	if (fcntl(t->bt_fd, F_SETFD, 1) == -1)
 		goto err;
 #endif
-	if (fstat(t->bt_fd, &sb))
+	if (fstat(t->bt_fd, (struct stat *) &sb))
 		goto err;
 	if (sb.st_size) {
 		if ((nr = read(t->bt_fd, &m, sizeof(BTMETA))) < 0)

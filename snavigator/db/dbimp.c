@@ -35,7 +35,9 @@ MA 02111-1307, USA.
 #include "dbutils.h"
 #include <setjmp.h>
 #include <signal.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include "longstr.h"
 
 #include <tcl.h>
@@ -43,6 +45,8 @@ MA 02111-1307, USA.
 #ifdef __MSVC__
 #include <io.h>
 #endif
+
+#include <compat.h>
 
 /* FIXME: we should try and decouple dbimp from libcpp2. */
 

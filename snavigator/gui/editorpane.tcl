@@ -49,15 +49,16 @@ itcl::class Editor& {
 	    rename -state -editstate editState State
 	}
 
-	eval itk_initialize $args
-
 	# Init some variables.
 	set editor $itk_component(hull).editor
 
-	set topw [winfo toplevel [namespace tail ${this}]]
+	set topw [winfo toplevel $itk_component(hull)]
 
 	# Init some local/global variables.
 	init_Editor
+
+        # Init options after setting up class variables
+	eval itk_initialize $args
 
 	# Add menu entries, if availiable.
 	if {$itk_option(-menu) != ""} {
@@ -170,10 +171,6 @@ itcl::class Editor& {
 	    -orient horizontal
 	scrollbar $itk_component(hull).yview \
 	    -command "$itk_component(editor) yview"
-
-	# Load file into editor.
-	editfile $itk_option(-filename) \
-	    -1 "" 0
 
 	pack $itk_component(hull).xview \
 	    -side bottom \
@@ -422,43 +419,7 @@ itcl::class Editor& {
         # Sun UNDO.
 	bind ${t} <F14> [bind Text <Control-z>]
 
-	bind ${t} <Insert> "puts \"Other insert binding call\" ; Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
-
-	bind ${t} <Double-1><ButtonRelease-1> {
-			switch -- [%W get insert] {
-			\} {
-					Editor&::Insert_Mark_Bracket %W \} 0
-				}
-			\{ {
-					Editor&::Insert_Mark_Bracket %W \{ 0
-				}
-			\) {
-					Editor&::Insert_Mark_Bracket %W \) 0
-				}
-			\( {
-					Editor&::Insert_Mark_Bracket %W \( 0
-				}
-			">" {
-					Editor&::Insert_Mark_Bracket %W ">" 0
-				}
-			"<" {
-					Editor&::Insert_Mark_Bracket %W "<" 0
-				}
-			\] {
-					Editor&::Insert_Mark_Bracket %W \] 0
-				}
-			\[ {
-					Editor&::Insert_Mark_Bracket %W \[ 0
-				}
-			\" {
-					Editor&::Insert_Mark_Bracket %W \" 0
-				}
-			\' {
-					Editor&::Insert_Mark_Bracket %W \' 0
-				}
-			}
-			break
-		}
+	bind ${t} <Insert> "Editor&::set_overwrite %W \$tkText(%W,ovwrt);break"
     }
 
     method m3_post_menu {w X Y x y} {
@@ -2398,7 +2359,6 @@ itcl::class Editor& {
 	set script ""
 	set prefix "file_dialog"
 	set save_open "open"
-	set multiple 0
 	set initialdir ""
 	set extensions ""
 	set initialfile ""
@@ -2425,9 +2385,6 @@ itcl::class Editor& {
 		}
 	    "-save_open" {
 		    set save_open ${val}
-		}
-	    "-multiple" {
-		    set multiple ${val}
 		}
 	    "-initialdir" -
 	    "-dir" {
@@ -2499,7 +2456,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    } else {
 		set f [tk_getOpenFile \
@@ -2508,7 +2464,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    }
 	} else {
@@ -2542,11 +2497,7 @@ itcl::class Editor& {
 
 	#store last accessed directory
 	if {${f} != ""} {
-	    if {${multiple}} {
-		set ff [lindex ${f} 0]
-	    } else {
-		set ff ${f}
-	    }
+	    set ff ${f}
 	    catch {set last_accessed_dir [file dirname ${ff}]}
 	}
 
@@ -3254,11 +3205,8 @@ itcl::class Editor& {
     method SetTitle {} {
 	global sn_options sn_root
 
-	#toplevel window
-	set win [winfo toplevel $itk_component(editor)]
+	${topw} configure -title [Title] -iconname [Icon]
 
-	wm title ${win} [Title]
-	wm iconname ${win} [Icon]
 	set lines 0
 	scan [$itk_component(editor) index "end-1c"] %d lines
 
@@ -3825,6 +3773,8 @@ itcl::class Editor& {
 
 	if {$tcl_platform(platform) != "windows"} {
 	    upvar #0 ${print_dialog}-cmd cmd
+	    # Escape [] and $ in user input for eval in sn_print_file
+	    regsub -all {(\$|\[|\])} $cmd {\\&} cmd
 	} else {
 	    set cmd ide_winprint
 	}
@@ -3841,7 +3791,8 @@ itcl::class Editor& {
 	global sn_options
 	global tcl_platform
 
-	set print_dialog "[winfo toplevel ${t}].printdlg"
+	set topl [winfo toplevel ${t}]
+	set print_dialog "${topl}.printdlg"
 
 	if {$tcl_platform(platform) == "windows"} {
 	    upvar #0 ${print_dialog}-ptarget target
@@ -3871,7 +3822,7 @@ itcl::class Editor& {
 	    ${print_dialog} raise
 	    return
 	}
-	set topl [winfo toplevel ${t}]
+
 	set print_dialog [sourcenav::Window ${print_dialog} \
 	    -leader ${t}]
 
@@ -3884,13 +3835,8 @@ itcl::class Editor& {
 
 	global ${print_dialog}-ptarget ${print_dialog}-cmd
 	set ${print_dialog}-ptarget "all"
-	set tit [wm title ${topl}]
-	regsub \
-	    -all {\*} ${tit} "" tit
-	regsub \
-	    -all {\[} ${tit} {\\[} tit
-	regsub \
-	    -all {\]} ${tit} {\\]} tit
+
+	set tit [${topl} cget -title]
 	set ${print_dialog}-cmd [format $sn_options(def,ascii-print-command) \
 	  ${tit}]
 	${print_dialog} configure -title [list [get_indep String Print] ${tit}]
@@ -4612,8 +4558,8 @@ itcl::class Editor& {
     itk_option define -file_changed file_changed File_Changed 0
     public variable highlight y
     itk_option define -findcombo findcombo Findcombo ""
-    #for readonly-projects
-    public variable topw ""
+
+    protected variable topw
     
     private variable edit_SearchNoCase
     private variable edit_SearchMethod
