@@ -1,5 +1,24 @@
 2002-09-12  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/classtreepane.tcl:
+	* gui/diff.tcl:
+	* gui/editorpane.tcl:
+	* gui/elix.tcl:
+	* gui/gdbtk.tcl:
+	* gui/multiview.tcl:
+	* gui/preferences.tcl:
+	* gui/printdialog.tcl:
+	* gui/projedit.tcl:
+	* gui/rcs.tcl:
+	* gui/retrieverpane.tcl:
+	* gui/selector.tcl:
+	* gui/tools.tcl:
+	* gui/tree.tcl:
+	* gui/xrefpane.tcl:
+	Replace pointless use of ::set with set.
+
+2002-09-12  Mo DeJong  <supermo@bayarea.net>
+
 	* mkdist.sh:
 	Rework toplevel directory test so it
 	checks for tcl and tk directories.

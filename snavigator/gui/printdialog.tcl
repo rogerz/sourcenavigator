@@ -717,7 +717,7 @@ itcl::class PrintDialog {
 
     public variable pageheight {29.7} {
         global ${this}-pageheight
-        ::set ${this}-pageheight ${pageheight}
+        set ${this}-pageheight ${pageheight}
     }
 
     public variable pagewidth {21} {}
@@ -726,7 +726,7 @@ itcl::class PrintDialog {
 
     public variable pager {0.5} {
         global ${this}-pager
-        ::set ${this}-pager ${pager}
+        set ${this}-pager ${pager}
     }
 
     public variable pagey {1.0} {}
@@ -768,12 +768,12 @@ itcl::class PrintDialog {
         global sn_options
 
         if {$sn_options(def,page-format) == ""} {
-            ::set sn_options(def,page-format) [lindex\
+            set sn_options(def,page-format) [lindex\
               [lindex $sn_options(def,page-formats) 0] 0]
         }
 
         if {${pageformat} != ""} {
-            ::set sn_options(def,page-format) ${pageformat}
+            set sn_options(def,page-format) ${pageformat}
         } else {
             set pageformat $sn_options(def,page-format)
         }

@@ -868,13 +868,13 @@ itcl::class Color& {
     method reset {} {
         global sn_options
         if {${fnt} != ""} {
-            ::set sn_options(${opt_fnt}) $sn_options(${fnt})
+            set sn_options(${opt_fnt}) $sn_options(${fnt})
         }
         if {${fg} != ""} {
-            ::set sn_options(${opt_fg}) $sn_options(${fg})
+            set sn_options(${opt_fg}) $sn_options(${fg})
         }
         if {${bg} != ""} {
-            ::set sn_options(${opt_bg}) $sn_options(${bg})
+            set sn_options(${opt_bg}) $sn_options(${bg})
         }
     }
 
@@ -918,7 +918,7 @@ itcl::class Color& {
 #            ${fnt_btn}.txt configure -state disabled
 
             if {![::info exists sn_options(${opt_fnt})]} {
-                ::set sn_options(${opt_fnt}) $sn_options(${fnt})
+                set sn_options(${opt_fnt}) $sn_options(${fnt})
             }
             ${sample} configure -font $sn_options(${opt_fnt})
             ${fnt_btn} configure -variable sn_options(${opt_fnt})\
@@ -938,7 +938,7 @@ itcl::class Color& {
 #            ${fg_btn}.txt configure -state disabled
 
             if {![::info exists sn_options(${opt_fg})]} {
-                ::set sn_options(${opt_fg}) $sn_options(${fg})
+                set sn_options(${opt_fg}) $sn_options(${fg})
             }
             ${sample} configure -fg $sn_options(${opt_fg})
             ${fg_btn} configure -variable sn_options(${opt_fg})\
@@ -958,7 +958,7 @@ itcl::class Color& {
 #            ${bg_btn}.txt configure -state disabled
 
             if {![::info exists sn_options(${opt_bg})]} {
-                ::set sn_options(${opt_bg}) $sn_options(${bg})
+                set sn_options(${opt_bg}) $sn_options(${bg})
             }
             ${sample} configure -bg $sn_options(${opt_bg})
             ${bg_btn} configure -variable sn_options(${opt_bg})\
@@ -976,10 +976,10 @@ itcl::class Color& {
         if {$sn_options(${opt_fnt}) == "" || [catch {${sample} configure \
           -font $sn_options(${opt_fnt})}]} {
             bell
-            ::set sn_options(${opt_fnt}) $sn_options(${fnt})
+            set sn_options(${opt_fnt}) $sn_options(${fnt})
 
             if {[catch {${sample} configure -font $sn_options(${fnt})}]} {
-                ::set sn_options(${opt_fnt}) "Courier"
+                set sn_options(${opt_fnt}) "Courier"
             }
         }
     }
@@ -995,14 +995,14 @@ itcl::class Color& {
             if {[catch {${sample} configure -fg $sn_options(${opt_fg})}] ||\
               $sn_options(${opt_fg}) == ""} {
                 bell
-                ::set sn_options(${opt_fg}) $sn_options(${fg})
+                set sn_options(${opt_fg}) $sn_options(${fg})
             }
         }
         if {${fg_bg} == "bg"} {
             if {[catch {${sample} configure -bg $sn_options(${opt_bg})}] ||\
               $sn_options(${opt_bg}) == ""} {
                 bell
-                ::set sn_options(${opt_bg}) $sn_options(${bg})
+                set sn_options(${opt_bg}) $sn_options(${bg})
             }
         }
     }
@@ -1025,7 +1025,7 @@ itcl::class Color& {
 
         if {$tcl_platform(platform) == "windows"} {
             # use native Windows common Dialog font selector
-            ::set sn_options(${opt_fnt}) [ide_win_choose_font\
+            set sn_options(${opt_fnt}) [ide_win_choose_font\
               -default $sn_options(${opt_fnt}) -parent ${cls}]
             sn_log "New font (for ${opt_fnt}) = $sn_options(${opt_fnt})"
         } else {
@@ -1055,7 +1055,7 @@ itcl::class Color& {
                 set ret [catch {${sample} configure -bg ${choosed_clr}}]
             }
             if {! ${ret}} {
-                ::set ${clrname} ${choosed_clr}
+                set ${clrname} ${choosed_clr}
             }
         }
     }

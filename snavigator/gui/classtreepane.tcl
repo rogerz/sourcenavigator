@@ -32,8 +32,8 @@ itcl::class ClassTree& {
         # Set default layout and order for classtree.
         global ${this}-layoutstyle
         global ${this}-order
-        ::set ${this}-order $sn_options(def,ctree-view-order)
-        ::set ${this}-layoutstyle $sn_options(def,ctree-layout)
+        set ${this}-order $sn_options(def,ctree-view-order)
+        set ${this}-layoutstyle $sn_options(def,ctree-layout)
 
 	itk_component add canvas {
 	    canvas $itk_component(hull).canvas\
@@ -70,7 +70,7 @@ itcl::class ClassTree& {
 
         # Display filenames with the classes.
         global ${this}-disp-files
-        ::set ${this}-disp-files ${display_filenames}
+        set ${this}-disp-files ${display_filenames}
 
 	eval itk_initialize $args
 
@@ -478,7 +478,7 @@ itcl::class ClassTree& {
         # Unmark old selection.
         catch {$itk_component(canvas) itemconfig "e:${m_edges}"\
           -fill $sn_options(def,canv-line-fg)}
-        ::set m_edges ${cname}
+        set m_edges ${cname}
 
         $itk_component(canvas) itemconfig e:${cname}\
 		-fill $sn_options(def,tree-select-line)

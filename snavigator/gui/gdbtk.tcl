@@ -191,8 +191,8 @@ proc sn_debugger {{working_dir ""} {dbg_program ""} {gdb_command ""}} {
 
     #restore older path state
     catch {
-        ::set env(TK_LIBRARY) ${save_TK_LIBRARY}
-        ::set env(TCL_LIBRARY) ${save_TCL_LIBRARY}
+        set env(TK_LIBRARY) ${save_TK_LIBRARY}
+        set env(TCL_LIBRARY) ${save_TCL_LIBRARY}
     }
 
 

@@ -436,7 +436,7 @@ itcl::class RevisionCtrl& {
             set rv ""
         }
         # finally display the results:
-        ::set ${this}-history ${hist_lb}
+        set ${this}-history ${hist_lb}
         if {${rev} == ""} {
             ${rcs_hist_top}.r configure -contents ${rv}
         }

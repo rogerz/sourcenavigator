@@ -777,7 +777,7 @@ itcl::class Editor& {
 
     method Redo {} {
 	global tkText
-	::set tkText($itk_component(editor),prevCmd) "Redo"
+	set tkText($itk_component(editor),prevCmd) "Redo"
 	tkTextUndo $itk_component(editor)
     }
 
@@ -2243,13 +2243,13 @@ itcl::class Editor& {
 
 		#disable gotosymbol
 		global gotosymbol_active
-		::set gotosymbol_active 0
+		set gotosymbol_active 0
 
 		#raise editor in the multi window
 		${win} view edit
 
 		#enable gotosymbol
-		::set gotosymbol_active 1
+		set gotosymbol_active 1
 
 		#get editor class & widget
 		set ed [${win} editor]
@@ -3282,7 +3282,7 @@ itcl::class Editor& {
 	if {[lsearch \
 	    -exact $sn_options(sys,builtin-highlighting) ${grp}] != -1} {
 	    global sn_text_highlight_group
-	    ::set sn_text_highlight_group($itk_component(editor)) ${grp}
+	    set sn_text_highlight_group($itk_component(editor)) ${grp}
 
 	    sn_log "Highlighting -delall \"$itk_option(-filename)\", group \"${grp}\""
 
@@ -3677,7 +3677,7 @@ itcl::class Editor& {
 	    set last_line_col [lindex [split [$editor index sel.last] \
 	      "."] end]
 	    if {${last_line_col} == "0"} {
-		::set tkPriv(selectMode) "line"
+		set tkPriv(selectMode) "line"
 		set end [$editor index "sel.last -1c"]
 	    } else {
 		set end [$editor index "sel.last lineend"]
@@ -3806,7 +3806,7 @@ itcl::class Editor& {
 	    upvar #0 ${print_dialog}-ptarget target
 
 	    #default print all when no selection
-	    ::set target "all"
+	    set target "all"
 
 	    #if selection availiable ask to print selection only
 	    if {! [catch {set lst [${t} get sel.first sel.last]}] && ${lst} \
@@ -3819,7 +3819,7 @@ itcl::class Editor& {
 		    return
 		}
 		if {${answer} == 1} {
-		    ::set target "marked"
+		    set target "marked"
 		}
 	    }
 	    Editor&::print_file ${print_dialog} ${t}
@@ -3922,7 +3922,7 @@ itcl::class Editor& {
 	#a long time
 	if {$itk_option(-symbols_filter) != ""} {
 	    upvar #0 $itk_option(-symbols_filter)-related related
-	    ::set related 1
+	    set related 1
 	}
 	DispModified
 	GetFileTags 0 ""
@@ -3942,7 +3942,7 @@ itcl::class Editor& {
 
     method Focus_In {} {
 	global last_Editor
-	::set last_Editor ${this}
+	set last_Editor ${this}
 
         if {$itk_option(-linenumber_var) != ""} {
 	    set $itk_option(-linenumber_var) [$itk_component(editor) index insert]

@@ -2114,9 +2114,9 @@ itcl::class XRef& {
         foreach s "r w p u" {
             upvar #0 ${t}-access-${s} val
             if {[lsearch -exact ${cross_ref_access} ${s}] == -1} {
-                ::set val ""
+                set val ""
             } else {
-                ::set val ${s}
+                set val ${s}
             }
             switch ${s} {
                 "r" {
@@ -2177,9 +2177,9 @@ itcl::class XRef& {
             upvar #0 ${v} value
             if {${set}} {
                 set scope [lindex [split ${v} "-"] end]
-                ::set value ${scope}
+                set value ${scope}
             } else {
-                ::set value ""
+                set value ""
             }
         }
     }

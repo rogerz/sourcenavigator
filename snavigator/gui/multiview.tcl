@@ -179,7 +179,7 @@ itcl::class MultiWindow& {
         #save related for now active tool
         if {${ActiveWidget} != ""} {
             upvar #0 ${ActiveWidget}-related rel
-            ::set rel ${related}
+            set rel ${related}
 
             #dump current position
             history_stack_add_point ${ActiveWidget}
@@ -191,7 +191,7 @@ itcl::class MultiWindow& {
             set variable [${btn} cget -variable]
             upvar #0 ${variable} value
             upvar #0 ${ActiveWidget}-Filter(${btn}) var
-            ::set var ${value}
+            set var ${value}
         }
 
         #get selection from current tool, only when keep
@@ -218,11 +218,11 @@ itcl::class MultiWindow& {
         }
 
         #restore the information about related
-        if {[catch {::set related ${toolrel}}]} {
+        if {[catch {set related ${toolrel}}]} {
             if {[${tool} whoami] == "edit"} {
-                ::set related 1
+                set related 1
             } else {
-                ::set related 0
+                set related 0
             }
         }
 
@@ -238,7 +238,7 @@ itcl::class MultiWindow& {
                 set variable [${btn} cget -variable]
 		upvar #0 ${variable} var
                 upvar #0 ${ActiveWidget}-Filter(${btn}) value
-                ::set var ${value}
+                set var ${value}
             }
         }
 

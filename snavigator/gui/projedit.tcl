@@ -265,7 +265,7 @@ itcl::class Project& {
 
         #View mode (tree, categorie, list)
         global ${this}-Tree_Mode
-        ::set ${this}-Tree_Mode ${Tree_Mode}
+        set ${this}-Tree_Mode ${Tree_Mode}
         set lbls [list [get_indep String Tree] [get_indep String Categorie]\
           [get_indep String List]]
         Radio& ${Toolbar}.treemode -variable ${this}-Tree_Mode -labels ${lbls}\
@@ -282,7 +282,7 @@ itcl::class Project& {
         #balloon_bind_info $Toolbar.dirs [get_indep String Disp_Directories]
         #pack $Toolbar.dirs -side left
         global ${this}-disp_Directories
-        ::set ${this}-disp_Directories ${disp_Directories}
+        set ${this}-disp_Directories ${disp_Directories}
         checkbutton ${Toolbar}.dirs -text [get_indep String Fullpath]\
           -variable ${this}-disp_Directories -command " ${this}\
           toggle_directories ${Toolbar}.dirs " -onvalue 1 -offvalue 0\
@@ -678,7 +678,7 @@ itcl::class Project& {
         global ${this}.msg
         set ret [${tr} identify ${x} ${y}]
         set idx [${tr} nearest ${y}]
-        ::set $itk_component(hull).msg [build_filepath ${treew} ${Tree_Mode} ${idx}]
+        set $itk_component(hull).msg [build_filepath ${treew} ${Tree_Mode} ${idx}]
 
         #no items or no tree mode
         if {[${tr} size] < 0} {
@@ -690,7 +690,7 @@ itcl::class Project& {
             #save info that this sub directory is closed
             set path [build_filepath ${treew} ${Tree_Mode} ${idx} -1]
             if {${ret} == "view"} {
-                ::set projtree(${Tree_Mode}/${path}) 1
+                set projtree(${Tree_Mode}/${path}) 1
             } else {
                 ::catch {unset projtree($Tree_Mode/$path)}
             }
@@ -712,7 +712,7 @@ itcl::class Project& {
     method change_view {cmb view} {
         upvar #0 ${this}-view vw
         if {${view} == ""} {
-            ::set vw "default"
+            set vw "default"
             set view ${vw}
         }
         if {${CurrentView} == ${view}} {
