@@ -1,5 +1,10 @@
 2004-01-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* configure.in: Update version number to 5.2b2.
+	* configure: Regen.
+
+2004-01-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Add initial attempt at a parser debug utility
 	called snpdbg. This util will run the parsers
 	over source code in a directory and detect

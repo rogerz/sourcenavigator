@@ -4,7 +4,7 @@ dnl Initialization.
 AC_INIT(hyper/sninit.c)
 AC_PREREQ(2.12.2)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(sn,5.2b1)
+AM_INIT_AUTOMAKE(sn,5.2b2)
 AM_MAINTAINER_MODE
 
 AC_CONFIG_AUX_DIR(..)
