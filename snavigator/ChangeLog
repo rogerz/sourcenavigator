@@ -1,3 +1,17 @@
+2004-02-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* NEWS: Add note about save fix.
+	* gui/editorpane.tcl (Close, wasClosed):
+	* gui/multiview.tcl (Close, CountInstancesOfFile):
+	When closing an editor window, don't ask to save
+	if the same file is open in another editor.
+	This is implemented by calling CountInstancesOfFile
+	before calling Close for a editor. Also, set
+ 	a flag in the editor when the Close method is invoked,
+	and then check this flag in CountInstancesOfFile
+	to account for the case where one window has the
+	same file open in two panes.
+
 2004-02-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* NEWS: Add note about bracket/paren fix.

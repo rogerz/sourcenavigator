@@ -4621,18 +4621,27 @@ itcl::class Editor& {
 
     #called, when the widget should be closed
     #mode=0: Ask if nessecary (no other buffer
-    #        with the same filename
+    #        with the same filename)
     #mode=1: always close
     method Close {{mode 0}} {
 	if {${mode} == 0 && $itk_option(-file_changed)} {
 	    if {[Ask_For_Modified revert]} {
 		#can be closed
-		return 1
+		set retval 1
 	    } else {
-		return 0
+		set retval 0
 	    }
+	} else {
+	    set retval 1
 	}
-	return 1
+	if {$retval} {
+	    set was_closed 1
+	}
+	return $retval
+    }
+    
+    method wasClosed {} {
+        return $was_closed
     }
 
     method whoami {} {
@@ -4658,6 +4667,7 @@ itcl::class Editor& {
     #public variables
     itk_option define -filename filename Filename $sn_options(noname_file) {
 	    editfile $itk_option(-filename) -1
+	    set was_closed 0
     }
 
  #   public variable file_changed 0
@@ -4673,6 +4683,7 @@ itcl::class Editor& {
     private variable edit_SearchString
     private variable edit_SearchDirection
     private variable edit_ReplaceString
+    private variable was_closed 0
 }
 
 proc wait_editor_end {procfd} {

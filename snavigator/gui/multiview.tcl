@@ -3328,15 +3328,23 @@ itcl::class MultiWindow& {
     method Close {} {
         foreach tool ${AvailTools} {
             for {set nxt ${tool}} {${nxt} != ""} {set nxt [${nxt} next]} {
-                # By editor with more than one buffer for the
-                # same file, do ask only one time!!
+                set forced_close 0
                 if {[${nxt} whoami] == "edit"} {
-                    if {[info exists alread_Asked([${nxt} cget -filename])]} {
-                        continue
+                    # If another editor widget has the file open, then
+                    # don't ask to save if the file has been modified
+                    set file [$nxt cget -filename]
+                    if {[CountInstancesOfFile $file] > 1} {
+                        set forced_close 1
+                    } else {
+                        # If we already asked about saving this filename, don't ask again
+                        if {[info exists alread_Asked($file)]} {
+                            set forced_close 1
+                        } else {
+                            set alread_Asked($file) 1
+                        }
                     }
-                    set alread_Asked([${nxt} cget -filename]) 1
                 }
-                if {[${nxt} Close] != 1} {
+                if {[${nxt} Close $forced_close] != 1} {
                     # User canceled command.
                     return 0
                 }
@@ -4243,7 +4251,7 @@ proc CountInstancesOfFile {file} {
     set filecount 0
 
     foreach obj [itcl::find objects "*" -class Editor&] {
-        if {[$obj cget -filename] == $file} {
+        if {[$obj cget -filename] == $file && ![$obj wasClosed]} {
             incr filecount
         }
     }
