@@ -78,6 +78,7 @@ static	FILE	*tty;
 #endif /* TTY_TRACE */
 
 #ifdef WIN32
+int kill(pid_t pid, int sig);
 #define	sleep(s)	Sleep(s * 1000);
 #endif/* WIN32 */
 
@@ -173,8 +174,7 @@ read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
 
 /*
  * This function checks whether the lock file and its locker
- * process are existing, and whether the TCP/IP port of the
- * starter process can ne still accessed.
+ * process exist.
  * Return values:
  *	TRUE:		the lock is still active.
  *	FALSE:		the lock is not active.
@@ -209,14 +209,14 @@ check_running(char *lock_file)
     }
   
   /* Does the S-N process still exist? */
-  if (kill(0, (pid_t) lck_sn_pid) == -1 && errno == ESRCH)
+  if (kill((pid_t) lck_sn_pid, 0) == -1 && errno == ESRCH)
     {
       /* The lock is not active, the process has died. */
       return -1;
     }
   
   /* Does the DB process still exist ? */
-  if (kill(0, (pid_t) lck_db_pid) == -1 && errno == ESRCH)
+  if (kill((pid_t) lck_db_pid, 0) == -1 && errno == ESRCH)
     {
       unsigned short chk_lck_port = 0;
       unsigned long chk_lck_sn_pid = 0;

@@ -3315,11 +3315,11 @@ Paf_Pipe_Write MX_VARARGS_DEF(char *, arg1)
   [irox:3.3.98]
 */
 
-int kill(int dumy, DWORD proc_id) /*sn_win32_ping*/
+int kill(pid_t pid, int dummy) /*sn_win32_ping*/
 {
         HANDLE hProcess;
         char debug_str[200];
-
+        DWORD proc_id = pid;
 
         hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, proc_id);
 

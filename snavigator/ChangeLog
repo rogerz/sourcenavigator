@@ -1,5 +1,16 @@
 2002-11-15  Mo DeJong  <mdejong@uncounted.org>
 
+	* db/dbimp.c (check_running): Add declaration
+	of kill function when compiling under Win32.
+	Fix check_running comment since this method
+	does not check for the process using a socket.
+	Reverse order of arguments to kill.
+	* db/dbutils.c (kill): Reverse order of
+	arguments to Win32 version of kill so they
+	match the Unix implementation.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
 	* db/dbdump.c:
 	* db/dbimp.c:
 	* db/dbutils.c:
