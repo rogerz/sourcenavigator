@@ -457,7 +457,6 @@ UndoINFO,Undo all changes
 Retriever,Retrie[ver
 PrefRetriever,Retriever
 Retrieve,R[etrieve
-PafProjBusy,Project "%s" is being used by user "%s"
 PafWdDir,D[atabase directory name
 PafOpenProj,Projects
 HierDefINFO,Show the superclasses of selected class
@@ -763,7 +762,10 @@ ContinueParsing,Do you want to continue parsing?
 Parsing,[Parsing Project
 MacroFiles,[C/C++ macro filename(s)
 AddYourMacroFiles,Specify filename(s) for the C/C++ parser
-ProjAlreayOpened,You already have the project '%s' open on this machine.
+ProjAlreadyOpenedThisProcess,You already have the project '%s' open in this session.
+ProjAlreadyOpenedOtherSystem,User '%s' already has the project '%s' open on the system '%s'.
+ProjAlreadyOpenedThisUser,You already have the project '%s' open on this machine. It appears that the process '%d' is using it.
+ProjAlreadyOpenedThisSystem,User '%s' already has the project '%s' open on this machine. It appears that the process '%d' is using it.
 MoreEditorToolbarButtons,[Extended toolbar buttons
 MoreEditorToolbarButtonsINFO,Add extended toolbar to Editor
 GotoPrevPosition,Go to previous page

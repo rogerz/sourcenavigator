@@ -2238,7 +2238,11 @@ proc sn_delete_current_project {{interactive 1}} {
     return 1
 }
 
-proc sn_is_project_busy {nm intp usr hst port} {
+# Check lock information in the database, check to see if
+# the other process is active, and return the found info
+# by setting variables in the caller's scope.
+
+proc sn_is_project_busy {nm intp usr hst port p} {
     global sn_options
     global tcl_platform errorCode
 
@@ -2246,10 +2250,12 @@ proc sn_is_project_busy {nm intp usr hst port} {
     upvar ${usr} user
     upvar ${hst} host
     upvar ${port} tcp_ip_port
+    upvar ${p} pid
 
     set in ""
     set user ""
     set host ""
+    set pid ""
 
     if {[catch {cd [file dirname ${nm}]}] || ![file exists ${nm}] ||\
       [file size ${nm}] == 0} {
@@ -2286,8 +2292,8 @@ proc sn_is_project_busy {nm intp usr hst port} {
     if {${host} == [info hostname]} {
         # We are on the same machine.
         if {${pid} == [pid]} {
-            return "me"
             # The current process is using the project.
+            return "thisprocess"
         }
         if {$tcl_platform(platform) == "unix"} {
             set ret [sn_unix_check_process "hyper" $pid]
@@ -2311,12 +2317,14 @@ proc sn_is_project_busy {nm intp usr hst port} {
                 return ""
             }
         }
+    } else {
+        return "othersystem"
     }
 
     if {${user} == [get_username]} {
-        return "me"
+        return "thisuser"
     }
-    return "busy"
+    return "thissystem"
 }
 
 # Check to see if the given pid corresponds to the given
@@ -2405,16 +2413,30 @@ proc sn_open_project {{nm ""}} {
     }
     tmp_proj close
 
-    set ret [sn_is_project_busy ${nm} in remuser remhost port]
+    set ret [sn_is_project_busy ${nm} in remuser remhost port pid]
     switch -- ${ret} {
-        "me" {
-                sn_error_dialog [format [get_indep String ProjAlreayOpened]\
-                  ${nm}]
+        "othersystem" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedOtherSystem] \
+                    ${remuser} ${nm} ${remhost}]
+                 return
+            }
+        "thisprocess" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisProcess] \
+                    ${nm}]
+                 return
+            }
+        "thisuser" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisUser]\
+                    ${nm} ${pid}]
                 return
             }
-        "busy" {
-                sn_error_dialog [format [get_indep String PafProjBusy] ${nm}\
-                  "${remuser}@${remhost}"]
+        "thissystem" {
+                sn_error_dialog [format \
+                    [get_indep String ProjAlreadyOpenedThisSystem] \
+                    ${remuser} ${nm} ${pid}]
                 return
             }
         "error" {
@@ -2812,24 +2834,38 @@ proc sn_read_project {projfile} {
     set interactive 1
     while {${interactive}} {
         set ret [sn_is_project_busy $sn_options(sys,project-file) in user host\
-          port]
+          port pid]
         switch -- ${ret} {
-            "me" {
-                    sn_error_dialog [format [get_indep String ProjAlreayOpened] \
-                        $sn_options(sys,project-file)] 
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${user} $sn_options(sys,project-file) ${host}]
                     return -1
             }
-            "busy" {
-	            sn_error_dialog [format [get_indep String PafProjBusy] \
-                        $sn_options(sys,project-file) ${user}@${host}]
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        $sn_options(sys,project-file)]
+                    return -1
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        $sn_options(sys,project-file) ${pid}] 
+                    return -1
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${user} $sn_options(sys,project-file) ${pid}]
                     return -1
             }
             "error" {
                     return 0
-                }
+            }
             default {
                     break
-                }
+            }
         }
     }
 

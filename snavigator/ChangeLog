@@ -1,5 +1,21 @@
 2002-06-07  John Lash  <jlash@speakeasy.net>
 
+	* etc/english.txt.in: Remove PafProjBusy and ProjAlreayOpened.
+	Add ProjAlreadyOpenedThisProcess, ProjAlreadyOpenedOtherSystem,
+	ProjAlreadyOpenedThisUser, and ProjAlreadyOpenedThisSystem.
+	* etc/german.txt: Ditto, with empty place holders.
+	* etc/japanese.txt: Ditto, with empty place holders.
+	* gui/misc.tcl (sn_is_project_busy, sn_open_project,
+	sn_read_project): Set a pid value so that callers can
+	display the locked process pid. Return a more descriptive
+	set of values so that callers can display more information
+	about why the db is locked.
+	* gui/projedit.tcl (can_create_project):
+	* gui/projmng.tcl (sn_delete_project): Display a more
+	descriptive set of errors after calling sn_is_project_busy.
+
+2002-06-07  John Lash  <jlash@speakeasy.net>
+
 	* gui/misc.tcl (sn_is_project_busy,
 	sn_unix_check_process): Check to see if another
 	process that holds a db lock is still alive using

@@ -992,10 +992,35 @@ itcl::class Project& {
     proc can_create_project {prjdir prjname} {
         set name [sn_build_project_filename ${prjdir} ${prjname}]
 
-        if {[sn_is_project_busy ${name} in remuser remhost port] != ""} {
-            sn_error_dialog [format [get_indep String PafProjBusy] ${name}\
-              "${remuser}@${remhost}"]
-            return 0
+        set ret [sn_is_project_busy ${name} in remuser remhost port pid]
+        switch -- ${ret} {
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${remuser} ${name} ${remhost}]
+                    return 0
+            }
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        ${name}]
+                    return 0
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        ${name} ${pid}] 
+                    return 0
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${remuser} ${name} ${pid}]
+                    return 0
+            }
+            "error" {
+                    return 0
+            }
         }
 
         if {[file exists ${name}]} {

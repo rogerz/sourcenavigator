@@ -463,7 +463,6 @@ UndoINFO,すべての変更を元に戻す
 Retriever,リトリーバ([V)
 PrefRetriever,リトリーバ
 Retrieve,リトリーブ
-PafProjBusy,プロジェクト "%s" は "%s" が使用中です。
 PafWdDir,データベース ディレクトリ名([A)
 PafOpenProj,プロジェクト
 HierDefINFO,選択したクラスのスーパークラスを表示
@@ -762,7 +761,10 @@ ContinueParsing,パーサーの処理を続けますか?
 Parsing,プロジェクトのパーサー処理([P)
 MacroFiles,C/C++ マクロ ファイル名([C)
 AddYourMacroFiles,C/C++ パーサーのファイル名を指定
-ProjAlreayOpened,プロジェクト '%s' は既に使用中です。\n前面に表示しますか?
+ProjAlreadyOpenedThisProcess,?? '%s' ??
+ProjAlreadyOpenedOtherSystem,?? '%s' ?? '%s' ?? '%s'.
+ProjAlreadyOpenedThisUser,?? '%s' ?? '%d' ??.
+ProjAlreadyOpenedThisSystem,?? '%s' ?? '%s' ?? '%d' ??.
 MoreEditorToolbarButtons,拡張ツールバー ボタン([E)
 MoreEditorToolbarButtonsINFO,エディタに拡張ツールバーを追加
 GotoPrevPosition,前ページへジャンプ

@@ -346,7 +346,6 @@ Retriever,Retrie[ver
 PrefRetriever,Retriever
 Retrieve,R[etrieve
 PafExecFilter,[Filter...
-PafProjBusy,Projekt "%s" wird vom Benuzer "%s" bearbeitet!
 PafWdDir,Datenbank-Verzeichnisname
 PafOpenProj,Projekt öffnen
 All,Alles
@@ -552,7 +551,10 @@ LoadDirectory,Ordner hinzufügen...
 WindowSizeINFO,Fenstergröße in Relation zur Bildschirmgröße
 FontName,[Name
 CloseProj,Projekt s[chließen...
-ProjAlreayOpened,Das Projekt '%s' ist bereits geöffnet.\nMöchten Sie es in den Vordergrund holen?
+ProjAlreadyOpenedThisProcess,?? '%s' ??
+ProjAlreadyOpenedOtherSystem,?? '%s' ?? '%s' ?? '%s'.
+ProjAlreadyOpenedThisUser,?? '%s' ?? '%d' ??.
+ProjAlreadyOpenedThisSystem,?? '%s' ?? '%s' ?? '%d' ??.
 Disp_Directories,Zeigt Dateien mit vollem Pfad
 ScanningHasBeenCanceled,Möchten Sie den Parsing-Prozeß abbrechen?\nDamit sing die übrigen Dateien nicht Teil des Projektes.
 InvalidProjectName,Projektname falsch angegeben. Bitte verwenden Sie keine Sonderzeichen.
