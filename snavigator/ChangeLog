@@ -1,4 +1,12 @@
-2003-06-01  Mo DeJong  <mdejong@users.sourceforge.net>
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rename cbuff
+	to mode_buff, rename cbuff_start_line to
+	mode_start_line and rename cbuff_start_column
+	to mode_start_column.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Emit an

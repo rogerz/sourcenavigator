@@ -856,10 +856,12 @@ static int result;
 
 static SearchTable * global_var_table = (SearchTable *) NULL;
 
-/* Stores a comment buffer that could be built over multiple lines/rules. */
-LongString cbuff;
-int cbuff_start_line;
-int cbuff_start_column;
+/* Stores the contents of a special processing mode over
+ * multiple lines/rules.
+ */
+LongString mode_buff;
+int mode_start_line;
+int mode_start_column;
 #define COMMENT_DUMP 0
 
 static YY_BUFFER_STATE original_buffer;
@@ -1037,7 +1039,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 199 "phpbrowser.l"
+#line 201 "phpbrowser.l"
 
 
 
@@ -1124,7 +1126,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 201 "phpbrowser.l"
+#line 203 "phpbrowser.l"
 { /* HTML -> PHP mode */
     matched_pattern("<?", yytext);
     BEGIN(PHP);
@@ -1133,7 +1135,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 207 "phpbrowser.l"
+#line 209 "phpbrowser.l"
 { /* PHP -> HTML mode */
     matched_pattern("?>", yytext);
     BEGIN(INITIAL);
@@ -1142,19 +1144,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 213 "phpbrowser.l"
+#line 215 "phpbrowser.l"
 { /* A C style multi-line comment, just like this! */
     matched_pattern("/*", yytext);
     BEGIN(COMMENT);
     sn_advance_column(2);
-    LongStringInit(&cbuff,0);
-    cbuff_start_line = sn_line();
-    cbuff_start_column = sn_column();
+    LongStringInit(&mode_buff,0);
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 222 "phpbrowser.l"
+#line 224 "phpbrowser.l"
 { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
@@ -1185,21 +1187,21 @@ YY_RULE_SETUP
 
 case 5:
 YY_RULE_SETUP
-#line 250 "phpbrowser.l"
+#line 252 "phpbrowser.l"
 {
     matched_pattern("[^\\*\\n]*", yytext);
 
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
     #endif
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_column(yyleng);
     }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 260 "phpbrowser.l"
+#line 262 "phpbrowser.l"
 {
     matched_pattern("[^\\*\\n]*\\n", yytext);
 
@@ -1207,7 +1209,7 @@ YY_RULE_SETUP
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_line();
     sn_reset_column();
@@ -1215,7 +1217,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 272 "phpbrowser.l"
+#line 274 "phpbrowser.l"
 {
     matched_pattern("\\*+[^\\*/\\n]*", yytext);
 
@@ -1223,14 +1225,14 @@ YY_RULE_SETUP
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_column(yyleng);
   }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 283 "phpbrowser.l"
+#line 285 "phpbrowser.l"
 {
     matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
 
@@ -1238,7 +1240,7 @@ YY_RULE_SETUP
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_line();
     sn_reset_column();
@@ -1246,7 +1248,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 295 "phpbrowser.l"
+#line 297 "phpbrowser.l"
 {
     matched_pattern("\\*+/", yytext);
 
@@ -1259,7 +1261,7 @@ YY_RULE_SETUP
         assert(*comment == '*');
         *comment = '0';
         to_append -= 2;
-        cbuff.append( &cbuff,
+        mode_buff.append( &mode_buff,
             yytext, to_append );
     }
 
@@ -1271,7 +1273,7 @@ YY_RULE_SETUP
 
 case 10:
 YY_RULE_SETUP
-#line 317 "phpbrowser.l"
+#line 319 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("(", yytext);
@@ -1286,7 +1288,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 329 "phpbrowser.l"
+#line 331 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern(")", yytext);
@@ -1301,7 +1303,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 341 "phpbrowser.l"
+#line 343 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("[", yytext);
@@ -1317,7 +1319,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 354 "phpbrowser.l"
+#line 356 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("]", yytext);
@@ -1332,7 +1334,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 366 "phpbrowser.l"
+#line 368 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{", yytext);
@@ -1347,7 +1349,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 378 "phpbrowser.l"
+#line 380 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("}", yytext);
@@ -1362,7 +1364,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 390 "phpbrowser.l"
+#line 392 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("}", yytext);
@@ -1377,7 +1379,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 402 "phpbrowser.l"
+#line 404 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("=", yytext);
@@ -1392,7 +1394,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 414 "phpbrowser.l"
+#line 416 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{assignment-operators}", yytext);
@@ -1407,7 +1409,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 426 "phpbrowser.l"
+#line 428 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("function", yytext);
@@ -1422,7 +1424,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 438 "phpbrowser.l"
+#line 440 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("global", yytext);
@@ -1437,7 +1439,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 450 "phpbrowser.l"
+#line 452 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{include-keywords}", yytext);
@@ -1452,7 +1454,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 462 "phpbrowser.l"
+#line 464 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{keywords}", yytext);
@@ -1467,7 +1469,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 474 "phpbrowser.l"
+#line 476 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{q-string}", yytext);
@@ -1487,7 +1489,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 491 "phpbrowser.l"
+#line 493 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("{someword}", yytext);
@@ -1502,7 +1504,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 503 "phpbrowser.l"
+#line 505 "phpbrowser.l"
 {
   matched_pattern("\\$", yytext);
   sn_advance_column(yyleng); /* ignore \$ */
@@ -1510,7 +1512,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 508 "phpbrowser.l"
+#line 510 "phpbrowser.l"
 {
   Token* tok;
   matched_pattern("${varname}", yytext);
@@ -1528,7 +1530,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 523 "phpbrowser.l"
+#line 525 "phpbrowser.l"
 {
   matched_pattern("\\n", yytext);
   sn_advance_line();
@@ -1537,7 +1539,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 529 "phpbrowser.l"
+#line 531 "phpbrowser.l"
 {
   matched_pattern(".", yytext);
   sn_advance_column(yyleng); /* eat text */
@@ -1545,7 +1547,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 536 "phpbrowser.l"
+#line 538 "phpbrowser.l"
 {
   int parens, noargs;
   LongString abuff;
@@ -1608,7 +1610,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 596 "phpbrowser.l"
+#line 598 "phpbrowser.l"
 {
   if (current_function) {
     current_function_brace_count++;
@@ -1618,7 +1620,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 603 "phpbrowser.l"
+#line 605 "phpbrowser.l"
 {
   if (current_function && (--current_function_brace_count == 0)) {
 #ifdef TOKEN_DEBUG
@@ -1637,7 +1639,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 619 "phpbrowser.l"
+#line 621 "phpbrowser.l"
 {
   int line_start, line_end, column_start, column_end;
   char * filename;
@@ -1688,7 +1690,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 667 "phpbrowser.l"
+#line 669 "phpbrowser.l"
 {
   SearchEntry entry;
 
@@ -1730,7 +1732,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 706 "phpbrowser.l"
+#line 708 "phpbrowser.l"
 {
   char* fname;
   int line;
@@ -1767,7 +1769,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 740 "phpbrowser.l"
+#line 742 "phpbrowser.l"
 {
   char* varname = tokens_head->strval;
   SearchEntry entry;
@@ -1870,7 +1872,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 840 "phpbrowser.l"
+#line 842 "phpbrowser.l"
 {
   char* varname = tokens_head->strval;
   SearchEntry entry;
@@ -1936,7 +1938,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 903 "phpbrowser.l"
+#line 905 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate token %d %s", token_index,
@@ -1952,12 +1954,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 916 "phpbrowser.l"
+#line 918 "phpbrowser.l"
 
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 918 "phpbrowser.l"
+#line 920 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -1965,7 +1967,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 924 "phpbrowser.l"
+#line 926 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -1994,7 +1996,7 @@ case YY_STATE_EOF(TOKEN):
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(PHP):
 case YY_STATE_EOF(COMMENT):
-#line 949 "phpbrowser.l"
+#line 951 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -2069,7 +2071,7 @@ case YY_STATE_EOF(COMMENT):
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 1021 "phpbrowser.l"
+#line 1023 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 
@@ -2955,7 +2957,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1021 "phpbrowser.l"
+#line 1023 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */
@@ -3111,7 +3113,7 @@ void emit_function_declaration() {
 }
 
 void emit_comment() {
-    char* comment = cbuff.buf;
+    char* comment = mode_buff.buf;
 
 #if COMMENT_DUMP
     fprintf(stderr, "emit comment \"%s\"\n", comment);
@@ -3122,10 +3124,10 @@ void emit_comment() {
         /* funcname */ NULL,
         sn_current_file(),
         comment,
-        cbuff_start_line,
-        cbuff_start_column);
+        mode_start_line,
+        mode_start_column);
 
-    cbuff.free(&cbuff);
+    mode_buff.free(&mode_buff);
 }
   
 void

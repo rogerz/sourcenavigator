@@ -130,10 +130,12 @@ static int result;
 
 static SearchTable * global_var_table = (SearchTable *) NULL;
 
-/* Stores a comment buffer that could be built over multiple lines/rules. */
-LongString cbuff;
-int cbuff_start_line;
-int cbuff_start_column;
+/* Stores the contents of a special processing mode over
+ * multiple lines/rules.
+ */
+LongString mode_buff;
+int mode_start_line;
+int mode_start_column;
 #define COMMENT_DUMP 0
 
 static YY_BUFFER_STATE original_buffer;
@@ -214,9 +216,9 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     matched_pattern("/*", yytext);
     BEGIN(COMMENT);
     sn_advance_column(2);
-    LongStringInit(&cbuff,0);
-    cbuff_start_line = sn_line();
-    cbuff_start_column = sn_column();
+    LongStringInit(&mode_buff,0);
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
 }
 
 <PHP>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
@@ -253,7 +255,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
     #endif
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_column(yyleng);
     }
@@ -264,7 +266,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_line();
     sn_reset_column();
@@ -276,7 +278,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_column(yyleng);
   }
@@ -287,7 +289,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
     #endif
 
-    cbuff.append( &cbuff,
+    mode_buff.append( &mode_buff,
         yytext, yyleng );
     sn_advance_line();
     sn_reset_column();
@@ -304,7 +306,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
         assert(*comment == '*');
         *comment = '0';
         to_append -= 2;
-        cbuff.append( &cbuff,
+        mode_buff.append( &mode_buff,
             yytext, to_append );
     }
 
@@ -1173,7 +1175,7 @@ void emit_function_declaration() {
 }
 
 void emit_comment() {
-    char* comment = cbuff.buf;
+    char* comment = mode_buff.buf;
 
 #if COMMENT_DUMP
     fprintf(stderr, "emit comment \"%s\"\n", comment);
@@ -1184,10 +1186,10 @@ void emit_comment() {
         /* funcname */ NULL,
         sn_current_file(),
         comment,
-        cbuff_start_line,
-        cbuff_start_column);
+        mode_start_line,
+        mode_start_column);
 
-    cbuff.free(&cbuff);
+    mode_buff.free(&mode_buff);
 }
   
 void
