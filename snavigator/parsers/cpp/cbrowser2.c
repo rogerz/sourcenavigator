@@ -280,8 +280,12 @@ main(int argc, char **argv)
 		FILE	*in;
 
 		in = fopen(xref_file,"r");
-		if (in)
+		if (in) {
 			infp = in;
+		} else {
+		    fprintf(stderr, "xref_file \"%s\" does not exist\n", xref_file);
+		    exit(3);
+		}
 	}
 
         Paf_db_init_tables(db_prefix,cache,cross_cache);
@@ -374,7 +378,6 @@ main(int argc, char **argv)
 			Paf_insert_cross_ref_qry(bufp);
 		} else {
 			fprintf(stdout, "%s\n", bufp);
-			fflush(stdout);
 			continue;
 		}
 	}

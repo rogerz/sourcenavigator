@@ -1,5 +1,14 @@
 2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/cpp/cbrowser2.c (main): Print an error
+	to stdout and exit if the xref_file given does
+	not exist. Don't flush stdout after a read of
+	a non-cppref line. Performance will be much
+	better if the buffer is allowed to fill up before
+	it is flushed.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Split parser functionality out of db/dbutils.c
 	and move it into parsers/common/parser.c.
 	With this change, a parser need only be linked
