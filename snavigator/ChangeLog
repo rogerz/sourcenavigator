@@ -1,3 +1,16 @@
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* bitmaps/clsbr_private.xpm: Add small empty
+	image to represent a private class member.
+	* gui/utilities.tcl: Define cls_br_private_image
+	with date from clsbr_private.xpm.
+	* hyper/services.c (class_browser_insert): Use
+	cls_br_private_image as the image when a member
+	with PAF_PRIVATE access is found. Check for
+	PAF_PRIVATE explicitly instead of just assuming
+	that a non-public and non-protected member is
+	private.
+
 2003-01-31  Earnie Boyd  <earnie@users.sf.net>
 
 	* db/dbutils.c (Paf_Pipe_Flush): Use FlushFileBuffers
