@@ -1135,8 +1135,7 @@ DISTROOT =	/tmp/dist
 DISTNAME =	tcl@TCL_VERSION@@TCL_PATCH_LEVEL@
 ZIPNAME =	tcl@TCL_MAJOR_VERSION@@TCL_MINOR_VERSION@@TCL_PATCH_LEVEL@.zip
 DISTDIR =	$(DISTROOT)/$(DISTNAME)
-$(UNIX_DIR)/configure: $(UNIX_DIR)/configure.in
-	autoconf $(UNIX_DIR)/configure.in > $(UNIX_DIR)/configure
+
 dist: $(UNIX_DIR)/configure
 	rm -rf $(DISTDIR)
 	mkdir $(DISTDIR)

@@ -426,6 +426,12 @@ AC_DEFUN(SC_CONFIG_CFLAGS, [
 
 	CFLAGS_DEBUG=-g
 	CFLAGS_OPTIMIZE=-O
+
+        # Don't set an opt level if an option like -O3 was set in CFLAGS
+        if echo $CFLAGS | grep '\-O' > /dev/null ; then
+            CFLAGS_OPTIMIZE=""
+        fi
+
 	CFLAGS_WARNING="-Wall -Wconversion"
 	LDFLAGS_DEBUG=
 	LDFLAGS_OPTIMIZE=
