@@ -60,53 +60,23 @@ POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
 AR = @AR@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 CC = @CC@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
 ITK_BUILD_LIB_SPEC = @ITK_BUILD_LIB_SPEC@
 ITK_LIB_FILE = @ITK_LIB_FILE@
 ITK_LIB_FULL_PATH = @ITK_LIB_FULL_PATH@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
 LIBGUI_CFLAGS = @LIBGUI_CFLAGS@
 LIBGUI_LIBRARY_DIR = @LIBGUI_LIBRARY_DIR@
-LIBIBERTY = @LIBIBERTY@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 RPATH_ENVVAR = @RPATH_ENVVAR@
-RUNTESTDIR = @RUNTESTDIR@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 TCLCONFIG = @TCLCONFIG@
 TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
@@ -136,29 +106,22 @@ TK_VERSION = @TK_VERSION@
 TK_XINCLUDES = @TK_XINCLUDES@
 TK_XLIBSW = @TK_XLIBSW@
 VERSION = @VERSION@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
-TCL = advice.tcl balloon.tcl bbox.tcl bgerror.tcl bindings.tcl \
-canvas.tcl cframe.tcl center.tcl debug.tcl def.tcl internet.tcl	\
-font.tcl gensym.tcl gettext.tcl hooks.tcl lframe.tcl list.tcl \
-looknfeel.tcl menu.tcl mono.tcl multibox.tcl parse_args.tcl path.tcl \
-postghost.tcl prefs.tcl print.tcl sendpr.tcl topbind.tcl toolbar.tcl \
-ulset.tcl wframe.tcl wingrab.tcl ventry.tcl combobox.tcl \
-pane.tcl panedwindow.tcl
+TCL = advice.tcl balloon.tcl bbox.tcl bgerror.tcl bindings.tcl canvas.tcl cframe.tcl center.tcl debug.tcl def.tcl internet.tcl	font.tcl gensym.tcl gettext.tcl hooks.tcl lframe.tcl list.tcl looknfeel.tcl menu.tcl mono.tcl multibox.tcl parse_args.tcl path.tcl postghost.tcl prefs.tcl print.tcl sendpr.tcl topbind.tcl toolbar.tcl ulset.tcl wframe.tcl wingrab.tcl ventry.tcl combobox.tcl pane.tcl panedwindow.tcl
 
 
 PACKAGES = combobox.tcl
 
 guidir = $(datadir)/redhat/gui
 gui_DATA = tclIndex pkgIndex.tcl $(TCL) $(PACKAGES)
-@TCL_SHARED_TRUE@SET_LIB_PATH = @TCL_SHARED_TRUE@$(RPATH_ENVVAR)=$$here/../../tcl/unix:$$here/../../itcl/itcl/unix:$$$(RPATH_ENVVAR); export $(RPATH_ENVVAR);
+@TCL_SHARED_TRUE@SET_LIB_PATH = $(RPATH_ENVVAR)=$$here/../../tcl/unix:$$here/../../itcl/itcl/unix:$$$(RPATH_ENVVAR); export $(RPATH_ENVVAR);
 @TCL_SHARED_FALSE@SET_LIB_PATH = 
 
 WISH = wish
-@CROSS_COMPILING_TRUE@ITCL_SH = @CROSS_COMPILING_TRUE@itclsh3.0
-@CROSS_COMPILING_FALSE@ITCL_SH = @CROSS_COMPILING_FALSE@@ITCL_SH@
+@CROSS_COMPILING_TRUE@ITCL_SH = itclsh3.0
+@CROSS_COMPILING_FALSE@ITCL_SH = @ITCL_SH@
 
 ETAGS_ARGS = --lang=none --regex='/[ \t]*\(proc\|method\|itcl_class\)[ \t]+\([^ \t]+\)/\1/' $(TCL) --lang=auto
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs

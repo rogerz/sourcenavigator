@@ -62,30 +62,9 @@ POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
 AR = @AR@
-BFDHDIR = @BFDHDIR@
-BFDLIB = @BFDLIB@
 CC = @CC@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-DEJAGNUHDIR = @DEJAGNUHDIR@
-DEJAGNULIB = @DEJAGNULIB@
-DEVOHDIR = @DEVOHDIR@
-ENDIAN = @ENDIAN@
 EXEEXT = @EXEEXT@
-GUILIB = @GUILIB@
-HAVE_DEVO_SIM = @HAVE_DEVO_SIM@
-IDEHDIR = @IDEHDIR@
-IDELIB = @IDELIB@
-IDETCLLIB = @IDETCLLIB@
-ILUHDIR = @ILUHDIR@
-ILULIB = @ILULIB@
-ILUTOP = @ILUTOP@
-INTLHDIR = @INTLHDIR@
-INTLLIB = @INTLLIB@
 ITCLHDIR = @ITCLHDIR@
-ITCLLIB = @ITCLLIB@
-ITCLMKIDX = @ITCLMKIDX@
-ITCLSH = @ITCLSH@
 ITCL_BUILD_LIB_SPEC = @ITCL_BUILD_LIB_SPEC@
 ITCL_LIB_FILE = @ITCL_LIB_FILE@
 ITCL_LIB_FULL_PATH = @ITCL_LIB_FULL_PATH@
@@ -93,22 +72,13 @@ ITCL_SH = @ITCL_SH@
 ITK_BUILD_LIB_SPEC = @ITK_BUILD_LIB_SPEC@
 ITK_LIB_FILE = @ITK_LIB_FILE@
 ITK_LIB_FULL_PATH = @ITK_LIB_FULL_PATH@
-LIBERTY = @LIBERTY@
-LIBGCC = @LIBGCC@
-LIBGUIHDIR = @LIBGUIHDIR@
-LIBGUILIB = @LIBGUILIB@
 LIBGUI_LIBRARY_DIR = @LIBGUI_LIBRARY_DIR@
-LIBIBERTY = @LIBIBERTY@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
-OPCODESLIB = @OPCODESLIB@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 RPATH_ENVVAR = @RPATH_ENVVAR@
-RUNTESTDIR = @RUNTESTDIR@
-SIMHDIR = @SIMHDIR@
-SIMLIB = @SIMLIB@
 TCLCONFIG = @TCLCONFIG@
 TCLHDIR = @TCLHDIR@
 TCL_BIN_DIR = @TCL_BIN_DIR@
@@ -138,14 +108,12 @@ TK_VERSION = @TK_VERSION@
 TK_XINCLUDES = @TK_XINCLUDES@
 TK_XLIBSW = @TK_XLIBSW@
 VERSION = @VERSION@
-ac_cv_c_itclsh = @ac_cv_c_itclsh@
 
 AUTOMAKE_OPTIONS = cygnus
 
 noinst_LIBRARIES = libgui.a
 
-@INSTALL_LIBGUI_TRUE@include_HEADERS = @INSTALL_LIBGUI_TRUE@\
-@INSTALL_LIBGUI_TRUE@	guitcl.h subcommand.h
+@INSTALL_LIBGUI_TRUE@include_HEADERS = 	guitcl.h subcommand.h
 
 datadir = @datadir@
 guidir = $(datadir)/redhat/gui
@@ -163,26 +131,13 @@ TBL_COMMAND = table
 
 LIBGUI_CFLAGS = @LIBGUI_CFLAGS@
 
-INCLUDES = $(LIBGUI_CFLAGS) $(TCLHDIR) \
-$(TKHDIR) \
-$(TK_XINCLUDES) $(TCL_DEFS) $(TK_DEFS) \
-$(TKHDIR)/../unix $(TKHDIR)/../win \
--DTBL_VERSION=\"$(TBL_VERSION)\"\
--DTBL_COMMAND=\"$(TBL_COMMAND)\"\
--DTBL_RUNTIME=\"tkTable.tcl\" -DTBL_RUNTIME_DIR=\"$(guidir)\"\
--DSTATIC_BUILD
+INCLUDES = $(LIBGUI_CFLAGS) $(TCLHDIR) $(TKHDIR) $(TK_XINCLUDES) $(TCL_DEFS) $(TK_DEFS) $(TKHDIR)/../unix $(TKHDIR)/../win -DTBL_VERSION=\"$(TBL_VERSION)\" -DTBL_COMMAND=\"$(TBL_COMMAND)\" -DTBL_RUNTIME=\"tkTable.tcl\" -DTBL_RUNTIME_DIR=\"$(guidir)\" -DSTATIC_BUILD
 
 
-TKTABLE_SOURCES = tkTable.c tkTableCell.c tkTableCellSort.c \
-tkTableCmds.c tkTableEdit.c tkTableTag.c tkTableWin.c tkTableUtil.c
+TKTABLE_SOURCES = tkTable.c tkTableCell.c tkTableCellSort.c tkTableCmds.c tkTableEdit.c tkTableTag.c tkTableWin.c tkTableUtil.c
 
 
-libgui_a_SOURCES = guitcl.h paths.c subcommand.c subcommand.h \
-xpmlib.c tclmain.c tkGraphCanvas.c \
-tkCanvEdge.c tkCanvLayout.c tkCanvLayout.h tclhelp.c tclgetdir.c \
-tclwinprint.c tclsizebox.c tclshellexe.c tclmapi.c tclwinfont.c	\
-tclwingrab.c tclwinmode.c tclwinpath.c tclmsgbox.c tclcursor.c \
-tkWinPrintText.c tkWinPrintCanvas.c tkWarpPointer.c $(TKTABLE_SOURCES)
+libgui_a_SOURCES = guitcl.h paths.c subcommand.c subcommand.h xpmlib.c tclmain.c tkGraphCanvas.c tkCanvEdge.c tkCanvLayout.c tkCanvLayout.h tclhelp.c tclgetdir.c tclwinprint.c tclsizebox.c tclshellexe.c tclmapi.c tclwinfont.c	tclwingrab.c tclwinmode.c tclwinpath.c tclmsgbox.c tclcursor.c tkWinPrintText.c tkWinPrintCanvas.c tkWarpPointer.c $(TKTABLE_SOURCES)
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
