@@ -472,8 +472,11 @@ fi
 ])
 AC_MSG_RESULT(${ac_cv_c_tcl_libdir})
 
-if test x$ac_win_build = xyes; then
-  tmp2="`cygpath --windows $ac_cv_c_tcl_libdir`"
+# FIXME: Should use macro from config/ subdir!
+AC_CHECK_PROG(CYGPATH, cygpath, cygpath -w, echo)
+
+if test "$CYGPATH" != "echo" ; then
+  tmp2="`$CYGPATH $ac_cv_c_tcl_libdir`"
   TCL_LIBRARY="`echo $tmp2 | sed -e s#\\\\\\\\#/#g`"
 else
   TCL_LIBRARY=$ac_cv_c_tcl_libdir
@@ -490,8 +493,8 @@ fi
 AC_SUBST(HYPER_MAIN)
 
 tmp="`cd $srcdir/gui; pwd`"
-if test x$ac_win_build = xyes ; then
-  tmp2="`cygpath --windows $tmp`"
+if test "$CYGPATH" != "echo" ; then
+  tmp2="`$CYGPATH $tmp`"
   SN_GUI_DIR="`echo $tmp2 | sed -e s#\\\\\\\\#/#g`"
 else
   SN_GUI_DIR=$tmp

@@ -1,3 +1,11 @@
+2002-11-13  Mo DeJong  <mdejong@uncounted.org>
+
+	* configure: Regen.
+	* configure.in: Check for cygpath and
+	don't attempt path conversions if it
+	is not found. This fix is needed to
+	be able to cross compile for windows.
+
 2002-11-10  Mo DeJong  <mdejong@uncounted.org>
 
 	* gui/makepane.tcl (ExecMake): Pipe stdout

@@ -4426,8 +4426,40 @@ fi
 
 echo "$ac_t""${ac_cv_c_tcl_libdir}" 1>&6
 
-if test x$ac_win_build = xyes; then
-  tmp2="`cygpath --windows $ac_cv_c_tcl_libdir`"
+# FIXME: Should use macro from config/ subdir!
+# Extract the first word of "cygpath", so it can be a program name with args.
+set dummy cygpath; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+echo "configure:4434: checking for $ac_word" >&5
+if eval "test \"`echo '$''{'ac_cv_prog_CYGPATH'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$CYGPATH"; then
+  ac_cv_prog_CYGPATH="$CYGPATH" # Let the user override the test.
+else
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_prog_CYGPATH="cygpath -w"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_CYGPATH" && ac_cv_prog_CYGPATH="echo"
+fi
+fi
+CYGPATH="$ac_cv_prog_CYGPATH"
+if test -n "$CYGPATH"; then
+  echo "$ac_t""$CYGPATH" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+
+if test "$CYGPATH" != "echo" ; then
+  tmp2="`$CYGPATH $ac_cv_c_tcl_libdir`"
   TCL_LIBRARY="`echo $tmp2 | sed -e s#\\\\\\\\#/#g`"
 else
   TCL_LIBRARY=$ac_cv_c_tcl_libdir
@@ -4444,8 +4476,8 @@ fi
 
 
 tmp="`cd $srcdir/gui; pwd`"
-if test x$ac_win_build = xyes ; then
-  tmp2="`cygpath --windows $tmp`"
+if test "$CYGPATH" != "echo" ; then
+  tmp2="`$CYGPATH $tmp`"
   SN_GUI_DIR="`echo $tmp2 | sed -e s#\\\\\\\\#/#g`"
 else
   SN_GUI_DIR=$tmp
@@ -4761,6 +4793,7 @@ s%@ITCL_LIB_FULL_PATH@%$ITCL_LIB_FULL_PATH%g
 s%@ITK_BUILD_LIB_SPEC@%$ITK_BUILD_LIB_SPEC%g
 s%@ITK_LIB_FILE@%$ITK_LIB_FILE%g
 s%@ITK_LIB_FULL_PATH@%$ITK_LIB_FULL_PATH%g
+s%@CYGPATH@%$CYGPATH%g
 s%@TCL_LIBRARY@%$TCL_LIBRARY%g
 s%@HYPER_MAIN@%$HYPER_MAIN%g
 s%@SN_GUI_DIR@%$SN_GUI_DIR%g
