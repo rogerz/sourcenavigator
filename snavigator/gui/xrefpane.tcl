@@ -753,9 +753,12 @@ itcl::class XRef& {
 
             if {${print_dialog} == "" || [itcl_info objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.print_dialog -canvas ${can}\
-                  -leader ${topw} -modality application -file [file join $sn_options(profile_dir)\
-                  xref.ps]]
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas ${can} \
+                  -file [file join $sn_options(profile_dir) xref.ps]]
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {

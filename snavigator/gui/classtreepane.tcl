@@ -263,10 +263,14 @@ itcl::class ClassTree& {
         } else {
             if {${print_dialog} == "" || [itcl_info objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.printdlg -canvas $itk_component(canvas)\
-                  -leader ${topw} -modality application -file [file join $sn_options(profile_dir)\
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas $itk_component(canvas)\
+                  -file [file join $sn_options(profile_dir)\
                   tree.ps]]
 
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {

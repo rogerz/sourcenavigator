@@ -1,5 +1,25 @@
 2002-05-29  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/classtreepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/dialog.tcl: Remove the poorly named -parent
+	option for the Dialog class. A transient window
+	should set its master using Window::transient.
+	* gui/includepane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+	* gui/targetmgr.tcl (edit_target): Invoke the
+	Window::transient method instead of using -parent.
+	* gui/xrefpane.tcl (print): Rename PrintDialog,
+	use itk_component(hull) not this, reorder arguments.
+	Invoke Window::transient to explicitly set the
+	transientfor property for the PrintDialog.
+
+2002-05-29  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/classpane.tcl:
 	* gui/classtreepane.tcl:
 	* gui/editorpane.tcl:

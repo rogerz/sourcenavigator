@@ -399,7 +399,6 @@ itcl::class sourcenav::Dialog {
     # Hide the on_close method so that it can't be invoked!
     private method on_close { {cmd ""} }
 
-    itk_option define -parent parent Parent .
     itk_option define -modality modality Modality application {
         if {$_active} {
             error "Cannot change -modality while Dialog is active."
@@ -430,7 +429,7 @@ itcl::body sourcenav::Dialog::constructor { args } {
 
     on_close [itcl::code $this deactivate]
 
-    eval itk_initialize $args 
+    eval itk_initialize $args
 }
 
 itcl::body sourcenav::Dialog::destructor { } {
@@ -459,11 +458,6 @@ itcl::body sourcenav::Dialog::activate { } {
     set _active 1
 
     $this PushModalStack $itk_component(hull)
-
-    if {($itk_option(-parent) != {}) && \
-            [winfo exists $itk_option(-parent)]} {
-	${this} transient $itk_option(-parent)
-    }
 
     ${this} centerOnScreen
     ${this} deiconify

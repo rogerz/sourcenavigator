@@ -206,9 +206,12 @@ itcl::class Include& {
         } else {
             if {${print_dialog} == "" || [itcl::find objects ${print_dialog}]\
               == ""} {
-                set print_dialog [PrintDialog $this.printdialog -canvas ${can}\
-                  -parent ${topw} -modality application -file [file join $sn_options(profile_dir)\
-                  include.ps]]
+                set print_dialog [PrintDialog $itk_component(hull).printdialog \
+                  -leader ${topw} \
+                  -modality application \
+                  -canvas ${can}\
+                  -file [file join $sn_options(profile_dir) include.ps]]
+	        $print_dialog transient ${topw}
 	        $print_dialog activate
 	        itcl::delete object $print_dialog
             } else {
