@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -221,7 +223,7 @@ fbrowser_LDADD = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_bu
 fbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a
 
 fbrowser_DEFS = -DALLOW_INCLUDE
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 bin_PROGRAMS =  fbrowser$(EXEEXT)

@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -213,7 +215,7 @@ noinst_LIBRARIES = libcpp2.a
 
 libcpp2_a_SOURCES = cp_argument.c cp_class.c cp_crossref.c cp_declaration.c cp_declarator.c cp_enum.c cp_error.c cp_expression.c cp_init.c cp_list.c cp_literal.c cp_malloc.c cp_name.c cp_oper.c cp_process.c cp_stack.c cp_statement.c cp_step.c cp_symbol.c cp_type.c cp_typename.c cpdefines.h cplex.c cpkeyw.c cpkeyw.h crossref.h crossrefP.h operator.h symbol.h macread.c macro.c token.c expr.c process.c
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../../config.h
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(noinst_LIBRARIES)

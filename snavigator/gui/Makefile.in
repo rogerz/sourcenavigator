@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -210,7 +212,7 @@ progdir = $(datadir)/sourcenav/gui
 
 prog_DATA = tclIndex bindings.tcl bindxtnd.tcl bugreport.tcl combo.tcl dialog.tcl diff.tcl dirdialog.tcl elix.tcl emacs.tcl error.tcl font.tcl grep.tcl help.tcl highlight.tcl history.tcl html.tcl i18n.tcl ide.tcl sninit.tcl ipc.tcl misc.tcl panewd.tcl paths.tcl printdialog.tcl rcs.tcl selector.tcl text.tcl utilities.tcl version.tcl history.tcl retriever.tcl statistics.tcl multiview.tcl multichild.tcl classpane.tcl classtreepane.tcl editorpane.tcl symbolbrowser.tcl includepane.tcl xrefpane.tcl retrieverpane.tcl greppane.tcl makepane.tcl preferences.tcl tools.tcl window.tcl projedit.tcl font.tcl projmng.tcl gdbtk.tcl tmeter.tcl project.tcl targetmgr.tcl buildtarget.tcl targetedit.tcl toolchain.tcl conftooldlg.tcl mkfilegen.tcl tree.tcl optiontrace.tcl tclgrepdriver.tcl execgrepdriver.tcl
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 DATA =  $(prog_DATA)

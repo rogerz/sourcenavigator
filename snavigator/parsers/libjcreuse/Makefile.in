@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -212,7 +214,7 @@ noinst_LIBRARIES = libjcreuse.a
 
 libjcreuse_a_SOURCES = DynArray.c DynArray.h Errors.c Errors.h General.c General.h Idents.c Idents.h Position.c Position.h Reuse.h Sets.c Sets.h Source.c Source.h StringM.c StringM.h rMemory.c rMemory.h rSystem.c rSystem.h ratc.h
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(noinst_LIBRARIES)

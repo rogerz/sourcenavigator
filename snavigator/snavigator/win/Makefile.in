@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -214,7 +216,7 @@ AUTOMAKE_OPTIONS = cygnus
 @WINDOWS_TRUE@snsdk_SOURCES = winCon.c
 @WINDOWS_TRUE@snsdk_LDADD = $(WIN32LIBS)
 @WINDOWS_TRUE@snsdk_CFLAGS = -DAPPNAME=\"..\\\\bin\\\\hyper.exe\"
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 @WINDOWS_TRUE@bin_PROGRAMS =  snavigator$(EXEEXT) snsdk$(EXEEXT)

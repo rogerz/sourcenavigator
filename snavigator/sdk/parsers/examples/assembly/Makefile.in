@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -212,7 +214,7 @@ assemblydir = $(datadir)/sdk/parsers/examples/assembly
 
 assembly_DATA = README Makefile Makefile.vc a.c b.c abrowser.l.in $(m4stuff)
 assembly_SCRIPTS = build-macros 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../../../config.h
 CONFIG_CLEAN_FILES = 
 SCRIPTS =  $(assembly_SCRIPTS)

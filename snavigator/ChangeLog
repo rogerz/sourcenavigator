@@ -1,3 +1,57 @@
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
+	* Makefile.in: Regen.
+	* configure: Regen.
+	* configure.in: Invoke AC_CANONICAL_HOST
+	and AC_CHECK_TOOL so that cross compiling
+	works correctly. Invoke AC_CONFIG_AUX_DIR
+	so configure knows where to look for
+	config.sub and config.guess.
+	* bitmaps/Makefile.in: Regen.
+	* db/Makefile.in: Regen.
+	* demo/Makefile.in: Regen.
+	* doc/Makefile.in: Regen.
+	* doc/html/Makefile.in: Regen.
+	* etc/Makefile.in: Regen.
+	* etc/sn_toolchains/Makefile.in: Regen.
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.in: Regen.
+	* misc/Makefile.in: Regen.
+	* misc/libutils/Makefile.in: Regen.
+	* packages/Makefile.in: Regen.
+	* parsers/Makefile.in: Regen.
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/chill/Makefile.in: Regen.
+	* parsers/cobol/Makefile.in: Regen.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/cpp/Makefile.in: Regen.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/gcj/Makefile.in: Regen.
+	* parsers/java/Makefile.in: Regen.
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/tcl/Makefile.in: Regen.
+	* parsers/toolbox/Makefile.in: Regen.
+	* sdk/Makefile.in: Regen.
+	* sdk/api/Makefile.in: Regen.
+	* sdk/api/c/Makefile.in: Regen.
+	* sdk/api/c/database/Makefile.in: Regen.
+	* sdk/api/c/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/Makefile.in: Regen.
+	* sdk/api/tcl/database/Makefile.in: Regen.
+	* sdk/api/tcl/database/examples/Makefile.in: Regen.
+	* sdk/api/tcl/misc/Makefile.in: Regen.
+	* sdk/parsers/Makefile.in: Regen.
+	* sdk/parsers/examples/Makefile.in: Regen.
+	* sdk/parsers/examples/assembly/Makefile.in: Regen.
+	* sdk/parsers/examples/elf/Makefile.in: Regen.
+	* snavigator/Makefile.in: Regen.
+	* snavigator/unix/Makefile.in: Regen.
+	* snavigator/win/Makefile.in: Regen.
+
 2002-11-14  Mo DeJong  <mdejong@uncounted.org>
 
 	* misc/compat.h: Include winsock.h when compiling

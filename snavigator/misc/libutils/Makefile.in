@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -217,7 +219,7 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/db -I$(top_srcdir)/misc $(TCLHDIR)
 
 libutils_a_SOURCES = homedir.c mxdefine.h mxfuncs.h fileutils.h fileutils.c mxlogger.h strs.c $(GETOPT) $(REALPATH)
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(sdk_LIBRARIES)

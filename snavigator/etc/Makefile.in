@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -211,7 +213,7 @@ SUBDIRS = sn_toolchains
 etcdir = $(datadir)/etc
 etc_DATA = english.txt german.txt grep.fil navigato sn_prop.cfg sn.el sn_cmp_g.pat snscenario
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES =  navigato english.txt sn_prop.cfg
 DATA =  $(etc_DATA)

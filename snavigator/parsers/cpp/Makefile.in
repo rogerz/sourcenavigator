@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -220,7 +222,7 @@ cbrowser_LDADD = cpplib/cpkeyw.$(OBJEXT) cpplib/cplex.$(OBJEXT) 	cpplib/macro.$(
 
 cbrowser_DEPENDENCIES = cpplib/cpkeyw.$(OBJEXT) 	cpplib/cplex.$(OBJEXT) cpplib/macro.$(OBJEXT) 	cpplib/macread.$(OBJEXT) cpplib/token.$(OBJEXT) 	cpplib/process.$(OBJEXT) cpplib/expr.$(OBJEXT) 	$(top_builddir)/db/libdbutils.a 	$(top_builddir)/misc/libutils/libutils.a 	$(DB_LIBDIR)/libdb.a
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 bin_PROGRAMS =  cbrowser$(EXEEXT)

@@ -77,6 +77,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
 ASM_DEMO = @ASM_DEMO@
 ASSEMBLER_DIRS = @ASSEMBLER_DIRS@
 AWK = @AWK@
@@ -224,7 +226,7 @@ chbrowser_LDADD = -L$(toolbox) -lsnptools 		$(top_builddir)/db/libdbutils.a 		 -
 
 chbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 			$(top_builddir)/misc/libutils/libutils.a 			$(toolbox)/libsnptools.a $(common)/libcommon.a
 
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 noinst_PROGRAMS =  chbrowser$(EXEEXT)
