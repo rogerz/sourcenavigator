@@ -39,6 +39,7 @@ MA 02111-1307, USA.
 #include "snptools.h"
 #include "lexinput.h"
 #include "longstr.h"
+#include "srchtbl.h"
 
 #undef yywrap
 #define YY_SKIP_YYWRAP
@@ -86,6 +87,8 @@ static int result;
 /* The mode to return to after leaving HTML mode */
 static int php_entry_mode = -1;
 
+static SearchTable * global_var_table = (SearchTable *) NULL;
+
 /* Stores a comment buffer that could be built over multiple lines/rules. */
 LongString cbuff;
 int cbuff_start_line;
@@ -107,7 +110,9 @@ yywrap()
   return(1);
 }
 
-void matched_pattern(char * pattern, char * text);
+static void matched_pattern(char * pattern, char * text);
+
+static void FreeGlobalEntry(SearchEntry *entry);
 
 %}
 
@@ -165,6 +170,11 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
     assert(result == 0);
 
     strcpy(current_function, "GLOBAL");
+
+    if (global_var_table) {
+      global_var_table->destroy( &global_var_table );
+      global_var_table = NULL;
+    }
 
     yy_pop_state(); /*BEGIN(PHP);*/
   }
@@ -240,8 +250,88 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
   sn_reset_column();
 }
 
-<PHP>\${symbol}{array-notation}? {
+<FUNCTION>"global"{wsn}+.+; {
+  char * x = yytext;
+  char * tmp1, * tmp2;
+
+  matched_pattern("global{wsn}+.+;", yytext);
+
+  /* Skip "global" token */
+
+  assert(*x == 'g');
+  x += strlen("global");
+  sn_advance_column(x - yytext);
+
+  /* Skip {wsn} */
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == '\t' || *x == ' ') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
+
+  assert(strlen(x) > 0);
+
+  /* Now parse out any $var entries
+   * and record them in the function's
+   * global var lookup table 
+   */
+
+  if (global_var_table == NULL) {
+      global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
+  }
+
+  for (tmp1=x, tmp2=identifier; *tmp1 != ';'; ) {
+    SearchEntry entry;
+    SearchEntry *pentry;
+
+    /* Start argument variable name */
+    if (*tmp1 == '$') {
+        for (tmp1++; *tmp1 != ';'; tmp1++) {
+            /*fprintf(stderr, "var loop '%s'\n", tmp1);*/
+            if (*tmp1 == ',' || *tmp1 == ' ' ||
+                    *tmp1 == '\t' || *tmp1 == '\n') {
+                break;
+            } else {
+                /*fprintf(stderr, "appended '%c'\n", *tmp1);*/
+                *tmp2++ = *tmp1;
+            }
+
+            assert((tmp2 - identifier) < MAX_SIZE);
+        }
+        *tmp2 = 0;
+        /* Add var name to the global table */
+        /*fprintf(stderr, "adding global var \"%s\"\n", identifier);*/
+
+        entry.key = identifier;
+        entry.key_len = -1;
+
+        if (global_var_table->search( &global_var_table, entry ) == NULL)
+        {
+            entry.data = NULL;
+            entry.data_len = 0;
+            entry.flag = 0;
+            global_var_table->add( &global_var_table, entry );
+        }
+    } else if (*tmp1 == ',') {
+        /*fprintf(stderr, "skip ',' in outer loop '%s'\n", tmp1);*/
+        tmp1++;
+    } else {
+        /*fprintf(stderr, "skip '%s'\n", tmp1);*/
+        tmp1++;
+    }
+  }
+
+}
+
+<PHP,FUNCTION>\${symbol}{array-notation}? {
   char * x = (char *) yytext;
+  SearchEntry entry;
+  int ref_to_symbol_type, ref_to_symbol_scope;
 
   matched_pattern("${symbol}{array-notation}?", yytext);
 
@@ -250,15 +340,35 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
   assert(*x == '$');
   x++;
 
+  /* Figure out if this is a global var or a local var */
+  entry.key = x;
+  entry.key_len = -1;
+
+  if ((PHP == YY_START) ||
+      (global_var_table &&
+      global_var_table->search( &global_var_table, entry ) != NULL)) {
+    /*fprintf(stderr, "global \"%s\"\n", x);*/
+    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+  } else {
+    /*fprintf(stderr, "local \"%s\"\n", x);*/
+    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+  }
+
   /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
    * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
    * needs to be an option to pass when not in a function. Currently,
    * we just pretend to be in a function named "GLOBAL".
    */
 
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
+  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+
+    result = sn_insert_xref(ref_to_symbol_type,
                  SN_FUNC_DEF, /* Not really in a function definition */
-                 SN_REF_SCOPE_GLOBAL,
+                 ref_to_symbol_scope,
                  NULL,
                  current_function,
                  NULL,
@@ -269,13 +379,17 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
                  sn_line(),
                  SN_REF_READ);
 
-  assert(result == 0);
+    assert(result == 0);
+  }
+
   sn_advance_column(yyleng);
 }
 
-<PHP>\${symbol}{ws}*= {
+<PHP,FUNCTION>\${symbol}{ws}*= {
   char * x = (char *) yytext;
   char * y;
+  SearchEntry entry;
+  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
 
   matched_pattern("${symbol}{ws}*=", yytext);
 
@@ -302,6 +416,23 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
   y++;
   *y = 0;
 
+  /* Figure out if this is a global var or a local var */
+  entry.key = x;
+  entry.key_len = -1;
+
+  if ((PHP == YY_START) || (global_var_table &&
+      global_var_table->search( &global_var_table, entry ) != NULL)) {
+    /*fprintf(stderr, "global \"%s\"\n", x);*/
+    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+    symbol_def_type = SN_GLOB_VAR_DEF;
+  } else {
+    /*fprintf(stderr, "local \"%s\"\n", x);*/
+    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+    symbol_def_type = SN_LOCAL_VAR_DEF;
+  }
+
   /* Setting a global variable should emit
      a symbol declaration. I am not really
      sure if we should emit just one symbol
@@ -311,7 +442,7 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
      file's symbol list which would be
      nice if it worked correctly */
 
-  result = sn_insert_symbol(SN_GLOB_VAR_DEF,
+  result = sn_insert_symbol(symbol_def_type,
                             NULL,
 			    x,
 			    sn_current_file(),
@@ -333,9 +464,13 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
    * we just pretend to be in a function named "GLOBAL".
    */
 
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
+  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+
+    result = sn_insert_xref(ref_to_symbol_type,
                  SN_FUNC_DEF, /* Not really in a function definition */
-                 SN_REF_SCOPE_GLOBAL,
+                 ref_to_symbol_scope,
                  NULL,
                  current_function,
                  NULL,
@@ -346,8 +481,10 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
                  sn_line(),
                  SN_REF_WRITE);
 
-  assert(result == 0);
-  sn_advance_column(yyleng);
+    assert(result == 0);
+  }
+
+  sn_advance_column(yyleng-1);
 }
 
 <PHP>^{ws}*"function"{wsn}+{symbol}{wsn}*\([^\)]*\){wsn}+\{ {
@@ -678,7 +815,7 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
 
 /* Helper method that will print matches as they are made */
 
-void matched_pattern(char * pattern, char * text) {
+static void matched_pattern(char * pattern, char * text) {
     char * mode = "UNKNOWN";
     int imode = YY_START;
 
@@ -696,6 +833,16 @@ void matched_pattern(char * pattern, char * text) {
     fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
         pattern, text, mode, sn_line(), sn_column());
     }
+}
+
+static void FreeGlobalEntry(SearchEntry *entry)
+{
+/*
+	Macro_t Macro = entry->data;
+
+	ckfree ((char*)Macro->pcLine);
+	ckfree ((char*)Macro);
+*/
 }
   
 void

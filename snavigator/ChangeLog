@@ -1,5 +1,23 @@
 2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add basic
+	local variable support. Use the searchtable
+	implementation that was just moved into
+	libcommon.a to support variable lookups.
+	Add support for the global keyword.
+	Add FUNCTION condition support to variable
+	read and write rules.
+	* tests/parsers/php.test: Add a series of
+	variable definition and xref tests. Check
+	global variable, local variable, and the
+	global keyword.
+	* tests/parsers/testutil.tcl: Add new
+	php_parse_local_xref helper method that
+	passes the -l flag to phpbrowser.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (load_xref_pipe): Switch xref
 	pipe back to blocking mode before closing
 	so that stderr messages are not lost due to

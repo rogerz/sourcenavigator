@@ -119,3 +119,11 @@ proc php_parse_comment_xref { fname } {
     set r [exec phpbrowser -r -x xout $fname]
     return [paf_subst [read_file xout]]
 }
+
+proc php_parse_local_xref { fname } {
+    file delete xout
+    save_file xout ""
+    set r [exec phpbrowser -l -x xout $fname]
+    return [paf_subst [read_file xout]]
+}
+

@@ -99,7 +99,110 @@ PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
 }
 
-tcltest::test var-1.1 { var write xref } {
+tcltest::test var-1.1 { var read } {
+    php_parse [save_file f.php {
+<?
+print $var;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test var-1.2 { 2 var writes, checks column } {
+    php_parse [save_file f.php {
+<?
+$var=1;$var=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.008<>f.php;3.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.008<>#<>var<>gv;3.11<>3.8<>3.11<>{}
+}
+
+tcltest::test var-1.2 { read then write, checks column } {
+    php_parse [save_file f.php {
+<?
+$var;$var=1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.006<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.006<>#<>var<>gv;3.9<>3.6<>3.9<>{}
+}
+
+# FIXME: Should the global statement act as the variable define here?
+
+tcltest::test var-1.3 { var write } {
+    php_parse [save_file f.php {
+<?
+function foo() {
+global $var;
+$var = 1;
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000005.001<>f.php;5.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var<>gv;5.4<>5.1<>5.4<>{}
+PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
+}
+
+tcltest::test var-1.4 { var read } {
+    php_parse [save_file f.php {
+<?
+function foo() {
+global $var;
+print $var;
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
+}
+
+# FIXME: The Tcl parser defines local var symbols only when
+# the -l flag is passed. Should we do this too?
+
+tcltest::test var-1.5 { local var write } {
+    php_parse [save_file f.php {
+<?
+function foo() {
+$var = 1;
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_LOCAL_VAR_DEF;var<>000004.001<>f.php;4.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var<>lv;4.4<>4.1<>4.4<>{}
+PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
+}
+
+tcltest::test var-1.6 { local var read } {
+    php_parse [save_file f.php {
+<?
+function foo() {
+print $var;
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
+}
+
+tcltest::test var-2.0 { var write xref } {
     php_parse_xref [save_file f.php {
 <?
 $var=1;
@@ -108,7 +211,7 @@ $var=1;
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
 }
 
-tcltest::test var-1.2 { var read xref } {
+tcltest::test var-2.1 { var read xref } {
     php_parse_xref [save_file f.php {
 <?
 print $var;
@@ -116,6 +219,109 @@ print $var;
 }]
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
 }
+
+tcltest::test var-2.2 { global statement is not a var read } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+    global $var;
+}
+?>
+}]
+} {}
+
+tcltest::test var-2.3 { global var write xref } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+global $var;
+$var=1;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
+}
+
+tcltest::test var-2.4 { global var read xref } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+global $var;
+print $var;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
+}
+
+
+tcltest::test var-2.5 { no local var xref by default } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+$var=1;
+}
+?>
+}]
+} {}
+
+tcltest::test var-2.6 { local var write xref } {
+    php_parse_local_xref [save_file f.php {
+<?
+function foo() {
+$var=1;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000004<>f.php;<>
+}
+
+tcltest::test var-2.7 { no local var xref by default } {
+    php_parse_xref [save_file f.php {
+<?
+function foo() {
+print $var;
+}
+?>
+}]
+} {}
+
+tcltest::test var-2.8 { local var read xref } {
+    php_parse_local_xref [save_file f.php {
+<?
+function foo() {
+print $var;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000004<>f.php;<>
+}
+
+
+tcltest::test var-2.9 { local var write xref } {
+    php_parse_local_xref [save_file f.php {
+<?
+function foo() {
+global $nar;
+$var=1;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000005<>f.php;<>
+}
+
+tcltest::test var-2.10 { local var read xref } {
+    php_parse_local_xref [save_file f.php {
+<?
+function foo() {
+global $nar;
+print $var;
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000005<>f.php;<>
+}
+
 
 tcltest::test comment-1.0 { comment } {
     php_parse [save_file f.php {
@@ -230,7 +436,6 @@ tcltest::test comment-1.11 { can't leave comment mode with ?> } {
 }]
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment ?>ONE<? Text
 }
-
 
 
 
@@ -713,6 +918,8 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 
 # Add checks for include or require statements, so that
 # the include browser can show file include relationships.
+
+# Need to support newline in var assignment {wsn} no {ws}.
 
 
 # cleanup
