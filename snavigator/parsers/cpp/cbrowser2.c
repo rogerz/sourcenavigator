@@ -220,7 +220,7 @@ main(int argc, char **argv)
 	tty = fopen("/dev/tty","w");
 #endif /* !WIN32 && TTY_TRACE */
 
-	while((type = getopt(argc,argv,"c:C:l:O:M:sm:n:")) != EOF)
+	while((type = getopt(argc,argv,"lc:C:O:M:sm:n:")) != EOF)
 	{
 		switch (type)
 		{

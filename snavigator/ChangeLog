@@ -1,3 +1,10 @@
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cpp/cbrowser2.c (main): Fix the -l
+	option so that it does not require an
+	argument. This fixes a problem when xref
+	was not running when local vars is enabled.
+
 2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
