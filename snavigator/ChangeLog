@@ -1,6 +1,17 @@
 2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Insert both
+	a read xref and a write xref for variable
+	operations like $var+=1.
+	* tests/parsers/php.test: Remove knownbug
+	constraint from var-5.6 since it now passes.
+	Fixup operator-1.3 since both read and write
+	xrefs are now being inserted.
+
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Add support
 	for variable pre and post increment
 	and decrement operators. Move the logic

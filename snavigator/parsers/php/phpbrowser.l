@@ -183,6 +183,8 @@ void append_token(TokenType type,
 
 char * TokenTypeToString(Token *tok);
 
+int get_num_tokens_matched(char *match);
+
 void emit_function_declaration();
 void emit_comment();
 void emit_dqstring();
@@ -1267,12 +1269,39 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 <TOKEN>"VARIABLE"{var-array-tokens}("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
   int offset;
+  
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
+  fprintf(tokenout, "match text is \"%s\", match num tokens is %d\n", yytext, get_num_tokens_matched(yytext));
 #endif
 
-  /* FIXME: should be READWRITE if ASSIGNMENT_OPERATORS */
-  emit_var_access(tokens_head, WRITE);
+  {
+    /* Figure out if this was a plain write ($var = 1) or
+     * a read/write ($var += 1) type of operation.
+     */
+
+    Token *last_tok = tokens_head;
+    VarAccess acc;
+    int num = get_num_tokens_matched(yytext) - 1;
+    for (; num > 0; num--) {
+      last_tok = last_tok->next;
+    }
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "last match token type was %s\n", TokenTypeToString(last_tok));
+#endif
+
+    assert((last_tok->type == ASSIGNMENT_OPERATOR) ||
+             (last_tok->type == ASSIGNMENT_OPERATORS));
+
+    if (last_tok->type == ASSIGNMENT_OPERATOR) {
+      acc = WRITE;
+    } else if (last_tok->type == ASSIGNMENT_OPERATORS) {
+      acc = READWRITE;
+    }
+
+    emit_var_access(tokens_head, acc);
+  }
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1980,6 +2009,25 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
     assert(result == 0);
   }
+}
+
+int get_num_tokens_matched(char *match) {
+  char *x;
+  int tokens;
+
+  assert(*match != '\0'); /* match must have some text */
+  assert(*match != ' '); /* match can't start with a space */
+  for (x=match, tokens=0; *x; x++) {
+    if (*x == ' ') {
+        /* We just got to the end of a token */
+        assert(*(x-1) != ' '); /* two spaces in a row is not allowed */
+        tokens++;
+    }
+  }
+  if (*(x-1) != ' ') {
+    tokens++;
+  }
+  return tokens;
 }
 
 void

@@ -782,9 +782,7 @@ $var++;
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
 }
 
-# FIXME: $var+=1; needs to emit read/write for this to pass
-
-tcltest::test var-5.6 { read and write xrefs } {knownbug} {
+tcltest::test var-5.6 { read and write xrefs } {
     browse_xref [save_file f.php {
 <?
 $var = $var + 1;
@@ -1859,16 +1857,27 @@ $var <<= 1;
 $var >>= 1;
 ?>
 }]
-} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000007<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000007<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000008<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000008<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000009<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000009<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000010<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000010<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000011<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000011<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000012<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000012<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000013<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000013<>f.php;<>
 }
 
