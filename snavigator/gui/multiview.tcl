@@ -2905,8 +2905,8 @@ itcl::class MultiWindow& {
 
         if {[${ActiveWidget} whoami] == "edit"} {
             #enable buttons (All,Related,All,None)
-            foreach btn [eval list $AllFilterOptions(radio)\
-              $AllFilterOptions(checkbutton)] {
+            foreach btn [concat $AllFilterOptions(radio)\
+              $AllFilterOptions(button)] {
                 ${btn} configure -state normal
             }
             foreach grp [lsort [array names combobox_editor_scopes]] {
@@ -2931,12 +2931,12 @@ itcl::class MultiWindow& {
         }\
         elseif {[${ActiveWidget} whoami] == "xref"} {
             # Disable All, Related.
-            foreach btn $AllFilterOptions(button) {
+            foreach btn $AllFilterOptions(radio) {
                 ${btn} configure -state disabled
             }
 
             # Enable buttons (All,None).
-            foreach btn $AllFilterOptions(radio) {
+            foreach btn $AllFilterOptions(button) {
                 ${btn} configure -state normal
             }
 
@@ -2967,7 +2967,7 @@ itcl::class MultiWindow& {
             }
 
             # Disable filter options (buttons and checkbuttons).
-            foreach btn [eval list $AllFilterOptions(radio)\
+            foreach btn [concat $AllFilterOptions(button)\
               $AllFilterOptions(checkbutton)] {
                 ${btn} configure -state disabled
             }
