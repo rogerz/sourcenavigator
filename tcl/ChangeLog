@@ -1,3 +1,10 @@
+2003-10-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/tclWinPipe.c (BuildCommandLine): Fix bug
+	that was caused by a missing space between
+	tclpipe.dll and the following arguments.  It caused error
+	in Windows 98 when exec command.com (e.g. dir) [Tcl Bug 789040]
+
 2003-09-13  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Add TCL-PRE-835-MERGE-2003-09-13 tag to
