@@ -1,3 +1,12 @@
+2003-02-13  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/multiview.tcl (AddStatusbar): Anchor the
+	text used to display the name of the file
+	currently being edited to the east. This
+	will still display the text file name when
+	the window is too small to display the entire
+	file path.
+
 2003-02-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	Regenerate all Makefile.in files because I

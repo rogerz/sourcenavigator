@@ -1403,14 +1403,25 @@ itcl::class MultiWindow& {
 
         pack $itk_component(linenum) -fill y -side left
 
+        # Create a frame with a groove and a border width of
+        # 2 so that the message entry maintains the same look
+        # that it had with earlier versions. This is needed
+        # so that the file info can be anchored east so that
+        # the file name still displays when the window is
+        # too small to display the whole file name.
+
+        set message_frame [frame $itk_component(statusbar).mf \
+            -relief groove -bd 2]
+
 	itk_component add message {
-	    label $itk_component(statusbar).message\
+	    label $itk_component(statusbar).mf.message\
 		    -font $sn_options(def,layout-font)\
-		    -relief groove -bd 2 -anchor w\
+		    -relief flat -bd 0 -anchor e \
 		    -textvar [itcl::scope message]
 	}
 
-	pack $itk_component(message) -expand y -fill both -side left
+        pack $message_frame -expand y -fill both -side left
+	pack $itk_component(message) -side left -anchor e
 
         pack $itk_component(statusbar) -side bottom -fill x
     }   
