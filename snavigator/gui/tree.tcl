@@ -161,8 +161,8 @@ itcl_class Tree {
 	    pack $entry -side left -fill x -expand y
 
 	    if {$filter_window} {
-		pack $lframe.filter\
-		    -side bottom -fill x
+		grid $lframe.filter \
+		        -row 3 -column 0 -columnspan 2 -sticky ew
 	    }
 	}
 
@@ -174,21 +174,16 @@ itcl_class Tree {
 	if {$tabsize > -1} {
 	    create_tabs
 	    view_tabs
-	    pack $lframe.size -side top -fill x -anchor nw
+	    grid $lframe.size -row 0 -column 0 -columnspan 2 -sticky ew
 	    resize 0 [lindex [$tree cget -tabs] 0] 0
 	}
-	
-	#pack the tree _after_ the column labels have been
-	#created and packed.
-	pack $tree -side bottom -fill both -expand yes
-	pack $lframe.y -padx 0 -pady 0 \
-		-ipadx 0 -ipady 0 \
-		-side right -fill y -before $tree
 
-	pack $lframe.x -padx 0 \
-		-pady 0 -ipadx 0 \
-		-ipady 0 -side bottom \
-		-fill x -before $lframe.y
+        grid $tree -row 1 -column 0 -sticky news
+        grid $lframe.y -row 1 -column 1 -sticky ns
+        grid $lframe.x -row 2 -column 0 -sticky ew
+
+        grid rowconfigure $lframe 1 -weight 1
+        grid columnconfigure $lframe 0 -weight 1
 
 	focus $tree
 	
@@ -1728,7 +1723,7 @@ after idle "update idletasks ; if \[winfo exists $top\] \{pack propagate $top\}"
 
     public propagate 0 {
 	if {[winfo exists $tree]} {
-	    pack propagate $tree $propagate
+	    grid propagate $tree $propagate
 	}
     }
     public accelerator 0 {

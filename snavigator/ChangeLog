@@ -1,5 +1,16 @@
 2003-08-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/tree.tcl (constructor, propagate):
+	Switch from using the pack geom manager to
+	grid for elements in the Tree widget. The
+	result of this change is that the x scrollbar
+	no longer extends below the y scrollbar.
+	Use the grid propagate command instead of
+	pack propagate in the propagate option
+	config command.
+
+2003-08-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/tree.tcl (Tree::constructor): Don't pass
 	-padx 3 to the pack command for the filter
 	element of a Tree widget. The result of this
