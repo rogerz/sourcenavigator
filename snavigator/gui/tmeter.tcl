@@ -116,6 +116,12 @@ proc make_scale_window {filenum {enable_cancel 0}} {
 
     window_configure ${thull} deiconify ${thull}.scale
 
+    # Ugh! Why does the window get mapped without
+    # having the contents drawn under Windows?
+    if {$::tcl_platform(platform) == "windows"} {
+        sn_wait 300
+    }
+
     return ${thull}
 }
 
