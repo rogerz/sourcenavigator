@@ -244,7 +244,7 @@ itcl::class Make {
         set exec_error ""
 
         if {${target} == "<External Makefile>"} {
-            # The users is building with a external Mkefile.
+            # The users is building with a external Makefile.
             # We should bring up the debug dialog.
             sn_debugger
         } else {
@@ -445,8 +445,10 @@ itcl::class Make {
             set mkgen [MakefileGen .mkg ${target}]
 
             set mkfile [${mkgen} GenerateMakefile]
-
             itcl::delete object ${mkgen}
+            # Only pass the last component of the
+            # Makefile path as the -f argument.
+            set mkfile [file tail $mkfile]
             set make_cmd "${make_cmd} -f ${mkfile}"
 
             # If we are building an embedded target
@@ -506,7 +508,7 @@ itcl::class Make {
         }
 
         #2. start command
-        sn_log "Executing make: ${make_cmd}"
+        sn_log "Executing make: ${make_cmd} in directory [pwd]"
         set ret [catch {set make_fd [open "| ${make_cmd}" r]} msg]
 
         #3. cd back to the project directory
