@@ -1,5 +1,13 @@
 2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	Add SN-52B1-2003-12-06 tag.
+
+	* NEWS: Add news item for b1 release.
+	* configure: Regen.
+	* configure.in: Update version number to 5.2b1.
+
+2003-12-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/bindings.tcl (sn_treetable_bindings,
 	sn_text_default_bindings, sn_canv_goto_bindings):
 	Implement MouseWheel binding for Win32 and
