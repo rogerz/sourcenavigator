@@ -1,5 +1,13 @@
 2003-08-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/tcl/skeleton.c (main): Don't create
+	and print a tmp file name as part of the
+	PAF_FILE output unless the -h flag is passed
+	to the parser. This will fixup output so
+	that is can be used in regression tests.
+
+2003-08-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/tcl/Trafo.c (add_variable_quals):
 	Fixup error in generated C code, the was
 	a disconnect between local variables that

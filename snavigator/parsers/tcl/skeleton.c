@@ -51,7 +51,7 @@ extern  int   report_local_vars;
 extern  FILE *cross_ref_fp;
         FILE *hig_fp;
 static  FILE *out_fp;
-static  int   highlight;
+static  int   highlight = 0;
 
 Tcl_Encoding encoding = NULL;
 static  char *group = "tcl";
@@ -136,7 +136,7 @@ main(int argc, char *argv[])
       break;
 
     case 'h':
-      highlight = -1;
+      highlight = 1;
       break;
       
     case 'y':
@@ -212,9 +212,6 @@ main(int argc, char *argv[])
       /* This part is called when a file has been saved, thus
        * we parse the file and provide highlighting.
        */
-      if (optind == (argc - 1) && highlight != -1)
-	highlight = 1;
-      
       fname = argv[optind];
       if (!log_symbol_filename(out_fp,fname)) {
 	start_parser(fname,0,hig_fp,highlight);
