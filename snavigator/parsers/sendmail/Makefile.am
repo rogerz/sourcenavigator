@@ -29,13 +29,16 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper \
 	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 sbrowser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a \
-		 $(common)/libcommon.a $(DB_LIBDIR)/libdb.a @LEXLIB@ \
+		 $(common)/libcommon.a $(DB_LIBDIR)/libdb.a \
 		 $(top_builddir)/misc/libutils/libutils.a \
 		 $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
-sbrowser_SOURCES = sbrowser.l
+sbrowser_SOURCES = sbrowser.c
 
 sbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
 			$(toolbox)/libsnptools.a $(common)/libcommon.a \
 			$(top_builddir)/misc/libutils/libutils.a
 
+# Used to regenerate .c from .l file
+flexgen:
+	$(LEX) -t > sbrowser.c $(LFLAGS) $(srcdir)/sbrowser.l

@@ -23,15 +23,15 @@ AUTOMAKE_OPTIONS = cygnus
 
 YFLAGS=-d
 
-toolbox = $(top_builddir)/sdk/parsers/toolbox
+toolbox = $(top_builddir)/parsers/toolbox
 common = $(top_builddir)/parsers/common
 
 noinst_PROGRAMS = chbrowser
 
-INCLUDES = -I$(top_srcdir)/hyper -I$(top_srcdir)/sdk/parsers/toolbox \
+INCLUDES = -I$(top_srcdir)/hyper -I$(top_srcdir)/parsers/toolbox \
 		-I$(top_srcdir)/parsers/common
 
-chbrowser_SOURCES = parser.y lexer.l common.h common.c emit.h emit.c error.c \
+chbrowser_SOURCES = parser.c lexer.c common.h common.c emit.h emit.c error.c \
 			main.c symtab.h symtab.c stack.h stack.c
 
 chbrowser_LDADD = -L$(toolbox) -lsnptools \
@@ -44,3 +44,10 @@ chbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
 			$(top_builddir)/misc/libutils/libutils.a \
 			$(toolbox)/libsnptools.a $(common)/libcommon.a
 
+# Used to regenerate .h and .c from .y file
+bisongen:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) -o parser.c $(srcdir)/parser.y
+
+# Used to regenerate .c from .l file
+flexgen:
+	$(LEX) -t > lexer.c $(LFLAGS) $(srcdir)/lexer.l

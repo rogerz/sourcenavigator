@@ -131,6 +131,7 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
+LEXLIB = @LEXLIB@
 LIBERTY = @LIBERTY@
 LIBGCC = @LIBGCC@
 LIBGUIHDIR = @LIBGUIHDIR@
@@ -216,10 +217,10 @@ bin_PROGRAMS = pybrowser
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper 	-I$(top_srcdir)/parsers/toolbox 	-I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 
-pybrowser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a 		 $(common)/libcommon.a $(DB_LIBDIR)/libdb.a @LEXLIB@ 		 $(top_builddir)/misc/libutils/libutils.a 		 $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+pybrowser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a 		 $(common)/libcommon.a $(DB_LIBDIR)/libdb.a 		 $(top_builddir)/misc/libutils/libutils.a 		 $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-pybrowser_SOURCES = pybrowser.l
+pybrowser_SOURCES = pybrowser.c
 
 pybrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 			$(toolbox)/libsnptools.a $(common)/libcommon.a 			$(top_builddir)/misc/libutils/libutils.a
 
@@ -236,13 +237,11 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 pybrowser_OBJECTS =  pybrowser.$(OBJEXT)
 pybrowser_LDFLAGS = 
-LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LEXLIB = @LEXLIB@
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  README Makefile.am Makefile.in pybrowser.c
+DIST_COMMON =  README Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -253,7 +252,7 @@ OBJECTS = $(pybrowser_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .l .o .obj .s
+.SUFFIXES: .S .c .o .obj .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --cygnus parsers/python/Makefile
 
@@ -315,8 +314,6 @@ maintainer-clean-compile:
 pybrowser$(EXEEXT): $(pybrowser_OBJECTS) $(pybrowser_DEPENDENCIES)
 	@rm -f pybrowser$(EXEEXT)
 	$(LINK) $(pybrowser_LDFLAGS) $(pybrowser_OBJECTS) $(pybrowser_LDADD) $(LIBS)
-.l.c:
-	$(LEX) $(AM_LFLAGS) $(LFLAGS) $< && mv $(LEX_OUTPUT_ROOT).c $@
 
 tags: TAGS
 
@@ -400,7 +397,6 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-test -z "pybrowserl" || rm -f pybrowserl
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
 		mostlyclean-tags mostlyclean-generic
 
@@ -435,6 +431,10 @@ install uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+# Used to regenerate .c from .l file
+flexgen:
+	$(LEX) -t > pybrowser.c $(LFLAGS) $(srcdir)/pybrowser.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

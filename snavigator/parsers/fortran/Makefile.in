@@ -131,6 +131,7 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
+LEXLIB = @LEXLIB@
 LIBERTY = @LIBERTY@
 LIBGCC = @LIBGCC@
 LIBGUIHDIR = @LIBGUIHDIR@
@@ -215,7 +216,7 @@ INCLUDES = $(WINFLAGS) -DALLOW_INCLUDE -I$(top_srcdir)/hyper 	$(TCLHDIR)
 
 YFLAGS = -d
 
-fbrowser_SOURCES = fortran.y exprtype.c forlex.c ftnchek.c ftnchek.h intrinsics.h iokeywds.h keywords.h pgsymtab.c plsymtab.c project.c symtab.c symtab.h
+fbrowser_SOURCES = fortran.c exprtype.c forlex.c ftnchek.c ftnchek.h intrinsics.h iokeywds.h keywords.h pgsymtab.c plsymtab.c project.c symtab.c symtab.h
 
 
 fbrowser_LDADD = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
@@ -242,7 +243,7 @@ CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  Makefile.am Makefile.in fortran.c
+DIST_COMMON =  Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -253,7 +254,7 @@ OBJECTS = $(fbrowser_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .o .obj .s .y
+.SUFFIXES: .S .c .o .obj .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --cygnus parsers/fortran/Makefile
 
@@ -315,13 +316,6 @@ maintainer-clean-compile:
 fbrowser$(EXEEXT): $(fbrowser_OBJECTS) $(fbrowser_DEPENDENCIES)
 	@rm -f fbrowser$(EXEEXT)
 	$(LINK) $(fbrowser_LDFLAGS) $(fbrowser_OBJECTS) $(fbrowser_LDADD) $(LIBS)
-.y.c:
-	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
-	if test -f y.tab.h; then \
-	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
-	else :; fi
-fortran.h: fortran.c
-
 
 tags: TAGS
 
@@ -405,7 +399,6 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-test -z "fortranhfortranc" || rm -f fortranh fortranc
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
 		mostlyclean-tags mostlyclean-generic
 
@@ -440,6 +433,10 @@ install uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+# Used to regenerate .h and .c from .y file
+bisongen:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) -o fortran.c $(srcdir)/fortran.y
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

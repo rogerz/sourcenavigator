@@ -20,9 +20,20 @@ AC_EXEEXT
 
 AC_OBJEXT
 AC_PROG_AWK
-AM_PROG_LEX
 AC_PROG_RANLIB
-AC_PROG_YACC
+
+# A developer might want to regenerate files with flex and
+# bison, the flexgen and bisongen targets are used to do this.
+# We don't want to include these targets in a normal build
+# since we need to be able to build on systems that do not
+# have flex and bison installed.
+
+LEX="flex"
+LEXLIB="-lfl"
+YACC="bison -y"
+AC_SUBST(LEX)
+AC_SUBST(LEXLIB)
+AC_SUBST(YACC)
 
 CYG_AC_PATH_TCLCONFIG
 CYG_AC_LOAD_TCLCONFIG

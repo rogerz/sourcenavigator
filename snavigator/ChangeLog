@@ -1,3 +1,100 @@
+2003-01-29  Mo DeJong  <mdejong@uncounted.org>
+
+	* INSTALL.TXT: Remove install file comment about
+	needing bison and flex to build.
+	* Makefile.am: Add flexgen and bisongen
+	targets that can be used to regenerate
+	.c file in the build dir. This should be
+	run on a developers machine that has flex
+	and bison installed.
+	* Makefile.in: Regen.
+	* aclocal.m4: Regen.
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Regen.
+	* bitmaps/Makefile.in:
+	* db/Makefile.in:
+	* demo/Makefile.in:
+	* doc/Makefile.in:
+	* doc/html/Makefile.in:
+	* etc/Makefile.in:
+	* etc/sn_toolchains/Makefile.in:
+	* gui/Makefile.in: Regen.
+	* hyper/Makefile.am: Add flexgen target and remove
+	old .l.c conversions since these required that
+	flex be installed at build time.
+	* hyper/Makefile.in: Regen.
+	* hyper/c_high.c: Add flex generated file.
+	* hyper/ch_high.c: Add flex generated file.
+	* hyper/j_high.c: Add flex generated file.
+	* hyper/py_high.c: Add flex generated file.
+	* hyper/tcl_high.c: Add flex generated file.
+	* misc/Makefile.in:
+	* misc/libutils/Makefile.in:
+	* packages/Makefile.in:
+	* parsers/Makefile.in:
+	* parsers/assembly/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Replace
+	.l file with .c file in dep to support building
+	on systems that don't have flex. Add flexgen target.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/abrowser.c: Add flex
+	generated file.
+	* parsers/assembly/ppc601-eabi/aclocal.m4: Regen.
+	* parsers/assembly/ppc601-eabi/config.h.in: Regen.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Don't
+	invoke AM_PROG_LEX and AC_PROG_YACC, just hard code
+	flex and bison.
+	* parsers/chill/Makefile.am: Fixup includes and deps
+	and add bisongen and flexgen targets. This directory
+	is not currently part of the build.
+	* parsers/chill/Makefile.in:
+	* parsers/cobol/Makefile.in:
+	* parsers/common/Makefile.in:
+	* parsers/cpp/Makefile.in:
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+	* parsers/fortran/Makefile.am: Use .c file in deps
+	and add bisongen target.
+	* parsers/fortran/Makefile.in: Regen.
+	* parsers/fortran/fortran.c: Add bison generated file.
+	* parsers/fortran/fortran.h: Add bison generated file.
+	* parsers/gcj/Makefile.in:
+	* parsers/java/Makefile.in:
+	* parsers/libjcreuse/Makefile.in: Regen.
+	* parsers/m4/Makefile.am: Use .c file in deps
+	and add flexgen target.
+	* parsers/m4/Makefile.in: Regen.
+	* parsers/m4/m4browser.c: Add flex generated file.
+	* parsers/python/Makefile.am: Remove LEXLIB since
+	it is not needed to build. Replace .l file with .c
+	file in deps. Add flexgen target.
+	* parsers/python/Makefile.in: Regen.
+	* parsers/python/pybrowser.c: Add flex generated file.
+	* parsers/sendmail/Makefile.am: Remove LEXLIB since
+	it is not needed to build. Replace .l file with .c
+	file in deps. Add flexgen target.
+	* parsers/sendmail/Makefile.in: Regen.
+	* parsers/sendmail/sbrowser.c: Add flex generated file.
+	* parsers/tcl/Makefile.in:
+	* parsers/toolbox/Makefile.in:
+	* sdk/Makefile.in:
+	* sdk/api/Makefile.in:
+	* sdk/api/c/Makefile.in:
+	* sdk/api/c/database/Makefile.in:
+	* sdk/api/c/database/examples/Makefile.in:
+	* sdk/api/tcl/Makefile.in:
+	* sdk/api/tcl/database/Makefile.in:
+	* sdk/api/tcl/database/examples/Makefile.in:
+	* sdk/api/tcl/misc/Makefile.in:
+	* sdk/parsers/Makefile.in:
+	* sdk/parsers/examples/Makefile.in:
+	* sdk/parsers/examples/assembly/Makefile.in:
+	* sdk/parsers/examples/elf/Makefile.in:
+	* snavigator/Makefile.in:
+	* snavigator/unix/Makefile.in:
+	* snavigator/win/Makefile.in: Regen.
+
 2003-01-11  Ian Roxborough  <irox@sbcglobal.net>
 
 	* gui/projedit.tcl (print_file): Where possible

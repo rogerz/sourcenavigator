@@ -131,6 +131,7 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
+LEXLIB = @LEXLIB@
 LIBERTY = @LIBERTY@
 LIBGCC = @LIBGCC@
 LIBGUIHDIR = @LIBGUIHDIR@
@@ -527,6 +528,18 @@ install-exec-local:
 	(cd ../tix; $(MAKE) install-libraries)
 	(cd ../itcl; $(MAKE) install-libraries)
 	(cd ../libgui; $(MAKE) install)
+
+flexgen:
+	cd hyper ; $(MAKE) flexgen
+	cd parsers/assembly/ppc601-eabi ; $(MAKE) flexgen
+	cd parsers/chill ; $(MAKE) flexgen
+	cd parsers/m4 ; $(MAKE) flexgen
+	cd parsers/python ; $(MAKE) flexgen
+	cd parsers/sendmail ; $(MAKE) flexgen
+
+bisongen:
+	cd parsers/chill ; $(MAKE) bisongen
+	cd parsers/fortran ; $(MAKE) bisongen
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -28,7 +28,7 @@ INCLUDES = $(WINFLAGS) -DALLOW_INCLUDE -I$(top_srcdir)/hyper \
 
 YFLAGS = -d
 
-fbrowser_SOURCES = fortran.y exprtype.c forlex.c ftnchek.c ftnchek.h \
+fbrowser_SOURCES = fortran.c exprtype.c forlex.c ftnchek.c ftnchek.h \
 intrinsics.h iokeywds.h keywords.h pgsymtab.c plsymtab.c project.c \
 symtab.c symtab.h
 
@@ -39,3 +39,6 @@ fbrowser_DEPENDENCIES = $(top_builddir)/db/libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 fbrowser_DEFS = -DALLOW_INCLUDE
 
+# Used to regenerate .h and .c from .y file
+bisongen:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) -o fortran.c $(srcdir)/fortran.y

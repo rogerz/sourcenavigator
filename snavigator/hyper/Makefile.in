@@ -130,6 +130,7 @@ JAVAEXE = @JAVAEXE@
 JAVA_PARSER = @JAVA_PARSER@
 JAV_DEMO = @JAV_DEMO@
 LEX = @LEX@
+LEXLIB = @LEXLIB@
 LIBERTY = @LIBERTY@
 LIBGCC = @LIBGCC@
 LIBGUIHDIR = @LIBGUIHDIR@
@@ -318,6 +319,8 @@ mostlyclean-compile:
 	-rm -f *.o core *.core
 	-rm -f *.$(OBJEXT)
 
+clean-compile:
+
 distclean-compile:
 	-rm -f *.tab.c
 
@@ -468,23 +471,16 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 tkTreeTable.$(OBJEXT): tkTreeTable.c tkTreeTable.h
 	$(COMPILE) $(TK_DEFS) -c $<
 
-j_high.c: j_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pjava_highlight_ $<
-
-py_high.c: py_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Ppy_highlight_ $<
-
-c_high.c: c_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pc_highlight_ $<
-
-ch_high.c: ch_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Pch_highlight_ $<
-
-tcl_high.c: tcl_high.l
-	$(LEX) -t > $@ $(LFLAGS) -Ptcl_highlight_ $<
-
-clean-compile:
-	-rm -f j_high.c py_high.c c_high.c ch_high.c tcl_high.c
+# This target will regenerate .c files from .l files. it
+# must never depend on a timestamp for .l files because
+# this would fail to compile on an end users system that
+# did not have flex installed if the timestamps got hosed
+flexgen:
+	$(LEX) -t > j_high.c $(LFLAGS) -Pjava_highlight_ $(srcdir)/j_high.l
+	$(LEX) -t > py_high.c $(LFLAGS) -Ppy_highlight_ $(srcdir)/py_high.l
+	$(LEX) -t > c_high.c $(LFLAGS) -Pc_highlight_ $(srcdir)/c_high.l
+	$(LEX) -t > ch_high.c $(LFLAGS) -Pch_highlight_ $(srcdir)/ch_high.l
+	$(LEX) -t > tcl_high.c $(LFLAGS) -Ptcl_highlight_ $(srcdir)/tcl_high.l
 
 highlight.$(OBJEXT): highlight.c
 	$(COMPILE) $(TK_DEFS) -c $<

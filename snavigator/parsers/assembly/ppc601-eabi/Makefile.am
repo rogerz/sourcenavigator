@@ -32,7 +32,7 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/../../../hyper \
 	-I$(top_srcdir)/../../toolbox \
 	-I$(top_srcdir)/../../common
 
-abrowser_SOURCES = abrowser.l
+abrowser_SOURCES = abrowser.c
 abrowser_LDADD = $(toolbox)/libsnptools.a $(db)/libdbutils.a \
 		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a \
 		$(libutils)/libutils.a \
@@ -43,3 +43,7 @@ abrowser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a \
 			$(common)/libcommon.a \
 			$(toolbox)/libsnptools.a \
 			$(libutils)/libutils.a
+
+# Used to regenerate .c from .l file
+flexgen:
+	$(LEX) -t > abrowser.c $(LFLAGS) $(srcdir)/abrowser.l

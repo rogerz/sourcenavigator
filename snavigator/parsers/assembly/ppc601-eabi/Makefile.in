@@ -114,6 +114,7 @@ ITK_BUILD_LIB_SPEC = @ITK_BUILD_LIB_SPEC@
 ITK_LIB_FILE = @ITK_LIB_FILE@
 ITK_LIB_FULL_PATH = @ITK_LIB_FULL_PATH@
 LEX = @LEX@
+LEXLIB = @LEXLIB@
 LIBERTY = @LIBERTY@
 LIBGCC = @LIBGCC@
 LIBGUIHDIR = @LIBGUIHDIR@
@@ -177,7 +178,7 @@ bin_PROGRAMS = abrowser
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/../../../hyper 	-I$(top_srcdir)/../../toolbox 	-I$(top_srcdir)/../../common
 
 
-abrowser_SOURCES = abrowser.l
+abrowser_SOURCES = abrowser.c
 abrowser_LDADD = $(toolbox)/libsnptools.a $(db)/libdbutils.a 		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a 		$(libutils)/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
@@ -197,15 +198,13 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 abrowser_OBJECTS =  abrowser.$(OBJEXT)
 abrowser_LDFLAGS = 
-LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LEXLIB = @LEXLIB@
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  ./stamp-h.in Makefile.am Makefile.in abrowser.c \
-acinclude.m4 aclocal.m4 config.h.in configure configure.in install-sh \
-missing mkinstalldirs
+DIST_COMMON =  ./stamp-h.in Makefile.am Makefile.in acinclude.m4 \
+aclocal.m4 config.h.in configure configure.in install-sh missing \
+mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -217,7 +216,7 @@ OBJECTS = $(abrowser_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .l .o .obj .s
+.SUFFIXES: .S .c .o .obj .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
 
@@ -314,8 +313,6 @@ maintainer-clean-compile:
 abrowser$(EXEEXT): $(abrowser_OBJECTS) $(abrowser_DEPENDENCIES)
 	@rm -f abrowser$(EXEEXT)
 	$(LINK) $(abrowser_LDFLAGS) $(abrowser_OBJECTS) $(abrowser_LDADD) $(LIBS)
-.l.c:
-	$(LEX) $(AM_LFLAGS) $(LFLAGS) $< && mv $(LEX_OUTPUT_ROOT).c $@
 
 tags: TAGS
 
@@ -435,7 +432,6 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-test -z "abrowserl" || rm -f abrowserl
 mostlyclean-am:  mostlyclean-hdr mostlyclean-binPROGRAMS \
 		mostlyclean-compile mostlyclean-tags \
 		mostlyclean-generic
@@ -475,6 +471,10 @@ all-am all installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
+
+# Used to regenerate .c from .l file
+flexgen:
+	$(LEX) -t > abrowser.c $(LFLAGS) $(srcdir)/abrowser.l
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
