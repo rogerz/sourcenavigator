@@ -1,5 +1,9 @@
 2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* MAINTAINERS: Update Mo's email address.
+
+2003-05-03  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/libjcreuse/Errors.c: Include
 	string.h to avoid compiler warning.
 	* parsers/python/pybrowser.c: Regen.
