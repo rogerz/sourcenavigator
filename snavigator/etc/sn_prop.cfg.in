@@ -254,6 +254,15 @@ sn_add_parser php \
 	-high_cmd $sn_path(bindir)/phpbrowser \
 	-high_switch "-h"
 
+# Example files
+
+sn_add_parser exl \
+	-suffix {*.exl} \
+	-brow_cmd $sn_path(bindir)/exlbrowser \
+	-high_cmd $sn_path(bindir)/exlbrowser \
+	-high_switch "-h"
+
+
 # Files without a parser
 
 if {$tcl_platform(platform) == "windows"} {

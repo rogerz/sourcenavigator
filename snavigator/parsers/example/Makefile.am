@@ -1,4 +1,4 @@
-# Copyright (c) 2000, Red Hat, Inc.
+# Copyright (c) 2004, Mo DeJong
 # 
 # This file is part of Source-Navigator.
 # 
@@ -21,6 +21,32 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-## Order is important here.
-SUBDIRS = common libjcreuse toolbox assembly cobol cpp fortran java @JAVA_PARSER@ @SENDMAIL_PARSER@ tcl python m4 php example
+toolbox = $(top_builddir)/parsers/toolbox
+common = $(top_builddir)/parsers/common
+
+bin_PROGRAMS = exlbrowser
+
+INCLUDES = $(WINFLAGS) \
+	-I$(top_srcdir)/hyper \
+	-I$(top_srcdir)/parsers/toolbox \
+	-I$(top_srcdir)/parsers/common \
+	-I$(top_srcdir)/misc/libutils \
+	$(TCLHDIR)
+
+exlbrowser_SOURCES = exlbrowser.c
+exlbrowser_LDADD = $(toolbox)/libsnptools.a \
+		$(common)/libcommon.a \
+		$(top_builddir)/misc/libutils/libutils.a \
+		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
+
+exlbrowser_DEPENDENCIES = \
+			$(common)/libcommon.a \
+			$(toolbox)/libsnptools.a \
+			$(top_builddir)/misc/libutils/libutils.a
+
+# Used to regenerate .c from .l file
+flexgen:
+	cp $(srcdir)/exlbrowser.l .
+	$(LEX) -t $(LFLAGS) exlbrowser.l > $(srcdir)/exlbrowser.c
+	rm exlbrowser.l
 

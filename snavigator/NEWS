@@ -1,3 +1,11 @@
+5.2b2:
+- Fix a bunch of Win32 menu bugs
+- Add Ctrl-PgUp and Ctrl-PgDn bindings to
+  support switching between notebook tabs
+- Fix project editor window centering bug
+- Add very simple "example" browser to
+  demonstrate how to create a new parser.
+
 5.2b1:
 - GNU tar no longer required to run `make install`
 - New --enable-symbols=mem flag can be passed
@@ -20,7 +28,7 @@
 - Improved parser/db back end
 - Improved international text support for parser/db
 - Highlighting support added to parser toolbox
-- Fixed a number of minor highlight bugs in editor
+- Fix a number of minor highlight bugs in editor
 - GNU Flex no longer required to build Source-Navigator
 - Msys+Mingw now used to build Source-Navigator for Win32
 
@@ -68,4 +76,4 @@
 - Upgraded to Tcl/Tk 8.3
 - Add pure Tcl Grep tool
 - Removed email bug submission
-- Fixed lots of GUI bugs
+- Fix lots of GUI bugs

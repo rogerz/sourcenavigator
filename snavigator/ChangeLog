@@ -1,3 +1,29 @@
+2004-01-04  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* NEWS: Add new notes for 5.2b2 release.
+	* configure: Regen.
+	* configure.in: Add parsers/example
+	subdir to Makefile gen rules.
+	* etc/sn_prop.cfg.in: Add browser rule
+	for .exl files.
+	* parsers/Makefile.am: Add "example" subdir.
+	* parsers/Makefile.in: Regen.
+	* parsers/example/Makefile.am: Build
+	exlbrowser.l and exlbrowser.c.
+	* parsers/example/Makefile.in: Regen.
+	* parsers/example/README.TXT: Describe
+	new example language.
+	* parsers/example/exlbrowser.c: Regen.
+	* parsers/example/exlbrowser.l: Create
+	simple example language browser to
+	demonstrate how Source-Navigator parser
+	should work. This browser supports a
+	number of features like global and
+	local vars, highlighting, and xrefs.
+	* tests/parsers/example.test: Test cases
+	for new example language. Sampled from
+	the PHP test cases.
+
 2003-12-29  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/bindings.tcl (sn_init_keybindings):

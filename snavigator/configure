@@ -4543,6 +4543,7 @@ parsers/cobol/Makefile
 parsers/common/Makefile
 parsers/cpp/Makefile
 parsers/cpp/cpplib/Makefile
+parsers/example/Makefile
 parsers/fortran/Makefile
 parsers/gcj/Makefile
 parsers/java/Makefile
@@ -4796,6 +4797,7 @@ parsers/cobol/Makefile
 parsers/common/Makefile
 parsers/cpp/Makefile
 parsers/cpp/cpplib/Makefile
+parsers/example/Makefile
 parsers/fortran/Makefile
 parsers/gcj/Makefile
 parsers/java/Makefile
