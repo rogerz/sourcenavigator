@@ -1712,7 +1712,8 @@ error:
 ok:
 
 	/* Set object to result */
-	Tcl_SetObjResult (interp, res_obj);
+	if (res_obj)
+		Tcl_SetObjResult (interp, res_obj);
 	
 	if (last_returned_record)
 		ckfree(last_returned_record);

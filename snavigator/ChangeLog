@@ -1,3 +1,10 @@
+2003-07-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/dbsym.c (dbtclfetch): Check that the result
+	TclObj is not NULL before setting the interp
+	result. This avoids a crash when an improperly
+	formatted -col option is passed.
+
 2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
