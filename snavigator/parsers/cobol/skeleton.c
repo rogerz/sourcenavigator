@@ -174,7 +174,7 @@ main(int argc, char *argv[])
 		case 'S':
 			break;
 
-		case 'x': /* cross reference file (ignored) */
+		case 'x': /* cross reference file */
 			cross_ref_file = optarg;
 			break;
 

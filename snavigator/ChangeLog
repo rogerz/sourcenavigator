@@ -1,3 +1,12 @@
+2003-05-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/cobol/skeleton.c (main):
+	* parsers/cpp/skeleton.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	Remove incorrect comment that claimed the
+	-x option to the parsers was ignored.
+
 2003-05-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/tmeter.tcl (make_scale_window,

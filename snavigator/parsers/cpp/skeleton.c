@@ -176,7 +176,7 @@ main(int argc, char *argv[])
          report_local_vars = TRUE;
          break;
 
-      case 'x': /* cross reference file (ignored) */
+      case 'x': /* cross reference file */
          cross_ref_file = optarg;
          break;
 
