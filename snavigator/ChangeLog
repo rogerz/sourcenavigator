@@ -1,3 +1,12 @@
+2003-02-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Woops, forgot to add clsbr_private.xpm to
+	Makefile.
+
+	* bitmaps/Makefile.am: Add clsbr_private.xpm.
+	* bitmaps/Makefile.in: Add clsbr_private.xpm
+	by hand to avoid nasty automake regen.
+
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* etc/sn_toolchains/gnu-pro-native: Change
