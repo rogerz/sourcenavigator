@@ -1618,7 +1618,8 @@ DrawMenuEntryAccelerator(menuPtr, mePtr, d, gc, tkfont, fmPtr,
 	COLORREF oldFgColor = gc->foreground;
 
 	gc->foreground = GetSysColor(COLOR_3DHILIGHT);
-	if (mePtr->accelPtr != NULL) {
+	if ((mePtr->accelPtr != NULL) &&
+	        ((mePtr->entryFlags & ENTRY_PLATFORM_FLAG1) == 0)) {
 	    Tk_DrawChars(menuPtr->display, d, gc, tkfont, accel,
 		    mePtr->accelLength, leftEdge + 1, baseline + 1);
 	}
@@ -2063,6 +2064,17 @@ DrawMenuEntryLabel(
     } else {
     	if (mePtr->labelLength > 0) {
 	    char *label = Tcl_GetStringFromObj(mePtr->labelPtr, NULL);
+	    /* Win 95/98 systems draw disabled menu text with a
+	     * 3D highlight, unless the menu item is highlighted */
+	    if ((mePtr->state == ENTRY_DISABLED) &&
+	            ((mePtr->entryFlags & ENTRY_PLATFORM_FLAG1) == 0)){
+	        COLORREF oldFgColor = gc->foreground;
+		gc->foreground = GetSysColor(COLOR_3DHILIGHT);
+	        Tk_DrawChars(menuPtr->display, d, gc, tkfont, label, 
+		        mePtr->labelLength, leftEdge + textXOffset + 1, 
+		        baseline + textYOffset + 1);
+		gc->foreground = oldFgColor;
+	    }
 	    Tk_DrawChars(menuPtr->display, d, gc, tkfont, label, 
 		    mePtr->labelLength, leftEdge, baseline);
 	    DrawMenuUnderline(menuPtr, mePtr, d, gc, tkfont, fmPtr, x, y,
