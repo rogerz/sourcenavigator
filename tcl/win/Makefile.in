@@ -398,6 +398,9 @@ tclWinTest.${OBJEXT}: tclWinTest.c
 tclAppInit.${OBJEXT} : tclAppInit.c
 	$(CC) -c $(CC_SWITCHES) @DEPARG@ $(CC_OBJNAME)
 
+tclWinPipe.${OBJEXT} : tclWinPipe.c
+	$(CC) -c $(CC_SWITCHES) -DTCL_DBGX=$(TCL_DBGX) @DEPARG@ $(CC_OBJNAME)
+
 # The following objects should be built using the stub interfaces
 
 tclWinReg.${OBJEXT} : tclWinReg.c

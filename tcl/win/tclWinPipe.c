@@ -24,6 +24,9 @@
 #include <io.h>
 #include <sys/stat.h>
 
+#define PREFIX_IDENT "rh"
+#define DEBUG_IDENT TCL_DBGX
+
 /*
  * The following variable is used to tell whether this module has been
  * initialized.
@@ -1174,8 +1177,13 @@ TclpCreateProcess(
 		startInfo.dwFlags |= STARTF_USESHOWWINDOW;
 		createFlags = CREATE_NEW_CONSOLE;
 	    }
-	    Tcl_DStringAppend(&cmdLine, "tclpip" STRINGIFY(TCL_MAJOR_VERSION) 
-		    STRINGIFY(TCL_MINOR_VERSION) ".dll ", -1);
+	    Tcl_DStringAppend(&cmdLine,
+		    PREFIX_IDENT
+		    "tclpip"
+		    STRINGIFY(TCL_MAJOR_VERSION) 
+		    STRINGIFY(TCL_MINOR_VERSION)
+		    STRINGIFY(DEBUG_IDENT)
+		    ".dll", -1);
 	}
     }
     
