@@ -475,6 +475,7 @@ Tk_HandleEvent(eventPtr)
 
     if (eventPtr->type==ButtonPress) {
 	dispPtr = TkGetDisplay(eventPtr->xbutton.display);
+	dispPtr->mouseButtonWindow = eventPtr->xbutton.window;
 	eventPtr->xbutton.state |= dispPtr->mouseButtonState;
 	switch (eventPtr->xbutton.button) {
 	    case 1: dispPtr->mouseButtonState |= Button1Mask; break; 
@@ -483,6 +484,7 @@ Tk_HandleEvent(eventPtr)
 	}
     } else if (eventPtr->type==ButtonRelease) {
 	dispPtr = TkGetDisplay(eventPtr->xbutton.display);
+	dispPtr->mouseButtonWindow = 0;
 	switch (eventPtr->xbutton.button) {
 	    case 1: dispPtr->mouseButtonState &= ~Button1Mask; break; 
 	    case 2: dispPtr->mouseButtonState &= ~Button2Mask; break; 
@@ -491,7 +493,20 @@ Tk_HandleEvent(eventPtr)
 	eventPtr->xbutton.state |= dispPtr->mouseButtonState;
     } else if (eventPtr->type==MotionNotify) {
 	dispPtr = TkGetDisplay(eventPtr->xmotion.display);
-	eventPtr->xmotion.state |= dispPtr->mouseButtonState;
+	if (dispPtr->mouseButtonState & (Button1Mask|Button2Mask|Button3Mask)) {
+	    if (eventPtr->xbutton.window != dispPtr->mouseButtonWindow) {
+	        /*
+	         * This motion event should not be interpreted as a button
+	         * press + motion event since this is not the same window
+	         * the button was pressed down in.
+	         */
+	        dispPtr->mouseButtonState &=
+	                ~(Button1Mask|Button2Mask|Button3Mask);
+	        dispPtr->mouseButtonWindow = 0;
+	    } else {
+	        eventPtr->xmotion.state |= dispPtr->mouseButtonState;
+	    }
+	}
     }
 
     /* 
