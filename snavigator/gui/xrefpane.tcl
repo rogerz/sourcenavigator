@@ -1630,6 +1630,10 @@ itcl::class XRef& {
         #4: reference art (r, w, p, u)
         #5: file
         #6: File position (line number)
+
+        if {[info commands paf_db_${ref}] == ""} {
+            return ""
+        }
         set total [paf_db_${ref} seq -uniq -updatecommand\
           "${this} update_db_fetching" -col [list 4 3 5 10 6 "8 ${fl}"\
           "7 ${FromTo}" "9 ${prm}"] ${symbol}]

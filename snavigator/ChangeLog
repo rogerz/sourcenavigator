@@ -1,3 +1,13 @@
+2003-12-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/xrefpane.tcl (read_references):
+	Check that a handle to the "to" or "by" xref
+	db actually exists before using it in
+	read_references. This fixes an error that
+	shows up if you build a project with no
+	xref and then go to the xref tab and type
+	in a symbol name.
+
 2003-12-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/classtreepane.tcl (constructor):
