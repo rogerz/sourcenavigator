@@ -48,14 +48,9 @@ static long column = 0;
 static long savedLine;
 static long savedColumn;
 
-static char * cachesize = NULL;
-static char * dbprefix = NULL;
 static char * group = NULL;
 static char * incl_to_pipe = NULL;
 static char * includename = NULL;
-static char * pipecmd = NULL; 
-static char * sn_host = NULL;
-static char * sn_pid = NULL;
 static char * xref_filename = NULL;
 
 static char includebuf[512];
@@ -199,22 +194,16 @@ sn_getopt(enum sn_options opt)
 {
   switch (opt)
   {
-    case SN_OPT_CACHESIZE:
-      return cachesize;
     case SN_OPT_CASE_SENSITIVE:
       return (void *) case_sensitive; 
     case SN_OPT_COMMENTS:
       return (void *) comments;
-    case SN_OPT_DBPREFIX:
-      return dbprefix;
     case SN_OPT_DIALECT:
       return (void *) dialect;
     case SN_OPT_DROP_USR_HEADERS:
       return (void *) drop_usr_headers;
     case SN_OPT_GROUP:
       return group;
-    case SN_OPT_HOSTNAME:
-      return sn_host;
     case SN_OPT_INCL_TO_PIPE:
       return incl_to_pipe;
     case SN_OPT_INCLUDE_LIST:
@@ -223,10 +212,6 @@ sn_getopt(enum sn_options opt)
       return (void *) local_vars;
     case SN_OPT_LISTFILE:
       return listfp;
-    case SN_OPT_PID:
-      return sn_pid;
-    case SN_OPT_PIPECMD:
-      return pipecmd;
     case SN_OPT_TREAT_AS_CPLUSPLUS:
       return (void *) treat_as_cplusplus;
     case SN_OPT_XREF_FILENAME:
@@ -251,7 +236,7 @@ sn_process_options(int argc, char *argv[])
   /* Character set encoding (as defined by Tcl). */
   Tcl_FindExecutable(argv[0]);
 
-  while ((opt = getopt(argc, argv, "I:n:s:hy:g:p:c:x:i:luB:e:tCrDS:H:O:P:")) != EOF)
+  while ((opt = getopt(argc, argv, "I:n:s:hy:g:x:i:luB:e:tCrDS:O:")) != EOF)
   {
     switch (opt)
     {
@@ -259,10 +244,6 @@ sn_process_options(int argc, char *argv[])
         /* silently ignore according to zkoppany */
         break;
 
-      case 'c':
-        cachesize = optarg;
-	break;
- 
       case 'C':
         treat_as_cplusplus = 1;
         break;
@@ -286,10 +267,6 @@ sn_process_options(int argc, char *argv[])
       case 'h':
         break;
 
-      case 'H':
-        sn_host = optarg;
-        break;
-
       case 'i':
         incl_to_pipe = optarg;
         break;
@@ -303,15 +280,7 @@ sn_process_options(int argc, char *argv[])
         break;
 
       case 'n':
-        dbprefix = optarg;
-        break;
-
-      case 'p':
-        pipecmd = optarg;
-        break;
- 
-      case 'P':
-        sn_pid = optarg;
+        /* FIXME: Remove db prefix option later */
         break;
 
       case 'r':
@@ -426,15 +395,7 @@ sn_set_group(char *newGroup)
 int
 sn_init()
 {
-  if (pipecmd != NULL)
-  {
-    Paf_Pipe_Create(pipecmd, dbprefix, incl_to_pipe, cachesize,
-                        sn_host, sn_pid);
-  }
-  else
-  {
-    Paf_db_init_tables(dbprefix, cachesize, NULL);
-  }
+  Paf_Pipe_Create(incl_to_pipe);
 
   if (xref_filename != NULL && !(cross_ref_fp = fopen(xref_filename, "a")))
   {

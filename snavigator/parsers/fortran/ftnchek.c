@@ -304,13 +304,8 @@ main(int argc, char *argv[])
    	FILE    *include_fp = NULL;
 	char	*cross_ref_file = NULL;
 	char	tmp[500];
-	char	*pipe_cmd = NULL;
-	char	*cachesize = NULL;
 	char	dirname[MAXPATHLEN];
-	char	*db_prefix = NULL;
 	char	*incl_to_pipe = NULL;
-	char	*sn_host = NULL;
-	char	*sn_pid = NULL;
 
 	dirname[0] = '\0';
 
@@ -340,7 +335,7 @@ main(int argc, char *argv[])
 	/* Character set encoding (as defined by Tcl). */
 	Tcl_FindExecutable(argv[0]);
 
-	while ((iarg = getopt(argc,argv,"e:s:n:hy:I:g:p:c:i:ltx:CrH:O:P:w:"))
+	while ((iarg = getopt(argc,argv,"e:s:n:hy:I:g:i:ltx:Cr:O:w:"))
 	       != EOF)
 	  {
 	    switch (iarg)
@@ -354,7 +349,7 @@ main(int argc, char *argv[])
 		break;
 		
 	      case 'n':
-		db_prefix = optarg;
+		/* FIXME: Remove db prefix option later */
 		break;
 		
 	      case 'e':
@@ -381,24 +376,8 @@ main(int argc, char *argv[])
 		group = optarg;
 		break;
 		
-	      case 'p':
-		pipe_cmd = optarg;
-		break;
-		
-	      case 'c':
-		cachesize = optarg;
-		break;
-		
 	      case 'i':
 		incl_to_pipe = optarg;
-		break;
-		
-	      case 'H':
-		sn_host = optarg;
-		break;
-		
-	      case 'P':
-		sn_pid = optarg;
 		break;
 		
 	      case 'x':
@@ -440,15 +419,8 @@ main(int argc, char *argv[])
 
 	if (optind < argc || list_fp)
 	{
-		if (pipe_cmd)
-		{
-			Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,
-				cachesize,sn_host,sn_pid);
-		}
-#ifndef NO_DATABASE
-		else
-			Paf_db_init_tables(db_prefix,cachesize,NULL);
-#endif
+		Paf_Pipe_Create(incl_to_pipe);
+
 		if (cross_ref_file)
 		{
 			if (!(cross_ref_fp = fopen(cross_ref_file,"a")))

@@ -190,7 +190,7 @@ extern int put_comment _ANSI_ARGS_((char *classn,char *func,char *filename,
 
 extern void put_status_parsing_file _ANSI_ARGS_((char *fname));
 
-extern void Paf_Pipe_Create _ANSI_ARGS_((char *pipe_cmd,char *db_prefix,char *incl_to_pipe,char *cache,char *sn_host,char *sn_pid));
+extern void Paf_Pipe_Create _ANSI_ARGS_((char *incl_to_pipe));
 
 extern void Paf_Open_Include_Dirs _ANSI_ARGS_((char *file_name,char *db_prefix));
 extern void Paf_Close_Include_Dirs _ANSI_ARGS_(());

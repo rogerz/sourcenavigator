@@ -1,3 +1,51 @@
+2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Rework parsers to remove code that directly writes
+	into the database when the -p option is not given.
+	Remove -p option and make writing to stdout the
+	default. Also remove the -c, -H, and -P options
+	to each of the parsers.
+
+	* db/dbutils.c (db_cachesize, db_cross_cachesize,
+	Paf_db_init_tables, Paf_Pipe_Create, Paf_Pipe_Close):
+	Explicitly initialize the db_cachesize and
+	db_cross_cachesize members to 0. Avoid initializing
+	to 0 in Paf_db_init_tables since these vars are
+	already initialized to a default value. This change
+	just makes it more clear that Paf_db_init_tables
+	does not actually need to be called, it should not
+	change any runtime functionality.
+	Rewrite Paf_Pipe_Create to support defualt pipe
+	output for parsers. The parsers no longer take
+	a -p option, so output always goes to stdout.
+	Don't call Paf_db_close_tables from inside
+	Paf_Pipe_Close, this is no longer needed since
+	the parsers don't ever call Paf_db_init_tables.
+	* gui/misc.tcl (sn_load_part_files): Don't pass
+	-c, -H, -P, or -p command line options to the
+	parsers.
+	* hyper/sn.h: Redefine args to Paf_Pipe_Create.
+	* parsers/cobol/skeleton.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Ignore the -n option. Don't call Paf_db_init_tables,
+	instead always call Paf_Pipe_Create.
+	* parsers/cpp/skeleton.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Don't call Paf_db_init_tables, instead
+	always call Paf_Pipe_Create. Keep -n option
+	since the cpp parser uses it to create an
+	include database.
+	* parsers/fortran/ftnchek.c (main): Remove
+	-c, -H, -P, and -p command line options.
+	Ignore the -n option. Don't call Paf_db_init_tables,
+	instead always call Paf_Pipe_Create.
+	* parsers/java/skeleton.c (main): Ditto.
+	* parsers/tcl/skeleton.c (main): Ditto.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options, sn_init): Ditto.
+	* parsers/toolbox/snptools.h: Remove unused sn_options
+	enum values.
+
 2003-04-21  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbutils.c (Paf_Pipe_Create, Paf_Pipe_Close):

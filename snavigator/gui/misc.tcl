@@ -3755,10 +3755,7 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         lappend cmd -e $sn_options(def,encoding)
     }
 
-    # The -c -H -P options need to be passed to both the parser and
-    # the dbimp executable.
-    lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
-    lappend cmd -p stdout | ${pipe}
+    lappend cmd | ${pipe}
     lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
     lappend cmd $sn_options(db_files_prefix)
 

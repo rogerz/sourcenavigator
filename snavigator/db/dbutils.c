@@ -107,8 +107,8 @@ static DB *db_syms[50];           /* Keep enough space */
 #define CREATE_ALWAYS_BTREES 1
 
 static	char	db_project_dir[MAXPATHLEN];
-static	u_int	db_cachesize;
-static	u_int	db_cross_cachesize;
+static	u_int	db_cachesize = 0;
+static	u_int	db_cross_cachesize = 0;
 
 #define DB_NO_CASE_COMPARE 1
 int	db_case_compare (const DBT *, const DBT *);
@@ -2907,31 +2907,15 @@ Paf_db_init_tables(const char *proj_dir,const char *cache,const char *cross_cach
 	{
 		db_cachesize = (u_int)(atoi(cache) * 1024);
 	}
-	else
-	{
-		db_cachesize = 0;
-	}
 	if (cross_cache)
 	{
 		db_cross_cachesize = (u_int)(atoi(cross_cache) * 1024);
 	}
-	else
-	{
-		db_cross_cachesize = 0;
-	}
 }
 
 void
-Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
-	char *cache,char *sn_host, char *sn_pid)
+Paf_Pipe_Create(char *incl_to_pipe)
 {
-	char    tmp[1024];
-
-	if (strcmp(pipe_cmd, "stdout") != 0) {
-		fprintf(stderr, "\"-p %s\" : stdout is the only valid -p option\n", pipe_cmd);
-		Paf_panic(PAF_PANIC_SIMPLE);
-	}
-
 #ifdef WIN32
 	pipe_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 #else
@@ -2941,6 +2925,7 @@ Paf_Pipe_Create(char *pipe_cmd,char *db_prefix,char *incl_to_pipe,
 	if (incl_to_pipe)
 	{
 		FILE    *ifp;
+		char    tmp[1024];
 
 		if ((ifp = fopen(incl_to_pipe,"r")) == NULL)
 		{
@@ -3064,18 +3049,12 @@ Paf_Pipe_Flush()
 int
 Paf_Pipe_Close()
 {
-	int     ret = 0;
-
 	if (pipe_handle == INVALID_HANDLE_VALUE)
-	{
-		Paf_db_close_tables();
-
-		return 0;
-	}
+		panic("pipe was not opened before Paf_Pipe_Close call");
 
 	pipe_handle = INVALID_HANDLE_VALUE;
 
-	return ret;
+	return 0;
 }
 
 static int

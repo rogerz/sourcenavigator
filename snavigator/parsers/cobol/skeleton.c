@@ -122,21 +122,16 @@ main(int argc, char *argv[])
 	int	opt;
 	char	tmp[MAXPATHLEN];
 	char	*fname;
-	char	*pipe_cmd = NULL;
-	char	*cachesize = NULL;
-	char	*db_prefix = NULL;
 	char	*incl_to_pipe = NULL;
 	int	case_flag = TRUE;
 	FILE	*list_fp = NULL;
 	extern FILE *include_fp;
 	char	*cross_ref_file = NULL;
-	char    *sn_host = NULL;
-	char    *sn_pid = NULL;
 
 	/* Character set encoding (as defined by Tcl). */
 	Tcl_FindExecutable(argv[0]);
 
-	while((opt = getopt(argc,argv,"e:s:n:hy:I:g:p:c:i:ltx:CrH:O:P:")) != EOF)
+	while((opt = getopt(argc,argv,"e:s:n:hy:I:g:i:ltx:Cr:O:")) != EOF)
 	{
 		switch (opt)
    		{
@@ -149,7 +144,7 @@ main(int argc, char *argv[])
 			break;
 
 		case 'n':
-			db_prefix = optarg;
+			/* FIXME: Remove db prefix option later */
 			break;
 
 		case 'e':
@@ -170,14 +165,6 @@ main(int argc, char *argv[])
 
 		case 'I':	/* include path ignored */
 			include_fp = fopen(optarg,"r");
-			break;
-
-		case 'p':
-			pipe_cmd = optarg;
-			break;
-
-		case 'c':
-			cachesize = optarg;
 			break;
 
 		case 'i':
@@ -209,13 +196,6 @@ main(int argc, char *argv[])
 		case 'D':
 			break;
 
-		case 'H':
-			sn_host = optarg;
-			break;
-
-		case 'P':
-			sn_pid = optarg;
-			break;
 		}
 	}
 
@@ -231,13 +211,7 @@ main(int argc, char *argv[])
 
 	if (optind < argc || list_fp)
 	{
-		if (pipe_cmd)
-		{
-			Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,cachesize,
-			   sn_host,sn_pid);
-		}
-		else
-			Paf_db_init_tables(db_prefix,cachesize, NULL);
+		Paf_Pipe_Create(incl_to_pipe);
 
 		if (list_fp)
 		{

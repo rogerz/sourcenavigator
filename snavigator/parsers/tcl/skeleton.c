@@ -110,21 +110,16 @@ main(int argc, char *argv[])
   int	opt;
   char	tmp[MAXPATHLEN];
   char	*fname;
-  char	*pipe_cmd      = NULL;
-  char	*cachesize     = NULL;
-  char	*db_prefix     = NULL;
   char	*incl_to_pipe  = NULL;
   int	case_flag      = TRUE;
   FILE	*list_fp       = NULL;
   FILE	*include_fp    = NULL;
   char	*cross_ref_file= NULL;
-  char  *hostname      = NULL;
-  char  *snpid         = NULL;
 
   /* Character set encoding (as defined by Tcl). */
   Tcl_FindExecutable(argv[0]);
 
-  while((opt = getopt(argc,argv,"e:H:O:P:I:n:s:hy:g:p:c:x:i:luB:e:tCrDS:")) != EOF) {
+  while((opt = getopt(argc,argv,"e:O:I:n:s:hy:g:x:i:luB:e:tCrDS:")) != EOF) {
     switch (opt) {
     case 's': 
       if ((out_fp = fopen(optarg,"a")) == NULL) {
@@ -134,7 +129,7 @@ main(int argc, char *argv[])
       break;
       
     case 'n':
-      db_prefix = optarg;
+      /* FIXME: Remove db prefix option later */
       break;
       
     case 'e':
@@ -155,14 +150,6 @@ main(int argc, char *argv[])
       
     case 'I':	/* include path ignored */
       include_fp = fopen(optarg,"r");
-      break;
-      
-    case 'p':
-      pipe_cmd = optarg;
-      break;
-      
-    case 'c':
-      cachesize = optarg;
       break;
       
     case 'i':
@@ -192,9 +179,6 @@ main(int argc, char *argv[])
     case 'r': /* Comment support. */
     case 'g':
     case 'D':
-    case 'H': hostname=optarg; break;
-    case 'P': snpid =optarg; break;
-
       break;
     }
   }
@@ -207,12 +191,8 @@ main(int argc, char *argv[])
   }
 
   if (optind < argc || list_fp)	{
-    if (pipe_cmd) {
-      Paf_Pipe_Create(pipe_cmd,db_prefix,incl_to_pipe,cachesize,
-		hostname,snpid);
-    } else {
-      Paf_db_init_tables(db_prefix,cachesize, NULL);
-    }
+    Paf_Pipe_Create(incl_to_pipe);
+
     if (list_fp) {
       /* This part is called when the project is beeing created. */
       while (fgets(tmp,sizeof(tmp) -1,list_fp))	{
