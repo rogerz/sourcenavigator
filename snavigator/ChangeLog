@@ -1,5 +1,14 @@
 2002-04-22  Mo DeJong  <supermo@bayarea.net>
 
+	* parsers/assembly/ppc601-eabi/Makefile.in:
+	* parsers/assembly/ppc601-eabi/aclocal.m4:
+	* parsers/assembly/ppc601-eabi/autogen.sh:
+	* parsers/assembly/ppc601-eabi/config.h.in:
+	* parsers/assembly/ppc601-eabi/configure: Update
+	build files to autoconf 2.13 and automake 1.4.
+
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
 	* Makefile.in:
 	* autogen.sh: Add new file.
 	* config.h.in:
