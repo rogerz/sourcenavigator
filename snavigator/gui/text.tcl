@@ -2169,6 +2169,20 @@ proc tkTextUndoPop {w} {
     }
     ${w} see insert
 
+    # If this is the last undo we can tell the editor that
+    # the file is no longer modified.
+    if {$tkText($w,undoPtr) == 0} {
+        # Find editor
+        set undone_editor ""
+        foreach editor_object [itcl::find objects -class Editor&] {
+            if {[$editor_object editor]==$w} {
+                $editor_object setmodified 0
+                $editor_object SetTitle
+                break
+            }
+        }
+    }
+
     return ${retval}
 }
 
