@@ -2,6 +2,7 @@
 
 	* gui/text.tcl (tkTextInsert): Sync other
 	editors when pasting into a text widget.
+	[Bug 594678]
 
 2002-08-05  Chris Drexler  <ckolumbus@users.sourceforge.net>
 
