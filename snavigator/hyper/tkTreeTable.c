@@ -3531,7 +3531,7 @@ DisplayRecursive (register TreeTable *tablePtr,
     TableItem * itemPtr;
     int real_x, real_text_x, real_bitm_x, real_plus_x, horiz_x, horiz_x2, vert_x, vert_x2;
     int real_y, real_text_y, real_bitm_y, real_plus_y, horiz_y, horiz_y2, vert_y, vert_y2;
-    int draw_text_y;
+    int draw_text_x, draw_text_y;
     int hidden;
     int redisplay = 0, windowWidth = -1;
     int lineHeight = tablePtr->lineHeight;
@@ -4123,17 +4123,21 @@ DisplayRecursive (register TreeTable *tablePtr,
 						{
 							tmp_tab_width = tablePtr->tabs[i];
 						}
-						Tk_DrawChars (tablePtr->display, pixmap, gc, font,
-									  p, len,
-									  tab_text_x + tmp_tab_width-ww-tablePtr->tabsMinSpace/2, draw_text_y);
+						draw_text_x = tab_text_x + tmp_tab_width-ww-tablePtr->tabsMinSpace/2;
 					}
 					else
 					{
-						Tk_DrawChars (tablePtr->display, pixmap, gc, font,
-									  p, len,
-									  tab_text_x + (i==0 ? 0 : tablePtr->tabsMinSpace/2),
-									  draw_text_y);
+						draw_text_x = tab_text_x + (i==0 ? 0 : tablePtr->tabsMinSpace/2);
 					}
+
+					Tk_DrawChars (tablePtr->display, pixmap, gc, font,
+					        p, len,
+					        draw_text_x, draw_text_y);
+
+					if (disp && (*realpos == tablePtr->active) && (tablePtr->flags & GOT_FOCUS)) {
+					    Tk_UnderlineChars(tablePtr->display, pixmap, gc, font,
+					            p, draw_text_x, draw_text_y, 0, len);
+					}	
 				}
 				
 				/* calculate the next tab stop position */
@@ -4197,29 +4201,20 @@ DisplayRecursive (register TreeTable *tablePtr,
 					p = my_WindowsNativePath(itemPtr->text, itemPtr->textLength);
 				}
 #endif
+				draw_text_x = real_text_x;
 				Tk_DrawChars (tablePtr->display, pixmap, gc, font,
 							  p, itemPtr->textLength,
-							  real_text_x, draw_text_y);
+							  draw_text_x, draw_text_y);
+
+				if (disp && (*realpos == tablePtr->active) && (tablePtr->flags & GOT_FOCUS)) {
+				    Tk_UnderlineChars(tablePtr->display, pixmap, gc, font,
+				            p, draw_text_x, draw_text_y, 0, itemPtr->textLength);
+				}
 			}
 			if (itemPtr->lineWidth > tablePtr->maxWidth)
 			{
 				tablePtr->maxWidth = itemPtr->lineWidth;
 			}
-		}
-		
-		/* draw line if have keyboard focus */
-		if (disp && (*realpos == tablePtr->active) && (tablePtr->flags & GOT_FOCUS))
-		{
-			XFillRectangle(tablePtr->display, pixmap,
-						   (itemPtr->textGC != None)
-								? itemPtr->textGC
-								: tablePtr->defTextGC, 
-						   real_text_x,
-						   real_y + lineHeight - metrics.descent,
-						   (tablePtr->fillSelection)
-									? Max (windowWidth, itemPtr->lineWidth)
-									: itemPtr->lineWidth - real_bitm_x - tablePtr->xOffset - 2,
-						   ACTIVE_LINE_HEIGHT);
 		}
 		
 		*seenpos += 1;

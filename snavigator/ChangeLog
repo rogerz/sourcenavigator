@@ -1,3 +1,15 @@
+2003-08-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* hyper/tkTreeTable.c (DisplayRecursive):
+	Add call to Tk_UnderlineChars for the active
+	index just after calls to Tk_DrawChars. The
+	previous code was drawing a line under all
+	the entries, but this was causing problems
+	under Win XP because of some problem with
+	the font metrics. The problem manifested
+	itself as a active line that actually went
+	through the bottom of the text.
+
 2003-08-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen.
