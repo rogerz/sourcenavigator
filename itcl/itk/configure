@@ -1576,6 +1576,8 @@ fi
       . $ITCLCONFIG
     fi
 
+    eval ITCL_BUILD_LIB_SPEC=\"${ITCL_BUILD_LIB_SPEC}\"
+
     
     
     
@@ -1604,7 +1606,7 @@ tkstub_LIB_SPEC=${TK_STUB_LIB_SPEC}
 #SC_PUBLIC_TCL_HEADERS
 
     echo $ac_n "checking for Tcl private include files""... $ac_c" 1>&6
-echo "configure:1608: checking for Tcl private include files" >&5
+echo "configure:1610: checking for Tcl private include files" >&5
 
     case "${host}" in
 	*mingw32* | *windows32*)
@@ -1645,7 +1647,7 @@ echo "configure:1608: checking for Tcl private include files" >&5
 #SC_PUBLIC_TK_HEADERS
 
     echo $ac_n "checking for Tk private include files""... $ac_c" 1>&6
-echo "configure:1649: checking for Tk private include files" >&5
+echo "configure:1651: checking for Tk private include files" >&5
 
     case "${host}" in
 	*mingw32* | *windows32*)
@@ -1725,7 +1727,7 @@ esac
 
 
     echo $ac_n "checking for building with threads""... $ac_c" 1>&6
-echo "configure:1729: checking for building with threads" >&5
+echo "configure:1731: checking for building with threads" >&5
     # Check whether --enable-threads or --disable-threads was given.
 if test "${enable_threads+set}" = set; then
   enableval="$enable_threads"
@@ -1752,7 +1754,7 @@ EOF
 		;;
 	    *)
 		echo $ac_n "checking for pthread_mutex_init in -lpthread""... $ac_c" 1>&6
-echo "configure:1756: checking for pthread_mutex_init in -lpthread" >&5
+echo "configure:1758: checking for pthread_mutex_init in -lpthread" >&5
 ac_lib_var=`echo pthread'_'pthread_mutex_init | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1760,7 +1762,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lpthread  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1764 "configure"
+#line 1766 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -1771,7 +1773,7 @@ int main() {
 pthread_mutex_init()
 ; return 0; }
 EOF
-if { (eval echo configure:1775: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1777: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1817,7 +1819,7 @@ fi
 
 
     echo $ac_n "checking how to build libraries""... $ac_c" 1>&6
-echo "configure:1821: checking how to build libraries" >&5
+echo "configure:1823: checking how to build libraries" >&5
     # Check whether --enable-shared or --disable-shared was given.
 if test "${enable_shared+set}" = set; then
   enableval="$enable_shared"
@@ -1888,7 +1890,7 @@ SHLIB_CFLAGS=${TCL_SHLIB_CFLAGS}
     esac
 
     echo $ac_n "checking for build with symbols""... $ac_c" 1>&6
-echo "configure:1892: checking for build with symbols" >&5
+echo "configure:1894: checking for build with symbols" >&5
     # Check whether --enable-symbols or --disable-symbols was given.
 if test "${enable_symbols+set}" = set; then
   enableval="$enable_symbols"

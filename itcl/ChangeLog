@@ -1,3 +1,8 @@
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itk/configure: Regen to account for
+	--enable-symbols fix.
+
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* itcl/configure: Regen.
