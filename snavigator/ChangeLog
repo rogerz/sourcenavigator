@@ -1,6 +1,16 @@
 2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add include
+	file support. The browser recognizes
+	the include, include_once, require, and
+	require_once keywords.
+	* tests/parsers/php.test: Add a series of
+	include keyword tests.
+
+2003-05-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Add a simple debug
 	dump function that can be used to print out
 	matched rules and text as they are made.

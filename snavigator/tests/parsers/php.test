@@ -501,6 +501,209 @@ function foo() {
 }
 
 
+tcltest::test include-1.0 { include a file } {
+    php_parse [save_file f.php {
+<?
+    include("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.013<>f.php;3.19<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.013<>#<>f2.php<>iu;3.19<>3.13<>3.19<>{}
+}
+
+tcltest::test include-1.1 { include a file } {
+    php_parse [save_file f.php {
+<?
+    include ("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.014<>f.php;3.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
+}
+
+tcltest::test include-1.2 { include a file } {
+    php_parse [save_file f.php {
+<?
+	include "f2.php";
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.010<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
+}
+
+tcltest::test include-1.3 { include a file } {
+    php_parse [save_file f.php {
+<?
+	include 'f2.php';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.010<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
+}
+
+tcltest::test include-1.4 { include a file } {
+    php_parse [save_file f.php {
+<?
+include
+'f2.php';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000004.001<>f.php;4.7<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>f2.php<>iu;4.7<>4.1<>4.7<>{}
+}
+
+tcltest::test include-1.5 { include a file } {
+    php_parse [save_file f.php {
+<?
+include( "f2.php" );
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.010<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
+}
+
+tcltest::test include-1.6 { include a file } {
+    php_parse [save_file f.php {
+<?
+include(	"f2.php"	);
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.010<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.010<>#<>f2.php<>iu;3.16<>3.10<>3.16<>{}
+}
+
+tcltest::test include-1.7 { include two files } {
+    php_parse [save_file f.php {
+<?
+include('one.php');
+include('two.php');
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;one.php<>000003.009<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>one.php<>iu;3.16<>3.9<>3.16<>{}
+PAF_INCLUDE_DEF;two.php<>000004.009<>f.php;4.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.009<>#<>two.php<>iu;4.16<>4.9<>4.16<>{}
+}
+
+tcltest::test include-1.8 { include two files } {
+    php_parse [save_file f.php {
+<?
+include('one.php'); include('two.php');
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;one.php<>000003.009<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>one.php<>iu;3.16<>3.9<>3.16<>{}
+PAF_INCLUDE_DEF;two.php<>000003.029<>f.php;3.36<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.029<>#<>two.php<>iu;3.36<>3.29<>3.36<>{}
+}
+
+# This one is really tricky to deal with because the scanner
+# would have already eaten up the ; from the previous match.
+# We don't want to match on things that are not the whole
+# keyword. This might only be fixable by moving to a
+# bnf based parser.
+
+tcltest::test include-1.9 { include two files } {knownbug} {
+    php_parse [save_file f.php {
+<?
+include('one.php');include('two.php');
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;one.php<>000003.009<>f.php;3.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>one.php<>iu;3.16<>3.9<>3.16<>{}
+PAF_INCLUDE_DEF;two.php<>000003.028<>f.php;3.35<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.028<>#<>two.php<>iu;3.35<>3.28<>3.35<>{}
+}
+
+tcltest::test include-1.10 { not an include keyword } {
+    php_parse [save_file f.php {
+<?
+notinclude 'f1.php';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test include-1.11 { not an include keyword } {
+    php_parse [save_file f.php {
+<?
+not_include 'f1.php';
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test include-2.0 { other include keywords } {
+    php_parse [save_file f.php {
+<?
+include("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.009<>f.php;3.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>f2.php<>iu;3.15<>3.9<>3.15<>{}
+}
+
+tcltest::test include-2.1 { other include keywords } {
+    php_parse [save_file f.php {
+<?
+include_once("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.014<>f.php;3.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
+}
+
+tcltest::test include-2.3 { other include keywords } {
+    php_parse [save_file f.php {
+<?
+require("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.009<>f.php;3.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.009<>#<>f2.php<>iu;3.15<>3.9<>3.15<>{}
+}
+
+tcltest::test include-2.4 { other include keywords } {
+    php_parse [save_file f.php {
+<?
+require_once("f2.php");
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_INCLUDE_DEF;f2.php<>000003.014<>f.php;3.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
+}
+
+
 
 # Need to add tests for string processing. Some variable
 # recognition works inside strings but I don't think

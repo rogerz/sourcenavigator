@@ -54,6 +54,10 @@ static char group[] = "php";
 static char current_function[MAX_SIZE] = {"GLOBAL"};
 static char current_function_args[MAX_SIZE] = {""};
 
+/* Temp location where an identifier can be stored when
+   inserting a symbol */
+static char identifier[MAX_SIZE] = {""};
+
 /* line number where highlight starts and ends */
 static int  current_function_highlight_line;
 
@@ -115,7 +119,17 @@ void matched_pattern(char * pattern, char * text);
 ws		[ \t]
 wsn		[ \t\n]
 symbol		[a-zA-Z0-9_]+
-array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
+dq-symbol	\"{symbol}\"
+sq-symbol	\'{symbol}\'
+q-symbol	({dq-symbol}|{sq-symbol})
+array-notation  (\[\]|\[{q-symbol}\])
+
+dq-string	\"[^\"]*\"
+sq-string	\'[^\']*\'
+q-string	({dq-string}|{sq-string})
+include-keywords ("include"|"include_once"|"require"|"require_once")
+include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
+
 
 %%
 
@@ -434,12 +448,98 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   yy_push_state(FUNCTION); /*BEGIN(FUNCTION);*/
 }
 
-<PHP,FUNCTION>{wsn}*{symbol}{wsn}*\( {
+<PHP,FUNCTION>{wsn}+{include}{wsn}*; {
+  char * x = yytext;
+  char * y;
+
+  matched_pattern("{wsn}+{include}{wsn}*;", yytext);
+
+  /* Skip any {wsn} chars leading up to the include keyword */
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == ' ' || *x == '\t') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
+
+  /* Skip the "include" token */
+  for ( ; *x ; x++) {
+      if ((*x >= 'A' && *x <= 'Z') || (*x >= 'a' && *x <= 'z') || (*x == '_')) {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
+
+  /* Skip any {wsn} chars leading up to the file name */
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == ' ' || *x == '\t') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
+
+  /* Skip {wsn}, open paren, single quote, or double quote */
+
+  for ( ; *x ; x++) {
+      if (*x == '\n') {
+          sn_advance_line();
+          sn_reset_column();
+      } else if (*x == '\t' || *x == ' ' ||
+              *x == '(' || *x == '\"' || *x == '\'') {
+          sn_advance_column(1);
+      } else {
+          break;
+      }
+  }
+
+  /* Save file name into identifier buffer */
+
+  for (y=x ; *y ; y++) {
+      if (*y == ')' || *y == '\"' || *y == '\''
+              || *y == ' ' || *y == '\t' || *y == '\n') {
+          assert((y-x) < (MAX_SIZE-1));
+          strncpy(identifier, x, (y-x));
+          break;
+      }
+  }
+
+  /* FIXME : Why is there not an sn_insert_include()
+   * method that takes only the needed parameters? */
+
+  result = sn_insert_symbol(SN_INCLUDE_DEF,
+          /* classname */ NULL,
+          identifier,
+          sn_current_file(),
+          sn_line(), sn_column(),
+          sn_line(), sn_column() + strlen(identifier),
+          /* attr */ 0,
+          /* ret */ NULL,
+          /* arg_types */ NULL,
+          /* arg_names */ NULL,
+          /* comment */ NULL,
+          sn_line(), sn_column(),
+          sn_line(), sn_column() + strlen(identifier));
+
+    assert(result == 0);
+
+    sn_advance_column((yytext + yyleng) - x);
+}
+
+<PHP,FUNCTION>{symbol}{wsn}*\( {
   char * x = (char *) yytext;
   char * y;
   char saved;
 
-  matched_pattern("{wsn}*{symbol}{wsn}*(", yytext);
+  matched_pattern("{symbol}{wsn}*(", yytext);
 
   /* Skip {wsn} leading up to symbol */
 
