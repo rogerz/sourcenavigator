@@ -4265,7 +4265,7 @@ static void add_variable_quals
 #endif
 {
 /* line 1379 "tcl.puma" */
- tTree obj, e2; 
+ tTree obj = NULL, e2 = NULL; 
  yyRecursion:
   if (yyP46->Kind == kqual_word) {
 /* line 1381 "tcl.puma" */
@@ -4300,7 +4300,7 @@ static void add_variable_quals
 /* line 1391 "tcl.puma" */
  {
   tIdent ident;
-  tTree obj;
+  /*tTree obj;*/ /* Commented to use obj in enclosing block */
   register tTree yyV1;
   {
 /* line 1392 "tcl.puma" */

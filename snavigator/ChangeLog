@@ -1,5 +1,19 @@
 2003-08-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/tcl/Trafo.c (add_variable_quals):
+	Fixup error in generated C code, the was
+	a disconnect between local variables that
+	were both named obj. The fix was to comment
+	out the obj variable in the inner scope so
+	that the one from the enclosing scope would
+	always be used.
+	* tests/parsers/tcl.test: Add test case
+	for core dump in var resolution code.
+	The test does not pass but that is due
+	to another bug.
+
+2003-08-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/common/parser.c (put_cross_ref):
 	Remove abort call when bad input is passed
 	in to an xref call. There is no reason to
