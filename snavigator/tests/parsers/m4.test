@@ -404,12 +404,20 @@ foo();
 }]
 } {1 fu 2.0 2.3}
 
+tcltest::test highlight-3.1 { highlight function keyword } {
+    browse_highlights [save_file f.m4 {
+AC_DEFUN([MACRO], [])
+}]
+} {1 key 2.0 2.8}
+
 
 # FIXME: Add support for sh heredoc style string
 # No subst should be done in the strings.
 # cat <<_ATEOF
 # ............
 # _ATEOF
+
+# AC_SUBST(RANLIB) should register a read xref for RANLIB
 
 # cleanup
 file delete f.m4

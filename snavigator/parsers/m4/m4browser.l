@@ -279,19 +279,34 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
   matched_pattern("^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*,", yytext);
 
-  /* FIXME : Insert an xref for the AC_DEFUN call. */
-
   current_function_line_start = sn_line();
   current_function_column_start = sn_column();
 
-  /* Skip AC_DEFUN( */
+  /* Skip {ws} */
 
   for ( ; *x ; x++) {
-      if (*x == '(') {
-          x++;
+      if (*x != ' ' &&
+          *x != '\t') {
           break;
       }
   }
+
+  /* Find '(' character after AC_DEFUN */
+  
+  for (y=x ; *y ; y++) {
+      if (*y == '(') {
+          break;
+      }
+  }
+
+  /* Highlight AC_DEFUN as a keyword, not a macro invocation */
+
+  sn_highlight(SN_HIGH_KEYWORD,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  x = y;
+  x++;
 
   /* Skip {ws} and optional [ */
 

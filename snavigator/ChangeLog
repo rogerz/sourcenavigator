@@ -1,3 +1,13 @@
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Highlight the
+	AC_DEFUN part of a macro declaration as
+	a keyword, since it is not treated as
+	a macro invocation.
+	* tests/parsers/m4.test: Add test case for
+	keyword highlight in macro declaration.
+
 2003-07-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/m4/m4browser.c: Regen.
