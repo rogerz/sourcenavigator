@@ -609,7 +609,7 @@ itcl::class snEditTarget {
 
     public method import_files {} {
 
-        set importedSrcFiles [Editor&::FileDialog $itk_component(hull) -multiple 1]
+        set importedSrcFiles [Editor&::FileDialog $itk_component(hull)]
 
         if {${importedSrcFiles} != ""} {
             ${b_target} AddSourceFiles ${importedSrcFiles}

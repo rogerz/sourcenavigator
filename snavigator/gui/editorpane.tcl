@@ -2398,7 +2398,6 @@ itcl::class Editor& {
 	set script ""
 	set prefix "file_dialog"
 	set save_open "open"
-	set multiple 0
 	set initialdir ""
 	set extensions ""
 	set initialfile ""
@@ -2425,9 +2424,6 @@ itcl::class Editor& {
 		}
 	    "-save_open" {
 		    set save_open ${val}
-		}
-	    "-multiple" {
-		    set multiple ${val}
 		}
 	    "-initialdir" -
 	    "-dir" {
@@ -2499,7 +2495,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    } else {
 		set f [tk_getOpenFile \
@@ -2508,7 +2503,6 @@ itcl::class Editor& {
 		    -initialdir ${initialdir} \
 		    -defaultextension ${defaultextension} \
 		    -filetypes ${types} \
-		    -multiple ${multiple} \
 		    -initialfile ${initialfile}]
 	    }
 	} else {
@@ -2542,11 +2536,7 @@ itcl::class Editor& {
 
 	#store last accessed directory
 	if {${f} != ""} {
-	    if {${multiple}} {
-		set ff [lindex ${f} 0]
-	    } else {
-		set ff ${f}
-	    }
+	    set ff ${f}
 	    catch {set last_accessed_dir [file dirname ${ff}]}
 	}
 

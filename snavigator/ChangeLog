@@ -1,3 +1,13 @@
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (FileDialog): Remove the
+	-multiple argument to the file dialog boxes.
+	This was a local modification to the Tk 8.1
+	sources for tkFDialog and tk_getOpenFile.
+	* gui/projedit.tcl (add_files): Remove the
+	-multiple argument to Editor&::FileDialog.
+	* gui/targetedit.tcl (import_files): Ditto.
+
 2002-04-26  Mo DeJong  <supermo@bayarea.net>
 
 	* hyper/recudir.c: Cast return values from

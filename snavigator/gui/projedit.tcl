@@ -1159,7 +1159,7 @@ itcl::class Project& {
     method add_files {} {
         Editor&::FileDialog $itk_component(hull) -title [get_indep String Open]\
           -script "eval ${this} add_files_cb" -prefix add_files\
-          -save_open open -multiple 1 -initialdir ${last_dir}
+          -save_open open -initialdir ${last_dir}
     }
 
     method add_dir_cb {dir} {
