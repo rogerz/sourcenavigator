@@ -1,3 +1,8 @@
+2002-05-16  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh: Add script to create source
+	distribution archives.
+
 2002-05-09  Mo DeJong  <supermo@bayarea.net>
 
 	* INSTALL.TXT: Minor wording change. Tell folks to
