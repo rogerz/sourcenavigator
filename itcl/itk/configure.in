@@ -65,6 +65,18 @@ fi
 #--------------------------------------------------------------------
 
 # CYGNUS LOCAL
+
+# Autoconf 2.13 does not understand how to run the C preprocessor
+# when compiling with VC++, so just hard code it here. It also
+# gets the executable suffix wrong.
+
+case "${host}" in
+*windows32*)
+        CPP="${CC} -nologo -E"
+        ac_cv_exeext=".exe"
+        ;;
+esac
+
 dnl SC_ENABLE_GCC
 AC_PROG_CC
 # END CYGNUS LOCAL
