@@ -1,3 +1,14 @@
+2002-11-26  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (print_file): Don't
+	attempt to delete a printer dialog object
+	if it does not exist. This fixes a problem
+	printing the grep pane under Windows.
+	* gui/winprint.tcl: Resurrect windows
+	printing file that was erroneously removed
+	on 2000-05-26. These methods are used
+	by the utilities.tcl file.
+
 2002-11-25  Mo DeJong  <mdejong@uncounted.org>
 
 	* gui/retriever.tcl (destructor, window_deleted):

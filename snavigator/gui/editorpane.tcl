@@ -3738,7 +3738,8 @@ itcl::class Editor& {
 	    }
 	}
 
-	if {${print_dialog} != ""} {
+	if {${print_dialog} != "" &&
+	        [itcl::find object ${print_dialog}] == ${print_dialog}} {
 	    itcl::delete object ${print_dialog}
 	}
 
