@@ -1,5 +1,10 @@
 2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/README.TXT: Add README file
+	for the PHP source code browser.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Support each
 	of the keywords defined in the PHP manual
