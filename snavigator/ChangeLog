@@ -1,5 +1,12 @@
 2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/common/parser.c (put_cross_ref):
+	Fix mistake made when moving code over from
+	dbutils.c, do nothing when the cross_ref_fp
+	global var is not set.
+
+2003-05-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/tmeter.tcl (make_scale_window): Add
 	a call to sn_wait so that we sit in the
 	event loop for a little bit after the scale

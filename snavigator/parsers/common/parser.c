@@ -451,7 +451,7 @@ int	acc)
 	LongString	data_value;
 	char	lineno_buf[10];
 
-	if (!fnc || *fnc == '\0' ||
+	if (!cross_ref_fp || !fnc || *fnc == '\0' ||
 		(scope_lev == PAF_REF_SCOPE_LOCAL && !report_local_vars))
 	{
 		return -1;
