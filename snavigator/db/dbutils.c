@@ -3223,7 +3223,7 @@ Paf_Pipe_Flush()
 {
 	if (pipe_handle == INVALID_HANDLE_VALUE)
 		return -1;
-#ifdef  __MSVC__
+#ifdef  WIN32
 	return (int)FlushFileBuffers(pipe_handle);
 #else
 	return fflush(pipe_handle);

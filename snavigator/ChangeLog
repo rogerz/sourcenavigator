@@ -1,3 +1,8 @@
+2003-01-31  Earnie Boyd  <earnie@users.sf.net>
+
+	* db/dbutils.c (Paf_Pipe_Flush): Use FlushFileBuffers
+	for mingw32 host.
+
 2003-01-29  Mo DeJong  <mdejong@uncounted.org>
 
 	* INSTALL.TXT: Remove install file comment about
