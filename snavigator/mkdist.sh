@@ -8,10 +8,8 @@ DIR=/tmp/sourcenav
 RELEASE=sourcenav-5.1.1
 RELEASEDIR=$DIR/$RELEASE
 
-PWD=`pwd`
-
-if test `basename $PWD` != "src" ; then
-    echo "Must be run from src/ directory at root of a checkout"
+if test ! -d tcl || test ! -d tk ; then
+    echo "Must be run from toplevel directory!"
     exit 1
 fi
 
@@ -22,11 +20,10 @@ for file in $PATCHES ; do
     patch -p 0 < $file >> patch.out
 done
 
-if test -d $DIR ; then
-    rm -rf $DIR
+rm -rf $DIR/$RELEASE
+if test ! -d $DIR ; then
+    mkdir $DIR
 fi
-
-mkdir $DIR
 mkdir $RELEASEDIR
 
 # Only copy those files that we actually need
