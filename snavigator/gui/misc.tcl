@@ -1002,9 +1002,17 @@ proc load_xref_pipe {xreffd xfer_file} {
         # It has to be called before sn_db_open_files!
         catch {unset SN_cross_pid}
 
+# FIXME : Tcl fails to raise an error
+# during a call to the close command
+# when the program on the other end
+# of a non-blocking pipe crashes.
+# We work around this by putting the
+# pipe back in blocking mode.
+        fconfigure ${xreffd} -blocking 1
+
         set err ""
         set status [catch {close ${xreffd}} err]
-        sn_log "Exit status: ${status}, ${err}"
+        sn_log "xref pipe exit status: ${status}, ${err}"
 
         #xref has been crashed, report the error and the last accessed
         #file name
