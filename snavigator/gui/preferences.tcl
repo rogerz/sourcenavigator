@@ -1507,6 +1507,8 @@ itcl_class Preferences& {
                     [list "" "" def,color_iv opt_def,color_iv "" ""]] \
                   [list "[get_indep String VariablesNoKey] (gv)" \
                     [list "" "" def,color_gv opt_def,color_gv "" ""]] \
+                  [list "[get_indep String PafLocVars] (lv)" \
+                    [list "" "" def,color_lv opt_def,color_lv "" ""]] \
                   [list "[get_indep String ConstantsNoKey] (con)" \
                     [list "" "" def,color_con opt_def,color_con "" ""]] \
                   [list "[get_indep String CommonsNoKey] (com)" \

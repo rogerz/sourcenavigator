@@ -1865,10 +1865,10 @@ itcl::class Editor& {
 	global combobox_editor_scopes
 
 	if {$sn_options(iscolor)} {
-	    #init symbol colors
+	    # Create highlight tags for text widget
 	    set sc [::lunique [lsort [eval concat [array get \
 	      combobox_editor_scopes]]]]
-	    foreach tg "key ${sc}" {
+	    foreach tg [concat key rem str ${sc} lv] {
 		catch {${t} tag configure ${tg} \
 		        -foreground $sn_options(def,color_${tg})}
 	    }
@@ -1881,10 +1881,6 @@ itcl::class Editor& {
 		        -foreground "cornflower blue"}
 	    }
 
-	    ${t} tag configure rem \
-	        -foreground $sn_options(def,color_rem)
-	    ${t} tag configure str \
-	        -foreground $sn_options(def,color_str)
 	    ${t} tag configure bracket \
 	        -background $sn_options(def,bracketmatch-bg) \
 	        -foreground white
@@ -1908,7 +1904,7 @@ itcl::class Editor& {
 	    set file_syms [get_file_symbols $itk_option(-filename)]
 
 	    #create tags for the found symbols in the editor
-	    sn_db_create_symbol_tags $itk_component(editor) ${file_syms} "in iu lv"
+	    sn_db_create_symbol_tags $itk_component(editor) ${file_syms} "in iu"
 
 	    #mark actual tag and display found tags into
 	    #the combobox

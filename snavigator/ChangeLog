@@ -1,5 +1,22 @@
 2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/editorpane.tcl (init_tags, color_file):
+	Add basic local variable highlighting support.
+	Add lv to the list of symbols that has a highlight
+	tag created for it in the editor. Remove lv
+	from the list of symbols that is filtered out
+	before being added to the editor in color_file.
+	There does not seem to be any reason to filter
+	out lv entries, most compilers do not generate
+	them and they and having locals highlighted can't
+	hurt.
+	* gui/preferences.tcl (AddColorAndFont): Add
+	color config option for local variables.
+	* gui/sninit.tcl (sn_init_globals): Add default
+	of turquoise3 for local variable highlight.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/preferences.tcl (AddOthers): Remove
 	the "bugs" labeled frame and the mailhost
 	entry box from the others tab. These widgets
