@@ -1583,6 +1583,77 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 }
 
 
+tcltest::test operator-1.0 { assignment operator } {
+    php_parse_xref [save_file f.php {
+<?
+$var = 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+}
+
+tcltest::test operator-1.3 { assignment operators } {
+    php_parse_xref [save_file f.php {
+<?
+$var += 1;
+$var -= 1;
+$var *= 1;
+$var /= 1;
+$var .= 1;
+$var %= 1;
+$var &= 1;
+$var |= 1;
+$var ^= 1;
+$var <<= 1;
+$var >>= 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000007<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000008<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000009<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000010<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000011<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000012<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000013<>f.php;<>
+}
+
+
+
+tcltest::test operator-2.0 { not an assignment operator } {
+    php_parse_xref [save_file f.php {
+<?
+$var == 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test operator-2.1 { not an assignment operator } {
+    php_parse_xref [save_file f.php {
+<?
+$var === 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+tcltest::test operator-2.2 { not an assignment operator } {
+    php_parse_xref [save_file f.php {
+<?
+$var != 1;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+}
+
+
+
+
+
 tcltest::test multi-1.0 { process multiple files } {
     save_file f1.php {
 <?
@@ -1617,8 +1688,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # recognition works inside strings but I don't think
 # function calls should be seen in string literals.
 
-# Need to fix array variable setting and reading.
-
 # FIXME: Add check for function call inside function arguments,
 # is that valid?
 
@@ -1641,8 +1710,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # Also, we don't currently report a function name when inserting
 # comments. It might also be good to check the return value
 # of the sn_insert_comment if there is one.
-
-# Add .= as assignment operator support.
 
 # When should we do with  <? CODE ?> when already in PHP mode?
 

@@ -60,9 +60,9 @@ typedef enum {
     COMMA,         /* ',' */
 
     VARIABLE,      /* $var */
-    ARRAY_VARIABLE, /* $var['one'] */
     ASSIGNMENT_OPERATOR, /* '=' */
     ASSIGNMENT_OPERATORS, /* = -= += and so on */
+    COMPARISON_OPERATORS, /* == === != >= and so on */
 
     SOMEWORD,          /* a sequence of text */
     KEYWORD,       /* a key sequence in this language */
@@ -191,7 +191,8 @@ someword	{symbol}
 token		{symbol}
 heredoc-id	{symbol}
 
-assignment-operators	("+"|"-"|"*"|"/")"="
+assignment-operators	("+="|"-="|"*="|"/="|".="|"%="|"&="|"|="|"^="|"<<="|">>=")
+comparison-operators	("=="|"==="|"!="|"!=="|"<>"|"<"|">"|"<="|">=")
 
 any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
@@ -671,6 +672,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 <PHP>"=" {
   matched_pattern("=", yytext);
   append_token(ASSIGNMENT_OPERATOR, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{comparison-operators} {
+  matched_pattern("{comparison-operators}", yytext);
+  append_token(COMPARISON_OPERATORS, yytext,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1385,12 +1396,12 @@ char * TokenTypeToString(Token *tok) {
             return "COMMA";
         case VARIABLE:
             return "VARIABLE";
-        case ARRAY_VARIABLE:
-            return "ARRAY_VARIABLE";
         case ASSIGNMENT_OPERATOR:
             return "ASSIGNMENT_OPERATOR";
         case ASSIGNMENT_OPERATORS:
             return "ASSIGNMENT_OPERATORS";
+        case COMPARISON_OPERATORS:
+            return "COMPARISON_OPERATORS";
         case SOMEWORD:
             return "SOMEWORD";
         case KEYWORD:

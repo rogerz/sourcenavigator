@@ -1,6 +1,17 @@
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Emit a token
+	for each comparison operator. This fixes
+	a bug where "$var == 5;" was being
+	interpreted as a variable write.
+	Removed unused ARRAY_VARIABLE token.
+	* tests/parsers/php.test: Add a series of
+	operator tests.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Implement array vars.
 	This matching approach works with empty indexes,
 	constants, single and double quoted strings,
