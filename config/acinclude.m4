@@ -189,13 +189,20 @@ dnl from PATH_TCLCONFIG (because this can also be cached).
 AC_DEFUN(CYG_AC_LOAD_TCLCONFIG, [
     . $TCLCONFIG
 
+dnl not used, don't export to save symbols
 dnl AC_SUBST(TCL_VERSION)
 dnl AC_SUBST(TCL_MAJOR_VERSION)
 dnl AC_SUBST(TCL_MINOR_VERSION)
 dnl AC_SUBST(TCL_CC)
     AC_SUBST(TCL_DEFS)
+    AC_SUBST(TCL_DBGX)
 
-dnl not used, don't export to save symbols
+dnl eval required to subst TCL_DBGX
+    eval TCL_LIB_FILE=${TCL_LIB_FILE}
+    eval TCL_LIB_FULL_PATH=${TCL_LIB_FULL_PATH}
+    eval TCL_BUILD_LIB_SPEC=\"${TCL_BUILD_LIB_SPEC}\"
+    eval TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\"
+
     AC_SUBST(TCL_LIB_FILE)
     AC_SUBST(TCL_LIB_FULL_PATH)
     AC_SUBST(TCL_LIBS)
@@ -433,6 +440,9 @@ dnl not used, don't export to save symbols
 dnl not used, don't export to save symbols
 dnl    AC_SUBST(TK_PREFIX)
 
+dnl eval required to subst TCL_DBGX
+    eval TK_BUILD_LIB_SPEC=\"${TK_BUILD_LIB_SPEC}\"
+
 dnl not used, don't export to save symbols
 dnl    AC_SUBST(TK_EXEC_PREFIX)
     AC_SUBST(TK_BUILD_INCLUDES)
@@ -596,6 +606,9 @@ AC_DEFUN(CYG_AC_LOAD_ITCLCONFIG, [
       . $ITCLCONFIG
     fi
 
+dnl eval required to subst TCL_DBGX
+    eval ITCL_BUILD_LIB_SPEC=\"${ITCL_BUILD_LIB_SPEC}\"
+
     AC_SUBST(ITCL_BUILD_LIB_SPEC)
     AC_SUBST(ITCL_SH)
     AC_SUBST(ITCL_LIB_FILE)
@@ -682,6 +695,9 @@ AC_DEFUN(CYG_AC_LOAD_ITKCONFIG, [
     if test -f "$ITKCONFIG" ; then
       . $ITKCONFIG
     fi
+
+dnl eval required to subst TCL_DBGX
+    eval ITK_BUILD_LIB_SPEC=\"${ITK_BUILD_LIB_SPEC}\"
 
     AC_SUBST(ITK_BUILD_LIB_SPEC)
     AC_SUBST(ITK_LIB_FILE)

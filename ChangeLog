@@ -1,3 +1,12 @@
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* config/acinclude.m4 (CYG_AC_LOAD_TCLCONFIG,
+	CYG_AC_LOAD_TKCONFIG, CYG_AC_LOAD_ITCLCONFIG,
+	CYG_AC_LOAD_ITKCONFIG): Subst TCL_DBGX into
+	file paths so that TCL_DBGX does not need
+	to be defined in extensions. This fixes
+	the build when --enable-symbols is passed.
+
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen.
