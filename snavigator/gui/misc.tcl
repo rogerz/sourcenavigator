@@ -936,7 +936,7 @@ proc sn_load_xref {xfer_file} {
     set SN_cross_pid ${fd}
     set xref_cancelled 0
     fconfigure ${fd} \
-        -encoding $sn_options(def,system-encoding) \
+        -encoding utf-8 \
         -blocking 0
     fileevent ${fd} readable [list load_xref_pipe ${fd} ${xfer_file}]
 }

@@ -1,3 +1,11 @@
+2003-05-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/misc.tcl (sn_load_xref): Set the encoding
+	of the dbimp pipe to utf-8 instead of the
+	platform encoding. This fixes reading of file
+	names outside the ascii range in status messages
+	from the cross ref process.
+
 2003-04-24  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* db/dbutils.c (put_file, put_symbol):
