@@ -1,3 +1,11 @@
+2002-09-12  Mo DeJong  <supermo@bayarea.net>
+
+	* mkdist.sh:
+	Rework toplevel directory test so it
+	checks for tcl and tk directories.
+	Remove any .rej files from dest dir
+	after patching.
+
 2002-09-05  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/text.tcl (tkTextInsertChar): Sync so that

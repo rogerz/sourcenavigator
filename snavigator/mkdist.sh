@@ -4,14 +4,12 @@
 # Source-Navigator. It should be run from the src/ directory
 # at the root of a clean CVS checkout.
 
-DIR=/tmp/sourcenav
+DIR=/share/SN51/dist
 RELEASE=sourcenav-5.1.0
 RELEASEDIR=$DIR/$RELEASE
 
-PWD=`pwd`
-
-if test `basename $PWD` != "src" ; then
-    echo "Must be run from src/ directory at root of a checkout"
+if test ! -d tcl || test ! -d tk ; then
+    echo "Must be run from toplevel directory!"
     exit 1
 fi
 
@@ -22,11 +20,10 @@ for file in $PATCHES ; do
     patch -p 0 < $file >> patch.out
 done
 
-if test -d $DIR ; then
-    rm -rf $DIR
+rm -rf $DIR/$RELEASE
+if test ! -d $DIR ; then
+    mkdir $DIR
 fi
-
-mkdir $DIR
 mkdir $RELEASEDIR
 
 # Only copy those files that we actually need
@@ -46,6 +43,7 @@ cd $RELEASEDIR
 find . -name CVS -exec rm -rf {} \; > /dev/null 2>&1
 find . -name ".#*" -exec rm -f {} \; > /dev/null 2>&1
 find . -name "*~" -exec rm -f {} \; > /dev/null 2>&1
+find . -name "*.rej" -exec rm -f {} \; > /dev/null 2>&1
 
 cp snavigator/README.TXT .
 cp snavigator/INSTALL.TXT .
