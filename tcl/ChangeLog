@@ -1,3 +1,9 @@
+2003-09-13  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Add TCL-PRE-835-MERGE-2003-09-13 tag to
+	mark state of tcl package before updating
+	to Tcl 8.3.5.
+
 2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/Makefile.in: Remove invocation of
