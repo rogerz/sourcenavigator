@@ -64,6 +64,7 @@ typedef enum {
     ASSIGNMENT_OPERATOR, /* '=' */
     ASSIGNMENT_OPERATORS, /* = -= += and so on */
     COMPARISON_OPERATORS, /* == === != >= and so on */
+    INCREMENT_OPERATORS,  /* ++ and -- */
     REFERENCE_OPERATOR,   /* & */
 
     SOMEWORD,          /* a sequence of text */
@@ -79,6 +80,11 @@ typedef enum {
     COMMENT,        /* Emit COMMENT token only when debugging */
     HTML            /* Emit HTML token only when debugging */
 } TokenType;
+
+typedef enum {
+    WRITE,
+    READWRITE
+} VarAccess;
 
 typedef struct Token {
     TokenType type;
@@ -183,6 +189,7 @@ void emit_dqstring();
 void emit_sqstring();
 void emit_hdstring();
 void emit_html();
+void emit_var_access(Token* tok, VarAccess acc);
 
 int yywrap() { return 1; }
 
@@ -207,6 +214,7 @@ heredoc-id	{symbol}
 
 assignment-operators	("+="|"-="|"*="|"/="|".="|"%="|"&="|"|="|"^="|"<<="|">>=")
 comparison-operators	("=="|"==="|"!="|"!=="|"<>"|"<"|">"|"<="|">=")
+increment-operators     ("++"|"--")
 
 any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
@@ -928,6 +936,19 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
+<PHP>{increment-operators} {
+#if MATCH_DUMP
+  matched_pattern("{increment-operators}", yytext);
+#endif
+
+  append_token(INCREMENT_OPERATORS, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
 <PHP>"function" {
 #if MATCH_DUMP
   matched_pattern("function", yytext);
@@ -1245,97 +1266,13 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"VARIABLE"{var-array-tokens}("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
-  char* varname = tokens_head->strval;
-  SearchEntry entry;
-  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
-  int line_start, line_end, column_start, column_end;
   int offset;
-
-  line_start = tokens_head->start_line;
-  column_start = tokens_head->start_column;
-  line_end = tokens_head->end_line;
-  column_end = tokens_head->end_column;
-
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable write at token %d\n", token_index);
+  fprintf(tokenout, "variable assignment at token %d\n", token_index);
 #endif
 
-  /*
-   * If we are not in a function or the variable is in the
-   * function's global table then it is a global.
-   */
-
-  entry.key = varname;
-  entry.key_len = -1;
-
-  if ((current_function == NULL) ||
-      (global_var_table &&
-        (global_var_table->search( &global_var_table, entry ) != NULL))) {
-    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-    symbol_def_type = SN_GLOB_VAR_DEF;
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "global var \"%s\"\n", varname);
-#endif
-  } else {
-    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-    symbol_def_type = SN_LOCAL_VAR_DEF;
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "local var \"%s\"\n", varname);
-#endif
-  }
-
-  /* I think setting a global variable should emit
-     a symbol declaration. I am not really
-     sure if we should emit just one symbol
-     declaration, or multiple ones. Multiple
-     ones breaks xref but it does present
-     the symbol multiple times in the
-     file's symbol list which would be
-     nice if it worked correctly */
-
-  result = sn_insert_symbol(symbol_def_type,
-                            NULL,
-			    varname,
-			    sn_current_file(),
-			    line_start, column_start,
-			    line_end, column_end,
-			    0,
-			    NULL,
-			    NULL,
-			    NULL,
-			    NULL,
-			    line_start, column_start,
-			    line_end, column_end
-                            );
-  assert(result == 0);
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
-
-  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
-      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
-          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
-
-    result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
-                 ref_to_symbol_scope,
-                 NULL,
-                 (current_function == NULL) ? "GLOBAL" : current_function,
-                 NULL,
-                 NULL,
-                 varname,
-                 NULL,
-                 sn_current_file(),
-                 line_start,
-                 SN_REF_WRITE);
-
-    assert(result == 0);
-  }
+  /* FIXME: should be READWRITE if ASSIGNMENT_OPERATORS */
+  emit_var_access(tokens_head, WRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1346,6 +1283,35 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* VARIABLE */
   offset = strlen("VARIABLE"); /* send back everything after the VARIABLE token */
   yyless(offset);
+}
+
+<TOKEN>("INCREMENT_OPERATORS VARIABLE"{var-array-tokens}|"VARIABLE"{var-array-tokens}"INCREMENT_OPERATORS") {
+  int offset, pre = 0;
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "variable increment at token %d\n", token_index);
+#endif
+
+  if (tokens_head->type == INCREMENT_OPERATORS) {
+    pre = 1;
+    free_head_token(); /* INCREMENT_OPERATORS */
+  }
+
+  emit_var_access(tokens_head, READWRITE);
+
+  /* Eat the variable token and send the rest of the tokens
+   * back for further matching. This is needed so that
+   * expressions like "$var[$one]++;" generate both
+   * a read/write xref for $var and a read xref for $one.
+   */
+
+  free_head_token(); /* VARIABLE */
+
+  if (pre) {
+    offset = strlen("INCREMENT_OPERATORS VARIABLE");
+  } else {
+    offset = strlen("VARIABLE");
+  }
+  yyless(offset); /* send back everything after the VARIABLE token */
 }
 
 <TOKEN>"VARIABLE" {
@@ -1720,6 +1686,8 @@ char * TokenTypeToString(Token *tok) {
             return "ASSIGNMENT_OPERATORS";
         case COMPARISON_OPERATORS:
             return "COMPARISON_OPERATORS";
+        case INCREMENT_OPERATORS:
+            return "INCREMENT_OPERATORS";
         case REFERENCE_OPERATOR:
             return "REFERENCE_OPERATOR";
         case SOMEWORD:
@@ -1901,7 +1869,119 @@ void emit_html() {
       mode_buff.free(&mode_buff);
     }
 }
- 
+
+/* This method is invoked when a var write operation is matched.
+ * in the token stream.
+ */
+
+void emit_var_access(Token *tok, VarAccess acc) {
+  char* varname = tok->strval;
+  SearchEntry entry;
+  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
+  int line_start, line_end, column_start, column_end;
+
+  line_start = tok->start_line;
+  column_start = tok->start_column;
+  line_end = tok->end_line;
+  column_end = tok->end_column;
+
+  /*
+   * If we are not in a function or the variable is in the
+   * function's global table then it is a global.
+   */
+
+  entry.key = varname;
+  entry.key_len = -1;
+
+  if ((current_function == NULL) ||
+      (global_var_table &&
+        (global_var_table->search( &global_var_table, entry ) != NULL))) {
+    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+    symbol_def_type = SN_GLOB_VAR_DEF;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "global var \"%s\"\n", varname);
+#endif
+  } else {
+    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+    symbol_def_type = SN_LOCAL_VAR_DEF;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "local var \"%s\"\n", varname);
+#endif
+  }
+
+  /* I think setting a global variable should emit
+     a symbol declaration. I am not really
+     sure if we should emit just one symbol
+     declaration, or multiple ones. Multiple
+     ones breaks xref but it does present
+     the symbol multiple times in the
+     file's symbol list which would be
+     nice if it worked correctly */
+
+  result = sn_insert_symbol(symbol_def_type,
+                            NULL,
+			    varname,
+			    sn_current_file(),
+			    line_start, column_start,
+			    line_end, column_end,
+			    0,
+			    NULL,
+			    NULL,
+			    NULL,
+			    NULL,
+			    line_start, column_start,
+			    line_end, column_end
+                            );
+  assert(result == 0);
+
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
+
+  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+
+    /* Generate just a write xref or a read/write pair of xrefs */
+
+    if (acc == READWRITE) {
+        result = sn_insert_xref(ref_to_symbol_type,
+                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_to_symbol_scope,
+                 NULL,
+                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 NULL,
+                 NULL,
+                 varname,
+                 NULL,
+                 sn_current_file(),
+                 line_start,
+                 SN_REF_READ);
+
+        assert(result == 0);
+    }
+
+    result = sn_insert_xref(ref_to_symbol_type,
+                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_to_symbol_scope,
+                 NULL,
+                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 NULL,
+                 NULL,
+                 varname,
+                 NULL,
+                 sn_current_file(),
+                 line_start,
+                 SN_REF_WRITE);
+
+    assert(result == 0);
+  }
+}
+
 void
 reset()
 {

@@ -1,3 +1,19 @@
+2003-06-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for variable pre and post increment
+	and decrement operators. Move the logic
+	in the variable assignment block into a
+	helper function named emit_var_access.
+	Invoke this method from the new pattern
+	that will match a variable increment
+	and decrement tokens.
+	* tests/parsers/php.test: Add token
+	parsing tests for increment operators.
+	Check that xrefs are being generated
+	properly for increment operators.
+
 2003-06-05  John Lash  <jlash@speakeasy.net>
 
 	* gui/editorpane.tcl (EditFile): Remove

@@ -124,6 +124,19 @@ $foo = &$bar;
 4 VARIABLE "bar" 3.9 3.12
 5 SEMICOLON "" 3.12 3.13}
 
+tcltest::test tokens-3.0 { parse into tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+$var++;
+--$var;
+?>
+}]]
+} {1 VARIABLE "var" 3.1 3.4
+2 INCREMENT_OPERATORS "++" 3.4 3.6
+3 SEMICOLON "" 3.6 3.7
+4 INCREMENT_OPERATORS "--" 4.0 4.2
+5 VARIABLE "var" 4.3 4.6
+6 SEMICOLON "" 4.6 4.7}
 
 # ---------------------------------------------
 # The rest of the tests check for output that
@@ -339,6 +352,66 @@ print $var;
 PAF_FILE;f.php;php<>
 PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
+}
+
+tcltest::test var-1.7 { var increment } {
+    browse [save_file f.php {
+<?
+$var++;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-1.8 { var decrement } {
+    browse [save_file f.php {
+<?
+--$var;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
+}
+
+tcltest::test var-1.9 { var decrement, ignore increment (syntax error) } {
+    browse [save_file f.php {
+<?
+--$var++;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
+}
+
+tcltest::test var-1.10 { array var increment } {
+    browse [save_file f.php {
+<?
+$var[0]++;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test var-1.11 { array var decrement } {
+    browse [save_file f.php {
+<?
+--$var[0];
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
 }
 
 tcltest::test var-2.0 { var write xref } {
@@ -699,7 +772,36 @@ $var["one"."two"] = 1;
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
 }
 
+tcltest::test var-5.5 { read and write xrefs } {
+    browse_xref [save_file f.php {
+<?
+$var++;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+}
 
+# FIXME: $var+=1; needs to emit read/write for this to pass
+
+tcltest::test var-5.6 { read and write xrefs } {knownbug} {
+    browse_xref [save_file f.php {
+<?
+$var = $var + 1;
+$var+=1;
+$var++;
+--$var;
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000004<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000004<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000005<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000005<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000006<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000006<>f.php;<>
+}
 
 tcltest::test comment-1.0 { comment } {
     browse [save_file f.php {
