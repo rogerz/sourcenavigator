@@ -84,8 +84,15 @@ PAF_GLOB_VAR_DEF;mode<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>mode<>gv;3.5<>3.1<>3.5<>{}
 }
 
-
-
+tcltest::test mode-2.5 { php mode } {
+    php_parse [save_file f.php {
+<? function foo() {} ?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000002.003<>f.php;2.20<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000002.003<>#<>foo<>fu;2.20<>2.12<>2.15<>{}
+}
 
 tcltest::test var-1.0 { var write } {
     php_parse [save_file f.php {
@@ -497,11 +504,56 @@ function foo() {
 }
 ?>
 }]
-} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
-PAF_COMMENT_DEF;f.php<>000005.006<>#<>#;no-op
+} {PAF_COMMENT_DEF;f.php<>000005.006<>#<>#;no-op
+PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
 }
 
 
+tcltest::test string-1.0 { double quoted string } {
+    php_parse [save_file f.php {
+<?
+$var = "value";
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+}
+
+tcltest::test string-1.1 { double quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = "value";
+$var2 = "value";
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000004.001<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
+}
+
+tcltest::test string-1.2 { double quoted string } {
+    php_parse [save_file f.php {
+<?
+$var1 = "\"" .
+    "\"";
+$var2 = 1;
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+}
+
+# FIXME: Add string that spans multiple lines test!
+# FIXME: Add single quoted string tests too!
 
 
 
@@ -583,8 +635,22 @@ tcltest::test function-1.5 { function definition } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_FUNC_DEF;stop_go<>000003.000<>f.php;3.23<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>stop_go<>fu;3.23<>3.11<>3.18<>{}
+PAF_FUNC_DEF;stop_go<>000003.002<>f.php;3.23<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>stop_go<>fu;3.23<>3.11<>3.18<>{}
+}
+
+tcltest::test function-1.6 { function definition } {
+    php_parse [save_file f.php {
+<?
+function foo() {
+  if (1) {}
+}
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
 
 
@@ -839,7 +905,7 @@ PAF_FILE_SYMBOLS;f.php<>000003.029<>#<>two.php<>iu;3.36<>3.29<>3.36<>{}
 # keyword. This might only be fixable by moving to a
 # bnf based parser.
 
-tcltest::test include-1.9 { include two files } {knownbug} {
+tcltest::test include-1.9 { include two files } {
     php_parse [save_file f.php {
 <?
 include('one.php');include('two.php');
@@ -922,6 +988,37 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 }
 
 
+tcltest::test multi-1.0 { process multiple files } {
+    save_file f1.php {
+<?
+function foo() {}
+?>
+}
+    save_file f2.php {
+<?
+function bar() {}
+?>
+}
+
+    save_file files {
+f1.php
+f2.php
+}
+
+    set results [php_parse_multi files]
+    file delete files f1.php f2.php
+    set results
+} {Status: Parsing: f1.php
+PAF_FILE;f1.php;php<>
+PAF_FUNC_DEF;foo<>000003.000<>f1.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f1.php<>000003.000<>#<>foo<>fu;3.17<>3.9<>3.12<>{}
+Status: Parsing: f2.php
+PAF_FILE;f2.php;php<>
+PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
+}
+
+
 
 # Need to add tests for string processing. Some variable
 # recognition works inside strings but I don't think
@@ -957,6 +1054,8 @@ PAF_FILE_SYMBOLS;f.php<>000003.014<>#<>f2.php<>iu;3.20<>3.14<>3.20<>{}
 
 # Should we create a token for commas and include them in the
 # parse rules for things like function declarations and global statements?
+
+# Add support for # as line comment in addition to //
 
 # cleanup
 file delete f.php

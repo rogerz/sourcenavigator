@@ -106,6 +106,10 @@ proc php_parse { fname } {
     return [paf_subst [exec phpbrowser $fname]]
 }
 
+proc php_parse_multi { fname } {
+    return [paf_subst [exec phpbrowser -y $fname]]
+}
+
 proc php_parse_xref { fname } {
     file delete xout
     save_file xout ""

@@ -1,3 +1,27 @@
+2003-06-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rewrite browser
+	so that it works in two passes. The first
+	phase splits the file into tokens, removes
+	comments, and so on. The second phase will
+	look for known patterns in the input tokens.
+	This approach is significantly better than
+	trying to parse symbols out of the text
+	directly. One does not need to maintain
+	complex state information while creating
+	tokens, and it avoids having to add a flex
+	mode for each processing state.
+	* tests/parsers/php.test: Add a couple of
+	additional tests. Update a test that is
+	failing because comment processing is
+	now done during token generation.
+	Remove knownbug constraint from include-1.9
+	since this test now passes. Add a test to
+	process multiple files via the -y option.
+	* tests/parsers/testutil.tcl (php_parse_multi):
+	Add helper to run phpbrowser with -y option.
+
 2003-05-31  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* tests/parsers/php.test: Add an additional

@@ -35,29 +35,73 @@ MA 02111-1307, USA.
 %{
 
 #include <ctype.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "snptools.h"
 #include "lexinput.h"
 #include "longstr.h"
 #include "srchtbl.h"
+#include "tcl.h"
+
+#undef YY_INPUT
+#define YY_INPUT(buf,r,ms) (r = sn_encoded_input(buf, ms))
 
 #undef yywrap
 #define YY_SKIP_YYWRAP
 
-#undef YY_INPUT
-#define YY_INPUT(buf,r,ms) (r = sn_encoded_input(buf, ms))
+typedef enum {
+    OPEN_PAREN,    /* '(' */
+    CLOSE_PAREN,   /* ')' */
+    OPEN_BRACE,    /* '{' */
+    CLOSE_BRACE,   /* '}' */
+    OPEN_BRACKET,  /* '[' */
+    CLOSE_BRACKET, /* ']' */
+    SEMICOLON,     /* ';' */
+    COMMA,         /* ',' */
+
+    VARIABLE,      /* $var */
+    ARRAY_VARIABLE, /* $var['one'] */
+    ASSIGNMENT_OPERATOR, /* '=' */
+    ASSIGNMENT_OPERATORS, /* = -= += and so on */
+
+    SOMEWORD,          /* a sequence of text */
+    KEYWORD,       /* a key sequence in this language */
+    FUNCTION_KEYWORD, /* The keyword "function" */
+    GLOBAL_KEYWORD, /* The keyword "global" */
+    INCLUDE_KEYWORD, /* The keyword "include" */
+
+    DOUBLE_QUOTED_STRING, /* "I am a double quoted string" */
+    SINGLE_QUOTED_STRING,  /* 'I am a double quoted string' */
+
+    UNKNOWN        /* Some unknown or unimportant text */
+} TokenType;
+
+typedef struct Token {
+    TokenType type;
+    char * strval; /* String value of token, NULL if single character */
+    long line; /* line in file where symbol appears */
+    int column; /* column where symbol starts */
+    struct Token* next;
+} Token;
+
+/* Uncomment this to see debug output in token parsing stage */
+/* #define TOKEN_DEBUG */
+
+#ifdef TOKEN_DEBUG
+FILE* tokenout = NULL;
+#endif
+
+Token* tokens_head = NULL;
+Token* tokens_tail = NULL;
+int token_index = 0; /* current offset from original token_head */
 
 static char group[] = "php";
 
 #define MAX_SIZE 512
 
 /* FIXME: Can't pass NULL or "" as current function (core dump) */
-static char current_function[MAX_SIZE] = {"GLOBAL"};
-static char current_function_args[MAX_SIZE] = {""};
-
-/* Temp location where an identifier can be stored when
-   inserting a symbol */
-static char identifier[MAX_SIZE] = {""};
+static char* current_function = (char *) NULL;
+static char* current_function_args = (char *) NULL;
 
 /* line number where highlight starts and ends */
 static int  current_function_highlight_line;
@@ -84,9 +128,6 @@ static int  current_function_brace_count;
 
 static int result;
 
-/* The mode to return to after leaving HTML mode */
-static int php_entry_mode = -1;
-
 static SearchTable * global_var_table = (SearchTable *) NULL;
 
 /* Stores a comment buffer that could be built over multiple lines/rules. */
@@ -95,31 +136,25 @@ int cbuff_start_line;
 int cbuff_start_column;
 #define COMMENT_DUMP 0
 
-/*
- * Flush any function definitions that might be outstanding (ie. if its
- * label appears _last_ in a file.  When we reach EOF, check to see if its
- * defn needs to be flushed to the database.  Normally the occurence of
- * another label causes the defn to be stored.
- * 
- * Return 1 so flex will keep playing.
- */
-
-int
-yywrap()
-{
-  return(1);
-}
+static YY_BUFFER_STATE original_buffer;
 
 static void matched_pattern(char * pattern, char * text);
 
 static void FreeGlobalEntry(SearchEntry *entry);
 
+Token* AllocToken();
+void FreeToken(Token* tok);
+void free_head_token();
+void add_token(Token* tok);
+char * TokenTypeToString(Token *tok);
+
+int yywrap() { return 1; }
+
 %}
 
-%option stack
 %x COMMENT
-%x FUNCTION
 %x PHP
+%x TOKEN
 
 ws		[ \t]
 wsn		[ \t\n]
@@ -132,98 +167,54 @@ array-notation  (\[\]|\[{q-symbol}\])
 dq-string	\"[^\"]*\"
 sq-string	\'[^\']*\'
 q-string	({dq-string}|{sq-string})
-include-keywords ("include"|"include_once"|"require"|"require_once")
-include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
 
+varname		{symbol}
+someword	{symbol}
+token		{symbol}
+
+assignment-operators	("+"|"-"|"*"|"/")"="
+
+any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
+
+include-keywords	("include"|"include_once"|"require"|"require_once")
+
+keywords	("and"|"or"|"xor")
+
+
+dq-string-token  "DOUBLE_QUOTED_STRING"
+sq-string-token  "SINGLE_QUOTED_STRING"
+string-token  ({dq-string-token}|{sq-string-token})
+literal-token ({someword}|{dq-string-token}|{sq-string-token})
+
+function-argument-token  ("VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
+function-argument-tokens (" "|" "{function-argument-token}" "({function-argument-token}" ")*)
+
+variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 
 %%
 
-<FUNCTION>\{ {
-  matched_pattern("{", yytext);
-  sn_advance_column(yyleng);
-  current_function_brace_count++;
-}
-
-<FUNCTION>\} {
-  matched_pattern("}", yytext);
-  sn_advance_column(yyleng);
-  current_function_brace_count--;
-  if (current_function_brace_count == 0) {
-    current_function_line_end = sn_line();
-    current_function_column_end = sn_column();
-
-    result = sn_insert_symbol(SN_FUNC_DEF, NULL,
-            current_function,
-            sn_current_file(), 
-            current_function_line_start, current_function_column_start,
-            current_function_line_end, current_function_column_end,
-            0 /* attribute */,
-            NULL /* return type */,
-            NULL /* argument types */,
-            current_function_args /* argument names */,
-            NULL /* comment */,
-            current_function_highlight_line,
-            current_function_highlight_column_start,
-            current_function_highlight_line,
-            current_function_highlight_column_end );
-
-    assert(result == 0);
-
-    strcpy(current_function, "GLOBAL");
-
-    if (global_var_table) {
-      global_var_table->destroy( &global_var_table );
-      global_var_table = NULL;
-    }
-
-    yy_pop_state(); /*BEGIN(PHP);*/
-  }
-}
-
-<INITIAL,PHP,FUNCTION>.		{
-  matched_pattern(".", yytext);
-  sn_advance_column(yyleng); /* eat text */
-}
-
-<PHP,FUNCTION>\\\$		{
-  matched_pattern("\\$", yytext);
-  sn_advance_column(yyleng); /* ignore \$ */
-}
-
-
-<INITIAL,PHP,FUNCTION>\n		{
-  matched_pattern("\\n", yytext);
-  sn_advance_line();
-  sn_reset_column();
-}
-
-<INITIAL>"<?" { /* HTML -> FUNCTION,PHP mode (but not COMMENT) */
+<INITIAL>"<?" { /* HTML -> PHP mode */
     matched_pattern("<?", yytext);
-    if (php_entry_mode == -1)
-        BEGIN(PHP);
-    else
-        BEGIN(php_entry_mode);
-
+    BEGIN(PHP);
     sn_advance_column(2);
 }
 
-<PHP,FUNCTION>"?>" { /* FUNCTION,PHP -> HTML mode */
+<PHP>"?>" { /* PHP -> HTML mode */
     matched_pattern("?>", yytext);
-    php_entry_mode = YY_START;
     BEGIN(INITIAL);
     sn_advance_column(2);
 }
 
-<PHP,FUNCTION>"/*"		{ /* A C style multi-line comment, just like this! */
+<PHP>"/*"		{ /* A C style multi-line comment, just like this! */
     matched_pattern("/*", yytext);
-    yy_push_state(COMMENT); /*BEGIN(COMMENT);*/
+    BEGIN(COMMENT);
     sn_advance_column(2);
     LongStringInit(&cbuff,0);
     cbuff_start_line = sn_line();
     cbuff_start_column = sn_column();
 }
 
-<PHP,FUNCTION>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
+<PHP>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
 
@@ -248,484 +239,6 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
 
   sn_advance_line();
   sn_reset_column();
-}
-
-<FUNCTION>"global"{wsn}+.+; {
-  char * x = yytext;
-  char * tmp1, * tmp2;
-
-  matched_pattern("global{wsn}+.+;", yytext);
-
-  /* Skip "global" token */
-
-  assert(*x == 'g');
-  x += strlen("global");
-  sn_advance_column(x - yytext);
-
-  /* Skip {wsn} */
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == '\t' || *x == ' ') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  assert(strlen(x) > 0);
-
-  /* Now parse out any $var entries
-   * and record them in the function's
-   * global var lookup table 
-   */
-
-  if (global_var_table == NULL) {
-      global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
-  }
-
-  for (tmp1=x, tmp2=identifier; *tmp1 != ';'; ) {
-    SearchEntry entry;
-    SearchEntry *pentry;
-
-    /* Start argument variable name */
-    if (*tmp1 == '$') {
-        for (tmp1++; *tmp1 != ';'; tmp1++) {
-            /*fprintf(stderr, "var loop '%s'\n", tmp1);*/
-            if (*tmp1 == ',' || *tmp1 == ' ' ||
-                    *tmp1 == '\t' || *tmp1 == '\n') {
-                break;
-            } else {
-                /*fprintf(stderr, "appended '%c'\n", *tmp1);*/
-                *tmp2++ = *tmp1;
-            }
-
-            assert((tmp2 - identifier) < MAX_SIZE);
-        }
-        *tmp2 = 0;
-        /* Add var name to the global table */
-        /*fprintf(stderr, "adding global var \"%s\"\n", identifier);*/
-
-        entry.key = identifier;
-        entry.key_len = -1;
-
-        if (global_var_table->search( &global_var_table, entry ) == NULL)
-        {
-            entry.data = NULL;
-            entry.data_len = 0;
-            entry.flag = 0;
-            global_var_table->add( &global_var_table, entry );
-        }
-    } else if (*tmp1 == ',') {
-        /*fprintf(stderr, "skip ',' in outer loop '%s'\n", tmp1);*/
-        tmp1++;
-    } else {
-        /*fprintf(stderr, "skip '%s'\n", tmp1);*/
-        tmp1++;
-    }
-  }
-
-}
-
-<PHP,FUNCTION>\${symbol}{array-notation}? {
-  char * x = (char *) yytext;
-  SearchEntry entry;
-  int ref_to_symbol_type, ref_to_symbol_scope;
-
-  matched_pattern("${symbol}{array-notation}?", yytext);
-
-  /* Trim leading $ off the front of the symbol */
-
-  assert(*x == '$');
-  x++;
-
-  /* Figure out if this is a global var or a local var */
-  entry.key = x;
-  entry.key_len = -1;
-
-  if ((PHP == YY_START) ||
-      (global_var_table &&
-      global_var_table->search( &global_var_table, entry ) != NULL)) {
-    /*fprintf(stderr, "global \"%s\"\n", x);*/
-    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-  } else {
-    /*fprintf(stderr, "local \"%s\"\n", x);*/
-    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-  }
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
-
-  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
-      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
-          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
-
-    result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
-                 ref_to_symbol_scope,
-                 NULL,
-                 current_function,
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 NULL,
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_READ);
-
-    assert(result == 0);
-  }
-
-  sn_advance_column(yyleng);
-}
-
-<PHP,FUNCTION>\${symbol}{ws}*= {
-  char * x = (char *) yytext;
-  char * y;
-  SearchEntry entry;
-  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
-
-  matched_pattern("${symbol}{ws}*=", yytext);
-
-  /* Trim the '$' off the front of the string */
-  assert(*x == '$');
-  x++;
-  sn_advance_column(1);
-
-  /* Trim the '=' off the end of the string */
-  y = x + strlen(x) - 1;
-  assert(*y == '=');
-  y--;
-
-  /* Trim white space off end of string */
-
-  for (; y>x ; y--) {
-      if ((*y == '\t') || (*y == ' ')) {
-          /* no-op */
-      } else {
-          break;
-      }
-  }
-
-  y++;
-  *y = 0;
-
-  /* Figure out if this is a global var or a local var */
-  entry.key = x;
-  entry.key_len = -1;
-
-  if ((PHP == YY_START) || (global_var_table &&
-      global_var_table->search( &global_var_table, entry ) != NULL)) {
-    /*fprintf(stderr, "global \"%s\"\n", x);*/
-    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-    symbol_def_type = SN_GLOB_VAR_DEF;
-  } else {
-    /*fprintf(stderr, "local \"%s\"\n", x);*/
-    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-    symbol_def_type = SN_LOCAL_VAR_DEF;
-  }
-
-  /* Setting a global variable should emit
-     a symbol declaration. I am not really
-     sure if we should emit just one symbol
-     declaration, or multiple ones. Multiple
-     ones breaks xref but it does present
-     the symbol multiple times in the
-     file's symbol list which would be
-     nice if it worked correctly */
-
-  result = sn_insert_symbol(symbol_def_type,
-                            NULL,
-			    x,
-			    sn_current_file(),
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x),
-			    0,
-			    NULL,
-			    NULL,
-			    NULL,
-			    NULL,
-			    sn_line(), sn_column(),
-			    sn_line(), sn_column() + (y - x));
-
-  assert(result == 0);
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
-
-  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
-      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
-          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
-
-    result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
-                 ref_to_symbol_scope,
-                 NULL,
-                 current_function,
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 NULL,
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_WRITE);
-
-    assert(result == 0);
-  }
-
-  sn_advance_column(yyleng-1);
-}
-
-<PHP>^{ws}*"function"{wsn}+{symbol}{wsn}*\([^\)]*\){wsn}+\{ {
-  char * x = (char *) yytext;
-  char * y;
-  char * tmp1, * tmp2;
-
-  matched_pattern("^{ws}*function{wsn}+{symbol}{wsn}*([^)]*){wsn}+{", yytext);
-
-  current_function_line_start = sn_line();
-  current_function_column_start = sn_column();
-
-  /* Skip {ws} leading up to function token */
-  for ( ; *x == ' ' || *x == '\t' ; x++) {}
-
-  /* Skip the "function" token */
-  assert(*x == 'f');
-  x += strlen("function");
-  sn_advance_column(x - yytext);
-
-  /* Skip any {wsn} chars leading up to the function name */
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == ' ' || *x == '\t') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  /* x now points to the start of the function name, point
-   * y at the char just after the function name
-   */
-
-  for (y=x ; *y ; y++) {
-      if (*y == '(' || *y == '\t' || *y == ' ' || *y == '\n') {
-          break;
-      }
-  }
-
-  assert((y - x) < MAX_SIZE);
-  strncpy(current_function, x, (y - x));
-  current_function[y - x] = 0;
-
-  current_function_highlight_line = sn_line();
-  current_function_highlight_column_start = sn_column();
-  current_function_highlight_column_end = sn_column() + (y - x);
-
-  /* Save function arguments in current_function_args */
-
-  for ( ; *y != '(' ; y++) {}
-  tmp1 = y + 1;
-  tmp2 = current_function_args;
-
-  for (; *tmp1 != ')'; ) {
-    /* Start argument variable name */
-    if (*tmp1 == '$') {
-        for (tmp1++; *tmp1 != ')'; tmp1++) {
-            /*fprintf(stderr, "var loop '%s'\n", tmp1);*/
-            if (*tmp1 == ',' || *tmp1 == '=' || *tmp1 == ' ' ||
-                    *tmp1 == '\t' || *tmp1 == '\n') {
-                break;
-            } else {
-                /*fprintf(stderr, "appended '%c'\n", *tmp1);*/
-                *tmp2++ = *tmp1;
-            }
-
-            assert((tmp2 - current_function_args) < MAX_SIZE);
-        }
-    } else if (*tmp1 == ',') {
-        /*fprintf(stderr, "append ',' in outer loop '%s'\n", tmp1);*/
-        *tmp2++ = ',';
-        tmp1++;
-    } else {
-        /*fprintf(stderr, "skip '%s'\n", tmp1);*/
-        tmp1++;
-    }
-  }
-  *tmp2 = 0;
-  /*fprintf(stderr, "current_function args are \"%s\"\n", current_function_args);*/
-
-  /* Advance from function name up to just past the '{' character */
-  for (; *x; x++) {
-    if (*x == '\n') {
-        sn_advance_line();
-        sn_reset_column();
-    } else {
-        sn_advance_column(1);
-    }
-  }
-
-  /*fprintf(stderr, "advanced to end of match at %d.%d\n", sn_line(), sn_column());*/
-
-  current_function_brace_count = 1;
-
-  yy_push_state(FUNCTION); /*BEGIN(FUNCTION);*/
-}
-
-<PHP,FUNCTION>{wsn}+{include}{wsn}*; {
-  char * x = yytext;
-  char * y;
-
-  matched_pattern("{wsn}+{include}{wsn}*;", yytext);
-
-  /* Skip any {wsn} chars leading up to the include keyword */
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == ' ' || *x == '\t') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  /* Skip the "include" token */
-  for ( ; *x ; x++) {
-      if ((*x >= 'A' && *x <= 'Z') || (*x >= 'a' && *x <= 'z') || (*x == '_')) {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  /* Skip any {wsn} chars leading up to the file name */
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == ' ' || *x == '\t') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  /* Skip {wsn}, open paren, single quote, or double quote */
-
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == '\t' || *x == ' ' ||
-              *x == '(' || *x == '\"' || *x == '\'') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  /* Save file name into identifier buffer */
-
-  for (y=x ; *y ; y++) {
-      if (*y == ')' || *y == '\"' || *y == '\''
-              || *y == ' ' || *y == '\t' || *y == '\n') {
-          assert((y-x) < (MAX_SIZE-1));
-          strncpy(identifier, x, (y-x));
-          break;
-      }
-  }
-
-  /* FIXME : Why is there not an sn_insert_include()
-   * method that takes only the needed parameters? */
-
-  result = sn_insert_symbol(SN_INCLUDE_DEF,
-          /* classname */ NULL,
-          identifier,
-          sn_current_file(),
-          sn_line(), sn_column(),
-          sn_line(), sn_column() + strlen(identifier),
-          /* attr */ 0,
-          /* ret */ NULL,
-          /* arg_types */ NULL,
-          /* arg_names */ NULL,
-          /* comment */ NULL,
-          sn_line(), sn_column(),
-          sn_line(), sn_column() + strlen(identifier));
-
-    assert(result == 0);
-
-    sn_advance_column((yytext + yyleng) - x);
-}
-
-<PHP,FUNCTION>{symbol}{wsn}*\( {
-  char * x = (char *) yytext;
-  char * y;
-  char saved;
-
-  matched_pattern("{symbol}{wsn}*(", yytext);
-
-  /* Skip {wsn} leading up to symbol */
-
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else if (*x == ' ' || *x == '\t') {
-          sn_advance_column(1);
-      } else {
-          break;
-      }
-  }
-
-  for (y=x; *y ; y++) {
-      if (*y == '(' || *y == ' ' || *y == '\t' || *y == '\n') {
-          saved = *y;
-          *y = 0;
-          break;
-      }
-  }
-
-  /* x is now the name of the function to be invoked */
-
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 SN_FUNC_DEF,
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 current_function,
-                 NULL,
-                 NULL,
-                 x,
-                 NULL, 
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_PASS);
-
-  assert(result == 0);
-
-  *y = saved;
-
-  for ( ; *x ; x++) {
-      if (*x == '\n') {
-          sn_advance_line();
-          sn_reset_column();
-      } else {
-          sn_advance_column(1);
-      }
-  }
 }
 
 <COMMENT>{
@@ -807,8 +320,719 @@ include		{include-keywords}{wsn}*({q-string}|\({wsn}*{q-string}{wsn}*\))
 
     cbuff.free(&cbuff);
     sn_advance_column(yyleng);
-    yy_pop_state(); /* BEGIN(INITIAL); */
+    BEGIN(PHP);
   }
+}
+
+<PHP>"(" {
+  Token* tok;
+  matched_pattern("(", yytext);
+  tok = AllocToken();
+  tok->type = OPEN_PAREN;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>")" {
+  Token* tok;
+  matched_pattern(")", yytext);
+  tok = AllocToken();
+  tok->type = CLOSE_PAREN;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"[" {
+  Token* tok;
+  matched_pattern("[", yytext);
+  sn_advance_column(yyleng);
+  tok = AllocToken();
+  tok->type = OPEN_BRACKET;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"]" {
+  Token* tok;
+  matched_pattern("]", yytext);
+  tok = AllocToken();
+  tok->type = CLOSE_BRACKET;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"{" {
+  Token* tok;
+  matched_pattern("{", yytext);
+  tok = AllocToken();
+  tok->type = OPEN_BRACE;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"}" {
+  Token* tok;
+  matched_pattern("}", yytext);
+  tok = AllocToken();
+  tok->type = CLOSE_BRACE;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>";" {
+  Token* tok;
+  matched_pattern("}", yytext);
+  tok = AllocToken();
+  tok->type = SEMICOLON;
+  tok->strval = NULL;
+  add_token(tok);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  sn_advance_column(yyleng);
+}
+
+<PHP>"=" {
+  Token* tok;
+  matched_pattern("=", yytext);
+  tok = AllocToken();
+  tok->type = ASSIGNMENT_OPERATOR;
+  tok->strval = NULL;
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{assignment-operators} {
+  Token* tok;
+  matched_pattern("{assignment-operators}", yytext);
+  tok = AllocToken();
+  tok->type = ASSIGNMENT_OPERATORS;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"function" {
+  Token* tok;
+  matched_pattern("function", yytext);
+  tok = AllocToken();
+  tok->type = FUNCTION_KEYWORD;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"global" {
+  Token* tok;
+  matched_pattern("global", yytext);
+  tok = AllocToken();
+  tok->type = GLOBAL_KEYWORD;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{include-keywords} {
+  Token* tok;
+  matched_pattern("{include-keywords}", yytext);
+  tok = AllocToken();
+  tok->type = INCLUDE_KEYWORD;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{keywords} {
+  Token* tok;
+  matched_pattern("{keywords}", yytext);
+  tok = AllocToken();
+  tok->type = KEYWORD;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{q-string} {
+  Token* tok;
+  matched_pattern("{q-string}", yytext);
+  tok = AllocToken();
+  if (*yytext == '\"') {
+    tok->type = DOUBLE_QUOTED_STRING;
+  } else {
+    tok->type = SINGLE_QUOTED_STRING;
+  }
+  *(yytext + yyleng - 1) = 0;
+  tok->strval = SN_StrDup(yytext+1);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>{someword} {
+  Token* tok;
+  matched_pattern("{someword}", yytext);
+  tok = AllocToken();
+  tok->type = SOMEWORD;
+  tok->strval = SN_StrDup(yytext);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+  sn_advance_column(yyleng);
+}
+
+<PHP>\\\$		{
+  matched_pattern("\\$", yytext);
+  sn_advance_column(yyleng); /* ignore \$ */
+}
+
+<PHP>\${varname} {
+  Token* tok;
+  matched_pattern("${varname}", yytext);
+  sn_advance_column(1);
+
+  tok = AllocToken();
+  tok->type = VARIABLE;
+  tok->strval = SN_StrDup(yytext+1);
+  tok->line = sn_line();
+  tok->column = sn_column();
+  add_token(tok);
+
+  sn_advance_column(yyleng-1);
+}
+
+<INITIAL,PHP>\n		{
+  matched_pattern("\\n", yytext);
+  sn_advance_line();
+  sn_reset_column();
+}
+
+<INITIAL,PHP>.		{
+  matched_pattern(".", yytext);
+  sn_advance_column(yyleng); /* eat text */
+}
+
+
+
+<TOKEN>"FUNCTION_KEYWORD SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
+  int parens, noargs;
+  LongString abuff;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "function declaration at token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  assert(tokens_head->type == FUNCTION_KEYWORD);
+
+  current_function_line_start = tokens_head->line;
+  current_function_column_start = tokens_head->column;
+
+  free_head_token(); /* FUNCTION_KEYWORD */
+
+  /* FIXME: It would be better to create a state stack and push
+     the current state onto that (class, function, namespace) */
+  assert(current_function == NULL);
+  current_function = SN_StrDup(tokens_head->strval);
+
+  current_function_highlight_line = tokens_head->line;
+  current_function_highlight_column_start = tokens_head->column;
+  current_function_highlight_column_end = tokens_head->column;
+  current_function_highlight_column_end += strlen(current_function);
+
+  free_head_token(); /* SOMEWORD */
+  free_head_token(); /* OPEN_PAREN */
+
+  /* Save function arguments in current_function_args */  
+  parens = 1;
+  noargs = 1;
+  LongStringInit(&abuff,0);
+  while (parens > 0) {
+    if (tokens_head->type == OPEN_PAREN) {
+      parens++;
+    } else if (tokens_head->type == CLOSE_PAREN) {
+      parens--;
+    } else if (tokens_head->type == VARIABLE) {
+        /* We just ignore default values for arguments */
+        if (!noargs) {
+            abuff.append( &abuff, ",", -1);
+        }
+        abuff.append( &abuff, tokens_head->strval, -1);
+        noargs = 0;
+    }
+
+    free_head_token(); /* ... */
+  }
+
+  assert(current_function_args == NULL);
+  if (!noargs) {
+      current_function_args = SN_StrDup(abuff.buf);
+  }
+  abuff.free(&abuff);
+
+  free_head_token(); /* OPEN_BRACE */
+
+  current_function_brace_count = 1;
+}
+
+<TOKEN>"OPEN_BRACE" {
+  if (current_function) {
+    current_function_brace_count++;
+  }
+  free_head_token(); /* OPEN_BRACE */
+}
+
+<TOKEN>"CLOSE_BRACE" {
+  if (current_function && (--current_function_brace_count == 0)) {
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "end of function %s at token %d\n",
+        current_function, token_index);
+#endif
+
+    current_function_line_end = tokens_head->line;
+    current_function_column_end = tokens_head->column + 1;
+
+    result = sn_insert_symbol(SN_FUNC_DEF,
+            NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+
+    assert(result == 0);
+
+    ckfree(current_function);
+    current_function = NULL;
+    ckfree(current_function_args);
+    current_function_args = NULL;
+
+    if (global_var_table) {
+      global_var_table->destroy( &global_var_table );
+      global_var_table = NULL;
+    }
+  }
+
+  free_head_token(); /* CLOSE_BRACE */
+}
+
+<TOKEN>("INCLUDE_KEYWORD "{string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{string-token}" CLOSE_PAREN SEMICOLON") {
+  int line_start, line_end, column_start, column_end;
+  char * filename;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "include statement begins at token %d\n", token_index);
+#endif
+
+  free_head_token(); /* INCLUDE_KEYWORD */
+
+  if (tokens_head->type == OPEN_PAREN) {
+    free_head_token(); /* OPEN_PAREN */
+  }
+
+  assert((tokens_head->type == SINGLE_QUOTED_STRING) ||
+           (tokens_head->type == DOUBLE_QUOTED_STRING));
+
+  /* FIXME: Quoted strings can span lines so line_end needs fixing */
+  line_end = line_start = tokens_head->line;
+  column_start = tokens_head->column + 1;
+  filename = tokens_head->strval;
+  column_end = column_start + strlen(filename);
+
+  result = sn_insert_symbol(SN_INCLUDE_DEF,
+          /* classname */ NULL,
+          filename,
+          sn_current_file(),
+          line_start, column_start,
+          line_end, column_end,
+          /* attr */ 0,
+          /* ret */ NULL,
+          /* arg_types */ NULL,
+          /* arg_names */ NULL,
+          /* comment */ NULL,
+          line_start, column_start,
+          line_end, column_end);
+
+  assert(result == 0);
+
+  free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
+
+  if (tokens_head->type == CLOSE_PAREN) {
+    free_head_token(); /* CLOSE_PAREN */
+  }
+
+  free_head_token(); /* SEMICOLON */
+}
+
+<TOKEN>("GLOBAL_KEYWORD"{variable-tokens}"SEMICOLON") {
+  SearchEntry entry;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "global statement found at %d\n", token_index);
+#endif
+
+  free_head_token(); /* GLOBAL_KEYWORD */
+
+  if (current_function && (global_var_table == NULL)) {
+    global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
+  }
+
+  /* Insert the variable name into the function's global table */
+
+  while (tokens_head->type == VARIABLE) {
+    if (current_function) {
+        entry.key = tokens_head->strval;
+        entry.key_len = -1;
+
+        if (global_var_table->search( &global_var_table, entry ) == NULL)
+        {
+            entry.data = NULL;
+            entry.data_len = 0;
+            entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+            global_var_table->add( &global_var_table, entry );
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "added global \"%s\"\n", entry.key);
+#endif
+        }
+    }
+
+    free_head_token(); /* VARIABLE */
+  }
+
+  free_head_token(); /* SEMICOLON */
+}
+
+<TOKEN>"SOMEWORD OPEN_PAREN" {
+  char* fname;
+  int line;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found function call tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  fname = tokens_head->strval;
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "function name is \"%s\"\n", fname);
+#endif
+  line = tokens_head->line;
+
+  result = sn_insert_xref(SN_REF_TO_FUNCTION,
+                 SN_FUNC_DEF,
+                 SN_REF_SCOPE_GLOBAL,
+                 NULL,
+                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 NULL,
+                 NULL,
+                 fname,
+                 NULL, 
+                 sn_current_file(),
+                 line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
+
+  free_head_token(); /* SOMEWORD */
+  free_head_token(); /* OPEN_PAREN */
+}
+
+<TOKEN>"VARIABLE "("ASSIGNMENT_OPERATOR"|"ASSIGNMENT_OPERATORS") {
+  char* varname = tokens_head->strval;
+  SearchEntry entry;
+  int ref_to_symbol_type, ref_to_symbol_scope, symbol_def_type;
+  int line_start, line_end, column_start, column_end;
+
+  line_end = line_start = tokens_head->line;
+  column_start = tokens_head->column;
+  column_end = column_start;
+  if (varname == NULL) {
+    column_end += 1;
+  } else {
+    column_end += strlen(varname);
+  }
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "variable assignment at token %d\n", token_index);
+#endif
+
+  /*
+   * If we are not in a function or the variable is in the
+   * function's global table then it is a global.
+   */
+
+  entry.key = varname;
+  entry.key_len = -1;
+
+  if ((current_function == NULL) ||
+      (global_var_table &&
+        (global_var_table->search( &global_var_table, entry ) != NULL))) {
+    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+    symbol_def_type = SN_GLOB_VAR_DEF;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "global var \"%s\"\n", varname);
+#endif
+  } else {
+    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+    symbol_def_type = SN_LOCAL_VAR_DEF;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "local var \"%s\"\n", varname);
+#endif
+  }
+
+  /* I think setting a global variable should emit
+     a symbol declaration. I am not really
+     sure if we should emit just one symbol
+     declaration, or multiple ones. Multiple
+     ones breaks xref but it does present
+     the symbol multiple times in the
+     file's symbol list which would be
+     nice if it worked correctly */
+
+  result = sn_insert_symbol(symbol_def_type,
+                            NULL,
+			    varname,
+			    sn_current_file(),
+			    line_start, column_start,
+			    line_end, column_end,
+			    0,
+			    NULL,
+			    NULL,
+			    NULL,
+			    NULL,
+			    line_start, column_start,
+			    line_end, column_end
+                            );
+  assert(result == 0);
+
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
+
+  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+
+    result = sn_insert_xref(ref_to_symbol_type,
+                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_to_symbol_scope,
+                 NULL,
+                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 NULL,
+                 NULL,
+                 varname,
+                 NULL,
+                 sn_current_file(),
+                 line_start,
+                 SN_REF_WRITE);
+
+    assert(result == 0);
+  }
+
+  free_head_token(); /* VARIABLE */
+  free_head_token(); /* ASSIGNMENT_OPERATOR || ASSIGNMENT_OPERATORS */
+}
+
+<TOKEN>"VARIABLE" {
+  char* varname = tokens_head->strval;
+  SearchEntry entry;
+  int line_num = tokens_head->line;
+  int ref_to_symbol_type, ref_to_symbol_scope;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "variable access at token %d\n", token_index);
+#endif
+
+  /*
+   * If we are not in a function or the variable is in the
+   * function's global table then it is a global.
+   */
+
+  entry.key = varname;
+  entry.key_len = -1;
+
+  if ((current_function == NULL) ||
+      (global_var_table &&
+        (global_var_table->search( &global_var_table, entry ) != NULL))) {
+    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "global var \"%s\"\n", varname);
+#endif
+  } else {
+    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "local var \"%s\"\n", varname);
+#endif
+  }
+
+  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
+   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
+   * needs to be an option to pass when not in a function. Currently,
+   * we just pretend to be in a function named "GLOBAL".
+   */
+
+  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+
+    result = sn_insert_xref(ref_to_symbol_type,
+                 SN_FUNC_DEF, /* Not really in a function definition */
+                 ref_to_symbol_scope,
+                 NULL,
+                 (current_function == NULL) ? "GLOBAL" : current_function,
+                 NULL,
+                 NULL,
+                 varname,
+                 NULL,
+                 sn_current_file(),
+                 line_num,
+                 SN_REF_READ);
+
+    assert(result == 0);
+  }
+
+  free_head_token(); /* VARIABLE */
+}
+
+<TOKEN>{token} {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "ate token %d %s", token_index,
+          TokenTypeToString(tokens_head));
+  if (tokens_head->strval) {
+      fprintf(tokenout, " \"%s\"", tokens_head->strval);
+  }
+  fprintf(tokenout, "\n");
+#endif
+
+  free_head_token(); /* ... */
+}
+
+<TOKEN>" "
+
+<TOKEN>.		{
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
+#endif
+}
+
+<TOKEN><<EOF>> {
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "reached EOF in TOKEN buffer\n");
+#endif
+
+    assert(tokens_head == NULL);
+
+    yy_delete_buffer( YY_CURRENT_BUFFER );
+    yy_switch_to_buffer( original_buffer );
+    BEGIN(INITIAL);
+    yyterminate();
+}
+
+<INITIAL,PHP><<EOF>> {
+  LongString token_buffer;
+  char *base;
+  int i;
+  Token* tok;
+  yy_size_t size;
+  YY_BUFFER_STATE yybs;
+
+#ifdef TOKEN_DEBUG
+  tokenout = fopen("tokens.out", "a");
+  fprintf(tokenout, "reached EOF in lex input buffer\n");
+#endif
+
+  /* If no tokens were generated, then quit now */
+  if (tokens_head == NULL) {
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "no TOKENs generated\n");
+#endif
+    yyterminate();
+  }
+
+  LongStringInit(&token_buffer,0);
+
+  /* Print token info to in memory buffer and then reload
+     the input state machine and start out in the TOKEN mode. */
+
+  for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
+        int token_length;
+#ifdef TOKEN_DEBUG
+        fprintf(tokenout, "token %d %s", i, TokenTypeToString(tok));
+        if (tok->strval) {
+            fprintf(tokenout, " \"%s\"", tok->strval);
+            token_length = strlen(tok->strval);
+        } else {
+            token_length = 1;
+        }
+        fprintf(tokenout, " (%d.%d -> %d.%d)",
+            tok->line,
+            tok->column,
+            tok->line,
+            tok->column + token_length
+        );
+        fprintf(tokenout, "\n");
+#endif
+        
+        token_buffer.append( &token_buffer, TokenTypeToString(tok), -1);
+        token_buffer.append( &token_buffer, " ", -1);
+  }
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "token buffer data is \"%s\"\n", token_buffer.buf);
+#endif
+
+  original_buffer = YY_CURRENT_BUFFER;
+  yy_switch_to_buffer( yy_scan_string(token_buffer.buf) );
+
+  token_buffer.free(&token_buffer);
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "switching to token mode\n");
+#endif
+
+  BEGIN(TOKEN);
 }
 
 %%
@@ -821,12 +1045,12 @@ static void matched_pattern(char * pattern, char * text) {
 
     if (imode == INITIAL) {
         mode = "INITIAL";
-    } else if (imode == FUNCTION) {
-        mode = "FUNCTION";
     } else if (imode == PHP) {
         mode = "PHP";
     } else if (imode == COMMENT) {
         mode = "COMMENT";
+    } else if (imode == TOKEN) {
+        mode = "TOKEN";
     }
 
     if (0) {
@@ -835,14 +1059,88 @@ static void matched_pattern(char * pattern, char * text) {
     }
 }
 
-static void FreeGlobalEntry(SearchEntry *entry)
-{
-/*
-	Macro_t Macro = entry->data;
+static void FreeGlobalEntry(SearchEntry *entry) {}
 
-	ckfree ((char*)Macro->pcLine);
-	ckfree ((char*)Macro);
-*/
+
+Token* AllocToken() {
+    Token* tok = (Token*) ckalloc(sizeof(Token));
+    memset(tok, 0, sizeof(Token));
+    return tok;
+}
+void FreeToken(Token* tok) {
+    if (tok->strval != NULL) {
+        ckfree(tok->strval);
+    }
+    ckfree((char *) tok);
+}
+
+void add_token(Token* tok) {
+    if (tokens_tail == NULL) {
+        tokens_head = tokens_tail = tok;
+    } else {
+        tokens_tail->next = tok;
+        tokens_tail = tok;
+    }
+}
+
+void free_head_token() {
+    Token* tok;
+    assert(tokens_head);
+    tok = tokens_head;
+    if (tokens_head == tokens_tail) {
+        tokens_head = tokens_tail = (Token*) NULL;
+    } else {
+        tokens_head = tokens_head->next;
+    }
+    FreeToken(tok);
+    token_index++;
+}
+
+char * TokenTypeToString(Token *tok) {
+    switch(tok->type) {
+        case OPEN_PAREN:
+            return "OPEN_PAREN";
+        case CLOSE_PAREN:
+            return "CLOSE_PAREN";
+        case OPEN_BRACE:
+            return "OPEN_BRACE";
+        case CLOSE_BRACE:
+            return "CLOSE_BRACE";
+        case OPEN_BRACKET:
+            return "OPEN_BRACKET";
+        case CLOSE_BRACKET:
+            return "CLOSE_BRACKET";
+        case SEMICOLON:
+            return "SEMICOLON";
+        case COMMA:
+            return "COMMA";
+        case VARIABLE:
+            return "VARIABLE";
+        case ARRAY_VARIABLE:
+            return "ARRAY_VARIABLE";
+        case ASSIGNMENT_OPERATOR:
+            return "ASSIGNMENT_OPERATOR";
+        case ASSIGNMENT_OPERATORS:
+            return "ASSIGNMENT_OPERATORS";
+        case SOMEWORD:
+            return "SOMEWORD";
+        case KEYWORD:
+            return "KEYWORD";
+        case FUNCTION_KEYWORD:
+            return "FUNCTION_KEYWORD";
+        case GLOBAL_KEYWORD:
+            return "GLOBAL_KEYWORD";
+        case INCLUDE_KEYWORD:
+            return "INCLUDE_KEYWORD";
+        case DOUBLE_QUOTED_STRING:
+            return "DOUBLE_QUOTED_STRING";
+        case SINGLE_QUOTED_STRING:
+            return "SINGLE_QUOTED_STRING";
+        case UNKNOWN:
+            return "UNKNOWN";
+        default:
+            return "TOKEN_NOT_MATCHED";
+    }
 }
   
 void
