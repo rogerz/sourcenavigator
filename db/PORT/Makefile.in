@@ -65,7 +65,6 @@ CPP = @CPP@
 EXEEXT = @EXEEXT@
 FALSE = @FALSE@
 FCTSH = @FCTSH@
-HACK = @HACK@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -99,8 +98,7 @@ M_OBJS = mpool.$(OBJEXT)
 R_OBJS = rec_close.$(OBJEXT) rec_delete.$(OBJEXT) rec_get.$(OBJEXT) rec_open.$(OBJEXT) rec_put.$(OBJEXT) rec_search.$(OBJEXT) rec_seq.$(OBJEXT) rec_utils.$(OBJEXT)
 
 
-libdb_a_SOURCES = @HACK@
-EXTRA_libdb_a_SOURCES = hack.c
+libdb_a_SOURCES = hack.c
 libdb_a_LIBADD = @LIBOBJS@ $(H_OBJS) $(B_OBJS) $(D_OBJS) $(M_OBJS) $(R_OBJS)
 libdb_a_DEPENDENCIES = $(libdb_a_LIBADD)
 
@@ -111,7 +109,7 @@ libdb_a_DEPENDENCIES = $(libdb_a_LIBADD)
 
 check_PROGRAMS = dbtest
 
-dbtest_SOURCES = @HACK@
+dbtest_SOURCES = hack.c
 dbtest_LDADD = -L. $(dbtest_DEPENDENCIES)
 dbtest_DEPENDENCIES = dbtest.$(OBJEXT) @LIBOBJS@ -ldb
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -124,10 +122,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libdb_a_OBJECTS = 
+libdb_a_OBJECTS =  hack.$(OBJEXT)
 AR = ar
 check_PROGRAMS =  dbtest$(EXEEXT)
-dbtest_OBJECTS = 
+dbtest_OBJECTS =  hack.$(OBJEXT)
 dbtest_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -141,7 +139,7 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-SOURCES = $(libdb_a_SOURCES) $(EXTRA_libdb_a_SOURCES) $(dbtest_SOURCES)
+SOURCES = $(libdb_a_SOURCES) $(dbtest_SOURCES)
 OBJECTS = $(libdb_a_OBJECTS) $(dbtest_OBJECTS)
 
 all: all-redirect
@@ -340,6 +338,8 @@ check-local:
 # All the compilation rules.  Normally you don't have to do this with
 # automake.
 #
+
+hack.$(OBJEXT):
 
 hash.$(OBJEXT): ../hash/hash.c
 	$(COMPILE) -c -I$(srcdir)/../hash $(srcdir)/../hash/hash.c

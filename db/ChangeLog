@@ -1,5 +1,17 @@
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
+	* Makefile.in: Regen.
+	* configure: Regen.
+	* configure.in: Remove the empty variable HACK.
+	This little trick works with automake 1.4 but
+	it fails under automake 1.6.
+	* PORT/Makefile.am: Include hack.c in the _SOURCES
+	variable instead of @HACK@.
+	* PORT/Makefile.in: Regen.
+	* PORT/hack.c: New empty file.
+
+2002-04-21  Mo DeJong  <supermo@bayarea.net>
+
 	* acinclude.m4: Remove RCS keyword that was getting
 	changed every time aclocal was run.
 	* aclocal.m4: Regen.

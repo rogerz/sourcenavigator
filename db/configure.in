@@ -9,10 +9,6 @@ AM_MAINTAINER_MODE
 AC_PROG_MAKE_SET
 AC_ARG_PROGRAM
 
-# This is a hack to work around an automake deficiency.  Sigh.
-HACK=
-AC_SUBST(HACK)
-
 dnl Configure setup.
 AC_PROG_CC
 AC_PROG_CPP
