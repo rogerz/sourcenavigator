@@ -17,3 +17,4 @@
 	* tix/*: Add bare bones toplevel configure, support
 	files, as well as itcl, libgui, tcl, tk, and tix
 	modules from sources.redhat.com CVS as of 2003-01-01.
+	Tagged as SOURCES_IMPORT_2003_02_05.
