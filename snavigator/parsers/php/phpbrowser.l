@@ -103,6 +103,8 @@ yywrap()
   return(1);
 }
 
+void matched_pattern(char * pattern, char * text);
+
 %}
 
 %option stack
@@ -118,11 +120,13 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 %%
 
 <FUNCTION>\{ {
+  matched_pattern("{", yytext);
   sn_advance_column(yyleng);
   current_function_brace_count++;
 }
 
 <FUNCTION>\} {
+  matched_pattern("}", yytext);
   sn_advance_column(yyleng);
   current_function_brace_count--;
   if (current_function_brace_count == 0) {
@@ -152,14 +156,25 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   }
 }
 
-<INITIAL,PHP,FUNCTION>.		{ sn_advance_column(yyleng); /* eat text */ }
+<INITIAL,PHP,FUNCTION>.		{
+  matched_pattern(".", yytext);
+  sn_advance_column(yyleng); /* eat text */
+}
 
-<PHP,FUNCTION>\\\$		{ sn_advance_column(yyleng); /* ignore \$ */ }
+<PHP,FUNCTION>\\\$		{
+  matched_pattern("\\$", yytext);
+  sn_advance_column(yyleng); /* ignore \$ */
+}
 
 
-<INITIAL,PHP,FUNCTION>\n		{ sn_advance_line(); sn_reset_column(); }
+<INITIAL,PHP,FUNCTION>\n		{
+  matched_pattern("\\n", yytext);
+  sn_advance_line();
+  sn_reset_column();
+}
 
 <INITIAL>"<?" { /* HTML -> FUNCTION,PHP mode (but not COMMENT) */
+    matched_pattern("<?", yytext);
     if (php_entry_mode == -1)
         BEGIN(PHP);
     else
@@ -169,12 +184,14 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 }
 
 <PHP,FUNCTION>"?>" { /* FUNCTION,PHP -> HTML mode */
+    matched_pattern("?>", yytext);
     php_entry_mode = YY_START;
     BEGIN(INITIAL);
     sn_advance_column(2);
 }
 
 <PHP,FUNCTION>"/*"		{ /* A C style multi-line comment, just like this! */
+    matched_pattern("/*", yytext);
     yy_push_state(COMMENT); /*BEGIN(COMMENT);*/
     sn_advance_column(2);
     LongStringInit(&cbuff,0);
@@ -185,6 +202,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 <PHP,FUNCTION>{ws}*\/\/.*\n { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
+
+  matched_pattern("//.*\\n", yytext);
 
   while (*x != '/') { x++; }
   x++;
@@ -209,6 +228,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
 <PHP>\${symbol}{array-notation}? {
   char * x = (char *) yytext;
+
+  matched_pattern("${symbol}{array-notation}?", yytext);
 
   /* Trim leading $ off the front of the symbol */
 
@@ -241,7 +262,9 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 <PHP>\${symbol}{ws}*= {
   char * x = (char *) yytext;
   char * y;
-  
+
+  matched_pattern("${symbol}{ws}*=", yytext);
+
   /* Trim the '$' off the front of the string */
   assert(*x == '$');
   x++;
@@ -317,6 +340,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   char * x = (char *) yytext;
   char * y;
   char * tmp1, * tmp2;
+
+  matched_pattern("^{ws}*function{wsn}+{symbol}{wsn}*([^)]*){wsn}+{", yytext);
 
   current_function_line_start = sn_line();
   current_function_column_start = sn_column();
@@ -414,6 +439,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   char * y;
   char saved;
 
+  matched_pattern("{wsn}*{symbol}{wsn}*(", yytext);
+
   /* Skip {wsn} leading up to symbol */
 
   for ( ; *x ; x++) {
@@ -466,6 +493,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 
 <COMMENT>{
   [^\*\n]* {
+    matched_pattern("[^\\*\\n]*", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -474,6 +503,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
     sn_advance_column(yyleng);
     }
   [^\*\n]*\n {
+    matched_pattern("[^\\*\\n]*\\n", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -484,6 +515,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
     sn_reset_column();
     }
   \*+[^\*/\n]* {
+    matched_pattern("\\*+[^\\*/\\n]*", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -493,6 +526,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
     sn_advance_column(yyleng);
   }
   \*+[^\*/\n]*\n {
+    matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -504,6 +539,8 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
   }
   "*"+"/" {
     char * comment;
+
+    matched_pattern("\\*+/", yytext);
 
     /* Include multiple '*' characters in the comment */
     if (yyleng > 2) {
@@ -538,6 +575,28 @@ array-notation  (\[\]|\[\"{symbol}\"\]|\[\'{symbol}\'\])
 }
 
 %%
+
+/* Helper method that will print matches as they are made */
+
+void matched_pattern(char * pattern, char * text) {
+    char * mode = "UNKNOWN";
+    int imode = YY_START;
+
+    if (imode == INITIAL) {
+        mode = "INITIAL";
+    } else if (imode == FUNCTION) {
+        mode = "FUNCTION";
+    } else if (imode == PHP) {
+        mode = "PHP";
+    } else if (imode == COMMENT) {
+        mode = "COMMENT";
+    }
+
+    if (0) {
+    fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+        pattern, text, mode, sn_line(), sn_column());
+    }
+}
   
 void
 reset()

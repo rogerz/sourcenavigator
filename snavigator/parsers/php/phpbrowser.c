@@ -288,10 +288,10 @@ static yyconst short int yy_accept[75] =
     {   0,
         0,    0,   14,   14,    0,    0,    0,    0,   20,    3,
         5,    3,   14,   15,   16,    3,    5,    3,    3,    3,
-        3,    1,    2,    3,    3,    3,    6,   14,   15,   16,
-       17,   16,   18,    0,    0,    0,    0,    8,    0,    0,
-       13,    7,    4,   10,    0,    0,    0,    0,    9,    0,
-       11,    0,    0,    0,    0,   10,    0,    0,    0,    0,
+        3,    3,    1,    2,    3,    3,    6,   14,   15,   16,
+       17,   16,   18,    0,    0,    0,    0,   10,    8,    0,
+        0,   13,    7,    4,    0,    0,    0,    0,   11,    0,
+        0,    9,    0,    0,    0,   10,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,   12,    0
     } ;
@@ -337,79 +337,79 @@ static yyconst int yy_meta[28] =
 
 static yyconst short int yy_base[86] =
     {   0,
-        0,    1,    2,    5,   14,    0,   37,   63,  122,  171,
-      171,  106,  117,  171,   40,   42,   44,    0,   53,  105,
-      113,  171,  171,    0,   49,   92,  171,  113,  171,   63,
-      171,   67,  171,   51,    0,  105,    0,  171,  111,   55,
-      171,  171,  171,   65,    0,   88,   90,  108,  171,   69,
-      171,   80,   91,    0,    0,  171,   85,  104,  101,   85,
-       87,   86,   80,   80,    4,   72,   85,   92,   85,   83,
-       94,   98,  171,  171,  124,  130,  136,  142,  147,   79,
-      153,   74,   42,  158,  164
+        0,    1,    2,    5,   14,    0,   16,   42,  136,  167,
+      167,  104,  115,  167,   42,   44,   46,    0,    0,   56,
+      103,  111,  167,  167,   51,   90,  167,  111,  167,   57,
+      167,   67,  167,   55,    0,  103,    0,   62,  167,  109,
+       77,  167,  167,  167,    0,   86,   88,   70,  167,   81,
+      106,  167,   89,    0,    0,  167,   83,  102,   99,   83,
+       85,   84,   78,   78,    4,   79,   86,   88,   90,   86,
+       71,   94,  167,  167,  120,  126,  132,  138,  143,   86,
+      149,   49,   44,  154,  160
     } ;
 
 static yyconst short int yy_def[86] =
     {   0,
        75,   75,   76,   76,   74,    5,    5,    5,   74,   74,
-       74,   74,   77,   74,   78,   79,   79,   74,   17,   74,
-       74,   74,   74,   80,   17,   19,   74,   77,   74,   78,
-       74,   78,   74,   17,   17,   74,   19,   74,   81,   74,
-       74,   74,   74,   80,   25,   19,   19,   81,   74,   74,
-       74,   74,   19,   82,   83,   74,   19,   82,   83,   19,
-       74,   74,   19,   19,   19,   84,   84,   74,   85,   85,
+       74,   74,   77,   74,   78,   79,   79,   80,   74,   17,
+       74,   74,   74,   74,   17,   20,   74,   77,   74,   78,
+       74,   78,   74,   17,   17,   74,   20,   80,   74,   81,
+       74,   74,   74,   74,   25,   20,   20,   74,   74,   74,
+       81,   74,   20,   82,   83,   74,   20,   82,   83,   20,
+       74,   74,   20,   20,   20,   84,   84,   74,   85,   85,
        74,   74,   74,    0,   74,   74,   74,   74,   74,   74,
        74,   74,   74,   74,   74
     } ;
 
-static yyconst short int yy_nxt[199] =
+static yyconst short int yy_nxt[195] =
     {   0,
-       74,   74,   11,   11,   14,   66,   66,   14,   38,   39,
-       15,   12,   12,   15,   10,   16,   17,   10,   10,   10,
-       10,   10,   10,   18,   19,   10,   10,   10,   20,   10,
-       21,   10,   19,   19,   19,   19,   19,   19,   19,   22,
-       23,   24,   31,   34,   35,   35,   35,   59,   32,   33,
-       45,   36,   34,   74,   40,   40,   40,   40,   36,   41,
-       36,   41,   10,   10,   25,   31,   50,   24,   46,   31,
-       50,   74,   74,   66,   66,   32,   33,   51,   41,   58,
-       52,   51,   26,   54,   44,   55,   68,   68,   10,   10,
-       71,   69,   71,   68,   68,   72,   72,   56,   69,   72,
+       74,   74,   11,   11,   14,   66,   66,   14,   39,   40,
+       15,   12,   12,   15,   10,   16,   17,   10,   18,   10,
+       10,   10,   10,   19,   20,   10,   10,   10,   21,   10,
+       22,   10,   20,   20,   20,   20,   20,   20,   20,   23,
+       24,   10,   10,   25,   31,   34,   35,   35,   35,   59,
+       32,   33,   45,   36,   58,   74,   34,   41,   41,   31,
+       36,   26,   42,   48,   36,   74,   74,   10,   10,   31,
+       46,   48,   72,   72,   49,   32,   33,   50,   41,   41,
+       66,   66,   49,   42,   54,   42,   55,   68,   68,   68,
+       68,   38,   69,   71,   69,   72,   72,   71,   56,   65,
 
-       72,   65,   64,   56,   56,   63,   62,   61,   60,   57,
-       49,   53,   47,   49,   39,   29,   47,   43,   42,   29,
-       27,   74,   74,   73,   10,   10,   10,   10,   10,   10,
-       13,   13,   13,   13,   13,   13,   28,   28,   28,   74,
-       28,   28,   30,   30,   30,   30,   30,   30,   37,   74,
-       74,   37,   37,   48,   48,   48,   48,   48,   48,   67,
-       67,   74,   74,   67,   70,   70,   70,   70,   70,   70,
-        9,   74,   74,   74,   74,   74,   74,   74,   74,   74,
+       64,   56,   56,   63,   62,   61,   60,   57,   52,   53,
+       47,   52,   40,   29,   47,   44,   43,   29,   27,   73,
+       10,   10,   10,   10,   10,   10,   13,   13,   13,   13,
+       13,   13,   28,   28,   28,   74,   28,   28,   30,   30,
+       30,   30,   30,   30,   37,   74,   74,   37,   37,   51,
+       51,   51,   51,   51,   51,   67,   67,   74,   74,   67,
+       70,   70,   70,   70,   70,   70,    9,   74,   74,   74,
        74,   74,   74,   74,   74,   74,   74,   74,   74,   74,
-       74,   74,   74,   74,   74,   74,   74,   74
+       74,   74,   74,   74,   74,   74,   74,   74,   74,   74,
+       74,   74,   74,   74
 
     } ;
 
-static yyconst short int yy_chk[199] =
+static yyconst short int yy_chk[195] =
     {   0,
-        0,    0,    1,    2,    3,   65,   65,    4,   18,   18,
+        0,    0,    1,    2,    3,   65,   65,    4,   19,   19,
         3,    1,    2,    4,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
-        5,    7,   15,   16,   16,   17,   17,   83,   15,   15,
-       25,   16,   34,   17,   19,   19,   40,   40,   25,   19,
-       34,   40,    7,    7,    8,   30,   44,    8,   25,   32,
-       50,   30,   30,   66,   66,   32,   32,   44,   66,   82,
-       44,   50,    8,   52,   80,   52,   67,   67,    8,    8,
-       70,   67,   69,   68,   68,   71,   71,   52,   68,   72,
+        5,    7,    7,    8,   15,   16,   16,   17,   17,   83,
+       15,   15,   25,   16,   82,   17,   34,   20,   20,   30,
+       25,    8,   20,   38,   34,   30,   30,    8,    8,   32,
+       25,   48,   71,   71,   38,   32,   32,   38,   41,   41,
+       66,   66,   48,   41,   50,   66,   50,   67,   67,   68,
+       68,   80,   67,   70,   68,   72,   72,   69,   50,   64,
 
-       72,   64,   63,   62,   61,   60,   59,   58,   57,   53,
-       48,   47,   46,   39,   36,   28,   26,   21,   20,   13,
-       12,    9,    0,   72,   75,   75,   75,   75,   75,   75,
-       76,   76,   76,   76,   76,   76,   77,   77,   77,    0,
-       77,   77,   78,   78,   78,   78,   78,   78,   79,    0,
-        0,   79,   79,   81,   81,   81,   81,   81,   81,   84,
-       84,    0,    0,   84,   85,   85,   85,   85,   85,   85,
+       63,   62,   61,   60,   59,   58,   57,   53,   51,   47,
+       46,   40,   36,   28,   26,   22,   21,   13,   12,   72,
+       75,   75,   75,   75,   75,   75,   76,   76,   76,   76,
+       76,   76,   77,   77,   77,    9,   77,   77,   78,   78,
+       78,   78,   78,   78,   79,    0,    0,   79,   79,   81,
+       81,   81,   81,   81,   81,   84,   84,    0,    0,   84,
+       85,   85,   85,   85,   85,   85,   74,   74,   74,   74,
        74,   74,   74,   74,   74,   74,   74,   74,   74,   74,
        74,   74,   74,   74,   74,   74,   74,   74,   74,   74,
-       74,   74,   74,   74,   74,   74,   74,   74
+       74,   74,   74,   74
 
     } ;
 
@@ -528,6 +528,8 @@ yywrap()
 {
   return(1);
 }
+
+void matched_pattern(char * pattern, char * text);
 
 #define YY_STACK_USED 1
 #define COMMENT 1
@@ -689,7 +691,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 118 "phpbrowser.l"
+#line 120 "phpbrowser.l"
 
 
 
@@ -749,7 +751,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 171 );
+		while ( yy_base[yy_current_state] != 167 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -777,16 +779,18 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 120 "phpbrowser.l"
+#line 122 "phpbrowser.l"
 {
+  matched_pattern("{", yytext);
   sn_advance_column(yyleng);
   current_function_brace_count++;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 125 "phpbrowser.l"
+#line 128 "phpbrowser.l"
 {
+  matched_pattern("}", yytext);
   sn_advance_column(yyleng);
   current_function_brace_count--;
   if (current_function_brace_count == 0) {
@@ -818,23 +822,34 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 155 "phpbrowser.l"
-{ sn_advance_column(yyleng); /* eat text */ }
+#line 159 "phpbrowser.l"
+{
+  matched_pattern(".", yytext);
+  sn_advance_column(yyleng); /* eat text */
+}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 157 "phpbrowser.l"
-{ sn_advance_column(yyleng); /* ignore \$ */ }
+#line 164 "phpbrowser.l"
+{
+  matched_pattern("\\$", yytext);
+  sn_advance_column(yyleng); /* ignore \$ */
+}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 160 "phpbrowser.l"
-{ sn_advance_line(); sn_reset_column(); }
+#line 170 "phpbrowser.l"
+{
+  matched_pattern("\\n", yytext);
+  sn_advance_line();
+  sn_reset_column();
+}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 162 "phpbrowser.l"
+#line 176 "phpbrowser.l"
 { /* HTML -> FUNCTION,PHP mode (but not COMMENT) */
+    matched_pattern("<?", yytext);
     if (php_entry_mode == -1)
         BEGIN(PHP);
     else
@@ -845,8 +860,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 171 "phpbrowser.l"
+#line 186 "phpbrowser.l"
 { /* FUNCTION,PHP -> HTML mode */
+    matched_pattern("?>", yytext);
     php_entry_mode = YY_START;
     BEGIN(INITIAL);
     sn_advance_column(2);
@@ -854,8 +870,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 177 "phpbrowser.l"
+#line 193 "phpbrowser.l"
 { /* A C style multi-line comment, just like this! */
+    matched_pattern("/*", yytext);
     yy_push_state(COMMENT); /*BEGIN(COMMENT);*/
     sn_advance_column(2);
     LongStringInit(&cbuff,0);
@@ -865,10 +882,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 185 "phpbrowser.l"
+#line 202 "phpbrowser.l"
 { /* A C++ style line comment -> // This function is quite nice. <- */
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
+
+  matched_pattern("//.*\\n", yytext);
 
   while (*x != '/') { x++; }
   x++;
@@ -893,9 +912,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 210 "phpbrowser.l"
+#line 229 "phpbrowser.l"
 {
   char * x = (char *) yytext;
+
+  matched_pattern("${symbol}{array-notation}?", yytext);
 
   /* Trim leading $ off the front of the symbol */
 
@@ -927,11 +948,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 241 "phpbrowser.l"
+#line 262 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
-  
+
+  matched_pattern("${symbol}{ws}*=", yytext);
+
   /* Trim the '$' off the front of the string */
   assert(*x == '$');
   x++;
@@ -1005,11 +1028,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 316 "phpbrowser.l"
+#line 339 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
   char * tmp1, * tmp2;
+
+  matched_pattern("^{ws}*function{wsn}+{symbol}{wsn}*([^)]*){wsn}+{", yytext);
 
   current_function_line_start = sn_line();
   current_function_column_start = sn_column();
@@ -1104,11 +1129,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 412 "phpbrowser.l"
+#line 437 "phpbrowser.l"
 {
   char * x = (char *) yytext;
   char * y;
   char saved;
+
+  matched_pattern("{wsn}*{symbol}{wsn}*(", yytext);
 
   /* Skip {wsn} leading up to symbol */
 
@@ -1163,8 +1190,10 @@ YY_RULE_SETUP
 
 case 14:
 YY_RULE_SETUP
-#line 468 "phpbrowser.l"
+#line 495 "phpbrowser.l"
 {
+    matched_pattern("[^\\*\\n]*", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -1175,8 +1204,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 476 "phpbrowser.l"
+#line 505 "phpbrowser.l"
 {
+    matched_pattern("[^\\*\\n]*\\n", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -1189,8 +1220,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 486 "phpbrowser.l"
+#line 517 "phpbrowser.l"
 {
+    matched_pattern("\\*+[^\\*/\\n]*", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -1202,8 +1235,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 495 "phpbrowser.l"
+#line 528 "phpbrowser.l"
 {
+    matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
+
     #if COMMENT_DUMP
     fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
     #endif
@@ -1216,9 +1251,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 505 "phpbrowser.l"
+#line 540 "phpbrowser.l"
 {
     char * comment;
+
+    matched_pattern("\\*+/", yytext);
 
     /* Include multiple '*' characters in the comment */
     if (yyleng > 2) {
@@ -1254,7 +1291,7 @@ YY_RULE_SETUP
 
 case 19:
 YY_RULE_SETUP
-#line 540 "phpbrowser.l"
+#line 577 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -2147,8 +2184,30 @@ int main()
 	return 0;
 	}
 #endif
-#line 540 "phpbrowser.l"
+#line 577 "phpbrowser.l"
 
+
+/* Helper method that will print matches as they are made */
+
+void matched_pattern(char * pattern, char * text) {
+    char * mode = "UNKNOWN";
+    int imode = YY_START;
+
+    if (imode == INITIAL) {
+        mode = "INITIAL";
+    } else if (imode == FUNCTION) {
+        mode = "FUNCTION";
+    } else if (imode == PHP) {
+        mode = "PHP";
+    } else if (imode == COMMENT) {
+        mode = "COMMENT";
+    }
+
+    if (0) {
+    fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+        pattern, text, mode, sn_line(), sn_column());
+    }
+}
   
 void
 reset()
