@@ -1,3 +1,10 @@
+2002-06-07  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/includepane.tcl (mark_item, see_item): Set -fill to red
+	for connecting lines when a "to" or "by" relationship is
+	added. Call mark_item when a canvas id is passed to see_item
+	and correctly deal with a canvas id passed to mark_item.
+
 2002-06-07  Ralf Corsepius  <corsepiu@faw.uni-ulm.de>
 
 	* etc/Makefile.am: Add german.txt to etc_DATA.

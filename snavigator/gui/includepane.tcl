@@ -281,6 +281,9 @@ itcl::class Include& {
             #select current class
             set id current
             set incname [${can} itemcget ${id} -text]
+        } elseif {[string match {[0-9]*} ${incname}]} {
+            set id ${incname}
+            set incname [${can} itemcget ${id} -text]
         } else {
             #select specified name
             set id [${can} find withtag ${incname}]
@@ -324,12 +327,13 @@ itcl::class Include& {
 
     # This function assures that the item will be on the screen.
     method see_item {{cname ""}} {
-        if {[string match {[0-9]*} ${cname}] == 0} {
+        if {[string match {[0-9]*} ${cname}]} {
+            mark_item ${cname}
+            set id ${cname}
+        } else {
             set opts [mark_item ${cname}]
             set cname [lindex ${opts} 0]
             set id [lindex ${opts} 1]
-        } else {
-            set id ${cname}
         }
 
         set c ${can}
