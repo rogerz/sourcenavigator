@@ -1,3 +1,12 @@
+2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/configure: Regen.
+	* unix/tcl.m4 (SC_ENABLE_SYMBOLS):
+	* win/configure: Regen.
+	* win/tcl.m4 (SC_ENABLE_SYMBOLS): Update
+	macro to support passing --enable-symbols=mem
+	on the configure command line.
+
 2003-09-13  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/configure: Regen.

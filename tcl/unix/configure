@@ -5883,16 +5883,47 @@ else
   tcl_ok=no
 fi
 
-    if test "$tcl_ok" = "yes"; then
-	CFLAGS_DEFAULT='$(CFLAGS_DEBUG)'
-	LDFLAGS_DEFAULT='$(LDFLAGS_DEBUG)'
-	DBGX=g
-	echo "$ac_t""yes" 1>&6
-    else
+
+    if test "$tcl_ok" = "no"; then
 	CFLAGS_DEFAULT='$(CFLAGS_OPTIMIZE)'
 	LDFLAGS_DEFAULT='$(LDFLAGS_OPTIMIZE)'
 	DBGX=""
 	echo "$ac_t""no" 1>&6
+    else
+	CFLAGS_DEFAULT='$(CFLAGS_DEBUG)'
+	LDFLAGS_DEFAULT='$(LDFLAGS_DEBUG)'
+	DBGX=g
+	if test "$tcl_ok" = "yes"; then
+	    echo "$ac_t""yes (standard debugging)" 1>&6
+	fi
+    fi
+    
+    
+
+    if test "$tcl_ok" = "mem" -o "$tcl_ok" = "all"; then
+	cat >> confdefs.h <<\EOF
+#define TCL_MEM_DEBUG 1
+EOF
+
+    fi
+
+    if test "$tcl_ok" = "compile" -o "$tcl_ok" = "all"; then
+	cat >> confdefs.h <<\EOF
+#define TCL_COMPILE_DEBUG 1
+EOF
+
+	cat >> confdefs.h <<\EOF
+#define TCL_COMPILE_STATS 1
+EOF
+
+    fi
+
+    if test "$tcl_ok" != "yes" -a "$tcl_ok" != "no"; then
+	if test "$tcl_ok" = "all"; then
+	    echo "$ac_t""enabled symbols mem compile debugging" 1>&6
+	else
+	    echo "$ac_t""enabled $tcl_ok debugging" 1>&6
+	fi
     fi
 
 
@@ -5910,17 +5941,17 @@ TCL_DBGX=${DBGX}
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:5914: checking for $ac_hdr" >&5
+echo "configure:5945: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 5919 "configure"
+#line 5950 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:5924: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:5955: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -5950,17 +5981,17 @@ done
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:5954: checking for $ac_hdr" >&5
+echo "configure:5985: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 5959 "configure"
+#line 5990 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:5964: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:5995: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -5987,7 +6018,7 @@ fi
 done
 
     echo $ac_n "checking FIONBIO vs. O_NONBLOCK for nonblocking I/O""... $ac_c" 1>&6
-echo "configure:5991: checking FIONBIO vs. O_NONBLOCK for nonblocking I/O" >&5
+echo "configure:6022: checking FIONBIO vs. O_NONBLOCK for nonblocking I/O" >&5
     if test -f /usr/lib/NextStep/software_version; then
 	system=NEXTSTEP-`awk '/3/,/3/' /usr/lib/NextStep/software_version`
     else
@@ -6049,7 +6080,7 @@ TCL_SHARED_LIB_SUFFIX=${SHARED_LIB_SUFFIX}
 
 
     echo $ac_n "checking how to build libraries""... $ac_c" 1>&6
-echo "configure:6053: checking how to build libraries" >&5
+echo "configure:6084: checking how to build libraries" >&5
     # Check whether --enable-shared or --disable-shared was given.
 if test "${enable_shared+set}" = set; then
   enableval="$enable_shared"
@@ -6883,6 +6914,8 @@ s%@DL_LIBS@%$DL_LIBS%g
 s%@CFLAGS_DEBUG@%$CFLAGS_DEBUG%g
 s%@CFLAGS_OPTIMIZE@%$CFLAGS_OPTIMIZE%g
 s%@CFLAGS_WARNING@%$CFLAGS_WARNING%g
+s%@CFLAGS_DEFAULT@%$CFLAGS_DEFAULT%g
+s%@LDFLAGS_DEFAULT@%$LDFLAGS_DEFAULT%g
 s%@TCL_STUB_LIB_FILE@%$TCL_STUB_LIB_FILE%g
 s%@TCL_STUB_LIB_FLAG@%$TCL_STUB_LIB_FLAG%g
 s%@TCL_BUILD_STUB_LIB_SPEC@%$TCL_BUILD_STUB_LIB_SPEC%g
@@ -6891,14 +6924,12 @@ s%@TCL_BUILD_STUB_LIB_PATH@%$TCL_BUILD_STUB_LIB_PATH%g
 s%@TCL_STUB_LIB_PATH@%$TCL_STUB_LIB_PATH%g
 s%@MAKE_STUB_LIB@%$MAKE_STUB_LIB%g
 s%@BUILD_DLTEST@%$BUILD_DLTEST%g
-s%@CFLAGS_DEFAULT@%$CFLAGS_DEFAULT%g
 s%@CFG_TCL_SHARED_LIB_SUFFIX@%$CFG_TCL_SHARED_LIB_SUFFIX%g
 s%@CFG_TCL_UNSHARED_LIB_SUFFIX@%$CFG_TCL_UNSHARED_LIB_SUFFIX%g
 s%@CFG_TCL_EXPORT_FILE_SUFFIX@%$CFG_TCL_EXPORT_FILE_SUFFIX%g
 s%@TCL_DBGX@%$TCL_DBGX%g
 s%@DL_OBJS@%$DL_OBJS%g
 s%@EXTRA_CFLAGS@%$EXTRA_CFLAGS%g
-s%@LDFLAGS_DEFAULT@%$LDFLAGS_DEFAULT%g
 s%@LDFLAGS_DEBUG@%$LDFLAGS_DEBUG%g
 s%@LDFLAGS_OPTIMIZE@%$LDFLAGS_OPTIMIZE%g
 s%@MAKE_LIB@%$MAKE_LIB%g
