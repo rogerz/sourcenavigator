@@ -74,8 +74,8 @@ __rec_ret(t, e, nrec, key, data)
 	/* We have to copy the key, it's not on the page. */
 	if (sizeof(recno_t) > t->bt_rkey.size) {
 		p = (void *)(t->bt_rkey.data == NULL ?
-		    malloc(sizeof(recno_t)) :
-		    realloc(t->bt_rkey.data, sizeof(recno_t)));
+		    db_malloc(sizeof(recno_t)) :
+		    db_realloc(t->bt_rkey.data, sizeof(recno_t)));
 		if (p == NULL)
 			return (RET_ERROR);
 		t->bt_rkey.data = p;
@@ -104,8 +104,8 @@ dataonly:
 		/* Use +1 in case the first record retrieved is 0 length. */
 		if (rl->dsize + 1 > t->bt_rdata.size) {
 			p = (void *)(t->bt_rdata.data == NULL ?
-			    malloc(rl->dsize + 1) :
-			    realloc(t->bt_rdata.data, rl->dsize + 1));
+			    db_malloc(rl->dsize + 1) :
+			    db_realloc(t->bt_rdata.data, rl->dsize + 1));
 			if (p == NULL)
 				return (RET_ERROR);
 			t->bt_rdata.data = p;

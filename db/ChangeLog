@@ -1,3 +1,36 @@
+2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Split out memory allocation and deallocation
+	into libdbmalloc so that another implementation
+	can be used at link time. This is needed to
+	support use of ckalloc functions from the Tcl
+	runtime in Source-Navigator.
+	
+	* PORT/Makefile.am: Add libdbmalloc.a, it is
+	used by default to link in defs for db_malloc
+	and friends.
+	* PORT/Makefile.in: Regen.
+	* PORT/dbmalloc.c (db_malloc, db_free, db_realloc,
+	db_calloc): Add default malloc routines.
+	* btree/bt_close.c:
+	* btree/bt_open.c:
+	* btree/bt_overflow.c:
+	* btree/bt_seq.c:
+	* btree/bt_split.c:
+	* btree/bt_utils.c:
+	* hash/hash.c:
+	* hash/hash_bigkey.c:
+	* hash/hash_buf.c:
+	* hash/hash_page.c:
+	* include/db.h:
+	* mpool/mpool.c:
+	* recno/rec_get.c:
+	* recno/rec_put.c:
+	* recno/rec_utils.c:
+	* test/dbtest.c: Replace malloc/free types calls
+	with calls to db_malloc/db_free which are defined
+	in libdbmalloc.a by default.
+
 2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure: Regen.

@@ -177,13 +177,13 @@ newbuf(hashp, addr, prev_bp)
 	 */
 	if (hashp->nbufs || (bp->flags & BUF_PIN)) {
 		/* Allocate a new one */
-		if ((bp = (BUFHEAD *)malloc(sizeof(BUFHEAD))) == NULL)
+		if ((bp = (BUFHEAD *)db_malloc(sizeof(BUFHEAD))) == NULL)
 			return (NULL);
 #if PURIFY
 		memset(bp, 0xff, sizeof(BUFHEAD));
 #endif /* PURIFY */
-		if ((bp->page = (char *)malloc(hashp->BSIZE)) == NULL) {
-			free(bp);
+		if ((bp->page = (char *)db_malloc(hashp->BSIZE)) == NULL) {
+			db_free(bp);
 			return (NULL);
 		}
 #if PURIFY
@@ -336,9 +336,9 @@ __buf_free(hashp, do_free, to_disk)
 		/* Check if we are freeing stuff */
 		if (do_free) {
 			if (bp->page)
-				free(bp->page);
+				db_free(bp->page);
 			BUF_REMOVE(bp);
-			free(bp);
+			db_free(bp);
 			bp = LRU;
 		} else
 			bp = bp->prev;

@@ -14,7 +14,7 @@ $(WINFLAGS)
 # libdb
 #
 
-noinst_LIBRARIES = libdb.a
+noinst_LIBRARIES = libdb.a libdbmalloc.a
 
 H_OBJS = hash.$(OBJEXT) hash_bigkey.$(OBJEXT) hash_buf.$(OBJEXT) \
 hash_func.$(OBJEXT) hash_log2.$(OBJEXT) hash_page.$(OBJEXT) \
@@ -37,6 +37,8 @@ rec_seq.$(OBJEXT) rec_utils.$(OBJEXT)
 libdb_a_SOURCES = hack.c
 libdb_a_LIBADD = @LIBOBJS@ $(H_OBJS) $(B_OBJS) $(D_OBJS) $(M_OBJS) $(R_OBJS)
 libdb_a_DEPENDENCIES = $(libdb_a_LIBADD)
+
+libdbmalloc_a_SOURCES = dbmalloc.c
 
 # ################################################################
 #

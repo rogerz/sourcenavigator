@@ -85,24 +85,24 @@ __bt_close(dbp)
 
 	/* Free random memory. */
 	if (t->bt_cursor.key.data != NULL) {
-		free(t->bt_cursor.key.data);
+		db_free(t->bt_cursor.key.data);
 		t->bt_cursor.key.size = 0;
 		t->bt_cursor.key.data = NULL;
 	}
 	if (t->bt_rkey.data) {
-		free(t->bt_rkey.data);
+		db_free(t->bt_rkey.data);
 		t->bt_rkey.size = 0;
 		t->bt_rkey.data = NULL;
 	}
 	if (t->bt_rdata.data) {
-		free(t->bt_rdata.data);
+		db_free(t->bt_rdata.data);
 		t->bt_rdata.size = 0;
 		t->bt_rdata.data = NULL;
 	}
 
 	fd = t->bt_fd;
-	free(t);
-	free(dbp);
+	db_free(t);
+	db_free(dbp);
 	return (close(fd) ? RET_ERROR : RET_SUCCESS);
 }
 

@@ -167,7 +167,7 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 		goto einval;
 
 	/* Allocate and initialize DB and BTREE structures. */
-	if ((t = (BTREE *)malloc(sizeof(BTREE))) == NULL)
+	if ((t = (BTREE *)db_malloc(sizeof(BTREE))) == NULL)
 		goto err;
 	memset(t, 0, sizeof(BTREE));
 	t->bt_fd = -1;                  /* Don't close unopened fd on error. */
@@ -177,7 +177,7 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 	t->bt_pfx = b.prefix;
 	t->bt_rfd = -1;
 
-	if ((t->bt_dbp = dbp = (DB *)malloc(sizeof(DB))) == NULL)
+	if ((t->bt_dbp = dbp = (DB *)db_malloc(sizeof(DB))) == NULL)
 		goto err;
 	memset(t->bt_dbp, 0, sizeof(DB));
 	if (t->bt_lorder != machine_lorder)
@@ -350,10 +350,10 @@ eftype: errno = EFTYPE;
 
 err:    if (t) {
 		if (t->bt_dbp)
-			free(t->bt_dbp);
+			db_free(t->bt_dbp);
 		if (t->bt_fd != -1)
 			(void)close(t->bt_fd);
-		free(t);
+		db_free(t);
 	}
 	return (NULL);
 }

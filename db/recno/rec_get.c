@@ -131,8 +131,8 @@ __rec_fpipe(t, top)
 
 	if (t->bt_rdata.size < t->bt_reclen) {
 		t->bt_rdata.data = t->bt_rdata.data == NULL ?
-		    malloc(t->bt_reclen) :
-		    realloc(t->bt_rdata.data, t->bt_reclen);
+		    db_malloc(t->bt_reclen) :
+		    db_realloc(t->bt_rdata.data, t->bt_reclen);
 		if (t->bt_rdata.data == NULL)
 			return (RET_ERROR);
 		t->bt_rdata.size = t->bt_reclen;
@@ -204,8 +204,8 @@ __rec_vpipe(t, top)
 				len = p - (u_char *)t->bt_rdata.data;
 				t->bt_rdata.size += (sz = 256);
 				t->bt_rdata.data = t->bt_rdata.data == NULL ?
-				    malloc(t->bt_rdata.size) :
-				    realloc(t->bt_rdata.data, t->bt_rdata.size);
+				    db_malloc(t->bt_rdata.size) :
+				    db_realloc(t->bt_rdata.data, t->bt_rdata.size);
 				if (t->bt_rdata.data == NULL)
 					return (RET_ERROR);
 				p = (u_char *)t->bt_rdata.data + len;
@@ -243,8 +243,8 @@ __rec_fmap(t, top)
 
 	if (t->bt_rdata.size < t->bt_reclen) {
 		t->bt_rdata.data = t->bt_rdata.data == NULL ?
-		    malloc(t->bt_reclen) :
-		    realloc(t->bt_rdata.data, t->bt_reclen);
+		    db_malloc(t->bt_reclen) :
+		    db_realloc(t->bt_rdata.data, t->bt_reclen);
 		if (t->bt_rdata.data == NULL)
 			return (RET_ERROR);
 		t->bt_rdata.size = t->bt_reclen;

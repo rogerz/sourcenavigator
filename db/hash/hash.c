@@ -109,7 +109,7 @@ __hash_open(file, flags, mode, info, dflags)
 		return (NULL);
 	}
 
-	if (!(hashp = (HTAB *)calloc(1, sizeof(HTAB))))
+	if (!(hashp = (HTAB *)db_calloc(1, sizeof(HTAB))))
 		return (NULL);
 	hashp->fp = -1;
 
@@ -197,7 +197,7 @@ __hash_open(file, flags, mode, info, dflags)
 	hashp->new_file = new_table;
 	hashp->save_file = file && (hashp->flags & O_RDWR);
 	hashp->cbucket = -1;
-	if (!(dbp = (DB *)malloc(sizeof(DB)))) {
+	if (!(dbp = (DB *)db_malloc(sizeof(DB)))) {
 		save_errno = errno;
 		hdestroy(hashp);
 		errno = save_errno;
@@ -242,7 +242,7 @@ error1:
 		(void)close(hashp->fp);
 
 error0:
-	free(hashp);
+	db_free(hashp);
 	errno = save_errno;
 	return (NULL);
 }
@@ -259,7 +259,7 @@ hash_close(dbp)
 
 	hashp = (HTAB *)dbp->internal;
 	retval = hdestroy(hashp);
-	free(dbp);
+	db_free(dbp);
 	return (retval);
 }
 
@@ -428,23 +428,23 @@ hdestroy(hashp)
 	if (__buf_free(hashp, 1, hashp->save_file))
 		save_errno = errno;
 	if (hashp->dir) {
-		free(*hashp->dir);      /* Free initial segments */
+		db_free(*hashp->dir);      /* Free initial segments */
 		/* Free extra segments */
 		while (hashp->exsegs--)
-			free(hashp->dir[--hashp->nsegs]);
-		free(hashp->dir);
+			db_free(hashp->dir[--hashp->nsegs]);
+		db_free(hashp->dir);
 	}
 	if (flush_meta(hashp) && !save_errno)
 		save_errno = errno;
 	/* Free Bigmaps */
 	for (i = 0; i < hashp->nmaps; i++)
 		if (hashp->mapp[i])
-			free(hashp->mapp[i]);
+			db_free(hashp->mapp[i]);
 
 	if (hashp->fp != -1)
 		(void)close(hashp->fp);
 
-	free(hashp);
+	db_free(hashp);
 
 	if (save_errno) {
 		errno = save_errno;
@@ -848,7 +848,7 @@ __expand_table(hashp)
 			hashp->DSIZE = dirsize << 1;
 		}
 		if ((hashp->dir[new_segnum] =
-		    (SEGMENT)calloc(hashp->SGSIZE, sizeof(SEGMENT))) == NULL)
+		    (SEGMENT)db_calloc(hashp->SGSIZE, sizeof(SEGMENT))) == NULL)
 			return (-1);
 		hashp->exsegs++;
 		hashp->nsegs++;
@@ -884,10 +884,10 @@ hash_realloc(p_ptr, oldsize, newsize)
 {
 	register void *p;
 
-	if (p = malloc(newsize)) {
+	if (p = db_malloc(newsize)) {
 		memmove(p, *p_ptr, oldsize);
 		memset((char *)p + oldsize, 0, newsize - oldsize);
-		free(*p_ptr);
+		db_free(*p_ptr);
 		*p_ptr = p;
 	}
 	return (p);
@@ -924,7 +924,7 @@ alloc_segs(hashp, nsegs)
 	int save_errno;
 
 	if ((hashp->dir =
-	    (SEGMENT *)calloc(hashp->DSIZE, sizeof(SEGMENT *))) == NULL) {
+	    (SEGMENT *)db_calloc(hashp->DSIZE, sizeof(SEGMENT *))) == NULL) {
 		save_errno = errno;
 		(void)hdestroy(hashp);
 		errno = save_errno;
@@ -932,7 +932,7 @@ alloc_segs(hashp, nsegs)
 	}
 	/* Allocate segments */
 	if ((store =
-	    (SEGMENT)calloc(nsegs << hashp->SSHIFT, sizeof(SEGMENT))) == NULL) {
+	    (SEGMENT)db_calloc(nsegs << hashp->SSHIFT, sizeof(SEGMENT))) == NULL) {
 		save_errno = errno;
 		(void)hdestroy(hashp);
 		errno = save_errno;

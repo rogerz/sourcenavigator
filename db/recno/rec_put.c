@@ -89,8 +89,8 @@ __rec_put(dbp, key, data, flags)
 
 		if (t->bt_rdata.size < t->bt_reclen) {
 			t->bt_rdata.data = t->bt_rdata.data == NULL ?
-			    malloc(t->bt_reclen) :
-			    realloc(t->bt_rdata.data, t->bt_reclen);
+			    db_malloc(t->bt_reclen) :
+			    db_realloc(t->bt_rdata.data, t->bt_reclen);
 			if (t->bt_rdata.data == NULL)
 				return (RET_ERROR);
 			t->bt_rdata.size = t->bt_reclen;
@@ -148,7 +148,7 @@ einval:		errno = EINVAL;
 		if (nrec > t->bt_nrecs + 1) {
 			if (F_ISSET(t, R_FIXLEN)) {
 				if ((tdata.data =
-				    (void *)malloc(t->bt_reclen)) == NULL)
+				    (void *)db_malloc(t->bt_reclen)) == NULL)
 					return (RET_ERROR);
 				tdata.size = t->bt_reclen;
 				memset(tdata.data, t->bt_bval, tdata.size);
@@ -161,7 +161,7 @@ einval:		errno = EINVAL;
 				    t->bt_nrecs, &tdata, 0) != RET_SUCCESS)
 					return (RET_ERROR);
 			if (F_ISSET(t, R_FIXLEN))
-				free(tdata.data);
+				db_free(tdata.data);
 		}
 	}
 

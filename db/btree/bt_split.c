@@ -386,7 +386,7 @@ bt_page(t, h, lp, rp, skip, ilen)
 	}
 
 	/* Put the new left page for the split into place. */
-	if ((l = (PAGE *)malloc(t->bt_psize)) == NULL) {
+	if ((l = (PAGE *)db_malloc(t->bt_psize)) == NULL) {
 		mpool_put(t->bt_mp, r, 0);
 		return (NULL);
 	}
@@ -403,7 +403,7 @@ bt_page(t, h, lp, rp, skip, ilen)
 	/* Fix up the previous pointer of the page after the split page. */
 	if (h->nextpg != P_INVALID) {
 		if ((tp = mpool_get(t->bt_mp, h->nextpg, 0)) == NULL) {
-			free(l);
+			db_free(l);
 			/* XXX mpool_free(t->bt_mp, r->pgno); */
 			return (NULL);
 		}
@@ -424,7 +424,7 @@ bt_page(t, h, lp, rp, skip, ilen)
 	memmove(h, l, t->bt_psize);
 	if (tp == l)
 		tp = h;
-	free(l);
+	db_free(l);
 
 	*lp = h;
 	*rp = r;

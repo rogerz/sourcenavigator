@@ -257,8 +257,8 @@ ldata:			switch (command) {
 				    lineno);
 			}
 			if (type != DB_RECNO)
-				free(key.data);
-			free(data.data);
+				db_free(key.data);
+			db_free(data.data);
 			state = COMMAND;
 			break;
 		case 'K':			/* key file */
@@ -289,7 +289,7 @@ lkey:			switch (command) {
 			case GET:
 				get(dbp, &key);
 				if (type != DB_RECNO)
-					free(key.data);
+					db_free(key.data);
 				state = COMMAND;
 				break;
 			case PUT:
@@ -298,13 +298,13 @@ lkey:			switch (command) {
 			case REMOVE:
 				rem(dbp, &key);
 				if ((type != DB_RECNO) && (flags != R_CURSOR))
-					free(key.data);
+					db_free(key.data);
 				state = COMMAND;
 				break;
 			case SEQ:
 				seq(dbp, &key);
 				if ((type != DB_RECNO) && (flags != R_CURSOR))
-					free(key.data);
+					db_free(key.data);
 				state = COMMAND;
 				break;
 			default:
@@ -694,7 +694,7 @@ rfile(name, lenp)
 	if (sb.st_size > (off_t)SIZE_T_MAX)
 		err("%s: %s\n", name, strerror(E2BIG));
 #endif
-	if ((p = (void *)malloc((u_int)sb.st_size)) == NULL)
+	if ((p = (void *)db_malloc((u_int)sb.st_size)) == NULL)
 		err("%s", strerror(errno));
 	(void)read(fd, p, (int)sb.st_size);
 	*lenp = sb.st_size;
@@ -709,7 +709,7 @@ xmalloc(text, len)
 {
 	void *p;
 
-	if ((p = (void *)malloc(len)) == NULL)
+	if ((p = (void *)db_malloc(len)) == NULL)
 		err("%s", strerror(errno));
 	memmove(p, text, len);
 	return (p);

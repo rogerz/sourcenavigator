@@ -447,7 +447,7 @@ __bt_setcur(t, pgno, index)
 {
 	/* Lose any already deleted key. */
 	if (t->bt_cursor.key.data != NULL) {
-		free(t->bt_cursor.key.data);
+		db_free(t->bt_cursor.key.data);
 		t->bt_cursor.key.size = 0;
 		t->bt_cursor.key.data = NULL;
 	}

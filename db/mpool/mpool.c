@@ -86,7 +86,7 @@ mpool_open(key, fd, pagesize, maxcache)
 	}
 
 	/* Allocate and initialize the MPOOL cookie. */
-	if ((mp = (MPOOL *)calloc(1, sizeof(MPOOL))) == NULL)
+	if ((mp = (MPOOL *)db_calloc(1, sizeof(MPOOL))) == NULL)
 		return (NULL);
 	CIRCLEQ_INIT(&mp->lqh);
 	for (entry = 0; entry < HASHSIZE; ++entry)
@@ -275,11 +275,11 @@ mpool_close(mp)
 	/* Free up any space allocated to the lru pages. */
 	while ((bp = mp->lqh.cqh_first) != (void *)&mp->lqh) {
 		CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
-		free(bp);
+		db_free(bp);
 	}
 
 	/* Free the MPOOL cookie. */
-	free(mp);
+	db_free(mp);
 	return (RET_SUCCESS);
 }
 
@@ -356,7 +356,7 @@ mpool_bkt(mp)
 			return (bp);
 		}
 
-new:	if ((bp = (BKT *)malloc(sizeof(BKT) + mp->pagesize)) == NULL)
+new:	if ((bp = (BKT *)db_malloc(sizeof(BKT) + mp->pagesize)) == NULL)
 		return (NULL);
 #ifdef STATISTICS
 	++mp->pagealloc;

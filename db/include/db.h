@@ -252,6 +252,11 @@ typedef struct {
 __BEGIN_DECLS
 DB *dbopen __P((const char *, int, int, DBTYPE, const void *));
 
+void *db_malloc(size_t size);
+void  db_free(void *ptr);
+void *db_realloc(void *ptr, size_t size);
+void *db_calloc(size_t nmemb, size_t size);
+
 #ifdef __DBINTERFACE_PRIVATE
 DB	*__bt_open __P((const char *, int, int, const BTREEINFO *, int));
 DB	*__hash_open __P((const char *, int, int, const HASHINFO *, int));

@@ -606,7 +606,7 @@ __put_page(hashp, p, bucket, is_bucket, is_bitmap)
 		} else {
 			max = ((u_int16_t *)p)[0] + 2;
 #if 1	/* Zsolt Koppany, bug fix 14-aug-96 */
-			write_buf = malloc(size);
+			write_buf = db_malloc(size);
 			memcpy(write_buf,p,size);
 			p = write_buf;
 #endif
@@ -627,11 +627,11 @@ __put_page(hashp, p, bucket, is_bucket, is_bitmap)
 	gap_size = off - end_off;
 	if (gap_size > 0)
 	{
-		char	*gap = malloc(gap_size);
+		char	*gap = db_malloc(gap_size);
 
 		memset(gap,0,gap_size);
 		write(fd,gap,gap_size);
-		free(gap);
+		db_free(gap);
 	}
 #endif /* WIN32 */
 	if ((lseek(fd, (off_t)page << hashp->BSHIFT, SEEK_SET) == -1) ||
@@ -640,13 +640,13 @@ __put_page(hashp, p, bucket, is_bucket, is_bitmap)
 		/* Errno is set */
 #if 1	/* Zsolt Koppany, bug fix 14-aug-96 */
 		if (write_buf)
-			free(write_buf);
+			db_free(write_buf);
 #endif
 		return (-1);
 	}
 #if 1	/* Zsolt Koppany, bug fix 14-aug-96 */
 	if (write_buf)
-		free(write_buf);
+		db_free(write_buf);
 #endif
 	if (wsize != size) {
 		errno = EFTYPE;
@@ -669,7 +669,7 @@ __ibitmap(hashp, pnum, nbits, ndx)
 	u_int32_t *ip;
 	int clearbytes, clearints;
 
-	if ((ip = (u_int32_t *)malloc(hashp->BSIZE)) == NULL)
+	if ((ip = (u_int32_t *)db_malloc(hashp->BSIZE)) == NULL)
 		return (1);
 	hashp->nmaps++;
 	clearints = ((nbits - 1) >> INT_BYTE_SHIFT) + 1;
@@ -987,11 +987,11 @@ fetch_bitmap(hashp, ndx)
 {
 	if (ndx >= hashp->nmaps)
 		return (NULL);
-	if ((hashp->mapp[ndx] = (u_int32_t *)malloc(hashp->BSIZE)) == NULL)
+	if ((hashp->mapp[ndx] = (u_int32_t *)db_malloc(hashp->BSIZE)) == NULL)
 		return (NULL);
 	if (__get_page(hashp,
 	    (char *)hashp->mapp[ndx], hashp->BITMAPS[ndx], 0, 1, 1)) {
-		free(hashp->mapp[ndx]);
+		db_free(hashp->mapp[ndx]);
 		return (NULL);
 	}
 	return (hashp->mapp[ndx]);
