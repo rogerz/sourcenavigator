@@ -1,3 +1,13 @@
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclgrepdriver.tcl (line_grep): Rework line_grep
+	method so that it works for buffers that do not end
+	with a newline. This lets us get rid of the need to
+	append a newline on the end of the buffer and
+	making an extra copy of a potentially large buffer.
+	* tests/gui/line_grep.test: Add more test cases for
+	buffers that do not end with a newline.
+
 2002-06-19  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/tclgrepdriver.tcl (processNextIndex, line_grep):

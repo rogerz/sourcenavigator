@@ -268,10 +268,6 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
         error "Pattern cannot contain a newline"
     }
 
-    if {[string index $buffer end] != "\n"} {
-        append buffer "\n"
-    }
-
     if {$ignorecase} {
         set matches [regexp -all -line -inline -indices -nocase -- $pattern $buffer]
     } else {
@@ -293,6 +289,11 @@ proc sourcenav::line_grep { pattern buffer {ignorecase 0}} {
     set newline_indexes [list]
     foreach ind [regexp -all -inline -indices -- "\n" $buffer] {
         lappend newline_indexes [lindex $ind 0]
+    }
+    # If the last index in the buffer is not a newline add
+    # it as a newline_index since regexp considers it one.
+    if {[string index $buffer $buffer_length] != "\n"} {
+        lappend newline_indexes $buffer_length
     }
     set newline_length [llength $newline_indexes]
     if {$newline_length == 0} {error "no newlines found in buffer"}

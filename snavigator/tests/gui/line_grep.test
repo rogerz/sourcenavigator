@@ -47,6 +47,14 @@ tcltest::test multi-6 {multiple lines, both lf and crlf} {
     sourcenav::line_grep FOO "FOO1\nFOO2\r\nFOO3\n"
 } {{1 FOO1 {{FOO 0}}} {2 FOO2 {{FOO 0}}} {3 FOO3 {{FOO 0}}}}
 
+tcltest::test multi-7 {multipl lines, needs newline} {
+    sourcenav::line_grep FOO "FOO\nFOO FOO"
+} {{1 FOO {{FOO 0}}} {2 {FOO FOO} {{FOO 0} {FOO 4}}}}
+
+tcltest::test multi-8 {multiple lines, single match on each, needs newline} {
+    sourcenav::line_grep FOO "1\nFOO\n2 FOO"
+} {{2 FOO {{FOO 0}}} {3 {2 FOO} {{FOO 2}}}}
+
 tcltest::test pat-1 {newline sensitive matching} {
     sourcenav::line_grep .*FOO "FOO\n"
 } {{1 FOO {{FOO 0}}}}
