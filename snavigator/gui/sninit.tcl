@@ -760,15 +760,8 @@ proc bgerror {err} {
 
     sn_log "Error string: ${err}"
     sn_log "Stack Trace: ${errorInfo}"
-    set answer [tk_dialog auto [get_indep String Error] ${err} question_image\
-      -1 [get_indep String ButtonBugReport] [get_indep String Cancel]]
 
-    if {${answer} != 0} {
-        return
-    }
-
-    # Web-based bug-reporting is no longer supported.
-    mail_send_bug_report ${err} ${errorInfo}
+    display_bug_report ${err} ${errorInfo}
 }
 
 # Replacement for sn_CreateInterp in sninit.c

@@ -888,6 +888,8 @@ ClassNoKey,Class
 
 ButtonBugReport,Bug Report
 ButtonMail,Mail
+ButtonDismiss,Dismiss
+ErrorOccured,An error has occured:
 
 #Ide strings
 BuildTargetManager,Build [Settings...

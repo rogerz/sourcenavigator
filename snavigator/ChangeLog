@@ -1,5 +1,20 @@
 2002-05-06  Mo DeJong  <supermo@bayarea.net>
 
+	* etc/english.txt.in: Add ButtonDismiss and
+	ErrorOccured strings.	
+	* gui/bugreport.tcl (display_bug_report): Add a
+	new method to replace mail_send_bug_report. This
+	error handler simply displays bug information in
+	a text box instead of sending an email to the
+	cygnus support email address.
+	* gui/sninit.tcl: Call display_bug_report instead
+	of mail_send_bug_report and avoid the initial
+	bug report dialog.
+	* gui/tclIndex: Regen to account for addition of
+	the display_bug_report procedure.
+
+2002-05-06  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/targetedit.tcl (cb_add_lib): Change tk_getOpenFile
 	call to Editor&::FileDialog so that the same file selection
 	dialog is used throughout the target editor dialog.
