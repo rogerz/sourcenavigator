@@ -1,5 +1,15 @@
 2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Include the
+	$ character in the variable token text
+	range so that it is also highlighted.
+	* tests/parsers/php.test: Update parsing
+	and highlighting tests to account for
+	inclusion of the dollar sign in variables.
+
+2003-06-18  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/editorpane.tcl (init_tags, color_file):
 	Add basic local variable highlighting support.
 	Add lv to the list of symbols that has a highlight

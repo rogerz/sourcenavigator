@@ -43,7 +43,7 @@ tcltest::test tokens-1.4 { parse into tokens } {
 <?PHP$var?>
 HTML}]
 } {0 HTML "HTML\n<?PHP" 1.0 2.5
-1 VARIABLE "var" 2.6 2.9
+1 VARIABLE "var" 2.5 2.9
 2 HTML "?>\nHTML" 2.9 3.4}
 
 tcltest::test tokens-1.5 { parse into tokens } {
@@ -51,7 +51,7 @@ tcltest::test tokens-1.5 { parse into tokens } {
 <?=$var?>
 }]
 } {0 HTML "\n<?=" 1.0 2.3
-1 VARIABLE "var" 2.4 2.7
+1 VARIABLE "var" 2.3 2.7
 2 HTML "?>\n" 2.7 3.0}
 
 
@@ -104,7 +104,7 @@ tcltest::test tokens-3.0 { parse into tokens } {
 $var
 ?>
 }]]
-} {1 VARIABLE "var" 3.1 3.4}
+} {1 VARIABLE "var" 3.0 3.4}
 
 tcltest::test tokens-3.1 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
@@ -112,7 +112,7 @@ tcltest::test tokens-3.1 { parse into tokens } {
 $var=1
 ?>
 }]]
-} {1 VARIABLE "var" 3.1 3.4
+} {1 VARIABLE "var" 3.0 3.4
 2 ASSIGNMENT_OPERATOR "" 3.4 3.5
 3 SOMEWORD "1" 3.5 3.6}
 
@@ -122,7 +122,7 @@ tcltest::test tokens-3.2 { parse into tokens } {
 $var[]=1
 ?>
 }]]
-} {1 VARIABLE "var" 3.1 3.4
+} {1 VARIABLE "var" 3.0 3.4
 2 OPEN_BRACKET "" 3.4 3.5
 3 CLOSE_BRACKET "" 3.5 3.6
 4 ASSIGNMENT_OPERATOR "" 3.6 3.7
@@ -134,10 +134,10 @@ tcltest::test tokens-3.3 { parse into tokens } {
 $foo = &$bar;
 ?>
 }]]
-} {1 VARIABLE "foo" 3.1 3.4
+} {1 VARIABLE "foo" 3.0 3.4
 2 ASSIGNMENT_OPERATOR "" 3.5 3.6
 3 REFERENCE_OPERATOR "" 3.7 3.8
-4 VARIABLE "bar" 3.9 3.12
+4 VARIABLE "bar" 3.8 3.12
 5 SEMICOLON "" 3.12 3.13}
 
 tcltest::test tokens-3.4 { parse into tokens } {
@@ -147,11 +147,11 @@ $var++;
 --$var;
 ?>
 }]]
-} {1 VARIABLE "var" 3.1 3.4
+} {1 VARIABLE "var" 3.0 3.4
 2 INCREMENT_OPERATORS "++" 3.4 3.6
 3 SEMICOLON "" 3.6 3.7
 4 INCREMENT_OPERATORS "--" 4.0 4.2
-5 VARIABLE "var" 4.3 4.6
+5 VARIABLE "var" 4.2 4.6
 6 SEMICOLON "" 4.6 4.7}
 
 tcltest::test tokens-3.5 { parse into tokens } {
@@ -196,7 +196,7 @@ tcltest::test tokens-4.0 { unknown tokens } {
 }]]
 } {1 UNKNOWN "!" 3.0 3.1
 2 UNKNOWN "!" 3.1 3.2
-3 VARIABLE "var" 3.3 3.6
+3 VARIABLE "var" 3.2 3.6
 4 SEMICOLON "" 3.6 3.7}
 
 tcltest::test tokens-4.1 { unknown tokens } {
@@ -205,7 +205,7 @@ tcltest::test tokens-4.1 { unknown tokens } {
 $var ~= 1;
 ?>
 }]]
-} {1 VARIABLE "var" 3.1 3.4
+} {1 VARIABLE "var" 3.0 3.4
 2 UNKNOWN "~" 3.5 3.6
 3 ASSIGNMENT_OPERATOR "" 3.6 3.7
 4 SOMEWORD "1" 3.8 3.9
@@ -493,8 +493,8 @@ $mode="php";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;mode<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>mode<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;mode<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>mode<>gv;3.5<>3.0<>3.5<>{}
 }
 
 tcltest::test mode-2.1 { php mode } {
@@ -504,8 +504,8 @@ $mode2="html";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;mode1<>000002.004<>f.php;2.9<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000002.004<>#<>mode1<>gv;2.9<>2.4<>2.9<>{}
+PAF_GLOB_VAR_DEF;mode1<>000002.003<>f.php;2.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000002.003<>#<>mode1<>gv;2.9<>2.3<>2.9<>{}
 }
 
 tcltest::test mode-2.2 { php mode } {
@@ -515,8 +515,8 @@ $mode1="html";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;mode2<>000003.004<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.004<>#<>mode2<>gv;3.9<>3.4<>3.9<>{}
+PAF_GLOB_VAR_DEF;mode2<>000003.003<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>mode2<>gv;3.9<>3.3<>3.9<>{}
 }
 
 tcltest::test mode-2.3 { html->php->html->php mode } {
@@ -528,10 +528,10 @@ $mode3="html";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;mode2<>000003.004<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.004<>#<>mode2<>gv;3.9<>3.4<>3.9<>{}
-PAF_GLOB_VAR_DEF;mode4<>000005.004<>f.php;5.9<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.004<>#<>mode4<>gv;5.9<>5.4<>5.9<>{}
+PAF_GLOB_VAR_DEF;mode2<>000003.003<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>mode2<>gv;3.9<>3.3<>3.9<>{}
+PAF_GLOB_VAR_DEF;mode4<>000005.003<>f.php;5.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.003<>#<>mode4<>gv;5.9<>5.3<>5.9<>{}
 }
 
 tcltest::test mode-2.4 { php mode } {
@@ -542,8 +542,8 @@ $mode="php";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;mode<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>mode<>gv;3.5<>3.1<>3.5<>{}
+PAF_GLOB_VAR_DEF;mode<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>mode<>gv;3.5<>3.0<>3.5<>{}
 }
 
 tcltest::test mode-2.5 { php mode } {
@@ -564,8 +564,8 @@ $var=1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test var-1.1 { var read } {
@@ -586,10 +586,10 @@ $var=1;$var=1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
-PAF_GLOB_VAR_DEF;var<>000003.008<>f.php;3.11<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.008<>#<>var<>gv;3.11<>3.8<>3.11<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.007<>f.php;3.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.007<>#<>var<>gv;3.11<>3.7<>3.11<>{}
 }
 
 tcltest::test var-1.2 { read then write, checks column } {
@@ -600,8 +600,8 @@ $var;$var=1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.006<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.006<>#<>var<>gv;3.9<>3.6<>3.9<>{}
+PAF_GLOB_VAR_DEF;var<>000003.005<>f.php;3.9<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.005<>#<>var<>gv;3.9<>3.5<>3.9<>{}
 }
 
 # FIXME: Should the global statement act as the variable define here?
@@ -617,8 +617,8 @@ $var = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000005.001<>f.php;5.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var<>gv;5.4<>5.1<>5.4<>{}
+PAF_GLOB_VAR_DEF;var<>000005.000<>f.php;5.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>var<>gv;5.4<>5.0<>5.4<>{}
 PAF_FUNC_DEF;foo<>000003.000<>f.php;6.1<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;6.1<>3.9<>3.12<>{}
 }
@@ -651,8 +651,8 @@ $var = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_LOCAL_VAR_DEF;var<>000004.001<>f.php;4.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var<>lv;4.4<>4.1<>4.4<>{}
+PAF_LOCAL_VAR_DEF;var<>000004.000<>f.php;4.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.000<>#<>var<>lv;4.4<>4.0<>4.4<>{}
 PAF_FUNC_DEF;foo<>000003.000<>f.php;5.1<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>foo<>fu;5.1<>3.9<>3.12<>{}
 }
@@ -679,8 +679,8 @@ $var++;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test var-1.8 { var decrement } {
@@ -691,8 +691,8 @@ tcltest::test var-1.8 { var decrement } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
+PAF_GLOB_VAR_DEF;var<>000003.002<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>var<>gv;3.6<>3.2<>3.6<>{}
 }
 
 tcltest::test var-1.9 { var decrement, ignore increment (syntax error) } {
@@ -703,8 +703,8 @@ tcltest::test var-1.9 { var decrement, ignore increment (syntax error) } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
+PAF_GLOB_VAR_DEF;var<>000003.002<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>var<>gv;3.6<>3.2<>3.6<>{}
 }
 
 tcltest::test var-1.10 { array var increment } {
@@ -715,8 +715,8 @@ $var[0]++;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test var-1.11 { array var decrement } {
@@ -727,8 +727,8 @@ tcltest::test var-1.11 { array var decrement } {
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.003<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.003<>#<>var<>gv;3.6<>3.3<>3.6<>{}
+PAF_GLOB_VAR_DEF;var<>000003.002<>f.php;3.6<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.002<>#<>var<>gv;3.6<>3.2<>3.6<>{}
 }
 
 tcltest::test var-2.0 { var write xref } {
@@ -1359,8 +1359,8 @@ $var = "";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test string-1.1 { single quoted string } {
@@ -1371,8 +1371,8 @@ $var = '';
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test string-1.2 { double quoted string } {
@@ -1383,8 +1383,8 @@ $var = "value";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test string-1.3 { single quoted string } {
@@ -1395,8 +1395,8 @@ $var = 'value';
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test string-1.4 { double quoted string } {
@@ -1408,10 +1408,10 @@ $var2 = "value";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000004.001<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000004.000<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.000<>#<>var2<>gv;4.5<>4.0<>4.5<>{}
 }
 
 tcltest::test string-1.5 { single quoted string } {
@@ -1423,10 +1423,10 @@ $var2 = 'value';
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000004.001<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000004.001<>#<>var2<>gv;4.5<>4.1<>4.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000004.000<>f.php;4.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000004.000<>#<>var2<>gv;4.5<>4.0<>4.5<>{}
 }
 
 tcltest::test string-1.6 { double quoted string } {
@@ -1439,10 +1439,10 @@ $var2 = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.000<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>var2<>gv;5.5<>5.0<>5.5<>{}
 }
 
 tcltest::test string-1.7 { single quoted string } {
@@ -1455,10 +1455,10 @@ $var2 = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.000<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>var2<>gv;5.5<>5.0<>5.5<>{}
 }
 
 tcltest::test string-1.8 { double quoted string } {
@@ -1471,10 +1471,10 @@ $var2 = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.000<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>var2<>gv;5.5<>5.0<>5.5<>{}
 }
 
 tcltest::test string-1.9 { single quoted string } {
@@ -1487,10 +1487,10 @@ $var2 = 1;
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var1<>000003.001<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var1<>gv;3.5<>3.1<>3.5<>{}
-PAF_GLOB_VAR_DEF;var2<>000005.001<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000005.001<>#<>var2<>gv;5.5<>5.1<>5.5<>{}
+PAF_GLOB_VAR_DEF;var1<>000003.000<>f.php;3.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var1<>gv;3.5<>3.0<>3.5<>{}
+PAF_GLOB_VAR_DEF;var2<>000005.000<>f.php;5.5<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000005.000<>#<>var2<>gv;5.5<>5.0<>5.5<>{}
 }
 
 tcltest::test string-2.0 { escape characters } {
@@ -1501,8 +1501,8 @@ $var = "val\n";
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 tcltest::test string-2.1 { escape characters } {
@@ -1513,8 +1513,8 @@ $var = 'val\n';
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000003.001<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000003.001<>#<>var<>gv;3.4<>3.1<>3.4<>{}
+PAF_GLOB_VAR_DEF;var<>000003.000<>f.php;3.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000003.000<>#<>var<>gv;3.4<>3.0<>3.4<>{}
 }
 
 
@@ -1576,8 +1576,8 @@ $var = "one" . '"';
 }]
 } {Status: Parsing: f.php
 PAF_FILE;f.php;php<>
-PAF_GLOB_VAR_DEF;var<>000007.001<>f.php;7.4<>0x0<>{}<>{}<>{}<>{}
-PAF_FILE_SYMBOLS;f.php<>000007.001<>#<>var<>gv;7.4<>7.1<>7.4<>{}
+PAF_GLOB_VAR_DEF;var<>000007.000<>f.php;7.4<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.php<>000007.000<>#<>var<>gv;7.4<>7.0<>7.4<>{}
 }
 
 
@@ -2464,6 +2464,11 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # range of 0 to 7 instead of just 1 to 4. That would
 # make the combobox display the variable name over
 # the whole range instead of just over the highlight.
+
+# Add tests for CRLF line ending and a missing \n at
+# the end of the file. The input layer should convert
+# \r\n to \n and add a \n to the end of the file if
+# one does not exist!
 
 # cleanup
 file delete f.php

@@ -2761,18 +2761,17 @@ YY_RULE_SETUP
 #if MATCH_DUMP
   matched_pattern("${varname}", yytext);
 #endif
-  sn_advance_column(1);
   append_token(VARIABLE, yytext+1,
           sn_line(),
           sn_column(),
           sn_line(),
-          sn_column() + yyleng - 1);
-  sn_advance_column(yyleng-1);
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 1141 "phpbrowser.l"
+#line 1140 "phpbrowser.l"
 {
   char* x, *y;
   #if MATCH_DUMP
@@ -2795,7 +2794,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 1161 "phpbrowser.l"
+#line 1160 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\$", yytext);
@@ -2812,7 +2811,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 1175 "phpbrowser.l"
+#line 1174 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern(".", yytext);
@@ -2836,7 +2835,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 1198 "phpbrowser.l"
+#line 1197 "phpbrowser.l"
 {
   int parens, noargs;
   LongString abuff;
@@ -2907,7 +2906,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 1266 "phpbrowser.l"
+#line 1265 "phpbrowser.l"
 {
   if (current_function) {
     current_function_brace_count++;
@@ -2917,7 +2916,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 1273 "phpbrowser.l"
+#line 1272 "phpbrowser.l"
 {
   if (current_function && (--current_function_brace_count == 0)) {
 #ifdef TOKEN_DEBUG
@@ -2936,7 +2935,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 1289 "phpbrowser.l"
+#line 1288 "phpbrowser.l"
 {
   int line_start, line_end, column_start, column_end;
   char * filename;
@@ -2996,7 +2995,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 1346 "phpbrowser.l"
+#line 1345 "phpbrowser.l"
 {
   SearchEntry entry;
 
@@ -3042,7 +3041,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 1389 "phpbrowser.l"
+#line 1388 "phpbrowser.l"
 {
   char* fname;
   int line;
@@ -3079,7 +3078,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1423 "phpbrowser.l"
+#line 1422 "phpbrowser.l"
 {
   int offset;
   
@@ -3102,7 +3101,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 1443 "phpbrowser.l"
+#line 1442 "phpbrowser.l"
 {
   int offset;
   
@@ -3125,7 +3124,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1463 "phpbrowser.l"
+#line 1462 "phpbrowser.l"
 {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
@@ -3157,7 +3156,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 1492 "phpbrowser.l"
+#line 1491 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable read at token %d\n", token_index);
@@ -3170,7 +3169,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 1502 "phpbrowser.l"
+#line 1501 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
@@ -3187,7 +3186,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 1516 "phpbrowser.l"
+#line 1515 "phpbrowser.l"
 {
   enum sn_highlights type;
 
@@ -3224,12 +3223,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 1550 "phpbrowser.l"
+#line 1549 "phpbrowser.l"
 
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 1552 "phpbrowser.l"
+#line 1551 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -3237,7 +3236,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 1558 "phpbrowser.l"
+#line 1557 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -3269,7 +3268,7 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 1583 "phpbrowser.l"
+#line 1582 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -3397,7 +3396,7 @@ case YY_STATE_EOF(HDSTRING):
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 1708 "phpbrowser.l"
+#line 1707 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -4287,7 +4286,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1708 "phpbrowser.l"
+#line 1707 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */

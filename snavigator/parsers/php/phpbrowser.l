@@ -1129,13 +1129,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #if MATCH_DUMP
   matched_pattern("${varname}", yytext);
 #endif
-  sn_advance_column(1);
   append_token(VARIABLE, yytext+1,
           sn_line(),
           sn_column(),
           sn_line(),
-          sn_column() + yyleng - 1);
-  sn_advance_column(yyleng-1);
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
 }
 
 <PHP>{wsn}+ {
