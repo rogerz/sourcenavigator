@@ -95,6 +95,8 @@ void dump_function_definition();
 
 void matched_pattern(char * pattern, char * text);
 
+static void emit_var_access(char * varname, int acc);
+
 %}
 
 %x FUNCTION
@@ -184,7 +186,6 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
 <INITIAL,FUNCTION>"$"({symbol}|"{"{symbol}"}") {
   char * x = (char *) yytext;
-  int ref_from_scope_type;
 
   matched_pattern("${symbol}", yytext);
 
@@ -204,34 +205,86 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
     *(yytext + yyleng - 1) = '\0';
   }
 
-  if (current_function[0] == '\0') {
-    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
+  emit_var_access(x, SN_REF_READ);
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>"${#"{symbol}"}" {
+  char * x = (char *) yytext;
+
+  matched_pattern("$\\{#{symbol}\\}", yytext);
+
+  /* Trim leading ${# of the front */
+
+  assert(*x == '$');
+  x++;
+  assert(*x == '{');
+  x++;
+  assert(*x == '#');
+  x++;
+  *(yytext + yyleng - 1) = '\0';
+
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (yyleng - 1));
+
+  emit_var_access(x, SN_REF_READ);
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>"${"{symbol}("-"|":-"|"+"|":+"|"?"|":?"|":"|"#"|"##"|"%"|"%%"|"="|":="|"/")[^\}]*"}" {
+  char * x = (char *) yytext;
+  char * y;
+  int is_read_write = 0;
+
+  matched_pattern("$\\{{symbol}(-|+|?|=|#|%){symbol}\\}", yytext);
+
+  /* Trim leading $ off the front of the symbol
+   * and ignore '{' and '}' characters if there */
+
+  assert(*x == '$');
+  x++;
+  assert(*x == '{');
+  x++;
+  *(yytext + yyleng - 1) = '\0';
+
+  /* Find separator symbol */
+  
+  for (y=x ; *y ; y++) {
+      if (*y == '-' || 
+          *y == '+' ||
+          *y == '?' ||
+          *y == '#' ||
+          *y == '%' ||
+          *y == '/') {
+          break;
+      }
+      if ((*y == '=') ||
+              ((*y == ':') &&
+               (*(y+1) == '='))) {
+          is_read_write = 1;
+          break;
+      }
+      if (*y == ':') {
+          break;
+      }
   }
+  *y = 0;
 
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 (current_function[0] == '\0') ? NULL : current_function,
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 "UNDECLARED",
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_READ);
+  sn_highlight(SN_HIGH_VAR_GLOBAL,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
 
-  assert(result == 0);
-
+  emit_var_access(x, SN_REF_READ);
+  if (is_read_write) {
+    emit_var_access(x, SN_REF_WRITE);
+  }
   sn_advance_column(yyleng);
 }
 
 <INITIAL,FUNCTION>{symbol}= {
   char * x = (char *) yytext;
   char * y;
-  int ref_from_scope_type;
   
   matched_pattern("{symbol}=", yytext);
 
@@ -250,26 +303,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
       }
   }
 
-  if (current_function[0] == '\0') {
-    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
-
-  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 (current_function[0] == '\0') ? NULL : current_function,
-                 NULL,
-                 NULL,
-                 x, /* refsymbol */
-                 "UNDECLARED",
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_WRITE);
-
-  assert(result == 0);
+  emit_var_access(x, SN_REF_WRITE);
   sn_advance_column(yyleng);
 }
 
@@ -415,6 +449,31 @@ void dump_function_definition() {
     assert(result == 0);
 
     current_function[0] = '\0';
+}
+
+void emit_var_access(char * varname, int acc) {
+  int ref_from_scope_type;
+
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_GLOB_VAR,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 NULL,
+                 (current_function[0] == '\0') ? NULL : current_function,
+                 NULL,
+                 NULL,
+                 varname, /* refsymbol */
+                 "UNDECLARED",
+                 sn_current_file(),
+                 sn_line(),
+                 acc);
+
+  assert(result == 0);
 }
 
 /* Helper method that will print matches as they are made */

@@ -67,6 +67,99 @@ ${var}
 } {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
 }
 
+tcltest::test var-4.3 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var-default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.4 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:-default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.5 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var+default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.6 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:+default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.7 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var?error}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.8 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:?error}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.9 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var#sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.10 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var##sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.11 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var%sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.12 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var%%sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.13 { var read xref for string length operation } {
+    browse_xref [save_file f.m4 {
+${#var}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.14 { var read/write xref } {
+    browse_xref [save_file f.m4 {
+${var=default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.15 { var read/write xref } {
+    browse_xref [save_file f.m4 {
+${var:=default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
 tcltest::test var-5.0 { var read xref in macro } {
     browse_xref [save_file f.m4 {
 AC_DEFUN([MACRO], $var)
@@ -398,13 +491,61 @@ ${var}
 }]
 } {1 gv 2.0 2.6}
 
-tcltest::test highlight-3.0 { highlight function xref } {
+tcltest::test highlight-3.0 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${#VAR}
+}]
+} {1 gv 2.3 2.6}
+
+tcltest::test highlight-3.1 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR+set}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.2 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:=set}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.3 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR#}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.4 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR##/*/}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.5 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:11}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.6 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:11}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.7 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR/word/sub}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-4.0 { highlight function xref } {
     browse_highlights [save_file f.m4 {
 foo();
 }]
 } {1 fu 2.0 2.3}
 
-tcltest::test highlight-3.1 { highlight function keyword } {
+tcltest::test highlight-4.1 { highlight function keyword } {
     browse_highlights [save_file f.m4 {
 AC_DEFUN([MACRO], [])
 }]

@@ -1,6 +1,16 @@
 2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Move xref generation into
+	the emit_var_access function. Add rules to match
+	special variable syntax like ${VAR-default},
+	${#VAR}, and a host of others.
+	* tests/parsers/m4.test: Add xref and highlight
+	tests for special variable syntax.
+
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
 	* parsers/m4/m4browser.l: Highlight the
 	AC_DEFUN part of a macro declaration as
 	a keyword, since it is not treated as
