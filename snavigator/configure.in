@@ -499,9 +499,9 @@ fi
 AC_SUBST(SN_GUI_DIR)
 
 if test x${exec_prefix} = xNONE; then
-  SN_SDK_EXEC_PREFIX=${prefix}/share/sdk
+  SN_SDK_EXEC_PREFIX='${prefix}/share/sdk'
 else
-  SN_SDK_EXEC_PREFIX=${exec_prefix}/sdk
+  SN_SDK_EXEC_PREFIX='${exec_prefix}/sdk'
 fi
 AC_SUBST(SN_SDK_EXEC_PREFIX)
 
