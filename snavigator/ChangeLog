@@ -1,5 +1,26 @@
 2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/editorpane.tcl (UpdateHighlights): Comment
+	out code that checks in the database for a
+	highlight file. This code worked on the
+	assumption that the parser would write an
+	entry into the database for a highlight file.
+	Since the parsers were modified so that they
+	don't write into the database, this is never
+	going to happen. Don't pass the -n option
+	to the highlighter, the c/c++ parser is
+	the only one that requires a -n option and
+	it has an in-process syntax highlighter already.
+	Rework the logic when a file has been modified
+	outside the IDE so that we save the data
+	into another file before invoking the highligher.
+	This avoids code that would exec the parser
+	and have it read the editor contents from
+	stdin. The reading from stdin logic in the
+	parsers is really flakey and should be removed.
+
+2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/editorpane.tcl (UpdateHighlights): Add
 	-delete flag to Sn_Highlight_Text calls so
 	that existing text tags get deleted before

@@ -3278,14 +3278,20 @@ itcl::class Editor& {
 	    }
 	}
 
-	if {[::info commands paf_db_f] != ""} {
-	    set highfile [paf_db_f get \
-	        -key -col {0 2} $itk_option(-filename)]
-	} else {
-	    set highfile ""
-	}
+        # Checking the database for a highlight file is commented
+        # out since the parsers should never write into the database
+        # directly. If in the future we can pass the -h flag to a
+        # normal parse operation, we could revisit this issue.
 
-	set grp [lindex ${highfile} 0]
+	#if {[::info commands paf_db_f] != ""} {
+	#    set highfile [paf_db_f get \
+	#        -key -col {0 2} $itk_option(-filename)]
+	#} else {
+	#    set highfile ""
+	#}
+        #
+	#set grp [lindex ${highfile} 0]
+        set grp [sn_get_file_type $itk_option(-filename)]
 
 	if {[lsearch \
 	    -exact $sn_options(sys,builtin-highlighting) ${grp}] != -1} {
@@ -3299,21 +3305,21 @@ itcl::class Editor& {
 	    return
 	}
 
-	set highfile [lindex ${highfile} 1]
+	#set highfile [lindex ${highfile} 1]
 
 	#verify if the file is modified (modified status)
 	set mod [is_fileModified $itk_option(-filename)]
 
-	if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
-	    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
-	    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
-		bgerror ${err}
-	    }
-	    if {$sn_options(def,edit-xref-highlight)} {
-		catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
-	    }
-	    return
-	}
+	#if {!${mod} && ${highfile} != "" && [file exists ${highfile}]} {
+	#    sn_log "Highlighting \"$itk_option(-filename)\": ${highfile}"
+	#    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
+	#	bgerror ${err}
+	#    }
+	#    if {$sn_options(def,edit-xref-highlight)} {
+	#	catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
+	#    }
+	#    return
+	#}
 
 	set highcmd [sn_highlight_browser $itk_option(-filename) "h"]
 	if {${highcmd} == ""} {
@@ -3321,54 +3327,56 @@ itcl::class Editor& {
 	    return
 	}
 
-	set outf [sn_tmpFileName]
-	lappend highcmd \
-	    -s ${outf}
+        set files_to_delete [list]
 
-	if {!${mod}} {
-	    lappend highcmd \
-	        -n $sn_options(db_files_prefix) $itk_option(-filename)
+	set outf [sn_tmpFileName]
+	lappend highcmd -s $outf
+        lappend files_to_delete $outf
+
+	if {${mod}} {
+	    # FIXME: It is not really clear why this logic is needed
+            # since we only highlight when opening, saving, or reverting.
+
+            # When a file has been modified outside the IDE, save
+            # the editor contents into a tmp file and highlight that.
+            set savef [sn_tmpFileName]
+            set fd [open ${savef} w]
+            fconfigure ${fd} \
+                -encoding $sn_options(def,system-encoding) \
+                -blocking 0
+            puts -nonewline ${fd} [$itk_component(editor) get 1.0 end]
+            close ${fd}
+
+            lappend highcmd $savef
+            lappend files_to_delete $savef
+        } else {
+	    lappend highcmd $itk_option(-filename)
 	}
 
 	sn_log "Highlighter: ${highcmd}"
 
-	if {${mod}} {
-	    $itk_component(editor) tag remove key 1.0 end
-	    $itk_component(editor) tag remove rem 1.0 end
-	    if {[catch {eval exec \
-		    -- ${highcmd} << {[$editor get 1.0 end]}} err]} {
+	if {[catch {eval exec -- ${highcmd}} err]} {
 		bgerror ${err}
 		return
-	    }
-	} else {
-	    if {[catch {eval exec \
-		    -- ${highcmd}} err]} {
-		bgerror ${err}
-		return
-	    }
 	}
 
-	if {!${mod}} {
-	    set highfile [paf_db_f get \
-	        -key -col [list 2] $itk_option(-filename)]
-	} else {
-	    set highfile ${outf}
-	}
+	#if {!${mod}} {
+	#    set highfile [paf_db_f get \
+	#        -key -col [list 2] $itk_option(-filename)]
+	#} else {
+	#    set highfile ${outf}
+	#}
 
-	# It might happen, that the highlighting filename could
-	# not be inserted into thet database.
-	if {${highfile} == ""} {
-	    set fd [open ${outf}]
-	    fconfigure ${fd} \
-	        -encoding $sn_options(def,system-encoding) \
-	        -blocking 0
-	    set highfile [gets ${fd}]
-	    close ${fd}
-	    # Lets mark it for delete.
-	    lappend outf ${highfile}
-	}
+	set fd [open ${outf}]
+	fconfigure ${fd} \
+	    -encoding $sn_options(def,system-encoding) \
+	    -blocking 0
+	set highfile [gets ${fd}]
+	close ${fd}
 
-	sn_log "Loading: ${highfile}"
+        lappend files_to_delete ${highfile}
+
+	sn_log "Loading Highlight File: ${highfile}"
 
 	if {${highfile} != ""} {
 	    if {[catch {Sn_Highlight_Text -delete $itk_component(editor) ${highfile}} err]} {
@@ -3380,13 +3388,14 @@ itcl::class Editor& {
 	    catch {Sn_Highlight_Text $itk_component(editor) $itk_option(-filename).HIGH}
 	}
 
-	if {[info exists env(TMP)] && [file dirname ${highfile}] != $env(TMP)} {
-	    lappend outf ${highfile}
-	}
+	#if {[info exists env(TMP)] && [file dirname ${highfile}] != $env(TMP)} {
+	#    lappend files_to_delete ${highfile}
+	#}
 
 	if {!${sn_debug}} {
-	    file delete \
-	        -- ${outf}
+            foreach file $files_to_delete {
+                file delete -- $file
+            }
 	}
     }
 
