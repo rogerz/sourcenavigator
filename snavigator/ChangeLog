@@ -1,5 +1,10 @@
 2002-11-14  Mo DeJong  <mdejong@uncounted.org>
 
+	* misc/compat.h: Include winsock.h when compiling
+	with mingw to avoid u_char related errors.
+
+2002-11-14  Mo DeJong  <mdejong@uncounted.org>
+
 	* gui/editorpane.tcl (toolbar_grep): Invoke search_grep
 	method from the multiwin parent instead of broken
 	sn_grep procedure. [Bug 610449]

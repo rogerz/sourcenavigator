@@ -17,6 +17,10 @@
 # define F_OK 0
 #endif
 
+#if defined(__MINGW32__)
+# include <winsock.h> /* Defines u_int and friends under Win32. */
+#endif
+
 #ifndef HAVE_UCHAR_T
 typedef unsigned char	u_char;		/* 4.[34]BSD names. */
 typedef unsigned int	u_int;
