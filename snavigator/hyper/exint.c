@@ -135,7 +135,7 @@ Sn_Highlight_Text(ClientData clientData,
     FILE           *fp;
     char	buf[1000];
     int             tag_name_idx, begpos_idx, endpos_idx;
-    char           *highlight;
+    char           *text_widget;
     int             wargc = 0;
     char           *wargv[10];
     register TkText *textPtr = NULL;
@@ -162,39 +162,43 @@ Sn_Highlight_Text(ClientData clientData,
 	return TCL_ERROR;
     }
 
-    highlight = argv[1];
-    if (!Tcl_GetCommandInfo(interp, highlight, &infoPtr))
+    text_widget = argv[1];
+    if (!Tcl_GetCommandInfo(interp, text_widget, &infoPtr))
     {
 	Tcl_AppendResult(interp, "wrong # \"",
-	    highlight, "\" does not exist", (char *) NULL);
+	    text_widget, "\" does not exist", (char *) NULL);
 	return TCL_ERROR;
     }
 
-    Tcl_UtfToExternalDString(NULL, argv[2], -1, &argString);
-    filename = Tcl_DStringValue(&argString);
+    if (del && strlen(argv[2]) == 0) {
+        filename = NULL;
+    } else {
+        Tcl_UtfToExternalDString(NULL, argv[2], -1, &argString);
+        filename = Tcl_DStringValue(&argString);
 
-    fp = fopen(filename,"r");
-    if (fp == NULL)
-    {
-	Tcl_AppendResult(interp, "could not open ", filename,
-	    " ", Tcl_PosixError(interp), (char *) NULL);
+        fp = fopen(filename,"r");
+        if (fp == NULL)
+        {
+	    Tcl_AppendResult(interp, "could not open ", filename,
+	        " ", Tcl_PosixError(interp), (char *) NULL);
 
-	return TCL_ERROR;
+	    return TCL_ERROR;
+        }
+        Tcl_DStringFree(&argString);
     }
-    Tcl_DStringFree(&argString);
 
     textPtr = (TkText *)infoPtr.clientData;
     if (del)
     {
 	wargc = 0;
-	wargv[wargc++] = highlight;
+	wargv[wargc++] = text_widget;
 	wargv[wargc++] = "tag";
 	wargv[wargc++] = "names";
 	tag_cou = TkTextTagCmd(textPtr, interp, wargc, wargv);
     }
 
     wargc = 0;
-    wargv[wargc++] = highlight;
+    wargv[wargc++] = text_widget;
     wargv[wargc++] = "tag";
     wargv[wargc++] = "remove";
     tag_name_idx   = wargc++;
@@ -216,6 +220,10 @@ Sn_Highlight_Text(ClientData clientData,
 	ckfree ((char *)tags);
     }
     Tcl_ResetResult(interp);
+
+    if (del && (filename == NULL)) {
+        return TCL_OK;
+    }
 
     for (wargv[2] = "add"; fgets(buf, sizeof(buf), fp); )
     {

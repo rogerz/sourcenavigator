@@ -1,5 +1,22 @@
 2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* gui/editorpane.tcl (UpdateHighlights):
+	Delete all the tags in the editor when a file
+	that has no built-in highlighter and no browser
+	based highlighter is saved. The symbols parsed
+	by the browser are highlighted, but the one
+	from the previous save were not getting deleted.
+	A call to Sn_Highlight_Text with the -delete
+	flag and an empty file argument is made to
+	implement this change.
+	* hyper/exint.c (Sn_Highlight_Text): Rename
+	highlight local var to text_widget to avoid
+	confusion. If an empty file name is passed
+	and the -delete flag is given, then just
+	delete the tags in the text widget and return.
+
+2003-06-02  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/common/parser.c (put_symbol): Convert
 	a newline in the symbol_name to 0xFF to avoid
 	printing a newline in the output.

@@ -3323,6 +3323,11 @@ itcl::class Editor& {
 
 	set highcmd [sn_highlight_browser $itk_option(-filename) "h"]
 	if {${highcmd} == ""} {
+            # When the source code browser does not support highlighting
+            # the symbols parsed from the file are still highlighted, so
+            # just delete any tags currently in the editor.
+	    Sn_Highlight_Text -delete $itk_component(editor) ""
+
 	    sn_log "Empty highlighter command for \"$itk_option(-filename)\""
 	    return
 	}
