@@ -73,6 +73,7 @@ typedef enum {
     GLOBAL_KEYWORD, /* The keyword "global" */
     INCLUDE_KEYWORD, /* The keyword "include" */
 
+    VDOUBLE_QUOTED_STRING, /* "I am a $variable string" */
     DOUBLE_QUOTED_STRING, /* "I am a double quoted string" */
     SINGLE_QUOTED_STRING,  /* 'I am a double quoted string' */
 
@@ -82,8 +83,9 @@ typedef enum {
 } TokenType;
 
 typedef enum {
-    WRITE,
-    READWRITE
+    VAR_READ,
+    VAR_WRITE,
+    VAR_READWRITE
 } VarAccess;
 
 typedef struct Token {
@@ -93,6 +95,7 @@ typedef struct Token {
     int start_column;
     long end_line;
     int end_column;
+    struct Token* vars; /* for variables embedded in a DOUBLE_QUOTED_STRING token */
     struct Token* next;
 } Token;
 
@@ -163,6 +166,9 @@ static YY_BUFFER_STATE original_buffer;
 
 static char* heredoc_id = (char *) NULL; /* End marker for a heredoc string */
 
+static Token* embedded_dq_string_vars_head = NULL;
+static Token* embedded_dq_string_vars_tail = NULL;
+
 #if MATCH_DUMP
 static void matched_pattern(char * pattern, char * text);
 #endif
@@ -181,6 +187,20 @@ void append_token(TokenType type,
                   int start_column,
                   long end_line,
                   int end_column);
+
+void append_dqstring_var_token(char* var,
+                           long start_line,
+                           int start_column,
+                           long end_line,
+                           int end_column);
+
+void append_dqstring_token(char* strval,
+                           long start_line,
+                           int start_column,
+                           long end_line,
+                           int end_column);
+
+void emit_var_access_for_dqstring(Token* tok);
 
 char * TokenTypeToString(Token *tok);
 
@@ -228,8 +248,8 @@ keywords	("and"|"or"|"xor")
 
 dq-string-token  "DOUBLE_QUOTED_STRING"
 sq-string-token  "SINGLE_QUOTED_STRING"
-string-token  ({dq-string-token}|{sq-string-token})
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
+include-string-token ({dq-string-token}|{sq-string-token})
 
 function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
@@ -237,7 +257,7 @@ function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 
 
-var-array-index-token ("SOMEWORD"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
+var-array-index-token ("SOMEWORD"|"VDOUBLE_QUOTED_STRING"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
 var-array-empty-tokens "OPEN_BRACKET CLOSE_BRACKET"
 var-array-index-tokens "OPEN_BRACKET "{var-array-index-token}" CLOSE_BRACKET")
 var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
@@ -497,7 +517,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   matched_pattern("\\\"\\\"", yytext);
 #endif
   /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
-  append_token(DOUBLE_QUOTED_STRING, "",
+  append_dqstring_token("",
           sn_line(),
           sn_column(),
           sn_line(),
@@ -516,12 +536,14 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   LongStringInit(&mode_buff,0);
   mode_start_line = sn_line();
   mode_start_column = sn_column();
+  embedded_dq_string_vars_head = NULL;
+  embedded_dq_string_vars_tail = NULL;
   sn_advance_column(yyleng);
   BEGIN(DQSTRING);
 }
 
 <DQSTRING>{
-  [^\"\n\\]* {
+  [^\"\n\\\$]* {
     #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*", yytext);
     #endif
@@ -533,7 +555,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         yytext, yyleng );
     sn_advance_column(yyleng);
   }
-  [^\"\n\\]*\n {
+  [^\"\n\\\$]*\n {
     #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
     #endif
@@ -546,9 +568,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_line();
     sn_reset_column();
   }
-  (\\\")+[^\"/\n\\]* {
+  (\\\")+ {
     #if MATCH_DUMP
-    matched_pattern("\\\"+[^\\\"/\\n\\\\]*", yytext);
+    matched_pattern("(\\\")+", yytext);
     #endif
 
     #if DQSTRING_DUMP
@@ -559,9 +581,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         yytext, yyleng );
     sn_advance_column(yyleng);
   }
-  (\\\")+[^\"\n\\]*\n {
+  \\ {
     #if MATCH_DUMP
-    matched_pattern("\\\"+[^\\\"\\n\\\\]*\\n", yytext);
+    matched_pattern("\\", yytext);
     #endif
 
     #if DQSTRING_DUMP
@@ -570,16 +592,29 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
     mode_buff.append( &mode_buff,
         yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
+    sn_advance_column(yyleng);
   }
-  \\ {
+  \${varname} {
     #if MATCH_DUMP
-    matched_pattern("\\\\", yytext);
+    matched_pattern("${varname}", yytext);
     #endif
 
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
+    sn_advance_column(1);
+
+    append_dqstring_var_token(yytext+1,
+            sn_line(),
+            sn_column(),
+            sn_line(),
+            sn_column() + yyleng - 1);
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+
+    sn_advance_column(yyleng-1);
+  }
+  \$ {
+    #if MATCH_DUMP
+    matched_pattern("$", yytext);
     #endif
 
     mode_buff.append( &mode_buff,
@@ -746,40 +781,108 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   LongStringInit(&mode_buff,0);
 
+  embedded_dq_string_vars_head = NULL;
+  embedded_dq_string_vars_tail = NULL;
+
   sn_advance_line();
   sn_reset_column();
 
   BEGIN(HDSTRING);
 }
 
-<HDSTRING>.*\n {
-#if MATCH_DUMP
-  matched_pattern(".*\n", yytext);
-#endif
+<HDSTRING>{
+  ^{heredoc-id};\n {
+    #if MATCH_DUMP
+    matched_pattern("^{heredoc-id};\n", yytext);
+    #endif
 
-  #if HDSTRING_DUMP
-  fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
-  #endif
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
+    #endif
 
-  if (strcmp(yytext, heredoc_id) == 0) {
-  #if HDSTRING_DUMP
-      fprintf(stderr, "hdstring end matched\n");
-  #endif
+    if (strcmp(yytext, heredoc_id) == 0) {
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring end matched\n");
+        #endif
 
-      sn_advance_column(yyleng-2); /* advance to ; */
-      emit_hdstring();
-      sn_advance_line();
-      sn_reset_column();
-      BEGIN(PHP);
-  } else {
-      if (mode_buff.len != 0) {
-          /* Only append newline if more than one line in heredoc */
-          mode_buff.append( &mode_buff, "\n", 1 );
-      }
-      mode_buff.append( &mode_buff, yytext, yyleng-1 );
-      sn_advance_line();
-      sn_reset_column();
+        sn_advance_column(yyleng-2); /* advance to ; */
+        emit_hdstring();
+        sn_advance_line();
+        sn_reset_column();
+        BEGIN(PHP);
+    } else {
+        mode_buff.append( &mode_buff, yytext, yyleng );
+    }
   }
+  [^\$\n]+ {
+    #if MATCH_DUMP
+    matched_pattern("[^;$\n]+", yytext);
+    #endif
+
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring(2) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+
+    sn_advance_column(yyleng);
+  }
+  [^\$\n]*\n {
+    #if MATCH_DUMP
+    matched_pattern("[^;$\n]*\n", yytext);
+    #endif
+
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring(3) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+
+    sn_advance_line();
+    sn_reset_column();
+  }
+  \${varname} {
+    #if MATCH_DUMP
+    matched_pattern("${varname}", yytext);
+    #endif
+
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring(4) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    sn_advance_column(1);
+
+    append_dqstring_var_token(yytext+1,
+            sn_line(),
+            sn_column(),
+            sn_line(),
+            sn_column() + yyleng - 1);
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+
+    sn_advance_column(yyleng-1);
+  }
+  \$ {
+    #if MATCH_DUMP
+    matched_pattern("$", yytext);
+    #endif
+
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring(5) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  /* Uncomment the next rule if you want to check to make sure
+   * the above rules cover all possible input. A warning
+   * "rule cannot be matched" should be printed by flex.
+   */
+  /*. {}*/
 }
 
 <PHP>"(" {
@@ -1169,7 +1272,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* CLOSE_BRACE */
 }
 
-<TOKEN>("INCLUDE_KEYWORD "{string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{string-token}" CLOSE_PAREN SEMICOLON") {
+<TOKEN>("INCLUDE_KEYWORD "{include-string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{include-string-token}" CLOSE_PAREN SEMICOLON") {
   int line_start, line_end, column_start, column_end;
   char * filename;
 
@@ -1298,7 +1401,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
 #endif
 
-  emit_var_access(tokens_head, WRITE);
+  emit_var_access(tokens_head, VAR_WRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1318,7 +1421,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
 #endif
 
-  emit_var_access(tokens_head, READWRITE);
+  emit_var_access(tokens_head, VAR_READWRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1342,7 +1445,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     free_head_token(); /* INCREMENT_OPERATORS */
   }
 
-  emit_var_access(tokens_head, READWRITE);
+  emit_var_access(tokens_head, VAR_READWRITE);
 
   /* Eat the variable token and send the rest of the tokens
    * back for further matching. This is needed so that
@@ -1361,72 +1464,22 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"VARIABLE" {
-  char* varname = tokens_head->strval;
-  SearchEntry entry;
-  int line_num = tokens_head->start_line;
-  int ref_to_symbol_type, ref_to_symbol_scope;
-
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable read at token %d\n", token_index);
 #endif
 
-  /*
-   * If we are not in a function or the variable is in the
-   * function's global table then it is a global.
-   */
-
-  entry.key = varname;
-  entry.key_len = -1;
-
-  if ((current_function == NULL) ||
-      (global_var_table &&
-        (global_var_table->search( &global_var_table, entry ) != NULL))) {
-    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "global var \"%s\"\n", varname);
-#endif
-  } else {
-    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "local var \"%s\"\n", varname);
-#endif
-  }
-
-  /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
-   * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
-   * needs to be an option to pass when not in a function. Currently,
-   * we just pretend to be in a function named "GLOBAL".
-   */
-
-  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
-      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
-          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
-
-    result = sn_insert_xref(ref_to_symbol_type,
-                 SN_FUNC_DEF, /* Not really in a function definition */
-                 ref_to_symbol_scope,
-                 NULL,
-                 (current_function == NULL) ? "GLOBAL" : current_function,
-                 NULL,
-                 NULL,
-                 varname,
-                 NULL,
-                 sn_current_file(),
-                 line_num,
-                 SN_REF_READ);
-
-    assert(result == 0);
-  }
-
-  /* FIXME: Could add {var-array-tokens} to this match but it is not
-   * clear why this is needed right now. Also, a handy way to count
-   * the number of tokens in a match (given yytext) would make it
-   * easy to know the number of tokens to free.
-   */
+  emit_var_access(tokens_head, VAR_READ);
 
   free_head_token(); /* VARIABLE */
+}
+
+<TOKEN>"VDOUBLE_QUOTED_STRING" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
+#endif
+
+  emit_var_access_for_dqstring(tokens_head);
+  free_head_token(); /* VDOUBLE_QUOTED_STRING */
 }
 
 <TOKEN>{token} {
@@ -1530,12 +1583,13 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         if (tok->strval == NULL) {
             fprintf(dump_tokens, " \"\"");
         } else {
-            /* Print a newline as \n and a double quote character as \" */
             char *x;
             fprintf(dump_tokens, " \"");
             for (x=tok->strval; *x; x++) {
                 if (*x == '\n') {
                     fprintf(dump_tokens, "\\n");
+                } else if (*x == '\\') {
+                    fprintf(dump_tokens, "\\\\");
                 } else if (*x == '\"') {
                     fprintf(dump_tokens, "\\\"");
                 } else {
@@ -1566,12 +1620,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   if (highlight_file) {
     enum sn_highlights type;
+    int vdq_string;
 
     for (tok = tokens_head ; tok ; tok = tok->next) {
+        vdq_string = 0;
         switch (tok->type) {
             case COMMENT:
                 type = SN_HIGH_COMMENT;
                 break;
+            case VDOUBLE_QUOTED_STRING:
+                vdq_string = 1;
             case DOUBLE_QUOTED_STRING:
             case SINGLE_QUOTED_STRING:
                 type = SN_HIGH_STRING;
@@ -1584,6 +1642,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         if (type != 0) {
             sn_highlight(type, tok->start_line, tok->start_column,
                     tok->end_line, tok->end_column);
+        }
+        if (vdq_string != 0) {
+            /* Write out VAR highlight for each embedded var */
         }
     }
 
@@ -1688,7 +1749,69 @@ void FreeToken(Token* tok) {
     if (tok->strval != NULL) {
         ckfree(tok->strval);
     }
+    if (tok->vars != NULL) {
+        Token* tmp, *next;
+        for (tmp=tok->vars; tmp; ) {
+            next = tmp->next;
+            FreeToken(tmp);
+            tmp = next;
+        }
+    }
     ckfree((char *) tok);
+}
+
+void append_dqstring_var_token(char* var,
+                           long start_line,
+                           int start_column,
+                           long end_line,
+                           int end_column) {
+    Token* tok;
+    tok = (Token*) ckalloc(sizeof(Token));
+    tok->type = VARIABLE;
+    tok->strval = SN_StrDup(var);
+
+    tok->start_line = start_line;
+    tok->start_column = start_column;
+
+    tok->end_line = end_line;
+    tok->end_column = end_column;
+    tok->vars = NULL;
+    tok->next = NULL;
+
+    /* append to var token list */
+
+    if (embedded_dq_string_vars_tail == NULL) {
+        embedded_dq_string_vars_head = embedded_dq_string_vars_tail = tok;
+    } else {
+        embedded_dq_string_vars_tail->next = tok;
+        embedded_dq_string_vars_tail = tok;
+    }
+}
+
+void append_dqstring_token(char* strval,
+                           long start_line,
+                           int start_column,
+                           long end_line,
+                           int end_column) {
+    if (embedded_dq_string_vars_head != NULL) {
+        append_token(VDOUBLE_QUOTED_STRING,
+                     strval,
+                     start_line,
+                     start_column,
+                     end_line,
+                     end_column);
+
+        tokens_tail->vars = embedded_dq_string_vars_head;
+        embedded_dq_string_vars_head = NULL;
+        embedded_dq_string_vars_tail = NULL;
+    } else {
+        append_token(DOUBLE_QUOTED_STRING,
+                     strval,
+                     start_line,
+                     start_column,
+                     end_line,
+                     end_column);
+    }
 }
 
 void append_token(TokenType type,
@@ -1710,6 +1833,7 @@ void append_token(TokenType type,
 
     tok->end_line = end_line;
     tok->end_column = end_column;
+    tok->vars = NULL;
     tok->next = NULL;
 
     /* append to token list */
@@ -1777,6 +1901,8 @@ char * TokenTypeToString(Token *tok) {
             return "GLOBAL_KEYWORD";
         case INCLUDE_KEYWORD:
             return "INCLUDE_KEYWORD";
+        case VDOUBLE_QUOTED_STRING:
+            return "VDOUBLE_QUOTED_STRING";
         case DOUBLE_QUOTED_STRING:
             return "DOUBLE_QUOTED_STRING";
         case SINGLE_QUOTED_STRING:
@@ -1858,12 +1984,14 @@ void emit_comment() {
 
 void emit_dqstring() {
     char* dqstring = mode_buff.buf;
+    char * x;
+    char * var;
 
 #if DQSTRING_DUMP
     fprintf(stderr, "creating dqstring token \"%s\"\n", dqstring);
 #endif
 
-    append_token(DOUBLE_QUOTED_STRING, dqstring,
+    append_dqstring_token(dqstring,
             mode_start_line,
             mode_start_column,
             sn_line(),
@@ -1891,13 +2019,19 @@ void emit_sqstring() {
 void emit_hdstring() {
     char* hdstring = mode_buff.buf;
 
+    /* Nuke trailing newline in hdstring */
+    char * end = hdstring + strlen(hdstring) - 1;
+    if (*end == '\n') {
+        *end = '\0';
+    }
+
 #if HDSTRING_DUMP
     fprintf(stderr, "creating hdstring token \"%s\"\n", hdstring);
 #endif
 
     /* sn_column() should be at the ; at the end of a heredoc */
 
-    append_token(DOUBLE_QUOTED_STRING, hdstring,
+    append_dqstring_token(hdstring,
             mode_start_line,
             mode_start_column,
             sn_line(),
@@ -1946,6 +2080,17 @@ void emit_html() {
     }
 }
 
+/* Write out read xrefs for variables embedded in this
+ * VDOUBLE_QUOTED_STRING token
+ */
+
+void emit_var_access_for_dqstring(Token* tok) {
+  assert(tok->vars);
+  for (tok = tok->vars; tok; tok = tok->next) {
+      emit_var_access(tok, VAR_READ);
+  }
+}
+
 /* This method is invoked when a var write operation is matched.
  * in the token stream.
  */
@@ -1987,16 +2132,19 @@ void emit_var_access(Token *tok, VarAccess acc) {
 #endif
   }
 
-  /* I think setting a global variable should emit
+  if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
+    /*
+     I think setting a global variable should emit
      a symbol declaration. I am not really
      sure if we should emit just one symbol
      declaration, or multiple ones. Multiple
      ones breaks xref but it does present
      the symbol multiple times in the
      file's symbol list which would be
-     nice if it worked correctly */
+     nice if it worked correctly.
+     */
 
-  result = sn_insert_symbol(symbol_def_type,
+    result = sn_insert_symbol(symbol_def_type,
                             NULL,
 			    varname,
 			    sn_current_file(),
@@ -2010,7 +2158,8 @@ void emit_var_access(Token *tok, VarAccess acc) {
 			    line_start, column_start,
 			    line_end, column_end
                             );
-  assert(result == 0);
+    assert(result == 0);
+  }
 
   /* FIXME: The second argument to sn_insert_xref must be one of SN_FUNC_DEF,
    * SN_MBR_FUNC_DEF, or SN_SUBR_DEF. This is too restrictive, there
@@ -2022,10 +2171,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
       ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
           ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
 
-    /* Generate just a write xref or a read/write pair of xrefs */
-    /* FIXME: Why can't we pass an option like SN_REF_READWRITE ? */
-
-    if (acc == READWRITE) {
+    if ((acc == VAR_READ) || (acc == VAR_READWRITE)) {
         result = sn_insert_xref(ref_to_symbol_type,
                  SN_FUNC_DEF, /* Not really in a function definition */
                  ref_to_symbol_scope,
@@ -2042,7 +2188,8 @@ void emit_var_access(Token *tok, VarAccess acc) {
         assert(result == 0);
     }
 
-    result = sn_insert_xref(ref_to_symbol_type,
+    if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
+        result = sn_insert_xref(ref_to_symbol_type,
                  SN_FUNC_DEF, /* Not really in a function definition */
                  ref_to_symbol_scope,
                  NULL,
@@ -2055,7 +2202,8 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  line_start,
                  SN_REF_WRITE);
 
-    assert(result == 0);
+        assert(result == 0);
+    }
   }
 }
 

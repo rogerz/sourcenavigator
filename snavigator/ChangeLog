@@ -1,3 +1,35 @@
+2003-06-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add a new token
+	VDOUBLE_QUOTED_STRING to support strings
+	that contain a variable. Add read access
+	support to the emit_var_access method.
+	Add a vars member to the Token structure
+	so that a list of embedded variable token
+	can be attached to a string token. Include
+	VDOUBLE_QUOTED_STRING in the array construct
+	matching pattern. Add some helper methods
+	to make dealing with double quoted string
+	tokens easier. Rework the DQSTRING mode so
+	that variables embedded in a double quoted
+	string are recognized. Rework heredoc mode
+	rules so that embedded variables are recognized.
+	Escape the escape char again when dumping
+	token descriptions. Free embedded variable
+	tokens in the FreeToken method.
+	* tests/parsers/php.test: Add additional
+	double quoted string token parsing tests.
+	Use xref tests instead of variable define
+	tests when possible since the var define
+	on var write feature will likely be removed.
+	Test for double quoted string as array index.
+	Add tests for double quoted strings with
+	embedded variables. Check that a quoted
+	string containing a variable is not seen
+	as a valid include file since it depends
+	on runtime interpretation of a variable.
+
 2003-06-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
