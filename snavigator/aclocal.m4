@@ -113,21 +113,21 @@ AC_DEFUN(CY_AC_BERKELEY_DB,
   if test x$result = xyes
   then
     case $type in
-	int8_t)		AC_DEFINE(HAVE_INT8_T)
+	int8_t)		AC_DEFINE(HAVE_INT8_T,,[Define if int8_t and friends are in <sys/types.h>.])
 			;;
-	u_int8_t)	AC_DEFINE(HAVE_UINT8_T)
+	u_int8_t)	AC_DEFINE(HAVE_UINT8_T,,[Define if u_int8_t is defined in <sys/types.h>.])
 			;;
-	int16_t)	AC_DEFINE(HAVE_INT16_T)
+	int16_t)	AC_DEFINE(HAVE_INT16_T,,[Define if int16_t and friends are in <sys/types.h>.])
 			;;
-	u_int16_t)	AC_DEFINE(HAVE_UINT16_T)
+	u_int16_t)	AC_DEFINE(HAVE_UINT16_T,,[Define if u_int16_t and friends are in <sys/types.h>.])
 			;;
-	int32_t)	AC_DEFINE(HAVE_INT32_T)
+	int32_t)	AC_DEFINE(HAVE_INT32_T,,[Define if int32_t and friends are in <sys/types.h>.])
 			;;
-	u_int32_t)	AC_DEFINE(HAVE_UINT32_T)
+	u_int32_t)	AC_DEFINE(HAVE_UINT32_T,,[Define if u_int32_t and friends are in <sys/types.h>.])
 			;;
-	int64_t)	AC_DEFINE(HAVE_INT64_T)
+	int64_t)	AC_DEFINE(HAVE_INT64_T,,[Define if int64_t and friends are in <sys/types.h>.])
 			;;
-	u_int64_t)	AC_DEFINE(HAVE_UINT64_T)
+	u_int64_t)	AC_DEFINE(HAVE_UINT64_T,,[Define if u_int64_t and friends are in <sys/types.h>.])
 			;;
 	*)		AC_MSG_ERROR([this should never happen])
 			;;

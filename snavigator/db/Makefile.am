@@ -24,12 +24,12 @@ AUTOMAKE_OPTIONS = cygnus
 SUBDIRS = ../parsers/cpp/cpplib
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper \
-		-I$(DB_INCDIR) $(TCLHDIR)
+		-I$(DB_INCDIR) $(TCLHDIR) -I$(top_srcdir)/misc
 
 if MSVC
 LINK = link -DEBUG $(CFLAGS) $(LDFLAGS) -OUT:$@
 else
-CFLAGS += -Wall
+CFLAGS = -Wall
 LINK = $(PURIFY) $(CC) $(CFLAGS) $(LDFLAGS) -o $@
 endif
 

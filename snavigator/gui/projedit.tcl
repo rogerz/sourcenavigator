@@ -355,10 +355,10 @@ itcl::class Project& {
           -underline [get_indep Pos Exit] -command " sn_exit "
 
         ##Windows
-        AddWindowsMenu ${m} ${this}
+        AddWindowsMenu ${m} $itk_component(hull)
 
         ##Help
-        AddHelpMenu ${m} ${this}
+        AddHelpMenu ${m} $itk_component(hull)
 
         ${this} configure -menu ${m}
     }
@@ -992,10 +992,35 @@ itcl::class Project& {
     proc can_create_project {prjdir prjname} {
         set name [sn_build_project_filename ${prjdir} ${prjname}]
 
-        if {[sn_is_project_busy ${name} in remuser remhost port] != ""} {
-            sn_error_dialog [format [get_indep String PafProjBusy] ${name}\
-              "${remuser}@${remhost}"]
-            return 0
+        set ret [sn_is_project_busy ${name} in remuser remhost port pid]
+        switch -- ${ret} {
+            "othersystem" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedOtherSystem] \
+                        ${remuser} ${name} ${remhost}]
+                    return 0
+            }
+            "thisprocess" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisProcess] \
+                        ${name}]
+                    return 0
+            }
+            "thisuser" {
+                    sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisUser] \
+                        ${name} ${pid}] 
+                    return 0
+            }
+            "thissystem" {
+	            sn_error_dialog [format \
+                        [get_indep String ProjAlreadyOpenedThisSystem] \
+                        ${remuser} ${name} ${pid}]
+                    return 0
+            }
+            "error" {
+                    return 0
+            }
         }
 
         if {[file exists ${name}]} {
@@ -1114,11 +1139,11 @@ itcl::class Project& {
 
     protected variable last_dir [pwd]
 
-    method add_files_cb {args} {
+    method add_files_cb {files} {
         global sn_options tcl_platform
 
         #undo history
-        if {${args} != ""} {
+        if {[llength $files] > 0} {
             set Undo_ProjectFiles ${ProjectFiles}
             set Undo_HiddenFiles ${HiddenFiles}
             set Undo_files_to_unload ${files_to_unload}
@@ -1126,40 +1151,57 @@ itcl::class Project& {
 
         #don't differ between upper/lower case on windows
         if {$tcl_platform(platform) == "windows"} {
-            set flag -nocase
+            set nocase 1
         } else {
-            set flag -exact
+            set nocase 0
         }
-        foreach f ${args} {
+
+        # Create map for ProjectFiles, HiddenFiles, and files_to_unload
+
+        foreach lname {ProjectFiles HiddenFiles files_to_unload} {
+            if {$nocase} {
+                foreach file [set $lname] {
+                    set ${lname}_MAP([string tolower $file]) {}
+                }
+            } else {
+                if {[llength [set $lname]] > 0} {
+                    set al [join [set $lname] " {} "]
+                    lappend al {}
+                    array set ${lname}_MAP $al
+                    unset al
+                }
+            }
+        }
+
+        foreach f ${files} {
             if {! $itk_option(-new_project)} {
                 set f [sn_truncate_path $sn_options(sys,project-dir) ${f}]
             }
-            if {[lsearch ${flag} ${ProjectFiles} ${f}] != -1} {
-                #file availiable
-                continue
+            if {$nocase} {
+                set nc [string tolower $f]
+            } else {
+                set nc $f
             }
-            if {[lsearch ${flag} ${HiddenFiles} ${f}] != -1} {
-                #file availiable
-                continue
-            }
-            if {[lsearch ${flag} ${files_to_unload} ${f}] != -1} {
-                #file availiable
+            if {[info exists ProjectFiles_MAP($nc)] ||
+                [info exists HiddenFiles_MAP($nc)] ||
+                [info exists files_to_unload_MAP($nc)]} {
                 continue
             }
             lappend ProjectFiles ${f}
+            set ProjectFiles_MAP($nc) {}
             set can_apply 1
         }
 
         #store last directory
-        set last_dir [file dirname [lindex ${args} 0]]
+        set last_dir [file dirname [lindex ${files} 0]]
 
         control_buttons
         Display_ProjectFiles
     }
     method add_files {} {
         Editor&::FileDialog $itk_component(hull) -title [get_indep String Open]\
-          -script "eval ${this} add_files_cb" -prefix add_files\
-          -save_open open -multiple 1 -initialdir ${last_dir}
+          -script "${this} add_files_cb" -prefix add_files\
+          -save_open open -initialdir ${last_dir}
     }
 
     method add_dir_cb {dir} {
@@ -1190,7 +1232,7 @@ itcl::class Project& {
           -1 -ignore $sn_options(def,ignored-directories)\
           -updatecommand "sn_glob_updatecommand" ${dir}]
 
-        eval add_files_cb ${fil_list}
+        add_files_cb ${fil_list}
 
         #hide scanning window
         hide_loading_message
@@ -1232,7 +1274,7 @@ itcl::class Project& {
             lappend nfiles ${f}
         }
 
-        eval add_files_cb ${nfiles}
+        add_files_cb ${nfiles}
     }
 
     method add_from_project {} {
@@ -1306,7 +1348,6 @@ itcl::class Project& {
         }
     }
 
-    protected variable topw "."
     protected variable Toolbar ""
     protected variable Statusbar ""
     protected variable Reuse ""

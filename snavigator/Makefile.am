@@ -22,15 +22,19 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
-snavigator bitmaps install
+snavigator bitmaps
 
 install-exec-local:
 	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
-if BUILD_GREP
-	$(INSTALL_PROGRAM) ../grep/src/grep$(EXEEXT) $(bindir)
-endif
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)
 	(cd ../itcl; $(MAKE) install-libraries)
 	(cd ../libgui; $(MAKE) install)
+
+rootdir = $(prefix)
+
+root_DATA = README.TXT INSTALL.TXT
+
+EXTRA_DIST = $(DATA)
+

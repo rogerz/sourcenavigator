@@ -46,7 +46,8 @@ INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) \
 $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win \
 $(TCLHDIR) $(TK_XINCLUDES) \
 -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic \
--I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src
+-I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src \
+-I$(top_srcdir)/misc
 
 sdkincludedir = $(datadir)/sdk/include
 sdkinclude_HEADERS = sn.h 
@@ -59,15 +60,15 @@ c_high.c py_high.c ch_high.c j_high.c highlight.c tclfileutils.c
 
 hyper_LDFLAGS = $(WIN32LDAPP)
 if MSVC
-hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ $(LibUtilsDir)/libutils.a \
+hyper_LDADD = @HYPER_MAIN@ $(LibUtilsDir)/libutils.a \
 $(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a \
 $(top_builddir)/../libgui/src/libgui.a \
 $(WIN32LIBS) \
 $(ITCL_BUILD_LIB_SPEC) $(ITK_BUILD_LIB_SPEC) \
 $(TIX_BUILD_LIB_SPEC) \
-$(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC) $(TCL_BUILD_STUB_LIB_SPEC)
+$(TK_BUILD_LIB_SPEC) $(TCL_BUILD_LIB_SPEC)
 else
-hyper_LDADD = @HYPER_CONSOLE@ @HYPER_MAIN@ -L$(LibUtilsDir) -lutils \
+hyper_LDADD = @HYPER_MAIN@ -L$(LibUtilsDir) -lutils \
 -L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb \
 -L$(top_builddir)/../libgui/src -lgui \
 $(WIN32LIBS) \

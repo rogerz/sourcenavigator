@@ -158,7 +158,7 @@ slow:			if ((t->bt_rfp = fdopen(rfd, "r")) == NULL)
 				goto einval;
 			}
 
-			if (fstat(rfd, &sb))
+			if (fstat(rfd, (struct stat *) &sb))
 				goto err;
 			/*
 			 * Kluge -- we'd like to test to see if the file is too

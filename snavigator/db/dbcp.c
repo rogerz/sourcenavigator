@@ -34,7 +34,10 @@ MA 02111-1307, USA.
 #include <limits.h>
 #include <string.h>
 
+#include <compat.h>
+
 #include "db.h"
+
 
 int
 main(int argc, char *argv[])

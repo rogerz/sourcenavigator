@@ -77,6 +77,7 @@ MA 02111-1307, USA.
 #   define CONST
 #endif
 
+#undef EXTERN
 #ifdef __cplusplus
 #   define EXTERN extern "C"
 #else

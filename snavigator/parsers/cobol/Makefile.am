@@ -23,8 +23,9 @@ AUTOMAKE_OPTIONS = cygnus
 
 bin_PROGRAMS = obrowser
 
-INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc/libutils \
-	-I$(top_srcdir)/parsers/libjcreuse $(TCLHDIR)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
+	-I$(top_srcdir)/misc/libutils -I$(top_srcdir)/parsers/libjcreuse \
+	$(TCLHDIR)
 
 obrowser_SOURCES = Scanner.c cobol.h deftab.h keywords.h statdef.h \
                    Scanner.h copy_pars.c def.h Source.h Source.c copy_pars.h \
