@@ -271,7 +271,7 @@ install-binaries: binaries install-lib-binaries install-bin-binaries
 # This rule installs platform-independent files, such as header files.
 #========================================================================
 
-install-libraries: libraries
+install-libraries: libraries installdirs
 	$(mkinstalldirs) $(includedir)
 	@echo "Installing header files in $(includedir)"
 	@for i in $(GENERIC_HDRS) ; do \
