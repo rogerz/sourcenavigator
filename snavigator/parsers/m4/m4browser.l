@@ -71,7 +71,7 @@ yywrap()
 
 ws		[ \t]
 symbol		[a-zA-Z0-9_]+
-quoted-symbol	\[?{symbol}\]?
+quoted-symbol	({symbol}|\[{symbol}\])
 func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
 %%
@@ -83,7 +83,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
 \n		{ sn_advance_line(); sn_reset_column(); }
 
-{ws}*(#|dnl).*\n {
+{ws}*(#|dnl{ws}).*\n {
   sn_advance_line();
   sn_reset_column();
 }

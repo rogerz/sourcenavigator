@@ -1,3 +1,17 @@
+2003-05-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Fix quoted-symbol
+	define so that "SYMBOL" and "[SYMBOL]" are
+	accepted but "[SYMBOL" and "SYMBOL]" are not.
+	Fix dnl comment rule so that a line that
+	begins with "dnl TEXT" is accepted but
+	"dnlTEXT" is not.
+	* tests/parsers/m4.test: Add basic set of
+	regression tests for the m4 parser.
+	* tests/parsers/testutil.tcl: Add helper
+	utils that are used to test parsers.
+
 2003-05-05  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/tools.tcl (select_file): When a
