@@ -140,6 +140,8 @@ static YY_BUFFER_STATE original_buffer;
 
 static void matched_pattern(char * pattern, char * text);
 
+static char* modestring();
+
 static void FreeGlobalEntry(SearchEntry *entry);
 
 Token* AllocToken();
@@ -149,6 +151,7 @@ void add_token(Token* tok);
 char * TokenTypeToString(Token *tok);
 
 void emit_function_declaration();
+void emit_comment();
 
 int yywrap() { return 1; }
 
@@ -290,37 +293,22 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     sn_reset_column();
   }
   "*"+"/" {
-    char * comment;
-
     matched_pattern("\\*+/", yytext);
 
     /* Include multiple '*' characters in the comment */
     if (yyleng > 2) {
-        comment = (char *) yytext + yyleng - 1;
+        int to_append = yyleng;
+        char *comment = (char *) yytext + yyleng - 1;
         assert(*comment == '/');
         comment--;
         assert(*comment == '*');
         *comment = '0';
-        yyleng -= 2;
+        to_append -= 2;
         cbuff.append( &cbuff,
-            yytext, yyleng );
+            yytext, to_append );
     }
 
-    comment = cbuff.buf;
-
-    #if COMMENT_DUMP
-    fprintf(stderr, "eating comment \"%s\"\n", comment);
-    #endif
-
-    sn_insert_comment(
-        /* classname */ NULL,
-        /* funcname */ NULL,
-        sn_current_file(),
-        comment,
-        cbuff_start_line,
-        cbuff_start_column);
-
-    cbuff.free(&cbuff);
+    emit_comment();
     sn_advance_column(yyleng);
     BEGIN(PHP);
   }
@@ -958,7 +946,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
     yyterminate();
 }
 
-<INITIAL,PHP><<EOF>> {
+<INITIAL,PHP,COMMENT><<EOF>> {
   LongString token_buffer;
   char *base;
   int i;
@@ -968,8 +956,15 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 
 #ifdef TOKEN_DEBUG
   tokenout = fopen("tokens.out", "a");
-  fprintf(tokenout, "reached EOF in lex input buffer\n");
+  fprintf(tokenout, "reached EOF in lex input buffer in mode %s\n", modestring());
 #endif
+
+  /* See if we ran off the end of the lex input buffer in a special mode */
+  switch (YY_START) {
+    case COMMENT:
+      emit_comment();
+      break;
+  }
 
   /* If no tokens were generated, then quit now */
   if (tokens_head == NULL) {
@@ -1025,21 +1020,32 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("VARIABLE ")+)
 
 %%
 
+/* Return a string that describes the current mode */
+
+static char* modestring() {
+    char* mode = "UNKNOWN";
+
+    switch (YY_START) {
+        case INITIAL:
+            mode = "INITIAL";
+            break;
+        case PHP:
+            mode = "PHP";
+            break;
+        case COMMENT:
+            mode = "COMMENT";
+            break;
+        case TOKEN:
+            mode = "TOKEN";
+            break;
+    }
+    return mode;
+}
+
 /* Helper method that will print matches as they are made */
 
 static void matched_pattern(char * pattern, char * text) {
-    char * mode = "UNKNOWN";
-    int imode = YY_START;
-
-    if (imode == INITIAL) {
-        mode = "INITIAL";
-    } else if (imode == PHP) {
-        mode = "PHP";
-    } else if (imode == COMMENT) {
-        mode = "COMMENT";
-    } else if (imode == TOKEN) {
-        mode = "TOKEN";
-    }
+    char * mode = modestring();
 
     if (0) {
     fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
@@ -1164,6 +1170,24 @@ void emit_function_declaration() {
       global_var_table->destroy( &global_var_table );
       global_var_table = NULL;
     }
+}
+
+void emit_comment() {
+    char* comment = cbuff.buf;
+
+#if COMMENT_DUMP
+    fprintf(stderr, "emit comment \"%s\"\n", comment);
+#endif
+
+    sn_insert_comment(
+        /* classname */ NULL,
+        /* funcname */ NULL,
+        sn_current_file(),
+        comment,
+        cbuff_start_line,
+        cbuff_start_column);
+
+    cbuff.free(&cbuff);
 }
   
 void

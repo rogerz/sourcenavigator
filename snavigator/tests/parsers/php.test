@@ -444,6 +444,23 @@ tcltest::test comment-1.11 { can't leave comment mode with ?> } {
 } {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;Comment ?>ONE<? Text
 }
 
+tcltest::test comment-1.12 { hit EOF in comment } {
+    php_parse [save_file f.php {
+<?
+/*
+?>
+}]
+} {Status: Parsing: f.php
+PAF_FILE;f.php;php<>
+}
+
+tcltest::test comment-1.13 { hit EOF in comment } {
+    php_parse_comment_xref [save_file f.php {
+<?
+/*
+?>
+}]
+} [format {PAF_COMMENT_DEF;f.php<>000003.002<>#<>#;%s%s%s%s} \xFF ?> \xFF \n]
 
 
 tcltest::test comment-2.0 { function with a comment } {
