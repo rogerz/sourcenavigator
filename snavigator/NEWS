@@ -4,10 +4,11 @@
   support switching between notebook tabs
 - Fix project editor window centering bug
 - Add very simple "example" browser to
-  demonstrate how to create a new parser.
+  demonstrate how to create a new parser
 - Add new snpdbg parser debug utility to
   enable testing of parsers outside of
-  Source-Navigator.
+  Source-Navigator
+- Add DESTDIR support
 
 5.2b1:
 - GNU tar no longer required to run `make install`

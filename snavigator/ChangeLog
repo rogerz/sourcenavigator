@@ -1,3 +1,9 @@
+2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* Makefile.am:
+	* Makefile.in:
+	* NEWS: Add DESTDIR support.
+
 2004-01-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* gui/snpdbg.tcl (snpdbg_parse_files): Rework

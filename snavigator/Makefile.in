@@ -491,7 +491,7 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 install-exec-local:
-	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
+	$(INSTALL) $(top_srcdir)/../COPYING $(DESTDIR)$(prefix)
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)

@@ -25,7 +25,7 @@ SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
 snavigator bitmaps
 
 install-exec-local:
-	$(INSTALL) $(top_srcdir)/../COPYING $(prefix)
+	$(INSTALL) $(top_srcdir)/../COPYING $(DESTDIR)$(prefix)
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)
