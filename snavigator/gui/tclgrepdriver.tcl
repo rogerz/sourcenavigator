@@ -159,7 +159,6 @@ itcl::body sourcenav::TclGrepDriver::processNextIndex { } {
 
 #    sn_log "TclGrepDriver::processNextIndex $currentFileName"
 
-    set currentFileBuffer ""
     set currentFileBytesToRead [file size $currentFileName]
 
     set currentFileFD [open $currentFileName r]
@@ -181,13 +180,18 @@ itcl::body sourcenav::TclGrepDriver::processNextIndex { } {
 itcl::body sourcenav::TclGrepDriver::inputReadyCallback {} {
 #    sn_log "inputReadyCallback: reading $currentFileBytesToRead bytes"
 
-    set buf [read $currentFileFD $currentFileBytesToRead]
-    append currentFileBuffer $buf
-    incr currentFileBytesToRead -[string length $buf]
+    # Getting whole buffer in one read is best, appending can double
+    # the size allocation.
+    if {![info exists currentFileBuffer]} {
+        set currentFileBuffer [read $currentFileFD $currentFileBytesToRead]
+    } else {
+        append currentFileBuffer [read $currentFileFD $currentFileBytesToRead]
+    }
 
 #    sn_log "inputReadyCallback: read [string length $buf] bytes"
 
-    if {$currentFileBytesToRead == 0 || [eof $currentFileFD]} {
+    if {[string length $currentFileBuffer] == $currentFileBytesToRead ||
+            [eof $currentFileFD]} {
         if {[catch {close $currentFileFD} err]} {
             sn_log "error during close : \"$err\""
         }
@@ -203,6 +207,7 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
     set scalevalue $fileListIndex
 
     set results [sourcenav::line_grep $pat $currentFileBuffer $ignorecase]
+    unset currentFileBuffer
     #sourcenav::print_line_grep_results $results
 
     if {[llength $results] > 0} {

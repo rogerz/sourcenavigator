@@ -1,5 +1,17 @@
 2002-06-20  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/tclgrepdriver.tcl (processNextIndex, inputReadyCallback):
+	Unset currentFileBuffer after running the grep to deallocate
+	the buffer instead of setting it to the empty string before
+	running the next grep. Just set the buffer in the fileevent
+	callback instead of appending to an empty variable. This
+	can cut the amount in memory needed in half since it avoids
+	doubling the allocated size in the append command. Check to
+	see if all bytes have been read by checking the size of the
+	buffer instead of decrementing after a read.
+
+2002-06-20  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/tclgrepdriver.tcl (line_grep): Fix search for last
 	character in buffer as well as bad variable access introduced
 	by my last checkin.
