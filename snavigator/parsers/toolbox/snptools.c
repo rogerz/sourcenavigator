@@ -174,12 +174,8 @@ sn_main(int argc, char *argv[], char * group, FILE ** lexstream, int (*lexer)(),
   }
   else
   {
-    /* We provide only highlighting for stdin */
-    if (sn_register_filename(lexstream, (char *) NULL) == 0)
-    {
-      reset();
-      lexer();
-    }
+    sn_error("-y or file name required\n");
+    return(1);
   }
   sn_close();
   return(0);
@@ -424,16 +420,12 @@ sn_close_db()
 int
 sn_register_filename(FILE ** lexstream, char * filename)
 {
-  if (filename)
-  {
     if (*lexstream)
     {
-      *lexstream = freopen(filename, OPEN_MODE, *lexstream);
+      fclose(*lexstream);
     }
-    else
-    {
-      *lexstream = fopen(filename, OPEN_MODE);
-    }
+    
+    *lexstream = fopen(filename, OPEN_MODE);
 
     if (!(*lexstream))
     {
@@ -446,8 +438,7 @@ sn_register_filename(FILE ** lexstream, char * filename)
       put_status_parsing_file(filename);
       put_file(filename, group, NULL);
     }
-  }
-  return(0);
+    return(0);
 }
 
 /*

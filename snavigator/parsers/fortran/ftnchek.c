@@ -239,52 +239,40 @@ log_symbol_filename(FILE *fp, char *fname)
 {
   char	*outfile = NULL;
 
-  if (fname) {
-    if (yyin) {
-      fclose(yyin);
-    }
-    yyin = fopen(fname,"r");
-    if (!yyin) {
-      fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",fname,errno);
-      return 1;
-    }
-  } else {
-    yyin = stdin;
+  if (fname == NULL) {
+    fprintf(stderr, "log_symbol_filename called with NULL filename\n");
+    exit(1);
   }
 
-  if (fname)
+  if (yyin) {
+    fclose(yyin);
+  }
+  yyin = fopen(fname,"r");
+  if (!yyin) {
+    fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",fname,errno);
+    return 1;
+  }
+
+  if (highlight)
     {
-      if (highlight)
-	{
-	  if (hig_fp)
-	    {
-	      fclose(hig_fp);
-	      hig_fp = NULL;
-	    }
+      if (hig_fp)
+        {
+          fclose(hig_fp);
+	  hig_fp = NULL;
+	}
 	
-	  outfile = Paf_tempnam(NULL,"hf");
-	  if (fp)
-	    {
-	      fprintf(fp,"%s\n",outfile);
-	    }
-	  
-	  hig_fp = fopen(outfile,"w+");
-	}
-      put_status_parsing_file(fname);
-    }
-  else
-    {
-      if (highlight)
+	outfile = Paf_tempnam(NULL,"hf");
+	if (fp)
 	{
-	  hig_fp = (fp) ? fp : stdout;
+	  fprintf(fp,"%s\n",outfile);
 	}
+	  
+	hig_fp = fopen(outfile,"w+");
     }
+  put_status_parsing_file(fname); 
   
 #ifndef NO_DATABASE
-  if (fname)
-    {
-      put_file(fname,group,outfile);
-    }
+  put_file(fname,group,outfile);
 #endif
   
   return 0;
@@ -466,16 +454,15 @@ main(int argc, char *argv[])
 		}
 		empty_comments();
 	}
-	else if (highlight && optind == argc)		/* Just highlight */
-	{
-		log_symbol_filename(out_fp,NULL);
-		src_file_in(NULL);
+	else	{
+		fprintf(stderr, "-y or file name required\n");
+		exit(1);
 	}
 
 	if (cross_ref_fp)
 		fclose(cross_ref_fp);
 
-	if (yyin && (yyin != stdin))
+	if (yyin)
 		fclose(yyin);
 
 	if (out_fp)

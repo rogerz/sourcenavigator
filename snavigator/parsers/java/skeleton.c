@@ -64,53 +64,40 @@ log_symbol_filename(FILE *fp, char *fname)
 {
 	char	*outfile = NULL;
 
-	if (fname)
-	{
-		if (yyin)
-			yyin = freopen(fname,OPEN_MODE,yyin);
-		else
-			yyin = fopen(fname,OPEN_MODE);
-		if (!yyin)
-		{
-			fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",
-				fname,errno);
-			fflush(stderr);
-			return 1;
-		}
+        if (fname == NULL) {
+	    fprintf(stderr, "log_symbol_filename called with NULL fname\n");
+	    exit(1);
 	}
-	else
-		yyin = stdin;
 
-	if (fname)
-	{
-		if (highlight)
-		{
-			if (hig_fp)
-			{
-				fclose(hig_fp);
-			}
-
-			outfile = Paf_tempnam(NULL,"hj");
-			if (fp)
-			{
-				fprintf(fp,"%s\n",outfile);
-			}
-
-			hig_fp = fopen(outfile,"w+");
-		}
-		put_status_parsing_file(fname);
-		put_file(fname,group,outfile);
+        if (yyin) {
+	  fclose(yyin);
 	}
-	else
+	
+	yyin = fopen(fname,OPEN_MODE);
+	if (!yyin)
 	{
-		if (highlight)
-		{
-			if (fp)
-				hig_fp = fp;
-			else
-				hig_fp = stdout;
-		}
+		fprintf(stderr, "Error: unable to open file \"%s\",errno: %d\n",
+			fname,errno);
+		return 1;
 	}
+
+	if (highlight)
+	{
+		if (hig_fp)
+		{
+			fclose(hig_fp);
+		}
+
+		outfile = Paf_tempnam(NULL,"hj");
+		if (fp)
+		{
+			fprintf(fp,"%s\n",outfile);
+		}
+
+		hig_fp = fopen(outfile,"w+");
+	}
+	put_status_parsing_file(fname);
+	put_file(fname,group,outfile);
 
 	return 0;
 }
@@ -222,9 +209,9 @@ main(int argc, char *argv[])
 		}
 		else
 		{
-		/* This part is called when a file has been saved, thus
-         * we parse the file and provide highlighting.
-	 	 */
+			/* This part is called when a file has been saved,
+			 * thus we parse the file and provide highlighting.
+			 */
 			fname = argv[optind];
 			if (!log_symbol_filename(out_fp,fname))
 			{
@@ -234,11 +221,8 @@ main(int argc, char *argv[])
 	}
 	else
 	{
-	/* We provide only highlighting for stdin. */
-		if (log_symbol_filename(out_fp,(char *)NULL) == 0)
-		{
-			start_parser(NULL,0,stdout,highlight);
-		}
+		fprintf(stderr, "-y or file name required\n");
+		exit(1);
 	}
 
 	if (yyin)

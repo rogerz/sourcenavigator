@@ -1,5 +1,27 @@
 2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/cobol/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/cpp/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/fortran/ftnchek.c (log_symbol_filename,
+	main):
+	* parsers/java/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/tcl/skeleton.c (log_symbol_filename,
+	main):
+	* parsers/toolbox/snptools.c (sn_register_filename,
+	sn_main):
+	Rework parser command line logic so that either a
+	-y option or a file name is required. The parsers
+	no longer try to read from stdin since the
+	functionality is no longer needed by the IDE
+	and results is pointless complexity. Rework
+	the log_symbol_filename implementations so
+	they more closely match each other.
+
+2003-05-09  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/fortran/forlex.c (IncludeFileStack,
 	push_include_file, pop_include_file, advance):
 	Rename input_fd to yyin.
