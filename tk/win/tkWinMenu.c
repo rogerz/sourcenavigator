@@ -1462,10 +1462,10 @@ DrawWindowsSystemBitmap(display, drawable, gc, rectPtr, bitmapID, alignFlags)
     GetObject(bitmap, sizeof(BITMAP), &bm);
     ptSize.x = bm.bmWidth;
     ptSize.y = bm.bmHeight;
-    DPtoLP(hdc, &ptSize, 1);
+    DPtoLP(scratchDC, &ptSize, 1);
 
     ptOrg.y = ptOrg.x = 0;
-    DPtoLP(hdc, &ptOrg, 1);
+    DPtoLP(scratchDC, &ptOrg, 1);
 
     if (alignFlags & ALIGN_BITMAP_TOP) {
 	topOffset = 0;
