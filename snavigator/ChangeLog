@@ -1,3 +1,9 @@
+2002-11-14  Mo DeJong  <mdejong@uncounted.org>
+
+	* gui/editorpane.tcl (toolbar_grep): Invoke search_grep
+	method from the multiwin parent instead of broken
+	sn_grep procedure. [Bug 610449]
+
 2002-11-13  Mo DeJong  <mdejong@uncounted.org>
 
 	* db/dbutils.c: Use Win32 version of kill()
