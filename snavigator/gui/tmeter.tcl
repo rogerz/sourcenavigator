@@ -393,7 +393,9 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
 
         set older_sn_loading_message_title ${title}
     } else {
-        raise ${w}
+        # Don't call raise here since it can cause a two second
+        # timeout with some broken window managers (kde, gnome).
+        #raise ${w}
     }
 
     if {${older_sn_loading_message_title} != ${title}} {
