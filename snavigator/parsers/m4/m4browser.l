@@ -96,6 +96,7 @@ void dump_function_definition();
 void matched_pattern(char * pattern, char * text);
 
 static void emit_var_access(char * varname, int acc);
+static void emit_func_call(char * funcname);
 
 %}
 
@@ -105,6 +106,7 @@ ws		[ \t]
 symbol		[a-zA-Z_][a-zA-Z0-9_]+
 quoted-symbol	({symbol}|\[{symbol}\])
 func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
+macro-name	[A-Z][A-Z0-9_]+
 
 %%
 
@@ -385,7 +387,6 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 <INITIAL,FUNCTION>{symbol}\( {
   char * x = (char *) yytext;
   char * y;
-  int ref_from_scope_type;
 
   matched_pattern("{symbol}(", yytext);
 
@@ -396,36 +397,66 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
       }
   }
 
-  /* x is now the name of the macro to be invoked */
-
-  if (current_function[0] == '\0') {
-    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
-
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 NULL,
-                 (current_function[0] == '\0') ? NULL : current_function,
-                 NULL,
-                 NULL,
-                 x,
-                 NULL, 
-                 sn_current_file(),
-                 sn_line(),
-                 SN_REF_PASS);
-
-  assert(result == 0);
+  emit_func_call(x);
 
   sn_highlight(SN_HIGH_FUNCTION,
-      sn_line(), sn_column(),
-      sn_line(), sn_column() + yyleng - 1);
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
 
   sn_advance_column(yyleng);
 
   current_function_paren_count++;
+}
+
+<INITIAL,FUNCTION>^{macro-name}$ {
+  matched_pattern("^{macro-name}$", yytext);
+
+  emit_func_call(yytext);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column(),
+      sn_line(), sn_column() + yyleng);
+
+  sn_advance_column(yyleng);
+}
+
+<INITIAL,FUNCTION>"AC_REQUIRE(["{symbol}"])" {
+  char * x = (char *) yytext;
+  char * y;
+
+  matched_pattern("AC_REQUIRE([{symbol}])", yytext);
+
+  /* Insert a function call xref for the AC_REQUIRE call */
+
+  for (y=x; *y ; y++) {
+      if (*y == '(') {
+          *y = 0;
+          break;
+      }
+  }
+
+  emit_func_call(x);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  /* Insert a function call xref for the macro argument */
+
+  for (y+=2, x=y; *y ; y++) {
+      if (*y == ']') {
+          *y = 0;
+          break;
+      }
+  }
+
+  emit_func_call(x);
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      sn_line(), sn_column() + (x - yytext),
+      sn_line(), sn_column() + (y - yytext));
+
+  sn_advance_column(yyleng);
 }
 
 %%
@@ -472,6 +503,31 @@ void emit_var_access(char * varname, int acc) {
                  sn_current_file(),
                  sn_line(),
                  acc);
+
+  assert(result == 0);
+}
+
+void emit_func_call(char * funcname) {
+  int ref_from_scope_type;
+
+  if (current_function[0] == '\0') {
+    ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_FUNCTION,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 NULL,
+                 (current_function[0] == '\0') ? NULL : current_function,
+                 NULL,
+                 NULL,
+                 funcname,
+                 NULL, 
+                 sn_current_file(),
+                 sn_line(),
+                 SN_REF_PASS);
 
   assert(result == 0);
 }

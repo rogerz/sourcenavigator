@@ -1,6 +1,19 @@
 2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Move function call
+	xref code into a helper function. Recognize
+	an plain line of text that contains only the
+	letters A-Z or the _ character as a macro
+	invocation. Recognize a macro name passed
+	to AC_REQUIRE as a function invocation.
+	* tests/parsers/m4.test: Add test cases for
+	macro names passed to AC_REQUIRE and an
+	line that contains only a macro invocation.
+
+2003-07-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
 	* parsers/m4/m4browser.l: Move xref generation into
 	the emit_var_access function. Add rules to match
 	special variable syntax like ${VAR-default},
