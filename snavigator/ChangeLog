@@ -1,5 +1,13 @@
 2003-11-30  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* demo/Makefile.am: 2nd attempt at removing
+	GNU tar dep. It seems Solaris tar does not
+	like 2 sets of command line flags, so combine
+	then into one set of options.
+	* demo/Makefile.in: Regen.
+
+2003-11-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	Remove dep on GNU tar for `make install`. [Bug 807708]
 
 	* INSTALL.TXT: Remove note about GNU tar since

@@ -10,7 +10,7 @@ install-data-local:
 	  echo "copying $$p to $(DESTDIR)$(demosdir)" ; \
 	  ( \
 	  cd $(srcdir) ; \
-	  $(TAR) -ch$(OLDTARFLAG) -f /tmp/$$p.tar-$$$$ $$p ; \
+	  $(TAR) -ch$(OLDTARFLAG)f /tmp/$$p.tar-$$$$ $$p ; \
 	  cp /tmp/$$p.tar-$$$$ $(DESTDIR)$(demosdir)/$$p.tar-$$$$ ; \
 	  rm /tmp/$$p.tar-$$$$ ; \
 	  cd $(DESTDIR)$(demosdir) ; \
