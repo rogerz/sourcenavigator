@@ -4512,7 +4512,31 @@ TkCopyAndGlobalEval(interp, script)
     Tcl_DStringFree(&buffer);
     return code;
 }
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TkpGetBindingXEvent --
+ *
+ *	This procedure returns the XEvent associated with the
+ *	currently executing binding. This procedure can only
+ *	be invoked while a binding is executing.
+ *
+ * Results:
+ *	Returns a pointer to the XEvent that caused the
+ *	current binding code to be run.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
 
-
-
-
+XEvent *
+TkpGetBindingXEvent(interp)
+    Tcl_Interp *interp;			/* Interpreter. */
+{
+    TkWindow *winPtr = (TkWindow *) Tk_MainWindow(interp);
+    BindingTable *bindPtr = (BindingTable *) winPtr->mainPtr->bindingTable;
+    return &(bindPtr->eventRing[bindPtr->curEvent]);
+}

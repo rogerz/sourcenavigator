@@ -1086,6 +1086,8 @@ EXTERN char *		TkTilePrintProc _ANSI_ARGS_((
 			    ClientData clientData, Tk_Window tkwin,
 			    char *widgRec, int offset,
 			    Tcl_FreeProc **freeProcPtr));
+EXTERN XEvent *		TkpGetBindingXEvent _ANSI_ARGS_((
+			    Tcl_Interp *interp));
 
 /* 
  * Unsupported commands.
