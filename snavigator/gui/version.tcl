@@ -716,8 +716,8 @@ proc sn_rcs_lockunlockdel {cmd marked_files {bsy 1}} {
 
     Selector& ${w}.syms -contents ${revisions} -height 5 -width 10 -sort ""
 
-    ${w}.syms bind <ButtonRelease-1> "set ${w}.ctrl.vers \[${w}.syms marked\]"
-    ${w}.syms bind <Double-1> "${lock} invoke"
+    ${w}.syms treebind <ButtonRelease-1> "set ${w}.ctrl.vers \[${w}.syms marked\]"
+    ${w}.syms treebind <Double-1> "${lock} invoke"
     pack ${w}.syms -side left -fill both -expand y
 
     ${w} move_to_mouse
