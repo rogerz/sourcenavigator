@@ -182,7 +182,7 @@ noinst_LIBRARIES = libcommon.a
 
 INCLUDES = $(WINFLAGS) $(TCLHDIR) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper
 
-libcommon_a_SOURCES = lexinput.h lexinput.c parser.h parser.c
+libcommon_a_SOURCES = lexinput.h lexinput.c parser.h parser.c srchtbl.h srchtbl.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
@@ -194,7 +194,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libcommon_a_LIBADD = 
-libcommon_a_OBJECTS =  lexinput.$(OBJEXT) parser.$(OBJEXT)
+libcommon_a_OBJECTS =  lexinput.$(OBJEXT) parser.$(OBJEXT) \
+srchtbl.$(OBJEXT)
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)

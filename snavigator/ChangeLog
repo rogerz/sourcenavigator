@@ -1,5 +1,22 @@
 2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* db/Makefile.am: Remove ref to srchtbl.c.
+	* db/Makefile.in: Regen.
+	* db/srchtbl.c:
+	* db/srchtbl.h: Moved to parsers/common
+	so that each of the browsers have
+	access to a hashtable implementation.
+	* parsers/common/Makefile.am: Add srchtbl.c
+	and srchtbl.h to libcommon_a_SOURCES.
+	* parsers/common/Makefile.in: Regen.
+	* parsers/common/srchtbl.c:
+	* parsers/common/srchtbl.h: Moved from db.
+	* parsers/cpp/cpplib/Makefile.am: Add
+	parsers/common to list of include directories.
+	* parsers/cpp/cpplib/Makefile.in: Regen.
+
+2003-05-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/toolbox/snptools.c (sn_getopt,
 	sn_process_options): Set the report_local_vars
 	global variable defined in the libcommon.a
