@@ -1,3 +1,13 @@
+2002-04-25  Mo DeJong  <supermo@bayarea.net>
+
+	* configure: Regen.
+	* configure.in: Check for Windows compiler type
+	using AC_EGREP_CPP instead of looking at the
+	value of ac_cv_prog_CC. Call AC_PROG_CPP before
+	hand since this is required for Autoconf 2.13.
+	* parsers/assembly/ppc601-eabi/configure: Regen.
+	* parsers/assembly/ppc601-eabi/configure.in: Ditto.
+
 2002-04-24  Mo DeJong  <supermo@bayarea.net>
 
 	* configure: Regen.

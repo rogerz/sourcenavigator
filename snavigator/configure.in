@@ -131,8 +131,28 @@ AC_SUBST(ASSEMBLER_DIRS)
 
 # Check for compiler
 AC_PROG_CC
+AC_PROG_CPP
 
-if test x$ac_cv_prog_CC != xcl; then
+AC_CACHE_CHECK([for cygwin32], ide_cv_os_cygwin32,
+[AC_EGREP_CPP(lose, [
+#ifdef __CYGWIN32__
+lose
+#endif],[ide_cv_os_cygwin32=yes],[ide_cv_os_cygwin32=no])])
+
+AC_CACHE_CHECK([for Microsoft Visual C++], sn_cv_os_msvc,
+[AC_EGREP_CPP(coool, [
+#ifdef _MSC_VER
+coool
+#endif],[sn_cv_os_msvc=yes],[sn_cv_os_msvc=no])])
+
+AC_CACHE_CHECK([for Mingw32], sn_cv_os_mingw32,
+[AC_EGREP_CPP(coool, [
+#ifdef __MINGW32__
+coool
+#endif],[sn_cv_os_mingw32=yes],[sn_cv_os_mingw32=no])])
+
+if test x$ide_cv_os_cygwin32 = xyes ||
+       test x$sn_cv_os_mingw32 = xyes ; then
    HYPER_CFLAGS="-Wall -fwritable-strings"
 fi
 AC_SUBST(HYPER_CFLAGS) 
@@ -260,25 +280,23 @@ dnl If we have random, assumes we have srandom.  If we have drand48,
 dnl assume we have srand48.  If we have rand, assume we have srand.
 AC_CHECK_FUNCS(random drand48 rand, break)
 
-# In the cygwin32 environment, we need some additional flags and
+# In the Windows environment, we need some additional flags and
 # libraries.
-AC_CACHE_CHECK([for cygwin32], ide_cv_os_cygwin32,
-[AC_EGREP_CPP(lose, [
-#ifdef __CYGWIN32__
-lose
-#endif],[ide_cv_os_cygwin32=yes],[ide_cv_os_cygwin32=no])])
+
 if test x$ide_cv_os_cygwin32 = xyes; then
   WINFLAGS="-D_WINDOWS=1 -DWIN32"
   WIN32LIBS="-lcomdlg32 -ladvapi32 -lshell32 -luser32 -lgdi32"
   WIN32LDAPP="-Wl,--subsystem,windows"
   SNCONFIGDIR="win"
   ac_win_build="yes"
-elif test x$ac_cv_prog_CC = xcl; then
+elif test x$sn_cv_os_msvc = xyes; then
   WINFLAGS="-D_WINDOWS=1 -DWIN32 -D__MSVC__ -DWINNT -FI\$(top_srcdir)/../db/PORT/win32/NTunixstubs.h -I\$(top_srcdir)/../db/PORT/win32/include"
   WIN32LIBS="comdlg32.lib advapi32.lib shell32.lib user32.lib gdi32.lib"
   WIN32LDAPP="-subsystem:windows -entry:WinMainCRTStartup"
   SNCONFIGDIR="win"
   ac_win_build="yes"
+elif test x$sn_cv_os_mingw32 = xyes; then
+  # FIXME: Add mingw flags
 else
   WINFLAGS=
   WIN32LIBS=
@@ -291,7 +309,7 @@ AC_SUBST(WINFLAGS)
 AC_SUBST(WIN32LIBS)
 AC_SUBST(WIN32LDAPP)
 AM_CONDITIONAL(WINDOWS, test x$ac_win_build = xyes)
-AM_CONDITIONAL(MSVC, test x$ac_cv_prog_CC = xcl)
+AM_CONDITIONAL(MSVC, test x$sn_cv_os_msvc = xyes)
 
 dnl Check for -lsocket and -lnsl.  This is copied from Tcl.
 AC_CACHE_CHECK([for socket libraries], tcl_cv_lib_sockets,
