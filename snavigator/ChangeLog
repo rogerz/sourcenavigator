@@ -1,3 +1,10 @@
+2004-01-08  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/snpdbg.tcl (snpdbg_parse_files): Rework
+	the exec of cbrowser2 so that it works properly
+	under Windows. Also, remove the .exe extension
+	from the output printed to the files tab.
+
 2004-01-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* configure.in: Update version number to 5.2b2.

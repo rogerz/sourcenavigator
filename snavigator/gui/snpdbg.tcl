@@ -224,7 +224,7 @@ proc snpdbg_parse_files { files } {
         set rname [file tail $file]
         set type [sn_get_file_type $file]
         set brow_cmd $Parser_Info(${type},BROW)
-        set brow_tail [file tail $brow_cmd]
+        set brow_tail [file rootname [file tail $brow_cmd]]
 
         set xref ${rname}_xref
         set browser_output ${rname}_${brow_tail}
@@ -315,8 +315,10 @@ proc snpdbg_parse_files { files } {
 
         # Invoke cbrowser2 if needed to process the xref output
         if {$cbrowser_xref} {
+            # Convert .../cbrowser to  .../cbrowser2
             set cbr2_cmd $Parser_Info(${type},BROW)
-            append cbr2_cmd "2"
+            set dirname [file dirname $cbr2_cmd]
+            set cbr2_cmd [file join $dirname cbrowser2]
             set cbr2_cmd [list $cbr2_cmd]
 
             set macroflag $Parser_Info(${type},MACRO)
@@ -388,7 +390,10 @@ proc snpdbg_parse_files { files } {
 
     if {$crashing_files != {}} {
         $files_text insert end "Crash detected in $crashing_files\n"
+    } else {
+        $files_text insert end "No Parser Crashes detected\n"
     }
+    $files_text see end
 }
 
 proc snpdbg_run { cmd {redir {}} } {
