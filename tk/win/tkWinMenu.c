@@ -2049,6 +2049,8 @@ DrawMenuEntryLabel(
     int activeBorderWidth;
     int leftEdge;
     int imageHeight, imageWidth;
+    int imageXOffset = 0, imageYOffset = 0;
+    int textXOffset = 0, textYOffset = 0;
 
     Tk_GetPixelsFromObj(menuPtr->interp, menuPtr->tkwin,
 	    menuPtr->activeBorderWidthPtr, &activeBorderWidth);

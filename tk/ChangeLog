@@ -1,5 +1,11 @@
 2003-12-28  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* win/tkWinMenu.c (DrawMenuEntryLabel): Fix
+	missing variable error created by the last
+	checkin on 2003-12-27.
+
+2003-12-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* win/tkWinMenu.c (ReconfigureWindowsMenu,
 	TkWinHandleMenuEvent, DrawMenuEntryArrow):
 	Fix drawing of a disabled cascade menu
