@@ -3895,7 +3895,8 @@ itcl::class Editor& {
 
     method filter {{all 0}} {
 	if {$itk_option(-symbols) != ""} {
-	    $itk_option(-symbols) configure -contents [read_filetags ${all}]
+	    $itk_option(-symbols) configure -contents \
+	        [lsort -command sn_compare [read_filetags ${all}]]
 	}
     }
 

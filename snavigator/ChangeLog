@@ -1,3 +1,11 @@
+2002-07-30  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/editorpane.tcl (filter): Sort symbols before
+	inserting them into the editor combo box. This
+	reverses an accidental gui change introduced
+	in 5.0 as part of the combo rewrite.
+	[Bug 579570]
+
 2002-07-29  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/mkfilegen.tcl (WriteRuleTarget): Escape
