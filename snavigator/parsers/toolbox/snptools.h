@@ -30,6 +30,7 @@ enum sn_options
   SN_OPT_DROP_USR_HEADERS,
   SN_OPT_DUMP_TOKENS,
   SN_OPT_GROUP,
+  SN_OPT_HIGHLIGHT,
   SN_OPT_INCL_TO_PIPE,
   SN_OPT_INCLUDE_LIST,
   SN_OPT_LISTFILE,
@@ -291,6 +292,15 @@ char * sn_afterlastwspace(char * buf);
  * Search the include path for an include file.
  */
 int sn_find_file(char * filename, char * buf);
+
+/*
+ * Write highlight info to a file that will be read by
+ * the IDE and used to add highlight tags to the editor.
+ */
+
+void sn_highlight(char * ident,
+    long line_start, int column_start,
+    long line_end, int column_end);
 
 #endif /* SNPTOOLS_H */
 

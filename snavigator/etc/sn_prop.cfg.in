@@ -248,7 +248,9 @@ sn_add_parser m4 \
 
 sn_add_parser php \
 	-suffix {*.php} \
-	-brow_cmd $sn_path(bindir)/phpbrowser
+	-brow_cmd $sn_path(bindir)/phpbrowser \
+	-high_cmd $sn_path(bindir)/phpbrowser \
+	-high_switch "-h"
 
 # Files without a parser
 

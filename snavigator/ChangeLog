@@ -1,5 +1,34 @@
 2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* etc/sn_prop.cfg.in: Enable text highlighting
+	for phpbrowser.
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: When the -h option
+	is passed to phpbrowser, emit comment tokens
+	and write highlight info to a file using
+	the new sn_highlight function. Currently,
+	only comments and strings are highlighted.
+	* parsers/toolbox/snptools.c (sn_getopt,
+	sn_process_options, sn_highlight,
+	sn_register_filename, sn_close):
+	Add support for -h command line option.
+	This option will create a highlight file
+	that can be written to using sn_highlight.
+	Pass this highlight file name to put_file
+	and write it to the file name passed in
+	the -s option, if there was one.
+	* parsers/toolbox/snptools.h: Add
+	SN_OPT_HIGHLIGHT and a decl for
+	sn_highlight.
+	* tests/parsers/php.test: Add file
+	highlight tests.
+	* tests/parsers/testutil.tcl (browse_highlights):
+	Add helper function to browse the contents
+	of a highlight file generated with the -h
+	and -s options.
+
+2003-06-06  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: When text that does
 	not match a known pattern is found, emit an

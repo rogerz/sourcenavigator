@@ -103,7 +103,8 @@ typedef struct Token {
 FILE* tokenout = NULL;
 #endif
 
-char * token_dump_file = NULL;
+static char * token_dump_file = NULL;
+static int highlight_file = 0;
 
 Token* tokens_head = NULL;
 Token* tokens_tail = NULL;
@@ -245,6 +246,8 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 %%
     /* Start in HTML mode */
+    highlight_file = (int) sn_getopt(SN_OPT_HIGHLIGHT);
+    token_dump_file = (char *) sn_getopt(SN_OPT_DUMP_TOKENS);
     enter_html_mode();
 
 <PHP>"?>" { /* PHP -> HTML mode */
@@ -371,7 +374,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   /* If dumping tokens, emit a special COMMENT token.
    * Otherwise, insert a comment symbol.
    */
-  if (token_dump_file) {
+  if (highlight_file || token_dump_file) {
     append_token(COMMENT, x,
             sn_line(),
             sn_column() - (x - yytext),
@@ -1556,6 +1559,35 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     yyterminate();
   }
 
+  /*
+   * If the -h and -s command line options were passed,
+   * then dump highlight info to a file.
+   */
+
+  if (highlight_file) {
+
+    for (tok = tokens_head ; tok ; tok = tok->next) {
+        char * tag = NULL;
+        switch (tok->type) {
+            case COMMENT:
+                tag = "rem";
+                break;
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+                tag = "str";
+                break;
+            case HTML:
+                break;
+        }
+        if (tag) {
+            sn_highlight(tag, tok->start_line, tok->start_column,
+                    tok->end_line, tok->end_column);
+        }
+    }
+
+    yyterminate();
+  }
+
   LongStringInit(&token_buffer,0);
 
   /* Print token info to in memory buffer and then reload
@@ -1803,7 +1835,7 @@ void emit_comment() {
   /* If dumping tokens, emit a special COMMENT token.
    * Otherwise, insert a comment symbol.
    */
-  if (token_dump_file) {
+  if (highlight_file || token_dump_file) {
     append_token(COMMENT, comment,
             mode_start_line,
             mode_start_column - 2,
@@ -1885,7 +1917,6 @@ void emit_hdstring() {
  * Should be called in place of BEGIN(HTML_MODE) */
 
 void enter_html_mode() {
-    token_dump_file = (char *) sn_getopt(SN_OPT_DUMP_TOKENS);
     if (token_dump_file) {
       LongStringInit(&mode_buff,0);
       mode_start_line = sn_line();

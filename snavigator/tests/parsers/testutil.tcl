@@ -182,3 +182,24 @@ proc filter_tokens { filters results } {
     }
     return $buff
 }
+
+
+# Dump parser highlight info to a file
+# and then return it. The highlight
+# format is "num tag start end".
+# This method only works for a browser
+# that supports the -h and -s arguments.
+
+proc browse_highlights { fname {options {}} } {
+    file delete hout
+    save_file hout ""
+    lappend options -h -s hout
+    browse $fname $options
+    if {[file size hout] == 0} {
+        error "empty out file"
+    } else {
+        # Get the tmp file name from hout
+        set fname [read_file hout]
+        return [read_file $fname]
+    }
+}

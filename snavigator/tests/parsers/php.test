@@ -172,6 +172,59 @@ $var ~= 1;
 5 SEMICOLON "" 3.9 3.10}
 
 
+# ---------------------------------------------
+# These next tests check the highlighter function
+# of a browser. When invoked with the -h and -s
+# options, a browser will emit a file that
+# contains text tags and file locations that
+# will be used by the editor to highlight text.
+# ---------------------------------------------
+
+tcltest::test highlight-1.0 { highlight } {
+    browse_highlights [save_file f.php {
+<HTML>
+My HTML is $cash=money.
+</HTML>
+}]
+} {}
+
+tcltest::test highlight-1.1 { highlight } {
+    browse_highlights [save_file f.php {
+<?
+// Comment
+?>
+}]
+} {1 rem 3.0 3.10}
+
+
+tcltest::test highlight-1.2 { highlight } {
+    browse_highlights [save_file f.php {
+<?
+"String"
+?>
+}]
+} {1 str 3.0 3.8}
+
+tcltest::test highlight-1.3 { highlight } {
+    browse_highlights [save_file f.php {
+<?
+'String'
+?>
+}]
+} {1 str 3.0 3.8}
+
+tcltest::test highlight-1.4 { highlight } {
+    browse_highlights [save_file f.php {
+<?
+<<< END
+String
+END;
+?>
+}]
+} {1 str 3.0 5.3}
+
+
+
 
 # ---------------------------------------------
 # The rest of the tests check for output that
@@ -2045,10 +2098,13 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # )
 # show('myArray');
  
+# FIXME: Need to deal with <?=cmd()?> blocks. They should not
+# generate an assignment token for the '='.
 
 # cleanup
 file delete f.php
 file delete xout
 file delete tout
+file delete hout
 ::tcltest::cleanupTests
 return

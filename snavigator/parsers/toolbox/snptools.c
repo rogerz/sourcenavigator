@@ -72,6 +72,10 @@ static int treat_as_cplusplus = 0;
 static FILE * listfp = NULL;
 static FILE * outfp = NULL;
 
+static int highlight = 0;
+static int highlight_number = 0;
+static FILE * highlightfp = NULL;
+
 /*
  * Return the first include path from the list (or NULL if the list is empty).
  */
@@ -205,6 +209,8 @@ sn_getopt(enum sn_options opt)
       return (void *) drop_usr_headers;
     case SN_OPT_GROUP:
       return group;
+    case SN_OPT_HIGHLIGHT:
+      return (void *) highlight;
     case SN_OPT_INCL_TO_PIPE:
       return incl_to_pipe;
     case SN_OPT_INCLUDE_LIST:
@@ -266,6 +272,7 @@ sn_process_options(int argc, char *argv[])
         break;
 
       case 'h':
+        highlight = 1;
         break;
 
       case 'i':
@@ -370,6 +377,24 @@ sn_message(char * format, ...)
 }
 
 /*
+ * Write highlight info to a file that will be read by
+ * the IDE and used to add highlight tags to the editor.
+ * This function should only be called when the -h
+ * option has been passed to the browser.
+ */
+void sn_highlight(char * ident,
+    long line_start, int column_start,
+    long line_end, int column_end)
+{
+  assert(highlight);
+  assert(highlightfp);
+  fprintf(highlightfp, "%d %s %d.%d %d.%d\n",
+    highlight_number++,
+    ident,
+    line_start, column_start, line_end, column_end);
+}
+
+/*
  * Make the executable exit due to some error with the error code expected by
  * S-N.
  */
@@ -443,9 +468,30 @@ sn_register_filename(FILE ** lexstream, char * filename)
     }
     else
     {
+      char * highlight_fname = NULL;
+
+      /*
+       * If the -h option was passed then create a tmp file
+       * and save highlight info into the file. The -s option
+       * is used in conjunction with -h to indicate a file
+       * that the name of the highlight file will be saved in.
+       */
+
+      if (highlight) {
+        if (highlightfp) {
+          fclose(highlightfp);
+        }
+        highlight_fname = Paf_tempnam(NULL,"hj");
+        if (outfp) {
+          fprintf(outfp,"%s\n",highlight_fname);
+        }      
+        highlightfp = fopen(highlight_fname,"w+");
+        highlight_number = 1;
+      }
+
       strcpy(currentFilename, filename);
       put_status_parsing_file(filename);
-      put_file(filename, group, NULL);
+      put_file(filename, group, highlight_fname);
     }
     return(0);
 }
@@ -622,6 +668,11 @@ sn_close()
   if (outfp != NULL)
   {
     fclose(outfp);
+  }
+
+  if (highlightfp != NULL)
+  {
+    fclose(highlightfp);
   }
   
   if (cross_ref_fp != NULL)
