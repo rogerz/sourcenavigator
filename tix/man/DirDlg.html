@@ -1,0 +1,123 @@
+
+
+
+<TITLE>tixDirSelectDialog - Create and manipulate directory selection dialogs.</TITLE>
+<Center><H2>tixDirSelectDialog - Create and manipulate directory selection dialogs.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixDirSelectDialog<I> <I>pathName ?<I>options</I></B>?
+</pre><H3>STANDARD OPTIONS</H3>
+<B>TixDirSelectDialog</B></I> supports all the standard options of a
+toplevel widget. See the <B>options(n)</B></I> manual entry for details on
+the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the user selects a directory
+in the dialog box. The command is called with one extra argument, the
+complete pathname of the directory. If the user cancels the selection,
+this command is not called.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>dirbox</B></I>
+Class:		<B>TixDirSelectBox</B></I>
+</code></code></code></pre>
+<UL>
+The DirSelectBox widget that consists of the main part of the dialog.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>cancel</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The "Cancel" button.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>ok</B></I>
+Class:		<B>Buton</B></I>
+</code></code></code></pre>
+<UL>
+The "OK" button.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixDirSelectDialog</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a DirSelectDialog
+widget.  Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+DirSelectDialog such as its cursor and relief.
+
+The DirSelectDialog widget presents the directories in the file system
+in a dialog window. The user can use this dialog window to navigate
+through the file system to select the desired directory.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixDirSelectDialog</B></I> command creates a new Tcl command whose
+This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for DirSelectDialog widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixDirSelectDialog</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixDirSelectDialog</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>popup</B></I>
+</I></B>
+<DD> Pops up the DirSelectDialog widget on the screen.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>EXAMPLE</H3>
+<pre><code><code><code>
+set dlg [tixDirSelectDialog .dlg -command SelectDir]
+$dlg popup
+
+proc SelectDir {dir} {
+    puts "You have selected \\"$dir\\""
+}
+</code></code></code></pre>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:21 EST 1997 </i> --- 
+<i>Serial 853731297</i>

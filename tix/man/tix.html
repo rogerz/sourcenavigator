@@ -1,0 +1,216 @@
+
+
+
+<TITLE>tix - Manipulate Tix internal state</TITLE>
+<Center><H2>tix - Manipulate Tix internal state</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tix</B></I> <I>option </I></B>?<I>arg arg ...</I></B>?
+</pre><H3>CONFIGURATION OPTIONS</H3>
+The Tix application context supports the following configuration
+options. Usually, these options are set using the X resource database,
+different color scheme for the Tix widgets, these two lines can be
+<P>
+<pre><code><code><code>
+  	*TixScheme:         Gray
+	*TixFontSet:        14Point
+</code></code></code></pre>
+<P>
+<pre><code><code><code>
+Name:		<B>binding</B></I>
+Class:		<B>Binding</B></I>
+Switch:		<B>-binding</B></I>
+</code></code></code></pre>
+<UL>
+This is an obsolete option.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>debug</B></I>
+Class:		<B>Debug</B></I>
+Switch:		<B>-debug</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether the Tix widgets should run in debug mode.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tixFontSet</B></I>
+Class:		<B>TixFontSet</B></I>
+Switch:		<B>-fontset</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the fontset to use for the Tix widgets. Valid options are
+<B>TK</B></I>, <B>12Point</B></I> and <B>14Point</B></I>. <B>TK</B></I> specifies that the
+standard TK fonts should be used. The default value is <B>14Point</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tixScheme</B></I>
+Class:		<B>TixScheme</B></I>
+Switch:		<B>-scheme</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the color scheme to use for the Tix widgets. Valid options
+are <B>TK</B></I>, <B>Gray</B></I>, <B>Blue</B></I>, <B>Bisque</B></I>, <B>SGIGray</B></I> and
+<B>TixGray</B></I>. The default value is <B>TixGray</B></I>. If you want the
+standard TK color scheme, you can use the value <B>TK</B></I>. If you want
+to use the TK 3.6 bisque color scheme, you can use the value <B>Bisque</B></I>. 
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tixSchemePriority</B></I>
+Class:		<B>TixSchemePriority</B></I>
+Switch:		<B>-schemepriority</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the priority level of the TK options set by th Tix
+schemes. Please refer to the TK <B>option(n)</B></I> manual page for a
+discussion of the priority level of Tix options. The default value is
+79, which makes the Tix schemes at a higher priority than the
+settings in the .Xdefaults file. If you want to allow the Tix schemes
+to be overridden by the settings in the .Xdefaults file, you can set
+the following line in you .Xdefaults file:
+</UL>
+<pre><code><code><code>
+*TixSchemePriority: 21
+</code></code></code></pre>
+</pre><HR>
+
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tix</B></I> command provides access to miscellaneous elements of
+the information manipulated by this command pertains to the
+application as a whole, or to a screen or display, rather than to a
+particular window.  The command can take any of a number of different
+forms depending on the <I>option</I></B> argument.  The legal forms are:
+<DL>
+<DT> <B>tix <B>addbitmapdir</B></I> <I>directory</I></B>
+</I></B>
+<DD> Tix maintains a list of directory under which which the <B>tix
+getimage</B></I> and <B>tix getbitmap</B></I> commands will search for image
+files. The standard bitmap directory is
+<B>$TIX_LIBRARY/bitmaps</B></I>. The <B>addbitmapdir</B></I> command adds
+<I>directory</I></B> into this list. By using this command, the image files
+of an applications can also be located using the <B>tix getimage</B></I> ot
+<B>tix getbitmap</B></I> command.
+</DL>
+<DL>
+<DT> <B>tix <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may be any of the options described in the
+<B>CONFIGURATION OPTIONS</B></I> section.
+</DL>
+<DL>
+<DT> <B>tix <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the Tix application
+context. If no <I>option</I></B> is specified, returns a list describing
+all of the available options (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given option(s) to have the given value(s); in this case
+the command returns an empty string. <I>Option</I></B> may be any of the
+options described in the <B>CONFIGURATION OPTIONS</B></I> section.
+</DL>
+<DL>
+<DT> <B>tix filedialog </B></I>?<I>class</I></B>?
+</I></B>
+<DD> Returns the file selection dialog that may be shared among different
+modules of this application. This command will create a file selection
+dialog widget when it is called the first time. This dialog will be
+returned by all subsequent calls to <B>tix filedialog</B></I>. An optional
+<I>class</I></B> parameter can be passed to specified what type of file
+selection dialog widget is desired. Possible options are
+<B>tixFileSelectDialog</B></I> or <B>tixExFileSelectDialog.</B></I>
+</DL>
+<DL>
+<DT> <B>tix getbitmap <I>name</I></B>
+</I></B>
+<DD> Locates a bitmap file of the name <I>name</I></B>.xpm or <I>name</I></B> in one
+of the bitmap directories (see the <B>addbitmapdir</B></I> command
+above). By using <B>tix getbitmap</B></I>, you can advoid hard coding the
+pathnames of the bitmap files in your application. When successful, it
+returns the complete pathname of the bitmap file, prefixed with the
+character <B>@</B></I>.  The returned value can be used to configure the
+<B>-bitmap</B></I> option of the TK and Tix widgets.
+</DL>
+<DL>
+<DT> <B>tix getimage <I>name</I></B>
+</I></B>
+<DD> Locates an image file of the name <I>name</I></B>.xpm, <I>name</I></B>.xbm or
+<I>name</I></B>.ppm in one of the bitmap directories (see the
+<B>addbitmapdir</B></I> command above). If more than one file with the same
+name (but different extensions) exist, then the image type is chosen
+according to the depth of the X display: xbm images are chosen on
+monochrome displays and color images are chosen on color displays. By
+using <B>tix getimage</B></I>, you can advoid hard coding the pathnames of
+the image files in your application. When successful, this command
+returns the name of the newly created image, which can be used to
+configure the <B>-image</B></I> option of the TK and Tix widgets.
+</DL>
+<DL>
+<DT> <B>tix <B>option</B></I> ?<I>args ...</I></B>?
+</I></B>
+<DD> Manipulates the options manitained by the Tix scheme
+mechanism. Available options are:
+
+</DL>
+<pre><code><code><code>
+\fCactive_bg</B></I>	\fCactive_fg</B></I>	\fCbg</B></I>
+\fCbold_font</B></I>	\fCdark1_bg</B></I>	\fCdark1_fg</B></I>
+\fCdark2_bg</B></I>	\fCdark2_fg</B></I>	\fCdisabled_fg</B></I>
+\fCfg</B></I>	\fCfixed_font</B></I>	\fCfont</B></I>	
+\fCinactive_bg</B></I>	\fCinactive_fg</B></I>	\fCinput1_bg</B></I>	
+\fCinput2_bg</B></I>	\fCitalic_font</B></I>	\fClight1_bg</B></I>
+\fClight1_fg</B></I>	\fClight2_bg</B></I>	\fClight2_fg</B></I>
+\fCmenu_font</B></I>	\fCoutput1_bg</B></I>	\fCoutput2_bg</B></I>
+\fCselect_bg</B></I>	\fCselect_fg</B></I>	\fCselector</B></I>
+</code></code></code></pre>
+
+The arguments to the <B>tix <B>option</B></I> command can take the
+following form(s):
+<UL>
+<DL>
+<DT> <B>tix option get</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of <I>option</I></B>.
+</DL>
+</UL>
+<DL>
+<DT> <B>tix <B>resetoptions</B></I> <I>newScheme newFontSet</I></B> ?<I>newScmPrio</I></B>?
+</I></B>
+<DD> Resets the scheme and fontset of the Tix application to
+<I>newScheme</I></B> and <I>newFontSet</I></B>, respectively. This affects only
+those widgets created <B>after</B></I> this call. Therefore, it is best to
+call the <B>resetoptions</B></I> command <B>before</B></I> the creation of any
+widgets in a Tix application.
+
+The optional parameter <I>newScmPrio</I></B> can be given to reset the
+priority level of the TK options set by the Tix schemes.
+</DL>
+</pre><H3>BUGS</H3>
+Because of the way TK handles the X option database, after tixwish has
+started up, it is not possible to reset the color schemes and font
+sets using the <B>tix config</B></I> command. Instead, the <B>tix
+resetoptions</B></I> command must be used.
+<P>
+The tk_setPalette command does not work very well under Tix. To use
+it, one must follow these steps:
+<UL>
+\fC
+<pre><code><code><code>
+
+tix resetoptions TK TK
+tk_setPalette lightblue
+</code></code></code></pre>
+</B></I>
+</UL>
+</pre><H3>KEYWORDS</H3>
+file selection dialog
+<hr><i>Last modified Sun Jan 19 22:34:41 EST 1997 </i> --- 
+<i>Serial 853731308</i>

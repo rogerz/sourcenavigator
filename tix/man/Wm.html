@@ -1,0 +1,45 @@
+
+
+
+<TITLE>Wm - Tix's addition to the standard TK <B>wm</B></I> command.</TITLE>
+<Center><H2>Wm - Tix's addition to the standard TK <B>wm</B></I> command.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<P>
+<B>wm<I> capture <I>pathName </I></B>
+<P>
+<B>wm<I> release <I>pathName </I></B>
+<P>
+</pre><H3>DESCRIPTION</H3>
+<P>
+
+The <B>wm capture</B></I> and the <B>wm release</B></I> commands change the
+toplevel attribute of Tk widgets.
+</pre><H3>COMMAND OPTIONS</H3>
+<P>
+<DL>
+<DT> <B>wm capture <I>pathName</I></B>
+</I></B>
+<DD> Converts the toplevel window specified by <I>pathName</I></B> into a non-toplevel
+widget. Normally this command is called to convert a <B>toplevel</B></I> widget
+into a <B>frame</B></I> widget. The newly-converted frame widget is
+un-mapped from the screen. To make it appear inside its parent, you
+must call a geometry manager (e.g. pack) explictly.
+</DL>
+<DL>
+<DT> <B>wm release <I>pathName</I></B>
+</I></B>
+<DD> Makes the non-toplevel window specified by <I>pathName</I></B> into a toplevel
+widget. Normally this command is called to convert a <B>frame</B></I> widget
+into a <B>toplevel</B></I> widget, but it can also be used on any
+non-toplevel widget (e.g, button). The newly-converted toplevel window
+is automatically mapped to the screen. To prevent it from appearing in
+the screen, you must call <B>wm withdraw</B></I> immediately after calling
+<B>wm release</B></I>.
+</DL>
+<P>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<!Serial 851729151>
+<hr><i>Last modified Fri Jan 17 23:02:21 EST 1997 </i> --- 
+<i>Serial 853731307</i>

@@ -1,0 +1,19 @@
+2003-02-05  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* COPYING:
+	* ChangeLog:
+	* Makefile.in:
+	* config.guess:
+	* config.sub:
+	* configure:
+	* configure.in:
+	* install-sh:
+	* config/acinclude.m4: Add acinclude.m4 from sources,
+	but remove any macros that are not actually used.
+	* itcl/*:
+	* libgui/*:
+	* tcl/*:
+	* tk/*:
+	* tix/*: Add bare bones toplevel configure, support
+	files, as well as itcl, libgui, tcl, tk, and tix
+	modules from sources.redhat.com CVS as of 2003-01-01.

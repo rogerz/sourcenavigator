@@ -1,0 +1,70 @@
+
+
+
+<TITLE>Utils - Utility commands in Tix 4.0.</TITLE>
+<Center><H2>Utils - Utility commands in Tix 4.0.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<DL>
+<DT> <B>tixDescendants<I> <I>pathName</I></B>
+</DL>
+<DL>
+<DT> <B>tixDisableAll <I>pathName</I></B>
+</DL>
+<DL>
+<DT> <B>tixEnableAll <I>pathName</I></B>
+</DL>
+<DL>
+<DT> <B>tixPushGrab</B></I> ?<I>-global</I></B>? <I>window</I></B>
+</DL>
+<DL>
+<DT> <B>tixPopGrab</B></I>
+</DL>
+</pre><HR>
+<P>
+</pre><H3>DESCRIPTION</H3>
+<P>
+<DL>
+<DT> <B>tixDescendants</B></I> <I>pathName</I></B>
+</I></B>
+<DD> Returns a list of all the descendant widgets of <I>pathName</I></B> plus
+<I>pathName</I></B> itself.
+</DL>
+<DL>
+<DT> <B>tixDisableAll</B></I> <I>pathName</I></B>
+</I></B>
+<DD> Disables <I>pathName</I></B> and all its descendants.
+</DL>
+<DL>
+<DT> <B>tixEnableAll</B></I> <I>pathName</I></B>
+</I></B>
+<DD> Enables <I>pathName</I></B> and all its descendants.
+</DL>
+<DL>
+<DT> <B>tixPushGrab</B></I> ?<I>-global</I></B>? <I>window</I></B>
+</I></B>
+<DD> The <B>tixPushGrab</B></I> and <B>tixPopGrab</B></I> commands allows you to
+perform "cascade-grabbing". <B>tixPushGrab</B></I> calls the <B>grab(n)</B></I>
+command on <I>window</I></B> and saves <I>window</I></B> on a grabbing
+stack.
+</DL>
+<DL>
+<DT> <B>tixPopGrab</B></I>
+</I></B>
+<DD> <B>tixPopGrab</B></I> pops the top-most element from the grabbing stack and
+release its grab. If the grabbing stack is not empty, then
+<B>tixPopGrab</B></I> will execute grab(n) on the current top-most element
+in the grabbing stack.
+</DL>
+</pre><H3>NOTES</H3>
+<P>
+Some Tix widgets (for example, tixComboBox and tixPanedWindow) grabs
+the screen on certain occasions using <B>tixPushGrab</B></I> and
+<B>tixPopGrab</B></I>. Therefore, if you need to grab the screen when these
+widgets are present, you should also call <B>tixPushGrab</B></I> and
+<B>tixPopGrab</B></I> in place of the Tk <B>grab</B></I> and <B>grab release</B></I>
+commands. Otherwise, the behavior of these widgets may be undefined.
+</pre><H3>KEYWORDS</H3>
+Tix(n),grab(n)
+<hr><i>Last modified Sun Jan 19 22:34:40 EST 1997 </i> --- 
+<i>Serial 853731306</i>

@@ -1,0 +1,206 @@
+
+
+
+<TITLE>tixScrolledWindow - Create and manipulate Tix ScrolledWindow widgets</TITLE>
+<Center><H2>tixScrolledWindow - Create and manipulate Tix ScrolledWindow widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixScrolledWindow<I> <I>pathName ?<I>options</I></B>?
+</pre><H3>STANDARD OPTIONS</H3>
+<P>
+<pre><code><code><code>
+<B>
+anchor	background	cursor
+relief	borderWidth
+</B></I>
+</code></code></code></pre>
+<P>
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>height</B></I>
+Class:		<B>Height</B></I>
+Switch:		<B>-height</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired height for the window, in pixels.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>scrollbar</B></I>
+Class:		<B>Scrollbar</B></I>
+Switch:		<B>-scrollbar</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the display policy of the scrollbars. The following
+values are recognized:
+</UL>
+<UL>
+<DL>
+<DT> <B>auto</B></I> </B></I>?<I>\+x</I></B>? </B></I>?<I>-x</I></B>? </B></I>?<I>\+y</I></B>? </B></I>?<I>-y</I></B>? 
+</I></B>
+<DD> When <B>-scrollbar</B></I> is set to "<B>auto</B></I>", the scrollbars are
+shown only when needed. Additional modifiers can be used to force a
+scrollbar to be shown or hidden. For example, "<B>auto -y</B></I>" means
+the horizontal scrollbar should be shown when needed but the vertical
+scrollbar should always be hidden; "<B>auto +x</B></I>" means the vertical
+scrollbar should be shown when needed but the horizontal scrollbar
+should always be shown, and so on.
+</DL>
+<DL>
+<DT> <B>both</B></I>
+</I></B>
+<DD> Both scrollbars are shown
+</DL>
+<DL>
+<DT> <B>none</B></I>
+</I></B>
+<DD> The scrollbars are never shown.
+</DL>
+<DL>
+<DT> <B>x</B></I>
+</I></B>
+<DD> Only the horizontal scrollbar is shown;
+</DL>
+<DL>
+<DT> <B>y</B></I>
+</I></B>
+<DD> Only the vertical scrollbar is shown.
+</DL>
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>width</B></I>
+Class:		<B>Width</B></I>
+Switch:		<B>-width</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired width for the window, in pixels.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>xScrollIncrement</B></I>
+Class:		<B>ScrollIncrement</B></I>
+Switch:		<B>-xscrollincrement</B></I>
+</code></code></code></pre>
+<UL>
+Specifies by how much the window should be scrolled in the horizontal
+direction when the user presses the arrows in the horizontal
+scrollbar. In Pixels.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>yScrollIncrement</B></I>
+Class:		<B>ScrollIncrement</B></I>
+Switch:		<B>-yscrollincrement</B></I>
+</code></code></code></pre>
+<UL>
+Specifies by how much the window should be scrolled in the vertical
+direction when the user presses the arrows in the horizontal
+scrollbar. In pixels.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>hsb</B></I>
+Class:		<B>Scrollbar</B></I>
+</code></code></code></pre>
+<UL>
+The horizontal scrollbar subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>window</B></I>
+Class:		<B>Frame</B></I>
+</code></code></code></pre>
+<UL>
+The frame subwidget which is scrolled by the ScrolledWindow widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>vsb</B></I>
+Class:		<B>Scrollbar</B></I>
+</code></code></code></pre>
+<UL>
+The vertical scrollbar subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixScrolledWindow</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a ScrolledWindow widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+ScrolledWindow widget such as its cursor and relief.
+</pre><H3>CREATING WIDGETS INSIDE A SCROLLEDWINDOW WIDGET</H3>
+<P>
+To create widgets inside a ScrolledWindow widget, one must create the
+new widgets relative to the <B>window</B></I> subwidget and manage them
+inside the <B>window</B></I> subwidget. An error will be generated if one
+tries to create widgets as immediate children of the ScrolledWindow.
+For example: the following is correct code, which creates new widgets
+inside the window subwidget:
+<P>
+<pre><code><code><code>
+    tixScrolledWindow .w; pack .w
+    set f [.w subwidget window]
+    button $f.b -text hi -width 40 -height 40
+    pack $f.b
+</code></code></code></pre>
+<P>
+The following example code is <I>incorrect</I></B> because it tries to
+create immediate children of the ScrolledWindow <B>\.w</B></I>:
+<P>
+<pre><code><code><code>
+    tixScrolledWindow .w; pack .w
+    button .w.b -text hi -width 40 -height 40
+    pack .w.b
+</code></code></code></pre>
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixScrolledWindow</B></I> command creates a new Tcl command whose
+command may be used to invoke various
+operations on the widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as
+determine the exact behavior of the command.  The following
+commands are possible for ScrolledWindow widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixScrolledWindow</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If
+no <I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixScrolledWindow</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no additional arguments are given, returns the pathname of the
+subwidget of the specified name.
+
+When no additional arguments are given, the widget command of the
+specified subwidget will be called with these parameters.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:37 EST 1997 </i> --- 
+<i>Serial 853731304</i>

@@ -1,0 +1,222 @@
+'\"
+'\" Copyright (c) 1998 Lucent Technologies, Inc.
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\" 
+'\" SCCS: %W%
+'\" 
+.so man.macros
+.TH Tcl_AddInterpResolvers 3 8.0 Tcl "Tcl Library Procedures"
+.BS
+.SH NAME
+Tcl_AddInterpResolvers, Tcl_GetInterpResolvers, Tcl_RemoveInterpResolvers, Tcl_SetNamespaceResolvers, Tcl_GetNamespaceResolvers \- change the name resolution rules for commands/variables
+.SH SYNOPSIS
+.nf
+\fB#include <tcl.h>\fR
+.sp
+void
+\fBTcl_AddInterpResolvers\fR(\fIinterp, name, cmdProc, varProc, compiledVarProc\fR)
+.sp
+int
+\fBTcl_GetInterpResolvers\fR(\fIinterp, name, resInfoPtr\fR)
+.sp
+int
+\fBTcl_RemoveInterpResolvers\fR(\fIinterp, name\fR)
+.sp
+void
+\fBTcl_SetNamespaceResolvers\fR(\fInamespacePtr, cmdProc, varProc, compiledVarProc\fR)
+.sp
+int
+\fBTcl_GetNamespaceResolvers\fR(\fInamespacePtr, resInfoPtr\fR)
+.SH ARGUMENTS
+.AS Tcl_ResolveCompiledVarProc *compiledVarProc
+.AP Tcl_Interp *interp  in
+Interpreter whose name resolution rules are being queried or modified.
+.AP char *name in
+Name for a group of name resolution procedures.
+.AP Tcl_ResolveCmdProc *cmdProc in
+Procedure which will be used to resolve command names.
+.AP Tcl_ResolveVarProc *varProc in
+Procedure which will be used to resolve variable names at run time.
+.AP Tcl_ResolveCompiledVarProc *compiledVarProc in
+Procedure which will be used to resolve variable names at compile time.
+.AP Tcl_ResolverInfo *resInfoPtr out
+Returns the resolution procedures that are currently in effect for
+a particular namespace or for a particular name resolution scheme
+in the interpreter.
+.AP Tcl_Namespace *namespacePtr in
+Namespace whose name resolution rules are being queried or modified.
+.BE
+
+.SH DESCRIPTION
+.PP
+These procedures make it possible to change the way that Tcl
+resolves command/variable names.  The name resolution rules are
+changed by supplying three procedures:  \fIcmdProc\fR, \fIvarProc\fR, and
+\fIcompiledVarProc\fR.  See the section \fBHOW NAME RESOLUTION PROCEDURES
+WORK\fR for details about these procedures.
+.PP
+The name resolution rules can be changed for a particular namespace,
+for an entire interpreter, or both.  When a name needs to be resolved,
+Tcl handles it as follows.  The name resolution scheme for the
+current namespace is consulted first.  Each of the name resolution
+schemes for the interpreter are consulted next.  Finally, Tcl uses
+the default rules for name resolution as described for the
+\fBnamespace\fR command.
+.PP
+\fBTcl_AddInterpResolver\fR adds a set of name resolution procedures
+to an interpreter.  The procedures are identified by a string \fIname\fR,
+so they can be queried or deleted later on.  All of the name resolution
+schemes for the interpreter are kept on a list, and they are consulted
+in order from most- to least-recently added.  For example, suppose one
+extension adds a name resolution scheme called "fred", and another
+extension adds another scheme called "barney".  When a name is resolved,
+the "barney" scheme will be consulted first, followed by the "fred"
+scheme, if necessary.
+.PP
+\fBTcl_GetInterpResolver\fR looks for a particular name resolution
+scheme in an interpreter.  If the \fIname\fR is recognized, this
+procedure returns a non-zero value along with pointers to the
+name resolution procedures in the \fIresInfoPtr\fR structure.  Otherwise,
+the procedure returns 0.
+.PP
+\fBTcl_RemoveInterpResolver\fR looks for a particular name resolution
+scheme in an interpreter.  If the \fIname\fR is recognized, this
+procedure deletes the scheme and returns a non-zero value.  Otherwise,
+it returns 0.
+.PP
+\fBTcl_SetNamespaceResolver\fR sets the name resolution procedures
+for a particular namespace.  Unlike an interpreter, a namespace can
+have only one name resolution scheme in effect at any given time.
+.PP
+\fBTcl_GetNamespaceResolver\fR returns the name resolution procedures
+for a particular namespace.  If the namespace has a special name
+resolution scheme, this procedure returns a non-zero value along
+with pointers to the name resolution procedures in the \fIresInfoPtr\fR
+structure.  Otherwise, the procedure returns 0.
+.SH "HOW NAME RESOLUTION PROCEDURES WORK"
+A name resolution scheme is enforced by three name resolution procedures.
+The \fIcmdProc\fR procedure is used to resolve command names.  It must
+conform to the following type:
+.CS
+typedef int Tcl_ResolveCmdProc(Tcl_Interp* \fIinterp\fR,
+        char* \fIname\fR, Tcl_Namespace* \fIcontext\fR, int \fIflags\fR,
+        Tcl_Command* \fIrPtr\fR);
+.CE
+The \fIinterp\fR argument is the interpreter performing the resolution;
+\fIname\fR is the command name being resolved; \fIcontext\fR is the
+namespace context containing the command reference; and \fIflags\fR
+may contain TCL_LEAVE_ERR_MSG.
+.PP
+If this procedure recognizes the command \fIname\fR, it should
+store the Tcl_Command token for that command in the \fIrPtr\fR
+argument and return TCL_OK.  If this procedure doesn't recognize
+the command \fIname\fR, it should return TCL_CONTINUE, and the
+name resolution will continue with another procedure or with the
+default Tcl resolution scheme.  If this procedure recognizes
+the command \fIname\fR, but for some reason the command is
+invalid, the procedure should return TCL_ERROR.  If the \fIflags\fR
+argument contains TCL_LEAVE_ERR_MSG, the procedure should leave
+an error message in the interpreter, explaining why the command
+is invalid.
+.PP
+The \fIvarProc\fR procedure is similar to \fIcmdProc\fR, but it is
+used to resolve variable names encountered at run time.  It must
+conform to the following type:
+.CS
+typedef int Tcl_ResolveVarProc(Tcl_Interp* \fIinterp\fR,
+        char* \fIname\fR, Tcl_Namespace* \fIcontext\fR, int \fIflags\fR,
+        Tcl_Var* \fIrPtr\fR);
+.CE
+The \fIinterp\fR argument is the interpreter performing the resolution;
+\fIname\fR is the variable name being resolved; \fIcontext\fR is the
+namespace context containing the variable reference; and \fIflags\fR
+may contain TCL_GLOBAL_ONLY, TCL_NAMESPACE_ONLY, or TCL_LEAVE_ERR_MSG.
+.PP
+If this procedure recognizes the variable \fIname\fR, it should
+store the Tcl_Var token for that variable in the \fIrPtr\fR
+argument and return TCL_OK.  If this procedure doesn't recognize
+the variable \fIname\fR, it should return TCL_CONTINUE, and the
+name resolution will continue with another procedure or with the
+default Tcl resolution scheme.  If this procedure recognizes
+the variable \fIname\fR, but for some reason the variable is
+not accessible, the procedure should return TCL_ERROR.  If the
+\fIflags\fR argument contains TCL_LEAVE_ERR_MSG, the procedure
+should leave an error message in the interpreter, explaining why
+the variable reference is invalid.
+.PP
+Note that this procedure should look for the TCL_GLOBAL_ONLY and
+TCL_NAMESPACE_ONLY flags.  It should handle them appropriately, or
+return TCL_CONTINUE and let Tcl handle the reference.  But it should
+not ignore the flags.
+.PP
+Tcl also resolves variables when a body of code is compiled; the
+\fIcompiledVarProc\fR procedure handles that case.  It must
+conform to the following type:
+.CS
+typedef int Tcl_ResolveCompiledVarProc(Tcl_Interp* \fIinterp\fR,
+        char* \fIname\fR, int \fIlength\fR, Tcl_Namespace* \fIcontext\fR,
+        Tcl_ResolvedVarInfo* \fIrPtr\fR);
+.CE
+The \fIinterp\fR argument is the interpreter performing the resolution;
+\fIname\fR is the variable name being resolved; \fIlength\fR is the
+number of bytes in \fIname\fR, which is not a null-terminated
+string; and \fIcontext\fR is the namespace context containing the
+variable reference.
+.PP
+If this procedure recognizes the variable \fIname\fR, it should
+return some information characterizing the variable in the
+\fIrPtr\fR structure.  This structure is defined as follows:
+.CS
+typedef struct Tcl_ResolvedVarInfo {
+    ClientData \fIidentity\fR;
+    Tcl_ResolveRuntimeVarProc *\fIfetchProc\fR;
+    Tcl_ResolveVarDeleteProc *\fIdeleteProc\fR;
+} Tcl_ResolvedVarInfo;
+.CE
+The \fIidentity\fR field is an arbitrary value that characterizes
+the variable.  Each variable should have a unique identity.  Each
+time the compiled code is executed, Tcl will call the \fIfetchProc\fR
+procedure to get the actual variable for a particular \fIidentity\fR
+value.  This callback procedure must conform to the following type:
+.CS
+typedef Tcl_Var Tcl_ResolveRuntimeVarProc(Tcl_Interp* \fIinterp\fR,
+    ClientData \fIidentity\fR);
+.CE
+The \fIfetchProc\fR procedure takes the \fIinterp\fR interpreter
+and the \fIidentity\fR from compile time and returns a Tcl_Var
+token representing the variable.  If for some reason the variable
+can't be found, this procedure should return NULL, and Tcl will
+create a local variable within the call frame of the procedure
+being executed.
+.PP
+When the compiled code is discarded, Tcl calls the \fIdeleteProc\fR
+procedure to release the \fIidentity\fR data.  The delete procedure
+must conform to the following type:
+.CS
+typedef void Tcl_ResolveVarDeleteProc(ClientData \fIidentity\fR);
+.CE
+.PP
+In general, the \fIvarProc\fR and \fIcompiledVarProc\fR procedures
+should \fIboth\fR be defined.  If the \fIcompiledVarProc\fR is not
+defined, then Tcl will create local variables for any variable
+names that are not recognized within a procedure.  If the \fIvarProc\fR
+is not defined, then Tcl will not recognize variables that are
+encountered at runtime.  For example, consider the following procedure:
+.CS
+proc foo {args} {
+    set anotherRef "1"
+    set name "another"
+    set ${name}Ref "2"
+}
+.CE
+Suppose that the \fIcompiledVarProc\fR resolves the name
+\fBanotherRef\fR at compile time.  The name \fB${name}Ref\fR
+can't be resolved at compile time, so the resolution of that
+name is deferred to run time.  If the \fIvarProc\fR procedure
+must intercept the name \fBanotherRef\fR at run time and
+supply the appropriate variable.
+
+.SH KEYWORDS
+interpreter, namespace, resolution

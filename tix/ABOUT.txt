@@ -1,0 +1,86 @@
+
+                       ABOUT THE TIX PROGRAMMING LIBRARY
+                                       
+   The Tix library is an extension to the Tk toolkit that contains over
+   40 new widgets for Tk. Features include: 
+   
+   A LOT of new widgets:
+          The Tix library has by far the greatest collection of widgets
+          for programming with Tcl/Tk. Highlights include: Hierarchical
+          Listbox, Directory List/Tree View, SpreadSheet, Tabular
+          Listbox, ComboBox, Motif style FileSelectBox, MS Windows style
+          FileSelectBox, PanedWindow, NoteBook, Spin Control widget ....
+          and many more. With these new widgets, your applications will
+          look great and interact with your users in intuitive ways.
+          
+   Rapid Prototyping New Widgets:
+          Tix comes with a complete Object-Oriented framework for
+          building new customed widgets using TCL exclusively. It
+          typically reduces the efforts of developing a new widget by a
+          factor of ten or more.
+          
+   XPM image suport:
+          This allows you to display color icons in XPM format. Supports
+          transparent background.
+          
+   Compound images:
+          A new image type called "compound" allows youto glue together a
+          bunch of bitmaps, images and text strings together to form a
+          bigger image. Then you can use this image with widgets that
+          support the -image option. For example, you can display a text
+          string string together with a bitmap, at the same time, inside
+          a TK button widget.
+          
+   Display Items and Display Styles:
+          Display items and display styles make it possible to display
+          visual information in many formats.
+          
+   Form geometry manager:
+          Works similarly to the Motif Form widget. You can specify
+          geometry constraints using attachment rules.
+          
+   Mwm window mamager support:
+          With the tixMwm command, you can communicate with the Motif
+          window manager "mwm"; you can add new items to the Motif system
+          menu and change the window manager decorations.
+          
+   
+     _________________________________________________________________
+   
+  GETTING MORE INFORMATION ABOUT TIX
+  
+   Tix Home Page:
+          The Tix Home Page at http://www.xpi.com/tix/ provides more
+          detailed and up-to-date information about Tix.
+          
+   The Tix Mailing List
+          There is a mailing list for the discussion of the development
+          of both the Tix library and Tix-based applications. To
+          subscribe, send me a mail to majordomo@xpi.com with the line
+          "subscribe tix-info [your_address]" in the body of the mail. To
+          send a message to the Tix mailing list, please use the address
+          tix-info@xpi.com.
+          
+          The Tix mailing list has been archived. You can find useful
+          information at the Tix mailing list archives at:
+          http://www.xpi.com/archives/archives.html.
+          
+  GETTING TECHICAL SUPPORT FOR TIX
+  
+   If you have a question about using the Tix library, feel free to
+   contact the Tix support team at the address tix-support@xpi.com.
+   Please notice that this support service is currently provided only on
+   a good-will basis with no implied obligations or guaranty.
+   
+  BUG REPORTS
+  
+   Tix is a large product and as such will certainly contain bugs. If you
+   have encountered a bug while using Tix, please send a bug report to
+   the address tix-bugs@xpi.com . We'll appreciate it if you can send
+   along a small, self-contained program that demonstrates the behavior
+   of the bug.
+   
+   
+     _________________________________________________________________
+   
+   Last modified Fri Jan 17 22:49:53 EST 1997 --- Serial 853731291

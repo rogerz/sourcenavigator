@@ -1,0 +1,700 @@
+
+    <center><h1>Tix Frequently Asked Questions</h1></center>
+
+
+    <h3>Table of Contents</h3>
+
+<DL>
+<DT><i><b>
+    Legal Issues
+</b></i><DD><ul>
+<li> <a href=#legal.1> [L.1] </a> 
+    Is Tix free software?
+</ul><p>
+<DT><i><b>
+    General Questions About Using The Tix Library
+</b></i><DD><ul>
+<li> <a href=#general.1> [G.1] </a> 
+    What does the "<code>-disablecallback</code>"
+    option do?
+<li> <a href=#general.2> [G.2] </a> 
+    How do I set the width of the entry subwidget inside the tixControl widget?
+<li> <a href=#general.3> [G.3] </a> 
+    What is the "<code>setslient</code>" method?
+<li> <a href=#general.4> [G.4] </a> 
+    Is there a Tix interface builder in the works?
+<li> <a href=#general.5> [G.5] </a> 
+    Can you tell me about the syntax of tixForm
+<li> <a href=#general.6> [G.6] </a> 
+
+    I am not using the tixForm geometry manager, but it is giving me
+errors about TixForm. What happened?
+<li> <a href=#general.7> [G.7] </a> 
+    How do I generate the <code>tclIndex</code> file for Tix?
+<li> <a href=#general.8> [G.8] </a> 
+    Can I ignore the default arguments passed by the various
+    <code>-command</code> and <code>-broeswcmd</code> options?
+<li> <a href=#general.9> [G.9] </a> 
+    What does <code>tixWidgetDoWhenIdle</code> do?
+<li> <a href=#general.feature_req> [G.10] </a> 
+    Why isn't such a feature in Tix? Will it be implemented?
+<li> <a href=#general.softwares> [G.11] </a> 
+    Who are using Tix in their software?
+<li> <a href=#general.twice> [G.12] </a> 
+
+    I am using a DirList widget. When the user clicks on an item, the
+    procedure of my <code>-browsecmd</code> gets called
+    twice. However, I just want it to be called once.
+<li> <a href=#general.destroy> [G.13] </a> 
+
+    I get an error <i>"can't read data(-value): no such element in
+    array</i>" when I use the tixExFileSelectDialog.
+</ul><p>
+<DT><i><b>
+    Question About Porting to Specific Platforms/Software
+</b></i><DD><ul>
+<li> <a href=#port.1> [P.1] </a> 
+    The configure script gave me strange errors.
+<li> <a href=#port.tk41> [P.2] </a> 
+
+    Does Tix 4.1 work with <b>Tk 4.1</b>
+<li> <a href=#port.itcl> [P.3] </a> 
+    Does Tix work with <b>Incr Tcl 2.0</b>?
+<li> <a href=#port.expect> [P.4] </a> 
+
+    How do I get Tix to work with <b>Expect</b>?
+<li> <a href=#port.6> [P.5] </a> 
+    <b>Solaris 2.4:</b>
+    Filenames in FileSelectBox are chopped off.
+<li> <a href=#port.7> [P.6] </a> 
+    Do I still need libXpm?
+<li> <a href=#port.8> [P.7] </a> 
+    <a name=coredump1>I get a coredump as soon as tixwish starts up.
+</ul><p>
+<DT><i><b>
+    Porting from Tix 3.6 to Tix 4.x
+</b></i><DD><ul>
+<li> <a href=#tix36to40.1> [X.1] </a> 
+    What happened to the <code>tixInit</code> command?
+<li> <a href=#tix36to40.2> [X.2] </a> 
+    How do I set the schemes and fontsets in Tix 4.x?
+<li> <a href=#tix36to40.3> [X.3] </a> 
+    How do I choose the default TK color schemes and fontsets? Tix is
+    messing up the colors of my existing programs.
+<li> <a href=#tix36to40.4> [X.4] </a> 
+    I want the old bisque look of Tk 3.6. tk_bisque doesn't work.
+</ul><p>
+</DL>
+<hr>
+<h3>
+    Legal Issues
+</h3>
+<DL>
+<DT> <b><a name=legal.1> [L.1] </a> 
+    Is Tix free software?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Tix is distributed under the same license as Tcl/Tk (a.k.a. BSD
+    style license).  Application developers can freely redistribute
+    Tix along with their products. <p>
+
+    We will continue to provide free technical support and
+    maintainence for Tix. However, to recover the development costs,
+    we would appreciate financial supports for the Tix user
+    community. If you like Tix and would like to make a donation to
+    the Tix Project, please send mail to <a
+    href="mailto:xpi@xpi.com">xpi@xpi.com</a>. <p>
+
+
+<p>
+</DL>
+<hr>
+<h3>
+    General Questions About Using The Tix Library
+</h3>
+<DL>
+<DT> <b><a name=general.1> [G.1] </a> 
+    What does the "<code>-disablecallback</code>"
+    option do?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Many Tix widgets have both a <code>-value</code> option and a
+    <code>-command</code> option. Any modification of the
+    <code>-value</code> will cause the <code>-command</code> callback
+    to be executed. Sometimes this is undesirable. For example,
+    calling "<code>config -value</code>" inside the callback procedure
+    will cause the callback to be re-entered and thus an infinite
+    recursion. <p>
+
+    The <code>-disablecallback</code> can be used to advoid this
+    problem. When this option is set, the <code>-command</code>
+    callback will not be executed even if the -value of a widget is
+    changed. Therefore, if you need to modify the -value of a widget
+    inside its callback, do this:
+
+    <blockquote><pre>
+    proc my_callback {w} {
+	$w config -disablecallback true
+	$w config value blah
+	$w config -disablecallback false
+    }
+    </pre></blockquote>
+
+    If you find this too troublesome, you can call the command tixSetSilent:
+
+    <blockquote><pre>
+    proc my_callback {w} {
+	tixSetSilent $w blah
+    }
+    </pre></blockquote>
+
+<p>
+<DT> <b><a name=general.2> [G.2] </a> 
+    How do I set the width of the entry subwidget inside the tixControl widget?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    You can use the option database or the -options flag to set the
+    configuration options of the subwidgets. E.g: <pre>
+
+option add *TixControl*entry.width 10
+</pre>
+
+  OR
+
+<pre>
+tixControl .c -options {
+   entry.width  10
+}
+</pre>
+
+<p>
+<DT> <b><a name=general.3> [G.3] </a> 
+    What is the "<code>setslient</code>" method?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+     This is an obsolete method. You could use it to achieve the same
+     effect as the <code>-disablecallback</code> option.
+     <code>selsilent</code> used to be a widget command for the
+     ComboBox, Control, etc. It has been removed since Tix 4.0a4 and
+     replaced by the <code>tixSetSilent</code> command. Please note
+     that <code>tixSetSilent</code> is not a widget command but an
+     external procedure.
+
+<p>
+<DT> <b><a name=general.4> [G.4] </a> 
+    Is there a Tix interface builder in the works?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    Yes. But I don't know when it will be finished. (probably in 96).
+
+<p>
+<DT> <b><a name=general.5> [G.5] </a> 
+    Can you tell me about the syntax of tixForm
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    Please see the file <a href="../man/Form.html">man/Form.html</a>
+    or <a href="../man/Form.n">man/Form.n</a>.
+
+<p>
+<DT> <b><a name=general.6> [G.6] </a> 
+
+    I am not using the tixForm geometry manager, but it is giving me
+errors about TixForm. What happened?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    When you get error messages like this:
+
+<pre> (TixForm) Error:Trying to use more than one geometry
+           manager for the same master window.
+           Giving up after 50 iterations.</pre>
+
+    Most likely, the problem is when using tixLabelFrame widgets, you
+    packed to the wrong frame: <p>
+
+    This is WRONG:
+
+<pre>   tixLabelFrame .d
+        button .d.b
+        pack .d.b </pre>
+
+This is the correct way:
+
+<pre>   tixLabelFrame .d
+        set f [.d subwidget frame]
+        button $f.b
+        pack $f.b
+        pack .d </pre>
+
+    Remember you don't pack directly into a TixLabelFrame
+    widget. Instead, you should pack into its <code>frame</code>
+    subwidget.
+
+<p>
+<DT> <b><a name=general.7> [G.7] </a> 
+    How do I generate the <code>tclIndex</code> file for Tix?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Tix <code>tclIndex</code> files cannot be generated using the
+    standard auto_mkindex procedure. You must use the tixindex program
+    in the <code>tools/</code> subdirectory in the Tix
+    distribution. The syntax is 
+    <pre> tixindex *.tcl
+    </pre>
+
+<p>
+<DT> <b><a name=general.8> [G.8] </a> 
+    Can I ignore the default arguments passed by the various
+    <code>-command</code> and <code>-broeswcmd</code> options?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    You can use the <code>tixBreak</code> command. For example:
+<pre> tixFileSelectDialog .c -command "puts foo; tixBreak" </pre>
+
+<p>
+<DT> <b><a name=general.9> [G.9] </a> 
+    What does <code>tixWidgetDoWhenIdle</code> do?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    It does the same thing as tixDoWhileIdle (and "after -idle"). The
+    difference is it takes its second argument as the name of a widget
+    and executes this command only if the widget exists: i.e.: 
+
+
+<pre>  tixWidgetDoWhenIdle tixComboBox::Update $w blah blah ..</pre>
+
+    will execute tixComboBox::Update only if $w exists. $w may be
+    destroyed after tixWidgetDoWhenIdle is called but before an idle
+    event happens.
+
+<p>
+<DT> <b><a name=general.feature_req> [G.10] </a> 
+    Why isn't such a feature in Tix? Will it be implemented?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Generally requests for new features are welcomed. You can send
+    your requests to <a href=mailto:tix@xpi.com> tix@xpi.com </a> and
+    we'll be happy to hear from you. <p>
+
+    We can't guarantee to implement the requested features
+    immediately. Usually it depends on how important the features. If
+    the feature is requested by more people, it will usually get done
+    faster.
+
+    However, some frequently requested features probably won't be
+    imlemented. Usually these features are cosmetic changes and:
+
+    <ul>
+    <li> they do not add new capability to the widgets
+    <li> they are not universally liked
+    <li> they confuse the user.
+    </ul>
+
+    <p>
+    Some examples are:
+
+    <ul>
+
+    <li> <b>Different foreground and background colors for the
+    NoteBook tabs</b>: having a lot of colors may antagonize the users
+    that are "color haters"; also, the different colors don't make it
+    easier for the user to locate the desired tab.
+
+    <li> <b>Ring-binder metaphore for the NoteBook widget</b>: a waste
+    of screen real estate.
+
+    <li> <b>Rows of tabs for the NoteBook widget</b>: the user may be
+    confused when the rows of tabs are switched. If you need to have a
+    lot of tabs for the notebook, use the ListNoteBook widget instead.
+
+    </ul>
+
+
+<p>
+<DT> <b><a name=general.softwares> [G.11] </a> 
+    Who are using Tix in their software?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    I have compiled a list of softwares that use Tix. See <a
+    href=http://www.xpi.com/tix/software.html>
+    http://www.xpi.com/tix/software.html</a>. (These are only the ones
+    that I have heard of, either from the authors themselves or from
+    the TCL FAQ. There should be more of them).
+
+
+
+<p>
+<DT> <b><a name=general.twice> [G.12] </a> 
+
+    I am using a DirList widget. When the user clicks on an item, the
+    procedure of my <code>-browsecmd</code> gets called
+    twice. However, I just want it to be called once.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    The <code>-browsecmd</code> procedure is triggered by three types
+    of events: <code>&lt;1&gt;</code>,
+    <code>&lt;ButtonRelease-1&gt;</code>, and
+    <code>&lt;B1-Motion&gt;</code>. When the user clicks on an entry,
+    a <code>&lt;1&gt;</code> and a
+    <code>&lt;ButtonRelease-1&gt;</code> event will happen in rapid
+    session, which causes your <code>-browsecmd</code> procedure to be
+    called twice. <p>
+
+    A crude fix for this problem is to ignore all the
+    <code>&lt;ButtonRelease-1&gt;</code> events. You can find out the
+    event that triggers the <code>-browsecmd</code> procedure by the
+    <code>tixEvent</code> command. Here is an example:
+
+    <blockquote><pre>
+    tixDirList .c -browsecmd Browse
+
+    proc Browse {args} {
+	if {[tixEvent type] == "<code>&lt;ButtonRelease-1&gt;</code>"} {
+	    return
+	}
+	# ....
+    }
+    </pre></blockquote>
+
+    However, the above solution is not perfect. For example, if the
+    user clicks down the button at entry one, drags it over entries
+    two and three and release it on top of entry three, the following
+    events may be caused: <p>
+
+    <ol>
+        <li> <code>&lt;1&gt;</code> on entry one.
+        <li> <code>&lt;B1-Motion&gt;</code> on entry two.
+        <li> <code>&lt;ButtonRelease-1&gt;</code> on entry three.
+    </ol> <p>
+
+    Therefore, if you use the above method, the browse event on entry
+    three will be lost! <p>
+
+    To devise a better solution, it's better to understand the basic
+    design conventions of a Tix-based GUI. Suppose we have a list of
+    entries displayed in a listbox (or DirList, or HList). When the
+    user clicks on an entry, the GUI usually responds by displaying a
+    "<b>detailed view</b>" of the entry. For example, if we put a list
+    of file names in a listbox, when the user clicks on a file name,
+    we display the contents of the file in a text window. If the user
+    then clicks on another file name, the text window will load in the
+    contents of the new file. <p>
+
+    Now what happens if the user clicks on the same entry twice? Do we
+    reload the contents of the file into the text window? This is
+    usually unnecessary, inefficient and probably not what the user
+    wants to do. The Tix convention is, when the user clicks on the
+    same entry again, the detail view is not updated. If the user
+    wants to force an update (e.g, the user knows the file's contents
+    has been changed and wants to see the new version), he or she can
+    double-click on the entry and the application will respond by
+    redisplaying the detail view (reloading the file). <p>
+
+    To implement this policy, the Browse procedure should be modified
+    as the following:
+
+    <blockquote><pre>
+    proc Browse {args} {
+	global currentView
+
+	set ent [tixEvent value]
+	if {$ent == $currentView} {
+	    # We have already displayed the detailed view of $ent.
+	    #
+	    return
+	} else {
+	    set currentView $ent
+	    DisplayDetail $ent
+	}
+    }
+    </pre></blockquote> <p>
+
+<p>
+<DT> <b><a name=general.destroy> [G.13] </a> 
+
+    I get an error <i>"can't read data(-value): no such element in
+    array</i>" when I use the tixExFileSelectDialog.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    If you use tixExFileSelectDialog like this:
+
+<pre>
+	tixExFileSelectDialog .f -command foo
+
+	foo {filename} {
+	    destroy .f
+	    do some other stuff ...
+	}
+</pre>
+
+ it will cause a Tcl error because the dialog assumes that it still
+ exists after calling your command. This usually result in errors like
+ this:
+
+<pre>
+	can't read "data(-value)": no such element in array
+	    while executing
+	"set data(-selection) $data(-value)..."
+	    (procedure "tixComboBox::SetValue" line 30)
+</pre>
+
+
+  This "feature" is built into many Tix widgets and can't be fixed
+  easily. To work around the problem, never destroy widgets inside
+  -command calls. Usually you should unmap toplevel windows
+  instead. If you must destroy widgets, do it with an "after"
+  command. For example, the foo procedure should be rewritten as:
+
+<pre>
+	foo {filename} {
+	    wm withdraw .f
+	    do some other stuff ...
+
+	    after idle {if [winfo exists .f] {destroy .f}}
+	}
+</pre>
+
+  Execute the "after" command at the very end of the
+  -command. Otherwise the idle handler may be activated by some
+  "update" calls.
+
+<p>
+</DL>
+<hr>
+<h3>
+    Question About Porting to Specific Platforms/Software
+</h3>
+<DL>
+<DT> <b><a name=port.1> [P.1] </a> 
+    The configure script gave me strange errors.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    The problem may be you have several operating systems sharing the
+    same file system. Some people encounter error messages like this:
+
+<blockquote><pre>
+# ./configure --prefix=/usr/vendor/tcl
+loading cache ./config.cache
+checking for a BSD compatible install... /usr/bin/installbsd -c
+checking for ranlib... ranlib
+checking how to run the C preprocessor... cc -E
+checking for unistd.h... ./configure[603]: "${ac_cv_header_$ac_safe+set}": bad
+substitution
+</pre></blockquote>
+
+    The problem is at line 2, configure loaded in ./config.cache,
+    which may have been created by a different operating system, with
+    settings only usuable for that operating system. To get around
+    this, you should type
+
+<blockquote><pre>
+make distclean
+./configure
+make all
+</pre></blockquote>
+
+<p>
+<DT> <b><a name=port.tk41> [P.2] </a> 
+
+    Does Tix 4.1 work with <b>Tk 4.1</b>
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Yes, just enable the "Tk 4.1 ..." option in the setup program. It
+    will also compile Tix in a dynamic lobrary.
+
+
+<p>
+<DT> <b><a name=port.itcl> [P.3] </a> 
+    Does Tix work with <b>Incr Tcl 2.0</b>?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    Yes just enable the "Itcl 2.0 ..." option in the setup
+    program. Make sure you have ITcl 2.0 installed. Beta versions will
+    *NOT* work. Also make sure you have installed the source tree of
+    ITcl 2.0 in the same directory where you install the Tix source
+    tree.
+
+<p>
+<DT> <b><a name=port.expect> [P.4] </a> 
+
+    How do I get Tix to work with <b>Expect</b>?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    From Paul Schmidt (kuato@netcom.com):
+
+    <blockquote>
+
+    I have integrated Tcl7.4, Tk4.0, Expect-5.19 and Tix4.0 on Linux
+    1.2.13 (ELF) and Solaris 2.4. It isn't too hard. For an
+    expectk+Tix binary you need to add a call to Tix_Init in
+    exp_main_tk.c. If you can find the call to Tk_Init then just
+    cut&paste and replace it with Tix_Init. Do the same if you want a
+    Tk+Tix window shell in TkAppInit.c. Worked like a charm. If you
+    have any problems just holler.
+
+    </blockquote>
+
+
+<p>
+<DT> <b><a name=port.6> [P.5] </a> 
+    <b>Solaris 2.4:</b>
+    Filenames in FileSelectBox are chopped off.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    <b>Problem:</b>
+    <blockquote>
+
+    With Tix4.0a7 (and also with Tix4.0a6) on Solaris 2.4, when
+    running the widget demo, in tixFileSelectBox, in the two scolling
+    lists (for Files an Directories), some of the file and directory
+    names have their first 2 letters chopped off. And some files are
+    repeated.
+
+    </blockquote>
+     
+    <b>Solution:</b> tixwish has some conflicts with /usr/ucblib/libucb.so.1
+    and you should not linke it tixwish (you don't need it). Here is
+    a solution provided by Charles L Ditzel
+    (<i>charles@hanami.cyberspace.com</i>):
+
+    <blockquote>
+    To fix the problem I was having, all I did was:
+
+    <pre>
+   unsetenv LD_LIBRARY_PATH
+   set my PATH to something basic like:
+     /usr/bin:/usr/ccs/bin:/bin:/usr/openwin/bin:/opt/SUNWspro/bin
+   removed config.cache
+   ./configure
+   make clean
+   make
+    </pre>
+ 
+    and now it works!! Must have been something in my old
+    <code>PATH</code> or <code>LD_LIBRARY_PATH</code> that was
+    causing it to pick up <code>/usr/ucblib/libucb.so</code>.
+
+    </blockquote>
+
+<p>
+<DT> <b><a name=port.7> [P.6] </a> 
+    Do I still need libXpm?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+    No, now Tix has its own XPM file reader. You no longer need libXpm.
+
+
+<p>
+<DT> <b><a name=port.8> [P.7] </a> 
+    <a name=coredump1>I get a coredump as soon as tixwish starts up.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+
+     Try to get a backtrace of the stack when the core dump happens
+     (with a debugger, for example). If the core dump happens right
+     inside the call to <code>Tk_ConfigureWidget()</code> inside the
+     file <code>tixInit.c</code>, then the problem is because you
+     compiled <code>libtk.a</code> and <code>libtix.a</code> with
+     different versions of the Th header file
+     <code>tk.h</code>. Delete all the <code>.o</code> files from the
+     src directory of Tix, fix the Makefile so that now you can
+     compile <code>libtix.a</code> with the same tk.h that you used to
+     compile <code>libtk.a</code>.
+
+
+<p>
+</DL>
+<hr>
+<h3>
+    Porting from Tix 3.6 to Tix 4.x
+</h3>
+<DL>
+<DT> <b><a name=tix36to40.1> [X.1] </a> 
+    What happened to the <code>tixInit</code> command?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    You don't need to use it anymore. It is provided in Tix 4.x only for
+    backward compatibility.
+
+<p>
+<DT> <b><a name=tix36to40.2> [X.2] </a> 
+    How do I set the schemes and fontsets in Tix 4.x?
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+    You can set the color schemes and fontsets using the standard X
+    resource database (.Xdefaults file). You can add these two lines
+    in the user's .Xdefaults file: <pre>
+
+	*TixScheme:   Gray
+	*TixFontSet:  14Point </pre>
+
+    If you want to switch color schemes and fontsets during run time,
+    you can issue the following commands: <pre>
+	tix config -scheme Gray -fontset 14Point
+    </pre>
+
+    Please read the <a href=../man/tix.html>tix</a> manual page for
+    more details
+
+<p>
+<DT> <b><a name=tix36to40.3> [X.3] </a> 
+    How do I choose the default TK color schemes and fontsets? Tix is
+    messing up the colors of my existing programs.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+   Add these two lines in your .Xdefaults:<pre>
+
+	*TixScheme:   TK
+	*TixFontSet:  TK </pre>
+
+<p>
+<DT> <b><a name=tix36to40.4> [X.4] </a> 
+    I want the old bisque look of Tk 3.6. tk_bisque doesn't work.
+</b><p>
+<DD>
+<b> ANSWER: </b> 
+
+   The Tix widgets are not compatible with tk_bisque. If you want a
+   bisque-ish look you can add to your .Xdefaults file the following
+   line:<pre>
+	*TixScheme:   Bisque</pre>
+
+<p>
+</DL>

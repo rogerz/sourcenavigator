@@ -1,0 +1,85 @@
+
+
+
+<TITLE>tixMwm - Communicate with the Motif(tm) window manager.</TITLE>
+<Center><H2>tixMwm - Communicate with the Motif(tm) window manager.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<P>
+<B>tixMwm<I> option <I>pathName ?args? </I></B>
+<P>
+</pre><H3>COMMAND OPTIONS</H3>
+<P>
+<DL>
+<DT> <B>tixMwm decoration <I>pathName</I></B> ?option? ?value? ?...? 
+</I></B>
+<DD> When no options are given, this command returns the values of all the
+decorations options for the toplevel window with the <I>pathName</I></B>.
+
+When only one option is given without specifying the value, the
+current value of that option is returned.
+
+When more than one "option value" pairs are passed to this command,
+the specified values will be assigned to the corresponding options. As
+a result, the appearance of the Motif decorations around the toplevel
+window will be changed.
+
+Possible options are: <B>-border</B></I>, <B>-menu</B></I>, <B>-maximize</B></I>,
+<B>-minimize</B></I>, <B>-resizeh</B></I> and <B>-title</B></I>. The value must be a
+Boolean value. The values returned by this command are undefined when
+the window is not managed by mwm.
+</DL>
+<DL>
+<DT> <B>tixMwm ismwmrunning <I>pathName</I></B>
+</I></B>
+<DD> This returns true if mwm is running on the screen where the specified
+window is located, false otherwise.
+</DL>
+<DL>
+<DT> <B>tixMwm protocol <I>pathName
+</I></B>
+<DD> When no additional options are given, this command returns all
+protocols associated with this toplevel window.
+</DL>
+<DL>
+<DT> <B>tixMwm protocol <I>pathName <B>activate<I> protocol_name</I></B>
+</DL>
+<DL>
+<DT> <B>tixMwm protocol <I>pathName <B>add<I> protocol_name menu_message</I></B>
+</I></B>
+<DD> Add a new mwm protocol message for this toplevel window. The
+message is identified by the string name specified in
+specified by <I>menu_message</I></B>. Once a new mwm protocol message is
+added to a toplevel, it can be catched by the TK <B>wm protocol</B></I>
+command. Here is an example:
+</DL>
+<pre><code><code><code>
+ tixMwm protocol . add MY_PRINT_HELLO \\
+     {"Print Hello"  _H Ctrl&lt;Key&gt;H}
+ wm protocol . MY_PRINT_HELLO {puts Hello}
+</code></code></code></pre>
+<DL>
+<DT> <B>tixMwm protocol <I>pathName <B>deactivate<I> protocol_name</I></B>
+</DL>
+<DL>
+<DT> <B>tixMwm protocol <I>pathName <B>delete<I> protocol_name</I></B>
+</I></B>
+<DD> window manager protocol handler associated with this protocol (by the
+<B>wm protocol</B></I> command) is not deleted automatically. You have to
+delete the protocol handle explicitly.  E.g.:
+</DL>
+<pre><code><code><code>
+ tixMwm protocol . delete MY_PRINT_HELLO
+ wm protocol . MY_PRINT_HELLO {}
+</code></code></code></pre>
+<P>
+</pre><H3>BUGS</H3>
+On some versions of Mwm, the <B>-border</B></I> will not disappear unless
+<B>-resizeh</B></I> is turned off. Also, the -title will not disappear
+unless all of <B>-title</B></I>, <B>-menu</B></I>, <B>-maximize</B></I> and
+<B>-minimize</B></I> are turned off.
+<P>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:32 EST 1997 </i> --- 
+<i>Serial 853731302</i>

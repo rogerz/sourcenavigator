@@ -1,0 +1,141 @@
+
+                         BUILDING THE WINDOWS BINARIES
+
+   To build Tix on Windows, you must have the following:
+
+     * Visual C++ 4.0 or later; or Borland C++ 4.5 or later. There is not
+       yet built-in support for Tix to work with other compilers.
+     * The sources of Tcl/Tk for Windows.
+     * The sources of Tix for Windows.
+
+  1. DOWNLOAD THE TCL, TK AND TIX SOURCES
+
+   You can download latest version of the Tcl7.5, 7.6 or 8.0 from
+   ftp://ftp.sunlabs.com/pub . There are detailed instructions that
+   comes with these packages about compiling them on Windows. Hopefully
+   that will give you a good exercise on setting up the environment for
+   compiling Tcl-based programs on the Windows platforms.
+
+   You can then get the Tix source distribution at
+   ftp://ftp.xpi.com/pub/Tix41.zip . This ZIP file contains files with
+   long file names and must be unzipped by an UNZIP program that knows
+   long filenames, such as winzip.exe.
+
+   You should put the Tcl, Tk and Tix source packages in the same
+   directory. For example, my directories look like this:
+
+     C:\tcl7.6
+     C:\tk4.2
+     C:\Tix4.1
+
+  2. COMPILE TCL AND TK
+
+   Follow the instructions that come with Tcl and Tk. If you can compile
+   successfully, you would get the following files:
+
+     C:\tcl7.6\win\tcl76.dll
+     C:\tcl7.6\win\tclpip76.dll
+     C:\tk4.2\win\tk42.dll
+
+   These are the files you need to run Tix on Windows.
+
+  3. COMPILE TIX
+
+   Change to the Tix4.1\Win subdirectory. Tix supports several versions
+   of Tcl. You choose the version of Tcl to compile Tix with by using the
+   TCL_VER variable:
+     * Tcl 7.5: nmake -f makefile.vc TCL_VER=7.5
+     * Tcl 7.6: nmake -f makefile.vc TCL_VER=7.6
+     * Tcl 8.0: nmake -f makefile.vc TCL_VER=8.0
+     * Itcl 2.2: nmake -f makefile.vc TCL_VER=2.2i
+
+   If you have BC++, use make -f makefile.bc instead.
+
+   When make or nmake finishes, you will get Tix binaries inside the
+   build directories. For example, if you compile Tix for Tcl 7.6, you
+   will be the following files: 
+
+     C:\Tix4.1\win\tcl7.6\tix4176.dll
+     C:\Tix4.1\win\tcl7.6\tix4176.exe
+
+   The executable file tix4176.exe contains Tcl, Tk and Tix. You can use
+   it to run an Tix script by: 
+
+     set TIX_LIBRARY=C:\Tix4.1\library C:\Tix4.1\win\tcl7.6\tix4176.exe
+     foo.tcl
+
+  4. FIXING DLL PROBLEMS
+
+   You may run into certain problems related to DLL's when you execute
+   tix4176.exe. For example:
+     * Windows complains that a DLL, usually tcl76.dll, is not found.
+     * Windows complains that a symbol is missing.
+     * Some weird things happen.
+
+   When tix4176.exe starts up, it will load in the following DLL's
+     * tcl76.dll
+     * tclpip76.dll
+     * tk42.dll
+     * tix4176.dll
+
+   Windows searches for a DLL file by the following order:
+    1. Same directory as executable.
+    2. Windows system directory.
+    3. directories in the PATH environment variable.
+
+   To ensure that the correct DLLs are loaded, you can copy all the DLL's
+   used by tix4176.exe into the directory where tix4176.exe is.
+
+  5. INSTALLING TIX
+
+   You can install Tix into the Tcl installation directory so that you
+   can load Tix with the "package require" command and no longer need to
+   set the TIX_LIBRARY variable:
+
+    1. Create a directory tix4.1 under the Tcl installation directory,
+       usually in C:\Program Files\Tcl7.6\lib.
+
+    2. Copy all the files under Tix4.1b1\library into the C:\Program
+       Files\Tcl7.6\lib\tix4.1 directory.
+
+    3. Copy the file Tix4.1\win\pkgIndex.tcl into the C:\Program
+       Files\Tcl7.6\lib\tix4.1 directory.
+
+   Now you should be able to start up wish42.exe and execute the
+   following command to load in Tix. 
+
+     package require -exact Tix [tixBinVer 4.1] 
+
+   Read the file Tix4.1\docs\Pkg.txt for more info about dynamically
+   loading Tix.
+
+     _________________________________________________________________
+
+  FAQ'S FOR RUNNING TIX ON WINDOWS
+
+   How do I set an environment variable.
+
+          You can set it in your DOS window by typing something like "set
+          TIX_LIBRARY=C:\Tix4.1\win". This will affect that particular
+          DOS window only. If you want the change to affect the whole
+          Windows environment (for example, you want launch txwish41.exe
+          by double-clicking on its icon), you must put the commands in
+          your AUTOEXEC.BAT file and then reboot your machine.
+
+   I get an "out of environment space" error from DOS.
+
+          Edit your CONFIG.SYS file and add the switch "/E:1024" to the
+          SHELL=COMMAND.COM line. Reboot. This should give you enough
+          env space.
+
+   My C compiler says "unrecognized file format tk42.lib" or something
+          like that.
+
+          You compiled tk42.lib with VC++ and are compiling Tix with
+          Borland C++, or vice verse. Use the same compiler to compile
+          all binaries.
+
+     _________________________________________________________________
+
+   Last modified Sat Feb 15 21:52:36 EST 1997 --- Serial 856069650
+

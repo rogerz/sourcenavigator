@@ -1,0 +1,371 @@
+
+
+
+<TITLE>tixControl - Create and manipulate tixControl widgets</TITLE>
+<Center><H2>tixControl - Create and manipulate tixControl widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixControl<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixControl</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The Control widget supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>allowEmpty</B></I>
+Class:		<B>AllowEmpty</B></I>
+Switch:		<B>-allowempty</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether the Control widget should allow the empty string
+as a valid input.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>autorepeat</B></I>
+Class:		<B>AutoRepeat</B></I>
+Switch:		<B>-autorepeat</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether the Control widget should have autorepeat behavior.
+If set to be "true", the value of the Control widget will be
+automatically incremented or decremented when the user holds down the
+mouse button over the arrow buttons. Only values "true" and
+"false" will be recognized.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the <B>-value</B></I> option of
+the Control widget is changed.  The command will be called with one
+arguments -- the new value of the Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>decrCmd</B></I>
+Class:		<B>DecrCmd</B></I>
+Switch:		<B>-decrcmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the the user presses the
+down-arrow button subwidget. This command is called with one parameter
+-- the current <B>-value</B></I> of this Control widget. This
+command is to decrement this value by one step, according to its own
+definition of "decrement", and return the decremented value, which
+will be stored in the <B>-value</B></I> of this Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the Control widget
+changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableForeground</B></I>
+Class:		<B>DisableForeground</B></I>
+Switch:		<B>-disableforeground</B></I>
+</code></code></code></pre>
+<UL>
+The foreground color to use for of the entry subwidget when the
+Control widget is disabled.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>incrCmd</B></I>
+Class:		<B>IncrCmd</B></I>
+Switch:		<B>-incrcmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the the user presses the
+up-arrow button subwidget. This command is called with one parameter
+-- the current <B>-value</B></I> of this Control widget. This
+command is to increment this value by one step, according to its own
+definition of "increment", and return the incremented value, which
+will be stored in the <B>-value</B></I> of this Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>initwait</B></I>
+Class:		<B>Initwait</B></I>
+Switch:		<B>-initwait</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how long the Control widget should wait initially before
+it starts to automatically increment or decrement its value in the
+autorepeat mode. In milliseconds.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>integer</B></I>
+Class:		<B>Integer</B></I>
+Switch:		<B>-integer</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value specifying whether only integer numbers are accepted.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>max</B></I>
+Class:		<B>Max</B></I>
+Switch:		<B>-max</B></I>
+Alias:		<B>-ulimit</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the upper limit of the value of the Control widget. When set
+to empty string, the Control widget has no upper limit.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>min</B></I>
+Class:		<B>Min</B></I>
+Switch:		<B>-min</B></I>
+Alias:		<B>-llimit</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the lower limit of the value of the Control widget.When set
+to empty string, the Control widget has no lower limit.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>repeatRate</B></I>
+Class:		<B>RepeatRate</B></I>
+Switch:		<B>-repeatrate</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how often the value of the Control widget should be
+incremented or decremented when it is in the autorepeat mode. In
+milliseconds.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectMode</B></I>
+Class:		<B>SelectMode</B></I>
+Switch:		<B>-selectmode</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how the Control widget should react to \fC&lt;KeyPress&gt;</B></I>
+events. When set to "immediate", any user keyboard inputs will
+immediately change the <B>-value</B></I> option. When set to "normal", the
+user keyboard inputs will be copied to the <B>-value</B></I> option only
+if the\fC &lt;Return&gt;</B></I> key is pressed or the keyboard focus is
+changed. The use of the immediate mode is discouraged. For effective
+use of the Control widget, one should use the normal mode together
+with the <B>update</B></I> widget command (see below).
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the whether the Control widget is normal or
+disabled.  Only the values "normal" and "disabled" are recognized.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>step</B></I>
+Class:		<B>Step</B></I>
+Switch:		<B>-step</B></I>
+</code></code></code></pre>
+<UL>
+Specifies by how much the value of the Control widget should be
+incremented or decrmented when the user press the arrow buttons.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>validateCmd</B></I>
+Class:		<B>ValidateCmd</B></I>
+Switch:		<B>-validatecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the -value of the
+Control widget is about to change. This command is called
+with one parameter -- the new <B>-value</B></I> entered by the user. This
+command is to validate this new value by returning a value it deems
+valid.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the value of the Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>variable</B></I>
+Class:		<B>Variable</B></I>
+Switch:		<B>-variable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the global variable in which the value of the
+Control widget should be stored. The value of the Control widget
+will be automatically updated when this variable is changed.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>decr</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The down arrow button.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>entry</B></I>
+Class:		<B>Entry</B></I>
+</code></code></code></pre>
+<UL>
+The entry that shows the value of this Control widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>incr</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The up arrow button.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixControl</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a Control widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+Control widget such as its cursor and relief.
+
+The Control widget is also known as the <B>SpinBox</B></I> widget.
+It is generally used to control a value. The user can adjust the value
+by pressing the two arrow buttons or by entering the value directly
+into the entry. The new value will be checked against the user-defined
+upper and lower limits.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixControl</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It has
+the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command.  The following commands
+are possible for Control widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixControl</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixControl</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>decr</B></I>
+</I></B>
+<DD> Decrements the value of the Control widget by the step specified
+by the <I>-step</I></B> option.
+</DL>
+<DL>
+<DT> <I>pathName <B>incr</B></I>
+</I></B>
+<DD> Increments the value of the Control widget by the step
+specified by the <I>-step</I></B> option.
+</DL>
+<DL>
+<DT> <I>pathName <B>invoke</B></I>
+</I></B>
+<DD> Causes the command specified by the <I>-command</I></B> option to be
+invoked.
+</DL>
+<DL>
+<DT> <I>pathName <B>update</B></I>
+</I></B>
+<DD> If the user has modified the entry using keyboard inputs, the update
+command will <B>update</B></I> the <B>-value</B></I> of this Control
+"normal", one should call the <B>update</B></I> command on this widget
+before examining its <B>-value</B></I> option. This command has no effect
+in if the <B>-selectmode</B></I> option is set to "immediate".
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+When the user presses the up/down arrow buttons (or press the &lt;Up&gt; and
+&lt;Down&gt; arrow keys on the keyboard), the value of the tixControl widget
+is adjusted according to the <B>-validatecmd</B></I>, <B>-incrcmd</B></I>,
+<B>-decrcmd</B></I>, <B>-step</B></I>, <B>-max</B></I> and <B>-min</B></I> options.
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:20 EST 1997 </i> --- 
+<i>Serial 853731296</i>

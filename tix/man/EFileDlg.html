@@ -1,0 +1,106 @@
+
+
+
+<TITLE>tixExFileSelectDialog - Create and manipulate tixExFileSelectDialog widgets</TITLE>
+<Center><H2>tixExFileSelectDialog - Create and manipulate tixExFileSelectDialog widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixExFileSelectDialog<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixExFileSelectDialog</B></I> class does not have a super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+<B>TixExFileSelectDialog</B></I> supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the user chooses on a filename
+(usually by selecting the filename and clicking on the "OK" button").
+The command is called with one argument, the complete pathname of the
+file.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>fsbox</B></I>
+Class:		<B>TixExFileSelectBox</B></I>
+</code></code></code></pre>
+<UL>
+The ExFileSelectBox subwidget embedded inside the ExFileSelectDialog.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixExFileSelectDialog</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a ExFileSelectDialog
+widget. Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+ExFileSelectDialog such as its cursor and relief.
+
+The ExFileSelectDialog widget provides an convenient method for the
+user to select files. The style of the ExFileSelectDialog widget is
+very similar to the standard file dialog in MS Windows 3.1.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixExFileSelectDialog</B></I> command creates a new Tcl command whose
+window. This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command. The following
+commands are possible for ExFileSelectDialog widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixExFileSelectDialog</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixExFileSelectDialog</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>popdown</B></I> 
+</I></B>
+<DD> Withdraws the ExFileSelectDialog from the screen.
+</DL>
+<DL>
+<DT> <I>pathName <B>popup</B></I> 
+</I></B>
+<DD> Pops up the ExFileSelectDialog on the screen.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I>name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:23 EST 1997 </i> --- 
+<i>Serial 853731298</i>

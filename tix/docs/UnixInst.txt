@@ -1,0 +1,171 @@
+
+                          BUILDING THE UNIX BINARIES
+
+   There are several versions of Tcl/Tk being used today. The newer Tcl
+   7.5, 7.6 and 8.0 releases are becoming popular because they can run
+   on Windows, Unix and Macintosh. However, many people are still using
+   Tcl 7.4. Another popular variant of Tcl is Itcl , which adds
+   object-oriented functionality to the Tcl language. Version Itcl 2.0,
+   2.1 and 2.2 are being widely used now.
+
+   Tix supports all of these versions of Tcl and Itcl so you can freely
+   choose a version of Tcl or Itcl that works best for you. The following
+   steps guide you through the process of building the Tix binary for
+   your choice of the version(s) of Tcl or Itcl on Unix platforms.
+
+  1. DOWNLOAD THE TCL, TK AND/OR ITCL SOURCES
+
+   You may have already installed Tcl, Tk and Itcl on your system. The
+   installed binaries usually reside in the /usr/local/ directory.
+   However, the build process of Tix doesn't use the installed binaries
+   because doing that may result in subtle version conflects. Instead,
+   Tix uses only the binaries from the Tcl, Tk and Itcl source
+   directories. Install sources of these packages if they are not already
+   in your system.
+
+     * Tcl 7.4, 7.5, 7.6 and 8.0: The source code of these Tcl releases
+       can be found at ftp://ftp.sunlabs.com/pub . Remember to download
+       the source code of the corresponding versions of Tk as well.
+
+     * Itcl 2.0: The source code can be found at
+       ftp://ftp.neosoft.com/pub/tcl/alcatel/extensions/itcl2.0.tar.gz
+       .
+
+     * Itcl 2.1 and 2.2: Download the source code from
+       ftp://www.tcltk.com/pub/itcl
+
+   Make sure that the source directory of these package reside in the
+   same directory as Tix. For example, to compile Tix 4.1.0 for Tcl 7.6
+   and Itcl 2.1, a typical source directory would look like this:
+
+  /home/src/tcl7.6/
+  /home/src/tk4.2/
+  /home/src/itcl2.1/
+  /home/src/Tix4.1.0/
+
+   IMPORTANT: Do not arrange your source directory in any other way. Do
+   not change the names for these directories. Otherwise Tix will not be
+   configured properly.
+
+  2. CONFIGURE AND COMPILE THE DESIRED VERSION(S) OF TCL AND/OR ITCL
+
+   Tcl, Tk and Itcl comes with installation guides and should be easy to
+   build. In case you have any problems building these packages, you can
+   send your questions to the comp.lang.tcl newsgroup or to the
+   respective authors of these packages. You may also send mail to
+   tix-support@xpi.com.
+
+   For example, assuming your source directory is structured as above,
+   you can build Tcl 7.6 and Tk 4.2 by issuing the following Unix
+   commands:
+
+  cd /home/src/tcl7.6/unix
+  ./configure --enable-shared
+  make
+  cd /home/src/tk4.2/unix
+  ./configure --enable-shared
+  make
+
+  3. CONFIGURE AND COMPILE TIX
+    1. Make sure you have configured and build the desired version(s) of
+       Tcl and/or Itcl.
+
+    2. Change into the Tix4.1.0/unix directory and execute the configure
+       script:
+
+  cd /home/src/Tix4.1.0/unix
+  ./configure
+
+    3. Inside the Tix4.1.0/unix directory, you will see several
+       subdirectories for building Tix for specific version of Tcl/Tk or
+       Itcl. Change into the appropriate subdirectory. For example, if
+       you want to build Tix for Tcl7.6/Tk4.2, execute the following
+       commands:
+
+  cd tk4.2
+  ./configure --enable-shared
+  make
+
+   Before you run the configure script, you can type:
+
+  ./configure --help
+
+   to find out the available options.
+    4. Repeat step 3 for any other versions of Tcl/Tk or Itcl that you
+       want to build Tix for.
+
+  4. EXPERIMENTING WITH TIX
+
+   When you finish building Tix, you will find the tixwish program inside
+   the build directories (e.g., Tix4.1.0/unix/tk4.2/tixwish). Or, if you
+   build Tix for Itcl, the program will be called itixwish.
+
+   Tix comes with a number of demo programs. You can run these program by
+   running the demos/widget script with tixwish or itixwish. Make sure
+   that you have set the TIX_LIBRARY variable accordingly (see below). If
+   you haven't installed Tcl and/or Tk then you'll need to set your
+   TCL_LIBRARY and TK_LIBRARY environment variable as well (see the Tcl
+   and Tk README files for information on this).
+
+   You can type the following command in your shell:
+
+  cd /home/src/Tix4.1.0/demos
+  env TIX_LIBRARY=/home/src/Tix4.1.0/library ../unix/tk4.2/tixwish widget
+
+   This will open up the Tix demo window. You can click on the "Run
+   Sample Programs" tab and execute the sample programs:
+
+   [IMAGE]
+
+   (Screen 4.1 Tix widget demostration program)
+
+  5. INSTALLING TIX
+
+   If you are sufficiently convinced that Tix works properly, you can
+   install the Tix binaries and scripts on your system. If you are
+   paranoid, these is a small set of test scripts that tests the behavior
+   of Tix under various configurations. You can do this by typing "make
+   tests" inside the build-subdirectories, e.g.:
+
+  cd /home/src/Tix4.1.0/unix/tk4.2
+  make tests
+
+   Hopefully it will report "0 error(s) found".
+
+   Type "make install" to install Tix's binaries and script files in
+   standard places:
+
+  cd /home/src/Tix4.1.0/unix
+  make install
+
+   In the default configuration information will be installed in
+   /usr/local so you'll need write permission on this directory. If
+   you'd like to use a different installation directory, you can specify
+   the "--exec-prefix" and "--prefix" options for the configure script in
+   step 3 and then rebuild Tix.
+
+  6. TROUBLE SHOOTING
+
+   If make fails then you'll have to personalize the Makefile's for your
+   site or possibly modify the distribution in other ways. First check
+   the files docs/FAQ.html and docs/Porting.html to see if there are
+   hints for compiling on your system. If you need to modify Makefile's,
+   there are comments at the beginning of it that describe the things you
+   might want to change and how to change them.
+
+   If you have trouble compiling Tix, I'd suggest looking at the files
+   docs/FAQ.html and docs/Porting.html. It contains information that
+   people have sent me about changes they had to make to compile Tix in
+   various environments.
+
+   I make no guarantees that this information is accurate, complete, or
+   up-to-date, but you may find it useful. If you get Tix running on a
+   new configuration and had to make non-trivial changes to do it, I'd be
+   happy to receive new information to add to docs/Porting.html. I'm also
+   interested in hearing how to change the configuration setup so that
+   Tix compiles on additional platforms "out of the box".
+
+     _________________________________________________________________
+
+   Last modified Wed Feb 12 16:01:33 EST 1997 --- Serial 856069650
+

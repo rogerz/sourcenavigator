@@ -1,0 +1,1325 @@
+Tcl/Tk has proven to be an excellent language for building small
+programs that require a Graphical User Interface (GUI). However, it is
+often inadequate for use in large commercial applications for a number
+of reasons:
+
+  *  Execution speed is usually too slow for serious computation.
+  *  Complex data structures are difficult to construct.
+  *  The lack of structure and typing in the Tcl language complicates
+     the development of large codes.
+  *  Tcl/Tk source code is easily read by the end user, making it hard
+     for developers to protect proprietary algorithms.
+  *  Large Tcl/Tk programs typically consist of many separate files
+     that must be correctly positioned within the target computer's
+     file system.  This can make the programs difficult to install,
+     maintain and administer.
+
+To circumvent these problems, we have constructed a system that makes
+it easy for a C or C++ program to invoke and interact with Tcl/Tk.
+This allows data structures and compute-intensive algorithms to be
+coded in C or C++ while the GUI is coded in Tcl/Tk. It also allows the
+entire application to be compiled into a single stand-alone
+executable, which is not easily readable by the end user and which can
+be run on computers that do not have Tcl/Tk installed.  We call our
+system "ET" for "Embedded Tk".
+
+
+1.  A Simple Example: ``Hello, World!''
+
+The following is an ET implementation of the classic "Hello, World!"
+program:
+
+
+    void main(int argc, char **argv){
+      Et_Init(&argc,argv);
+      ET( button .b -text {Hello, World!} -command exit; pack .b );
+      Et_MainLoop();
+    }
+
+This example is short, but is serves to illustrate the basic structure
+of any ET application.  The first line of the main() procedure is a
+call to the function Et_Init().  This function initializes the ET
+system by creating a Tcl/Tk interpreter, connecting to the X11 server,
+and creating a main window.  The last line of main() implements the
+event loop.  Everything in between constitutes setup code.  In this
+example, the setup code is a short Tcl/Tk script contained within the
+special macro ET(). The et2c macro preprocessor will replace this ET()
+macro with C code that causes the enclosed Tcl/Tk script to be
+executed.
+
+Of course, there is nothing in this example that could not also be
+done by calling Tcl/Tk library routines directly, without the
+intervening ET abstraction.  The advantage of using ET is that it
+makes the interface between C and Tcl/Tk considerably less cumbersome
+and error-prone, allowing the programmer to focus more mental energy
+on the algorithm and less on the syntax of the programming language.
+
+1.1 Compiling ``Hello, World!''
+
+To compile the hello world example, we must first process the source
+file using the et2c macro preprocessor, then link the results with the
+et.o library.  Suppose the example code is contained in the file
+hello.c. Then to compile the example (on most systems) requires the
+following steps:
+
+
+
+    et2c hello.c >hello_.c
+    cc -o hello hello_.c et.o -ltk -ltcl -lX11 -lm
+
+
+Assuming it is statically linked, the resulting executable file hello
+contains everything needed to run the program: the Tcl/Tk interpreter,
+the startup scripts and the application code.  The program can be
+moved to other binary-compatible computers and executed there even if
+the other computers do not have Tcl/Tk installed.
+
+Additional information is provided below.
+
+1.2 How to obtain sources and documentation
+
+Complete sources to the et2c macro preprocessor and et.o library
+comprise less than 2000 lines of code, including comments.  These
+sources, together with source code to all example programs discussed
+below, are available for anonymous FTP from ftp.vnet.net in the
+directory /pub/users/drh.
+
+A copy of this documentation is also available from the same FTP site.
+The documentation is available in either PostScript, HTML, or an ASCII
+text file.
+
+
+2.  A Summary Of Services Provided By ET
+
+The overall goal of ET is to simplify the interface between C and an
+embedded Tcl/Tk-based GUI. To this end, the ET system provides a
+number of services that aid in initializing the Tcl/Tk interpreter and
+in transferring data and control between Tcl/Tk and C. The services
+provided by ET are summarized here and described in more detail in
+subsequent sections.
+
+2.1 Routines to initialization the Tcl/Tk interpreter
+
+The et.o library includes routines Et_Init() and Et_MainLoop() that
+initialize the ET package and implement the X11 event loop.  A third
+routine Et_ReadStdin() allows standard input to be read and
+interpreted by the Tcl/Tk interpreter at run-time.
+
+2.2 Macros to invoking Tcl/Tk from within C
+
+The ET() macro looks and works just like a function in C, except that
+its argument is a Tcl/Tk script instead of C code.  ET() returns
+either ET_OK or ET_ERROR depending upon the success or failure of the
+script.  Similar routines ET_STR(), ET_INT() and ET_DBL() also take a
+Tcl/Tk script as their argument, but return a string, an integer, or a
+double-precision floating point number instead of the status code.
+
+2.3 A method to pass variable contents from C to Tcl/Tk
+
+Wherever the string %d(x) occurs inside an ET() macro, the integer C
+expression x is converted to ASCII and substituted in place of the
+%d(x).  Similarly, %s(x) can be used to substitute a character string,
+and %f(x) will substitute a floating point value.  The string %q(x)
+works like %s(x) except that a backslash is inserted before each
+character that has special meaning to Tcl/Tk.
+
+2.4 Macros for creating new Tcl/Tk commands in C
+
+The macro "ET_PROC( newcmd ){ ... }" defines a C function that is
+invoked whenever the newcmd command is executed by the Tcl/Tk
+interpreter.  Parameters argc and argv describe the arguments to the
+command.  If a file named xyzzy.c contains one or more ET_PROC macros,
+then the commands associated with those macros are registered with the
+Tcl/Tk interpreter by invoking "ET_INSTALL_COMMANDS( xyzzy.c )" after
+the Et_Init() in the main procedure.
+
+2.5 Macros for linking external Tcl/Tk scripts into a C program
+
+The macro "ET_INCLUDE( script.tcl )" causes the Tcl/Tk script in the
+file script.tcl to be made a part of the C program and executed at the
+point in the C program where the ET_INCLUDE macro is found.  The
+external Tcl/Tk script is normally read into the C program at
+compile-time and thus becomes part of the executable.  However, if the
+-dynamic option is given to the et2c macro preprocessor, loading of
+the external Tcl/Tk script is deferred to run-time.
+
+2.6 Tcl/Tk return status macros
+
+The macros ET_OK and ET_ERROR are set equal to TCL_OK and TCL_ERROR.
+This often eliminates the need to put "#include " at the beginning of
+files that use ET.
+
+2.7 Convenience variables
+
+ET defines three global C variables as a convenience to the
+programmer.  Et_Interp is a pointer to the Tcl/Tk interpreter used by
+ET. Et_MainWindow is the main window of the ET application.
+Et_Display is the Display pointer required as the first argument to
+many XLib routines.  ET also provides two global Tcl variables,
+cmd_name and cmd_dir.  These contain the name of the executable and
+the directory where the executable is found.
+
+
+3.  Example 2: A Decimal Clock
+
+The preceding "Hello, World!" example program demonstrated the basic
+structure of an ET application including the use of the Et_Init()
+function to initialize the Tcl/Tk interpreter and the Et_MainLoop()
+function for implementing the X11 event loop.  The following program
+will demonstrate additional aspects of the the ET system.
+
+3.1 Source code for the decimal clock example
+
+
+  /* This file implements a clock that shows the hour as 
+  ** fixed-point number X, such that
+  **
+  **      0.000 <= X < 24.000
+  **
+  ** X represents a fractional hour, not hours and minutes.
+  ** Thus the time "8.500" means half past 8 o'clock, not
+  ** ten minutes till 9.
+  */
+  #include <time.h>
+
+  void main(int argc, char **argv){
+    Et_Init(&argc,argv);
+    ET_INSTALL_COMMANDS;
+    ET( 
+      label .x -width 6 -text 00.000 -relief raised -bd 2
+      pack .x
+      UpdateTime
+    );
+    Et_MainLoop();
+  }
+
+  /* Update the time displayed in the text widget named ".x".
+  ** Reschedule this routine to be called again after 3.6 
+  ** seconds.
+  */
+  ET_PROC( UpdateTime ){
+    struct tm *pTime; /* The time of day, decoded */
+    time_t t;         /* Number of seconds since the epoch */
+    char buf[40];     /* The time value is written here */
+
+    t = time(0);
+    pTime = localtime(&t);
+    sprintf(buf,"%2d.%03d",pTime->tm_hour,
+       (pTime->tm_sec + 60*pTime->tm_min)*10/36);
+    ET( .x config -text %s(buf); after 3600 UpdateTime );
+    return ET_OK;
+  }
+
+                              **Image**
+             3.1 Typical appearance of the decimal clock
+
+3.2 Discussion of the decimal clock example
+
+This example implements a clock program that displays the time in
+thousandths of the hour, rather than the more usual hours, minutes and
+seconds.  (Such a display might be useful, for instance, to a
+consultant who bills time in tenth hour increments.) The code for this
+example is contained in the file named dclock.c.
+
+3.2.1 Initialization and event loop routines.  As in the first example
+, the main() function to dclock begins with a call to Et_Init() and
+ends with a call to Et_MainLoop(), with setup code in between.  If you
+didn't see it before, note here that the Et_Init() function takes two
+arguments -- a pointer to an integer that is the number of parameters
+to the program, and a pointer to an array of pointers to strings that
+are the program parameters.  Note especially that the first argument
+is passed by reference, not by value.  The Et_Init() function requires
+these arguments so that it can detect and act upon command line
+arguments related to the initialization of Tcl/Tk. Any such arguments
+detected are removed from the argc and argv variables before Et_Init()
+returns, so the rest of the program need not be aware of their
+existence.  The arguments currently understood by Et_Init() are
+-geometry, -display, -name and -sync.  The use and meaning of these
+arguments is exactly the same as in the standard Tcl/Tk interpreter
+program "wish".
+
+3.2.2 The ET_PROC macro.  The main difference between dclock and the
+first example is that the setup code for dclock has an "
+ET_INSTALL_COMMANDS" macro and there is an "ET_PROC" function defined
+after main().  Let's begin by describing the ET_PROC macro.
+
+The ET_PROC macro is nothing more than a convenient shorthand for
+creating new Tcl/Tk commands in C. To create a new Tcl/Tk command, one
+writes ET_PROC followed by the name of the new command in parentheses
+and the C code corresponding to the new command in curly braces.
+Within a single ET source file there can be any number of ET_PROC
+macros, as long as the command names defined are all unique.  The et2c
+macro preprocessor translates the ET_PROC macro into a C function
+definition that implements the command, so ET_PROC macros should only
+be used in places where it is legal to write C function definitions.
+
+3.2.2.1 Parameters to an ET_PROC function.  The function created by an
+ET_PROC macro has four parameters, though only two are commonly used.
+The two useful parameters are argc and argv, which are the number of
+arguments to the Tcl/Tk command and the value of each argument.  (The
+command name itself counts as an argument here.) Hence, the argc and
+argv parameters work just like the first two parameters to main() in a
+typical C program.  Another parameter to every ET_PROC function is the
+pointer to the Tcl/Tk interpreter, interp.  This variable is exactly
+equal to the global variable Et_Interp.  The last parameter is called
+clientData and is defined to be a pointer to anything.  It actually
+points to the structure that defines the main window of the
+application, and is therefore the same as the global variable
+Et_MainWindow.
+
+                              **Image**
+        3.2 Summary of the parameters to each ET_PROC command
+
+3.2.3 The ET_INSTALL_COMMANDS macro.  The ET_PROC macro will create a
+C function that can be used as a Tcl/Tk command, but that function and
+the corresponding command name must still be registered with the
+Tcl/Tk interpreter before the command can be used.  This is the job of
+the ET_INSTALL_COMMANDS macro.  Thus, in the dclock example, we must
+invoke the ET_INSTALL_COMMANDS macro to register the UpdateTime
+command prior to using the the UpdateTime command in any Tcl script.
+Because new Tcl/Tk commands must be registered before they are used,
+the ET_INSTALL_COMMANDS macros are usually the first setup code to
+follow the Et_Init() function call.
+
+Each instance of an ET_INSTALL_COMMANDS macro registers all ET_PROC
+commands defined in a single source file.  The dclock example has only
+a single ET_PROC command, but even if it had had 50, a single
+ET_INSTALL_COMMANDS macro within the main() function would have been
+sufficient to install them all.
+
+The name of the source file containing the ET_PROC commands that are
+to be registered is given as an argument to the ET_INSTALL_COMMANDS
+macro.  If no argument is given, then the name of the file containing
+the ET_INSTALL_COMMANDS macro is used.  Hence, the line in the dclock
+example that registers the UpdateTime command can be written in either
+of the following ways:
+
+
+  ET_INSTALL_COMMANDS;
+
+  ET_INSTALL_COMMANDS( dclock.c );
+
+Note that the ET_INSTALL_COMMANDS macro does not actually open or read
+the file named in its argument.  The macro just mangles the file name
+in order to generate a unique procedure name for its own internal use.
+The file itself is never accessed.  For this reason, the file name
+specified as an argument to the ET_INSTALL_COMMANDS macro should not
+contain a path, even if the named file is in a different directory.
+
+3.2.4 The ET() macro.  We have already considered the ET() macro once,
+in connection with the setup code for the "Hello, World!" example, and
+we also observe that the ET() macro reappears in the setup code for
+dclock and in the UpdateTime function.  Let's look at this macro in
+more detail.
+
+An ET() macro works just like a function, except that its argument is
+a Tcl/Tk script instead of a C expression.  When an ET() macro is
+executed, its argument is evaluated by the Tcl/Tk interpreter and an
+integer status code is returned.  The status code will be either ET_OK
+if the script was successful, or ET_ERROR if the script encountered an
+error.  (An ET() macro might also return TCL_RETURN, TCL_BREAK, or
+TCL_CONTINUE under rare circumstances.)
+
+In the dclock example, a single ET() macro is used to initialize the
+display of the decimal clock.  Three Tcl/Tk commands are contained
+within the macro.  The first command creates a label widget for use as
+the clock face, the second packs this label, and the third calls the
+ET_PROC command named UpdateTime to cause the time on the clock face
+to be updated.  (The UpdateTime command will arrange to call itself
+again after a fixed interval, in order to update the time to the next
+thousandth of an hour.)
+
+The Tcl/Tk script contained in an ET() macro executes at the global
+context level.  This means that the Tcl/Tk code within an ET() macro
+can create and access only global Tcl/Tk variables.
+
+3.2.4.1 The %s() phrase within an ET() macro.  Now consider the ET()
+macro contained in the UpdateTime function.  The role of this macro is
+to first change the label on the .x label widget to be the current
+time and then reschedule the UpdateTime command to run again in 3.6
+seconds.  The time value is stored in the character string buf[].
+Within the argument to the ET() macro, the special phrase %s(buf)
+causes the contents of the character string stored in buf[] to be
+substituted in placed of the %s(buf) phrase itself.  The effect is
+similar to a %s substitution in the format string of a printf
+function.  In fact, the statement
+
+
+
+    ET( .x config -text %s(buf); after 3600 UpdateTime );
+
+
+is logical equivalent to
+
+
+
+    char buf2[1000];
+    sprintf(buf2," .x config -text %s; after 3600 UpdateTime ",buf);
+    Tcl_GlobalEval(Et_Interp,buf2);
+
+
+except that with the ET() macro there is never a danger of overflowing
+the temporary buffer buf2[].
+
+3.2.4.2 Other substitution phrases within ET() macros.  The phrase
+%s(...) is replaced by the string contents of its argument within an
+ET() macro.  Similarly, the phrases %d(...) and %f(...) are replaced
+by ASCII representations of the integer and floating point number
+given by the expression in their arguments.  The names of the
+substitution phrases are taken from similar substitution tokens in the
+format string of the printf function.  Note, however, that option
+flags, precision and field widths are not allowed in an ET() macro
+substitution phrase, as they are in printf.  The phrase %3.7f is
+understood by printf but is is not understood by ET(). In an ET()
+macro the only allowed form of a substitution phrase is where the
+format letter immediately follows the percent symbol.
+
+The ET() macro supports an additional substitution phrase not found in
+standard printf: the %q(...). substitution.  The %q() works just like
+%s() with the addition that it inserts extra backslash characters into
+the substituted string in order to escape characters of the string
+that would otherwise have special meaning to Tcl/Tk. Consider an
+example.
+
+
+
+  char *s = "The price is $1.45";
+  ET( puts "%q(s)" );
+
+
+Because the %q(...) macro was used instead of %s(...), an extra
+backslash is inserted immediately before the "$".  The command string
+passed to the Tcl/Tk interpreter is therefore:
+
+
+
+  puts "The price is \$1.45"
+
+
+This gives the expected result.  Without the extra backslash, Tcl/Tk
+would have tried to expand "$1" as a variable, resulting in an error
+message like this:
+
+
+
+  can't read "1": no such variable
+
+
+In general, it is always a good idea to use %q(...) instead of %s(...)
+around strings that originate from outside the program -- you never
+know when such strings may contain a character that needs to be
+escaped.
+
+                              **Image**
+    3.3 Summary of substitution phrases understood by ET() macros
+
+3.2.5 Variations on the ET() macro.  The ET() macro used in all
+examples so far returns a status code indicating success or failure of
+the enclosed Tcl script.  Sometimes, though, it is useful to have
+access to the string returned by the Tcl script, instead of the status
+code.  For these cases one can use the ET_STR() macro in place of ET()
+
+The ET_STR() macro works just like ET() in most respects.  The sole
+argument to ET_STR() is a Tcl/Tk script to which the usual %s(), %d(),
+%f() and %q() substitutions are applied.  The difference between
+ET_STR() and ET() is that ET_STR() returns a pointer to a
+null-terminated string that is the result of the Tcl/Tk script if the
+script was successful.  If the script failed, then ET_STR() returns a
+NULL pointer.
+
+It is very important to note that the string returned by ET_STR() is
+ephemeral -- it will likely be deallocated, overwritten or otherwise
+corrupted as soon as the next Tcl/Tk command is executed.  Therefore,
+if you need to use this string for any length of time, it is a good
+idea to make a copy.  In the following code fragment, the C string
+variable entryText is made to point to a copy of the contents of an
+entry widget named .entry.
+
+
+
+  char *entryText = strdup( ET_STR(.entry get) );
+
+
+It is not necessary to make a copy of the string returned by ET_STR()
+if the string is used immediately and then discarded.  The following
+two examples show uses of the ET_STR() macro where the result does not
+need to be copied.  The first example shows a quick way to find the
+width, height and location of the main window for an application:
+
+
+
+  int width, height, x, y;
+  sscanf(ET_STR(wm geometry .),"%dx%d+%d+%d",&width,&height,&x,&y);
+
+
+The next example shows a convenient way to tell if a given widget is a
+button:
+
+
+
+  char *widget_name = ".xyz";
+  if( strcmp(ET_STR(winfo class %s(widget_name)),"Button")==0 ){
+    /* The widget is a button */
+  }else{
+    /* The widget is not a button */
+  }
+
+
+There also exist versions of the ET() macro that return an integer and
+a floating point number: ET_INT() and ET_DBL(). These work much like
+ET_STR() except that the returned string is converted to an integer or
+to a double using the functions atoi() or atof().  The values 0 and
+0.0 are returned if the Tcl/Tk script given in the argument fails or
+if the returned string is not a valid number.
+
+The ET_INT() and ET_DBL() macros are often used to read the values of
+integer and floating point Tcl/Tk variables.  For instance, if Width
+is a global Tcl/Tk variable containing an integer value, then we can
+load that value into the integer C variable iWidth using the following
+statement:
+
+
+
+  iWidth = ET_INT( set Width );
+
+
+The ET_INT() is also useful for recording the integer id number of an
+object created on a Tcl/Tk canvas widget.  In the following example, a
+line is created on the canvas widget .c and its id is recorded in the
+integer C variable id.  Later, this id is used to delete the line.
+
+
+
+  id = ET_INT( .c create line 100 100 200 200 -width 2 );
+  /* ... intervening code omitted ... */
+  ET( .c delete %d(id) );
+
+
+The last example of the ET_INT() macro shows a convenient way to tell
+if the X11 server is color or monochrome:
+
+
+
+  if( ET_INT(winfo screendepth .)==1 ){
+    /* The display is monochrome */
+  }else{
+    /* The display is color */
+  }
+
+
+                              **Image**
+             3.4 Summary of variations on the ET() macro
+
+
+4.  Example 3: fontchooser
+
+As its name implies, the next example is a small utility program that
+can be used to select X11 fonts.  The source code is contained in two
+files, fontchooser.c and fontchooser.tcl.  We will look at the C code
+first.
+
+4.1 Source code to the font chooser
+
+
+  /*
+  ** This program allows the user to view the various fonts
+  ** available on the X server.
+  **
+  ** Preprocess this file using "et2c" then link with "et.o".
+  */
+  #include "tk.h"     /* This automatically loads Xlib.h */
+
+  void main(int argc, char **argv){
+    Et_Init(&argc,argv);
+    ET_INSTALL_COMMANDS;
+    ET_INCLUDE( fontchooser.tcl );
+    Et_MainLoop();
+  }
+
+  /* This function parses up font names as follows:
+  **
+  **         Font Family               Font size
+  **    __________________________  ________________
+  **   /                          \/                \
+  **   -misc-fixed-medium-r-normal--10-100-75-75-c-60-iso8859-1
+  **                                |   |  \___/    | \_______/
+  **                                |   |    |      |     |
+  **                                |   |    |      |     `-- Always as shown
+  **                                |   |    |      |
+  **             The point size ----'   |    |      `--- 10x average width
+  **                                    |    |
+  **              This field ignored----'    `--- Resolution in dots per inch
+  **
+  **
+  ** If $name is a font name (the first 6 fields of the X11 font name)
+  ** then this procedure defines the global variable $Font($name), giving
+  ** it as a value a list of available font sizes in ascending order.
+  ** Only fonts of a particular resolution are included.  By default, the
+  ** resolution selected is 75dpi, but this can be changed by the
+  ** argument to the command.
+  **
+  ** This command also creates global variable FontCount that holds the
+  ** number of entries in the Font() array.
+  */
+  ET_PROC( FindFonts ){
+    char **fontnames;    /* The names of all fonts in the selected resolution */
+    int count;           /* Number of fonts */
+    int i;               /* Loop counter */
+    char pattern[400];   /* Buffer to hold a pattern used to select fonts. */
+  
+    if( argc==1 ){
+      strcpy(pattern,"*-75-75-*-*-iso8859-1");
+    }else if( argc==2 ){
+      extern int atoi();
+      int resolution = atoi(argv[1]);
+      sprintf(pattern,"*-%d-%d-*-*-iso8859-1",resolution,resolution);
+    }
+    fontnames = XListFonts(Et_Display,pattern,1000,&count);
+    ET(
+      catch {unset Font}
+      set FontCount 0
+    );
+    for(i=0; iresult = "Wrong # args";
+      return ET_ERROR;
+    }
+    if( sscanf(argv[1],"%d-%*d-%*d-%*d-%*c-%d",&leftHeight,&leftWidth)!=2 ){
+      interp->result = "First argument is not a font size";
+      return ET_ERROR;
+    }
+    if( sscanf(argv[2],"%d-%*d-%*d-%*d-%*c-%d",&rightHeight,&rightWidth)!=2 ){
+      interp->result = "Second argument is not a font size";
+      return ET_ERROR;
+    }
+    result = leftHeight - rightHeight;
+    if( result==0 ) result = leftWidth - rightWidth;
+    sprintf(interp->result,"%d",result);
+    return ET_OK;
+  }
+
+                              **Image**
+          4.1 Typical appearance of the fontchooser program
+
+4.2 Analysis of the fontchooser source code
+
+As is the prior examples, the main() function for the fontchooser
+begins and ends with calls to Et_Init() and Et_MainLoop().
+Immediately following the Et_Init() call is an ET_INSTALL_COMMANDS
+macro that registers the two commands FindFonts and FontSizeCompare
+with the Tcl/Tk interpreter.
+
+4.2.1 Using the argc and argv parameters to an ET_PROC function.  The
+FindFonts routine is used to query the X server for the names of all
+available fonts at a particular resolution specified by the argument
+to the FindFonts routine.  If no resolution is specified (if the
+FindFonts command is not given an argument in the Tcl/Tk script) then
+the resolution defaults to 75 dots per inch.  The argc and argv
+parameters are used to determine the number and value of arguments to
+the FindFonts command.  The specified resolution is then used to
+construct a search pattern for the fonts.
+
+
+
+    if( argc==1 ){
+      strcpy(pattern,"*-75-75-*-*-iso8859-1");
+    }else if( argc==2 ){
+      extern int atoi();
+      int resolution = atoi(argv[1]);
+      sprintf(pattern,"*-%d-%d-*-*-iso8859-1",resolution,resolution);
+    }
+
+
+4.2.2 Global variables defined by ET.  After creating a search
+pattern, the The Xlib function XListFonts() is used find all fonts
+that match that pattern.
+
+
+
+    fontnames = XListFonts(Et_Display,pattern,1000,&count);
+
+
+The first argument to XListFonts(), as in many Xlib functions, is a
+pointer to a Display structure that defines the connection to the X
+server.  The fontchooser program uses the convenience variable
+Et_Display to fill this argument.  Et_Display is a global variable
+defined in the et.o library and initialized to the active X connection
+by the Et_Init() function.  The Et_Display variable is available for
+use by any function that needs a Display pointer.
+
+The ET system defines two global C variables besides Et_Display:
+Et_Interp and Et_MainWindow.  The Et_Interp variable is a pointer to
+the Tcl/Tk interpreter used by ET. This variable is very handy since
+many routines in the Tcl/Tk library require a pointer to the
+interpreter as their first argument.  The Et_MainWindow variable
+defines the main window of the application, the window named "."
+within Tcl/Tk scripts.  The main window is needed by a few Tcl/Tk
+library routines, but is not as widely used as the other global
+variables in ET.
+
+All three global C variables in ET are initialized by the Et_Init()
+routine and never change after initialization.
+
+                              **Image**
+                   4.2 Summary of global variables
+
+4.2.3 Other actions of the FindFonts command.  After calling
+XListFonts(), the FindFonts command splits each name into a "font
+family" and a "font size".  For each font family, it creates an entry
+in the global Tcl/Tk array variable Font with the font family name as
+the index and a list of sizes for that font as the value.  A new entry
+in the Font array is created, or else a new size is added to the list
+of font sizes in that entry, by the following ET() macro:
+
+
+
+      ET( 
+        if {![info exists {Font(%s(nameStart))}]} {
+          set {Font(%s(nameStart))} {}
+          incr FontCount
+        }
+        lappend {Font(%s(nameStart))} {%s(cp)}
+      );
+
+
+After all fonts returned by XListFonts have been processed, the list
+of sizes on each entry in the Font array variable is sorted by the
+final ET() macro in the FindFonts command:
+
+
+
+    ET(
+      foreach i [array names Font] {
+        set Font($i) [lsort -command FontSizeCompare $Font($i)]
+      }
+    );
+
+
+4.2.4 Operation of the FontSizeCompare command.  The FontSizeCompare
+command is used to sort into ascending order the font sizes listed in
+a single entry of the Font array.  The only place it is used is on the
+lsort command contained in the final ET() macro of the FindFonts
+routine.
+
+Unlike any previously described ET_PROC command, FontSizeCompare makes
+use of the interp parameter.  Recall that the interp parameter is a
+pointer to the Tcl/Tk interpreter, and is therefore always equal to
+the global C variable Et_Interp.  Hence, one could have used the
+Et_Interp variable in place of the interp parameter throughout the
+FindSizeCompare function and obtained the same result.
+
+4.2.5 Constructing the GUI for the fontchooser.  The Tcl/Tk code that
+defines the GUI for the fontchooser is contained in a separate file
+fontchooser.tcl.  A small portion of this file follows:
+
+
+
+  # This code accompanies the "fontchooser.c" file.  It does most of the
+  # work of setting up and operating the font chooser.
+
+  # Title the font chooser and make it resizeable.
+  #
+  wm title . "Font Chooser"
+  wm iconname . "FontChooser"
+  wm minsize . 1 1
+
+  # Construct a panel for selecting the font family.
+  #
+  frame .name -bd 0 -relief raised
+     
+
+... 136 lines omitted ...
+
+
+  # Begin by displaying the 75 dot-per-inch fonts
+  #
+  update
+  LoadFontInfo 75
+
+
+When the script in the file fontchooser.tcl executes, it constructs
+the listboxes, scrollbars, menu and menu buttons of the fontchooser,
+and finally calls the LoadFontInfo function.  The LoadFontInfo command
+is defined by a proc statement in the part of the fontchooser.tcl file
+that was omitted from the listing.  The LoadFontInfo function calls
+FindFonts and then populates the listboxes accordingly.
+
+The interesting thing about this example is how the script in
+fontchooser.tcl is invoked.  In the prior examples ("Hello, World!"
+and dclock) the Tcl/Tk script that setup the application was very
+short and fit into an ET() macro in the main() function.  This same
+approach could have been taken with the fontchooser.  We could have
+put the entire text of the Tcl/Tk script into a 152 line ET() macro.
+But that is inconvenient.  It is much easier to use an ET_INCLUDE
+macro.
+
+4.2.6 The ET_INCLUDE macro.  An ET_INCLUDE macro is similar to a
+#include in the standard C preprocessor.  A #include reads in an
+external C file as if it were part of the original C code.  ET_INCLUDE
+does much the same thing for Tcl/Tk code.  It copies an external
+Tcl/Tk script into the original C program, and causes that script to
+be executed when control reaches the macro.
+
+An important characteristic of the ET_INCLUDE macro is that it loads
+the external Tcl/Tk script into the C program at compile time, not at
+run time.  This means that a copy of the Tcl/Tk script actually
+becomes part of the resulting executable.  To clarify this point,
+consider the difference between the following two statements:
+
+
+
+  ET( source fontchooser.tcl );
+
+  ET_INCLUDE( fontchooser.tcl );
+
+
+Both statements causes the file named fontchooser.tcl to be read and
+executed by the Tcl/Tk interpreter.  The difference is that in the
+first statement, the file is opened and read in at run-time,
+immediately before the contained script is executed.  This means that
+the file fontchooser.tcl must be available for reading by the program
+in order for the program to work correctly.  In the second case, the
+file is opened and read when the program is compiled.  The only work
+left to do at run-time is to pass the contained script to the Tcl/Tk
+interpreter.  In the second statement, then, the file fontchooser.tcl
+does not have to be available to the program for correct operation.
+
+4.2.7 How the ET_INCLUDE macro locates files.  The external script
+file specified by an ET_INCLUDE macro need not be in the same
+directory as the C program containing the ET_INCLUDE for the include
+operation to work.  If the external script is in a different
+directory, however, the name of that directory must be specified to
+the et2c macro preprocessor using one or more "-Idirectory" command
+line switches.
+
+The algorithm used by et2c to locate a file is to first check the
+working directory.  If the file is not there, then look in the
+directory specified by the first -I option.  If the file is still not
+found, then search the directory specified by the second -I option.
+And so forth.  An error is reported only when the file mamed in the
+ET_INCLUDE macro is missing from the working directory and from every
+directory specified by -I options.  Note that this is essentially the
+same algorithm used by the C compiler to find files named in #include
+preprocessor directives.
+
+4.2.8 The -dynamic option to et2c.  In a deliverable program, it is
+usually best to load external Tcl/Tk scripts at compile time so that
+the scripts will be bound into a single executable.  However, during
+development it is sometimes advantageous to load external Tcl/Tk
+scripts at run-time.  To do so allows these scripts to be modified
+without having to recompile the C code.
+
+The -dynamic option on the command line of the et2c preprocessor will
+causes ET_INCLUDE macros to read their files at run-time instead of at
+compile-time.  In effect, the -dynamic option causes macros of the
+form ET_INCLUDE(X) to be converted into ET(source X). Generally
+speaking, it is a good idea to use the -dynamic option on et2c
+whenever the -g option (for symbolic debugging information) is being
+used on the C compiler.
+
+4.2.9 Use of ET_INCLUDE inside the et.o library.  When Tcl/Tk first
+starts up, it must normally read a list of a dozen or so Tcl scripts
+that contain definitions of widget bindings and related support
+procedures.  In the standard interactive Tcl/Tk interpreter wish,
+these files are read a run-time from a standard directory.  In an ET
+application, however, these startup files are loaded into the
+executable at compile time using ET_INCLUDE macros.
+
+Startup files are loaded into the Et_Init() function that is part of
+the et.o library.  The relevant source code followings:
+
+
+
+    /*
+     * Execute the start-up Tcl/Tk scripts. In the standard version of
+     * wish, these are read from the library at run-time.  In this version
+     * the scripts are compiled in.
+     *
+     * Some startup scripts contain "source" commands.  (Ex: tk.tcl in
+     * Tk4.0).  This won't do for a stand-alone program.  For that reason,
+     * the "source" command is disabled while the startup scripts are
+     * being read.
+     */
+     ET( rename source __source__; proc source {args} {} );
+     ET_INCLUDE( init.tcl );
+     ET_INCLUDE( tk.tcl );
+     ET_INCLUDE( button.tcl );
+     ET_INCLUDE( dialog.tcl );
+     ET_INCLUDE( entry.tcl );
+     ET_INCLUDE( focus.tcl );
+     ET_INCLUDE( listbox.tcl );
+     ET_INCLUDE( menu.tcl );
+     ET_INCLUDE( obsolete.tcl );
+     ET_INCLUDE( optionMenu.tcl );
+     ET_INCLUDE( palette.tcl );
+     ET_INCLUDE( parray.tcl );
+     ET_INCLUDE( text.tcl );
+     ET_INCLUDE( scale.tcl );
+     ET_INCLUDE( scrollbar.tcl );
+     ET_INCLUDE( tearoff.tcl );
+     ET_INCLUDE( tkerror.tcl );
+     ET( rename source {}; rename __source__ source );
+
+
+It is because of these 17 ET_INCLUDE macros that the et.c file must be
+preprocessed by et2c before being compiled into et.o.
+
+
+5.  Example 4: etwish
+
+The short code that follows implements the interactive Tcl/Tk shell "
+wish" using ET:
+
+
+
+  main(int argc, char **argv){
+    Et_Init(&argc,argv);
+    Et_ReadStdin();
+    Et_MainLoop();
+  }
+
+
+This program illustrates the use of Et_ReadStdin() routine.  The
+Et_ReadStdin() routine causes ET to monitor standard input, and to
+interpret all characters received as Tcl/Tk commands.  This is, of
+course, the essential function of the interactive Tcl/Tk shell.
+
+The program generated by this code example differs from the standard
+wish program in two important ways.
+
+  *  In the example here, the Tcl/Tk startup scripts are bound to the
+     executable at compile-time, but in the standard wish they are
+     read into the executable at run-time.
+  *  This example does not support the -f command line switch that
+     will cause wish to take its input from a file instead of from
+     standard input.
+
+
+6.  Example 5: runscript
+
+The next example implements a version of wish that takes its input
+from a file instead of from standard input.  The file that is read
+must reside in the same directory as the executable and must have the
+same name as the executable but with the addition of a .tcl suffix.
+For instance, if the executable that results from compiling the
+following program is named fuzzy, then the result of executing fuzzy
+is that the Tcl/Tk script found in the same directory as fuzzy and
+named fuzzy.tcl is read and executed.
+
+
+
+  void
+  main(int argc, char **argv){
+    Et_Init(&argc,argv);
+    ET( source $cmd_dir/$cmd_name.tcl );
+    Et_MainLoop();
+  }
+
+
+6.1 The $cmd_dir and $cmd_name variables
+
+The operation of the runscript program depends on the existence of two
+Tcl/Tk variables computed by Et_Init() and named cmd_dir and cmd_name.
+The cmd_dir variable stores the name of the directory that holds the
+currently running executable.  The cmd_name variables stores the base
+name of the executable.  The cmd_name and especially the cmd_dir
+variables are included as a standard part of ET in order to encourage
+people to write programs that do not use hard-coded absolute
+pathnames.
+
+In most modern operating systems, a file can have two kinds of names:
+absolute and relative.  An absolute pathname means the name of a file
+relative to the root directory of the filesystem.  A relative
+pathname, on the other hand, describes a file relative to some other
+reference directory, usually the working directory.  Experience has
+shown that it is generally bad style to hard-code absolute pathnames
+into a program.
+
+The cmd_dir variable helps programmers to avoid hard-coded absolute
+pathnames by allowing them to locate auxiliary files relative to the
+executable.  For example, if a program named acctrec needs to access a
+data file named acctrec.db then it can do so be look for acctrec.db in
+a directory relative to the directory that contains acctrec.  The
+programmer might write:
+
+
+
+  char *fullName = ET_STR( return $cmd_dir/../data/$cmd_name.db );
+  FILE *fp = fopen(fullName,"r");
+
+
+Using this scheme, both the executable and the datafile can be placed
+anywhere in the filesystem, so long as they are in the same position
+relative to one another.
+
+The runscript example demonstrates the use relative pathnames in this
+way.  The executable for runscript locates and executes a Tcl/Tk
+script contained in a file in the same directory as itself.  The name
+of the script is the name of the executable with a ".tcl" suffix
+appended.  Using this scheme, the executable and script can be renamed
+and moved to different directories at will, and they will still run
+correctly so long as they remain together and keep the same name
+prefix.  Such flexibility makes a program much easier to install and
+administer.
+
+
+7.  Example 6: bltgraph
+
+The next program will demonstrate how to use ET with an extension
+package to Tcl/Tk, in this case the BLT extension.  The example is
+very simple.  All it does is turn the graph2 demo which comes with the
+BLT package into a stand-alone C program.  A real program would, of
+course, want to do more, but this example serves to illustrate the
+essential concepts.
+
+
+
+  /*
+  ** This program demonstrates how to use ET with
+  ** extensions packages for Tcl/Tk, such as BLT.
+  */
+  #include 
+
+  int main(int argc, char **argv){
+    Et_Init(&argc,argv);
+    if( Blt_Init(Et_Interp)!=ET_OK ){
+      fprintf(stderr,"Can't initialize the BLT extension.\n");
+      exit(1);
+    }
+    ET_INCLUDE( graph2 );
+    Et_MainLoop();
+    return 0;
+  }
+
+
+The bltgraph program starts like every other ET program with a call to
+Et_Init().  This call creates the Tcl/Tk interpreter and activates the
+standard Tk widget commands.  The second line of the program is a call
+to Blt_Init().  The Blt_Init() function is the entry point in the BLT
+library that initializes the BLT extension widgets and registers the
+extra BLT commands with the Tcl/Tk interpreter.  Other extension
+packages will have a similar initialization functions whose name is
+the name of the extension package followed by an underscore and the
+suffix Init.  The example program shows the initialization of a single
+extension package, though we could just as easily have inserted calls
+to the initialization routines for 10 different extensions, if our
+application had the need.
+
+After the BLT package has been initialized, the only other code before
+the call to Et_MainLoop() is an ET_INCLUDE macro which reads in a
+Tcl/Tk script named graph2.  This script is one of the demonstrations
+that is included with the BLT distribution and contained in the demos
+subdirectory.  In order for the et2c preprocessor to locate this
+script, you will either have to copy it into the working directory, or
+else put a -I option on the command line to tell et2c where the script
+is found.
+
+This example is included with the ET distribution, but the Makefile
+does not build it by default.  If you want to compile this example,
+first edit the Makefile to define the BLT_DIR macro appropriately,
+then type make bltgraph.
+
+
+8.  Other example programs
+
+The standard ET distribution includes several more example programs
+that are described briefly in the following paragraphs.
+
+8.1 The bell program
+
+The first additional example program is called bell.  This is a small
+utility that can be used to change the pitch, duration and volume of
+the console "beep".  Complete source code is contained in the single
+file bell.c.
+
+When run, the bell utility displays three horizontal sliders, one each
+for pitch, duration and volume, and three buttons.  The user selects
+the desired parameters for the "beep" on the sliders.  Pressing the "
+test" button causes a beep to sound with the chosen parameters.
+Pressing the "set" button tells the X server to use the chosen
+parameters for all subsequent beeps.  The "quit" button is used to
+exit the utility.
+
+The bell program consists of the main() function and a single ET_PROC
+function named bell.  The main() function creates the GUI for the
+utility using 21 lines of Tcl/Tk code contained within a single ET()
+macro.  The bell function is responsible for sounding the bell and
+change the parameters of the bell tone using the XBell() and
+XChangeKeyboardControl() Xlib functions.
+
+8.2 The color program
+
+The color utility is intended to aid the user in selected named
+colors.  The sources code is contained in two files color.c and
+color.tcl.
+
+Upon startup, the color utility displays a wide color swatch across
+the top of its main window.  On the lower left side of the window are
+six sliders representing both the RGB and HSV color components of the
+swatch.  The user can change the color of the swatch by moving these
+sliders.  On the lower right are six smaller color labels showing the
+named colors that are "closest" to the color shown in the main color
+swatch.
+
+The implementation of this utility is roughly four parts C to one part
+Tcl. This is because several of the key algorithms, including the RGB
+to HSV conversion routines and the procedures for finding the nearby
+colors, are all implemented in C for speed.
+
+                              **Image**
+                 8.1 Screen shot of the color program
+
+8.3 The perfmon program
+
+The next example is a graphical CPU performance monitoring tool for
+the Linux operating system called perfmon.  The source code for
+perfmon is contained in two files called perfmon.c and perfmon.tcl.
+
+When invoked, the perfmon utility displays a small window containing
+three bar graphs labeled "Core", "Swap" and "CPU". Each bar graph is
+continually updated to show the amount of usage of the corresponding
+hardware resource.
+
+8.3.1 Explanation of the perfmon display.  The "Core" graph shows how
+much of main memory is in use.  The red part of the graph is that
+portion of memory that contains the text, heap and stack of executing
+programs.  The blue part of the graph shows main memory that is
+currently being used as disk cache.  The green part of the graph
+represents the amount of unused memory.
+
+The "Swap" graph works like the "Core" graph except that it shows the
+amount of swap space used instead of main memory.  There is no blue
+line on the "Swap" graph since swap space is never used as disk cache.
+
+The "CPU" graph shows in red the amount of time the CPU spent doing
+actual work.  The blue part of the CPU graph is the amount of time the
+CPU spend executing the operating system kernel.  The green part of
+the graph represents the time the CPU was idle.
+
+Double-clicking over any part of the perfmon utility brings up an
+auxiliary window in which the user can change the frequency with which
+the graphs are updated, and the time interval over which the values on
+the graph are averaged.  By default, the update interval is about 10
+times per second, which is barely noticeable on a Pentium, but tends
+to overwhelm a 486.  Users of slower hardware may wish to change the
+update interval to minimize the impact of this utility on system
+performance.
+
+The implementation of this utility pays careful attention to speed, so
+as not to impose an unacceptable load on the system.  If nothing else,
+the perfmon program demonstrates that it is possible to use Tcl/Tk in
+a high-speed, performance critical application.
+
+                              **Image**
+                8.2 Screen shot of the perfmon program
+
+8.4 The tkedit program
+
+The two files tkedit.c and tkedit.tcl together implement an ASCII text
+editor based on the Tcl/Tk text widget.  This editor features menu
+options to dynamically change the width, height and font and for
+cutting, copying, deleting and pasting text.  Within the editor, the
+cursor can be moved by clicking with the mouse, pressing the arrow
+keys on the keyboard, or by using the EMACS cursor movement control
+sequences.
+
+8.5 The tkterm program
+
+The files getpty.c, tkterm.c and tkterm.tcl contain source code for a
+vt100 terminal emulator.  You can use tkterm whereever you are now
+using xterm.
+
+The main window for tkterm is implemented using a Tcl/Tk text widget.
+The main window, its associated scrollbar and a menu bar across the
+top of the application are all coded by the Tcl/Tk script contained in
+the file tkterm.tcl.  The C code in getpty.c handles the messy details
+of opening a pseudo-TTY and attaching a shell on the other side.
+(Most of this code was copied from the sources for the "rxvt" terminal
+emulator program.) The bulk of the code for tkterm is contained in the
+C file tkterm.c and is concerned with translating VT100 escape codes
+into commands for manipulating the text widget.
+
+The sources to tkterm are an example of a moderately complex
+application using ET. The tkterm.c file contains 7 ET_PROC macros, 33
+ET macros and numerious uses of other ET features.
+
+
+9.  Compiling an ET application
+
+The first step in compiling an application that uses ET is to compile
+ET itself.  This is relatively easy as there are only two source code
+files: et2c.c and et40.c. (All other C source files in the ET
+distribution are example programs.) The et2c.c file is the source code
+for the et2c preprocessor and the et40.c is the source code for the
+et.o library.
+
+Compile the et2c macro preprocessor using any ANSI or K&R C compiler.
+The code makes minimal demands of the language, and should be very
+portable.  Some systems my require a -I option on the compiler command
+line, however, to tell the compiler where to find the include file
+tcl.h. The following command assumes the source code to tcl is found
+in /usr/local/src/tcl7.4
+
+
+
+  cc -O -o et2c -I/usr/local/src/tcl7.4 et2c.c
+
+
+The et.o library is generated from et40.c in two steps.  First you
+must filter the source file et40.c using the et2c preprocessor.  The
+output of et2c is then sent through the C compiler to generate et.o.
+The et2c command will normally need two -I options to tell the
+preprocessor where to look for the Tcl/Tk startup scripts.  If you are
+not sure where the Tcl/Tk startup files are found on your system, you
+can find out using the following command:
+
+
+
+  echo 'puts $auto_path; destroy .' | wish
+
+
+The default locations are /usr/local/lib/tcl and /usr/local/lib/tk.
+Assuming this is where the startup files are on your system, then the
+command to preprocess the et.c source file is the following:
+
+
+
+  et2c -I/usr/local/lib/tcl -I/usr/local/lib/tk et40.c >et_.c
+
+
+The output of the preprocessor now needs to be compiled using an ANSI
+C compiler.  The et40.c source code makes use of the tk.h and tcl.h
+include files, so it may be necessary to put -I options on the
+compiler command line to tell the compiler where these files are
+located.  The following command is typical:
+
+
+
+  cc -c -o et.o -I/usr/local/src/tcl7.4 -I/usr/local/src/tk4.0 et_.c
+
+
+Having compiled the et2c preprocessor and et.o library, compiling the
+rest of the application is simple.  Just run each file through the
+preprocessor and then compile the output as you normally would.  For
+example, the source file main.c would be compiled as follows:
+
+
+
+  et2c main.c >main_.c
+  cc -c -o main.o main_.c
+  rm main_.c
+
+
+The final rm command is just to clean up the intermediate file and is
+not strictly necessary.
+
+After all C source files have been compiled into .o files, they can be
+linked together, and with the Tcl/Tk library using a command such as
+the following:
+
+
+
+  cc -o myapp main.o file1.o file2.o et.o -ltk -ltcl -lX11 -lm
+
+
+This example links together the files main.o, file1.o and file2.o into
+an executable named myapp.  All ET applications must be linked with
+et.o and the Tcl/Tk libraries.  The Tcl/Tk libraries require, in turn,
+the X11 library and the math library.  On some systems it may be
+necessary to include one or more -L options on the command line to
+tell the linker were to find these libraries.  Applications that use
+other libraries or Tcl/Tk extension packages will probably need
+addition -l switches.
+
+The default action of the linker is usually to bind to shared
+libraries for Tcl/Tk and X11 if shared libraries are available.  If
+the executable is to be moved to other sites, where these libraries
+may not be installed, it is best to force the use of static libraries
+in the link.  The command-line option to achieve this is usually
+-static or -Bstatic, though it varies from system to system.
+
+9.1 Source file suffix conventions
+
+We like to use the suffix .c for ET application source files even
+though the files do not contain pure C code.  The reason is that ET
+source code looks like C even if it isn't.  To files output from the
+et2c preprocessor we give the suffix _.c.
+
+Other users have reported that they don't like to use the .c suffix on
+ET source files since it implies that the file can be directly
+compiled using the C compiler.  They prefer a different suffix for the
+ET source, and reserve the .c suffix for the output of the et2c
+preprocessor.  Like this:
+
+
+
+  et2c main.et >main.c
+  cc -c -o main.o main.c
+  rm main.c
+
+
+The method you use is purely a matter of personal preference.  The
+et2c preprocessor makes no assumptions about file names.  Most C
+compilers, however, require that their input files end with .c so be
+sure the output of et2c is written to a file with that suffix.
+
+9.2 Compiling using an older K&R C compiler
+
+If it is your misfortune not to have an ANSI C compiler, you can still
+use ET. The source code to et2c is pure K&R C and should work fine
+under older compilers.  The source code to et.o is another matter.  To
+compile the library using an older compiler you will need to first
+give a -K+R option to et2c and then give a -DK_AND_R option to the C
+compiler.  Like this:
+
+
+
+  et2c -K+R -I/usr/lib/tcl -I/usr/lib/tk et.c >et_.c
+  cc -DK_AND_R -I/usr/src/tcl7.4 -I/usr/src/tk4.0 -c -o et.o et_.c
+
+
+When compiling application code using an older compiler, just give the
+-K+R option to et2c.  It is not necessary to give the -DK_AND_R option
+to the C compiler when compiling objects other than et.c.
+
+9.3 Where to store the ET files
+
+The source code to the et2c preprocessor and the et.o library is small
+-- less than 2100 lines total, including comments.  For that reason,
+we find it convenient to include a copy of the sources in the source
+tree for projects that use ET. The makefiles for these projects
+includes steps to build the preprocessor and library as a precondition
+to compiling the application code.  In this way, we never have to "
+install" ET in order to use it.  This also allows the source tree to
+be shipped to another site and compiled there without having to ship
+ET separately.
+
+
+10.  Summary and conclusion
+
+The ET system provides a simple and convenient mechanism for combining
+a Tcl/Tk based graphical user interface and a C program into a single
+executable.  The system gives a simple method for calling Tcl/Tk from
+C, for generating new Tcl/Tk commands written in C, and for including
+external Tcl/Tk scripts as part of a C program.
+
+ET is currently in use in several large-scale (more than 100000 lines
+of code) development efforts, and is proving that it is capable of
+providing an easy-to-use yet robust interface between Tcl/Tk and C.
+
+
+11.  Acknowledgments
+
+The original implementation of ET grew out of a programming contract
+from AT&T. AT&T was in turn funded under a contract from the United
+States Navy.  Many thanks go to Richard Blanchard at AT&T and to Dave
+Toms and Clair Guthrie at PMO-428 for allowing ET to be released to
+the public domain.
+
+
+12.  Author's Name and Address
+
+D. Richard Hipp, Ph.D.
+Hipp, Wyrick & Company, Inc.
+6200 Maple Cove Lane
+Charlotte, NC 28269
+704-948-4565
+drh@vnet.net

@@ -1,0 +1,136 @@
+
+
+
+<TITLE>tixLabelEntry - Create and manipulate tixLabelEntry widgets</TITLE>
+<Center><H2>tixLabelEntry - Create and manipulate tixLabelEntry widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixLabelEntry<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixLabelEntry</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The LabelEntry widget supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>disableForeground</B></I>
+Class:		<B>DisableForeground</B></I>
+Switch:		<B>-disableforeground</B></I>
+</code></code></code></pre>
+<UL>
+The foreground color to use for of the entry subwidget when the
+LabelEntry widget is disabled.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this LabelEntry widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the whether the LabelEntry widget is normal or disabled. Only
+the values "normal" and "disabled" are recognized.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>entry</B></I>
+Class:		<B>Entry</B></I>
+</code></code></code></pre>
+<UL>
+The entry subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixLabelEntry</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a LabelEntry
+widget. Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+LabelEntry such as its cursor and relief.
+<P>
+The LabelEntry widget packages an entry widget and a label into one
+mega widget. It can be used be used to simplify the creation of
+"entry-form" type of interface. In this kind of interface, one must
+create many entry widgets with label widgets next to them and describe
+the use of each of the entry widgets.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixLabelEntry</B></I> command creates a new Tcl command whose
+window. This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command. The following
+commands are possible for LabelEntry widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixLabelEntry</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixLabelEntry</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I>name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:31 EST 1997 </i> --- 
+<i>Serial 853731301</i>

@@ -1,0 +1,161 @@
+
+  TIX 4.1B2
+
+   Released on December 28, 1996
+
+Subject: [Announce] Tix version 4.1b2 is available
+
+   I am pleased to announce the availability of Tix version 4.1b2, the
+   first beta release. This version of Tix supports the Unix and
+   Microsoft Windows platforms.
+
+   The Tix library has by far the greatest collection of widgets for
+   programming with Tcl/Tk. Highlights include: Hierarchical Listbox,
+   Directory List/Tree View, SpreadSheet, Tabular Listbox, ComboBox,
+   Motif style FileSelectBox, MS Windows style FileSelectBox,
+   PanedWindow, NoteBook, Spin Control widget .... and many more. With
+   these new widgets, your Tcl/Tk applications will look great and
+   interact with your users in intuitive ways.
+
+   For more info about Tix, visit the Tix home page at
+   http://www.xpi.com/tix/ .
+
+   This version of Tix is released under licensing terms similar to those
+   of Tcl/Tk. Please read the file license.terms carefully before
+   proceeding.
+
+  REQUIREMENT
+
+    Unix Platforms
+
+   Tix 4.1b2 works with the following combinations of Tcl/Tk/ITcl:
+     * Tcl 7.4 + Tk 4.0
+     * Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     * Tcl 7.5 + Tk 4.1
+     * Tcl 7.5 + Tk 4.1 + ITcl 2.1
+     * Tcl 7.6 + Tk 4.2
+
+    Windows Platforms
+
+   Tix 4.1b2 requires the final release of Tcl 7.5 or Tcl 7.6.
+
+  GETTING THE TIX PACKAGE
+
+   Tix 4.1b2 sources are available at
+     * ftp://ftp.xpi.com/pub/Tix4.1b2.tar.gz: Unix source tar file.
+     * ftp://ftp.xpi.com/pub/windows/tix41b2.zip: Same as
+       Tix4.1b2.tar.gz, but in Windows/DOS ZIP format.
+
+  WHAT'S NEW SINCE TIX 4.1A3 (THE LAST RELEASE)
+
+    10/13/96
+
+   New feature: Now XPM image works on Windows.
+
+    10/18/96
+
+   New feature: New options -editnotifycmd and -editdonecmd for the Grid
+   widget to support editing of the entries.
+
+   New feature: New widget TixFloatEntry to support editing of DItems.
+
+    10/27/96
+
+   Feature Change: The following changes are made to the configuration
+   and installation of Tix:
+     * Naming convention of binaries: The binaries for the Tk 4.0 target
+       are called tixwish and libtix.a. For Tk 4.1 and later, the
+       executable is be called tixwish[Tix version].[Tk version] and the
+       library is called libtix[Tix version].[Tk version].[lib
+       extension]. For example, tixwish4.1.4.1 and libtix4.1.4.2.so. On
+       platforms that do not allow the dot character in the names of
+       shared libraries, the dot character will be omitted. E.g.,
+       libtix4142.so.
+     * Shared vs static linking: The static binary will be created only
+       if the -enable-[tkversion]-shared flag is disabled. If you want to
+       create both shared and static binaries, configure and compile Tix
+       twice.
+     * ET support is replaced by SAM (stand-alone module) support.
+     * The following options are removed from configure:
+          + -enable-tk40_et
+          + -enable-tk41_et
+          + -enable-tk41_shared
+     * The new options are added to configure:
+          + -enable-tk40-sam
+          + -enable-tk41-sam
+          + -enable-tk42-sam
+          + -enable-tk41-shared
+          + -enable-tk42-shared
+
+    11/1/96
+
+   New feature: XPM code has been rewritten. The code is now cleanly
+   separated into three modules: generic, windows specific and Unix
+   specific.
+
+    11/17/96
+
+   New feature: Tix classes can be defined before their superclasses are
+   defined. However, a class cannot be instantiated before all of its
+   superclasses are defined. This feature makes it possible to load the
+   Tix scripts into the SAM in any order, without having to worry about
+   loading the superclasses before the subclasses.
+
+   New feature: Tix is initialized by calling the command __tixInit, not
+   by sourcing Init.tcl.
+
+    11/29/96
+
+   Bug Fixed: tixTmpLine now correctly works on multiple X displays.
+
+    11/30/96
+
+   Feature Change: DisplayStyle now uses a hash table to store the items
+   associated with it (previously a link list was used). This speeds up
+   the delete operations when a lot (1000 or more) of items are
+   associated with the same style. Possible Incompatibility: widgets that
+   use DItems must be recompiled.
+
+   Bug Fixed: Tix no longer tempers with the way Tk handles errors,
+   unless the environment variable TIX_DEBUG_INTERACTIVE is set. If this
+   variable is set, all error messages will be printed to the standard
+   output. This may be convenient for debugging purposes. Use this
+   feature with discretion, and during program development only.
+
+    12/2/96
+
+   Bug Fixed:Dotted anchor lines (HList, TList, Grid) and rubber-band
+   lines (PanedWindow, ResizeHandle) are implemented on Windows.
+
+   New feature: Tcl 7.6 support is complete for the Windows platform.
+   makefile.vc and makefile.bc have been modified such that the Tcl
+   version can be chosen at compile time by, e.g., "make TCL_VER=7.5 -f
+   makefile.bc".
+
+    12/2/96
+
+   Bug Fixed: Display items are correctly clipped. E.g., if a text item
+   is wider than the width of a column in an HList, the item will be
+   clipped.
+
+    12/20/96
+
+   New feature: New sample file demos/samples/EditGrid.tcl that
+   demonstrates the use of an editable grid widget.
+
+    12/21/96
+
+   Bug Fixed: Tix works with multiple interpreters under tk4.1 and 4.2
+   (see test/general/minterp.tcl). However, minterp.tcl still core dumps
+   under Itcl 2.1. It is not clear to me whether this is a problem of Tix
+   or Itcl.
+
+   Bug Fixed: Now when an interpreter is deleted, all Tix class
+   informations associated with this interpreter are freed. (No memory
+   leak is recorded by purify when running Tix against the complete test
+   suite.)
+
+     _________________________________________________________________
+
+   Last modified Fri Jan 17 22:52:59 EST 1997 --- Serial 853731294
+

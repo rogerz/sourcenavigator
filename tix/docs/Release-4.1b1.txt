@@ -1,0 +1,136 @@
+
+  TIX 4.1B1
+
+   Released on September 30, 1996
+
+Subject: [Announce] Tix version 4.1b1 is available
+
+   I am pleased to announce the availability of Tix version 4.1b1, the
+   first beta release. This version of Tix supports the Unix and
+   Microsoft Windows platforms.
+
+   This version of Tix is released under licensing terms similar to those
+   of Tcl/Tk. Please read the file license.terms carefully before
+   proceeding.
+
+  REQUIREMENT
+
+    Unix Platforms
+
+   Tix 4.1b1 works with the following combinations of Tcl/Tk/ITcl/ET:
+     * Tcl 7.4 + Tk 4.0
+     * Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     * Tcl 7.4 + Tk 4.0 + ET 1.5
+     * Tcl 7.5 + Tk 4.1 (final release only)
+     * Tcl 7.5 + Tk 4.1 + ITcl 2.1
+     * Tcl 7.5 + Tk 4.1 + ET 1.6
+
+    Windows Platforms
+
+   Tix 4.1b1 requires the final release of Tcl 7.5 and Tk 4.1 (no alpha
+   or beta versions). Many things currently does not work under Windows,
+   including:
+     * FileSelectDialog (ExFileSelectDialog does work, though)
+     * XPM images
+
+  GETTING THE TIX PACKAGE
+
+   Tix 4.1b1 sources are available at
+     * ftp://ftp.xpi.com/pub/Tix4.1b1.tar.gz: Unix source tar file.
+     * ftp://ftp.xpi.com/pub/windows/tix41b1.zip: Same as
+       Tix4.1b1.tar.gz, but in Windows/DOS ZIP format.
+
+   We'll also release binary distributions of Tix. They will be available
+   in a few days for all Windows 32 bit platforms (Win32s, Win95, WinNT
+   3.5 and 4.0) as well as the following Unix platforms: Solaris 2.5,
+   SunOs 4.1, HPUX 9.x, IRIX 5.x and Linux.
+
+  WHAT'S NEW SINCE TIX 4.1A3 (THE LAST RELEASE)
+
+    7/14/96
+
+   New feature: Supports ET+TK4.1. --enable-tk41_et flag for configure
+   script.
+
+   New feature: Supports ITCL 2.1. --enable-itcl21 flag for configure
+   script.
+
+   New feature: Default color schemes and fontset can be set when Tix is
+   compiled: --with-fontset= and --with-scheme= flags for configure
+   script.
+
+   Incompatibility: All the "::" qualifiers in Tix class methods have
+   been replaced by ":", so that the Tix classes can be loaded into Itcl
+   without patching Itcl. If you have written your own Tix classes, you
+   need to modify the source files to use the ":" qualifier instead.
+
+   The program tools/setcolon.sh helps you port your code from the "::"
+   convention to the ":" convention. Execute the program without argument
+   for usage syntax. It may modify your code in unexpected ways. Use with
+   caution.
+
+    7/15/96
+
+   New feature: New function Tix_SetRcFileName() and new macros
+   TCL_7_5_OR_LATER, TK_4_1_OR_LATER to provide better support for both
+   Tcl7.4/Tk4.0 and Tcl7.5+/Tk4.1+.
+
+   Bug Fixed: entrycget method of OptionMenu didn't work as expected.
+
+    7/17/96
+
+   The demos-c subdirectory has been moved to demos/c-code.
+
+    7/24/96
+
+   Bug Fixed: tixMwm now deletes information about a toplevel when the
+   toplevel is destroyed.
+
+    8/22/96
+
+   New feature: New command "tixConsoleInit" available with Tcl 7.5/Tk
+   4.1. Create console window that runs in a separate interpreter.
+
+   New feature: Now Tix works under multiple interpreters.
+
+    8/23/96
+
+   New feature: Now ListNoteBook uses a PanedWindow to manage the HList
+   and the pages.
+
+   New feature: New option -dynamicgeometry for PanedWindow.
+
+    8/24/96
+
+   New feature: New command "tixStrEq" compares the equality of two
+   strings.
+
+    9/12/96
+
+   New feature: Tix provides emulation for strcasecmp() for platforms
+   that do not support this function.
+
+    9/14/96
+
+   New feature: New widget command selection get for HList. This is just
+   an alias for info selection. It's added so that the API is similar to
+   the TK API.
+
+   New feature: New widget command info bbox for HList. Used mainly in
+   regression tests.
+
+    9/17/96
+
+   New feature: Orientation of the pane subwidget in TixListNoteBook now
+   configureable via the -options switch during creation.
+
+    9/22/96
+
+   New feature: Now the default fontset and color scheme are
+   configurable in the setup.tcl program as well as in the configure
+   script.
+
+     _________________________________________________________________
+
+   Last modified Fri Jan 17 22:52:57 EST 1997 --- Serial 853731293
+

@@ -1,0 +1,263 @@
+
+
+
+<TITLE>tixNoteBook - Create and manipulate tixNoteBook widgets</TITLE>
+<Center><H2>tixNoteBook - Create and manipulate tixNoteBook widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixNoteBook<I> <I>pathName ?<I>options</I></B>?
+</pre><H3>STANDARD OPTIONS</H3>
+The NoteBook widget supports all the standard options of a frame widget.
+See the options(n) manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>dynamicGeometry</B></I>
+Class:		<B>DynamicGeometry</B></I>
+Switch:		<B>-dynamicgeometry</B></I>
+</code></code></code></pre>
+<UL>
+If set to false, the size of the Notebook will match the size of the
+largest page. If set to true, the size of the Notebook will match the
+size of the current page (therefore, the size may change when the user
+selects different pages). The default value is false. A setting of true
+is discouraged.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>ipadX</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-ipadx</B></I>
+</code></code></code></pre>
+<UL>
+The amount of internal horizontal paddings around the sides of the
+page subwidgets.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>ipadY</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-ipady</B></I>
+</code></code></code></pre>
+<UL>
+The amount of internal vertical paddings around the sides of the
+page subwidgets.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>nbframe</B></I>
+Class:		<B>tixNoteBookFrame</B></I>
+</code></code></code></pre>
+<UL>
+The "note book frame" widget that displays ths tabs of the notebook.
+Most of the display options of the page tabs are controlled by this
+subwidget. For example, if you need to choose a different font to
+display the tab names of the pages, the color of the inactive tabs or
+the color behind the tabs, you can configure the options of the
+<B>nbframe</B></I> subwidget.  See the manual page of
+<B>tixNoteBookFrame(n)</B></I> for more details.
+</UL>
+<P>
+In addition, all the page subwidgets created as a result of the
+<B>add</B></I> command can be accessed by the <B>subwidget</B></I> command. They
+are identified by the <B>pageName</B></I> parameter to the <B>add</B></I>
+command.
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixNoteBook</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a NoteBook widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+NoteBook widget such as its cursor and relief.
+
+The NoteBook widget can be used to display many windows in a
+limited space using a "notebook" metaphore. The notebook is divided
+into a stack of pages (windows). At one time only one of these pages
+can be shown. The user can navigate through these pages by choosing
+the visual "tabs" at the top of the NoteBook widget.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixNoteBook</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It has
+the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for NoteBook widgets:
+<DL>
+<DT> <I>pathName <B>add<I> pageName </I></B>?<I>option value ...</I></B>?
+</I></B>
+<DD> Adds a new notebook page subwidget into the NoteBook widget.
+Additional parameters may be supplied to configure this page
+subwidget. Possible options are:
+</DL>
+<UL>
+<DL>
+<DT> <B>-anchor</B></I>
+</I></B>
+<DD> Specifies how the information in a tab (e.g. text or a bitmap) is to
+be displayed in the widget. Must be one of the values <B>n</B></I>,
+<B>ne</B></I>, <B>e</B></I>, <B>se</B></I>, <B>s</B></I>, <B>sw</B></I>, <B>w</B></I>, <B>nw</B></I>, or
+<B>center</B></I>. For example, nw means display the information such that
+its top-left corner is at the top-left corner of the widget.
+</DL>
+<DL>
+<DT> <B>-bitmap</B></I>
+</I></B>
+<DD> Specifies a bitmap to display on the tab of this page. The bitmap is
+displayed only if none of the <B>-label</B></I> or <B>-image</B></I> options are
+specified.
+</DL>
+<DL>
+<DT> <B>-createcmd</B></I>
+</I></B>
+<DD> Specifies a TCL command to be called the first time a page is shown on
+the screen. This option can be used to delay the creation of the
+contents of a page until necessary. Therefore, it can be used to speed
+up interface creation process especially when there are a large number
+of pages in a NoteBook widget.
+</DL>
+<DL>
+<DT> <B>-image</B></I>
+</I></B>
+<DD> Specifies an image to display on the tab of this page. The image is
+displayed only if the <B>-label</B></I> options is not specified.
+</DL>
+<DL>
+<DT> <B>-justify</B></I>
+</I></B>
+<DD> When there are multiple lines of text displayed in a tab, this option
+determines how the lines line up with each other. Must be one of left,
+</DL>
+<DL>
+<DT> <B>-label</B></I>
+</I></B>
+<DD> Specifies a text label string to display on the tab of this page subwidget.
+</DL>
+<DL>
+<DT> <B>-raisecmd</B></I>
+</I></B>
+<DD> Specifies a TCL command to be called whenever this page is raised by
+the user.
+</DL>
+<DL>
+<DT> <B>-state</B></I>
+</I></B>
+<DD> Specifies whether this page can be raised by the user. Must be either
+<B>normal</B></I> or <B>disabled</B></I>.
+</DL>
+<DL>
+<DT> <B>-underline</B></I>
+</I></B>
+<DD> Specifies the integer index of a character to underline in the tab.
+This option is used by the default bindings to implement keyboard
+traversal for menu buttons and menu entries.  0 corresponds to the
+first character of the text displayed in the widget, 1 to the next
+character, and so on.
+</DL>
+<DL>
+<DT> <B>-wraplength</B></I>
+</I></B>
+<DD> This option specifies the maximum line length of the label string on
+this tab. If the line length of the label string exceeds this length,
+it is wrapped onto the next line, so that no line is longer than the
+specified length. The value may be specified in any of the standard
+forms for screen distances. If this value is less than or equal to 0
+then no wrapping is done: lines will break only at newline characters
+in the text.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>.<I>Option</I></B> may have any of the values accepted by the
+<B>tixNoteBook</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list). If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixNoteBook</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>delete<I> pageName</I></B>?
+</I></B>
+<DD> Deletes the page identified by <I>pageName</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>pagecget</B></I> <I>pageName option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B> in the page given by <I>pageName</I></B>. <I>Option</I></B> may
+have any of the values accepted by the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>pageconfigure<I> pageName ?<I>option</I></B>? <I>?value ...</I></B>?
+</I></B>
+<DD> When no option is given, prints out the values of all options of this
+page. If <I>option</I></B> is specified with no <I>value</I></B>, then the
+command returns the current value of that option. If one or more
+<I>option-value</I></B> pairs are specified, then the command modifies the
+command returns an empty string. <I>Option</I></B> may be any of options
+accepted by the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>pages</B></I> 
+</I></B>
+<DD> Returns a list of the names of all the pages.
+</DL>
+<DL>
+<DT> <I>pathName <B>raise <I>pageName</I></B> 
+</I></B>
+<DD> Raise the page identified by <I>pageName</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>raised</B></I> 
+</I></B>
+<DD> Returns the name of the currently raised page.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+<UL>
+[1] <BR>
+When the user pressed the left mouse button over a notebook tab, the
+notebook page associated with that tab will be raised to the top of
+the stack of pages.
+</UL>
+<P>
+<UL>
+[2] <BR>
+The pages can also be selected using the keyboard. The user can type
+the <B>&lt;Tab&gt;</B></I> key to cycle among the set of pages. When the focus
+appears on the desired page, the user can type <B>&lt;Return&gt;</B></I> or
+<B>&lt;space&gt;</B></I> to select that page. Or, if the user wants to cancel the
+selection, he/she can type the <B>&lt;Escape&gt;</B></I> key.
+</UL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:33 EST 1997 </i> --- 
+<i>Serial 853731303</i>

@@ -1,0 +1,58 @@
+			   Tix Test Suite
+			   --------------
+COPYRIGHT
+
+    Copyright (c) 1996, Expert Interface Technologies
+
+    See the file "license.terms" for information on usage and
+    redistribution of this file, and for a DISCLAIMER OF ALL
+    WARRANTIES.
+
+EXECUTING TEST SUITES
+
+UNIX --
+
+    1) cd to the test/ subdirectory.
+
+    2) To execute all of the test suite for all compilation targets, run:
+
+		make all
+
+    3) To execute all of the test suites for a single compilation
+    target, run:
+
+		make unix-tk4.0
+	or	make unix-itcl2.0
+	or	make unix-itcl2.1
+	or	make unix-tk4.1
+
+    4) To execute a specific test only, you must invoke the apropriate
+    executable explicitly:
+
+		../unix-tk4.0/tixwish Driver.tcl general/select.tcl
+
+    executes the test file general/select.tcl for the unix-tk4.0
+    compilation target.
+
+		../unix-tk4.0/tixwish Driver.tcl general
+
+    executes all the test files in the general/ subdirectory for the
+    unix-tk4.0 compilation target.
+
+WINDOWS --
+
+    1) Open the DOS command window.
+
+    2) cd to the test/ subdirectory in the Tix source tree.
+
+    3) Run the following line in the DOS window to execute all the tests.
+
+	txwish41.exe Driver.tcl
+
+    4) To select a specific test, try
+
+	txwish41.exe Driver.tcl general/select.tcl
+	txwish41.exe Driver.tcl general
+
+	... etc
+

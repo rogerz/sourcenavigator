@@ -1,0 +1,566 @@
+#! /bin/bash -norc
+dnl	This file is an input file used by the GNU "autoconf" program to
+dnl	generate the file "configure", which is run during Tk installation
+dnl	to configure the system for the local environment.
+# RCS: @(#) $Id$
+
+# CYGNUS LOCAL, autoconf 2.5 or higher to get --bindir et al
+AC_PREREQ(2.5)
+# END CYGNUS LOCAL
+
+AC_INIT(../generic/tk.h)
+# RCS: @(#) $Id$
+
+TK_VERSION=8.3
+TK_MAJOR_VERSION=8
+TK_MINOR_VERSION=3
+TK_PATCH_LEVEL=".2"
+VERSION=${TK_VERSION}
+
+if test "${prefix}" = "NONE"; then
+    prefix=/usr/local
+fi
+if test "${exec_prefix}" = "NONE"; then
+    exec_prefix=$prefix
+fi
+# Make sure srcdir is fully qualified!
+srcdir=`cd $srcdir ; pwd`
+TCL_TOOL_PATH(TK_SRC_DIR, "`cd $srcdir/..; pwd`")
+
+AC_PROG_RANLIB
+AC_PROG_CC
+
+AC_HAVE_HEADERS(unistd.h limits.h)
+
+#------------------------------------------------------------------------
+# Threads support
+#------------------------------------------------------------------------
+
+SC_ENABLE_THREADS
+
+#------------------------------------------------------------------------------
+# If we're using GCC, see if the compiler understands -pipe.  If so, use it.
+# It makes compiling go faster.  (This is only a performance feature.)
+#------------------------------------------------------------------------------
+
+if test -z "$no_pipe"; then
+if test -n "$GCC"; then
+  AC_MSG_CHECKING([if the compiler understands -pipe])
+  OLDCC="$CC"  
+  CC="$CC -pipe"
+  AC_TRY_COMPILE(,,
+    AC_MSG_RESULT(yes),
+    CC="$OLDCC"
+    AC_MSG_RESULT(no))
+fi  
+fi
+
+#--------------------------------------------------------------------
+# Find and load the tclConfig.sh file
+#--------------------------------------------------------------------
+
+SC_PATH_TCLCONFIG
+SC_LOAD_TCLCONFIG
+
+#--------------------------------------------------------------------
+# Recompute the necessary flags to run the compiler
+#--------------------------------------------------------------------
+
+SC_CONFIG_CFLAGS
+
+SC_ENABLE_SYMBOLS
+
+LIB_RUNTIME_DIR='${LIB_RUNTIME_DIR}'
+
+TK_DBGX=${DBGX}
+
+#------------------------------------------------------------------------
+# If Tcl and Tk are installed in different places, adjust the library
+# search path to reflect this.
+#------------------------------------------------------------------------
+
+if test "$TCL_EXEC_PREFIX" != "$exec_prefix"; then
+    LIB_RUNTIME_DIR="${LIB_RUNTIME_DIR}:${TCL_EXEC_PREFIX}/lib"
+fi
+
+#--------------------------------------------------------------------
+# On a few very rare systems, all of the libm.a stuff is
+# already in libc.a.  Set compiler flags accordingly.
+# Also, Linux requires the "ieee" library for math to work
+# right (and it must appear before "-lm").
+#--------------------------------------------------------------------
+
+AC_CHECK_FUNC(sin, MATH_LIBS="", MATH_LIBS="-lm")
+AC_CHECK_LIB(ieee, main, [MATH_LIBS="-lieee $MATH_LIBS"])
+
+#--------------------------------------------------------------------
+# On AIX systems, libbsd.a has to be linked in to support
+# non-blocking file IO.  This library has to be linked in after
+# the MATH_LIBS or it breaks the pow() function.  The way to
+# insure proper sequencing, is to add it to the tail of MATH_LIBS.
+# This library also supplies gettimeofday.
+#--------------------------------------------------------------------
+libbsd=no
+if test "`uname -s`" = "AIX" ; then
+    AC_CHECK_LIB(bsd, gettimeofday, libbsd=yes)
+    if test $libbsd = yes; then
+	MATH_LIBS="$MATH_LIBS -lbsd"
+    fi
+fi
+
+#--------------------------------------------------------------------
+# Supply a substitute for stdlib.h if it doesn't define strtol,
+# strtoul, or strtod (which it doesn't in some versions of SunOS).
+#--------------------------------------------------------------------
+
+AC_MSG_CHECKING(stdlib.h)
+AC_HEADER_EGREP(strtol, stdlib.h, tk_ok=yes, tk_ok=no)
+AC_HEADER_EGREP(strtoul, stdlib.h, , tk_ok=no)
+AC_HEADER_EGREP(strtod, stdlib.h, , tk_ok=no)
+if test $tk_ok = no; then
+    AC_DEFINE(NO_STDLIB_H)
+fi
+AC_MSG_RESULT($tk_ok)
+
+#--------------------------------------------------------------------
+# Include sys/select.h if it exists and if it supplies things
+# that appear to be useful and aren't already in sys/types.h.
+# This appears to be true only on the RS/6000 under AIX.  Some
+# systems like OSF/1 have a sys/select.h that's of no use, and
+# other systems like SCO UNIX have a sys/select.h that's
+# pernicious.  If "fd_set" isn't defined anywhere then set a
+# special flag.
+#--------------------------------------------------------------------
+
+AC_MSG_CHECKING([fd_set and sys/select])
+AC_TRY_COMPILE([#include <sys/types.h>],
+	[fd_set readMask, writeMask;], tk_ok=yes, tk_ok=no)
+if test $tk_ok = no; then
+    AC_HEADER_EGREP(fd_mask, sys/select.h, tk_ok=yes)
+    if test $tk_ok = yes; then
+	AC_DEFINE(HAVE_SYS_SELECT_H)
+    fi
+fi
+AC_MSG_RESULT($tk_ok)
+if test $tk_ok = no; then
+    AC_DEFINE(NO_FD_SET)
+fi
+
+#--------------------------------------------------------------------
+# Check for various typedefs and provide substitutes if
+# they don't exist.
+#--------------------------------------------------------------------
+
+AC_TYPE_MODE_T
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+
+#------------------------------------------------------------------------------
+#       Find out about time handling differences.
+#------------------------------------------------------------------------------
+
+AC_CHECK_HEADERS(sys/time.h)
+AC_HEADER_TIME
+
+#-------------------------------------------
+#     In OS/390 struct pwd has no pw_gecos field
+#-------------------------------------------
+
+AC_MSG_CHECKING([pw_gecos in struct pwd])
+AC_TRY_COMPILE([#include <pwd.h>],
+      [struct passwd pwd; pwd.pw_gecos;], tk_ok=yes, tk_ok=no)
+AC_MSG_RESULT($tk_ok)
+if test $tk_ok = yes; then
+    AC_DEFINE(HAVE_PW_GECOS)
+fi
+
+#--------------------------------------------------------------------
+#	Locate the X11 header files and the X11 library archive.  Try
+#	the ac_path_x macro first, but if it doesn't find the X stuff
+#	(e.g. because there's no xmkmf program) then check through
+#	a list of possible directories.  Under some conditions the
+#	autoconf macro will return an include directory that contains
+#	no include files, so double-check its result just to be safe.
+#--------------------------------------------------------------------
+
+SC_PATH_X
+
+#--------------------------------------------------------------------
+#	Various manipulations on the search path used at runtime to
+#	find shared libraries:
+#	1. If the X library binaries are in a non-standard directory,
+#	   add the X library location into that search path.
+#	2. On systems such as AIX and Ultrix that use "-L" as the
+#	   search path option, colons cannot be used to separate
+#	   directories from each other. Change colons to " -L".
+#	3. Create two sets of search flags, one for use in cc lines
+#	   and the other for when the linker is invoked directly.  In
+#	   the second case, '-Wl,' must be stripped off and commas must
+#	   be replaced by spaces.
+#--------------------------------------------------------------------
+
+if test "x${x_libraries}" != "x"; then
+    LIB_RUNTIME_DIR="${LIB_RUNTIME_DIR}:${x_libraries}"
+fi
+if test "${TCL_LD_SEARCH_FLAGS}" = '-L${LIB_RUNTIME_DIR}'; then
+    LIB_RUNTIME_DIR=`echo ${LIB_RUNTIME_DIR} |sed -e 's/:/ -L/g'`
+fi
+
+# The statement below is very tricky!  It actually *evaluates* the
+# string in TCL_LD_SEARCH_FLAGS, which causes a substitution of the
+# variable LIB_RUNTIME_DIR.
+
+eval "TK_CC_SEARCH_FLAGS=\"$TCL_LD_SEARCH_FLAGS\""
+
+#
+# CYGNUS LOCAL:  statically link on Solaris, HPUX & SunOS so that
+#                we don't have problems with people not having libraries
+#                installed or not having LD_LIBRARY_PATH set.
+#
+
+    case "$host" in
+#
+# gdb linked statically w/ Solaris iff GCC and GNU ld are used,
+# otherwise dynamic
+#
+        *-*-solaris2*)
+	    sol_xlibsw=
+            if test "x$GCC" = "xyes" ; then
+	       # This is probably the simplest way to test for GNU ld.
+	       # It only works with relatively recent versions of GNU
+	       # ld.
+	       gld_text=`$CC -Wl,--version 2>&1 | sed 1q`
+	       case "$gld_text" in
+		GNU* | *BFD*)
+		    # sol2.* has libX*.so files in /usr/lib,
+		    # but not libX*.a files, so we need to force a
+		    # -L/usr/openwin/lib option, sometimes.
+		    # FIXME: this won't work right if someone has
+		    # their own X libraries in say /usr/local/lib.
+		    case "$XLIBSW" in
+		    *-L*) ;;
+		    *) if test ! -f /usr/lib/libXt.a; then
+			    XLIBSW="-L/usr/openwin/lib $XLIBSW"
+			fi
+			;;
+		    esac
+
+		   # Why do we link against libX11 twice?  Because the
+		   # Openwin X11 and Xext libraries are seriously broken.
+		   sol_xlibsw="-Wl,-Bstatic $XLIBSW -lXext -lX11 -Wl,-Bdynamic"
+		   ;;
+	       esac
+            fi
+	    if test -z "$sol_xlibsw"; then
+	      if test "x$x_libraries" != "x"; then
+		XLIBSW="$XLIBSW -R$x_libraries"
+	      fi
+	    else
+	       XLIBSW=$sol_xlibsw
+	       suppress_enable_shared=yes
+	    fi
+	    ;;
+#
+# gdb linked statically w/ SunOS or HPUX
+#
+        m68k-hp-hpux*|hppa*-hp-hpux*|sparc-sun-sunos*)
+            if test "x$x_libraries" != "x" ;
+            then
+	       XLIBSW="$x_libraries/libX11.a"
+            else
+	       XLIBSW="/usr/lib/libX11.a"
+            fi
+	    suppress_enable_shared=yes
+	    ;;
+
+#
+# GDB should be linked dynamically on NetBSD, but needs the linker
+# to set an RPATH in the binaries for the X11 library directory.  It's
+# assumed that if a shared libtk is being built, it will be RPATH'd
+# in via a directive in the tcl library configuration information.
+#
+	*-*-netbsd*)
+	    if test "x$x_libraries" != "x"; then
+	      XLIBSW="$XLIBSW -Wl,-rpath,$x_libraries"
+	    fi
+	    ;;
+
+#
+# default is to link dynamically
+#
+        *)
+	   ;;
+    esac
+#
+# END CYGNUS LOCAL
+
+# The following case handles the differences between linking with "ld"
+# and the compiler
+
+case $SHLIB_LD in
+    *ld*)
+      TK_LD_SEARCH_FLAGS=`echo ${TK_CC_SEARCH_FLAGS} |sed -e "s|-Wl,||g" -e "s|,| |g"`
+      ;;
+    *)
+      TK_LD_SEARCH_FLAGS="${TK_CC_SEARCH_FLAGS}"
+      ;;
+esac
+
+#--------------------------------------------------------------------
+#	Check for the existence of various libraries.  The order here
+#	is important, so that then end up in the right order in the
+#	command line generated by make.  The -lsocket and -lnsl libraries
+#	require a couple of special tricks:
+#	1. Use "connect" and "accept" to check for -lsocket, and
+#	   "gethostbyname" to check for -lnsl.
+#	2. Use each function name only once:  can't redo a check because
+#	   autoconf caches the results of the last check and won't redo it.
+#	3. Use -lnsl and -lsocket only if they supply procedures that
+#	   aren't already present in the normal libraries.  This is because
+#	   IRIX 5.2 has libraries, but they aren't needed and they're
+#	   bogus:  they goof up name resolution if used.
+#	4. On some SVR4 systems, can't use -lsocket without -lnsl too.
+#	   To get around this problem, check for both libraries together
+#	   if -lsocket doesn't work by itself.
+#--------------------------------------------------------------------
+
+AC_CHECK_LIB(Xbsd, main, [LIBS="$LIBS -lXbsd"])
+
+# CYGNUS LOCAL: Store any socket library(ies) in the cache, and don't
+# mess up the cache values of the functions we check for.
+AC_CACHE_CHECK([for socket libraries], tcl_cv_lib_sockets,
+ [tcl_cv_lib_sockets=
+  tk_checkBoth=0
+  unset ac_cv_func_connect
+  AC_CHECK_FUNC(connect, tk_checkSocket=0, tk_checkSocket=1)
+  if test "$tk_checkSocket" = 1; then
+      unset ac_cv_func_connect
+      AC_CHECK_LIB(socket, main, tcl_cv_lib_sockets="-lsocket",
+		   tk_checkBoth=1)
+  fi
+  if test "$tk_checkBoth" = 1; then
+      tk_oldLibs=$LIBS
+      LIBS="$LIBS -lsocket -lnsl"
+      unset ac_cv_func_accept
+      AC_CHECK_FUNC(accept,
+		    [tcl_checkNsl=0
+		     tcl_cv_lib_sockets="-lsocket -lnsl"])
+      unset ac_cv_func_accept
+      LIBS=$tk_oldLibs
+  fi
+  unset ac_cv_func_gethostbyname
+  tk_oldLibs=$LIBS
+  LIBS="$LIBS $tk_cv_lib_sockets"
+  AC_CHECK_FUNC(gethostbyname, ,
+		[AC_CHECK_LIB(nsl, main,
+			      [tcl_cv_lib_sockets="$tcl_cv_lib_sockets -lnsl"])])
+  unset ac_cv_func_gethostbyname
+  LIBS=$tcl_oldLIBS
+])
+test -z "$tcl_cv_lib_sockets" || LIBS="$LIBS $tcl_cv_lib_sockets"
+
+# Add the threads support libraries
+
+LIBS="$LIBS$THREADS_LIBS"
+
+#--------------------------------------------------------------------
+# One more check related to the X libraries.  The standard releases
+# of Ultrix don't support the "xauth" mechanism, so send won't work
+# unless TK_NO_SECURITY is defined.  However, there are usually copies
+# of the MIT X server available as well, which do support xauth.
+# Check for the MIT stuff and use it if it exists.
+#
+# Note: can't use ac_check_lib macro (at least, not in Autoconf 2.1)
+# because it can't deal with the "-" in the library name.
+#--------------------------------------------------------------------
+
+if test -d /usr/include/mit ; then
+    AC_MSG_CHECKING([MIT X libraries])
+    tk_oldCFlags=$CFLAGS
+    CFLAGS="$CFLAGS -I/usr/include/mit"
+    tk_oldLibs=$LIBS
+    LIBS="$LIBS -lX11-mit"
+    AC_TRY_LINK([
+	#include <X11/Xlib.h>
+    ], [
+	XOpenDisplay(0);
+    ], [
+	AC_MSG_RESULT(yes)
+	XLIBSW="-lX11-mit"
+	XINCLUDES="-I/usr/include/mit"
+    ], AC_MSG_RESULT(no))
+    CFLAGS=$tk_oldCFlags
+    LIBS=$tk_oldLibs
+fi
+
+#--------------------------------------------------------------------
+#	On a few very rare systems, all of the libm.a stuff is
+#	already in libc.a.  Set compiler flags accordingly.
+#	Also, Linux requires the "ieee" library for math to
+#	work right (and it must appear before "-lm").
+#--------------------------------------------------------------------
+
+MATH_LIBS=""
+AC_CHECK_FUNC(sin, , MATH_LIBS="-lm")
+AC_CHECK_LIB(ieee, main, [MATH_LIBS="-lieee $MATH_LIBS"])
+
+#--------------------------------------------------------------------
+#	Figure out whether "char" is unsigned.  If so, set a
+#	#define for __CHAR_UNSIGNED__.
+#--------------------------------------------------------------------
+
+AC_C_CHAR_UNSIGNED
+
+#--------------------------------------------------------------------
+#	Under Solaris 2.4, strtod returns the wrong value for the
+#	terminating character under some conditions.  Check for this
+#	and if the problem exists use a substitute procedure
+#	"fixstrtod" (provided by Tcl) that corrects the error.
+#--------------------------------------------------------------------
+
+SC_BUGGY_STRTOD
+
+#--------------------------------------------------------------------
+#	The statements below define a collection of symbols related to
+#	building libtk as a shared library instead of a static library.
+#--------------------------------------------------------------------
+
+SC_ENABLE_SHARED
+
+eval eval "TK_SHARED_LIB_SUFFIX=${SHARED_LIB_SUFFIX}"
+eval eval "TK_UNSHARED_LIB_SUFFIX=${UNSHARED_LIB_SUFFIX}"
+
+if test "${SHARED_BUILD}" = "1" -a "${SHLIB_SUFFIX}" != ""; then
+    TK_SHLIB_CFLAGS="${SHLIB_CFLAGS}"
+    TCL_TOOL_SHARED_LIB_LONGNAME(TK_LIB_FILE, tk, ${TK_SHARED_LIB_SUFFIX})
+    MAKE_LIB="\${SHLIB_LD} -o \${TK_LIB_FILE} \${OBJS} \$(TK_LD_SEARCH_FLAGS) ${TCL_BUILD_STUB_LIB_SPEC} \${LIBS}"
+    RANLIB=":"
+
+#    TCL_STUB_FLAGS="-DUSE_TCL_STUBS"
+    TCL_STUB_FLAGS=""
+else
+    TK_SHLIB_CFLAGS=""
+    TCL_TOOL_STATIC_LIB_LONGNAME(TK_LIB_FILE, tk, ${TK_UNSHARED_LIB_SUFFIX})
+    MAKE_LIB="\${STLIB_LD} \${TK_LIB_FILE} \${OBJS}"
+
+    TCL_STUB_FLAGS=""
+fi
+
+# Note:  in the following variable, it's important to use the absolute
+# path name of the Tcl directory rather than "..":  this is because
+# AIX remembers this path and will attempt to use it at run-time to look
+# up the Tcl library.
+
+if test "$SHARED_BUILD" = 0 -o $TCL_NEEDS_EXP_FILE = 0; then
+    TCL_TOOL_LIB_SHORTNAME(TK_LIB_FLAG, tk, $TK_VERSION)
+    TCL_TOOL_LIB_SPEC(TK_BUILD_LIB_SPEC, `pwd`, ${TK_LIB_FLAG})
+    TCL_TOOL_LIB_SPEC(TK_LIB_SPEC, ${exec_prefix}/lib, ${TK_LIB_FLAG})
+    TK_BUILD_EXP_FILE=""
+    TK_EXP_FILE=""
+else
+    TK_BUILD_EXP_FILE="lib.exp"
+    eval "TK_EXP_FILE=libtk${TCL_EXPORT_FILE_SUFFIX}"
+    
+    TK_BUILD_LIB_SPEC="-bI:`pwd`/${TK_BUILD_EXP_FILE}"
+    TK_LIB_SPEC="-bI:${exec_prefix}/lib/${TK_EXP_FILE}"
+fi
+TK_SHARED_BUILD=${SHARED_BUILD}
+
+dnl CYGNUS LOCAL
+TK_BUILD_INCLUDES="-I`cd $srcdir/../generic; pwd`"
+dnl END CYGNUS LOCAL
+
+#--------------------------------------------------------------------
+# The statements below define various symbols relating to creating
+# the stub'd version of the Tk library
+#
+# For now, linking to Tcl stubs is not supported with Tk. It causes
+# too many problems with linking.  When Tk is a fully loadable 
+# extension, linking the the Tcl stubs will be supported.
+#--------------------------------------------------------------------
+
+TCL_TOOL_STATIC_LIB_LONGNAME(TK_STUB_LIB_FILE, tkstub, ${TK_UNSHARED_LIB_SUFFIX})
+
+MAKE_STUB_LIB="\${STLIB_LD} \${STUB_LIB_FILE} \${STUB_LIB_OBJS}"
+
+TCL_TOOL_LIB_SHORTNAME(TK_STUB_LIB_FLAG, tkstub, ${TK_VERSION})
+TCL_TOOL_LIB_SPEC(TK_BUILD_STUB_LIB_SPEC, `pwd`, ${TK_STUB_LIB_FLAG})
+TCL_TOOL_LIB_SPEC(TK_STUB_LIB_SPEC, ${exec_prefix}/lib, ${TK_STUB_LIB_FLAG})
+
+TCL_TOOL_LIB_PATH(TK_BUILD_STUB_LIB_PATH, `pwd`, ${TK_STUB_LIB_FILE})
+TCL_TOOL_LIB_PATH(TK_STUB_LIB_PATH, `pwd`, ${TK_STUB_LIB_FILE})
+
+AC_SUBST(TK_STUB_LIB_FILE)
+AC_SUBST(TK_STUB_LIB_FLAG)
+AC_SUBST(TK_BUILD_STUB_LIB_SPEC)
+AC_SUBST(TK_STUB_LIB_SPEC)
+AC_SUBST(TK_BUILD_STUB_LIB_PATH)
+AC_SUBST(TK_STUB_LIB_PATH)
+AC_SUBST(MAKE_STUB_LIB)
+AC_SUBST(TK_STUB_FLAGS)
+AC_SUBST(TK_BUILD_EXP_FILE)
+AC_SUBST(TK_EXP_FILE)
+
+AC_SUBST(TCL_STUB_FLAGS)
+AC_SUBST(TK_BUILD_EXP_FILE)
+AC_SUBST(TK_EXP_FILE)
+
+AC_SUBST(CFLAGS_DEFAULT)
+AC_SUBST(CFLAGS_DEBUG)
+AC_SUBST(CFLAGS_OPTIMIZE)
+AC_SUBST(LDFLAGS_DEFAULT)
+AC_SUBST(LDFLAGS_DEBUG)
+AC_SUBST(LDFLAGS_OPTIMIZE)
+AC_SUBST(TK_DBGX)
+AC_SUBST(DL_LIBS)
+AC_SUBST(EXTRA_CFLAGS)
+AC_SUBST(MATH_LIBS)
+AC_SUBST(AR)
+AC_SUBST(RANLIB)
+AC_SUBST(MAKE_LIB)
+AC_SUBST(SHLIB_CFLAGS)
+AC_SUBST(TK_SHLIB_CFLAGS)
+AC_SUBST(STLIB_LD)
+AC_SUBST(SHLIB_LD)
+AC_SUBST(SHLIB_LD_LIBS)
+AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(SHLIB_VERSION)
+AC_SUBST(TCL_BIN_DIR)
+AC_SUBST(TCL_LIB_FULL_PATH)
+AC_SUBST(TCL_LIB_SPEC)
+AC_SUBST(TCL_LIB_FLAG)
+AC_SUBST(TCL_BUILD_STUB_LIB_SPEC)
+AC_SUBST(TCL_BUILD_LIB_SPEC)
+AC_SUBST(TCL_DBGX)
+AC_SUBST(TCL_LIB_FLAG)
+AC_SUBST(TCL_SRC_DIR)
+AC_SUBST(TCL_VERSION)
+AC_SUBST(TK_BUILD_LIB_SPEC)
+AC_SUBST(TK_LIB_FULL_PATH)
+AC_SUBST(TK_CC_SEARCH_FLAGS)
+AC_SUBST(TK_LD_SEARCH_FLAGS)
+AC_SUBST(TK_LIB_FILE)
+AC_SUBST(TK_LIB_FLAG)
+AC_SUBST(TK_LIB_SPEC)
+AC_SUBST(TK_MAJOR_VERSION)
+AC_SUBST(TK_MINOR_VERSION)
+AC_SUBST(TK_PATCH_LEVEL)
+AC_SUBST(TK_SRC_DIR)
+AC_SUBST(TK_VERSION)
+AC_SUBST(XINCLUDES)
+AC_SUBST(XLIBSW)
+AC_SUBST(TK_SHARED_BUILD)
+dnl CYGNUS LOCAL
+AC_SUBST(TK_BUILD_INCLUDES)
+dnl END CYGNUS LOCAL
+# CYGNUS LOCAL
+# Need more variables to keep shared/static linking separate.
+AC_SUBST(TCL_SHARED_LIB_SUFFIX)
+AC_SUBST(TCL_UNSHARED_LIB_SUFFIX)
+AC_SUBST(TK_SHARED_LIB_FILE)
+AC_SUBST(TK_UNSHARED_LIB_FILE)
+# END CYGNUS LOCAL
+
+AC_OUTPUT(Makefile tkConfig.sh)
+

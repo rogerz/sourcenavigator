@@ -1,0 +1,52 @@
+/*
+ * etdemo.et --
+ *
+ *	This file demonstrates how the stand-alone module of Tix can be
+ *	used in an ET application.
+ *
+ * Copyright (c) 1996, Expert Interface Technologies
+ *
+ * See the file "license.terms" for information on usage and redistribution
+ * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+    /*
+     * Initialize ET, this will load the TCL and TK libraries and call
+     * Tcl_Init() and Tk_Init() for you.
+     */
+
+    Et_Init(&argc,argv);
+
+    /*
+     * Initialize the stand-alone version of Tix.
+     */
+
+    if (Tixsam_Init(Et_Interp) != ET_OK ){
+        fprintf(stderr,"Can't initialize the Tix extension.\n");
+        exit(1);
+    }
+
+
+    /*
+     * Now put your code here. As an example, I just "source" in the file
+     * test.tcl in the curent directory. Notice this file is loaded in
+     * dynamically. If you want to load in test.tcl statically, you should
+     * use ET_INCLUDE(test.tcl) instead. Please consult your ET manual
+     * for more details.
+     */
+
+    /* ET(source test.tcl); */
+
+    /*
+     * Go into the ET mainloop. This won't return until the application
+     * exits.
+     */
+    
+    Et_MainLoop();
+    return 0;
+}

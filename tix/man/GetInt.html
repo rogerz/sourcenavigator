@@ -1,0 +1,26 @@
+
+
+
+<TITLE>tixGetInt - Get the integer value of a string.</TITLE>
+<Center><H2>tixGetInt - Get the integer value of a string.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<P>
+<B>tixGetInt<I> ?-nocomplain? ?-trunc? string</I></B>
+<P>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The command <B>tixGetInt</B></I> converts any number into an integer
+number. By default, it will round the number to the nearest integer.
+When the <B>-trunc</B></I> option is specified, the number is truncated
+instead of rounded.
+
+When the string is not a valid TCL numerical value and the
+<B>-nocomplain</B></I> option is specified, <B>tixGetInt</B></I> will return
+"0". Otherwise it will generate an error.
+<P>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<!Serial 851729145>
+<hr><i>Last modified Fri Jan 17 23:01:05 EST 1997 </i> --- 
+<i>Serial 853731299</i>

@@ -1,0 +1,23 @@
+
+  TIX 4.1.0 FINAL RELEASE
+
+   Released on Feb 15, 1997
+
+  WHAT'S NEW
+     * Works with all major releases of Tcl (7.4 throught 8.0) and Itcl
+       (2.0, 2.1 and 2.2).
+
+     * Easy configuration. See docs/UnixInst.html and docs/WinInst.html.
+
+     * Works on both Windows and Unix platforms.
+
+     * Stand-alone module support (SAM): compile scripts into shared
+       libraries for easy redistribution. SAM also supports ET (See
+       docs/SAModule.txt).
+
+     * Supports the "package require" command (see docs/Pkg.txt).
+
+     _________________________________________________________________
+
+   Last modified Sun Feb 16 00:05:06 EST 1997 --- Serial 856069650
+

@@ -1,0 +1,147 @@
+'\"
+'\" Copyright (c) 1996, Expert Interface Technologies
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\" 
+'\" The file man.macros and some of the macros used by this file are
+'\" copyrighted: (c) 1990 The Regents of the University of California.
+'\"              (c) 1994-1995 Sun Microsystems, Inc.
+'\" The license terms of the Tcl/Tk distrobution are in the file
+'\" license.tcl.
+.so man.macros
+'----------------------------------------------------------------------
+.HS tixNBFrame tix 4.0
+.BS
+'
+'
+'----------------------------------------------------------------------
+.SH NAME
+tixNBFrame \- Create and manipulate Tix NoteBook Frame widgets
+'
+'
+'----------------------------------------------------------------------
+.SH SYNOPSIS
+\fBtixNBFrame\fI \fIpathName ?\fIoptions\fR?
+'
+'
+'----------------------------------------------------------------------
+.PP
+.SH SUPER-CLASS
+None.
+'
+'----------------------------------------------------------------------
+.SH "STANDARD OPTIONS"
+'
+.LP
+.nf
+.ta 4c 8c 12c
+\fB
+background	borderWidth	cursor		disabledForeground
+foreground	font		height		highlightColor
+highlightThickness	relief		takeFocus
+width\fR
+.ta 4c 
+.fi
+.LP
+See the \fBoptions(n)\fR manual entry for details on the standard options.
+'
+'
+'----------------------------------------------------------------------
+.SH "WIDGET-SPECIFIC OPTIONS"
+'
+'----------BEGIN
+.LP
+.nf
+Name:		\fBbackPageColor\fR
+Class:		\fBBackPageColor\fR
+Switch:		\fB\-backpagecolor\fR
+.fi
+.IP
+Specifies the color for the extra space on the row of tabs which is
+not covered by any page tabs.
+'----------END
+'
+'----------BEGIN
+.LP
+.nf
+Name:		\fBfocusColor\fR
+Class:		\fBFocusColor\fR
+Switch:		\fB\-focuscolor\fR
+.fi
+.IP
+Specifies the color for the focus highlight.
+'----------END
+'
+'----------BEGIN
+.LP
+.nf
+Name:		\fBinactiveBackground\fR
+Class:		\fBInactiveBackground\fR
+Switch:		\fB\-inactivebackground\fR
+.fi
+.IP
+Specifies the color for the inactive tabs (the active tab always have
+the same background color as the notebook).
+'----------END
+'
+'----------BEGIN
+.LP
+.nf
+Name:		\fBtabPadX\fR
+Class:		\fBPad\fR
+Switch:		\fB\-tabpadx\fR
+.fi
+.IP
+The horizontal padding around the text labels on the page tabs.
+'----------END
+'
+'----------BEGIN
+.LP
+.nf
+Name:		\fBtabPadY\fR
+Class:		\fBPad\fR
+Switch:		\fB\-tabpady\fR
+.fi
+.IP
+The vertical padding around the text labels on the page tabs.
+'----------END
+'
+'
+.BE
+'
+'
+'----------------------------------------------------------------------
+.SH DESCRIPTION
+'
+'
+The NBFrame widget is used privately inside the \fBTixNoteBook(n)\fR
+widget to display the page tabs. The application programmer should
+never create a NBFrame widget directly. The sole purpose of this maual
+page is to describe the options that can be used to configure the
+appearance of the TixNoteBook widget.
+.PP
+The name of the NBFrame subwidget inside the TixNoteBook widget is
+called \fBnbframe\fR. It can be accessed using the \fBsubwidget\fR
+command of the TixNoteBook widget or the \fB\-options\fR switch:
+.PP
+'----------------------------------------------------------------------
+.SH EXAMPLE
+'
+.nf
+ tixNoteBook .d -options {
+     nbframe.BackPageColor gray60
+ }
+ .d subwidget nbframe config -font fixed
+
+ .d add page1 -label "Page1"
+ set page [.d subwidget page1]
+ button $page.b1
+ pack $page.b1
+
+ pack .d -expand yes -fill both
+.fi
+'
+'----------------------------------------------------------------------
+.SH KEYWORDS
+Tix(n), TixNoteBook(n)

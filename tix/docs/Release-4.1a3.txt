@@ -1,0 +1,88 @@
+
+  TIX 4.1A3
+
+   Released on April 23, 1996
+
+Subject: [Announce] Tix version 4.1a3 is available
+
+   I am pleased to announce the availability of Tix version 4.1a3, the
+   third alpha release. This version of Tix supports the Unix and
+   Microsoft Windows platforms.
+
+   Tix 4.1 is the commercial version of Tix 4.0. It contains more widgets
+   and works under MS Windows. Please read the file license.terms first
+   inside the distribution tar file or from the WWW at
+   http://www.xpi.com/tix/license.terms.41a3.txt 
+
+  REQUIREMENT
+
+    Unix Platforms
+
+   Tix 4.1a3 works with the following combinations of Tcl/Tk/ITcl/ET:
+     * Tcl 7.4 + Tk 4.0
+     * Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     * Tcl 7.4 + Tk 4.0 + ET 1.5
+     * Tcl 7.5 + Tk 4.1 (final release only)
+
+    Windows Platforms
+
+   Tix 4.1a3 requires the final release of Tcl 7.5 and Tk 4.1 (no alpha
+   or beta versions). Many things currently does not work under Windows,
+   including:
+     * FileSelectDialog (ExFileSelectDialog does work, though)
+     * The top-left corner of the Grid (aka spreadsheet) widget
+     * XPM images
+
+  GETTING THE TIX PACKAGE
+
+   Tix 4.1a3 is available at
+     * ftp://ftp.xpi.com/pub/Tix4.1a3.tar.gz: Unix source tar file.
+     * ftp://ftp.xpi.com/pub/windows/tix41a3.zip: Same as
+       Tix4.1a3.tar.gz, but in Windows/DOS ZIP format.
+     * ftp://ftp.xpi.com/pub/windows/tix41bin.zip: Windows binaries.
+
+  WHAT'S NEW SINCE TIX 4.1A2 (THE LAST RELEASE)
+
+    5/5/96
+
+   New feature: New tool unix-et-tk4.0/makescript.tcl. It includes the
+   Tix script library into a ET application in the correct order. If
+   A.tcl depends on B.tcl, then B.tcl is loaded first.
+
+    5/6/96
+
+   New feature: Now the -default option of the Tix mega widget classes
+   are inherited from their superclasses.
+
+   New feature: New option -expand for the panes in PanedWindow
+
+   Bug Fixed: ScrolledHList didn't calculate the size of the hlist
+   subwidget correctly, resulting in scrollbars not appearing even if the
+   hlist widget is not big enough to display all of its contents.
+
+    5/8/96
+
+   New feature: New method setsize for PanedWindow.
+
+    5/10/96
+
+   New feature: New widget tixMeter, can be used to display the progress
+   of work.
+
+   Bug Fixed: HList multiple and extended selectMode now work with
+   TixTree.
+
+    5/11/96
+
+   Bug Fixed: HList "see" method sometimes doesn't display the specified
+   element correctly.
+
+   New widgets: New widgets CheckList, Grid, ScrolledGrid, TList and
+   ScrolledTList added to the Tix 4.1 distribution.
+
+   New feature: New option -postcmd for PopupMenu widget.
+
+     _________________________________________________________________
+
+   Last modified Fri Jan 17 22:52:55 EST 1997 --- Serial 853731293
+

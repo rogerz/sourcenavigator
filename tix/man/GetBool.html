@@ -1,0 +1,24 @@
+
+
+
+<TITLE>tixGetBoolean - Get the boolean value of a string.</TITLE>
+<Center><H2>tixGetBoolean - Get the boolean value of a string.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<P>
+<B>tixGetBoolean<I> ?-nocomplain? string</I></B>
+<P>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The command <B>tixGetBoolean</B></I> returns "0" if the string is a valid
+TCL string for the boolean value FALSE. It returns "1" if the string
+is a valid TCL string for the boolean value TRUE. 
+
+When the string is not a valid TCL boolean value and the
+<B>-nocomplain</B></I> option is specified, <B>tixGetBoolean</B></I> will return
+"0". Otherwise it will generate an error.
+<P>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:29 EST 1997 </i> --- 
+<i>Serial 853731299</i>
