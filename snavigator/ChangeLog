@@ -1,3 +1,11 @@
+2004-10-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/tree.tcl (treetable_search_region): When
+	a typeahead search in executed in a tree widget,
+	deselect the previously selected index. This
+	avoids a problem where it appears that multiple
+	indexes are selected at the same time.
+
 2004-05-10  Eric Lassauge  <lassauge@users.sourceforge.net>
 
 	* NEWS: Note french support.

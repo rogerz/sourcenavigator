@@ -2023,6 +2023,7 @@ proc treetable_search_region {w a state} {
 	    return 1
 	}
     }
+    $w selection clear 0 end
     $w activate $off
     $w activate $off
     $w yview see $off
