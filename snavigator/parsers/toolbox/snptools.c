@@ -12,6 +12,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <config.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -312,7 +313,7 @@ sn_process_options(int argc, char *argv[])
         listfp = fopen(optarg, "r");
 	if (listfp == NULL)
 	{
-	  sn_error("could not open %s\n", optarg);
+	  sn_error("Could not open \"%s\", %s\n", optarg, strerror(errno));
 	  sn_panic();
 	}
 	break;

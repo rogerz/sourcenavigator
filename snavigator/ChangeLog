@@ -1,5 +1,17 @@
 2003-05-10  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/cobol/skeleton.c (main):
+	* parsers/fortran/ftnchek.c (main):
+	* parsers/java/skeleton.c (main):
+	* parsers/tcl/skeleton.c (main):
+	* parsers/toolbox/snptools.c (sn_process_options):
+	Check to make sure the file name passed as
+	the -y argument actually exists. This avoids
+	a problem where a typo in the file name
+	generates a usage message.
+
+2003-05-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/misc.tcl (sn_create_new_project): Check each
 	import directory to see if it exists and generate
 	an error if it does not. This avoids a problem

@@ -141,6 +141,12 @@ main(int argc, char *argv[])
       
     case 'y':
       list_fp = fopen(optarg,"r");
+      if (!list_fp) {
+          fprintf(stderr, "Could not open: \"%s\", %s\n",
+                  optarg, strerror(errno));
+          exit(2);
+      }
+
       break;
       
     case 'I':	/* include path ignored */
