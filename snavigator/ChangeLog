@@ -7,6 +7,7 @@
 	* gui/version.tcl (sn_rcs_lockunlockdel): Use
 	treebind method of the Selector& class, the
 	bind method was removed long ago.
+	[Bug 570492]
 
 2002-07-14  Mo DeJong  <supermo@bayarea.net>
 
@@ -15,6 +16,7 @@
 	the goto line dialog since this invokes Focus_In
 	and changes the value. This was causing the Win32
 	version to fail.
+	[Bug 579168]
 
 2002-07-09  David Philippi  <lists@torangan.de>
 
