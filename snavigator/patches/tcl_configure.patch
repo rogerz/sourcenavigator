@@ -1,15 +1,41 @@
 2002-05-31  Mo DeJong  <supermo@bayarea.net>
 
+	* win/configure: Regen.
 	* win/configure.in: Don't generate ../unix/tclConfig.sh
-	since this breaks Itcl.
+	since that breaks Itcl.
 
+Index: tcl/win/configure
+===================================================================
+RCS file: /cvs/src/src/tcl/win/configure,v
+retrieving revision 1.7
+diff -u -r1.7 configure
+--- tcl/win/configure	28 Oct 2001 16:26:29 -0000	1.7
++++ tcl/win/configure	1 Jun 2002 19:21:37 -0000
+@@ -2922,7 +2922,7 @@
+ 
+ ac_given_srcdir=$srcdir
+ 
+-trap 'rm -fr `echo "Makefile tclConfig.sh tcl.hpj ../unix/tclConfig.sh" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
++trap 'rm -fr `echo "Makefile tclConfig.sh tcl.hpj" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+ EOF
+ cat >> $CONFIG_STATUS <<EOF
+ 
+@@ -3081,7 +3081,7 @@
+ 
+ cat >> $CONFIG_STATUS <<EOF
+ 
+-CONFIG_FILES=\${CONFIG_FILES-"Makefile tclConfig.sh tcl.hpj ../unix/tclConfig.sh"}
++CONFIG_FILES=\${CONFIG_FILES-"Makefile tclConfig.sh tcl.hpj"}
+ EOF
+ cat >> $CONFIG_STATUS <<\EOF
+ for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
 Index: tcl/win/configure.in
 ===================================================================
 RCS file: /cvs/src/src/tcl/win/configure.in,v
 retrieving revision 1.7
 diff -u -r1.7 configure.in
 --- tcl/win/configure.in	28 Oct 2001 16:26:29 -0000	1.7
-+++ tcl/win/configure.in	31 May 2002 23:38:01 -0000
++++ tcl/win/configure.in	1 Jun 2002 19:21:37 -0000
 @@ -247,5 +247,5 @@
  AC_SUBST(MAKE_DLL)
  AC_SUBST(MAKE_EXE)
