@@ -623,11 +623,19 @@ ReconfigureWindowsMenu(
 	    HMENU childMenuHdl = (HMENU) mePtr->childMenuRefPtr->menuPtr
 		->platformData;
 	    if (childMenuHdl != NULL) {
-		itemID = (UINT) childMenuHdl;
-		/* Win32 draws the popup arrow in the wrong color    *
-		 * for a disabled cascade menu, so do it by hand.    */
+		/*
+		 * Win32 draws the popup arrow in the wrong color    *
+		 * for a disabled cascade menu, so do it by hand.    *
+		 * Given it is disabled, there's no need for it to   *
+		 * be connected to its child.
+		 */
 		if (mePtr->state != ENTRY_DISABLED) {
 		    flags |= MF_POPUP;
+		    /*
+		     * If the MF_POPUP flag is set, then the id
+		     * is interpreted as the handle of a submenu.
+		     */
+		    itemID = (UINT) childMenuHdl;
 		}	
 	    }
 	    if ((menuPtr->menuType == MENUBAR) 

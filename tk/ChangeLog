@@ -1,3 +1,8 @@
+2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/tkWinMenu.c (ReconfigureWindowsMenu):
+	Back port child menu id fix from Tk CVS head.
+
 2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* unix/Makefile.in: Add DESTDIR support.
