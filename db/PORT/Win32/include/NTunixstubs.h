@@ -4,10 +4,6 @@
   #define O_NONBLOCK 0
 #endif
 
-#ifndef mode_t
-  typedef int mode_t;
-#endif
-
 #undef HAVE_SYS_UTSNAME_H
 #ifndef F_OK
   #define F_OK 0
@@ -58,4 +54,4 @@
 
 #endif
 
-#include <Shlobj.h>
+#include <shlobj.h>

@@ -1,3 +1,23 @@
+2002-04-22  Mo DeJong  <supermo@bayarea.net>
+
+	Add mingw native/cross build support.
+	
+	* config.h.in: Regen.
+	* configure: Regen.
+	* configure.in: Set WINFLAGS appropriately when
+	building with mingw. Replace broken AC_TYPE_*
+	macros with manual checks that set HAVE_*
+	values. Include winsock.h when checking for
+	u_char with mingw.
+	* PORT/Win32/include/NTunixstubs.h: Remove
+	mode_t typedef. Correct case of include so
+	that it works with Mingw on a case sensitive
+	file-system.
+	* PORT/include/compat.h: Check for missing
+	ssize_t, size_t, mode_t, off_t, and pid_t
+	types and define them if needed. Include the
+	NTunixstubs.h header when building with mingw.
+
 2002-04-21  Mo DeJong  <supermo@bayarea.net>
 
 	Remove old style acconfig.h template for
