@@ -1,3 +1,15 @@
+2003-11-30  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Remove dep on GNU tar for `make install`. [Bug 807708]
+
+	* INSTALL.TXT: Remove note about GNU tar since
+	it is no longer needed to run `make install`.
+	* NEWS: Add items for upcoming b1 release.
+	* demo/Makefile.am: Remove use of -X flag to
+	tar since that meant we depended on GNU tar
+	being on the PATH.
+	* demo/Makefile.in: Regen.
+
 2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* INSTALL.TXT: Add note about the requirement

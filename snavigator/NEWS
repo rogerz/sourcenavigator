@@ -1,3 +1,9 @@
+5.2b1:
+- GNU tar no longer required to run `make install`
+- New --enable-symbols=mem flag can be passed
+  to configure to enable Tcl memory debugging.
+- Fix underline of text in Win32 symbol browser.
+
 5.2a2:
 - All widgets now use modern looking 1 pixel border width
 - Use new sourcenav icon for Win32 toplevel windows
