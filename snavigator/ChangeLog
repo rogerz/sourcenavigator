@@ -1,5 +1,10 @@
 2002-04-29  Mo DeJong  <supermo@bayarea.net>
 
+	* configure: Regen.
+	* configure.in: Bump version to 5.1.0.
+
+2002-04-29  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/editorpane.tcl (FileDialog): Remove the
 	-multiple argument to the file dialog boxes.
 	This was a local modification to the Tk 8.1
