@@ -351,7 +351,7 @@ isfileused(ClientData clientData,Tcl_Interp *interp,int argc,char **argv)
   Tcl_DStringFree(&nativeName);
   if (fd == INVALID_HANDLE_VALUE)
     {
-      sprintf(tmp,"%d",GetLastError());
+      sprintf(tmp,"%d",(int)GetLastError());
       LOGGER((LOGFP,"CreateFile for <%s> error: %s\n",filename,tmp));
       
       Tcl_AppendResult(interp, tmp, (char *) NULL);
@@ -952,7 +952,6 @@ Sn_setup_Init(Tcl_Interp *interp)		/* Interpreter for application. */
 	char	old_auto_path[2000];
 #if _WINDOWS
 	char	*null_dev = "NULL:";
-	char	cwd_str[255];
 #else
 	char	*null_dev = "/dev/null";
 #endif /* _WINDOWS */

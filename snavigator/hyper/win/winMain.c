@@ -38,6 +38,7 @@ MA 02111-1307, USA.
  * SCCS: @(#) winMain.c 1.28 96/07/23 16:58:12
  */
 
+#include <tclInt.h> /* For TclInitEncodingSubsystem */
 #include <tk.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

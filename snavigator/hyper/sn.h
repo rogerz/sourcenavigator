@@ -201,7 +201,7 @@ extern char *Paf_tempnam _ANSI_ARGS_((char *dir,char *pref));
 
 extern int (*Paf_Macro) _ANSI_ARGS_ ((char *word,int len,char **parameter_list,char **macro));
 
-extern void Paf_db_init_tables _ANSI_ARGS_((char *arg,char *cache,char *cross_cache));
+extern void Paf_db_init_tables _ANSI_ARGS_((const char *arg,const char *cache,const char *cross_cache));
 
 extern void Paf_insert_cross_ref_qry _ANSI_ARGS_ ((char *pcLine));
 

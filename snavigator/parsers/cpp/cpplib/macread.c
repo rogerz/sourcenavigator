@@ -240,7 +240,7 @@ static Macro_t f_MacroReadLine(char *pcLine, int *name_len, SearchTable *tbl)
 	return Macro;
 }
 
-void MacroReadFile(char *pcFilename)
+void MacroReadFile(const char *pcFilename)
 {
 	FILE *pfile;
 	LongString bf;

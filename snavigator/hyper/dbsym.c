@@ -413,7 +413,7 @@ dbisempty(tcldbpars *pars)
 	DB      *db_exclude = pars->db_exclude;
 	DBT     data;
 	DBT     key;
-	int     ret;
+	int     ret = -1;
 	int     flag;
 	int     cou;
 	int     len;

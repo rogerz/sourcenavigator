@@ -1,5 +1,24 @@
 2002-11-15  Mo DeJong  <mdejong@uncounted.org>
 
+	* db/dbdump.c:
+	* db/dbimp.c:
+	* db/dbutils.c:
+	* db/dbutils.h: 
+	* hyper/dbsym.c:
+	* hyper/sn.h:
+	* hyper/sninit.c:
+	* hyper/tkTreeTable.c:
+	* hyper/win/winMain.c:
+	* parsers/cpp/skeleton.c:
+	* parsers/cpp/cpplib/macread.c:
+	* snavigator/win/winCon.c:
+	Fix compiler warnings by adding casts
+	and consts where needed. Also init some
+	variables that could have been used
+	without an init. No functional changes.
+
+2002-11-15  Mo DeJong  <mdejong@uncounted.org>
+
 	* Makefile.in: Regen.
 	* configure: Regen.
 	* configure.in: Invoke AC_CANONICAL_HOST

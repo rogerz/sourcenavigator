@@ -45,7 +45,7 @@ int my_SplitList (char *str, int *num, char ***argvPtr, char sep);
 char * read_next_field (char *str, char *buf, int size, char sep);
 int read_next_int_field (char *str, char sep);
 void db_remove_file_xfer_using_keys(int softdel, char *key_files);
-void MacroReadFile(char *pcFilename);
+void MacroReadFile(const char *pcFilename);
 
 #endif /* _DBUTILS_ */
 

@@ -50,7 +50,7 @@ Tcl_Encoding encoding = NULL;
 extern   int yyfd;
 
 void start_parser(char *fname,int parse_cplpl,FILE *highl_fp,int highlight);
-void MacroReadFile(char *Filename);
+void MacroReadFile(const char *Filename);
 void MacroFreeTable();
 void free_lex_buffers();
 void free_token_buffers();
