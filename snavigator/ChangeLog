@@ -1,6 +1,27 @@
 2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Support each
+	of the keywords defined in the PHP manual
+	appendix G. Pass the SN_HIGH_KEYWORD
+	highlight option to sn_highlight for
+	each of these tokens.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	Add SN_HIGH_KEYWORD support and fix compiler
+	error that was a result of a previous change.
+	* parsers/toolbox/snptools.h: Add SN_HIGH_KEYWORD
+	to sn_highlights enum.
+	* tests/parsers/php.test: Add tests for
+	various keywords and keyword tokens. A side
+	effect of this keyword fix is that constructs
+	like "if (1) {}" are no longer seen as a call
+	to the function if. Add tests to verify that
+	no pass xref is generated for these common
+	cases.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Add support
 	for php mode entry tokens like "<?=" and
 	"<?PHP".

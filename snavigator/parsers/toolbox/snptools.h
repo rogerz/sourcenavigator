@@ -42,6 +42,7 @@ enum sn_options
 enum sn_highlights
 {
   SN_HIGH_COMMENT = 1,
+  SN_HIGH_KEYWORD,
   SN_HIGH_STRING
 };
 

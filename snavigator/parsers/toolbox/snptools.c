@@ -394,6 +394,9 @@ void sn_highlight(enum sn_highlights type,
     case SN_HIGH_COMMENT:
       tag = "rem";
       break;
+    case SN_HIGH_KEYWORD:
+      tag = "key";
+      break;
     case SN_HIGH_STRING:
       tag = "str";
       break;
@@ -405,7 +408,7 @@ void sn_highlight(enum sn_highlights type,
   fprintf(highlightfp, "%d %s %d.%d %d.%d\n",
     highlight_number++, /* Ignored by Sn_Highlight_Text */
     tag,
-    line_start, column_start, line_end, column_end);
+    start_line, start_column, end_line, end_column);
 }
 
 /*

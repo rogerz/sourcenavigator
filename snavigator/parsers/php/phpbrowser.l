@@ -243,8 +243,7 @@ any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
 include-keywords	("include"|"include_once"|"require"|"require_once")
 
-keywords	("and"|"or"|"xor")
-
+keywords	("and"|"or"|"xor"|"array"|"as"|"break"|"case"|"cfunction"|"class"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"extends"|"for"|"foreach"|"if"|"isset"|"list"|"new"|"old_function"|"print"|"return"|"static"|"switch"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
 
 dq-string-token  "DOUBLE_QUOTED_STRING"
 sq-string-token  "SINGLE_QUOTED_STRING"
@@ -1635,6 +1634,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
                 type = SN_HIGH_STRING;
                 break;
             case HTML:
+                break;
+            case KEYWORD:
+            case FUNCTION_KEYWORD:
+            case GLOBAL_KEYWORD:
+            case INCLUDE_KEYWORD:
+                type = SN_HIGH_KEYWORD;
                 break;
             default:
                 type = 0;

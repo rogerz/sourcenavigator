@@ -157,12 +157,12 @@ $var++;
 tcltest::test tokens-3.5 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
-\$var;
+\$myvar;
 ?>
 }]]
 } {1 SOMEWORD "\\$" 3.0 3.2
-2 SOMEWORD "var" 3.2 3.5
-3 SEMICOLON "" 3.5 3.6}
+2 SOMEWORD "myvar" 3.2 3.7
+3 SEMICOLON "" 3.7 3.8}
 
 tcltest::test tokens-3.6 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
@@ -245,6 +245,38 @@ tcltest::test tokens-5.3 { double quoted string tokens } {
 }]]
 } {1 DOUBLE_QUOTED_STRING "hi\\\\\"" 3.0 3.7}
 
+tcltest::test tokens-6.0 { keyword tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+include "file";
+?>
+}]]
+} {1 INCLUDE_KEYWORD "include" 3.0 3.7
+2 DOUBLE_QUOTED_STRING "file" 3.8 3.14
+3 SEMICOLON "" 3.14 3.15}
+
+tcltest::test tokens-6.1 { keyword tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+1 and 2
+?>
+}]]
+} {1 SOMEWORD "1" 3.0 3.1
+2 KEYWORD "and" 3.2 3.5
+3 SOMEWORD "2" 3.6 3.7}
+
+tcltest::test tokens-6.2 { keyword tokens } {
+    filter_tokens HTML [browse_tokens [save_file f.php {
+<?
+if (1) {}
+?>
+}]]
+} {1 KEYWORD "if" 3.0 3.2
+2 OPEN_PAREN "" 3.3 3.4
+3 SOMEWORD "1" 3.4 3.5
+4 CLOSE_PAREN "" 3.5 3.6
+5 OPEN_BRACE "" 3.7 3.8
+6 CLOSE_BRACE "" 3.8 3.9}
 
 
 # ---------------------------------------------
@@ -298,6 +330,123 @@ END;
 }]
 } {1 str 3.0 5.3}
 
+tcltest::test highlight-1.5 { highlight special keywords } {
+    browse_highlights [save_file f.php {
+<?
+function
+global
+include
+include_once
+require
+require_once
+?>
+}]
+} {1 key 3.0 3.8
+2 key 4.0 4.6
+3 key 5.0 5.7
+4 key 6.0 6.12
+5 key 7.0 7.7
+6 key 8.0 8.12}
+
+tcltest::test highlight-1.6 { highlight other keywords } {
+    browse_highlights [save_file f.php {
+<?
+and
+or
+xor
+array
+as
+break
+case
+cfunction
+class
+const
+continue
+declare
+default
+die
+do
+echo
+else
+elseif
+empty
+enddeclare
+endfor
+endforeach
+endif
+endswitch
+endwhile
+eval
+exit
+extends
+for
+foreach
+if
+isset
+list
+new
+old_function
+print
+return
+static
+switch
+unset
+use
+var
+while
+__FUNCTION__
+__FILE__
+__CLASS__
+__LINE__
+?>
+}]
+} {1 key 3.0 3.3
+2 key 4.0 4.2
+3 key 5.0 5.3
+4 key 6.0 6.5
+5 key 7.0 7.2
+6 key 8.0 8.5
+7 key 9.0 9.4
+8 key 10.0 10.9
+9 key 11.0 11.5
+10 key 12.0 12.5
+11 key 13.0 13.8
+12 key 14.0 14.7
+13 key 15.0 15.7
+14 key 16.0 16.3
+15 key 17.0 17.2
+16 key 18.0 18.4
+17 key 19.0 19.4
+18 key 20.0 20.6
+19 key 21.0 21.5
+20 key 22.0 22.10
+21 key 23.0 23.6
+22 key 24.0 24.10
+23 key 25.0 25.5
+24 key 26.0 26.9
+25 key 27.0 27.8
+26 key 28.0 28.4
+27 key 29.0 29.4
+28 key 30.0 30.7
+29 key 31.0 31.3
+30 key 32.0 32.7
+31 key 33.0 33.2
+32 key 34.0 34.5
+33 key 35.0 35.4
+34 key 36.0 36.3
+35 key 37.0 37.12
+36 key 38.0 38.5
+37 key 39.0 39.6
+38 key 40.0 40.6
+39 key 41.0 41.6
+40 key 42.0 42.5
+41 key 43.0 43.3
+42 key 44.0 44.3
+43 key 45.0 45.5
+44 key 46.0 46.12
+45 key 47.0 47.8
+46 key 48.0 48.9
+47 key 49.0 49.8}
 
 
 
@@ -1814,7 +1963,36 @@ function foo() {
 } {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
 }
 
+tcltest::test function-3.4 { keywords not seen as call xref } {
+    browse_xref [save_file f.php {
+<?
+function foo() {
+    if (1)
+        bar();
+}
+?>
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000005<>f.php;<>
+}
 
+tcltest::test function-3.5 { keywords not seen as call xref } {
+    browse_xref [save_file f.php {
+<?
+array();
+?>
+}]
+} {}
+
+tcltest::test function-3.6 { function result as function argument } {
+    browse_xref [save_file f.php {
+<?
+bar(
+    bar());
+?>
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000003<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000004<>f.php;<>
+}
 
 tcltest::test function-4.0 { function not finished at EOF } {
     browse [save_file f.php "
@@ -2238,9 +2416,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # should we still see this as a function invocation?
 # for example "foo(];" or "foo(;" does the close paren
 # need to be there for a function call to be seen?
-
-# Test "foo(foo());" to make sure tokens in a function
-# call are being processed and not ignored.
 
 # We don't currently report a function name when inserting
 # comments. Not clear how we would implement this since
