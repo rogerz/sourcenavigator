@@ -43,8 +43,15 @@ proc sn_ensure_emacs_running {editcmd} {
         set lisp_commands "(progn (add-to-list 'load-path \"[file dirname\
           ${lisp_file}]\") (require 'sn))"
         if {[regexp "(gnuclient|gnudoit)" ${editcmd}]} {
+
+            # Unset tmp env vars while executing gnudoit
+            # since these programs will fail to find unix socket files
+            # when the tmp dir is set to .snprj
+            set tmp [sn_unset_tmp_dir]
+
             # First try via gnuclient.  If that fails,
             # then start a new Emacs.
+
             if {! [catch {exec gnudoit ${lisp_commands}} err]} {
                 # It worked.  So send the magic command.
                 sn_log "Emacs: connected via gnudoit"
@@ -57,6 +64,10 @@ proc sn_ensure_emacs_running {editcmd} {
                 sn_log "Emacs: exec gnudoit failed : $err"
                 # Assume "emacs" is in path.
                 set editcmd emacs
+            }
+
+            if {$tmp != ""} {
+                sn_set_tmp_dir $tmp
             }
         }
 

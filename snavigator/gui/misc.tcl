@@ -2840,6 +2840,27 @@ proc sn_set_tmp_dir {tmpdir} {
     set env(tmp) ${tmpdir}
 }
 
+# This proc is used to undo the tmp dir setting done by
+# sn_set_tmp_dir. It will unset any env vars and return
+# what the tmp dir was set to or "" if it was not set.
+
+proc sn_unset_tmp_dir {} {
+    global env tcl_platform
+    if {$tcl_platform(platform) == "windows"} {
+        return
+    }
+    if {![info exists env(TMPDIR)] ||
+        ![info exists env(TMP)] ||
+        ![info exists env(tmp)]} {
+        return
+    }
+    set tmp $env(TMPDIR)
+    unset env(TMPDIR)
+    unset env(TMP)
+    unset env(tmp)
+    return $tmp
+}
+
 #raise the first found symbol browser or multi window
 proc sn_raise_project {} {
 
