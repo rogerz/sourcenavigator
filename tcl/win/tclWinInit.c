@@ -336,6 +336,25 @@ AppendEnvironment(
     char *str;
     Tcl_DString ds;
     char **pathv;
+    char *shortlib;
+
+    /*
+     * The shortlib value needs to be the tail component of the
+     * lib path. For example, "lib/tcl8.4" -> "tcl8.4" while
+     * "usr/share/tcl8.5" -> "tcl8.5".
+     */
+    for (shortlib = (char *) (lib + strlen(lib) - 1); shortlib > lib ; shortlib--) {
+        if (*shortlib == '/') { 
+            if (shortlib == (lib + strlen(lib) - 1)) {
+                Tcl_Panic("last character in lib cannot be '/'");
+            }
+            shortlib++;
+            break;
+        }
+    }
+    if (shortlib == lib) {
+        Tcl_Panic("no '/' character found in lib");
+    }
 
     /*
      * The "L" preceeding the TCL_LIBRARY string is used to tell VC++
@@ -361,7 +380,7 @@ AppendEnvironment(
 	 * UTF-8 chars because I know lib is ascii.
 	 */
 
-	if ((pathc > 0) && (lstrcmpiA(lib + 4, pathv[pathc - 1]) != 0)) {
+	if ((pathc > 0) && (lstrcmpiA(shortlib, pathv[pathc - 1]) != 0)) {
 	    /*
 	     * TCL_LIBRARY is set but refers to a different tcl
 	     * installation than the current version.  Try fiddling with the
@@ -370,7 +389,7 @@ AppendEnvironment(
 	     * version string.
 	     */
 	    
-	    pathv[pathc - 1] = (char *) (lib + 4);
+	    pathv[pathc - 1] = shortlib;
 	    Tcl_DStringInit(&ds);
 	    str = Tcl_JoinPath(pathc, pathv, &ds);
 	    objPtr = Tcl_NewStringObj(str, Tcl_DStringLength(&ds));
