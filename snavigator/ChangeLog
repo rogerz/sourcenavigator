@@ -17,7 +17,7 @@
 	This avoids code that would exec the parser
 	and have it read the editor contents from
 	stdin. The reading from stdin logic in the
-	parsers is really flakey and should be removed.
+	parsers is really flaky and should be removed.
 
 2003-05-08  Mo DeJong  <mdejong@users.sourceforge.net>
 
