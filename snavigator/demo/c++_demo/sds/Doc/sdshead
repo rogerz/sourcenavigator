@@ -1,0 +1,355 @@
+
+Sds header description
+In order 
+
+struct sds_header {
+  magic_number:4 bytes:value 0x 50 42 xx 43
+               'xx' indicates the architecture of the machine on which the
+               dataset was generated, or the last conversion. These are
+               defined in the header sds_mdep.h: padding and size
+               information are contained in sds_glob.c and accessed through
+               functions in that file. When loading a dataset, its byte
+               ordering is determined by the full pattern.
+  controlbits:2 bytes:As of writing, (Fri Sep 30 12:16:28 EDT 1994) this
+               is used to contain flags for controlling conversion to and
+               from 32 and 64-bit address machines. Also, a bit may be
+               used to indicate if eg a 680x0 padded datset is also, in
+               fact, risc padded.
+  version
+  heap_size
+  list_size
+}
+char   heap[heap_size]
+               Contains the 'nameheap': heap_size bytes composed of
+               a number of zero-terminated strings which are all
+               the component names of user objects. The direc
+               structure (below) points into here; string ordering
+               is important as sub-object names are sequentially
+               accessed according to the structure definitions.
+struct type_list[list_size/4]
+ {
+ sds_code        nelems;  
+ sds_code        elemcod;
+ }
+ This array of structures (in reality, array of unions; the union type
+ is held in signal bits in the elemcod) describe the data structure of the
+ user object. elemcod contains a code for the data type: this is either a
+ primitive type (see sds_mdep.h for these) such as SDS_FLOAT, or is or'd
+ with SDS_INDLIST (== 0x80000000) to indicate a complex data type: in this
+ case, (elemcod & ~SDS_CODE_MASK) will point to the element number of the
+ typelist structure where the definition of this complex type begins. 
+ (SDS_CODE_MASK simply indicates the MSB, where all modifier flags sit).
+ In addition, the end of a complex type is signalled by SDS_RETLIST, and
+ the end of a complete type_list structure by SDS_ENDLIST. In an assembled
+ dataset header, SDS_LENLIST, which will appear at the beginning of a
+ complex type definition, indicates that nelems points into the header name
+ heap: names begin at (&heap + (nelems & 0xffff)), and there are 
+ (nelems >> 16) names in this particular list. SDS__SIZE_ALIGN, the next
+ elemcod in the list, indicates that nelems gives the structure size in
+ bytes (that is, the size of one element of the structure - as given by
+ sizeof()) and (elemcod & 0xff) shows the byte alingment of the structure.
+
+struct direc[N]
+                       Each element of this structure refers to a data object:
+                       direc[0] refers to the directory object itself, so,
+                       for instance, the number of USER objects is
+                       direc[0].nelems - 1. This structure should never be
+                       accessed directly by the user.
+{
+  offst: 4 bytes;      /* offset from memory start */
+  nelems: 4 bytes;     /* # elements */
+  elemsz: 4 bytes;     /* size in bytes of 1 element */
+  elemcod: 4 bytes;    /* code of the type */
+  wtime: 4 bytes;      /* last write time  */
+  structype: 2 bytes;  /* is it a list etc? */
+  align_type: 1 bytes; /* alignment type  */
+  illoca: 1 bytes;     /* reallocation flag */
+  obj_name: 4 bytes;   /* name offset of the object */
+}
+
+After this come the user objects. There is NO further SDS meta-data
+embedded in this data: each is guaranteed to lie on the proper byte
+boundary for the local architecture. If fast access is required, casting to
+the appropriate compiled-in structure definition will work.
+
+Note: when loading in an Sds, the following sequence happens when NO
+information is available as to size, architecture and so on:
+
+1. Load 4 bytes. Here you can check a. Is this (probably) an Sds?
+   b. Which byte-order and architecture?
+2. Load next 8. This gives you address size (32 or 64) and extra pad
+  information, plus version (not needed yet, all datasets so far obey the
+  same layout spec) and two variable byte sizes.
+3. Load in name heap and typelist, and the FIRST directory element (this
+  directory element must be massaged slightly if address size is changing).
+  Now one knows the number of user objects and so
+4. Load in the rest of the directory.Now I have all information necessary
+  for loading in the rest of teh dataset; each object is correctly sized
+  (both for the local architecture and for the original, if different.) Note
+  that data objects MAY have zero multiplicity (ie only the definition is
+  there) or they MAY be marked 'disjoint' - that is they have a non-zero
+  multiplicity but are not in this byte  stream - they exist somewhere else.
+  As to where, I don't have any idea IN THE DATASET HEADER: when this has
+  been implemented so far, the extra meta-data is contained in USER objects -
+  for instance, objects which name datafiles in the local file system, which
+  may then be mapped into process memory for access. These extra conventions
+  need to be defined as requirements become clearer - this is basically the
+  SDS way of ensuring that extra meta-information can be put into datasets as
+  necessary.
+
+As an example, we can look at a common Sds dataset used in several test
+programs:
+
+---------------------------------------------------------------------
+ dataset 'test data' 2 user objects created Wed Mar  9 11:11:35 1994
+- Sds version 3.000000 --------------------------------------------------
+   flibble Structure
+      x-offset Float
+      y-offset Float
+      x-scale Float
+      y-scale Double
+      x-units C-String[12]
+      y-units C-String[12]
+      point-style Long32
+      line-style Byte
+      x-object Long32
+   data Long32[512]
+
+Desribing the header in more detail, we have:
+
+      magic 0x50420543
+      version 0x3
+      tlist size 104 bytes
+      heap size 108 bytes
+
+( note that od -x on this file gives the first 4 bytes as 0543 5042: this 
+  indicates that the generation architecture if "the wrong way round" [or
+  the right way, depending on your persuasion]).
+
+type list:
+0: 9000a code 10000000 << SDS_LENLIST set; 9 names start at heap offset 0xa
+                          (that is, the 9 names of the 'flibble' structure,
+                          starting with 'y-offset')
+1: 38 code 20000004    << SDS_SIZE_ALIGN set: structure size is 0x38 bytes,
+                          it goes on a 4-byte boundary. (This description
+                          is from an Intel-486 generated dataset).
+
+2: 1 code 8            << One float, followed by...
+3: 1 code 8            << ....another...
+4: 1 code 8
+5: 1 code 9            << ...a double...
+6: c code d            << ...two 12-byte C-strings
+7: c code d            << (that is, they are zero-terminated)
+8: 1 code 6            << ...a 4-byte integer...
+9: 1 code 2            << a single byte (Sds marks this 8-bit integer as
+                          such: display code will not treat it as a character)
+a: 1 code 6            << ...another 4-byte integer.
+b: 0 code 40000000     << End of this structure definition
+c: 0 code 40000001     << ...and, actually, the end of the full list.
+***********************
+Name heap: it starts with the dataset name 
+(not necessarily the name of where it came from, its "storage name"):
+
+    0| 74 65 73 74 20 64 61 74 61  0 78 2d 6f 66 66 73 |test data.x-offs
+   10| 65 74  0 79 2d 6f 66 66 73 65 74  0 78 2d 73 63 |et.y-offset.x-sc
+   20| 61 6c 65  0 79 2d 73 63 61 6c 65  0 78 2d 75 6e |ale.y-scale.x-un
+   30| 69 74 73  0 79 2d 75 6e 69 74 73  0 70 6f 69 6e |its.y-units.poin
+   40| 74 2d 73 74 79 6c 65  0 6c 69 6e 65 2d 73 74 79 |t-style.line-sty
+   50| 6c 65  0 78 2d 6f 62 6a 65 63 74  0 66 6c 69 62 |le.x-object.flib
+   60| 62 6c 65  0 64 61 74 61  0  0  0  0             |ble.data....
+***********************
+
+Now the directories: first element describes itself:
+      name offset 0x0
+      data offset 0xe0 
+      timestamp 0x2d7df537 
+      code 0xe 
+      number of elements 3 
+      size of element 28 
+      reallocation flag 0 
+      structure type 0 
+      align 4
+****************
+      name offset 0x1005c
+      data offset 0xfffffffe 
+      timestamp 0x0 
+      code 0x80000000 
+      number of elements 1 
+      size of element 56 
+      reallocation flag 0 
+      structure type 0 
+      align 4
+   flibble 1 (0 38 4)
+      x-offset 1 (0 4 4)
+      y-offset 1 (4 4 4)
+      x-scale 1 (8 4 4)
+      y-scale 1 (c 8 4)
+      x-units 12 (14 1 1)
+      y-units 12 (20 1 1)
+      point-style 1 (2c 4 4)
+      line-style 1 (30 1 1)
+      x-object 1 (34 4 4)
+****************
+      name offset 0x10064
+      data offset 0xfffffffe 
+      timestamp 0x0 
+      code 0x6 
+      number of elements 512 
+      size of element 4 
+      reallocation flag 0 
+      structure type 0 
+      align 4
+
+
+0000000 0543 5042 08fd 0003 006c 0068 000a 0009
+0000020 0000 1000 0038 0000 0004 2000 0001 0000
+0000040 0008 0000 0001 0000 0008 0000 0001 0000
+0000060 0008 0000 0001 0000 0009 0000 000c 0000
+0000100 000d 0000 000c 0000 000d 0000 0001 0000
+0000120 0006 0000 0001 0000 0002 0000 0001 0000
+0000140 0006 0000 0000 0000 0000 4000 0000 0000
+0000160 0001 4000 6574 7473 6420 7461 0061 2d78
+0000200 666f 7366 7465 7900 6f2d 6666 6573 0074
+0000220 2d78 6373 6c61 0065 2d79 6373 6c61 0065
+0000240 2d78 6e75 7469 0073 2d79 6e75 7469 0073
+0000260 6f70 6e69 2d74 7473 6c79 0065 696c 656e
+0000300 732d 7974 656c 7800 6f2d 6a62 6365 0074
+0000320 6c66 6269 6c62 0065 6164 6174 0000 0000
+0000340 00e0 0000 0003 0000 001c 0000 000e 0000
+0000360 f537 2d7d 0000 0004 0000 0000 0134 0000
+0000400 0001 0000 0038 0000 0000 8000 0000 0000
+0000420 0000 0004 005c 0001 016c 0000 0200 0000
+0000440 0004 0000 0006 0000 0000 0000 0000 0004
+0000460 0064 0001 0000 3f80 0000 4000 0000 4040
+0000500 0000 0000 0000 4010 7578 696e 7374 0000
+0000520 0000 0200 7579 696e 7374 c400 80f7 6000
+0000540 0001 0000 0015 0000 ffff ffff fffb ffff
+0000560 fffc ffff fffd ffff fffe ffff ffff ffff
+0000600 0000 0000 0001 0000 0002 0000 0003 0000
+0000620 0004 0000 0005 0000 0006 0000 0007 0000
+0000640 0008 0000 0009 0000 000a 0000 000b 0000
+0000660 000c 0000 000d 0000 000e 0000 000f 0000
+0000700 0010 0000 0011 0000 0012 0000 0013 0000
+0000720 0014 0000 0015 0000 0016 0000 0017 0000
+0000740 0018 0000 0019 0000 001a 0000 001b 0000
+0000760 001c 0000 001d 0000 001e 0000 001f 0000
+0001000 0020 0000 0021 0000 0022 0000 0023 0000
+0001020 0024 0000 0025 0000 0026 0000 0027 0000
+0001040 0028 0000 0029 0000 002a 0000 002b 0000
+0001060 002c 0000 002d 0000 002e 0000 002f 0000
+0001100 0030 0000 0031 0000 0032 0000 0033 0000
+0001120 0034 0000 0035 0000 0036 0000 0037 0000
+0001140 0038 0000 0039 0000 003a 0000 003b 0000
+0001160 003c 0000 003d 0000 003e 0000 003f 0000
+0001200 0040 0000 0041 0000 0042 0000 0043 0000
+0001220 0044 0000 0045 0000 0046 0000 0047 0000
+0001240 0048 0000 0049 0000 004a 0000 004b 0000
+0001260 004c 0000 004d 0000 004e 0000 004f 0000
+0001300 0050 0000 0051 0000 0052 0000 0053 0000
+0001320 0054 0000 0055 0000 0056 0000 0057 0000
+0001340 0058 0000 0059 0000 005a 0000 005b 0000
+0001360 005c 0000 005d 0000 005e 0000 005f 0000
+0001400 0060 0000 0061 0000 0062 0000 0063 0000
+0001420 0064 0000 0065 0000 0066 0000 0067 0000
+0001440 0068 0000 0069 0000 006a 0000 006b 0000
+0001460 006c 0000 006d 0000 006e 0000 006f 0000
+0001500 0070 0000 0071 0000 0072 0000 0073 0000
+0001520 0074 0000 0075 0000 0076 0000 0077 0000
+0001540 0078 0000 0079 0000 007a 0000 007b 0000
+0001560 007c 0000 007d 0000 007e 0000 007f 0000
+0001600 0080 0000 0081 0000 0082 0000 0083 0000
+0001620 0084 0000 0085 0000 0086 0000 0087 0000
+0001640 0088 0000 0089 0000 008a 0000 008b 0000
+0001660 008c 0000 008d 0000 008e 0000 008f 0000
+0001700 0090 0000 0091 0000 0092 0000 0093 0000
+0001720 0094 0000 0095 0000 0096 0000 0097 0000
+0001740 0098 0000 0099 0000 009a 0000 009b 0000
+0001760 009c 0000 009d 0000 009e 0000 009f 0000
+0002000 00a0 0000 00a1 0000 00a2 0000 00a3 0000
+0002020 00a4 0000 00a5 0000 00a6 0000 00a7 0000
+0002040 00a8 0000 00a9 0000 00aa 0000 00ab 0000
+0002060 00ac 0000 00ad 0000 00ae 0000 00af 0000
+0002100 00b0 0000 00b1 0000 00b2 0000 00b3 0000
+0002120 00b4 0000 00b5 0000 00b6 0000 00b7 0000
+0002140 00b8 0000 00b9 0000 00ba 0000 00bb 0000
+0002160 00bc 0000 00bd 0000 00be 0000 00bf 0000
+0002200 00c0 0000 00c1 0000 00c2 0000 00c3 0000
+0002220 00c4 0000 00c5 0000 00c6 0000 00c7 0000
+0002240 00c8 0000 00c9 0000 00ca 0000 00cb 0000
+0002260 00cc 0000 00cd 0000 00ce 0000 00cf 0000
+0002300 00d0 0000 00d1 0000 00d2 0000 00d3 0000
+0002320 00d4 0000 00d5 0000 00d6 0000 00d7 0000
+0002340 00d8 0000 00d9 0000 00da 0000 00db 0000
+0002360 00dc 0000 00dd 0000 00de 0000 00df 0000
+0002400 00e0 0000 00e1 0000 00e2 0000 00e3 0000
+0002420 00e4 0000 00e5 0000 00e6 0000 00e7 0000
+0002440 00e8 0000 00e9 0000 00ea 0000 00eb 0000
+0002460 00ec 0000 00ed 0000 00ee 0000 00ef 0000
+0002500 00f0 0000 00f1 0000 00f2 0000 00f3 0000
+0002520 00f4 0000 00f5 0000 00f6 0000 00f7 0000
+0002540 00f8 0000 00f9 0000 00fa 0000 0100 0000
+0002560 00ff 0000 00fe 0000 00fd 0000 00fc 0000
+0002600 00fb 0000 00fa 0000 00f9 0000 00f8 0000
+0002620 00f7 0000 00f6 0000 00f5 0000 00f4 0000
+0002640 00f3 0000 00f2 0000 00f1 0000 00f0 0000
+0002660 00ef 0000 00ee 0000 00ed 0000 00ec 0000
+0002700 00eb 0000 00ea 0000 00e9 0000 00e8 0000
+0002720 00e7 0000 00e6 0000 00e5 0000 00e4 0000
+0002740 00e3 0000 00e2 0000 00e1 0000 00e0 0000
+0002760 00df 0000 00de 0000 00dd 0000 00dc 0000
+0003000 00db 0000 00da 0000 00d9 0000 00d8 0000
+0003020 00d7 0000 00d6 0000 00d5 0000 00d4 0000
+0003040 00d3 0000 00d2 0000 00d1 0000 00d0 0000
+0003060 00cf 0000 00ce 0000 00cd 0000 00cc 0000
+0003100 00cb 0000 00ca 0000 00c9 0000 00c8 0000
+0003120 00c7 0000 00c6 0000 00c5 0000 00c4 0000
+0003140 00c3 0000 00c2 0000 00c1 0000 00c0 0000
+0003160 00bf 0000 00be 0000 00bd 0000 00bc 0000
+0003200 00bb 0000 00ba 0000 00b9 0000 00b8 0000
+0003220 00b7 0000 00b6 0000 00b5 0000 00b4 0000
+0003240 00b3 0000 00b2 0000 00b1 0000 00b0 0000
+0003260 00af 0000 00ae 0000 00ad 0000 00ac 0000
+0003300 00ab 0000 00aa 0000 00a9 0000 00a8 0000
+0003320 00a7 0000 00a6 0000 00a5 0000 00a4 0000
+0003340 00a3 0000 00a2 0000 00a1 0000 00a0 0000
+0003360 009f 0000 009e 0000 009d 0000 009c 0000
+0003400 009b 0000 009a 0000 0099 0000 0098 0000
+0003420 0097 0000 0096 0000 0095 0000 0094 0000
+0003440 0093 0000 0092 0000 0091 0000 0090 0000
+0003460 008f 0000 008e 0000 008d 0000 008c 0000
+0003500 008b 0000 008a 0000 0089 0000 0088 0000
+0003520 0087 0000 0086 0000 0085 0000 0084 0000
+0003540 0083 0000 0082 0000 0081 0000 0080 0000
+0003560 007f 0000 007e 0000 007d 0000 007c 0000
+0003600 007b 0000 007a 0000 0079 0000 0078 0000
+0003620 0077 0000 0076 0000 0075 0000 0074 0000
+0003640 0073 0000 0072 0000 0071 0000 0070 0000
+0003660 006f 0000 006e 0000 006d 0000 006c 0000
+0003700 006b 0000 006a 0000 0069 0000 0068 0000
+0003720 0067 0000 0066 0000 0065 0000 0064 0000
+0003740 0063 0000 0062 0000 0061 0000 0060 0000
+0003760 005f 0000 005e 0000 005d 0000 005c 0000
+0004000 005b 0000 005a 0000 0059 0000 0058 0000
+0004020 0057 0000 0056 0000 0055 0000 0054 0000
+0004040 0053 0000 0052 0000 0051 0000 0050 0000
+0004060 004f 0000 004e 0000 004d 0000 004c 0000
+0004100 004b 0000 004a 0000 0049 0000 0048 0000
+0004120 0047 0000 0046 0000 0045 0000 0044 0000
+0004140 0043 0000 0042 0000 0041 0000 0040 0000
+0004160 003f 0000 003e 0000 003d 0000 003c 0000
+0004200 003b 0000 003a 0000 0039 0000 0038 0000
+0004220 0037 0000 0036 0000 0035 0000 0034 0000
+0004240 0033 0000 0032 0000 0031 0000 0030 0000
+0004260 002f 0000 002e 0000 002d 0000 002c 0000
+0004300 002b 0000 002a 0000 0029 0000 0028 0000
+0004320 0027 0000 0026 0000 0025 0000 0024 0000
+0004340 0023 0000 0022 0000 0021 0000 0020 0000
+0004360 001f 0000 001e 0000 001d 0000 001c 0000
+0004400 001b 0000 001a 0000 0019 0000 0018 0000
+0004420 0017 0000 0016 0000 0015 0000 0014 0000
+0004440 0013 0000 0012 0000 0011 0000 0010 0000
+0004460 000f 0000 000e 0000 000d 0000 000c 0000
+0004500 000b 0000 000a 0000 0009 0000 0008 0000
+0004520 0007 0000 0006 0000 0005 0000 0004 0000
+0004540 0003 0000 0002 0000 0001 0000
+0004554

@@ -1,0 +1,433 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Ian Roxborough">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <title>snide_spec</title>
+</head>
+<body>
+
+<center>
+<h1>
+Source Navigator Integrated Development Environment Functional Specification</h1></center>
+
+<center>
+<h5>
+By Ian T Roxborough (irox@cygnus.com)</h5></center>
+
+<h5>
+Abstract:</h5>
+The goal of this document is to demonstrate and explain the functionality
+of an IDE (integrated development environment) front end to Source Navigator.&nbsp;
+The goal of an IDE is to allow the user to operate all the development
+tools (editors, compilers, debuggers, etc.) require for their development
+task in one encapsulated environment. The environment must provide easy
+access to the development tools with a consistent look and feel, at the
+same time providing the flexibility required for the developer to get the
+job done.
+<p>Initially this document will only cover the creation and execution of
+the build process, but eventually it is hoped to expand this document to
+cover the whole IDE part of Source Navigator.
+<h2>
+Tasks of an IDE</h2>
+This section will try to break down the tasks of an IDE in distinct components.&nbsp;
+For the time being we can assume that the developer will be using the traditional
+<b>edit</b>
+-> <b>build</b> -> <b>debug</b> (EDB) [todo: find reference for farther
+reading on EBD cycle] development model in which the user works in cycles
+containing 2 or 3 steps of the&nbsp; EBD until there goal is achieved.&nbsp;&nbsp;
+For examples:&nbsp; The user may go through several cycles of <b>edit </b>->
+<b>build</b>
+until they get the code to build, followed by many cycles of <b>edit ->
+build </b>-> <b>debug</b> until the build works properly.
+<p>Identified components of an IDE include:
+<p>1) Creating the build procedure of the application being developed.
+<br>2) Edit and amend source code.
+<br>3) Execute the build procedure.
+<br>4) Launch application and debugger.
+<br>5) Misc. (revision control, installation, build optimization, profiling,
+analysis, testing, etc.)
+<p>The rest of this paper will be about the functional specification for
+sections 1 and 3, creating the build procedure and the execution of the
+build procedure.
+<br>&nbsp;
+<h2>
+Accessing build creation and build execution functionality</h2>
+
+<h3>
+Functional Description and User interface.</h3>
+The user can access the build menu from appropriate menu bars.
+<br><img SRC="snide-menu2.GIF" height=276 width=393>
+<br>1) "Build Targets...": This menu item, when selected will bring up
+the Target Manager dialog.
+<p>Notes:
+<br>Menu item "Build Targets..." is very misleading.&nbsp; This will be
+revised, possible candidates include: "Build Target Manager" "Make Target
+Manager", "Build Manager".... [See the Terminology Section below.]
+<h2>
+Simple Target Manager</h2>
+This is base which the user can create/delete/edit/dupilicate build targets.
+<br><img SRC="target-mgr2.GIF" height=349 width=459>
+<br>1) Target list.&nbsp; Selecting a target will enable the Duplicate,
+Edit and Delete buttons and the selected target will be displayed in the
+Selected target entry box (See item 7).&nbsp; Targets in the list can be
+selected with a single click, doubling clicking will cause the Target Edit
+to come up for the selected target.
+<p>2) New: this button will create and add an empty entry to the target
+list and select it, ready for the user to type in a name (item in 7) and
+press the set button (item 8).
+<p>3) Duplicate: this button is used to duplicate the selected build target.
+This will generate a unique name and insert it into the Target list.&nbsp;
+This new entry will be selected ready for the user to give it a new name.
+<p>4) Edit: this button will bring up an "Edit Target" dialog with the
+fields initialized with the information stored about the selected target.&nbsp;
+If no targets have been selected from the target list then this button
+will be disabled.
+<p>5) Delete: pressing this button will delete the selected target.&nbsp;
+If no targets have been selected then this button will be disabled.
+<p>6) Done: this button dismisses the Target Manager dialog, removing it
+from view.
+<p>7) Selected Target entry box:&nbsp; Any target selected in the Target
+list will be displayed in this text entry box.&nbsp; If this text entry
+box is empty then the Set button (item 8) is disabled.
+<p>8) Set button: this button is disabled until something is entered into
+the text entry box (item 7). If a target is selected in the Target list
+and this button is pressed then the selected target will be renamed to
+the contents of the text entry box. If no target is selected and the button
+is press a new target is created.
+<h2>
+Editing a Build Procedure</h2>
+
+<h3>
+(The "Edit Target" Dialog)</h3>
+
+<h3>
+Overview</h3>
+In a traditional <b>compile/link</b> model a <i>build target</i> can depend
+on several inputs:
+<p>&nbsp;&nbsp;&nbsp; - Source files ( C, C++, Java, and other files for
+compilation)
+<br>&nbsp;&nbsp;&nbsp; - Libraries (to be linked to compiled source code)
+<br>&nbsp;&nbsp;&nbsp; - Rules (how to compile/translate the source files)
+<br>&nbsp;&nbsp;&nbsp; - Sub Targets (other <i>build targets</i> which
+may need to be built, e.g. a library)
+<p>There will also be other information required for building a target,
+such as:
+<p>&nbsp;&nbsp;&nbsp; - build directory (where to store intermediate and
+final files, e.g. object files, libraries, executables)
+<br>&nbsp;&nbsp;&nbsp; - target type (Executable, Library, DLL, shared
+libraries, Other)
+<br>&nbsp;&nbsp;&nbsp; - tool chain (the development tool suit needed,
+e.g. GNUPro98r1, MSVC++)
+<h3>
+Functional Description and User interface</h3>
+
+<h4>
+Editing a Build target Dialog</h4>
+The user will be presented with the following Dialog:
+<p><img SRC="target-edit.GIF" height=563 width=717>
+<p>1) The tab notebook allows the user to control Source Files, Library
+Files, Build Rules and linker rules. more on these below.&nbsp; By default
+this will always start with the Source Files tab on top with no data in
+any fields.
+<p>2) Title Bar: This contains the Target Name so the user can tell which
+target they are editing.
+<p>3) Build Directory: This is the directory where all files generated
+in the build process will initially be stored.&nbsp; The directory name
+can be entered at the keyboard, pasted in from some other source or the
+"..." button can be used in the standard way to bring up a standard select
+directory directory dialog which can be used to select a directory.&nbsp;
+By default this will be blank.
+<p>4) Target Type: This drop down combobox is used to select the build
+target type: Executable, Library, DLL, Share libraries, Other. The user
+clicking any where on the combobox will make the list "drop down".&nbsp;
+The user can not entry and data in this widget, only select and existing
+type.&nbsp; Default will be Executable.
+<p>5) Tool Chain: Another combobox allowing the user to select the development
+tool chain in the same manner as selecting the target type.&nbsp; The default
+will be GNUPro which ever is that latest version available, other options
+may include old versions of GNUPro and other tools chain like MSVC++, etc.
+<p>6) OK button: This button once clicked will store all the information,
+the user has entered, in a database and remove the dialog from view.
+<p>7) Cancel button: Once clicked this button will remove the dialog from
+view without committing any of the information to the database.
+<br>&nbsp;
+<h4>
+Create/Edit Build target Dialog -> Source Files Tab</h4>
+This tab is used to see which files are currently in the build target and
+add or remove new ones:<img SRC="source-tab2.GIF" height=489 width=532>
+<br>1) left file tree widget: This is a file tree widget containing all
+the files currently in the project, the user can select a file or directory
+or any combination of multiple files and directories.&nbsp; By default
+nothing will be selected.&nbsp; Selecting any item in this tree will enable
+the add files arrow button (see item 3).
+<p>2) right file tree widget: This is a file tree widget containing only
+the files in the current build target.&nbsp; The user can select items
+in this file tree widget in the same manner as the left file tree widget.&nbsp;
+Selecting items in this will enable the remove files arrow (see item 4).
+<p>3) add files button:&nbsp; This button will add files to the current
+build target.&nbsp; This button is disabled until an item is selected in
+the left file tree widget.&nbsp; Once this button has been pressed, items
+selected will be added to the right file tree widget.
+<p>4) clear files button: This button will remove files from the current
+build target source base.&nbsp; This button will be disabled until an item
+is selected in the right file tree widget.
+<p>5) Import Source: Files: This button is used to bring up an OS standard
+file selection dialog, which the user can select file(s) which are not
+currently in the project database.
+<p>6) Import Source: Directory: This button is used to bring up an OS standard
+directory selection dialog, allowing the user to add directories (and the
+source files in them), which are currently not in the project database,
+to the build target source base.
+<br>&nbsp;
+<h4>
+Create/Edit Build target Dialog -> Library Files Tab</h4>
+This notebook tab is intended for displaying which libraries will be implicitly
+included in the build and for accessing add and remove controls for adding
+new libraries and removing libraries no long required.
+<br><img SRC="lib-tab.GIF" height=502 width=602>
+<br>1) Add Library button:&nbsp; Clicking on this button will bring up
+a standard OS file selection dialog for the user to select the library
+(e.g. libfoo.a).&nbsp; Once the users has selected the library file it
+will be added to the library listbox.
+<p>2) Remove Library button: clicking on this button will remove a library
+which has been selected in the library listbox.&nbsp; This button will
+be disabled if nothing is selected in the library.
+<p>3) Library file listbox: This lists all the libraries which have been
+included for linking with the current build target.&nbsp; The user can
+select one of more libraries with a method which is consistent with their
+OS.&nbsp; Once one or more libraries have been selected in this listbox
+the "Remove Library" button will be enabled.
+<p>Notes:
+<br>[TODO: Add a disable/enable library button so the user can disable
+selected libraries.]
+<h4>
+Create/Edit Build target Dialog -> Sub Targets Tab</h4>
+This notetab has been remove for the Flik project, it will be revisited
+after then next release.
+<br>[Todo: screen shot]
+<p>This tab will look similar to the Library Files Tab, but with the option
+to include build targets which have already be created in the project,
+or build targets which exist in other projects (for example: the user might
+have a project to build a library that they want to include in there current
+build target in a different project, they can either include a pre built
+library or include the build target so that building the current build
+target will build and update the target in the other project.
+<p>1) Included build target list box:
+<br>2) Add build target:
+<br>3) Import build target:
+<br>4) Remove build target:
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab</h4>
+This tab allows the user to Disable, Delete, Edit, Create and Duplicate
+build rules.
+<br><img SRC="rules-tab.GIF" height=459 width=573>
+<p>Rules list box, contains a list of all rules for this target.&nbsp;
+A selected rule is denoted by the standard OS highlighter.
+<br>1) The Status column of the rules list box: This column show if a build
+rule is disabled or enabled. (See items 4 &amp; 5)
+<p>2) The File Type column of the rules list box: This column displays
+the type of file which the rule will act upon.
+<p>3) The Description column of the rules list box: This is a brief description
+of the rule.&nbsp; The extension of the file(s) this rule can be applied
+to is in the square braises (e.g. "[.c]").
+<p>4) Enabled rule indicator: This little blue tick indicates that the
+rule is&nbsp; enabled for this target.
+<p>5) Disabled rule indicator: This little red cross indicates that the
+rule is disabled for this target.
+<p>6) Command Line for selected rule: This disabled text box (i.e. the
+user can't enter anything into this box) displays the expanded command
+line arguments for the selected rule.&nbsp; If no rule is selected then
+this text box will be empty.
+<p>7) Disable/enable button: This button allows the user to disable or
+enable rules.&nbsp; If nothing is selected then this button is disabled.&nbsp;
+If an enabled rule is selected (as in the screen shot), then the button
+is active and will read "Disable", pressing the button will cause the rule's
+Status to turn to disabled (i.e. the little blue tick turns into a little
+red cross) and the button will read "Enable" (since the same rule is selected).&nbsp;
+If a disabled rule is selected then the button will be active and the button
+label will read "Enable", pressing the button will change the Status of
+the selected rule to enabled (a little blue tick) and the button label
+will turn to "Disable".
+<p>8) Delete: The button is only enabled when a rule is selected in the
+rule list.&nbsp; Pressing this button will delete the selected rule.
+<p>9) Edit Rule: This button is only enabled when a rule is selected in
+the rule list. Pressing this button will bring up a dialog window specific
+to the the rule selected. (more of the rule specific dialogs later).
+<p>10) Duplicate: This button will copy a selected rule and add it to the
+rule list box. This button will be disabled if a rule has not been selected.
+<p>11) New Rule: This button is always enabled. Pressing it will result
+is a User Defined Rule dialog being displayed.
+<br>&nbsp;
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab -> Specific Rule Dialogs</h4>
+The Specific rule dialogs are a set of dialogs with a GUI front-end for
+selecting flags, includes, defines, etc. specific to the rule and the tool
+the rule is using.&nbsp; This is a big subject and a lot of work so we
+will begin be exploring just rule for C
+<br>&nbsp;
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab -> Specific Rule Dialogs
+-> Compiler -> flags</h4>
+The user will be presented with the following dialog:
+<br><img SRC="compile-flags.GIF" height=377 width=590>
+<br>1) Dialog title bar: "Build Rule Settings" followed by the suffix for
+the files involved.
+<p>2) Debug combobox: This drop down comobox allows the user to select
+a debug setting. The deault for this combobox will the default compiler
+setting.
+<p>3) Optimization: Same as item 2, but from Optimization.
+<p>4) Code Generation: Same as item 2, but for Code Generation.
+<p>5) Compiler Location: This allows the user to give a absolute location
+for the compile binary.&nbsp; The user can either type in the location
+(or compiler name if the compiler is in the PATH variable) or click on
+the button to the right of the entry widget and use a standard OS file
+selection dialog to select the binary they wish to use.
+<p>6) Warning level: Same as item 2, but for warning levels.
+<p>7) User flags:&nbsp; This entry widget lets the user type in sets of
+flags which are not covered in the comboxes.
+<p>8) Command Line args: This text widget displays the command line which
+will be used for this rule.&nbsp; When the
+<br>user changes some of the settings (i.e. Warning level, debug, optimization,
+etc), this text box will reflect the
+<br>changes by adding or removing flags. This text widget is not editable.
+<p>9) OK button: This button will commit the changes (if any) to the Rules
+settings, these settings will now be used if this rule is evoked in a build.&nbsp;
+This dialog will vanish after the OK button has been pressed.
+<p>10) Cancel button: Pressing this but will cause the dialog to vanish
+without saving any changes which the user has made.
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab -> Specific Rule Dialogs
+-> Compiler -> Includes</h4>
+Clicking on the "Includes" tab will change the display to something like
+this:
+<br><img SRC="compile-includes.GIF" height=362 width=551>
+<p>1) Auto Generated Paths list: This is a list of paths which is generated
+from the SN includes database.&nbsp; If the file to be included is listed
+in the project then the path can be retrieved from the database.&nbsp;
+Clicking on any of these paths will select it, which is indicated by the
+blue selection bar.
+<p>2) Selected path: this path has been selected.&nbsp; This will cause
+the Delete button (see item 6) to become active.&nbsp; A path maybe selected
+from either the Auto Generated Paths list or the User Specified Paths list,
+but not both at once or more the one path at a time.
+<p>3) User Specified Paths list: This is a list of path(s) which the user
+has selected to be used inconjuction with the auto generated paths.&nbsp;
+Clicking on any of the paths in this list will cause it to be selected
+(and unselecting any path which previously had be selected).
+<p>4) Add button: Pressing this button will bring up an OS standard directory
+selection dialog box which the user can use to select a path they wish
+to add the the User Specified Paths list.
+<p>5) Generate: Clicking on this button will generate a list of include
+paths from the database and enter them into the
+<br>Auto Generated Paths list.
+<p>6) Delete: This button is disabled if a path (from either the user or
+auto generate lists)&nbsp; has not be selected.&nbsp; Once this button
+is active pressing it will remove the path currently selected path.
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab -> Specific Rule Dialogs
+-> Compiler -> defines.</h4>
+Clicking on the "Defines" tab will change the display to something like
+this:
+<h4>
+<img SRC="compile-define.GIF" height=377 width=590></h4>
+1) Select define: A selected define (macro definition), signified by the
+blue bar.&nbsp; Once a define is selected it will appear in the entry widget
+(See item 3) and the delete button (item 5) will be enabled.
+<p>2) Defines list: This is a list of all the macro definition which the
+user has enter so far.&nbsp; Clicking on one will select it.
+<p>3) Text entry box: This is a text entry box for edit or entering in
+new defines.
+<p>4) Set button:&nbsp; If the text entry box (item 3) is empty this button
+will be disabled.&nbsp; If the text entry box isn't empty and a define
+is selected, then pressing then pressing this button will change the selected
+define to the contents of the text entry box.&nbsp; If the text entry box
+isn't empty and a define isn't selected, the pressing the Set button will
+create a new define in the listbox (item 2) using the contents of the text
+entry box.
+<p>5) Delete button: This button is disabled until something is selected
+in the defines listbox. Once this button is active, if it is pressed it
+will delete the currently selected define.
+<p>6) New button: This button is always active.&nbsp; Pressing this button
+will create a new blank entry in the define list.&nbsp; This define will
+be selected ready of the user to enter the define into the text entry box
+and the press the set button.
+<h4>
+Create/Edit Build target Dialog -> Build Rules Tab -> Specific Rule Dialogs
+-> User Defined Rules</h4>
+[todo: screen shot]
+<p>1) Rule description:
+<p>2) Extension of input file:
+<p>3) Extension of output file:
+<p>4) Action list box: A list of commands that should be successfully executed
+in order to produce the output file.&nbsp; The user can enter a new step
+by clicking on a empty slot in the list.
+<br>&nbsp;
+<h2>
+The Build Procedure Execution.</h2>
+A slightly modified version of the existing Makefile executor and a standard
+Source Navigator Editor pane have been join together to make it easy to
+switch between building and fixing errors.
+<br><img SRC="building.GIF" NOSAVE height=645 width=697>
+<br>1) Target combobox: This popup combobox allows the user to select which
+existing target from the current project they would like to build.&nbsp;
+By default this will always initialize to the first target in the list.
+<p>2) Directory combobox:
+<p>3) The Build text output window: The output from the build (compiler
+info, warnings, error, etc.)&nbsp; is directed into this window in real
+time.&nbsp; This user can double click on an error, the editor will then
+load the file (if it hasn't already), jump to the line which contains the
+error and highlight it (with the text selection highlighter).
+<p>4) Highlighted error: This is an error which the user has clicked on.
+<p>5) Start button: Clicking on this button will start the build process
+for the currently selected target.&nbsp; Once the build process has been
+start this button will become disabled.&nbsp; After the build process is
+finished (or has been Canceled) the button will be re-enabled again.
+<p>6) Cancel button: This button will remain disabled until the build process
+has been started (by clicking on Start).&nbsp; Once the Cancel button is
+enabled the user can click on it to stop the build at any time.&nbsp; Once
+the build process is finished or Canceled the Cancel button is disabled
+again.
+<p>7) Editor: This is the standard editor, no modifications have been made.
+<p>8) Error line: This line has been highlighted because the user has double
+clicked on an error.&nbsp; If the user was to click any where on the editor
+text widget the highlighter would vanish.
+<p>Note: errors in the Makefile should be reported to the user at build
+time in the same way compiler errors are reported.
+<p>[TODO: remove the Directory entry box and move buttons (start, cancel)
+and the target combobox selector all to the same row.]
+<h2>
+Terminology</h2>
+The terminology which is currently being used (e.g. Build, Target, Make,
+Target Manager, etc.) may cause problems.&nbsp; For example, a "Target"
+in the embedded world, is very different from the targets that are being
+referred to in the context, also a Target Manager is serves a completely
+different function in embedded industry.
+<p>[TODO: Devise a conversion for the terminology which understandable
+and unambiguous while avoiding long menu and button names which will detract
+from the usability of the GUI.]
+<h2>
+Issues, Concerns, Todos and Misc. notes</h2>
+- The extensive use of file tree widgets inside dialogs is not the best
+use of screen real-estate.
+<p>- GUI NIT: not too good to have OK/Cancel buttons along the bottom of
+a dialog.
+<p>- TODO: The build window needs more work.
+<p>- TODO: Add "export target as Makefile" option some where.
+<p>- Devise "Simple Setting" functionality/requirements to allow the user
+to switch between tool chains without having to enter boiler plate compiler/translation/linker
+flags/settings. (i.e.: specific settings for debug, release and optimization
+which have know equivalents across many tool chains).
+<br>&nbsp;
+<h3>
+Other contributors include:</h3>
+Hopefully you soon.
+<p>Please give feedback and feel free to write additions for this document.
+<br>&nbsp;(Including fixing my grammar/spelling.)
+<p><font size=-1>This document (Version 1.2) was produced using Netscape
+Composer, screen shot done with Adobe PhotoShop taken from Tcl/Tk produced
+mockup/proto-type (this version of tcl/tk includes a windows look and feel
+patch).</font>
+</body>
+</html>

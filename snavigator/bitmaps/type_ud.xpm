@@ -1,0 +1,27 @@
+/* XPM */
+static char * type_ud_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 5 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+"o	c gray",
+"O	c red",
+/* pixels */
+"       .        ",
+"      .X.       ",
+"     .XoX.      ",
+"    .XoXoX.     ",
+"   .XoOOOoX.    ",
+"  .XoOOOOOoX.   ",
+" .XoXOXoXOXoX.  ",
+".XoXoXoXOOoXoX. ",
+" .XoXoXOOoXoX.  ",
+"  .XoXoOoXoX.   ",
+"   .XoXoXoX.    ",
+"    .XoOoX.     ",
+"     .XoX.      ",
+"      .X.       ",
+"       .        ",
+"                "};

@@ -1,0 +1,78 @@
+# This scenario will create some files and then load
+# them into a new project file. After the project
+# has been created, it will be closed and then
+# opened again. Then it will be deleted and
+# the script will exit SN.
+
+file delete -force /tmp/foo
+file mkdir /tmp/foo
+writefile /tmp/foo/f1.c {int func1(int i) { return 0; }}
+writefile /tmp/foo/f2.c {int func2(int i) { return func1(0); }}
+
+set top [next_toplevel]
+set new $top.btns.new
+async mouse_click $new
+
+set top [next_toplevel]
+
+set prjname_leb $top.dirs.prjname
+$prjname_leb configure -value /tmp/foo/foo.proj
+
+set prjdir_leb $top.dirs.dir-1
+$prjdir_leb configure -value /tmp/foo
+
+# Press the Ok button
+set ok $top.button0
+async mouse_click $ok
+
+# Wait for the next window (Symbol Browser)
+# to show up, and then close it
+
+set top [next_toplevel]
+close_toplevel $top
+
+
+
+# Open the project we just created up again, select
+# it from the list by matching the name
+
+set top [next_toplevel]
+
+set lb $top.scrolllistbox.projs
+
+listbox_select_entry_pattern $lb *foo*
+
+set open $top.btns.open
+mouse_click $open
+
+# Once the project had been opened, close it
+set top [next_toplevel]
+close_toplevel $top
+
+# We should be back at the project selector!
+
+
+# Delete the project, it should be selected
+# at this point, so hit the delete button.
+
+set top [next_toplevel]
+
+set delete $top.btns.delete
+
+async mouse_click $delete
+
+# Hit the Ok button in the confirm dialog.
+
+set okd [next_toplevel]
+
+set ok $okd.button_0
+
+mouse_click $ok
+
+
+# Hit the "Cancel" button, this should exit SN
+
+set exit $top.btns.exit
+
+async close_toplevel $exit
+

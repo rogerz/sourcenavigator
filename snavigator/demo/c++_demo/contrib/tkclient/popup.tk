@@ -1,0 +1,31 @@
+proc popup {path prompt} {
+	set popup_frame $path
+	set f1 $popup_frame.f1
+	set f2 $popup_frame.f2
+
+	set popup_prompt $f1.prompt
+	set entry $f1.entry
+	set okay $f2.okay
+	set cancel $f2.cancel
+
+	global popup_vars
+	set popup_vars($entry) ""
+
+	frame $popup_frame
+	frame $f1
+	frame $f2
+
+	label $popup_prompt -text $prompt
+	entry $entry -textvariable popup_vars($entry) -relief sunken -bd 2
+	glish_button $okay Okay "glish_reply \$popup_vars($entry)"
+	glish_button $cancel Cancel { glish_reply "" }
+
+ 	bind $entry <Enter> { focus %W }
+ 	bind $entry <Return> "glish_reply \$popup_vars($entry)"
+
+	pack $popup_prompt $entry -side left -padx 1m -pady 2m
+	pack $okay $cancel -fill x -side left -padx 5m -pady 1m
+	pack $f1 $f2
+
+	return $path
+}

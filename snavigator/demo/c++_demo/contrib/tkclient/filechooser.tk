@@ -1,0 +1,76 @@
+proc filechooser {path dir pattern} {
+	set lbox_frame $path
+	set lbox_label $lbox_frame.title
+	set lbox $lbox_frame.lbox
+	set lbox_scroller $lbox_frame.scroller
+	set lbox_cancel $lbox_frame.cancel
+
+	global list_patterns list_titles
+	set list_patterns($lbox) $pattern
+	set list_titles($lbox) $lbox_label
+
+	frame $lbox_frame
+
+	label $lbox_label -text $dir -relief raised -borderwidth 3 \
+		-font -adobe-times-bold-i-normal--14-100-100-100-p-77-iso8859-1
+	listbox $lbox -relief raised -borderwidth 2 \
+		-yscrollcommand "$lbox_scroller set" -font \
+		-adobe-times-bold-r-normal--14-100-100-100-p-76-iso8859-1
+	scrollbar $lbox_scroller -command "$lbox yview"
+	glish_button $lbox_cancel Cancel { glish_reply "" }
+
+	pack $lbox_label -side top -fill x
+	pack $lbox_cancel -side bottom -fill x -pady 6 -padx 3
+	pack $lbox -side left -fill x -expand 1
+	pack $lbox_scroller -side right -fill y
+
+	filechooser_dir $lbox $dir $pattern
+
+	set select_action {
+		# Change selection to where the mouse now is.
+		%W select clear
+		%W select adjust [%W nearest %y]
+		set selection [%W get [%W curselection]]
+		if [file isdirectory $selection] {
+			global list_patterns
+			set pat $list_patterns(%W)
+			filechooser_dir %W $selection $pat
+		} else {
+			glish_reply [format %%s/%%s [pwd] $selection]
+		}
+	}
+
+	bind $lbox <Double-1> $select_action
+	bind $lbox <B1-Motion> {
+		# Disallow selecting multiple items.
+	}
+
+	return $lbox_frame
+}
+
+# Takes a pathname and returns the last n components.
+proc pathname_tail {path n} {
+	set plist [split $path /]
+	set len [llength $plist]
+	set plist [lrange $plist [expr $len - $n] $len]
+	return [join $plist /]
+}
+
+proc filechooser_dir {chooser dir pattern} {
+	# Delete old entries.
+	$chooser delete 0 [$chooser size]
+
+	# Add new entries.  Include ".." for moving up.
+	$chooser insert end ".."
+
+	global list_titles
+	cd $dir
+	$list_titles($chooser) configure -text [pathname_tail [pwd] 4]
+
+	foreach i [lsort [glob -nocomplain $pattern]] {
+		if [file isdirectory $i] {
+			set i $i/
+		}
+		$chooser insert end $i
+	}
+}

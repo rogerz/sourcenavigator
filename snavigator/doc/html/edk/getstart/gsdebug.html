@@ -1,0 +1,1988 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus1.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Working with Insight, the Debugger Interface</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_gs.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="gstarget.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="gstools.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1000736"></A><A NAME="38213"></A>Working with Insight, the Debugger Interface<DIV>
+<IMG SRC="gsdebug-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1000575"></A> <A NAME="marker-1019712"></A>To work with Embedded 
+DevKit's <A NAME="marker-1000569"></A>visual debugger, <A NAME="marker-1000571"></A>Insight, 
+see the following documentation and Insight's <B CLASS="Callout">
+Help</B>
+ menu for discussion of general functionality and use of <A NAME="marker-1005216"></A>menus,
+ <A NAME="marker-1005217"></A>buttons or other features.</P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-1000655"></A>From Source-Navigator, select <B CLASS="Callout">
+Tools</B>
+<SPAN CLASS="Bold">
+ </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ </SPAN>
+<B CLASS="Callout">
+Debugger</B>. The <B CLASS="Callout">
+Program to debug</B>
+ window displays. 
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1012080"></A><B CLASS="Callout">
+Program to debug</B>
+ window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1012101"></A><IMG SRC="gsdebug-2.gif" ALIGN="BASELINE">
+</P></LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1012087"></A>Click <B CLASS="Callout">
+OK</B>. <A NAME="marker-1013956"></A>Insight launches, displaying the <B CLASS="Callout">
+Source Window</B>
+ (<A HREF="gsdebug.html#31206" CLASS="XRef">Source Window</A>). For a native project, click the <B CLASS="Bold">Run</B> button. For an embedded project, click <B CLASS="Bold">Run</B> and then click the <B CLASS="Bold">Continue</B> button. For more information on 
+Insight, see its <B CLASS="Callout">
+Help</B>
+ menu.</LI>
+</OL>
+<H3 CLASS="Label">
+<A NAME="pgfId-1014724"></A>WARNING!</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1014725"></A>Having an inactive debugging session open when starting 
+another debugging session with EDK will close all projects. All work will be unrecoverable.</P>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1000793"></A>Using the <A NAME="29817"></A>Source Window</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1000799"></A><A NAME="_Toc419784858"></A>When Insight first launches, 
+it displays an empty <B CLASS="Callout">
+Source Window</B>
+<A NAME="marker-1000795"></A> (<A HREF="gsdebug.html#31206" CLASS="XRef">Source Window</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1000801"></A><B CLASS="Callout">
+Source Window</B>
+<A NAME="31206"></A> </P>
+<P CLASS="Figure">
+<A NAME="pgfId-1000805"></A><IMG SRC="gsdebug-3.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000844"></A>The <A NAME="marker-1000843"></A>menu selections in the <B CLASS="Callout">
+Source Window</B>
+ are <B CLASS="Callout">
+File</B>, <B CLASS="Callout">
+Run</B>, <B CLASS="Callout">
+View</B>, <B CLASS="Callout">
+Control</B>, <B CLASS="Callout">
+Preferences</B>
+ and <B CLASS="Callout">
+Help</B>. See <A HREF="gsdebug.html#36270" CLASS="XRef">Source Window Menus and Display Features</A> for more descriptions of the <B CLASS="Callout">
+Source Window</B>. To work with the other windows for debugging purposes specific to your project, use the <B CLASS="Callout">
+View</B>
+ menu or the buttons in the toolbar and see the following doc<A NAME="marker-1019521"></A>umentation.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001704"></A><A HREF="gsdebug.html#10036" CLASS="XRef">Using the Stack Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001708"></A><A HREF="gsdebug.html#_Ref412616710" CLASS="XRef">Using the Registers Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001712"></A><A HREF="gsdebug.html#_Ref412617191" CLASS="XRef">Using the Memory Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001716"></A><A HREF="gsdebug.html#_Ref412617239" CLASS="XRef">Using the Watch Expressions Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001720"></A><A HREF="gsdebug.html#_Ref412962956" CLASS="XRef">Using the Local Variables Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001724"></A><A HREF="gsdebug.html#_Ref412617275" CLASS="XRef">Using the Breakpoints Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001732"></A><A HREF="gsdebug.html#34157" CLASS="XRef">Using the Console Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018159"></A><A HREF="gsdebug.html#31480" CLASS="XRef">Using the Function Browser Window</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001736"></A><A HREF="gsdebug.html#12208" CLASS="XRef">Using the Processes Window for Threads</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001740"></A><A HREF="gsdebug.html#_Ref419196185" CLASS="XRef">Using the Help Window</A></LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-1000888"></A>To open 
+a specific file
+ as a project 
+for debugging, 
+select <B CLASS="Callout">
+File</B>
+<A NAME="marker-1011809"></A><SPAN CLASS="Bold">
+ </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ </SPAN>
+<B CLASS="Callout">
+Open</B>
+<A NAME="marker-1011810"></A><A NAME="marker-1011811"></A>
+ in the 
+<B CLASS="Callout">
+Source Window</B>. The file's contents will then be passed to the GDB interpreter for execution. To start debugging, click the <B CLASS="Callout">
+Run</B>
+ button (<A HREF="gsdebug.html#14987" CLASS="XRef">Run button</A>) from the <B CLASS="Callout">
+Source Window</B>. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017977"></A><B CLASS="Callout">
+Run</B>
+<A NAME="marker-1017975"></A><A NAME="14987"></A> button</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017981"></A><IMG SRC="gsdebug-4.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017971"></A>When the debugger runs, the button turns into the <B CLASS="Callout">
+Stop</B>
+ button (<A HREF="gsdebug.html#42599" CLASS="XRef">Stop button</A>). The <B CLASS="Callout">
+Stop</B>
+ button interrupts the debugging process for a project, <EM CLASS="Emphasis">
+provided that</EM>
+ the underlying hardware and protocols <EM CLASS="Emphasis">
+support</EM>
+ such interruptions. Generally, machines that are connected to boards cannot 
+interrupt programs on those boards, so the <B CLASS="Callout">
+Stop</B>
+ button has no functionality (it will appear unavailable, or &quot;grayed out&quot;). For more information on the toolbar buttons, see <A HREF="gsdebug.html#17011" CLASS="XRef">Default style toolbar</A>.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001390"></A><B CLASS="Callout">
+Stop</B>
+<A NAME="marker-1001387"></A><A NAME="42599"></A> button</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001394"></A><IMG SRC="gsdebug-5.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1014582"></A>WARNING!</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1014583"></A>When debugging a target, do not click on the <B CLASS="Callout">
+Run</B>
+ button during an active debugging process, or it will de-activate the process. The <B CLASS="Callout">
+Run</B>
+ button will become the <B CLASS="Callout">
+Stop</B>
+ button and Insight will lose connection with the target. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1016080"></A><A NAME="_Ref419196143"></A>To specify preferences of how <A NAME="marker-1016078"></A>source code appears and to change <A NAME="marker-1016079"></A>debugging settings, select <B CLASS="Callout">
+Preferences</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Source </B>
+from the <B CLASS="Callout">
+Source Window</B>. The <B CLASS="Callout">
+Source Preferences</B>
+<A NAME="marker-1016081"></A> dialog opens (<A HREF="gsdebug.html#41696" CLASS="XRef">Source Preferences dialog</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1016086"></A><B CLASS="Callout">
+Source Preferences</B>
+<A NAME="41696"></A> dialog</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1016090"></A><IMG SRC="gsdebug-6.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1016092"></A>Left-click any of the colored squares to open the <B CLASS="Callout">
+Choose color</B>
+<A NAME="marker-1016091"></A> dialog, with which you modify the display colors of the <B CLASS="Callout">
+Source Window</B>. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018198"></A><B CLASS="Callout">
+Mouse Button-1 Behavior </B>
+sets and clears either breakpoints or tracepoints (points in the source code, with an associated text string); the default is for setting breakpoints. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018200"></A><B CLASS="Callout">
+Variable Balloons</B>
+ lets you display a balloon of text whenever the cursor is over a variable in the <B CLASS="Callout">
+Source Window</B>; the balloon displays the value of the variable (see <A HREF="gsdebug.html#16579" CLASS="XRef">Breakpoint information balloon</A> for an example). <B CLASS="Callout">
+On</B>
+ is the default selection. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018199"></A>Selecting <B CLASS="Callout">
+Tab Size </B>
+sets the number of spaces for a tab character in the <B CLASS="Callout">
+Source Window</B>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018038"></A>The <B CLASS="Callout">
+Source Window</B>
+ has the following functionality and <A NAME="marker-1018036"></A>d<A NAME="marker-1018037"></A>isplay features when using the <B CLASS="Callout">
+Source Preferences</B>
+ dialog settings. </P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018039"></A>When the executable is running in a debugging process, 
+the location of the current program counter displays as a line with a 
+colored background (<B CLASS="Callout">PC</B>).</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018040"></A>When the executable has finished running, the background 
+color changes (<B CLASS="Callout">Browse</B>).</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018043"></A>When looking at a stack <A NAME="marker-1018042"></A>backtrace, 
+the background color changes to another different color 
+(<B CLASS="Callout">Stack</B>). </LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-1000982"></A>To set other preferences for a debugging session, 
+select <B CLASS="Callout">
+Preferences</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Global</B>
+ from the 
+<B CLASS="Callout">
+Source Window</B>. The 
+<B CLASS="Callout">
+Global Preferences</B>
+<A NAME="marker-1001553"></A>
+ dialog opens (<A HREF="gsdebug.html#22215" CLASS="XRef">Global 
+Preferences dialog</A>)
+ where you select a specific font and type size for the text in the windows for Insight. 
+</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1000985"></A><B CLASS="Callout">
+Global Preferences</B>
+<A NAME="22215"></A> dialog</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1000989"></A><IMG SRC="gsdebug-7.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1000994"></A><B CLASS="Callout">
+Icons</B>
+<A NAME="marker-1000990"></A> allows you to select the appearance of the toolbar buttons as the <B CLASS="Callout">
+Windows-style Icon Set</B>
+ (the default; see <A HREF="gsdebug.html#17011" CLASS="XRef">Default style toolbar</A>) or the <B CLASS="Callout">
+Basic Icon Set</B>
+ (see Insight's <B CLASS="Callout">
+Help</B>
+ menu for more information).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1013740"></A><B CLASS="Callout">
+Fonts</B>
+ is for selecting font family and size.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1013741"></A><B CLASS="Callout">
+Fixed Font</B>
+ sets
+ the font for the source code display panes.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1013742"></A><B CLASS="Callout">
+Default Font </B>
+sets the default font for list boxes, buttons and other controls.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1013743"></A><B CLASS="Callout">
+Status Bar Font</B>
+ sets
+ the font for the status bar.
+</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-1017655"></A><B CLASS="Callout">
+Use builtin image as icon</B>
+ to change your host default settings for the Insight session icon on your desktop. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018196"></A><B CLASS="Callout">
+Use Netscape to View Help Files</B>
+ provides Netscape as your default browser for Insight's <B CLASS="Callout">
+Help</B>
+ documentation. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018197"></A><B CLASS="Callout">
+Tracing features disabled</B>
+ disables setting tracepoints.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1016342"></A>
+Default
+<A NAME="17011"></A> style toolbar<A NAME="&lt;$startrange&gt;Insight"></A></P>
+<P CLASS="Figure">
+<A NAME="pgfId-1016423"></A>
+<IMG SRC="gsdebug-8.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1016538"></A>The following descriptions discuss the 
+use of the default debugger <A NAME="41540"></A>t<A NAME="Insight"></A>oolbar 
+buttons.</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016684"></A><IMG SRC="gsdebug-9.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016686"></A>The <B CLASS="Callout">
+Run</B>
+ button starts the debugging process for an executable file. I fthere is no executable open, the Load New Executable dialog displays to open an executable</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016688"></A><BR>
+<IMG SRC="gsdebug-10.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016693"></A>During the debugging process, the <B CLASS="Callout">
+Run</B>
+ button turns into the <B CLASS="Callout">
+Stop</B>
+ button to interrupt the debugging. You cannot interrupt some targets; you will 
+instead have to disconnect from the target.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016698"></A><IMG SRC="gsdebug-11.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016700"></A>
+The 
+<B CLASS="Callout">
+Step</B>
+ button
+ steps to next executable line of source code. Also, the 
+<B CLASS="Callout">
+Step</B>
+ button
+ steps into called functions.
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016705"></A><IMG SRC="gsdebug-12.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016707"></A>
+The 
+<B CLASS="Callout">
+Next</B>
+ button
+ steps to the next executable line of source code in the current file. Unlike the 
+<B CLASS="Callout">
+Step</B>
+ button, the 
+<B CLASS="Callout">
+Next</B>
+ button
+ steps over called functions.
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016712"></A><IMG SRC="gsdebug-13.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016714"></A>
+The 
+<B CLASS="Callout">
+Finish</B>
+ button
+ finishes execution of a current frame. If clicked while in a function, it finishes 
+the function and returns to the line that called the function.
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016719"></A><IMG SRC="gsdebug-14.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016721"></A>
+The 
+<B CLASS="Callout">
+Continue</B> button continues execution until a breakpoint, watchpoint or exception is encountered, 
+or until execution completes.
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016726"></A><IMG SRC="gsdebug-15.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016728"></A>The <B CLASS="Callout">
+Registers</B>
+ button invokes the <B CLASS="Callout">
+Registers</B>
+ window for viewing or changing register properties for a program's content.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016733"></A><IMG SRC="gsdebug-16.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016735"></A>The <B CLASS="Callout">
+Memory</B>
+ button invokes the <B CLASS="Callout">
+Memory</B>
+ window for displaying and editing the state of memory and addresses.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016740"></A><IMG SRC="gsdebug-17.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016742"></A>The <B CLASS="Callout">
+Stack</B>
+ button invokes the <B CLASS="Callout">
+Stack</B>
+ window for displaying and navigating the current call stack, where each line represents a stack frame. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016747"></A><IMG SRC="gsdebug-18.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016749"></A>The <B CLASS="Callout">
+Watch Expressions</B>
+ button invokes the <B CLASS="Callout">
+Watch Expressions</B>
+ window for entering expressions which will be updated every time that the executable stops.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016754"></A><IMG SRC="gsdebug-19.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016756"></A>The <B CLASS="Callout">
+Local Variable</B>
+ button invokes the <B CLASS="Callout">
+Local Variables</B>
+ window for displaying all local variables and their structure.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016761"></A><IMG SRC="gsdebug-20.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016763"></A>The <B CLASS="Callout">
+Breakpoints</B>
+ button invokes the <B CLASS="Callout">
+Breakpoints</B>
+ window for examining breakpoints and changing their settings.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016776"></A><IMG SRC="gsdebug-21.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1016778"></A>The <B CLASS="Callout">
+Console</B>
+ button invokes the <B CLASS="Callout">
+Console</B>
+ window as a command line interface for debugging. The prompt is <KBD CLASS="CodeOutput">
+(gdb)</KBD>.</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017009"></A><IMG SRC="gsdebug-22.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017011"></A>The left-hand read-only <A NAME="marker-1017136"></A>frame <A NAME="marker-1017137"></A>displays the program counter 
+(<KBD CLASS="Code">pc</KBD><A NAME="marker-1017139"></A>) of the current frame.<BR>
+The right-hand read-only frame displays the line number, which contains the program counter.</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017018"></A><IMG SRC="gsdebug-23.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017020"></A>The <B CLASS="Callout">
+Step assembler</B>
+ button steps through one assembler machine
+ instruction. Also, the 
+<B CLASS="Callout">
+Step assembler</B>
+ button
+ steps into subroutines.
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017025"></A><IMG SRC="gsdebug-24.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017027"></A>The <B CLASS="Callout">
+Next assembler</B>
+ button steps to the next assembler instruction. The <B CLASS="Callout">
+Next assembler</B>
+ button then executes subroutines and steps to the next instruction.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017177"></A><IMG SRC="gsdebug-25.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017179"></A>The <B CLASS="Callout">
+Down Stack Frame</B>
+ button moves down the stack frame one level.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017173"></A><IMG SRC="gsdebug-26.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017175"></A>The <B CLASS="Callout">
+Up Stack Frame</B>
+ button moves up the stack frame one level.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017169"></A><IMG SRC="gsdebug-27.gif" ALIGN="BASELINE">
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1017171"></A>The <B CLASS="Callout">
+Go to Bottom of Stack Frame</B>
+ button moves to the bottom of the stack frame.</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1018649"></A><A NAME="&lt;$endrange&gt;Insight"></A>&nbsp;</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1017311"></A><A NAME="_Toc419784862"></A>Using the Mouse in the Source Window</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1017313"></A>The <A NAME="marker-1017312"></A>mouse has many uses within the main display pane of the <B CLASS="Callout">
+Source Window</B>. Divided into two columns 
+(<A HREF="gsdebug.html#30967" CLASS="XRef">Using the mouse in the Source Window</A>), the window's left column extends from the left edge of the display pane to the last character of the line number, while the right column extends from the last character of the line number to the right edge of the display pane. Within each column, the mouse has different effects (see the following descriptions for <A HREF="gsdebug.html#11590" CLASS="XRef">Left column functionality for the Source Window</A> and <A HREF="gsdebug.html#39716" CLASS="XRef">Right column functionality for the Source Window</A>).
+</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017324"></A><A NAME="30967"></A>Using the mouse in the <B CLASS="Callout">
+Source Window</B>
+</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017339"></A>
+<IMG SRC="gsdebug-28.gif" ALIGN="BASELINE"></P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1017341"></A>
+Left column functionality for the
+<A NAME="11590"></A> Source Window</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1017342"></A>When the cursor is in the left column over an executable line, it appears as a minus sign. When a breakpoint is set at this point, the cursor changes into a circle. A left click sets a <A NAME="marker-1017343"></A>breakpoint at the current line; the breakpoint appears as a colored square in place of the minus sign. A left click on any existing or temporary breakpoint removes that breakpoint. A right click on any existing or temporary breakpoint brings up a pop-up menu (<A HREF="gsdebug.html#34971" CLASS="XRef">Pop-up menu for setting breakpoints</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017349"></A><A NAME="34971"></A>Pop-up menu for setting breakpoints</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017353"></A><IMG SRC="gsdebug-29.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1028140"></A><B CLASS="Callout">
+Continue to Here </B>
+causes the program to run up to a location, ignoring any breakpoints; like the temporary breakpoint, this menu selection displays as a differently shaded square than a regular breakpoint. When a breakpoint has been disabled, it turns, for instance, from red or orange to black (color settings vary depending on the preferences you set; see also <A HREF="gsdebug.html#41696" CLASS="XRef">Source Preferences dialog</A> and its accompanying descriptions). <B CLASS="Callout">
+Set Breakpoint </B>
+sets a breakpoint on the current executable line; this has the same action as left 
+clicking on the minus sign. 
+<B CLASS="Callout">
+Set Temporary Breakpoint </B>
+sets a temporary breakpoint on a current executable line; a temporary breakpoint 
+displays as a differently shaded square than a regular breakpoint, and is automatically 
+removed when hit. 
+<B CLASS="Callout">
+Set Breakpoint on Thread(s) </B>
+sets a thread-specific breakpoint at the current location.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017820"></A>Right-click on a line with a breakpoint to invoke a pop-up menu to delete breakpoints (<A HREF="gsdebug.html#19120" CLASS="XRef">Pop-up menu for deleting breakpoints</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017365"></A><A NAME="19120"></A>Pop-up menu for deleting breakpoints</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017369"></A><IMG SRC="gsdebug-30.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017370"></A><B CLASS="Callout">
+Delete Breakpoint </B>
+deletes the breakpoint on the current executable line. This has the same action as left clicking on the colored square; see the description for <B CLASS="Callout">
+Continue to Here</B>
+ for <A HREF="gsdebug.html#34971" CLASS="XRef">Pop-up menu for setting breakpoints</A>. <A NAME="marker-1017374"></A>With the cursor over a line, a breakpoint opens a 
+<EM CLASS="Emphasis">breakpoint information balloon</EM><A NAME="marker-1017375"></A><A NAME="marker-1017376"></A>; 
+see <A HREF="gsdebug.html#16579" CLASS="XRef">Breakpoint information balloon</A> for an example of such a tool tip.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017381"></A><A NAME="16579"></A>Breakpoint information balloon</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017385"></A><IMG SRC="gsdebug-31.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1017387"></A>
+Right column functionality for the Source Window
+<A NAME="39716"></A></H4>
+<P CLASS="Body">
+<A NAME="pgfId-1017388"></A>The following documentation discusses the functionality of how the mouse works in the right column of the <B CLASS="Callout">
+Source Window</B>.
+With the cursor over a <A NAME="marker-1017389"></A><A NAME="marker-1017390"></A>global or <A NAME="marker-1017391"></A>local variable, the value of that <A NAME="marker-1017392"></A>variable displays. With the cursor over a pointer to a structure or class, view the type of structure or class and the address of the structure or class. Double clicking an <A NAME="marker-1017394"></A>expression selects it. Right clicking an expression invokes a pop-up menu (<A HREF="gsdebug.html#18625" CLASS="XRef">Pop-up window for expressions</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017400"></A><A NAME="18625"></A>Pop-up window for expressions</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017404"></A><IMG SRC="gsdebug-32.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017405"></A><B CLASS="Callout">
+Add </B>
+<KBD CLASS="CodeVariant">
+&lt;selected expression&gt;</KBD>
+<B CLASS="Callout">
+&nbsp;&nbsp;to Watch </B>
+opens the 
+<B CLASS="Callout">
+Watch Expressions</B>
+ window (<KBD CLASS="CodeVariant">&lt;selected expression&gt;</KBD>&nbsp;&nbsp;
+ in the example was 
+<KBD CLASS="Code">
+get_run_time</KBD>) and adds a variable expression to the list of expressions in the window. 
+<B CLASS="Callout">
+Dump Memory at </B>
+<KBD CLASS="CodeVariant">&lt;selected expression&gt;</KBD>
+&nbsp;&nbsp;opens the 
+<B CLASS="Callout">
+Memory</B>
+ window, which displays a memory dump at an expression. 
+<B CLASS="Callout">
+Open Another Source Window</B>
+ opens another <B CLASS="Callout">
+Source Window</B>
+ for displaying a program in an alternate format (see <A HREF="gsdebug.html#15811" CLASS="XRef">Code display drop-down list box</A> and its accompanying descriptions). <B CLASS="Callout">
+Open Source in external editor</B>
+ opens the program in an alternate editor, such as the Source-Navigator <B CLASS="Callout">
+Editor</B>
+<A NAME="marker-1017412"></A> (see <A HREF="gshost.html#32391" CLASS="XRef">Using the Editor</A>).</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1017030"></A>
+Source Window Menus and Display Features
+<A NAME="36270"></A></H3>
+<P CLASS="Body">
+<A NAME="pgfId-1005356"></A>The <B CLASS="Callout">
+Source Window</B>
+ has the following menu items, many of which correspond to the toolbar buttons (see <A HREF="gsdebug.html#17011" CLASS="XRef">Default style toolbar</A>). </P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1014744"></A><B CLASS="Callout">
+File</B>
+ has the following menu items. <B CLASS="Callout">
+Edit Source</B>
+ allows direct editing of the source code. <B CLASS="Callout">
+Open</B>
+ invokes the <B CLASS="Callout">
+Load New Executable </B>
+dialog. <B CLASS="Callout">
+Source</B>
+ invokes the <B CLASS="Callout">
+Choose GDB Command file</B>
+ dialog. <B CLASS="Callout">
+Exit</B>
+ closes the Insight interface.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1014818"></A><B CLASS="Callout">
+Run</B>
+ has the following usage. <B CLASS="Callout">
+Attach to Process</B>
+ attaches thread processes for debugging (see <A HREF="gsdebug.html#12208" CLASS="XRef">Using the Processes Window for Threads</A>). <B CLASS="Callout">
+Download</B>
+ downloads an executable to a target. <B CLASS="Callout">
+Run</B>
+ runs the executable.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1014852"></A><B CLASS="Callout">
+View</B>
+ displays the following windows: <B CLASS="Callout">
+Stack</B>
+ (<A HREF="gsdebug.html#33680" CLASS="XRef">Stack window</A>), <B CLASS="Callout">
+Registers</B>
+ (<A HREF="gsdebug.html#29557" CLASS="XRef">Registers window</A>), <B CLASS="Callout">
+Memory</B>
+ (<A HREF="gsdebug.html#10363" CLASS="XRef">Memory window</A>), <B CLASS="Callout">
+Watch Expressions</B>
+ (<A HREF="gsdebug.html#41703" CLASS="XRef">Watch Expressions window</A>), <B CLASS="Callout">
+Local Variables</B>
+ (<A HREF="gsdebug.html#13279" CLASS="XRef">Local Variables window</A>), <B CLASS="Callout">
+Breakpoints</B>
+ (<A HREF="gsdebug.html#39362" CLASS="XRef">Breakpoints window</A>), <B CLASS="Callout">
+Console</B>
+ (<A HREF="gsdebug.html#12732" CLASS="XRef">Console window</A>), <B CLASS="Callout">
+Function Browser</B>
+ (<A HREF="gsdebug.html#30418" CLASS="XRef">Function Browser window</A>), and <B CLASS="Callout">
+Processes</B>
+ (for threads, use <B CLASS="Callout">
+Threads List</B>; see <A HREF="gsdebug.html#23370" CLASS="XRef">Process window for displaying state of threads</A>).</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1014938"></A><B CLASS="Callout">
+Control</B>
+ has the following usage. <B CLASS="Callout">
+Step</B>
+ steps to next executable line of source code and steps into called functions. <B CLASS="Callout">
+Next</B>
+ steps to next executable line of source code in the current file and steps over called functions. <B CLASS="Callout">
+Finish</B>
+ finishes execution of a current frame and, if clicked while in a function, finishes the function and returns to the line that called the function. <B CLASS="Callout">
+Continue</B>
+ continues execution until a breakpoint, watchpoint or exception is encountered, or until execution completes. <B CLASS="Callout">
+Step Asm Inst</B>
+ steps through one assembler machine instruction and steps into subroutines. <B CLASS="Callout">
+Next Asm Inst</B>
+ steps to the next assembler instruction but steps over subroutines.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1014995"></A><B CLASS="Callout">
+Preferences</B>
+ has the following usage. <B CLASS="Callout">
+Global</B>
+ opens <B CLASS="Callout">
+Global Preferences</B>
+ (<A HREF="gsdebug.html#22215" CLASS="XRef">Global Preferences window</A>) for changing how text appears. <B CLASS="Callout">
+Source</B>
+ opens the <B CLASS="Callout">
+Source Preferences</B>
+ (<A HREF="gsdebug.html#41696" CLASS="XRef">Source Preferences dialog</A>) to show how colors display.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1015018"></A><B CLASS="Callout">
+Help</B>
+ has the following usage. <B CLASS="Callout">
+Help</B>
+ displays the <B CLASS="Callout">
+Help</B>
+ window (<A HREF="gsdebug.html#11708" CLASS="XRef">Help window showing the help topic's index</A>). <B CLASS="Callout">
+About GDB</B>
+ displays the version number, copyright notice and contact information for Insight to use for GDB.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1004077"></A><A NAME="_Toc419784863"></A>
+Below the horizontal scroll bar of the Source Window
+</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1017898"></A>There are four display and selection fields below the 
+horizontal s<A NAME="marker-1004078"></A>croll bar: the <A NAME="marker-1004079"></A>status 
+text box (<A HREF="gsdebug.html#15598" CLASS="XRef">Status text box</A>), 
+the <A NAME="marker-1017893"></A>file drop-down combo 
+box (<A HREF="gsdebug.html#19749" CLASS="XRef">File drop-down list box</A>), the <A NAME="marker-1017897"></A>
+function drop-down combo box (<A HREF="gsdebug.html#27024" CLASS="XRef">Function drop-down combo box</A>) and the 
+code display drop-down list box (<A HREF="gsdebug.html#15811" CLASS="XRef">Code display drop-down list box</A>). At 
+the top of the horizontal scroll bar, text details the current status of the debugger; the 
+status text box in <A HREF="gsdebug.html#15598" CLASS="XRef">Status text box</A> shows 
+&quot;<KBD CLASS="Code">Program stopped at line 19</KBD>&quot; as the message.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017959"></A>The <B CLASS="Callout">
+Function Browser</B>
+ window provides even more powerful tools for locating files and functions within your source code; for more information, see <A HREF="gsdebug.html#31480" CLASS="XRef">Using the Function Browser Window</A>. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1017909"></A>
+Status text box
+<A NAME="15598"></A></P>
+<P CLASS="Figure">
+<A NAME="pgfId-1017913"></A>
+<IMG SRC="gsdebug-33.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018831"></A>The <A NAME="marker-1018826"></A>function <A NAME="marker-1018827"></A>drop-down list box (<A HREF="gsdebug.html#27024" CLASS="XRef">Function drop-down combo box</A>) displays all the functions of a selected source (<KBD CLASS="Code">.c</KBD>) or header (<KBD CLASS="Code">.h</KBD>) file that an executable uses. Select a function by clicking in the list, or by typing directly into the text field for the function drop-down <A NAME="marker-1018832"></A>list box.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1004121"></A><A NAME="27024"></A>Function drop-down combo box</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1004125"></A><IMG SRC="gsdebug-34.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018842"></A>The file <A NAME="marker-1018838"></A>drop-down list box (<A HREF="gsdebug.html#19749" CLASS="XRef">File drop-down list box</A>) displays the source (<KBD CLASS="Code">.c</KBD>) and header (<KBD CLASS="Code">.h</KBD>) files associated with an executable. Select files by clicking the arrow to the right of the drop-down list and then selecting one of the files in the <A NAME="marker-1018843"></A>list, or by typing the file's name directly into the list's text field.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1018809"></A>File drop-down list box<A NAME="19749"></A></P>
+<P CLASS="Figure">
+<A NAME="pgfId-1018813"></A><IMG SRC="gsdebug-35.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1017953"></A>Select how the code in the <B CLASS="Callout">
+Source Window</B>
+ displays by using the code display drop-down list box (<A HREF="gsdebug.html#15811" CLASS="XRef">Code display drop-down list box</A>). 
+</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1004130"></A><A NAME="15811"></A>Code display drop-down list box</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1004134"></A><IMG SRC="gsdebug-36.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011564"></A>The selections in the code display drop-down list box provide the following different ways to display code in the <B CLASS="Callout">
+Source Window</B>.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1011553"></A><B CLASS="Callout">
+SOURCE</B>
+ displays <A NAME="marker-1011552"></A>source code. </LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1011555"></A><B CLASS="Callout">
+ASSEMBLY</B>
+ displays <A NAME="marker-1011554"></A>assembly code. </LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1011556"></A><B CLASS="Callout">
+MIXED</B>
+ displays both source code <EM CLASS="Emphasis">
+and</EM>
+ assembly code, interspersed within the <B CLASS="Callout">
+Source Window</B>.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1011557"></A><B CLASS="Callout">
+SRC+ASM </B>
+displays source code in one pane and assembly code in a separate pane of the 
+<B CLASS="Callout">
+Source Window</B>.
+</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-1004571"></A>Type a character string into the search text box (<A HREF="gsdebug.html#22364" CLASS="XRef">Search text box</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1018316"></A><A NAME="22364"></A>Search text box</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1018320"></A><IMG SRC="gsdebug-37.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018313"></A>Press <B CLASS="Callout">
+Enter</B>
+ to perform a forward search on the source file for the first instance of a specific character string. After having specified 
+&quot;<KBD CLASS="Code">main</KBD>&quot; in the search text box, the example program in <A HREF="gsdebug.html#26850" CLASS="XRef">Searching for a word in source code</A> shows the jump to a <KBD CLASS="Code">
+main</KBD>
+ function.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1018337"></A><A NAME="26850"></A>Searching for a word in source code</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1018340"></A><IMG SRC="gsdebug-38.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018328"></A>Use the <B CLASS="Callout">
+Shift</B>
+ and <B CLASS="Callout">
+Enter</B>
+ keys simultaneously to search for the string. Use the <B CLASS="Callout">
+Enter</B>
+ key or the <B CLASS="Callout">
+Shift</B>
+ and <B CLASS="Callout">
+Enter</B>
+ keys to repeat the search. 
+Type &quot;<KBD CLASS="Code">@</KBD>&quot; with a number in the search text box and press <B CLASS="Callout">
+Enter</B>
+ to <A NAME="marker-1011598"></A>jump to a specific line number in the source code. The example program in <A HREF="gsdebug.html#19711" CLASS="XRef">Searching for a specific line in source code</A> shows a jump to the line 86.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1018348"></A><A NAME="19711"></A>Searching for a specific line in source code</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1018352"></A><IMG SRC="gsdebug-39.gif" ALIGN="BASELINE">
+<A NAME="marker-1018244"></A>&nbsp;</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1018247"></A>
+Using the Stack Window
+<A NAME="10036"></A></H1>
+<P CLASS="Body">
+<A NAME="pgfId-1001806"></A><A NAME="marker-1019373"></A>Each time your program performs a function call, information about the call  generates. That information includes the location of the call in your program, the arguments of the call, and the local variables of the function being called. The information is saved in a block of data called a <EM CLASS="Emphasis">
+stack frame</EM><A NAME="marker-1018874"></A>. The stack frames are allocated in a region of memory called the <EM CLASS="Emphasis">
+call stack</EM><A NAME="marker-1018875"></A>. When your program stops, you can examine the stack you to see this information. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1018853"></A>A stack refers to the layers (TCP, IP, and sometimes others) through which all data passes at both client and server ends of a data exchange. The call stack is the data area or buffer used for storing requests that need to be handled, as in a list of tasks or, specifically, the contiguous parts of the data associated with one call to a specified function in a frame. The frame contains the arguments given to the function, the function's local variables, and the address at which the program is executing.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018911"></A>The <B CLASS="Callout">
+Stack</B>
+<A NAME="Insight"></A> window displays the current state of the call stack (<A HREF="gsdebug.html#33680" CLASS="XRef">Stack window</A>), where each line represents a <A NAME="marker-1018912"></A>stack frame; the line with the <KBD CLASS="Code">
+main.c</KBD>
+ executable had been selected for the example. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001809"></A><B CLASS="Callout">
+Stack</B>
+<A NAME="33680"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001813"></A><IMG SRC="gsdebug-40.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001815"></A>Click a frame to select or highlight that frame. The <SPAN CLASS="Bold">
+Source Window</SPAN>
+ automatically shows the source code that corresponds to the selected frame. If the frame points to an assembly instruction, the <SPAN CLASS="Bold">
+Source Window</SPAN>
+ changes to assembly code; the corresponding source line's background in the <SPAN CLASS="Bold">
+Source Window</SPAN>
+ also changes to the stack color.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1001823"></A>Using the <A NAME="_Ref412616710"></A><A NAME="_Toc419784866"></A>
+Registers Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1001828"></A>The <SPAN CLASS="Bold">
+Registers</SPAN>
+<A NAME="marker-1001824"></A> window (<A HREF="gsdebug.html#29557" CLASS="XRef">Registers window</A>) dynamically displays registers and their contents.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1004592"></A><B CLASS="Callout">
+Registers</B>
+<A NAME="29557"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001837"></A><IMG SRC="gsdebug-41.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1003077"></A> To change the properties of registers, use the following methods. </P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001839"></A>To select a <A NAME="marker-1011046"></A>register, single left click on it.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001840"></A>To edit the contents of a register, double click on it. Alternatively, use <B CLASS="Callout">
+Register</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Edit</B>
+ to change the contents after selecting a register. Use the <B CLASS="Callout">
+Esc</B>
+ key to abort the editing.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002926"></A>Use <B CLASS="Callout">
+Register</B>
+ <EM CLASS="Arrow">
+-></EM>
+  <B CLASS="Callout">
+Format</B>
+ to invoke another pop-up menu to display the contents of a selected register in <B CLASS="Callout">
+Hex</B>
+ (Hexadecimal), <B CLASS="Callout">
+Decimal</B>, <B CLASS="Callout">
+Natural</B>, <B CLASS="Callout">
+Binary</B>, <B CLASS="Callout">
+Octal</B>, or <SPAN CLASS="Bold">
+Raw</SPAN>
+ formats. <P>
+<P CLASS="Body"><A NAME="pgfId-1018862"></A><B CLASS="Callout">
+Hex</B>
+ is the default display format. <B CLASS="Callout">
+Natural</B>
+ format refers to and <B CLASS="Callout">
+Raw</B>
+ refers to. The other formats are self-explanatory.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002933"></A>Use <B CLASS="Callout">
+Register</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Remove from Display</B>
+ to remove a selected register from the window; all registers will display if you close and reopen the window, unless you have already selected this feature. </LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001862"></A>Use <B CLASS="Callout">
+Register</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Display All Registers</B>
+ to display all the registers; this menu item is only active when one or more registers have been removed from display.</LI>
+</UL>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1001865"></A><A NAME="_Ref412617191"></A><A NAME="_Toc419784867"></A>Using the 
+Memory Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1001870"></A>The <B CLASS="Callout">Memory</B>
+<A NAME="marker-1001866"></A> window (<A HREF="gsdebug.html#10363" CLASS="XRef">Memory window</A>) dynamically displays the state of memory. Double-click a memory location with the cursor in the window and edit its contents.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001873"></A><B CLASS="Callout">
+Memory</B>
+<A NAME="10363"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001877"></A><IMG SRC="gsdebug-42.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1003166"></A>Use <B CLASS="Callout">
+Addresses</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Auto Update</B>
+ to update the contents of the <B CLASS="Callout">
+Memory</B>
+ window automatically whenever the target's state changes; this is the default setting. Use <B CLASS="Callout">
+Addresses</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Update Now</B>
+ to update the <B CLASS="Callout">
+Memory</B>
+ window's view of the target's memory. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1003169"></A><B CLASS="Callout">
+Memory Preferences</B>
+<A NAME="31422"></A> dialog for the <B CLASS="Callout">
+Memory</B>
+ window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001904"></A><IMG SRC="gsdebug-43.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1003175"></A>Use <B CLASS="Callout">
+Addresses</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Preferences </B>
+to invoke the <B CLASS="Callout">
+Memory Preferences</B>
+dialog to set <A NAME="marker-1003176"></A>memory options. </P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1010851"></A>
+Select the size of the individual cells to display
+ with <B CLASS="Callout">
+Size</B>
+ options; 
+<B CLASS="Callout">
+Byte</B>, 
+<B CLASS="Callout">
+Half-Word</B>, 
+<B CLASS="Callout">
+Word</B>, 
+<B CLASS="Callout">
+Double-Word</B>, 
+<B CLASS="Callout">
+Float</B>, or 
+<B CLASS="Callout">
+Double-Float</B>
+ are the settings, with 
+<B CLASS="Callout">
+Word</B>
+ being the default selection.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1010852"></A>
+Select the format of the memory that displays with 
+<B CLASS="Callout">
+Format </B>
+options; 
+<B CLASS="Callout">
+Binary</B>,
+<B CLASS="Callout">
+Signed Decimal</B>,
+<B CLASS="Callout">
+Octal</B>,
+<B CLASS="Callout">
+Unsigned Decimal</B>, or 
+<B CLASS="Callout">
+Hex</B>
+ (Hexadecimal) 
+are the settings, with 
+<B CLASS="Callout">
+Hex</B>
+ being the default selection.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1010853"></A>
+Set the number of bytes to display with 
+<B CLASS="Callout">
+Number of Bytes</B>, <B CLASS="Callout">
+Depends on Window Size</B>
+ or 
+<B CLASS="Callout">
+Fixed</B>. 
+<B CLASS="Callout">
+Depends on Window Size</B>
+ selection is default.
+</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1011880"></A>
+Display a string representation of memory with
+<B CLASS="Callout">
+ Miscellaneous</B>, <B CLASS="Callout">
+Bytes Per Row</B>
+ or 
+<B CLASS="Callout">
+Display ASCII</B>
+ selections. 
+<B CLASS="Callout">
+Control Char </B>
+displays non-ASCII characters; the default control character is the period (<KBD CLASS="Code">.</KBD>).
+</LI>
+</UL>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1001912"></A><A NAME="_Ref412617239"></A><A NAME="_Toc419784868"></A>Using the 
+Watch Expressions Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1001917"></A>The <A NAME="marker-1001913"></A><SPAN CLASS="Bold">
+Watch Expressions</SPAN>
+ window displays the name and current value of user-specified expressions (<A HREF="gsdebug.html#41703" CLASS="XRef">Watch Expressions window</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001919"></A><B CLASS="Callout">
+Watch Expressions</B>
+<A NAME="41703"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1001923"></A><IMG SRC="gsdebug-44.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018487"></A>The <B CLASS="Callout">
+Watch Expressions</B>
+ window 
+has the following functionality.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018489"></A>Single click on an expression to select it.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1018490"></A>Right click in the display pane, having selected an expression, to invoke an expression-specific <B CLASS="Callout">
+Watch</B>
+<A NAME="marker-1018491"></A> menu (<A HREF="gsdebug.html#32895" CLASS="XRef">Watch menu in the Watch Expressions window</A>). </LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001935"></A><B CLASS="Callout">
+Watch</B>
+ menu in the <B CLASS="Callout">
+Watch Expressions</B>
+ window<A NAME="32895"></A></P>
+<P CLASS="Figure">
+<A NAME="pgfId-1011186"></A><IMG SRC="gsdebug-45.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011187"></A>Use <B CLASS="Callout">
+Watch</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Edit</B>
+ to edit the value in an expression (an example of an expression capable of being edited is shown in <A HREF="gsdebug.html#36703" CLASS="XRef">Editing the value in an expression</A>). Use the <A NAME="marker-1011188"></A><B CLASS="Callout">
+Esc</B>
+ key to abort <A NAME="marker-1011189"></A>editing.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001952"></A><A NAME="36703"></A>Editing the value in an expression</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1011228"></A><IMG SRC="gsdebug-46.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011509"></A>Use <B CLASS="Callout">
+Watch</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Format</B>
+ to invoke another pop-up menu for displaying a selected expression's value in <B CLASS="Callout">
+Hex</B>
+ (Hexadecimal), <B CLASS="Callout">
+Decimal</B>, <B CLASS="Callout">
+Binary</B>, or <B CLASS="Callout">
+Octal</B>
+ formats; by default, pointers display in hexadecimal with all other expressions as decimal. Use <B CLASS="Callout">
+Watch</B>
+ <EM CLASS="Arrow">
+-></EM>
+ <B CLASS="Callout">
+Remove</B>
+ to remove a selected expression from the watch list. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1011510"></A>Use the text edit field and the <B CLASS="Callout">
+Add Watch</B>
+<A NAME="marker-1011525"></A> button at the bottom of the window to add registers to the <B CLASS="Callout">
+Watch Expression</B>
+ window or, by typing <A NAME="marker-1011512"></A>register <A NAME="marker-1011513"></A><EM CLASS="Emphasis">
+convenience variables</EM>
+ into the text edit field, add an expression to the watch list (see <KBD CLASS="Code">
+corearg</KBD>
+ added in <A HREF="gsdebug.html#17647" CLASS="XRef">Using the Add Watch button for the Watch Expressions window</A> with its results in <A HREF="gsdebug.html#11180" CLASS="XRef">Results of using Add Watch button for the Watch Expressions window</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001975"></A><A NAME="17647"></A>Using the <B CLASS="Callout">
+Add Watch</B>
+ button for the <B CLASS="Callout">
+Watch Expressions</B>
+ window</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011264"></A><IMG SRC="gsdebug-47.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011362"></A>Every register has a corresponding convenience variable. The <A NAME="marker-1011361"></A>register convenience variables consist of a dollar sign followed by the register name; <KBD CLASS="Code">
+$pc</KBD>
+ is the program counter's convenience variable, for example, while <KBD CLASS="Code">
+$fp</KBD>
+ is the frame pointer's convenience variable.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011365"></A>Re-cast other types to which a <A NAME="marker-1011364"></A>pointer was cast by typing it in the text edit field. For example, typing 
+(<KBD CLASS="Code">struct _foo *</KBD>)<KBD CLASS="Code"> bar</KBD>
+ in the text edit field, the bar pointer is cast as a <KBD CLASS="Code">
+struct _foo</KBD>
+ pointer.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011266"></A>Invalid <A NAME="marker-1011270"></A>expressions are ignored.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1011273"></A><A NAME="11180"></A>Results of using <A NAME="marker-1011530"></A><B CLASS="Callout">
+Add Watch</B>
+ button for the <B CLASS="Callout">
+Watch Expressions</B>
+ window</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001992"></A><IMG SRC="gsdebug-48.gif" ALIGN="BASELINE">
+</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002007"></A><A NAME="_Ref412962956"></A><A NAME="_Ref412962985"></A><A NAME="_Toc419784869"></A>Using the 
+Local Variables Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002011"></A>The<SPAN CLASS="Bold">
+ Local Variables</SPAN>
+<A NAME="marker-1002008"></A> window displays the current value of all <A NAME="marker-1002009"></A>local variables.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002013"></A><B CLASS="Callout">
+Local Variables</B>
+<A NAME="13279"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002017"></A><IMG SRC="gsdebug-49.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002024"></A>Use <B CLASS="Callout">
+Variable</B>
+<A NAME="marker-1003284"></A>
+<EM CLASS="Arrow">
+-></EM>
+<B CLASS="Callout">
+Edit</B>
+ to change the value of a selected variable that you want edit. Using the Escape key (<B CLASS="Callout">Esc</B>) aborts editing. Use <B CLASS="Callout">
+Variable</B>
+<EM CLASS="Arrow">
+-></EM>
+<B CLASS="Callout">
+Format</B>
+ to invoke another pop-up menu to display a selected variable's value in <B CLASS="Callout">
+Hex</B>
+ (Hexadecimal), <B CLASS="Callout">
+Decimal</B>, 
+<B CLASS="Callout">
+Binary</B>
+ or <B CLASS="Callout">
+Octal</B>
+ formats. By default, pointers display in hexadecimal and all other expressions as decimal. Single click the mouse with the cursor over a variable in the <B CLASS="Callout">
+Local Variables</B>
+ window to select the variable (<A HREF="gsdebug.html#40373" CLASS="XRef">Selecting a variable</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002070"></A><A NAME="40373"></A>Selecting a variable </P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002074"></A><IMG SRC="gsdebug-50.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004629"></A>Double click the mouse with the cursor in the <SPAN CLASS="Bold">
+Local Variables</SPAN>
+ window to edit the variable (<A HREF="gsdebug.html#28909" CLASS="XRef">Editing local variables</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002076"></A><A NAME="28909"></A>Editing local variables</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002080"></A><IMG SRC="gsdebug-51.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004691"></A>Single click the mouse with the cursor on the plus sign to the left of a structure variable to see the elements of that structure (compare the variable structure for <KBD CLASS="Code">
+homebuf</KBD>
+ in <A HREF="gsdebug.html#40373" CLASS="XRef">Selecting a variable</A> with the results in <A HREF="gsdebug.html#30097" CLASS="XRef">Displaying the elements of a variable structure</A>). To close the structure elements, click the minus sign to the left of an open structure (compare the variable structure in <A HREF="gsdebug.html#30097" CLASS="XRef">Displaying the elements of a variable structure</A> with what the window had displayed in <A HREF="gsdebug.html#40373" CLASS="XRef">Selecting a variable</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002082"></A>Displaying the elements of a variable structure<A NAME="30097"></A></P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002086"></A><IMG SRC="gsdebug-52.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004666"></A>See also <A HREF="gsdebug.html#_Toc419784884" CLASS="XRef">Setting Breakpoints and Viewing Local Variables</A> and <A HREF="gsdebug.html#15007" CLASS="XRef">File after changing local variables values.</A>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002089"></A><A NAME="_Ref412617275"></A><A NAME="_Toc419784870"></A>Using the 
+Breakpoints Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002095"></A>The <A NAME="marker-1002090"></A><B CLASS="Callout">
+Breakpoints</B>
+ window displays the currently set <A NAME="marker-1002091"></A>breakpoints. See <A HREF="gsdebug.html#39362" CLASS="XRef">Breakpoints window</A> for the <KBD CLASS="Code">
+main.c</KBD>
+ example program breakpoints running in the <B CLASS="Callout">
+Source Window</B>, and see <A HREF="gsdebug.html#26473" CLASS="XRef">Results of setting breakpoints at line 105</A> for the results in the <B CLASS="Callout">
+Source Window</B>.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002099"></A>WARNING!</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002100"></A>Breakpoints and exceptions may not work, especially if debugging C++ code, and the <B CLASS="Callout">
+Breakpoints</B>
+ window
+ may be inoperative.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002102"></A><B CLASS="Callout">
+Breakpoints</B>
+<A NAME="39362"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002106"></A><IMG SRC="gsdebug-53.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002107"></A>Single click the mouse with the cursor over a check-box for a breakpoint to select that breakpoint (see the breakpoint results for line 105 in <A HREF="gsdebug.html#39605" CLASS="XRef">Selecting a breakpoint</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002123"></A><A NAME="39605"></A>Selecting a breakpoint</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002127"></A><IMG SRC="gsdebug-54.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1005535"></A>Single click with the mouse with the cursor over a check-box of a breakpoint to disable the breakpoint. The color of the square in the Breakpoint window changes (Line 101 in <A HREF="gsdebug.html#19513" CLASS="XRef">Setting temporary breakpoints in the Breakpoints window</A>) and the line's breakpoint status changes in the <SPAN CLASS="Bold">
+Source Window</SPAN>.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1005540"></A><A NAME="19513"></A>Setting temporary breakpoints in the <B CLASS="Callout">
+Breakpoints</B>
+ window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1004848"></A><IMG SRC="gsdebug-55.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004849"></A>Using the <B CLASS="Callout">
+Breakpoint</B>
+ menu for the <B CLASS="Callout">
+Breakpoints</B>
+ window, toggle the enabled or disabled state of a selected breakpoint. The single check mark between them shows the state of the selected breakpoint. <B CLASS="Callout">
+Remove</B>
+ removes the selected breakpoint.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004850"></A>Using the <B CLASS="Callout">
+Global</B>
+ menu for the <B CLASS="Callout">
+Breakpoints</B>
+ window, <B CLASS="Callout">
+Disable All</B>
+ disables all breakpoints, <B CLASS="Callout">
+Enable All</B>
+ enables all breakpoints, and <B CLASS="Callout">
+Remove All</B>
+ removes all breakpoints.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004883"></A>Single click an empty check box of a disabled breakpoint to re-enable a breakpoint (<A HREF="gsdebug.html#27584" CLASS="XRef">Results in Source Window having enabled a breakpoint</A>). A check reappears and the color of the square in the <SPAN CLASS="Bold">
+Source Window</SPAN>
+ changes (see line 105 in <A HREF="gsdebug.html#26473" CLASS="XRef">Results of setting breakpoints at line 105.</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002129"></A><A NAME="27584"></A>Results in <B CLASS="Callout">
+Source Window</B>
+ having enabled a breakpoint</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1011956"></A><IMG SRC="gsdebug-56.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011958"></A>Using the <A NAME="10930"></A><B CLASS="Callout">
+Breakpoint</B>
+ menu, toggle between the normal and temporary setting of a selected breakpoint. A normal breakpoint remains valid no matter how many times it is hit. A temporary breakpoint is removed automatically the first time it is hit. A single check mark for either setting shows the state of the selected breakpoint. When a <A NAME="marker-1011959"></A>breakpoint is set to temporary, the line in the <B CLASS="Callout">
+Source Window</B>
+ no longer has a colored quare, as shown by comparing <A HREF="gsdebug.html#27584" CLASS="XRef">Results in Source Window having enabled a breakpoint</A> with <A HREF="gsdebug.html#65495" CLASS="XRef">Results in Source Window having set a breakpoint as temporary</A>, where the breakpoint for line 105 in the <KBD CLASS="Code">
+main.c</KBD>
+ example program changed. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1005635"></A>
+<A NAME="65495"></A>Results in Source Window having set a breakpoint as temporary</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1005645"></A><IMG SRC="gsdebug-57.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1005639"></A>See also <A HREF="gsdebug.html#Figure 108" CLASS="XRef">Local Variables window after setting breakpoints</A>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002189"></A><A NAME="34157"></A>Using the Console Window</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1018144"></A>To send commands directly to the GDB interpreter, use the <B CLASS="Callout">
+Console</B>
+ window (<A HREF="gsdebug.html#12732" CLASS="XRef">Console window</A>).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1018149"></A><B CLASS="Callout">
+Console</B>
+<A NAME="12732"></A> window </P>
+<P CLASS="Figure">
+<A NAME="pgfId-1018153"></A><IMG SRC="gsdebug-58.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1018154"></A>The <B CLASS="Callout">
+Console</B>
+ window opens with a <KBD CLASS="CodeOutput">
+(gdb)</KBD>
+ prompt for invoking debugging commands. <A HREF="gsdebug.html#12732" CLASS="XRef">Console window</A> shows the <KBD CLASS="Code">
+help</KBD>
+ command's available topics when using the <B CLASS="Callout">
+Console</B>
+ window. For more specific commands, see <EM CLASS="Emphasis">
+Debugging with GDB</EM>
+ in <STRONG CLASS="BoldEmphasis">
+GNUPro Debugger Tools</STRONG>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1018120"></A><A NAME="31480"></A>Using the Function Browser Window</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002191"></A>To invoke the <B CLASS="Callout">
+Function Browser</B>
+<A NAME="marker-1002190"></A> window, select <B CLASS="Callout">
+View</B>
+<EM CLASS="Arrow">
+-></EM>
+<B CLASS="Callout">
+Function Browser</B>
+ from the 
+<B CLASS="Callout">
+Source Window</B>. The <B CLASS="Callout">
+Function Browser</B>
+ window has several fields that provide search and browsing capability for source code debugging (<A HREF="gsdebug.html#30418" CLASS="XRef">Function Browser window</A>). Descriptions follow of the <B CLASS="Callout">
+Filter</B>, 
+<B CLASS="Callout">
+Files</B>, 
+<B CLASS="Callout">
+Functions</B>
+ and <B CLASS="Callout">
+View Source</B>
+ fields.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002196"></A><B CLASS="Callout">
+Function Browser</B>
+<A NAME="30418"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002200"></A><IMG SRC="gsdebug-59.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002201"></A>The <B CLASS="Callout">
+Filter</B>
+ group at the top of the <B CLASS="Callout">
+Function Browser</B>
+ window
+ contains the <B CLASS="Callout">
+Show if function</B>
+ drop-down list box and a text edit field. <B CLASS="Callout">
+Show if function </B>
+allows you to match the character string in the text edit field to its right by any of the four alternatives. Using the <B CLASS="Callout">
+Show if function </B>
+drop-down list box (<A HREF="gsdebug.html#16130" CLASS="XRef">Show if function drop-down list box</A>), <B CLASS="Callout">
+starts with </B>
+shows functions that start with the character string in the text edit field entry, <B CLASS="Callout">
+contains </B>
+shows functions that contain the character string in the text edit field entry, <B CLASS="Callout">
+ends with </B>
+shows functions that end with the character string in the text edit field entry, <B CLASS="Callout">
+matches regexp </B>
+makes the search routines use regular expression matching (for example, searching for 
+&quot;<KBD CLASS="Code">^[ab]</KBD><B CLASS="Callout">.</B><KBD CLASS="Code">*</KBD>&quot; matches all functions starting with either <KBD CLASS="Code">
+a</KBD>
+ or <KBD CLASS="Code">
+b</KBD>
+ letters).</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002207"></A><B CLASS="Callout">
+Show if function </B>
+<A NAME="16130"></A>drop-down list box</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002211"></A><IMG SRC="gsdebug-60.gif" ALIGN="BASELINE">
+&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002216"></A>The <B CLASS="Callout">
+Files</B>
+ group limits the search to highlighted files. Clicking individual file names selects or deselects that file. The list of matching files refreshes when any search parameter changes. <B CLASS="Callout">
+Hide </B>
+<KBD CLASS="Code">
+.h </KBD>
+<B CLASS="Callout">
+files</B>, if checked, disallows <KBD CLASS="Code">
+.h</KBD>
+ header files to display. <B CLASS="Callout">
+Select All </B>
+selects all listed files.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002220"></A>The <B CLASS="Callout">
+Functions</B>
+ group matches all functions in the selected file(s). <B CLASS="Callout">
+Breakpoints</B>
+ has two available buttons, <B CLASS="Callout">
+Delete</B>
+ or <B CLASS="Callout">
+Set</B>; <B CLASS="Callout">
+Delete </B>
+removes a breakpoint previously set at the first executable line of the selected function, while <B CLASS="Callout">
+Set </B>
+sets a breakpoint at the first executable line of the selected function. Both of these will work on any and all selected functions in the listing. If all functions are selected, they all get or lose a breakpoint.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002225"></A><B CLASS="Callout">
+View Source/Hide Source</B>
+ allows you to toggle between displaying or hiding a file in  a <A NAME="marker-1002226"></A>source browser (<A HREF="gsdebug.html#22977" CLASS="XRef">Function Browser window with source browser</A>); the source browser has the same functionality as when using the <B CLASS="Callout">
+Source Window</B>.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002232"></A><B CLASS="Callout">
+Function Browser</B>
+<A NAME="22977"></A><A NAME="marker-1002231"></A> window with source browser</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002236"></A><IMG SRC="gsdebug-61.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1011444"></A>There are four display and selection fields below the horizontal s<A NAME="marker-1011442"></A>croll bar (the same functionality as using the <SPAN CLASS="Bold">
+Source Window</SPAN>): the <A NAME="marker-1011443"></A>status text box (<A HREF="gsdebug.html#15598" CLASS="XRef">Status text box</A>), the <A NAME="marker-1011452"></A>function drop-down combo box (<A HREF="gsdebug.html#27024" CLASS="XRef">Function drop-down combo box</A>) and the code display drop-down list box (<A HREF="gsdebug.html#15811" CLASS="XRef">Code display drop-down list box</A>); see the figures and their accompanying explanations for specific information.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002273"></A><A NAME="12208"></A>Using the Processes Window for Threads</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002275"></A>The <SPAN CLASS="Bold">
+Processes</SPAN>
+ window (<A HREF="gsdebug.html#23370" CLASS="XRef">Process window for displaying state of threads</A>) dynamically displays the state of currently running threads.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1002276"></A>
+WARNING!
+</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1002277"></A>Threads support is not available for all targets.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002285"></A><B CLASS="Callout">
+Processes</B>
+<A NAME="23370"></A> window for displaying state of threads</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002289"></A><IMG SRC="gsdebug-62.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002290"></A>The <SPAN CLASS="Bold">
+Processes</SPAN>
+ window will display a list of threads and/or processes of an executable that you are debugging. The exact contents are specific to each operating system. The first column is the thread number, used internally by the debugger to track the thread. This number is also used by the command line interface (in the <SPAN CLASS="Bold">
+Console</SPAN>
+ window) when referring to threads. The rest of the columns are dependent on information coming from the operating system.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002291"></A>The <B CLASS="Callout">
+Source Window</B>
+ displays the current location and source for a <EM CLASS="Emphasis">
+current</EM>
+ thread (or process). To change the current thread, click on the desired thread in the <B CLASS="Callout">
+Threads</B>
+ window and the debugger will switch contexts, updating all windows. The current thread will highlight.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002292"></A>Having set a breakpoint on a line or function, stop execution and return control to the debugger for every thread that hits a set location. To set a breakpoint on a specific thread or threads, use the <SPAN CLASS="Bold">
+Source Window</SPAN>. See also <A HREF="gsdebug.html#_Toc419784884" CLASS="XRef">Setting Breakpoints and Viewing Local Variables</A> and <A HREF="gsdebug.html#22969" CLASS="XRef">Setting Breakpoints on Multiple Threads</A>.</P>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002301"></A><A NAME="_Ref419196185"></A><A NAME="_Toc419784872"></A>
+Using the Help Window
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002306"></A>Invoke the <B CLASS="Callout">
+
+</B>
+<A NAME="marker-1002302"></A> window (<A HREF="gsdebug.html#11708" CLASS="XRef">Help window showing the help topic's index</A>) using the <B CLASS="Callout">
+Help</B>
+ menu from the <B CLASS="Callout">
+Source Window</B>
+ to get <A NAME="marker-1002307"></A>HTML-based navigable help by topic.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002309"></A><B CLASS="Callout">
+Help </B>
+<A NAME="11708"></A>window showing the help topic's index</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002313"></A><IMG SRC="gsdebug-63.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002320"></A>The <B CLASS="Callout">
+Help </B>
+window has two menus: <B CLASS="Callout">
+File</B>
+ and <B CLASS="Callout">
+Topics</B>.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002328"></A>The <B CLASS="Callout">
+File</B>
+ menu makes the following options functional: <B CLASS="Callout">
+Back</B>
+ moves back one HTML help page, relative to previous forward page movements; <B CLASS="Callout">
+Forward</B>
+ moves forward one HTML help page, relative to previous back page movement; <B CLASS="Callout">
+Home </B>
+returns to the main HTML help &quot;Table of Contents&quot; page; <B CLASS="Callout">
+Close</B>
+ closes the <B CLASS="Callout">
+Help</B>
+ window.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002339"></A>The <B CLASS="Callout">
+Topics</B>
+ menu displays information for each menu item. Content changes in the <B CLASS="Callout">
+Help </B>
+window to represent a selected topic.</LI>
+<UL>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-1002343"></A>The first menu item, <B CLASS="Callout">
+index</B>, returns to the main <B CLASS="Callout">Help </B>
+window (<A HREF="gsdebug.html#11708" CLASS="XRef">Help window showing the help topic's index</A>). </LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-1002344"></A>The second item, <B CLASS="Callout">
+Attach Dialog</B>, is only for a host system's use, when attaching to another debugging process, and <EM CLASS="Emphasis">
+not</EM>
+ for use by embedded targets. </LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-1002345"></A>The remaining menus document the Insight windows: 
+Stack (<A HREF="gsdebug.html#33680" CLASS="XRef">Stack window</A>), 
+Registers (<A HREF="gsdebug.html#29557" CLASS="XRef">Registers window</A>), 
+Memory (<A HREF="gsdebug.html#10363" CLASS="XRef">Memory window</A>), Watch 
+Expressions (<A HREF="gsdebug.html#41703" CLASS="XRef">Watch Expressions 
+window</A>), Local Variables (<A HREF="gsdebug.html#13279" CLASS="XRef">Local 
+Variable window</A>), Breakpoints (<A HREF="gsdebug.html#39362" CLASS="XRef">Breakpoints 
+window</A>), Console (<A HREF="gsdebug.html#12732" CLASS="XRef">Console window</A>), 
+Function Browser (<A HREF="gsdebug.html#30418" CLASS="XRef">Function Browser window</A>), 
+and Processes (<A HREF="gsdebug.html#23370" CLASS="XRef">Process window for displaying 
+state of threads</A>).</LI>
+</UL>
+</UL>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002348"></A>
+Examples for Debugging with Insight
+<A NAME="28537"></A><A NAME="marker-1002347"></A></H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002349"></A>The following documentation contains an example 
+debugging session procedures for using Insight. 
+See also <A HREF="gstarget.html#14143" CLASS="XRef">Debug an Executable Application 
+on a Target Board</A>.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002359"></A><A HREF="gsdebug.html#_Toc419784883" CLASS="XRef">Selecting and 
+Examining a Source File</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002363"></A><A HREF="gsdebug.html#_Toc419784884" CLASS="XRef">Setting 
+Breakpoints and Viewing Local Variables</A></LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1002367"></A><A HREF="gsdebug.html#22969" CLASS="XRef">Setting 
+Breakpoints on Multiple Threads</A></LI>
+</UL>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002369"></A><A NAME="_Toc419784883"></A>
+Selecting and Examining a Source File
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002373"></A><A NAME="marker-1002370"></A>To 
+select a <A NAME="marker-1002371"></A>source file, or to specify what to 
+display when examining a source file when debugging, use the following 
+process.</P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-1002393"></A>Select a source file 
+(<KBD CLASS="Code">main.c</KBD> in the example in <A HREF="gsdebug.html#36954" CLASS="XRef">Source file selection</A>) from the file drop-down list, at the bottom left of the <B CLASS="Callout">
+Source Window</B>.
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002395"></A><A NAME="36954"></A>Source file selection</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002399"></A><IMG SRC="gsdebug-64.gif" ALIGN="BASELINE">
+</P>
+</LI>
+<LI CLASS="NumberedNext">
+<P CLASS="Body"><A NAME="pgfId-1002400"></A>Select a function from the function drop-down list to the right of the file drop-down list, or type its name in the text field above the list to locate a function (in <A HREF="gsdebug.html#17715" CLASS="XRef">Searching for a word in source code</A>, see the executable line 86, where the <KBD CLASS="Code">
+main</KBD>
+ function displays).</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1019191"></A>Type a character string into the search 
+text box (<A HREF="gsdebug.html#22178" CLASS="XRef">Search text box</A>).
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1019193"></A><A NAME="22178"></A>Search text box</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1019197"></A><IMG SRC="gsdebug-65.gif" ALIGN="BASELINE">
+</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1019198"></A>Press <B CLASS="Callout">
+Enter</B>
+ to perform a forward search on the source file for the first instance 
+of a specific character string. After having specified <KBD CLASS="Code">
+main</KBD>
+ in the search text box, the example program 
+in <A HREF="gsdebug.html#17715" CLASS="XRef">Searching for a word in source code</A> shows the jump to a <KBD CLASS="Code">
+main</KBD>
+ function.
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1019203"></A><A NAME="17715"></A>Searching for a word in source code</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1019207"></A><IMG SRC="gsdebug-66.gif" ALIGN="BASELINE">
+</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1019208"></A>Use the <B CLASS="Callout">
+Shift</B>
+ and <B CLASS="Callout">
+Enter</B>
+ keys simultaneously to search for the string. Use the <B CLASS="Callout">
+Enter</B>
+ key or the <B CLASS="Callout">
+Shift</B>
+ and <B CLASS="Callout">
+Enter</B>
+ keys to repeat the search. Type &quot;<KBD CLASS="Code">@</KBD>&quot; with a number in the search text box and press <B CLASS="Callout">
+Enter</B>
+ to <A NAME="marker-1019209"></A>jump to a specific line number in the source code. 
+The example program in <A HREF="gsdebug.html#19711" CLASS="XRef">Searching for a specific 
+line in source code</A> shows a jump to the line 86.
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1019257"></A>Searching for a specific line in source code</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1019254"></A><IMG SRC="gsdebug-67.gif" ALIGN="BASELINE">
+</P></LI></OL>
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1005098"></A><A NAME="_Toc419784884"></A>
+Setting Breakpoints and Viewing Local Variables
+<A NAME="marker-1005097"></A></H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002432"></A>A <A NAME="marker-1002431"></A>breakpoint can be set at any executable line in a source file. Executable lines are marked by a minus sign in the left margin of the <SPAN CLASS="Bold">
+Source Window</SPAN>. When the cursor is in the left column and it is over an executable line, it changes into a circle. When the cursor is in this state, a breakpoint can be set.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002436"></A>The following exercise steps you through setting four breakpoints in a function, as well as running the program and viewing the changing values in the local variables.</P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-1002437"></A>With the <SPAN CLASS="Bold">
+Source Window</SPAN>
+ active and the main.c source file open, the cursor was placed over the minus sign on line 6. </LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1010987"></A>When the minus sign changes into a circle, click the left mouse button; this sets the breakpoint, indicated by a colored square. </LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1010988"></A>Click on a breakpoint to remove the breakpoint.</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002442"></A>Repeat the process to set breakpoints at specific lines. </LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002444"></A>Open the <SPAN CLASS="Bold">
+Breakpoints</SPAN>
+ window (<A HREF="gsdebug.html#18276" CLASS="XRef">Breakpoints window</A>).
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002452"></A><B CLASS="Callout">
+Breakpoints</B>
+<A NAME="18276"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002456"></A><IMG SRC="gsdebug-68.gif" ALIGN="BASELINE">
+</P></LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002457"></A>Click the check box for a line to set a breakpoint in an executable. The box's color changes and the square's color of the line in the <SPAN CLASS="Bold">
+Source Window</SPAN>
+ changes (<A HREF="gsdebug.html#15622" CLASS="XRef">Disabling a breakpoint in 
+Breakpoints window</A>). This color change indicates a disabling of the breakpoint. 
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1019293"></A><A NAME="15622"></A>Disabling a breakpoint in <B CLASS="Callout">
+Breakpoints</B>
+ window
+</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1019297"></A><IMG SRC="gsdebug-69.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body"><A NAME="pgfId-1019290"></A>Re-enable the breakpoint at the line by clicking the check box in the <SPAN CLASS="Bold">
+Breakpoints</SPAN>
+ window.</P>
+</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002460"></A>Click the <B CLASS="Callout">
+Run</B>
+ button on the tool bar to start the executable (see <A HREF="gsdebug.html#14987" CLASS="XRef">Run button</A>). The program runs until it hits the first breakpoint. The color bar on the line changes color, indicating that the program is running (see settings in <A HREF="gsdebug.html#18276" CLASS="XRef">Breakpoints window</A> changed in <A HREF="gsdebug.html#15622" CLASS="XRef">Disabling a breakpoint in Breakpoints window</A>, and the <B CLASS="Callout">
+Source Window</B>
+ in <A HREF="gsdebug.html#26473" CLASS="XRef">Results of setting breakpoints at line 105</A>, 
+after debugging stopped).
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002472"></A><A NAME="26473"></A>R<A NAME="marker-1002469"></A>esults of setting <A NAME="marker-1002470"></A>breakpoints at line 105</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002476"></A><IMG SRC="gsdebug-70.gif" ALIGN="BASELINE">
+</P>
+</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002477"></A>Open the <B CLASS="Callout">
+Local Variables</B>
+ window (<A HREF="gsdebug.html#13562" CLASS="XRef">Local Variables window</A>), by clicking the <B CLASS="Callout">
+Local Variables</B>
+ button in the tool bar. The window displays the initial values of the variables.
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1019327"></A><B CLASS="Callout">
+Local Variables</B>
+<A NAME="13562"></A> window</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1019331"></A><IMG SRC="gsdebug-71.gif" ALIGN="BASELINE">
+</LI><LI CLASS="NumberedNext">
+<A NAME="pgfId-1002487"></A>Click the <B CLASS="Callout">
+Continue</B>
+ button in the tool bar to move to the next br<A NAME="marker-1002488"></A>eakpoint. The variables that have changed value turn color in the <B CLASS="Callout">
+Local Variables</B>
+ window (see results in <A HREF="gsdebug.html#Figure 108" CLASS="XRef">Local Variables window after setting breakpoints</A> for line 105 in the <KBD CLASS="Code">
+main.c</KBD>
+ example).
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002494"></A><B CLASS="Callout">
+Local Variables</B>
+<A NAME="Figure 108"></A> window after <A NAME="marker-1002493"></A>setting breakpoints</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002498"></A><IMG SRC="gsdebug-72.gif" ALIGN="BASELINE">
+</LI><LI CLASS="NumberedNext">
+<A NAME="pgfId-1002499"></A>
+Click the 
+<B CLASS="Callout">
+Continue</B>
+button two more times to step through the next two breakpoints and notice that 
+the values of the <A NAME="marker-1002500"></A>local variables change (compare results 
+from the 
+<KBD CLASS="Code">
+main.c</KBD>
+example program in <A HREF="gsdebug.html#26473" CLASS="XRef">Results of setting breakpoints at line 105</A> and results in <A HREF="gsdebug.html#15007" CLASS="XRef">File after changing local variables values</A>). Repeat with the <B CLASS="Callout">
+Continue</B>
+ button to step through breakpoints and notice their values change.
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002508"></A><A NAME="15007"></A>File after changing local variables values</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002512"></A><IMG SRC="gsdebug-73.gif" ALIGN="BASELINE">
+</P></LI></OL
+</DIV>
+<DIV>
+<H1 CLASS="Heading1Top">
+<A NAME="pgfId-1002514"></A><A NAME="22969"></A>Setting Breakpoints on Multiple Threads</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002516"></A>With Insight processing in a multi-thread environment, select threads and set breakpoints on one or more threads when debugging. </P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1005420"></A>WARNING! </H3>
+<P CLASS="Note">
+<A NAME="pgfId-1005421"></A>Multiple thread functionality does not work similarly on all embedded targets. When debugging C++ code, for instance, breakpoints and exceptions may not work on multiple threads.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1005409"></A>A process can have multiple threads running concurrently, each performing a different task, such as waiting for events or something time-consuming that a program doesn't need to complete before resuming. When a thread finishes its job, the debugger suspends or destroys the thread running in the debugging process.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002517"></A>The thread debugging facility allows you to observe all threads while your program runs. However, whenever the debugging process is active, one thread in particular is always the focus of debugging. This thread is called the <EM CLASS="Emphasis">
+current thread.</EM>
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002518"></A>
+The precise semantics of threads and the use of threads differs depending on operating systems. 
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1019511"></A>In general, the threads of a single program are like multiple processes--except that they share one address space (that is, they can all examine and modify the same variables). Additionally, each thread has its own registers and execution stack, and perhaps private memory.</P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-1002521"></A>In the <B CLASS="Callout">
+Source Window</B>, right click on an executable line without a breakpoint to 
+open the breakpoint pop-up menu (see <A HREF="gsdebug.html#38675" CLASS="XRef">Breakpoint 
+pop-up menu in the Source Window</A>).</LI>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002526"></A><A NAME="38675"></A>Breakpoint pop-up menu in the <B CLASS="Callout">
+Source Window</B>
+</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002530"></A><IMG SRC="gsdebug-74.gif" ALIGN="BASELINE">
+&nbsp;</P></LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-1002531"></A>Select the <B CLASS="Callout">
+Set Breakpoint on Thread(s)</B>
+ menu item. The <B CLASS="Callout">
+Processes</B>
+ window displays (<A HREF="gsdebug.html#32738" CLASS="XRef">Process window for threads</A>).</LI>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002537"></A><B CLASS="Callout">
+Processes</B>
+<A NAME="marker-1002535"></A><A NAME="32738"></A> window for threads</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002541"></A><IMG SRC="gsdebug-75.gif" ALIGN="BASELINE">
+</P>
+</LI><LI CLASS="NumberedNext">
+<A NAME="pgfId-1002542"></A>By clicking on specific breakpoints, select one or more threads. A breakpoint sets in the <B CLASS="Callout">
+Source Window</B>
+ at the executable line only for the selected threads. Having selected threads, the results display in the <B CLASS="Callout">
+Processes</B>
+ window. With the cursor over a breakpoint at line 105 in the sample program in the <B CLASS="Callout">
+Source Window</B>, a <EM CLASS="Emphasis">
+breakpoint information balloon</EM>
+<A NAME="marker-1002543"></A> displayed to show where the selected thread begins (<A HREF="gsdebug.html#29394" CLASS="XRef">Breakpoint balloon with thread information in Source Window</A>).</LI>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002548"></A><A NAME="29394"></A>Breakpoint balloon with thread information in <B CLASS="Callout">
+Source Window</B>
+</P>
+<P CLASS="Figure">
+<A NAME="pgfId-1002553"></A><IMG SRC="gsdebug-76.gif" ALIGN="BASELINE">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002555"></A><A NAME="marker-1002554"></A></P></LI></OL>
+<P CLASS="Body">
+<A NAME="pgfId-1000841"></A></P>
+</DIV>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_gs.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="gstarget.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="gstools.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

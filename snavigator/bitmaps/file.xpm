@@ -1,0 +1,25 @@
+/* XPM */
+static char * file_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+/* pixels */
+"  ........      ",
+"  .XXXXXX..     ",
+"  .X...XX...    ",
+"  .XXXXXX....   ",
+"  .X.X...XXX.   ",
+"  .XXXXXXXXX.   ",
+"  .X.X...X.X.   ",
+"  .XXXXXXXXX.   ",
+"  .X...X...X.   ",
+"  .XXXXXXXXX.   ",
+"  .X..X.X..X.   ",
+"  .XXXXXXXXX.   ",
+"  .X..X....X.   ",
+"  .XXXXXXXXX.   ",
+"  ...........   ",
+"                "};

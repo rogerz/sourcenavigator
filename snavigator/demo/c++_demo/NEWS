@@ -1,0 +1,1034 @@
+$Header$
+
+Glish changes
+=============
+
+10Mar95:
+	- 2.5.0 release.  You must recompile and relink your present
+	  Glish clients.  To build Glish 2.5, you need flex 2.4.6 or higher
+	  (current is 2.4.7), which you can get from ftp.ee.lbl.gov.  The
+	  Glish installation has changed considerably - see README.
+
+	- Glish now runs under SunOS, IRIX, HP-UX, Solaris, and AIX.
+
+	- Included in the Glish distribution is a "contrib/" directory
+	  containing contributed (but not supported) Glish clients.
+	  Presently, contrib/ includes a Glish <-> Tcl/TK interface,
+	  a Glish <-> Perl 5.0 interface, and a (fledgling) Glish <-> EPICS
+	  interface.
+
+	- Four new types have been added: byte (unsigned integer in the
+	  range 0 .. 255), short, complex, and dcomplex (double-precision
+	  complex).  The first two were contributed by Chris Saltmarsh,
+	  the last two by Darrell Schiebel.  To create a byte or short
+	  value, use as_byte(x) or as_short(x) for some integer x.
+	  dcomplex constants are specified using the same notation as in S:
+
+		5 + 3i
+		6-2.93i
+		3.14i
+
+	  all specify double-precision complex constants.  To create a
+	  single-precision complex value, use as_complex(x).  The function
+	  complex(r,i) returns a complex/dcomplex value whose real parts are
+	  taken from the vector 'r' and imaginary parts from 'i'.  The four
+	  new types are all "numeric" and support the usual numeric operations
+	  (with the complex operators patterned after S).  Type promotion
+	  is now ordered as: bool, byte, short, integer, float, double,
+	  complex, dcomplex, except that mixing double with complex promotes
+	  to dcomplex.  The real part of an imaginary value is retrieved
+	  using the real(z) function, and the imaginary part using imag(z).
+
+	- A general framework of "attributes" associated with a value has
+	  been contributed by Darrell Schiebel.  A value's attributes are
+	  accessed using the "::" operator.  For example,
+
+		a::foo := 1:3
+
+	  assigns [1, 2, 3] to a's "foo" attribute (regardless of a's type).
+	  Then executing
+
+		a::bar := a::foo * 2
+
+	  would assign [2, 4, 6] to a's "bar" attribute.  A value's attributes
+	  are themselves a record value (whose elements might also have
+	  attributes).  To assign all of a value's attributes:
+
+		a:: := [foo=1:3, bar=(1:3)*2]
+
+	  and to access the record directly, just use the expression "a::".
+	  When values with attributes are operated on, the attributes of the
+	  operand (if a unary operator) or the longer operand (binary operator)
+	  are propagated to the result.
+
+	- Using these attributes, Darrell has also added multi-dimensional
+	  arrays (Darrell's been busy!).  In Glish, all values are
+	  intrinsically one-dimensional arrays (which are now referred to
+	  as "vectors").  This underlying vector however can be intrepreted
+	  as a multi-dimensional array by associating a "shape" attribute
+	  with the value.  Thus,
+
+		a := 1:9
+		a::shape := [3,3]
+
+	  associates with a's vector a shape of a 3x3 array.  Printing 'a'
+	  at this point yields:
+
+		[[1:3,]
+		    1 4 7
+		    2 5 8
+		    3 6 9]
+
+	  The first row reports the portion of the array being printed.
+
+	  Arrays are created using the array() function, which takes
+	  as its first argument a value whose vector is used for the
+	  initial array elements, and whose remaining values give the
+	  dimensions of the array.  For example, we could have created 'a'
+	  using:
+
+		a := array(1:9,3,3)
+
+	  As discussed above concerning propagation of attributes, operating
+	  on arrays preserves their dimensionality.  Arrays of different
+	  shape but the same number of elements can be mixed in operations;
+	  the result has the shape of the lefthand operand.
+
+	  Arrays can be indexed in several ways.  As before, a boolean index
+	  serves as a mask for selecting array elements.  Arrays can also
+	  be indexed using multiple subscripts:
+
+		a[2,1]
+
+	  yields 2,
+
+		a[1:2,2:3]
+
+	  yields
+
+		[[1:2,]
+		    4 7
+		    5 8]
+
+	  while
+
+		a[2:3,]
+
+	  yields
+
+		[[1:2,]
+		    2 5 8
+		    3 6 9]
+
+	  and
+
+		a[,1:2]
+
+	  yields
+
+		[[1:3,]
+		    1 4
+		    2 5
+		    3 6]
+
+	  Arrays can also be indexed using another array with as many
+	  columns as 'a' has dimensions.  This operation is referred to
+	  as a "pick".  Each row in the index array specifies a single
+	  element from 'a'.  For example, given
+
+		d := array([1,2,2,3],2,2)
+
+	  then a[d] selects a[1,2] and a[2,3], yielding [4, 8].
+
+	- Glish now supports "subreferences" to portions of arrays.  For
+	  example,
+
+		a := [1, 3, 5, 7, 9, 11, 13]
+		b := ref a[[2, 6]]
+
+	  associates 'b' with the 2nd and 6th element of 'a'.  This association
+	  lasts until either 'a' or 'b' is assigned to.  Assigning to elements
+	  of 'a' or 'b', though, preserves the connection.  For example,
+
+		b[2] := 14
+
+	  changes the value of 'a' to [1, 3, 5, 7, 9, 14, 13].  Subreferences
+	  also work with multi-dimensional arrays.  Subreferences were
+	  contributed by Darrell Schiebel.
+
+	- Glish is now configured using an autoconf-generated "configure"
+	  script.  This means to build Glish, you go to the top level
+	  directory and type "./configure".  The script then generates
+	  Makefile (from Makefile.in) and config.h (from config.h.in)
+	  files, which contain all of the system dependencies for your
+	  environment.  The SDS library has not yet been converted to
+	  autoconf, nor has the new editline library (see below), though
+	  they use it for minor configuration issues such as which C compiler
+	  to use.
+
+	- When run interactively, Glish now uses the "editline" library
+	  written by Simmule Turner and Rich Salz, and integrated into
+	  Glish by Darrell Schiebel.  Editline lets you do emacs-style
+	  line editing on the text you type to the Glish interpreter,
+	  similar to "tcsh".  If for some reason you don't want to use
+	  editline (or it doesn't built for your system), you can turn
+	  off its use by undefining USE_EDITLINE in glish/input.h.
+
+	- The new prod(...) function returns the scalar product of its
+	  arguments, analogous to the existing sum(...) function.  (DS)
+
+	- The new missing() function returns a boolean vector which is T
+	  if the corresponding argument (numbered from left to right) was
+	  missing in the present call to the function (and thus took on
+	  its default value), or F if the argument was explicitly passed. (DS)
+
+	- In conjunction with this missing() function, you can now omit
+	  positional arguments in function calls.  E.g., foo(1,,,5).
+
+	- The length() function now returns a vector of the lengths
+	  of its arguments.  So length(1:5, 2:20) returns [5, 19]. (DS)
+
+	- rep() can now be called with non-scalar arguments. (DS)
+
+	- min(), max(), and range() are now correctly documented to operate
+	  on an arbitrary number of arguments.
+
+	- The sync(c) function can be called to synchronize the Glish
+	  script's execution with that of client 'c'.  The call does not
+	  return until client 'c' has processed all events/requests previously
+	  sent to it.
+
+	- The sort(x) function returns the vector x sorted into ascending
+	  order.  x's type must be either numeric or string.  (This function
+	  is written entirely in Glish, by the way.)
+
+	- sort_pair(x,y) rearranges the elements of y to reflect the order
+	  of the elements of x (x and y must have the same length).  For
+	  example, sort_pair([3,1,2], "a b c") returns "b c a", since "b"
+	  was paired with the smallest element of [3,1,2], "c" with the
+	  second smallest, and "a" with the largest.
+
+	- order(x) returns the indices of the sorted elements of x.  So,
+	  for example, x[order(x)] == sort(x).
+
+	- The precedence of the val/ref/const operators has been changed.
+	  It used to be very low, and now is very high (equivalent to the
+	  '!' operator).  This fixes a bug in grouping
+		val a := 5
+	  as
+		val (a := 5)
+
+	- The "glish.init" startup Glish script is now compiled into the
+	  Glish interpreter, and no longer needs to be located at run-time.
+	  Related to this, the $glish_init environment variable is no longer
+	  used to locate an alternative glish.init file at run-time.
+
+	- The SDS library has been heavily modified, courtesy of Chris
+	  Saltmarsh and Todd Satogata.  The main changes are improved
+	  buffering and bug fixes.
+
+	- A new member function, Client::Error(const char* msg), is available
+	  for Glish clients to post an "error" event.  There is also a version
+	  that formats its message using a single string argument,
+	  Client::Error(const char* fmt, const char* arg).  Eventually these
+	  routines will correctly indicate errors for request/reply events,
+	  but at present they don't.
+
+	- Client::AddInputMask now returns the number of new input fd's
+	  it added to the mask.
+
+	- Client::HasSequencerConnection() is deprecated; use
+	  Client::HasInterpreterConnection() instead.
+
+	- A new member function Client::PostEvent(const char* event_name,
+	  const char* event_fmt, const char* arg1, conts char* arg2), posts
+	  an event with the given name and a printf-format taking two
+	  string arguments.
+
+	- A new member function Client::ReplyPending() returns true if the
+	  client has a request/reply pending and false otherwise.
+
+	- You can now call Client::PostEvent with a nil Value pointer for the
+	  event's value, if you know the value will be ignored.
+
+	- The GlishEvent class has been spruced up a bit, and now supports
+	  a member function IsRequest() which returns true if the event was
+	  a request and false otherwise.
+
+	- If a Glish client is fired up standalone (from a shell instead
+	  of via Glish), by default it now considers itself to not have
+	  any event source.  Calls to NextEvent() will return nil, and
+	  calls to PostEvent() will simply discard the posted events.  To
+	  force the client to use stdin as its event source and stdout
+	  as its event sink, run it with "-glish" as the first argument.
+
+	- The "bool" C++ type has been changed to "glish_bool" to avoid
+	  conflicts with ANSI C++, which has a builtin "bool" type.  A
+	  number of Value and Client member functions that used to have
+	  bool operands now have int operands instead.
+
+	- The abbreviations of "true" and "false" for "glish_true" and
+	  "glish_false" have been removed, due to conflict with ANSI C++.
+
+	- Value::FieldVal( const char field[], charptr& val ) is now
+	  correctly typed as FieldVal( const char field[], char*& val ),
+	  reflecting the fact that the caller should delete val when
+	  done with it.
+
+	- The C language Glish client interface is no longer supported.
+
+	- Glish now builds with flex 2.4.7.
+
+	- A bug was fixed in using boolean values in arithmetic operations.
+
+	- A bug was fixed in recognizing "established" events from clients
+	  running on the same host as the Glish interpreter.
+
+	- Some minor memory leaks have been fixed.
+
+
+23Aug93:
+	- 2.4.1 release.  If you relink a Glish client to the libglish.a
+	  of this release, then you *must* also recompile any of the
+	  client's sources that create Client objects (because they've
+	  changed in size).
+
+	- A new overview paper, "Glish: A Software Bus for High-Level
+	  Control", is available in doc/ICALEPCS-93.ps.  It is slanted
+	  towards using Glish for accelerator control (rather than as
+	  a general software bus).
+
+	- Glish now has a mechanism for synchronous request/reply events:
+
+		result := request a->b( 1:10 )
+
+	  sends a "b" event to "a" with value 1:10 and then waits for "a" to
+	  reply.  The value of a's reply is stored in "result".  Note that
+	  "request" is a new keyword, which may cause incompatibilities
+	  (syntax errors) with existing scripts that have variables with
+	  that name.
+
+	  "a" must be a Glish client (not a user agent such as a subsequence).
+	  The client responds to a request using the Client::Reply member
+	  function (it is up to the client to know which of the different
+	  events it receives correspond to request/reply).  Glish generates
+	  a warning if the client first generates any other event (i.e., by
+	  using Client::PostEvent) or if Client::Reply is used when a request
+	  is not pending.  Presently, when a request/reply is active no other
+	  events are read by the Glish interpreter until the reply is received;
+	  perhaps this will change in the future, as we understand request/
+	  reply usage better.  Another possible future change is the addition
+	  of a timeout.
+
+	  See the Glish User Manual for details.
+
+	- The "event-send" statement now takes an optional "send" keyword.
+	  That is, you can write
+
+		foo->bar( args )
+
+	  instead as
+
+		send foo->bar( args )
+
+	  The belief is that using "send" will lead to more readable scripts,
+	  and the plan is to gradually phase in "send" as a mandatory keyword.
+
+	- A new member function
+	
+		int Client::HasEventSource()
+
+	  returns true if a Glish client has *any* input source (either
+	  a connection to the Glish interpreter, or by reading from stdin),
+	  and false if it has no input source (due to using -noglish).
+
+	- The "[]" expression now creates a truly empty array; previously it
+	  created an array with a single element, the boolean constant F.
+	  Such empty arrays can be used when constructing other arrays,
+	  even if the other array elements have incompatible types.  For
+	  example,
+
+		["foo", "bar", []]
+
+	  constructs a two-element string array, but
+
+		["foo", "bar", [T]]
+
+	  results in an error because the types "string" and "boolean"
+	  are incompatible.
+
+	- A bug introduced in the last release in which the completion of
+	  an "await" statement could lead to $value not being set has been
+	  fixed.
+
+	- A backward-compatibility bug in reading Glish datasets/SDS's
+	  written with old versions of Glish has been fixed.
+
+
+26Jul93:
+	- 2.3.2 release.
+
+	- Fixed slow memory leak in sending events.
+
+	- A number of minor tweaks to keep cfront-derived C++ compilers happy.
+
+
+21Jul93:
+	- 2.3.1 release.
+
+	- New "activate" and "deactivate" statements can be used to
+	  control whether the body of a "whenever" statement is active
+	  (i.e., whether it's executed when its corresponding event
+	  comes in).
+
+	- Four new built-in functions support the activate/deactivate
+	  statements:
+
+		whenever_stmts(agent)
+			returns a record listing the event names and
+			"whenever" statements indices corresponding to
+			the given agent.
+
+		active_agents()
+			returns a record array listing all of the currently
+			active agents.
+
+		current_whenever()
+			returns the index of the currently-executing (or
+			most recently-executed) "whenever" statement.  Here
+			"executing" refers to executing the *body* of
+			the "whenever" statement.
+
+		last_whenever_executed()
+			returns the index of the last executed whenever
+			statement, where "executed" refers to the statement
+			as a whole and not to its body.
+
+	- Each host now runs at most one copy of the Glish daemon glishd.
+	  glishd listens on TCP port 9991 for connections from Glish
+	  interpreters.  When it receives one it opens a socket connection
+	  which the interpreter uses to communicate with the daemon by
+	  sending it events, much as before.  Each daemon can support
+	  multiple interpreters at the same time.  If an interpreter finds
+	  that no daemon is presently running on a remote host then it
+	  creates one using rsh as before.  The daemon does not, however,
+	  exit when the interpreter does, but instead persists.  This means
+	  that you may find encounter a daemon owned by someone else running
+	  on a machine you want to use.  For the present the assumption is
+	  that this is not a major problem; but conceivably you might need
+	  the daemon to be running with your uid and not some other persons.
+	  For now what you do is tell the daemon to exit using the
+	  "tell_glishd" program (see below).  In the future we may have to
+	  make the daemon setuid-root so it can change its uid as needed.
+
+	- The Glish interpreter probes each remote daemon every five seconds
+	  by sending it a "probe" event.  If the daemon does not reply to
+	  this event within the next five seconds, the interpreter deems
+	  network connectivity lost, issues a warning, and generates a
+	  "connection_lost" event for the global "system" agent (see next
+	  item).  If the daemon subsequently replies to a later probe, the
+	  interpreter reports this fact and generates a "connection_restored"
+	  event.  If the daemon dies or is killed using tell_glishd, the
+	  interpreter generates a "daemon_terminated" event.
+
+	- A new agent record, "system", manages information about the
+	  general environment in which a script runs.  "system" presently
+	  has two information fields:
+
+		system.version
+			The version number of the Glish interpreter.
+		
+		system.is_script_client
+			True if this script is a client of another script,
+			false otherwise.
+
+	  "system" also generates the following events:
+
+		system->connection_lost
+			Indicates that connectivity to a remote host has
+			been lost.  The event value names the host.
+
+		system->connection_restored
+			Indicates that connectivity to a remote host has
+			been recovered.  The event value names the host.
+
+		system->daemon_terminated
+			Indicates that Glish daemon on a remote host has
+			died.  Again, the event vlue names the host.
+
+	  You can set up "whenever"'s for these events just like for those
+	  generated by any other agent.
+
+	  If you find you'd like other "system" events, let me know; in
+	  general they're not hard to add.
+
+	- The "version" global has been removed, since it's now subsumed
+	  by "system.version".
+
+	- Glish now supports an "include" directive for including the
+	  contents of a source file:
+
+		include "foo.g"
+
+	  includes the contents of the file "foo.g".  There's no limit
+	  on the nesting-depth.
+
+	- When running Glish interactively, you can now create clients and
+	  execute "whenever" statements.  You also can execute scripts by
+	  "include"'ing them.
+
+	- You can now use the "==" and "!=" operators to compare non-numeric,
+	  non-string values.  Two such values compare as equal if they refer
+	  to exactly the same entity.  For example,
+
+		a := [b=1, c=2]
+		d := [b=1, c=2]
+		e := ref a
+		print a == a, a == d, a == e
+
+	  prints T, F, T.
+
+	- Glish now allows only one filename on the command line (since
+	  the "include" directive can be used to access multiple sources).
+	  Because of this change, you no longer need the special "--"
+	  argument to delimit the end of source filenames and the beginning
+	  of script arguments.  Instead, every argument save the first is
+	  treated as a script argument.  "--" is still allowed, though, for
+	  backward compatibility.
+
+	- A new program (not a Glish client), tell_glishd, is available for
+	  controlling the Glish daemon on a given host.  Presently all you
+	  can do with tell_glishd is kill the daemon running on a given
+	  host.  You do so using:
+
+		tell_glishd -k [host]
+
+	  As indicated, "host" is optional; it defaults to the local host.
+
+
+03Jun93:
+	- 2.2.2 release.
+
+	- Fixed deadlock problems when using multiple point-to-point links.
+
+	- Local point-to-point links no longer use named pipes, but
+	  Unix-domain sockets instead.
+
+	- Fixed bug in which a broken link was treated by the sink
+	  side as a "terminate" event.
+
+	- Added file version.h for tracking version number.
+
+
+20May93:
+	- 2.2.1 release; Client::FD_Change virtual function was
+	  completely broken.
+
+
+19May93:
+	- 2.2 release.
+
+	- Assignment (":=") is now an expression instead of a statement,
+	  so you can string multiple assignments together like in C:
+
+		a := b := 1
+
+	- Compound assignments such as "x +:= 1" are now supported.
+
+	- "local" statements can include initializations:
+
+		local x := 5
+
+	- You can use a Glish script as a client in another Glish script:
+
+		c := client("glish myscript.g")
+
+	  There's a new, associated global variable called "script", which
+	  is either boolean "F" if the script is running independently,
+	  or an agent that can be used to send and receive events from the
+	  script if being run as a script client.
+
+	- An "opaque" type is available for client data (SDS's) that are
+	  uninterpreted by Glish (it just provides a mechanism for conveying
+	  them between clients).
+
+	- The division operator now always converts its operands to
+	  Glish "double" values and yields a double value.
+
+	- The Client class has a new virtual member function, Client::FD_Change,
+	  that you can redefine when deriving from Client to receive
+	  notification of when a Client's input sources change.
+
+	- The manual includes a new chapter, "Changes Between Glish Releases",
+	  summarizing this information and providing pointers to fuller
+	  descriptions in the Glish user manual.
+
+	- Some portability tweaks for HP/UX.
+
+
+21Jan93:
+	- 2.1 release.
+
+	- User documentation is now available in doc/User-Doc.ps.
+
+	- An "ind(x)" function has been added which returns the
+	  indicies corresponding to an array value.  For example,
+
+		ind("hello, how are you?")
+
+	  returns [1 2 3 4], since the argument has four elements.
+
+
+13Jan93:
+	- Records can now be indexed in the same manner as arrays, i.e.,
+	  with integer or boolean arrays.  For example,
+
+		r := [a=1, b=2]
+		r[1] := 5
+		r[2] := "hi"
+		print r
+
+	  prints "[a=5, b=hi]".  You also can add fields to a record:
+
+		r := [=]	# create an empty array
+		r[1] := 5
+		r[2] := "hi"
+		print r
+
+	  prints "[*1=5, *2=hi]", where "*1" and "*2" are internal names
+	  for the new record fields just created.
+
+	  This style of record access allows you to create what are
+	  effectively arrays of records, functions, or agents, without
+	  the restriction (and type-checking) that every element of the
+	  array has the same type.
+
+	- Added BSD-style copyright notice to sources.
+
+
+01Dec92:
+	- PostScript for a 15-page paper describing Glish is now available in
+	  glish/doc/USENIX-93.ps.  The paper will appear in the proceedings
+	  of the 1993 Winter USENIX conference.
+
+	- Glish now supports "link" and "unlink" directives for creating
+	  and suspending point-to-point connections between Glish clients.
+	  Events sent point-to-point are *not* seen by the sequencer;
+	  they do not trigger "whenever"'s.  The "link" syntax looks like:
+
+		link a->b to c->d
+
+	  This causes all of a's "b" events to go directly to c, which
+	  will see them as "d" events.  You can also use:
+
+		link a->b to c->*
+
+	  which passes the event along without changing its name (i.e.,
+	  it's still called "b").  The "unlink" directive looks the same:
+
+		unlink a->b to c->d
+
+	  suspends the point-to-point connection, so a's "b" events will
+	  now be seen by the sequencer and trigger any corresponding
+	  "whenever"'s.  Doing another "link" reactivates the link.
+
+	- The Client library has undergone several user-visible changes:
+
+	  An "void Unrecognized()" member function has been added; it *must*
+	  be called by a client that does not recognize a particular event.
+
+	  "int ReadFD()" has been replaced by routines oriented towards
+	  use of select().  "void AddInputMask( fd_set* mask )" is passed
+	  an fd_set mask used by select() and adds to it those bits
+	  corresponding to the Client's input sources.  You then can use
+	  "int HasClientInput( fd_set* mask )" to determine whether a
+	  mask returned by select() indicates that the client has pending
+	  input (i.e., one or more events has arrived).  The function returns
+	  true or false.
+
+	  A new version of NextEvent() is available; it is passed an fd_set*
+	  mask which it uses to determine from where to read the next event.
+
+	  "int WriteFD()" has been removed.
+
+	- Communication between the sequencer and processes running on
+	  the same host is now done using pipes, a substantial performance
+	  win.
+
+	- When creating clients or shell tasks an optional input= argument
+	  can be used to set up the program's standard input.  For example,
+
+		shell("wc", input=1:10)
+
+	  will run the "wc" command on the numbers from 1 to 10, one on
+	  each line.
+
+	- shell clients now write their output to a pty if available, so
+	  it is line-buffered.
+
+	- The default "glish.init" file now resides in $(ISTKPLACE)/lib/
+	  instead of $(ISTKPLACE)/glish/.
+
+	- The "loop" keyword has been replaced with "next" ("continue" can
+	  also be used, for die-hard C hackers).
+
+	- The glish interpreter now prints non-string array values with []'s
+	  around them.
+
+	- The predefined family of "relay" functions now treat a "destination
+	  event name" of '*' to mean "use the same name as that the source
+	  generated".
+
+
+01Oct92:
+	- A number of new predefined functions are available: is_function(),
+	  is_agent(), and is_numeric() return true if their argument is
+	  a function, and agent, or a numeric type, respectively.  abs()
+	  returns the absolute value of its numeric argument.  len() is
+	  an alias for length().  rep() takes two arguments, a "value" and
+	  a "count", and returns an array of "count" copies of "value".
+	  For example, rep(5,3) is [5, 5, 5].
+
+	- Clients can be suspended by including "suspend=<executable>" on
+	  the Glish command line.  For example, "glish suspend=myprog foo.g"
+	  will run Glish on "foo.g" and whenever a client whose executable
+	  is called "myprog" is begun, it will act as though "suspend=T" had
+	  been specified in the client() call.
+
+	- When clients are suspended they now announce themselves along
+	  with their host and PID.
+
+	- The "await" statement has been modified to by default process
+	  all other events until the await'd for event(s) arrives.  A
+	  special version of await, using the keyword "only", will not
+	  process the events unless they match the "except" list.
+
+	- The Value class's constructors for creating Value's from arrays
+	  now take an enumerated type as an optional third argument indicating
+	  what degree of control the Value is to assume over the array.
+	  A value of TAKE_OVER_ARRAY (default) indicates that the array
+	  is now the Value's to manage as it pleases (perhaps dynamically
+	  growing it, and definitely deleting it when done with it); a value
+	  of COPY_ARRAY indicates that the Value should first make a copy of
+	  the array; and a value of PRESERVE_ARRAY indicates that the Value
+	  should use the array but not dynamically grow it or delete it.
+	  COPY_ARRAY is often appropriate for arrays created on the stack
+	  in routines that will exit, and PRESERVE_ARRAY is good for static
+	  or global arrays, or arrays that are shared among a number of
+	  Value's.  The third argument used to be a boolean, with false
+	  corresponding to TAKE_OVER_ARRAY and true to COPY_ARRAY.
+
+	- Any line can now be forcibly continued to the next line by
+	  escaping its newline.  For example,
+
+		a := b
+		+c
+
+	  is normally interpreted as two statements because a semi-colon
+	  is inserted after "b", but
+
+		a := b \
+		+ c
+
+	  is interpreted as one statement.
+
+	- The output of shell() commands no longer has a newline at the
+	  end of each line; they are stripped off.
+
+	- The Glish "fatal" global has been #define'd to actually be
+	  named "glish_fatal" to avoid somewhat frequent name clashes
+	  when linking Glish clients to other libraries.
+
+	- A bug has been fixed with accessing $value during an "await".
+
+	- The List class has been modified so that many of BaseList's
+	  member functions are now protected.  Before this change it was
+	  possible to use the wrong type when inserting into a list and
+	  have the compiler fail to catch the problem.
+
+	- The Dictionary class is now implemented using dynamically
+	  extended hash tables.  Dictionary's can optionally be specified
+	  as "ordered", in which case the elements can be accessed
+	  in array-fashion, with index 0 corresponding to the first element
+	  inserted into the dictionary, index 1 the second, and so on.
+	  If an element is deleted from a dictionary then all the indicies
+	  are changed to reflect the deletion; for example, if the first
+	  element inserted is deleted, index 0 will then correspond to
+	  what originally was the second inserted element.
+
+
+10Aug92:
+	- Changed the paste() predefined function to take an optional
+	  argument "sep" which designates the string to be used to glue
+	  together the arguments to the call.  For example,
+
+		paste( 3, 5, 7, sep="foo" )
+
+	  results in "3foo5foo7", and
+
+		paste( "Test #", 2 )
+
+	  results in "Test #2".  By default sep is a single blank (' ').
+	  Note that to preserve leading or trailing whitespace in the
+	  separator it must be enclosed in single quotes instead of
+	  double quotes.
+
+	- Fixed bugs in automatic growing of values when elements are
+	  assigned beyond the current end of the value's array.
+
+	- Fixed a bug in constructing string arrays.
+
+	- Fixed a bug with boolean array indicies.
+
+
+05Aug92:
+	- Added "FieldVal" member functions to Value class for quick access
+	  to the scalar values of record fields.
+
+
+28Jul92:
+	- Fixed some minor bugs related to "glishmon", the Glish event
+	  monitor.
+
+	- Fixed some bugs related to read_value()/write_value().
+
+
+24Jul92:
+	- A new set of Value member functions called SetField() have been
+	  added for easily adding fields to records from raw C types (such
+	  as an array of float's).
+
+
+22Jul92:
+	- A -noglish flag has been added to the Client library.  When
+	  run standalone clients by default read stdin to get new events
+	  and write generated events to stdout.  -noglish suppresses the
+	  reading of events from stdin (but not the writing to stdout;
+	  perhaps it should do this too); it's main use is to enable
+	  running standalone clients in the background.
+
+	- Numerous new methods are now available for Value objects, primarily
+	  to make it easy to use Value's in client applications.  See
+	  Glish/Value.h for the latest full list.  The main noteworthy
+	  changes are routines for accessing record fields.  Also, in
+	  general Value member functions are now a bit more lenient regarding
+	  bad calls (for example, requesting a field from a Value that's
+	  not a record), typically returning nil pointers instead of
+	  exiting with a fatal error.
+
+	- A new create_record() function is available to clients for
+	  creating Values of type "record".
+
+	- A bug was fixed in the socket code that could substantially
+	  slow down sending events.  In particular, interactive applications
+	  should now be much snappier.
+
+	- The "glish.init" file, which must be present in order to run
+	  glish, is now found first by checking for the "glish_init"
+	  environment variable.  If the variable is not set then a
+	  hardwired path is used, much as in the past.
+
+	- A couple of bugs were fixed regarding converting values to
+	  strings and from boolean to integer.  These previously
+	  caused core dumps in some cases.
+
+
+05Jun92:
+	- The BoolVal()/IntVal()/DoubleVal() member functions of the Value
+	  class now take an optional argument specifying which element of
+	  the Value to convert and return.
+
+	- Two new predefined functions: all(x) returns true if when interpreted
+	  as a boolean value, all the elements of "x" are true; any(x) returns
+	  true if at least one of the elements of "x" is true.
+
+	- A "terminate" event may now be sent to a client to tell it to
+	  terminate.  The event looks the same to the client as a broken
+	  sequencer connection (i.e., NextEvent() returns 0).
+
+
+04Jun92:
+	- A "C" client library has been written.  See glish_client.h or
+	  doc/glish-diffs for a description of its interface.
+
+	- A bug has been fixed which would cause remotely executed clients
+	  to generate sporadic error messages.
+
+	- A bug in the truncating of long event names has been fixed.
+
+
+15May92:
+	- Glish has undergone major revisions.  See doc/glish-diffs for
+	  a summary of differences between the old version of Glish and
+	  the new (which is Glish version 2.0).
+
+
+12Mar92:
+
+	- The C++ "Client" class has been rewritten to be layered on top
+	  of the C client/event_lib libraries.  The major benefit of this
+	  rewrite is that SDS-valued Glish events are now accessible to
+	  C++ Glish clients.  See "Client.h" in glish/conn for a description
+	  of the relevant member functions.
+
+	- The C++ "Channel" class has been rewritten to be layered on top
+	  of the C ipc_lib library.  This change should be transparent,
+	  except that the ReadStatus() member function has been removed.
+
+	- The C event_lib interface has changed in several ways:
+
+		- event_init() now takes argv passed by *value* rather
+		  than by reference.  I.e., a typical call to event_init()
+		  looks like 
+
+			event_init( &argc, argv );
+
+		  (there used to be a '&' before argv, too).  argv is
+		  now modified *in place*.
+
+		- event_terminate() is a new routine that must be called
+		  for the client to gracefully exit.
+
+		- all routines which take pointer arguments have been
+		  modified to declare those arguments "const" if the
+		  pointer's contents are not modified.
+
+	- The C client_lib interface has two new routines: client_channel()
+	  returns the ipc_lib channel used for the connection (ipc_lib
+	  routines can then be used to read or write from the channel,
+	  or to get the corresponding read/write fd's for use in select()
+	  operations); client_event_available() returns true if another
+	  event is available for processing.
+	  
+	  client_event_available() does *not* do a select(), so events that
+	  have arrived in the local system buffer but that have not yet been
+	  read by the ipc_lib routines do *not* cause client_event_available()
+	  to return true.  These events must be detected using select() calls.
+	  client_event_available() is used to make sure all incoming events
+	  have been exhausted after a select() has indicated that there
+	  are such events, and client_next_event() has been used to read
+	  the first such event.  The typical code fragment looks like:
+
+		  <select is done on several channels; it turns out that the
+		   client channel shows data ready.>
+		  do
+			{
+			char event_name[512], event_value[8192];
+
+			if ( ! client_next_event( event_name, event_value ) )
+				/* Connection terminated - all done */
+				exit( ... );
+
+			<process the event>
+			}
+		  while ( client_event_available() );
+
+	- ipc_lib, client/event_lib have had "const" modifiers attached
+	  to all pointer arguments whose contents are not modified.
+
+	- The basic ipc_lib type has been renamed "IPC_Channel" from
+	  "Channel".
+
+	- The ipc_lib library no longer uses blocking I/O; the associated
+	  data_is_available() routines have been removed (these routines
+	  would check to see whether any IPC data was available in the
+	  ipc_lib buffer, and if not would try to read more data and
+	  see whether the read call returned EWOULDBLOCK).  Instead, use
+	  ipc_{channel_}data_in_buffer(), which returns true if more IPC
+	  data is available in the channel's buffer, and false otherwise.
+	  If you want to know whether more IPC data is available in the
+	  system buffer, you must use select().
+
+	- ipc_lib now provides ipc_channel_write_stream(), which returns
+	  the FILE* associated with the IPC output file.
+
+	- Bugs that broke Glish string comparisons have been fixed.
+
+	- The C++ "ClientWorld" class has a new member function,
+	  CloseConnection(), which gracefully terminates the program's
+	  Glish connection (if any).
+
+
+05Dec91:
+
+	- The Glish sources can now be compiled using cfront-based
+	  C++ compilers, and with Saber-C++ (which requires compiling
+	  with -DSABER).
+
+	- Environment variables are available inside Glish sequences
+	  as "$varname".  They have string values.  At present they
+	  cannot be set to new values.
+
+	- Environment variables can be set for a Glish run by specifying
+	  "var=value" on the Glish sequencer command line.
+
+	- Some debugging support has been added in the form of supplying
+	  a list of task variables on the Glish sequencer command line:
+	  "suspend=foo,bar,bletch" indicates that whenever the tasks
+	  associated with the Glish variables "foo", "bar", or "bletch"
+	  are fired up, they should be given the "suspend" attribute
+	  to allow a debugger to be attached.
+
+	- Glish now supports asynchronous clients (i.e., clients that
+	  can asynchronously "join" a Glish sequence).  Such clients
+	  are declared using the '&' attribute:
+
+		async-client := client<&>( arg1, arg2, ... );
+
+	  Upon executing such a statement, the event variable ".activate"
+	  is created (in the above example, this would be
+	  async-client.activate); its value is the arguments to async-client,
+	  including the magic Glish arguments that client_lib needs to
+	  attach to the sequencer.  Typically these arguments will be
+	  printed out (or sent to another client for display or action).
+	  Once such a client joins the sequence, a ".established" event is
+	  generated as usual.
+
+	- A bug that made Glish constructs such as "when foo & bar -> ..."
+	  not work has been fixed (this wasn't a problem for "whenever"
+	  constructs).
+
+	- If an environment variable "glish_monitor" is set, it indicates
+	  the name of a Glish client (found via $PATH, as usual) to monitor
+	  Glish events.  The client is sent "inbound" events indicating
+	  each event the sequencer receives, and "outbound" events indicating
+	  each event sent out by the sequencer.
+
+
+    Some changes to the C client library (event_lib.a):
+
+	- When an SDS-valued event is sent to a client, "bindings" may
+	  be introduced to bind the names of the elements of the SDS.
+	  For example, a Glish statement such as:
+
+		kaspar.send( sid.SDS, "xval=betax" );
+
+	  will send a "send" event to the "kaspar" client whose value
+	  is the SDS corresponding to the last "SDS" event generated
+	  by "sid".  If "kaspar" looks for an element in that SDS called
+	  "xval", it will actually be given the element called "betax".
+	  Thus, "xval" is in effect a formal parameter that kaspar is
+	  specified to work with, while "betax" corresponds to the actual
+	  parameter that it will find.
+
+	- If a client linked with event_lib.a is invoked outside of
+	  the sequencing system (i.e., stand-alone), then any input
+	  from stdin is treated as though it describes incoming events
+	  (of the form "eventname eventvalue", with a blank separating
+	  the two); any events generated by the client are simply
+	  written to stdout.  Any SDS-valued events the client generates
+	  are written to a file with the same name as the generated event.
+	  To give the client an SDS-valued event as input, use "SDS sdsfile"
+	  as the value of the event (this can be followed by bindings
+	  as described above).  For example, to give a client a "compute"
+	  event whose value is an SDS residing in the file "myvalues",
+	  produce the following on the client's stdin:
+
+		compute SDS myvalues
+
+	- event_init() has been modified to return non-zero if the
+	  client is running within the Glish system, and zero if it
+	  is running stand-alone.
+
+	- Routines have been added to event_lib.h for supporting arrays
+	  of strings; see event_recv_string_ptr() and event_add_string_array().

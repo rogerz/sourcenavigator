@@ -1,0 +1,32 @@
+package require tcltest
+package require eventutils
+
+if {! [winfo exists .t]} {
+    set t [toplevel .t]
+    set pb .t.p
+}
+
+tcltest::test tmeter-variable-1 { Create a ProgressBar and
+        update the linked variable to update the widget } {
+    destroy $pb
+    ProgressBar $pb -width 200
+    pack $pb
+    raise $t
+
+    $pb configure -maxvalue 100
+    $pb configure -labeltext "Label"
+    set num 0
+    $pb configure -variable num
+
+    for {set num 0} {$num < 100} {incr num} {
+        pause 100
+    }
+
+    set c [$pb component canvas]
+    $c itemcget [$c find withtag text] -text
+} 100%
+
+
+
+
+destroy $t

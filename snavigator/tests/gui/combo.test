@@ -1,0 +1,661 @@
+package require tcltest
+package require eventutils
+
+# The Combo& class is currently defined in combo.tcl
+
+if {![winfo exists .t]} {
+    set t [toplevel .t -width 400 -height 400]
+    pack propagate $t 0
+}
+
+set c $t.combo
+
+# This proc returns 1 if the combo popup is showing.
+
+proc is_popup_visible { } {
+    global c
+    if {[grab current] == [$c component arrow]} {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+
+
+
+tcltest::test combo-error-1 { Invalid data to ctor } {
+    destroy $c
+    list [catch {Combo& foo} err] $err
+} {1 {bad window path name "foo"}}
+
+tcltest::test combo-destroy-1 { Destroy the object } {
+    destroy $c
+    Combo& $c
+    list [catch {itcl::delete object $c} err] $err
+} {0 {}}
+
+tcltest::test combo-destroy-2 { Destroy the object } {
+    destroy $c
+    Combo& $c
+    destroy $c
+} {}
+
+tcltest::test combo-destroy-3 { Destroy the object after displaying it } {
+    destroy $c
+    pack [Combo& $c]
+    list [catch {itcl::delete object $c} err] $err
+} {0 {}}
+
+
+
+tcltest::test combo-readonly-1 { check -readonly option } {
+    destroy $c
+    Combo& $c
+    $c cget -readonly
+} 0
+
+tcltest::test combo-readonly-2 { check -readonly option } {
+    destroy $c
+    Combo& $c -readonly 1
+    $c cget -readonly
+} 1
+
+tcltest::test combo-readonly-3 { check -readonly option } {
+    destroy $c
+    Combo& $c
+    list [catch {$c configure -readonly noggy} err] $err
+} {1 {expected boolean value but got "noggy"}}
+
+
+tcltest::test combo-readonly-4 { check that text can
+        not be entered into the entry box when
+        -readonly is set to 1 } {
+    destroy $c
+    Combo& $c
+    pack $c
+
+    set e [$c component entry]
+    enter_text $e HELLO
+    set result [$e get]
+
+    $c configure -readonly 1
+    enter_text $e BOB
+    lappend result [$e get]
+
+    $c configure -readonly 0
+    enter_text $e FRED
+    lappend result [$e get]
+
+    set result
+} {HELLO HELLO FRED}
+
+tcltest::test combo-readonly-5 { changing the -state
+        should not effect the -readonly property } {
+    destroy $c
+    Combo& $c
+    pack $c
+
+    set result [$c cget -readonly]
+    $c configure -state disabled
+    lappend result [$c cget -readonly]
+    $c configure -state normal
+    lappend result [$c cget -readonly]
+
+    set result
+} {0 0 0}
+
+
+tcltest::test combo-contents-1 { check -contents option } {
+    destroy $c
+    Combo& $c
+    $c cget -contents
+} ""
+
+tcltest::test combo-contents-2 { check -contents option } {
+    destroy $c
+    Combo& $c -contents one
+    $c cget -contents
+} one
+
+tcltest::test combo-contents-3 { check -contents option } {
+    destroy $c
+    Combo& $c -contents {one two three four}
+    $c cget -contents
+} {one two three four}
+
+
+
+tcltest::test combo-state-1 { check -state option } {
+    destroy $c
+    Combo& $c
+    $c cget -state
+} normal
+
+tcltest::test combo-state-2 { check -state option } {
+    destroy $c
+    Combo& $c -state normal
+    $c cget -state
+} normal
+
+tcltest::test combo-state-3 { check -state option } {
+    destroy $c
+    Combo& $c -state disabled
+    $c cget -state
+} disabled
+
+tcltest::test combo-state-5 { check -state option } {
+    destroy $c
+    Combo& $c
+    list [catch {$c configure -state foo} err] $err
+} {1 {bad state "foo": must be disabled, or normal}}
+
+tcltest::test combo-state-6 { setting -state disabled
+        should make it impossible to press the arrow button } {
+    destroy $c
+    Combo& $c -state disabled
+    pack $c
+
+    set result {}
+    delay 1 {
+        mouse_click [$c component arrow]
+        set result [is_popup_visible]
+    }
+
+    delay 2
+
+    set result
+} 0
+
+
+
+# Check interaction of the -state and -readonly option
+
+tcltest::test combo-readonly-state-1 { setting -state disabled
+        should make it impossible to type into the entry } {
+    destroy $c
+    Combo& $c
+    pack $c
+
+    set e [$c component entry]
+    enter_text $e ONE
+    set result [$e get]
+
+    $c configure -state disabled
+    enter_text $e TWO
+    lappend result [$e get]
+
+    $c configure -readonly 0
+    enter_text $e THREE
+    lappend result [$e get]
+
+    set result
+} {ONE ONE ONE}
+
+
+tcltest::test combo-readonly-state-2 { setting -state and
+        -readonly should not effect each other } {
+    destroy $c
+    Combo& $c
+    pack $c
+
+    set e [$c component entry]
+    keyevent $e A
+
+    $c configure -state disabled
+    keyevent $e B
+    $c configure -state normal
+
+    keyevent $e C
+
+    $c configure -readonly 1
+    keyevent $e D
+    $c configure -readonly 0
+
+    keyevent $e E
+
+    $c configure -state disabled
+    $c configure -readonly 1
+    keyevent $e F
+    $c configure -readonly 0
+    keyevent $e G
+    $c configure -state normal
+
+    keyevent $e H
+
+    $c configure -readonly 1
+    $c configure -state disabled
+    keyevent $e I
+    $c configure -state normal
+    keyevent $e J
+    $c configure -readonly 0
+
+    keyevent $e K
+
+    $c cget -entrytext
+} ACEHK
+
+
+tcltest::test combo-entry-1 { the combo box entry
+        should be empty by default } {
+    destroy $c
+    Combo& $c
+    [$c component entry] get
+} ""
+
+tcltest::test combo-entry-2 { the combo box entry
+        should be editable by default } {
+    destroy $c
+    Combo& $c
+    pack $c
+    set e [$c component entry]
+    enter_text $e symbol
+    $e get
+} symbol
+
+tcltest::test combo-entry-3 { send an Up button
+        press event to the entry to check that
+        the widget bindings are getting fired } {
+    destroy $c
+    Combo& $c -contents one
+    pack $c
+    set e [$c component entry]
+
+    keyevent $e Up
+    $e get
+} one
+
+tcltest::test combo-entry-4 { send a Down button
+        press event to the entry to check that
+        the widget bindings are getting fired } {
+    destroy $c
+    Combo& $c -contents {one two}
+    pack $c
+    set e [$c component entry]
+
+    keyevent $e Down
+    $e get
+} two
+
+tcltest::test combo-entry-5 { check the order
+        the -contents options appear in the
+        drop down using up and down key events } {
+    destroy $c
+    Combo& $c -contents {one two three four five}
+    pack $c
+    set e [$c component entry]
+
+    set result {}
+
+    keyevent $e Up
+    lappend result [$e get]
+    keyevent $e Down
+    lappend result [$e get]
+    keyevent $e Down
+    lappend result [$e get]
+    keyevent $e Down
+    lappend result [$e get]
+    keyevent $e Down
+    lappend result [$e get]
+
+    set result
+} {one two three four five}
+
+
+
+tcltest::test combo-entryvariable-1 { check -entryvariable option } {
+    destroy $c
+    Combo& $c
+    $c cget -entryvariable
+} ""
+
+tcltest::test combo-entryvariable-2 { check -entryvariable option } {
+    destroy $c
+    Combo& $c -entryvariable foo
+    $c cget -entryvariable
+} foo
+
+tcltest::test combo-entryvariable-3 { check -entryvariable option } {
+    destroy $c
+    set foo BEFORE
+    Combo& $c -entryvariable foo
+    [$c component entry] get
+} BEFORE
+
+tcltest::test combo-entryvariable-4 { check -entryvariable option } {
+    destroy $c
+    Combo& $c -entryvariable foo
+    set foo AFTER
+    [$c component entry] get
+} AFTER
+
+tcltest::test combo-entryvariable-5 { check -entryvariable option } {
+    destroy $c
+    set foo ""
+    Combo& $c -entryvariable foo
+    pack $c
+    enter_text [$c component entry] DURING
+    set foo
+} DURING
+
+
+
+
+
+
+tcltest::test combo-selectcommand-1 { check -selectcommand option } {
+    destroy $c
+    Combo& $c
+    $c cget -selectcommand
+} ""
+
+tcltest::test combo-selectcommand-2 { check -selectcommand option } {
+    destroy $c
+    Combo& $c -selectcommand foo
+    $c cget -selectcommand
+} foo
+
+
+proc entry_text_changed { arg } {
+    global result
+    set result $arg
+}
+
+proc enter_and_leave { e str } {
+    event generate $e <Enter>
+    enter_text $e $str
+    event generate $e <Leave>
+}
+
+
+tcltest::test combo-selectcommand-3 { invoke -selectcommand callback } {
+    destroy $c
+    set result NOTSET
+    Combo& $c -selectcommand entry_text_changed
+    pack $c
+    # Note that the \n maps to <Return> and that fires the binding.
+    enter_text [$c component entry] DURING\n
+    set result
+} DURING
+
+tcltest::test combo-selectcommand-4 { <Enter> <Leave> does not invoke
+                                      the -selectcommand callback } {
+    destroy $c
+    set result NOTSET
+    Combo& $c -selectcommand entry_text_changed
+    pack $c
+    enter_and_leave [$c component entry] DURING
+    set result
+} NOTSET
+
+tcltest::test combo-selectcommand-5 { invoke -selectcommand callback
+                                      the -selectcommand callback } {
+    destroy $c
+    set results {}
+    set result NOTSET1
+    Combo& $c -selectcommand entry_text_changed
+    pack $c
+
+    set e [$c component entry]
+    # Note that the \n maps to <Return> and that fires the binding.
+    enter_text $e DURING1\n
+
+    lappend results $result
+    set result NOTSET2
+
+    enter_and_leave $e DURING2
+
+    lappend results $result
+
+    set results
+} {DURING1 NOTSET2}
+
+
+# It seems that we are having some serious
+# problems delivering click events to a window
+# that has the grab. Why do real X events go
+# through but virtual Tk ones do not !!!
+
+tcltest::test combo-arrow-1 { a click on the arrow should
+        make the popup visible } {
+    destroy $c
+    Combo& $c -contents {one two}
+    pack $c
+
+    set result {}
+    delay 1 {
+        mouse_click [$c component arrow]
+        set result [is_popup_visible]
+    }
+
+    delay 2
+    $c menu_unpost
+    set result
+} 1
+
+
+tcltest::test combo-arrow-2 { a second click on the arrow should
+        hide the popup } {
+    destroy $c
+    Combo& $c -contents {one two}
+    pack $c
+
+    set arrow [$c component arrow]
+
+    set result {}
+    delay 1 {
+        mouse_click $arrow
+        lappend result [is_popup_visible]
+    }
+
+    delay 2 {
+        mouse_click $arrow
+        lappend result [is_popup_visible]
+    }
+
+    delay 3
+
+    # If the popup is still visible put
+    # it away since destroying a menu
+    # that is showing seems to hose
+    # things up for some reason.
+    $c menu_unpost
+
+    set result
+} {1 0}
+
+tcltest::test combo-arrow-3 { when the popup is visible,
+        a click in some other widget should close the popup } {
+    destroy $c
+    Combo& $c -contents {one two}
+    pack $c
+
+    set result {}
+    delay 1 {
+        mouse_click [$c component arrow]
+        lappend result [is_popup_visible]
+    }
+
+    delay 2 {
+        mouse_click [$c component entry]
+        lappend result [is_popup_visible]
+    }
+
+    delay 3
+
+    $c menu_unpost
+
+    set result
+} {1 0}
+
+
+tcltest::test combo-arrow-4 { when the popup is visible,
+        a click in some other widget should close the popup } {
+    destroy $c
+    Combo& $c -contents {one two}
+    pack $c
+
+    set result {}
+    delay 1 {
+        mouse_click [$c component arrow]
+        lappend result [is_popup_visible]
+    }
+
+    delay 2 {
+        mouse_click $t
+        lappend result [is_popup_visible]
+    }
+
+    delay 3
+
+    $c menu_unpost
+
+    set result
+} {1 0}
+
+
+
+
+
+tcltest::test combo-arrow-focus-1 { when the popup
+        appears, the tree widget should have the
+        focus } {
+    destroy $c
+    Combo& $c -contents {1 2 3 4 5 6 7 8 9}
+    pack $c
+
+    set tree [$c component treew]
+
+    set result NONE
+
+    delay 1 {
+        mouse_click [$c component arrow]
+        # We need to wait around for a bit
+        # since the focus is reset in
+        # an after idle event
+        pause 500
+        set result [focus]
+    }
+
+    delay 2
+
+    $c menu_unpost
+
+    expr {($tree == $result) ? 1 : "$tree != $result"}
+} 1
+
+
+tcltest::test combo-arrow-typeahead-1 { sending key events
+        after the popup appears should search in
+        the combo list } {
+    destroy $c
+    Combo& $c -contents {foo bar bag nog main zoggy}
+    pack $c
+
+    delay 1 {
+        mouse_click [$c component arrow]
+    }
+
+    delay 2 {
+        # The list must have the focus for this to work
+        set w [focus]
+        # Type 'm'
+        keyevent $w m
+        # Hit the spacebar to select the current symbol
+        keyevent $w " "
+    }
+
+    delay 3
+
+    $c menu_unpost
+    $c cget -entrytext
+} main
+
+
+
+tcltest::test combo-arrow-extended-1 { the extended window
+          should be displayed to the right of the list } {
+    destroy $c $f
+
+    Combo& $c
+    pack $c
+
+    set ext [$c component extended]
+    set f [frame $ext.f -background red]
+    pack $f -fill both -expand true
+
+    set e [entry $f.e -textvariable result]
+    pack $f.e -side bottom
+    set result ""
+
+    delay 1 {
+        mouse_click [$c component arrow]
+    }
+
+    delay 2 {
+        enter_text $e TEXT
+    }
+
+    delay 5
+
+    $c menu_unpost
+
+    set result
+} TEXT
+
+
+
+# Test two combo boxes fighting it out for the grab
+
+tcltest::test combo-arrow-dual-1 { make sure that two
+        combo widgets work together, when one
+	pops up the other should be hidden } {
+    destroy $c
+    set c1 $t.combo1
+    set c2 $t.combo2
+    Combo& $c1 -contents {1 2 3 4 5 6 7 8 9}
+    Combo& $c2 -contents {A B C D E F G H I}
+    pack $c1 -side left
+    pack $c2 -side right
+
+    set result [list]
+
+    raise $t
+
+    delay 1 {
+        set a1 [$c1 component arrow]
+        mouse_click $a1
+        lappend result [grab current]
+    }
+    
+    delay 2 {
+        set a2 [$c2 component arrow]
+        mouse_click $a2
+        lappend result [grab current]
+    }
+
+    delay 3
+    $c2 menu_unpost
+    $c1 menu_unpost
+    destroy $c1 $c2
+    
+    expr {$result == "$a1 $a2" ? 1 : "got \{$result\} not \{$a1 $a2\}"}
+} 1
+
+
+
+tcltest::test combo-selecttext-1 { Invoke selectext member function } {
+    destroy $c
+    Combo& $c -contents {one two three}
+    set e [$c component entry]
+    pack $c
+    $c selecttext two
+    $e get
+} two
+
+# End tests
+
+destroy $t
+
+rename is_popup_visible {}
+

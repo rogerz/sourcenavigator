@@ -1,0 +1,96 @@
+# Test out the target editor dialog box. This is the dialog
+# that is brought up after a given target is opened in the
+# target manager dialog box.
+
+set top [next_toplevel]
+
+set notebook [$top component notebook]
+
+# Activate each tab in the dialog.
+# Move the first page to the end of
+# the list so we finish in the
+# tab we started in
+set pages [$notebook pages]
+set pages [concat [lrange $pages 1 end] [lindex $pages 0]]
+
+foreach tab $pages {
+    $notebook raise $tab
+}
+
+# Type some text into the build
+# directory field.
+
+set build_dir_LEB [$top component bdirleb]
+
+set LEB_entry [$build_dir_LEB component entry]
+
+set dir /tmp/foo/build_one
+
+enter_text $LEB_entry $dir
+
+set displayed_dir [$build_dir_LEB cget -value]
+
+if {$dir != $displayed_dir} {
+    #error "LEB should be set to \"$dir\", it was \"$displayed_dir\""
+    puts stderr "LEB should be set to \"$dir\", it was \"$displayed_dir\""
+}
+
+# Press the button to bring up the directory selector dialog.
+
+set LEB_button [$build_dir_LEB component button]
+
+
+# Open dirdialog and press ok
+
+async mouse_click $LEB_button
+
+set dirdialog [next_toplevel]
+
+mouse_click [$dirdialog component ok]
+
+# Open dirdialog and press cancel
+
+async mouse_click $LEB_button
+
+# FIXME: next_toplevel breaks in the face
+# of two toplevels of the same name!
+
+set dirdialog [next_toplevel]
+
+mouse_click [$dirdialog component cancel]
+
+
+
+# FIXME: We might want to check for double and
+# triple clicks to each of these widgdets !!
+
+
+
+# Open up the import file dialog, then close it
+
+set ImportFileButton [$top component impfbut]
+
+async mouse_click $ImportFileButton
+
+destroy [next_toplevel]
+
+
+
+
+
+
+# Close down the targer editor dialog by pressing cancel
+
+set cancel [$top component cancel]
+mouse_click $cancel
+
+
+# Close the target manager window
+
+# FIXME: How do we find the last
+# window? There might be more
+# than one, how can we choose?
+
+#keyevent $top Escape
+
+

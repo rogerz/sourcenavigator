@@ -1,0 +1,971 @@
+# Copyright (c) 2000, Red Hat, Inc.
+# 
+# This file is part of Source-Navigator.
+# 
+# Source-Navigator is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+# 
+# Source-Navigator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with Source-Navigator; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+###############################################################################
+#
+# german.txt
+#
+# Copyright (C) 1997-2000 Red Hat, Inc.
+#
+# Description:
+# This file maps short tokens which are used in the program source onto the
+# strings that are actually displayed at run-time.
+#
+# The format is:
+#
+#	<token>,<value>
+#
+# A <value> cannot have embedded newlines.
+#
+# In some contexts, a left bracket indicates that the next character
+# will be underlined in the interface; for instance this works for
+# menu items.
+#
+# Entries in this file can appear in any order.
+#
+# Any changes to this file must be mirrored in all other message catalogs.
+# If you don't know the other languages, put an entry into those catalogues
+# with `???' as the "translation".  Then send email to the S-N list asking
+# the someone update the entry.
+#
+# Part of the token name is sometimes used to indicate usage.
+# Balloon help text tokens are usually suffixed with "INFO".
+#
+###############################################################################
+
+#Edition Strings
+DeveloperEdition,Developer Edition
+EnterpriseEdition,Enterprise Edition
+DemoEdition,Demo Version
+
+Format,Fortm[at
+Work,[Arbeit
+Layout,[Layout
+Project,Projekt
+Window,[Fenster
+FilePermRead,r
+FilePermWrite,w
+FilePermUser,Besitzer
+FilePermGroup,Gruppe
+FilePermOther,Andere
+KBytes,KBytes
+HierarchyLayout,Hierarchie Layout
+CrossReferencing,Cross-Referenz
+Database,Datenbank
+Class,Klasse
+Name,Name
+Parameters,Parameter
+Type,Typ
+Public,Public
+Static,Static
+Protected,Protected
+Virtual,Virtual
+Private,Private
+Related,Relativ
+Email,Email
+Web,World Wide Wib
+Loading,Laden...
+Untitled,(unbekannt)
+AllRightsReserved,Alle Rechte vorbehalten
+BugReport,Fehlerreport
+Internationalization,Internationalisierung
+Encoding,Zeichensatz-Encoding
+ToUpgrade,Um die Lizenz zu aktualisieren, kontaktieren Sie bitte sn-support@cygnus.com\noder rufen Sie +1-408-5429600 an
+EvalExpires,Die Evaluations-Lizenz läuft in %d Tagen ab.
+EvalExpiresTonight,Die Evaluations-Lizenz läuft Heute um Mitternacht ab.
+EvalLicense,Source-Navigator Evaluation
+NoLicenseFound,Keine Lizenz gefunden
+WaitingForXref,Warten auf das Ende der Cross-Referenz
+ProjectBatchBuilt,Projekt erstellt
+ScanningFile,Scannen: %s
+Continue,Fortfahren
+DefaultTitle,Datei(en) auswählen
+SelFileColHelp,Sie müssen mindestens ein Verzeichnis/eine Datei auswählen!
+Error,Fehler
+FileExists,Datei existiert bereits!
+File,Datei
+Filter,Filter:
+Open,[Öffnen...
+Overwrite,Überschreiben
+PermRead,Lesen
+PermWrite,Schreiben
+PermUser,Benutzer
+PermGroup,Gruppe
+PermOthers,Andere
+Print,D[rucken...
+Search,[Suchen
+SQLFfor,[Vorwärts
+SQLPcolor,Farbig
+SQLPcolormodell,Farbmodell
+SQLPcopies,Kopien
+SQLPfile,in Datei
+SQLPform,Seitenformat:
+SQLPformland,Querformat
+SQLPformnorm,Hochformat
+SQLPgrey,Graustufen
+SQLPmono,Einfarbig
+SQLPname,Ausdrucken
+SQLPprintall,Alles
+SQLPprintercmd,Drucker Kommando
+SQLPprintit,Drucken
+SQLPprintleftm,Linker Rand
+SQLPprinttopm,Oberer Rand
+SQLPprintwidth,Seitenbreite
+SQLPprintheight,Höhe
+SQLPprintrange,Bereich
+SQLPprintfactor,[Faktor
+SQLPprintPageV,[vertikale Seiten
+SQLPprintPageH,[horizontal
+SQLPPrintPageNum,Seitennummer drucken
+SQLPPage,Seite
+cancel,A[bbruch
+ok,OK
+preference,[Voreinstellungen...
+#
+# Stringtabelle
+#
+Include,[Include Verzeichnisse
+CreatProjFile,Projektdatei hinzufügen
+PafCloseProj,Projekt [schließen...
+ProjectINFO,Projektmenu
+LoadNewFiles,Neue [Dateien laden...
+EditSymbol,Symbol editieren
+SaveChanges,Änderungen [speichern
+Quit,[Beenden
+View,[Ansicht
+Grep,[Grep
+Hide,[Verstecken
+Make,[Make
+Undefined,Nicht definiert
+Functions,[Funktionen
+FunctionsDec,Funktions[deklarationen
+Commons,Co[mmons
+CommonsVars,Common Varia[ble
+Classes,[Klassen
+Methods,[Methoden
+Friends,F[riends
+MethodImps,Methoden[implementationen
+ClassVars,[Instanzvariablen
+Files,[Dateien
+Typedefs,[Typ-Definitionen
+ClassHierarchy,Klassen[hierarchie
+ReadOnly,[Nur lesbares Projekt
+Enums,[Enums
+Variables,[Variablen
+Defines,Ma[kros
+FileBrowTitle,Datei-Browser:
+ComBrowTitle,Common-Browser:
+ClassBrowTitle,Klassen-Browser
+Browser,[Browser
+Browse,[Browsen
+ClassBrowOverridden,[Überschriebene
+PafAbrOverride,Überschreibt ein Member einer Basisklasse
+PafAbrOverridden,Wird in einer Subklasse überschrieben
+CloseTool,[Tool schließen
+History,H[istorie
+Help,[Hilfe
+Version,[Version
+Copyright,Copyright
+INFOHide,Versteckt Projekt
+INFOGrep,Grep auf Projekt
+INFOHierarchy,Zeigt Klassenhierarchie
+INFOClasses,Klassen-Anzeige
+INFOMethods,Methoden-Anzeige
+INFOFunctions,Funktionen-Anzeige
+INFOFiles,Datei-Anzeige
+INFOTypedefs,Typedef-Anzeige
+FileNotExist,Dateien existieren nicht!
+Yes,Ja
+No,Nein
+Cancel,A[bbruch
+NoRegInter,Kein registrierter Interpreter
+SendTo,Gesendet an :
+SearchingSubDirectories,Durchsuchen der Unterverzeichnisse ...
+Scanning,Durchsuchen ...
+ProjectDelete,Projekt [löschen...
+DeleteProjectQuestion,Soll das Projekt gelöscht werden
+NoProjectFile,ist keine Projektdatei!
+RestoreWindows,Fenster wiederherstellen ...
+ClassTree,Klassenbaum
+TitleReadOnly, (nur lesbar)
+Lines,Zeilen
+IsNotReadable,ist nicht lesbar !
+LineNumber,Zeilennummer :
+Goto,[Gehe zu
+ReplacePattern,Ersatztext:
+Next,Nächstes
+None,[Keins
+FindReplace,Suchen - Ersetzen
+IgnoreCase,Groß/Kleinschreibung ignorieren
+RegExp,Regexp
+HasBeenModified,wurde geändert !
+NewFile,[Neue Datei
+OpenFile,Datei [öffnen
+OpenProj,Projekt [öffnen...
+RevertFile,Datei [verwerfen
+Revert,[Verwerfen
+Exit,[Beenden
+Save,[Speichern
+#
+# Editor strings
+#
+EditMakeCommand,Make [Kommando editieren...
+EditSave,[Speichern
+EditFastSave,Sc[hnell Speichern
+EditDelete,[Löschen
+EditCut,[Ausschneiden
+EditPaste,Ein[fügen
+EditReplace,Ersetzen...
+EditCopy,[Kopieren
+EditPattern,Muster...
+EditNext,Nächstes
+EditGotoLine,Gehe zu Zeile...
+EditGotoError,Gehe zu Fehler...
+EditFile,[Datei
+EditNewFile,[Neue Datei...
+EditFind,[Suchen
+EditInsertFile,Dat[ei Einfügen...
+EditSaveFileAs,Speichern [als...
+EditViewFile,Ansehen
+EditQuit,[Beenden
+EditEdit,[Edit
+EditSelectTop,zum Anfang
+EditSelectBottom,zum Ende
+EditIdent,[Einrücken
+EditOutdent,Au[srücken
+EditSelection,Auswahl
+EditSearchFor,Suchen nach ...
+Reusable,Wiederverwenden
+EditGrepSelection,Grep auf
+EditGoto,[Gehe zu
+EditLastPosition,Letzte Position
+EditSetMark,Marke setzen
+EditGotoMark,Gehe zu Marke
+EditGotoTop,An den Anfang
+EditGotoEnd,Ans Ende
+FileViewOnly,(nicht editierbar)
+EditExtras,E[xtras
+EditCreateBackFiles,Sicherungsdateien *.bak erzeugen
+EditUpdateHighlights,Markierung erneuern
+EditSoftTabWidth,Tabulatorweite
+EditAutoIndentWidth,Tabulatorweite automatisch
+EditBracketMatchDelay,Dauer der Klammeranzeige
+EditDefaultHeight,Defaulthöhe
+EditDefaultWidth,Defaultbreite
+#
+# Infotexte für den Editor
+#
+EINFOSearchHistory,Liste aller Suchstrings
+EINFOOpenFile,Öffnet eine Datei
+EINFOSaveChanges,Sichert Änderungen
+EINFODeleteSection,Löscht markierten Text
+EINFOCutSelection,Schneidet Auswahl in Zwischenspeicher
+EINFOCopySelection,Kopiert Auswahl in Zwischenspeicher
+EINFOPasteSelection,Fügt aus Zwischenspeicher ein
+EINFOEnterPattern,Eingabe des Suchmusters
+EINFOFindPattern,Sucht nach Muster
+EINFOFindNext,Findet nächstes Vorkommen
+EINFOGotoLine,Bewegt den Cursor zur Zeile
+EINFOStartMake,Startet make
+EINFOActivateBrowser,Aktiviert Symbol-Browser
+EINFODragDrop,Drag & drop um Anzeige zu ändern
+Ok,Ok
+Apply,[Übernehmen
+Select,Auswahl
+ErrorNotWrite,ist nicht schreibbar!
+SearchPattern,Suchmuster:
+UtilSearch,S[uche
+UtilEdit,Editiere
+UtilView,Anzeige
+UtilFiles,Dateien:
+ErrorNoMatches,Keine Dateien stimmen überein
+GrepStrings,Grep auf Text:
+Strings,Texte
+Kill,Kill
+MakeKilled,+++ Abgebrochen +++
+MakeEnd,+++ Beendet +++
+#
+# RCS in Choose
+#
+ChooseHiddenFiles,Versteckte Dateien
+CHooseUnloadFiles,[Entfernen
+ChooseFiles,Projektdateien
+ChooseHistory,Meldungen der Versionskontrolle
+ChooseRevisionControl,Versionskontrolle
+ChooseDiff,[DIFF...
+ChooseLock,[Sperren...
+ChooseDel,[Version Löschen...
+ChooseUnlock,[Freigeben...
+ChooseCheckIn,Check [In...
+ChooseCheckOut,Check [Out...
+ChooseWithLock,Mit Sperre
+ChooseDiscard,[Uncheckout
+ChooseRevision,Version:
+ChooseInfoDeselectOne,Versteckt markierte Dateien
+ChooseInfoDeselectAll,Versteckt alle Dateien
+ChooseInfoSelectOne,Setzt markierte Dateien zurück
+ChooseInfoSelectAll,Setzt alle Dateien zurück
+ChooseInfoRevisionControl,Schaltet Versionkontrolle ein/aus
+Prev,Letztes
+Of,von
+ChooseNothingCheckedOut,Es wurde nichts ausgemeldet
+PafExpand,[Expand
+PafUnexpand,[Unexpand
+PafCindent,[C indent
+PafTclindent,[Tcl indent
+PafCrossRef,[Cross-Referenz
+PafCrossToDetail,[Details To..
+PafCrossByDetail,[Details By..
+INFOGlob,globale Variablen-Anzeige
+Reparse,Projekt neu [parsen
+NewProj,[Neues Projekt...
+PafWrap,[Umbruch
+PafOverWrite,[Überschreiben
+ODDReportrightm,Rechter Rand
+ODDReportbotm,Unterer Rand
+PafReplace,Ersetzen
+EDITTagStop,Tab Stop
+EditUndo,Ruckgängig
+EditUndoINFO,Macht die letzte Änderung ruckgängig
+Retriever,Retrie[ver
+PrefRetriever,Retriever
+Retrieve,R[etrieve
+PafExecFilter,[Filter...
+PafProjBusy,Projekt "%s" wird vom Benuzer "%s" bearbeitet!
+PafWdDir,Datenbank-Verzeichnisname
+PafOpenProj,Projekt öffnen
+All,Alles
+Marked,Markierte
+PrintFile,Druckt Datei
+HierDefINFO,Zeigt die Super-Klassen der markierten Klasse
+HierDef,[Super-Klassen
+HierRelINFO,Zeigt die Hierarchie sub-Klassen der markierten Klasse
+HierRel,S[ub-Klassen
+Topdown,Von oben nach unten
+LeftRight,Von links nach rechts
+ISI,ISI
+Tree,Baum
+CrfRefTo,Refers [to
+CrfRefToINFO,Zeigt references to
+CrfRefBy,Refered [by
+CrfRefByINFO,Zeigt referenced by
+CrfRemSubN,Entfernt Subnodes
+Symbols,[Symbole
+SymbolicTags,Symbolische Tags
+Abrav,[Abkürzungen
+ListSize,Insgesamt: %s markiert: %s
+Subr,S[ubroutinen
+Const,[Konstanten
+EnumCons,Enum [Werte
+Unions,Uni[ons
+ProjExit,Wollen Sie das Projekt wirklich beenden ?
+UnknownDir,Das Verzeichnis "%s" existiert nicht!
+ShowFNames,[Dateinamen
+ProjSet,Projekteinstellungen
+ShowFNamesInfo,Zeigt Dateinamen
+PAfIgnDirs,Ignorierte Verzeichnisse
+XRefLocalVars,Referenzen auf lokale Variablen generieren.
+CommentDB,Erzeuge Datenbank für Kommentare
+PafHtmlView,HTML-Viewer
+PafLocVars,Lokale-Variablen
+Access,Zugriff
+Read,gelesen
+Written,geschrieben
+Passed,weitergegeben
+Unused,nicht verwendet
+IgnoreWS,Leerzeichen ignorieren
+Comment,Kommentar:
+Statistics,Statistik
+DrawProjTree,Projekt-Baum ...
+HTMLDoc,[HTML Dokumentation
+HTMLDocAll,HTML [Projekt-Dokumentation
+CacheSize,Datenbank-Cache Größe
+xrefCacheSize,Cross-Referenzdatenbank-Cache Größe
+FileTrans,Ausgabe-Datei Umsetzung:
+Languages,Sprachen
+Extensions,Extensionen
+imp,[Implementation von
+def,[Definition von
+IncBroTit,[Include-Browser
+SelectAll,Alles [wählen
+SelectOnly,Nur "%s" wählen
+INFOStartClassBrw,Startet Klassen-Browser für die markierte Klasse
+
+IncludeTree,Include-Baum
+IncLevelTit,[Levels
+Includes,[Inkludiert
+IncludesINFO,Zeigt die von der aktuellen Datei inkludierten Dateien
+IncludedFrom,Inkludiert [von
+IncludedFromINFO,Zeigt die Dateien, die die aktuelle Datei inkludieren
+RemIncludedFrom,Schließt inkludiert-von Teilbaum
+RemIncludes,Schließt den inkludierten Teilbaum
+
+ParserOpt,Parser-Optionen:
+ParserIgn,Ignorierte Wörter:
+
+EditorOpt,Editor-Optionen:
+EditM3Sup,Rechte Maustaste:
+EditM3Scroll,Scrolling
+EditM3Menu,Bearbeiten-Menü
+
+DbgTitle,Deb[ugger
+
+Windows,[Fenster
+Root,Wurzel:
+TakeRoot,als Wurzel nehmen
+LimitScanMsg,Bei der Developer's Edition können nur die ersten %s Dateien bearbeitet werden, dabei sind nur %s Quellcode-Zeilen zugelassen.
+LimitOpenProjError,Dieses Projekt kann von der Developer's Edition nicht geöffnet werden.
+ChangeFontSize,Ändert Fontgröße
+LimMsg,Diese Funktionalität ist in der Developer's Edition nicht erlaubt, für ein Upgrade\nkontaktieren Sie: "sn-support@cygnus.com" or +1-408-5429600!
+
+Warning,Warnung
+SelMrkFiles,Übernimmt die markierten Dateien
+SelAllFiles,Übernimmt alle Dateien
+DelMrkFiles,Entfernt die markierten Dateien
+DelAllFiles,Entfernt alle Dateien
+
+#Page formats
+PrtPageFormat,Seitenformat
+PageFormatLetter,Letter
+PageFormatLegal,Legal
+PageFormatExecutive,Executive
+
+CrossRetriever,Cross-Referenz-[Retriever
+
+Recursive,Rekursive Liste
+
+VMakeTitle,VMa[ke
+
+TreeButton,Sortiere (M/Links), Spalte (M/Rechts)
+TreeColumn,Spaltenbreite (M/Links), Zwischenzeilen (M/Rechts)
+CrossBoxes,[Rahmen
+CrossBoxesINFO,Rahmen
+CrossAcceptParam,Vergleiche [Parameter
+CrossAcceptParamINFO,Berücksichtige Parameter und Lokalisierung
+CrossAcceptStatic,Vergleiche [statische Informationen
+CrossAcceptStaticINFO,Berücksichtige STATIC Symbole
+CrossDispParam,[Zeige Parameter
+CrossDispParamINFO,Parameter zeigen an/aus
+
+TreeBestFit,[Beste Anpassung
+TreeTruncate,[schneiden
+TreeViewSplitLines,[Zeige Trennlinien
+HoldWindow,behalten
+HoldWindowINFO,Behalte Fenster
+IgnoredDirectories,Ignorierte Verzeichnisse
+Indent,[Einrücken
+Sort,[Sortierung
+Toggle,[An/Aus
+SaveDiasabled,Speichern ist deaktiviert!
+Parent,Ein Verzeichnis höher
+Reread,Refresh
+BackProcsRun,Operation nicht erlaub, weil ein Prozeß im Hintergrund läuft!
+OwnerRead,Lese-Berechtigung für Besitzer
+OwnerWrite,Schreib-Berechtigung für Besitzer
+GroupRead,Lese-Berechtigung für Gruppenmitglieder
+GroupWrite,Schreib-Berechtigung für Gruppenmitglieder
+OthersRead,Lese-Berechtigung für Andere
+OthersWrite,Schreib-Berechtigung für Andere
+DirReadWriteExec,muß les- and schreibbar sein!
+Permissions,Berechtigungen
+DatabaseLocked,Datenbank ist gesperrt.
+DataBaseUnusable,Ein Datenbankprozeß ist abgestürzt. Das Projekt kann sich\nin einem inkonsistenten Zustand befinden.
+DataBaseCrashed,Ein Datenbankprozeß ist abgestürzt. Sie müssen das Projekt neu parsen,\ndamit Source-Navigator richtig gestartet werden kann.
+Mixer,Filter
+MixerINFO,Filter für Member
+Or,OR
+And,And
+OrINFO,Zumindest eine Flagge ist wahr
+AndINFO,Alle Flaggen sind zutreffend
+ClassAllINFO,Setze alle Flaggen
+ClassNoneINFO,Deaktiviere Filter
+ProjTitle,Projektname
+XrefSortFile,Schnelles Update
+XrefSortFileInfo,Schnelles Cross-Referenz Update
+ProjClone,Wollen Sie das Projekt klonen?
+
+#Neue variablen fuer das neue GUI:
+GrepFormat,[Format
+MotifINFO,Benutze Motif Look&Feel
+ReusableINFO,Neue Fenster sind wiederverwendbar
+CannotCloseWindow,Ein Source-Navigator Prozeß ist aktiv. Das Fenster kann nicht geschlossen werden.\nSie müssen den Prozeß abbrechen oder warten bis er beendet ist.
+Parsing,Projekt parsen
+Pattern,Muster:
+XrefGeneration,Cross-Referenz-Prozeß
+SearchFindSelectionINFO,Suche Auswahl oder das nächste Muster
+SplitIntoInclude,I[nklude
+MoreEditorToolbarButtons,Mehr Edit-Buttons im Toolbar
+NewSwitchableINFO,Behalte den Kontext des aktuellen Views im nächsten View
+ProjectMenu,[Projekt
+MultiMisc,[Verschiedenes
+SearchGoto,[Gehe zu...
+SearchFind,[Suche...
+AskForNewView,Der angegebene View ist nicht vorhanden.\nMöchten Sie einen neuen View definieren?
+TkINFO,Verwende Tk Look&Feel
+GrepFormatINFO,Formatiert den aktuellen Ausdruck
+PrefMake,[Make
+PrefOverwrite,[Überschreiben
+Directory,Verzeichnis
+RevisionControlEditor,Version Control Editor...
+RevisionControlEditorNoKey,Version Control Editor
+XRefReenabled,Cross-Referenz wurde wieder eingeschaltet. Sie sollten das Projekt\nneu parsen um korrekte Cross-Referenz-Informationen zu erhalten.
+MultiClass,[Klassen
+Family,[Gruppe
+Preferences,[Optionen
+AlighmentHorizontal,[Horizontal
+MultiRetriever,Retrie[ver
+DonotSave,Nicht speichern
+YouHaveAddedSomeDirectories,Sie haben die folgenden Verzeichnisse angegeben
+WindowsIconize,[Iconiziere Projekt
+CommentDBINFO,Erstellt Datenbank für Kommentare im Source-Code
+MultiBrowser,[Symbole
+StartXRefINFO,Ruft Cross-Referenz für das selektierte Symbol
+SaveAsFastSave, 'Speichern' ist nicht möglisch, da die Datenbank gerade geändert wird.\nMöschten Sie die Datei schnell speichern?
+ProjectPreferences,Projekt[optionen
+CancelXref,Source-Navigator generiert Cross-Referenz Daten. Der Abbruch dieses\nVorgangs löscht alle Cross-Referenz Dateien.
+NoSelection,Keine Auswahl vorhanden, um den Vorgang zu starten.
+SearchPrev,Suche [Vorheriges
+List,[Liste
+SplitInto,View hinzufügen
+HelpContents,[Inhalt
+FastCreateProject,Auto-Erstellung eines neuen Projekts
+ContinueParsing,Möchten Sie den Rest der Source Dateien weiter parsen?
+DonotApply,Nicht übernehmen
+XRefFilter,[Filter...
+MacroFiles,[C/C++ Makro Datei(en)
+LoadDirectory,Ordner hinzufügen...
+WindowSizeINFO,Fenstergröße in Relation zur Bildschirmgröße
+FontName,[Name
+CloseProj,Projekt s[chließen...
+ProjAlreayOpened,Das Projekt '%s' ist bereits geöffnet.\nMöchten Sie es in den Vordergrund holen?
+Disp_Directories,Zeigt Dateien mit vollem Pfad
+ScanningHasBeenCanceled,Möchten Sie den Parsing-Prozeß abbrechen?\nDamit sing die übrigen Dateien nicht Teil des Projektes.
+InvalidProjectName,Projektname falsch angegeben. Bitte verwenden Sie keine Sonderzeichen.
+PrefPrinter,[Drucker
+ManyMatchesTitle,Gefundene Symbole
+CannotProceed,Source-Navigator Datenbank wird von einem andreren Prozeß benutzt.\nSie müssen warten oder den Prozeß beenden.
+NewWork,[Neue Fenster
+ChooseINFO,Wähle Datei...
+Close,[Schließen
+SaveAsDefault,Einige Optionen wurden geändert, die zu den Standardoptionen gehören.\nMöchten Sie diese Änderungen als Standard speichern?
+MultiMake,[Make
+ExternalEditor,Externer [Editor
+GenerateXRefINFO,Erstellt Cross-Referenz Datenbank
+Word,[Wort
+CannotDeleteProject,Das Projekt konnte nicht gelöscht werden.\nPrüfen Sie die Ursache und versuchen Sie es erneut.
+SplitIntoEditor,Edit[or
+ManyMatchesINFO,Basierend auf den angegebenen Informationen wurden mehrere Symbole gefunden.\nSie müssen ein Symbol aus der folgenden Liste selektieren.
+NewFileINFO,Editiere neue Datei
+HiddenFiles,[Versteckte Dateien
+Choose,[...
+Tools,[Tools
+LoadFiles,[Dateien hinzufügen...
+UsedFileDialogSystem,[System
+ProjectPreferencesMenu,Projekt[optionen
+ViewMode,[Zeige Dateien als
+FontCursive,[Kursiv
+ScanRecursiveINFO,Fügt alle Dateien aus dem Verzeichnis und allen seinen Unterverzeichnissen hinzu.
+ExclusiveModeINFO,Setzt den Filter nur für eine Kategorie und startet das Suchen automatisch.
+UsedFileDialog,Dateidialog
+MultiGrepFormat,Format:
+RetrieverINFO,Suche alle zutreffenden Symbole in der Projektdatenbank.
+GotoNextPosition,Gehe zur nächsten Seite
+SearchGotoLine,Gehe zur Zeile...
+ViewINFO,Zeigt ausgewählte Dateien
+SearchGotoError,Gehe zu Fehler
+PrevINFO,Gehe zum vorherigen Eintrag in der Liste
+XRefFilterINFO,Filter...
+OfScreenSize,der Bildschirmgröße
+StartMakeINFO,Startet make Kommando
+WindowsNewRetrEditor,[Retriever - Editor
+MultiGrep,[Grep
+WindowsClose,[Schließen
+UsedFileDialogSystemINFO,Benutze das Standard Datei-Dialogfenster
+MultiHierDef,Zeige [Superklassen
+Delete,[Löschen
+SplitIntoXRef,[Cross-Referenz
+Processing,[Parse Projekt
+LanguageExt,Sprachenerweiterung
+Stop,[Anhalten
+OpenNewBuffer,ist geändert.\nMöchten Sie ein anderes Fenster benutzen?
+MultiGrepStop,[Anhalten
+WindowsNewClassXRef,[Klassen - Cross-Referenz
+FontBold,[Fett
+ProjectCancelINFO,Verwirft Änderungen und schließt das Projekteditor.
+FontSize,[Größe
+XRefHasBeenCrashed,Ein Fehler ist bei der Erstellung von Cross-Referenz aufgetaucht.\nDie Projekt Cross-Referenz ist somit möglicherweise nicht vollständig.
+PrefRcs,Versionskontrolle
+CloseProject,S[chließe Projekt
+UsedFileDialogSNINFO,Benutzt Source-Navigator Datei-Dialogbox
+EditRedo,[Wiederherstellen
+OpenProject,[Öffne Projekt
+NextINFO,Gehe zum nächsten Eintrag in der Liste
+ProjectVerifyError,Unbekannter Fehler beim Prüfen, ob das Projekt schon geöffnet ist.
+UnloadedFiles,[Gelöschte Dateien
+CancelMakeINFO,Make [abbrechen
+MultiClassHierarchy,Hie[rarchie
+NewReusableINFO,Verwende das aktuelle Fenster zur Anzeige anderer Views.
+Alighment,[Ausrichtung
+SearchGrep,[Grep...
+ErrorByScanning,Ein Fehler wurde beim Scannen gefunden.\nMöchten Sie die Datei überspringen und den Rest der Dateien weiter scannen?
+RetrieverFilter,[Filter
+SaveProject,Projekt [speichern
+StatisticsINFO,Zeige Statistik zur aktuellen Auswahl
+LoadNewFilesINFO,Neue Dateien zum Projekt hinzufügen
+XReferences,[Referenzen
+GrepProcessing,Grep-Prozeß aktiv...
+Keep,Kontext
+SpaceHorizontal,[Horizontaler Freiraum:
+DoYouWantToReparse,Soll das Projekt erneut geparst werden und die Datenbank neu angelegt werden?\nDas Erzeugen der Cross-Referenz-Datenbank kann einige Zeit dauern.
+PrefMakeCmd,[Make Kommando
+ContinueParsingOtherTypes,Das Parsen wurde unterbrochen.\nEs können einige noch nicht geparste Dateien aus anderen Programmiersprachen vorhanden sein.\nMöchten Sie andere Sprachtypen weiterparsen?
+ProjectLocation,[Ziel
+ProjectName,Projekt [Datei
+MultiHierAllINFO,Zeige die gesamte Klassenhierarchie
+PrefPrintCommand,[Druck Kommando
+DonotDisplay,Dialogbox nicht nochmals anzeigen
+AutoIndentWidth,Auto-[Einrück-Breite
+HierDispFiles,Zeige Dateinamen
+StartMake,[Start
+Char,[Zeichen
+Fullpath,Voller Pfadname
+XRefBellINFO,Akustisches Signal, wenn Cross-Referenz fertig gebildet ist
+RetrieverFilterINFO,Filteroptionen für Retriever einstellen
+MultiEditor,Edit[or
+RetrieverSearchINFO,Starte Suche für die angegebenen Filer-Informationen
+LoadFromProject,Projekt hinzufügen...
+Reset,[Reset
+SplitDeleteLast,[Entfernt den letzten View
+AddDirectory,Ordner hinzufügen
+Implementation,[Implementation
+DonotDisplayWarning,Keine Meldung anzeigen, wenn mehrere Symbole gefunden wurden
+First,[Erstes
+UnableToExecuteParser,Source-Navigator kann keinen entsprechenden Sprachparser finden.\nWollen Sie andere Sprachdateien weiter parsen?
+ApplyINFO,Übernehme die aktuelle Einstellung
+Second,[Nächstes
+PrefAfterRestart,Einige eingestellte Optionen können nur Wirkung haben, wenn Source-Navigator neu gestartet wird.
+PrefClassAndHierarchy,Klassen - Hierarchie
+ReparseINFO,Alle Projektdateien neu parsen
+CreateNewWindow,Neue Fenster
+MembersOrder,[Members anzeigen
+MakeEntry,Make Kommando
+MultiXRef,[X-Ref
+Definition,[Deklaration
+MultiGrepBreakBy,[Suche erste:
+LoadDirectoryINFO,Füge alle Dateien in einem Ordner hinzu
+RecentProjects,Vorhandene Pro[jekte
+PrefTabWidth,Eingefügte Tab-Breite:
+FgColor,[Vordergrund
+MultiGrepLines,[Einträge
+Reuse,Wiederverwenden
+WindowsNewCTreeClass,[Hierarchie - Klassen
+WindowLayout,GUI Look&Feel
+XRefCancelINFO,Aktuelles Lesen aus der Cross-Referenz-Datenbank abbrechen
+ProjectFiles,Dat[eien
+Wrap,[Umbruch
+DoYouWantToInitProjEditor,Möchten Sie den Projekteditor mit den Dateien der angegebenen Ordner initialisieren?
+Orientation,[Orientierung
+Others,[Verschiedenes
+Start,[Starte
+Views,[Vorhandene Views
+ProjectEditor,Projekteditor
+GrepSearchINFO,Starte grep für den angegebenen Ausdruck
+ChooseFont,Font selektieren
+PrefInNewWindows,Einige eingestellte Optionen wirken sich nur in neuen Fenstern aus.
+New,[Neu
+SaveDefault,Speichern als Default
+MultiHierAll,Alle anzeigen
+SearchImplementation,Finde [Implementation
+ReportBugs,[Berichte Fehler via
+SearchSetMark,Marke [setzen
+EditClear,[Deselektieren
+FastCreateProjectQuestion,Möchten Sie ein Projekt basierend auf die folgenden Informationen automatisch erstellen:
+XRefBell,[Signal wenn komplett
+PrefScanProjectINFO,Scannt das gesamte Projekt beim Öffnen (Bei größeren Projekten kann dies einige Zeit dauern)
+HideINFO,Verstecke selektierte Dateien
+ParserCommands,Parser Kommandos
+Color,[Farbe
+SplitWindows,Fenster [teilen:
+MultiInclude,I[nclude
+PrefInclude,I[nclude Verzeichnisse
+ColorAndFont,[Farben&Fonts
+ContinueProcessing,Möchten Sie das Projekt mit den bisherigen Konfigurationen öffnen?
+Unload,[Entfernen
+Categorie,[Kategorie
+MakeStartDir,[Ordner
+WindowsNewCTreeClassEditor,Hierarchie - Klassen - [Editor
+ExternalEditors,[Externe Editoren
+LoadFromProjectINFO,Dateien aus einem anderen Projekt hinzufügen
+Font,[Font
+PrefScanProject,[Aktualisiere Projekt beim Starten
+PrefDispOrder,Ordner anzeigen:
+MultiRetrieverPattern,[Ausdruck:
+PrefMailhost,[Mailhost
+SpaceVertical,[Vertikaler Freiraum
+PrefUnknownError,Source-Navigator kann die Einstellungen nicht übernehmen.
+Rename,[Umbenennen
+PrefTabStop,Tab[stop
+Sample,Beispiel
+SearchGotoMark,Gehe zu Marke
+AlighmentVertical,[Vertikal
+SelectDirectory,Selektiere Ordner
+Parser,[Parser
+Justify,Rechter [Einschub
+MultiHierRel,Zeige Su[bklassen
+TermoGenerateXRef,Button betätigen, um Cross-Referenz abzubrechen
+WindowsNewClassEditor,[Klassen - Editor
+UsedFileDialogSN,[S-N
+SaveAsFastSaveTitle,Speichern [als...
+ScanRecursive,Addiere Unterverzeichnisse
+ExclusiveMode,E[xklusives Suchen
+EditSaveAll,Sc[hnell Speichern Alle
+MultiGrepPattern,Ausdruck:
+MoreEditorToolbarButtonsINFO,Zusätzliche Editor-Buttons im Toolbar
+RCS,[Versionskontrolle
+BgColor,[Hintergrund
+XRefIsRunning,Source-Navigator erzeugt die Cross-Referenz-Datenbank
+WantToFastSave,Möchten Sie geänderte Dateien vor dem Starten\ndes Make Kommandos schnell speichern?
+UndoINFO,Änderungen zurücknehmen
+AllFiles,[Alle Dateien
+AddYourMacroFiles,Addiere die Makrodatei(en) für den C/C++ parser
+InvalidProjectDir,Falsches Projektverzeichnis.
+WindowsNew,Edit[or
+Switchable,Behalte Kontext
+DeleteColumnFilters,Setzt alle Spaltenfilter zurück
+MultiHierRelINFO,Zeige nur Klassen & Superklassen
+DeleteProject,Aktuelles Projekt [löschen
+more,[Mehr Ordner
+PrefDispLayout,Layoutstil-Anzeige:
+SplitIntoClassHierarchy,[Hierarchie
+DonotDisplayWarningINFO,Dialogbox zur Ankündigung von mehreren gefundenen Symbolen ein- bzw. ausschalten
+DonotReparse,Nicht wieder [parsen
+PrefBugReport,Fehlerberichte
+ChooseColor,Wählte Farben
+GenerateXRef,Erzeuge Cross-Referenz-Datenbank
+EditPreferences,View [Optionen
+MakeEntryINFO,Definiere das Make-Kommando
+SplitIntoClass,[Klassen
+WindowsNewFindEditor,[Grep - Editor
+ProjectOkINFO,Änderungen übernehmen und Projekt schließen
+MultiHierDefINFO,Zeigt Klassen, Basisklassen und Superklassen an
+UnloadINFO,Entfernt selektierte Dateien aus dem Projekt
+MakeStartDirINFO,Startverzeichnis
+GrepCancelINFO,Grep-Prozeß abbrechen
+PrefAfterReparse,Einige eingestellte Optionen haben ihre Wirkung, wenn das Projekt neu geparst wird.
+KeepINFO,Behalte den Kontext für den aktuellen Symbol auch in den nächsten Views
+PrefAsciiPrintCommand,[ASCII Druck-Kommando
+SearchReplace,[Ersetzen
+GotoPrevPosition,Gehe zur vorherigen Seite
+WindowSize,S-N Fenstergröße ist
+ProjectEditorMenu,Projekt[editor
+PageFormatA4,A4
+ScanProject,Projekt [aktualisieren
+DebuggerCommand,GNU Debugger Kommando
+SearchNext,Suche [Nächstes
+DoNotDisplayINFO,Zeigt diese Dialogbox nicht mehr
+GotoDefImp,Gehe zu
+SearchDefinition,Finde Dek[laration
+Rcs,[Versionskontrolle
+goto,[Gehe zu:
+WaitOrCancelXRef,Cross-Referenz Informationen werden aus der Datenbank gelesen.\nBitte warten...
+WaitOrCancelRetriever,Symbole werden aus der Datenbank gelesen.\nBitte warten...
+ActiveSymbol,Aktives Symbol im aktuellen View
+ListRelatedSymbols,Listet alle view-spezifischen Symbole
+LimitLightVersion,Sie brauchen die Vollversion, um diesen Vorgang auszuführen.
+Compile,[Kompilieren
+CompileINFO,Kompiliere aktuelle Datei
+FilesNotFound,Source-Navigator konnte die folgenden Projektdateien nicht finden.\nMöchten Sie diese Dateien aus dem Projekt entfernen?\n\n
+TryAgain,Nicht gefundene Dateien immer suchen lassen
+TryAgainINFO,Dialogbox aufrufen, wenn eine Datei nicht gefunden werden kann
+TryToLocalizeFile,Source-Navigator kann folgende Datei nicht finden.\nSie können selbst nach der Datei suchen.
+Localize,[Suche Datei...
+EditorFileTranslationUnixINFO,Speichere Dateien in UNIX format
+EditorFileTranslationWindowsINFO,Speichere Dateien in MSDOS format
+EditorFileTranslationKeepINFO,Speichere Dateien nach ihrem original format
+LocateIncludeFilesINFO,Suche den vollen Pfad für includierte Headerdateien
+LocateIncludeFiles,Lokalisiere Includes
+EditorFileTranslation,Dateitranslation
+CannotSaveIncludeDirectories,Include-Verzeichnisse können nicht gespeichert werden
+EditorFileTranslationAutoINFO,Speichere Dateien nach dem aktuellen Dateisystem
+EditorFileTranslationCRINFO,Speichere Dateien mit nur einem CR
+KeepLF,Keep
+AutoLF,Auto
+UNIXLF,UNIX
+WindowsCRLF,Windows
+MacintoshCR,Macintosh
+NowPrintingPage,Seite %d wird gedruckt
+NowPrinting,Durcken...
+EditorTranslateTabs,Konvertierte Tabs In Leerzeichen
+EditorTranslateTabsINFO,Konvertiert eingefügte Tabs in Leerzeichen
+CannotFindDllLibrary,Source-Navigator benötigt die '%s' Windows-Bibliothek\, um in PostScript-Format zu drucken.\nDruckvorgang wurde abgebrochen.
+PrintSelection,Möchten Sie den gesamten Text drucken?
+UnableToReparse,Source-Navigator kann das Projekt nicht neu parsen, unbekannter Fehler.
+OlderProjectOpened,Dieses Projekt wurde mit einer älteren Version von Source-Navigator erstellt.\nUm mit dem Projekt arbeiten zu können, müssen Sie das Projekt new parsen.\nManche Projekt Einstellungen können dabei verloren gehen.
+NewerProjectCannotBeOpened,Ein mit einer neueren Source-Navigator Version erstelltes Projekt kann\nnicht mit einer älteren Version von Source-Navigator geöffnet werden.
+EditionCannotOpenThisProject,Dieses Projekt wurde mit einer anderen S-N Edition erstellt.\nDie S-N Edition, die Sie benutzen kann das Projekt nicht öffnen.\nNur die Enterprise Edition kann Projekte anderer Editionen öffnen.\nBitte kontaktieren Sie unseren Customer Support "sn-support@cygnus.com" für ein Upgrade.
+CurrentLinesOfSourceCode,Projekt hat %s Source-Code Zeilen.
+LimitedEdition,Mit dieser Version erstellten Projekte sind auf maximal %s Source-Code Zeilen limitiert.
+ScanningCanceld,Wollen Sie wirklich das Durchsuchen nach Source-Code Dateien stoppen?
+DatabaseFilesCouldNotBeDeleted,Source-Navigator kann die alten Projekt-Datenbankdateien aus\neinem unbekannten Grund nicht löschen.
+WrongProjectName,Falscher Projektname '%s'
+WrongDatabaseDirectory,Falsches Datenbankverzeichnis '%s'
+IDEProductName,Flik 1.0
+SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.\nFür Support, kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
+SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
+SplashAllRightsReserved,Alle Rechte vorbehalten. Source-NavigatorTM, das Source-NavigatorTM Logo und Cygnus Solutions Logo sind Trademarks von Red Hat, Inc. Alle anderen Produktnamen sind Trademarks ihrer rechtmäßigen Inhaber.
+ThisProjectIsTooBig,Das Projekt überschreitet das Limit der aktuellen Source-Navigator Edition.\nDas Projekt kann nicht geöffnet werden.
+SplashSupportText,Für Support kontaktieren Sie bitte <sn-support@cygnus.com> oder besuchen Sie unsere Webseite http://www.cygnus.com.
+FileModifiedOutsideTitle,Datei geändert
+FileModifiedOutside,Datei %s wurde von außen geändert.\nMöchten Sie es jedenfalls überschreiben?
+
+#Debugger text variables (DON'T REMOVE1)
+DbgProgram,[Program
+DbgWorkdir,[Working directory
+DbgProgXterm,[Xterm
+DbgExecutable,[Program to debug
+SDK_UnknownRequest,Source-Navigator hat eine unregistrierte Anforderung durch die SDK Schnittstelle erhalten.\nBitte vergewissern Sie sich, daß das Command nicht durch Dritte verursacht wurde.\nErhaltenes Command <%s>
+
+#Others tab in Preferences (those not in other places)
+Default,Default
+General,General
+Standard,Standard
+Highlighting,Highlighting
+Balloon,Balloon
+BoldFont,Bold Font
+Editor,Editor
+Text,Text
+FunctionsNoKey,Funktionen
+FunctionsDecNoKey,Funktionsdeklarationen
+SubroutinesNoKey,Subroutinen
+Comments,Comments
+Keywords,Keywords
+ClassesNoKey,Klassen
+EnumConsNoKey,Enum Werte
+MethodsNoKey,Methoden
+FriendsNoKey,Friends
+MethodImpsNoKey,Methodenimplementationen
+ClassVarsNoKey,Instanzvariablen
+VariablesNoKey,Variablen
+ConstantsNoKey,Konstanten
+CommonsNoKey,Commons
+CommonsVarsNoKey,Common Variable
+DefinesNoKey,Makros
+Brackets,Brackets
+HierarchyNoKey,Hierarchie
+AbstractClass,Abstract Class
+CrossReference,Cross-Referenz
+StandardFont,Standard Font
+BranchFont,Branch Font
+IncludeNoKey,Include Verzeichnisse
+OthersNoKey,Verschiedenes
+Drawing,Drawing
+LinesTo,Lines To
+LinesBy,Lines By
+SelectedLines,Selected Lines
+BranchToLines,Branch-To Lines
+BranchByLines,Branch-By Lines
+Listing,Listing
+FoundText,Found Text
+Checkbutton,Checkbutton
+UnionsNoKey,Unions
+ClassNoKey,Klassen-Browser
+
+ButtonBugReport,Bug Report
+ButtonMail,Mail
+
+#Ide strings
+BuildTargetManager,???? [Build Setup...
+
+#target manager (gui/targetmgr.tcl)
+IDETargetMgrTitle,Build Settings
+IDETMBuildTargets,[Build Targets:
+IDETMCreateTarget,[Create
+IDETMCopyTarget,D[uplicate
+IDETMRenameTarget,[Rename
+IDETMEditTarget,[Edit
+IDETMDeleteTarget,[Delete
+IDETargetMgrDone,D[one
+
+#target editor
+IDETargetEdTitle,Edit Target:
+IDETEBuildDir,Build [Directory:
+IDETETargetType,[Target Type:
+IDETEToolChain,Tool [Chain:
+IDETEOK,OK
+IDETECancel,Cancel
+
+#target editor -> Source Files page
+IDETESourceFilesTab,[Source Files
+IDETEAddFiles,> [Add Files >
+IDETEProjectFiles,Project Files:
+IDETETargetFile,Target Files:
+IDETEClearFile,Cl[ear
+IDETEClearAllFiles,Clear All
+IDETEImportLabel,Import:
+IDETEImportFiles,Files
+IDETEImportDir,Directory
+
+#target editor -> Libs page
+IDETELibraryFileTab,[Library Files
+IDETELibraryLabel,Libraries:
+IDETEAddLib,[Add...
+IDETERemoveLib,R[emove
+IDETEMoveUp,Move [Up
+IDETEMoveDown,Move Dow[n
+
+#target editor -> Build rules tab
+IDETEBuildRulesTab,[Build Rules
+IDETEBuildRuleDisable,Disabl[e
+IDETEBuildRuleEnable,Enabl[e
+IDETEBuildRuleEdit,"Ed[it Rule"
+
+#target editor -> Link Rules tab
+IDETELinkRulesTab,Link [Rules
+IDETELinkOutputFile,[Output File:
+IDETELinkFlags,Link [flags:
+IDETELinkerExe,Li[nker:
+IDETELaunchSettingsLabel,Debug/Execute Settings:
+IDETELaunchCommand,Command to launch Application:
+IDETELaunchDebug,Debu[g
+IDETELaunchExecute,[Execute
+
+#Build Rule settings.
+IDEBuildRuleTitle,Build Rule Settings
+IDEBRSettingsTab,[Settings
+IDEBRIncludesTab,[Includes
+IDEBRDefinesTab,[Defines
+IDEBROK,OK
+IDEBRCancel,Cancel
+#Settings tab
+IDEBRDebugCombo,Debug:
+IDEBROptimizationCombo,Optimization:
+IDEBRWarningCombo,Warnings:
+IDEBRCodeGenCombo,Code Generation:
+IDEBRUserFlags,User Flags:
+IDEBRExecLocation,Executable:
+#Includes tab
+IDEBRAutoGenPathsLabel,Auto-Generated Include Paths:
+IDEBRUserGenPathsLabel,User Specified Include Paths:
+IDEBRGeneratePaths,[Generate
+IDEBRDeletePath,D[elete
+IDEBRAddPath,[Add...
+#defines tab
+IDEBRMacroDefinesLabel,Macro defines:
+IDEBRDeleteMacro,D[elete
+IDEBRCreateMacro,[New
+IDEBRChangeMacro,[Change

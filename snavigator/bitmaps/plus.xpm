@@ -1,0 +1,18 @@
+/* XPM */
+static char * plus_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"9 9 3 1",
+/* colors */
+" 	c #707070",
+".	c white",
+"X	c black",
+/* pixels */
+"         ",
+" ....... ",
+" ...X... ",
+" ...X... ",
+" .XXXXX. ",
+" ...X... ",
+" ...X... ",
+" ....... ",
+"         "};

@@ -1,0 +1,301 @@
+# This class tests the OptionTrace functions
+
+itcl::class TracedEntry {
+
+    inherit itk::Widget
+
+    constructor {args} {
+
+        itk_component add entry {
+            entry $itk_component(hull).entry
+	} {
+	    keep -state
+	}
+
+        eval itk_initialize $args
+
+        pack $itk_component(entry)
+
+        # Link up the widget and the -value option
+
+        $itk_component(entry) configure -textvariable \
+            [itcl::scope itk_option(-value)]
+    }
+
+    destructor {
+        sourcenav::OptionTrace::deleteOptionTrace -variable -value [itcl::scope itk_option]
+    }
+
+    itk_option define -value value Value ""
+
+    itk_option define -variable variable Variable "" {
+        sourcenav::OptionTrace::configureOptionTrace -variable -value [itcl::scope itk_option]
+    }
+}
+
+
+package require tcltest
+package require eventutils
+
+
+
+if {![winfo exists .t]} {
+    set t [toplevel .t]
+}
+
+set e $t.ent
+
+
+tcltest::test te-value-1 { check configuration options } {
+    destroy $e
+    TracedEntry $e
+    $e cget -value
+} ""
+
+tcltest::test te-value-2 { check configuration options } {
+    destroy $e
+    TracedEntry $e -value foo
+    $e cget -value
+} foo
+
+tcltest::test te-value-3 { check configuration options } {
+    destroy $e
+    TracedEntry $e
+    $e configure -value bar
+    $e cget -value
+} bar
+
+tcltest::test te-value-4 { check configuration options } {
+    destroy $e
+    TracedEntry $e
+    $e configure -value foo
+    [$e component entry] get
+} foo
+
+
+
+
+
+
+tcltest::test te-variable-1 { check configuration options } {
+    destroy $e
+    TracedEntry $e
+    $e cget -variable
+} ""
+
+tcltest::test te-variable-2 { check configuration options } {
+    destroy $e
+    TracedEntry $e -variable foo
+    $e cget -variable
+} foo
+
+tcltest::test te-variable-3 { check configuration options } {
+    destroy $e
+    TracedEntry $e
+    $e configure -variable bar
+    $e cget -variable
+} bar
+
+tcltest::test te-variable-4 { traces should get cleaned up } {
+    destroy $e
+    catch {unset new_var_w_no_traces}
+    set new_var_w_no_traces "value"
+    TracedEntry $e -variable new_var_w_no_traces
+    $e configure -variable ""
+    trace vinfo new_var_w_no_traces
+} {}
+
+tcltest::test te-variable-5 { traces should get cleaned up } {
+    destroy $e
+    catch {unset new_var_w_no_traces}
+    set new_var_w_no_traces "value"
+    TracedEntry $e -variable new_var_w_no_traces
+    expr {[trace vinfo new_var_w_no_traces] == ""}
+} 0
+
+
+# We seem to have a problem in the case where the variable
+# gets unset, the traces on it get deleted so we don't
+# get any callbacks after it gets unset and then reset.
+# Do normal widgets have this problem too?
+
+
+
+
+tcltest::test te-value-variable-1 { querying -value should get
+        the value of the variable } {
+    destroy $e
+    set var VALUE
+    TracedEntry $e -variable var
+    $e cget -value
+} VALUE
+
+tcltest::test te-value-variable-2 { querying -value should get
+        the value of the variable, unless the variable is not
+        set and then we do nothing } {
+    destroy $e
+    catch {unset var}
+    TracedEntry $e -variable var
+    $e cget -value
+} ""
+
+tcltest::test te-value-variable-3 { setting -value and then
+        setting a new -variable should not change the -value
+        if the new -variable does not exist } {
+    destroy $e
+    set var1 INITIAL
+    TracedEntry $e -variable var1
+    catch {unset var2}
+    $e configure -variable var2
+    $e cget -value
+} INITIAL
+
+tcltest::test te-value-variable-4 { querying -value should get
+        the value of the variable } {
+    destroy $e
+    set var VALUE1
+    TracedEntry $e -variable var
+    set var VALUE2
+    $e cget -value
+} VALUE2
+
+tcltest::test te-value-variable-5 { configuring -value should
+        set the value of the variable } {
+    destroy $e
+    set var V1
+    TracedEntry $e -variable var
+    $e configure -value V2
+    set var
+} V2
+
+tcltest::test te-value-variable-6 { configuring -value should
+        set the value of the variable } {
+    destroy $e
+    set var V1
+    TracedEntry $e -variable var
+    $e configure -value ""
+    set var
+} ""
+
+tcltest::test te-value-variable-7 { configuring -variable should
+        query the value of the variable and not set it } {
+    destroy $e
+    set var V1
+    TracedEntry $e -value V2
+    $e configure -variable var
+    set var
+} V1
+
+tcltest::test te-value-variable-8 { configuring -value before
+        -variable should query the value of the variable } {
+    destroy $e
+    set var V1
+    TracedEntry $e -value V2 -variable var
+    $e cget -value
+} V1
+
+tcltest::test te-value-variable-9 { configuring -variable before
+        -value should set the value of the variable } {
+    destroy $e
+    set var V1
+    TracedEntry $e -variable var -value V2
+    $e cget -value
+} V2
+
+tcltest::test te-value-variable-10 { configuring the -value
+        twice should set the variable twice } {
+    destroy $e
+    set var V1
+    TracedEntry $e -variable var -value V2
+    list $var [$e configure -value V3] $var [$e cget -value]
+} {V2 {} V3 V3}
+
+tcltest::test te-value-variable-11 { configuring the -variable
+        twice should query the variable twice } {
+    destroy $e
+    set var1 V1
+    set var2 V2
+    TracedEntry $e
+    $e configure -variable var1
+    list [$e cget -value] \
+         [$e configure -variable var2] \
+         [$e cget -value]
+} {V1 {} V2}
+
+tcltest::test te-value-variable-12 { configuring the -variable
+        twice and then setting the -value should not change the
+        original -variable } {
+    destroy $e
+    set var1 V1
+    set var2 V2
+    TracedEntry $e
+    $e configure -variable var1
+    $e configure -variable var2
+    $e configure -value V3
+    list $var1 $var2
+} {V1 V3}
+
+tcltest::test te-value-variable-13 { configuring the -variable
+        to "" and then setting the -value should not change the
+        variable } {
+    destroy $e
+    set var V1
+    TracedEntry $e
+    $e configure -variable var
+    $e configure -variable ""
+    $e configure -value V2
+    set var
+} V1
+
+tcltest::test te-value-variable-14 { configuring -variable to ""
+        should unlink the variable but retain the value } {
+    destroy $e
+    set var VALUE
+    TracedEntry $e -variable var
+    list [$e cget -value] \
+         [$e configure -variable ""] \
+         [set var new] \
+         [$e cget -value]
+} {VALUE {} new VALUE}
+
+
+
+
+
+
+tcltest::test te-event-1 { send keypress events
+        to entry and then query the -value } {
+    destroy $e
+    TracedEntry $e
+    pack $e
+    set entry [$e component entry]
+    enter_text $entry HELLO
+    list [$e cget -value] \
+         [$entry get]
+} {HELLO HELLO}
+
+tcltest::test te-event-2 { send keypress events
+        to entry and then query the -value } {
+    destroy $e
+    TracedEntry $e -value INITIAL
+    pack $e
+    set entry [$e component entry]
+    enter_text $entry HELLO
+    list [$e cget -value] \
+         [$entry get]
+} {HELLO HELLO}
+
+tcltest::test te-event-3 { send keypress events
+        to entry and then query the variable } {
+    destroy $e
+    set var NONE
+    TracedEntry $e -variable var
+    pack $e
+    enter_text [$e component entry] SOME
+    set var
+} SOME
+
+
+destroy $t
+itcl::delete class TracedEntry
+

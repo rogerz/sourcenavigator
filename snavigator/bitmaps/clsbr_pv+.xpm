@@ -1,0 +1,28 @@
+/* XPM */
+static char * clsbr_pv+_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c magenta",
+"o	c yellow",
+"O	c cyan",
+"+	c white",
+/* pixels */
+"       ..       ",
+"      .XX.      ",
+"     .XXXX.     ",
+"    .XXXXXX.    ",
+"  .......XXX.   ",
+" .ooooo.O.XXX.  ",
+" .oo.oo.OO.XXX. ",
+"..ooooo.OOO.....",
+" ...oo.OOO.+++. ",
+"  ..o.OOO.+++.  ",
+"   .oo...+++.   ",
+"   .o.+++++.    ",
+"   .oo.+++.     ",
+"   .o..++.      ",
+"    .  ..       ",
+"                "};

@@ -1,0 +1,156 @@
+       IDENTIFICATION DIVISION.
+         PROGRAM-ID.    PROBE.
+         AUTHOR.        J GROSCH.
+         DATE-WRITTEN.  26-05-94.
+         DATE-COMPILED. 26-05-94.
+      *
+       ENVIRONMENT DIVISION.
+         CONFIGURATION SECTION.
+           SOURCE-COMPUTER. PC.
+           OBJECT-COMPUTER. PC.
+         INPUT-OUTPUT SECTION.
+           FILE-CONTROL.
+             SELECT f ASSIGN TO m RESERVE 1 ALTERNATE KEY IS n.
+             SELECT f ASSIGN TO m RESERVE NO AREA ALTERNATE KEY IS n.
+             SELECT f ASSIGN TO m RESERVE NO ALTERNATE AREA ALTERNATE
+               KEY IS n.
+             SELECT f ASSIGN TO m RESERVE 1 AREA ALTERNATE KEY IS n.
+             SELECT f ASSIGN TO m RESERVE 1 ALTERNATE AREA ALTERNATE
+               KEY IS n.
+             SELECT f ASSIGN TO m ACCESS SEQUENTIAL RELATIVE KEY IS n.
+             SELECT f ASSIGN TO m ACCESS SEQUENTIAL RELATIVE.
+             SELECT f ASSIGN TO m ACCESS RANDOM RELATIVE KEY IS n.
+             SELECT f ASSIGN TO m ACCESS RANDOM RELATIVE.
+             SELECT f ASSIGN TO m ACCESS DYNAMIC RELATIVE KEY IS n.
+             SELECT f ASSIGN TO m ACCESS DYNAMIC RELATIVE.
+             SELECT f ASSIGN TO DISK.
+             SELECT f ASSIGN TO DISK FILE g.
+             SELECT f ASSIGN TO DISK FILE STATUS s.
+             SELECT f ASSIGN TO DISK STATUS s.
+             SELECT f ASSIGN m ALTERNATE d PASSWORD p PASSWORD q.
+             SELECT f ASSIGN m ALTERNATE s = a b c t = d e f.
+      *
+       DATA DIVISION.
+         FILE SECTION.
+         WORKING-STORAGE SECTION.
+       77  I PIC 99.
+       01  NAMEN.
+           05 VORNAME  PIC X(12).
+           05 NACHNAME PIC X(12).
+      *
+       PROCEDURE DIVISION.
+         MAIN.
+           RETURN n AT END ACCEPT n ACCEPT n. ACCEPT n.
+           RETURN n AT END ADD m TO n ADD m TO n. ADD m TO n.
+           RETURN n AT END ALTER n TO m ALTER n TO m. ALTER n TO m.
+           RETURN n AT END CALL m CALL m. CALL m.
+           RETURN n AT END CANCEL m CANCEL m. CANCEL m.
+           RETURN n AT END CLOSE m CLOSE m. CLOSE m.
+           RETURN n AT END COMPUTE n = m COMPUTE n = m. COMPUTE n = m.
+
+           RETURN n AT END WRITE m WRITE m. WRITE m.
+
+           RECEIVE n MESSAGE INTO i NO DATA CLOSE f WITH DATA STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA CLOSE f WITH LOCK.
+
+           RECEIVE n MESSAGE INTO i NO DATA PERFORM f WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA PERFORM f WITH TEST BEFORE
+             UNTIL n.
+
+           RECEIVE n MESSAGE INTO i NO DATA DISABLE INPUT n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA DISABLE INPUT n WITH KEY n.
+
+           RECEIVE n MESSAGE INTO i NO DATA DISPLAY n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA DISPLAY n WITH NO ADVANCING.
+
+           RECEIVE n MESSAGE INTO i NO DATA ENABLE INPUT n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA ENABLE INPUT n WITH KEY n.
+
+           RECEIVE n MESSAGE INTO i NO DATA OPEN INPUT n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA OPEN INPUT n WITH NO REWIND.
+
+           RECEIVE n MESSAGE INTO i NO DATA OPEN OUTPUT n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA OPEN OUTPUT n WITH NO
+             REWIND.
+
+           RECEIVE n MESSAGE INTO i NO DATA SEND m FROM n WITH DATA
+             STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA SEND m FROM n WITH l.
+
+           RECEIVE n MESSAGE INTO i NO DATA STRING a DELIMITED b INTO
+             c WITH DATA STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA STRING a DELIMITED b INTO
+             c WITH POINTER l.
+
+           RECEIVE n MESSAGE INTO i NO DATA UNSTRING a DELIMITED b
+             INTO c WITH DATA STOP RUN.
+           RECEIVE n MESSAGE INTO i NO DATA UNSTRING a DELIMITED b
+             INTO c WITH POINTER l.
+
+           IF (a = b) STOP RUN.
+
+           IF a STOP RUN IF b STOP RUN END-IF.
+           IF a STOP RUN IF b STOP RUN ELSE STOP RUN.
+           ON a ON b STOP RUN ELSE      STOP RUN.
+           ON a ON b STOP RUN OTHERWISE STOP RUN.
+
+           IF a        NUMERIC STOP RUN.
+           IF a IS     NUMERIC STOP RUN.
+           IF a    NOT NUMERIC STOP RUN.
+           IF a IS NOT NUMERIC STOP RUN.
+           IF a        ZERO    STOP RUN.
+           IF a IS     ZERO    STOP RUN.
+           IF a    NOT ZERO    STOP RUN.
+           IF a IS NOT ZERO    STOP RUN.
+
+           ADD a TO b SIZE ERROR PERFORM p UNTIL i NOT NUMERIC.
+           ADD a TO b SIZE ERROR PERFORM p UNTIL e NOT ZERO.
+           ADD a TO b SIZE ERROR PERFORM p UNTIL e NOT EQUAL TO f.
+
+           ADD a TO b SIZE ERROR PERFORM p UNTIL i NOT SIZE ERROR
+              STOP RUN.
+           CALL a     EXCEPTION  PERFORM p UNTIL i NOT EXCEPTION
+              STOP RUN.
+           STRING a DELIMITED b INTO c OVERFLOW PERFORM p UNTIL i
+              NOT OVERFLOW STOP RUN.
+           DELETE a RECORD INVALID KEY PERFORM p UNTIL i
+              NOT INVALID KEY STOP RUN.
+           WRITE n    END-OF-PAGE PERFORM p UNTIL i
+              NOT END-OF-PAGE STOP RUN.
+           READ a     END         PERFORM p UNTIL i NOT END STOP RUN.
+
+           CALL n ON OVERFLOW STOP RUN.
+           CALL n ON m        STOP RUN.
+
+           ADD m GIVING n ON SIZE ERROR STOP RUN.
+           ADD m GIVING n ON m          STOP RUN.
+
+           ADD m TO n ON SIZE ERROR STOP RUN.
+           ADD m TO n ON m          STOP RUN.
+
+           COMPUTE m = n ON SIZE ERROR STOP RUN.
+           COMPUTE m = n ON m          STOP RUN.
+
+           DIVIDE m INTO n ON SIZE ERROR STOP RUN.
+           DIVIDE m INTO n ON m          STOP RUN.
+
+           MULTIPLY m BY n ON SIZE ERROR STOP RUN.
+           MULTIPLY m BY n ON m          STOP RUN.
+
+           SUBTRACT m FROM n ON SIZE ERROR STOP RUN.
+           SUBTRACT m FROM n ON m          STOP RUN.
+
+           STRING a DELIMITED b INTO c ON OVERFLOW STOP RUN.
+           STRING a DELIMITED b INTO c ON m        STOP RUN.
+
+           UNSTRING a DELIMITED b INTO c ON OVERFLOW STOP RUN.
+           UNSTRING a DELIMITED b INTO c ON m        STOP RUN.
+
+           CALL n EXCEPTION CALL m END-CALL.
+           CALL n EXCEPTION CALL m NOT EXCEPTION STOP RUN END-CALL.

@@ -1,0 +1,134 @@
+This file outlines the commands that are available in
+the eventutils package.
+
+--------------------------------------------------
+
+close_toplevel { widget }
+
+This command will close the toplevel window given
+as the widget argument.
+
+Example: Query for next toplevel and then close it.
+
+set top [next_toplevel]
+close_toplevel $top
+
+--------------------------------------------------
+
+mouse_click { widget args }
+
+This command uses the "event generate" command
+to simulate a user clicking the mouse over
+the given widget. Optional arguments can include
+any valid options to the "event generate" command,
+the most common of which are -x and -y to indicate
+the x and y coords of the mouse click.
+
+Example:
+
+set top [next_toplevel]
+set button $top.open
+mouse_click $button
+
+--------------------------------------------------
+
+mouse_double_click { widget args }
+
+This command works just like mouse_click except
+that it generates a double click event instead
+of a regular click.
+
+FIXME: Do we need a mouse_triple_click ?
+
+--------------------------------------------------
+
+pause {{msecs 1000}}
+
+This command will pause the execution of the
+script for a given number of (1/1000) second
+intervals. This can be useful in cases where
+you know that some amount of delay is needed.
+If invoked with no arguments, it will pause
+for one second.
+
+Example: Pause script for 5 seconds, then destroy
+
+set top [next_toplevel]
+
+pause 5000
+
+close_toplevel $top
+
+--------------------------------------------------
+
+writefile { file data }
+
+This command will write the given buffer of data
+to the file named "file". This command is
+typically used to create files that will be
+loaded into a project or some such thing.
+If the file already exists it will be truncated.
+The directory where the file will live must
+already exist.
+
+Example: Create some source files in /tmp/foo
+
+file delete -force /tmp/foo
+file mkdir /tmp/foo
+writefile /tmp/foo/f1.c {int func1(int i) { return 0; }}
+writefile /tmp/foo/f2.c {int func2(int i) { return func1(0); }}
+
+--------------------------------------------------
+
+enter_text { widget text }
+
+This command is used to enter text into a widget.
+The exact way that text is entered depends on the
+widget in question. In general, one can assume
+that text that was already in the widget gets
+erased before new text is added.
+
+Example: Enter some text into an Entry widget
+
+set top [next_toplevel]
+set entry $top.entry
+
+enter_text $entry HELLO
+
+--------------------------------------------------
+
+listbox_select_index { lb index }
+
+This command will select a numerical index
+in a listbox widget. If the numerical index
+is bigger than the number of elements, then
+an error will be raised. The mouse_click
+command is used behind the scenes to actually
+select the index, so as to simulate the user
+actually clicking on the given index in the list.
+
+Example: Highlight the first element in the listbox
+
+set top [next_toplevel]
+set lb $top.listbox
+
+listbox_select_index $lb 0
+
+--------------------------------------------------
+
+listbox_select_entry_pattern {lb pattern}
+
+This command works like the listbox_select_index
+command except that instead of providing a
+numerical index, one would provide a pattern
+that matches the item in the listbox that
+you would like to select.
+
+Example: Highlight an entry that matched Foo*
+
+set top [next_toplevel]
+set lb $top.listbox
+
+listbox_select_entry_pattern $lb Foo*
+
+--------------------------------------------------

@@ -1,0 +1,55 @@
+package require tcltest
+package require eventutils
+
+if {[itcl::find class ItkError] == ""} {
+
+itcl::class ItkError {
+    inherit itk::Widget
+
+    constructor {args} {
+        eval itk_initialize $args
+
+        itk_component add button {
+            button $itk_option(-win).button
+        } {}
+
+        pack $itk_component(button)
+    }
+
+    itk_option define -win win Win ""
+}
+
+}
+
+
+
+set t .t
+
+tcltest::test itk-destroy-1 { This test reproduces
+        a problem with an itk widget. When an itk
+        component contains a sub component that is
+        packed into another frame it creates a
+        <Destroy> binding that uses the original
+        object command. If the object gets deleted
+        and then the <Destroy> binding fires, you
+        end up with a really tricky bug that
+        depends on the order that widgets are
+        destroyed } {
+
+    destroy $t
+    toplevel $t
+    set f [frame $t.f]
+    set w [ItkError $t.w -win $f]
+
+    pack $f -side top
+    pack $w
+
+    destroy $w
+    # This should not raise
+    # an error, it does
+    # in existing itk code.
+    destroy $f
+} {}
+
+destroy $t
+

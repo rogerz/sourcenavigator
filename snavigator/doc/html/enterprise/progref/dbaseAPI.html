@@ -1,0 +1,3169 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text/css">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; U) [Netscape]">
+   <title>Database API</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1 CLASS="Chapter">
+<a NAME="pgfId-996750"></a><a NAME="pgfId-996751"></a><a NAME="22066"></a><a NAME="databaseapi"></a>Database
+API</h1>
+<img SRC="dbaseAPI-1.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-1006573"></a>This chapter provides information
+that enables programmers to build applications that make use of Source-Navigator's&nbsp;<a NAME="marker-1000008"></a>project
+databases. It covers the API, including available functions and their syntax.
+
+<p CLASS="Body"><a NAME="pgfId-996753"></a>This chapter assumes that you
+are familiar with the Tcl or C programming languages. For information about
+Tcl see <i>Practical Programming in Tcl and Tk</i><sup><a href="#pgfId-1005066" CLASS="footnote">1</a></sup>
+and <i>Tcl and the Tk Toolkit</i><sup><a href="#pgfId-1006673" CLASS="footnote">2</a></sup>,
+and for information about C refer to <i>The C Programming Language</i><sup><a href="#pgfId-1005069" CLASS="footnote">3</a></sup>
+.
+<h2 CLASS="Heading1">
+<a NAME="pgfId-996755"></a><a NAME="28610"></a><a NAME="intro"></a>Introduction</h2>
+
+<div CLASS="Body"><a NAME="pgfId-996756"></a>Source-Navigator&nbsp;<a NAME="marker-1000009"></a>project
+information is stored in a <i>database<a NAME="marker-1001321"></a></i>.
+There is one database for each project and the database may contain one
+or more <i>views</i>. A&nbsp;<a NAME="marker-1010407"></a>view is a named
+subset of records; this might be the subset of all <tt>.h</tt> files, or
+the subset of all files in a given subdirectory. Views are a powerful and
+fast way to narrow down a large project without building multiple projects
+(see <a href="dbaseAPI.html#28466" CLASS="XRef">Views</a>).
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1010406"></a>A&nbsp;<a NAME="marker-1000010"></a>database
+consists of 15 to 25 files; each file consists of a table that contains
+symbol and index information. Database files are regular files in the operating
+system and can be shared between UNIX and Windows operating systems.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1261413"></a>When you create a project
+with Source-Navigator, a database is created under the <tt><i>projectdir</i>/.snprj</tt>
+directory. By default, this location can be changed in the Project Preferences
+dialog when the project is created. See the "Project Preferences Window"
+section of the <i>Source-Navigator User's Reference Guide</i> for more
+information. Each database file is created with a filename starting with
+<tt>projectname</tt>,
+where <tt>projectname</tt> is the project name you chose and <tt>projectdir</tt>
+is the project directory you chose. One or more databases may exist under
+the same directory.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1240064"></a>Each file is a <i>table<a NAME="marker-1240062"></a></i>
+that contains specific symbol information and indexes. A&nbsp;<a NAME="marker-1240063"></a>database
+table can be accessed via an&nbsp;<a NAME="marker-1263514"></a><i>index</i>,
+which is handled internally by the database, or sequentially. To use the&nbsp;<a NAME="marker-1240066"></a>Tcl
+API, you do not need additional header files, compilers, or libraries.
+All of the Tcl commands you need to work with a Source-Navigator project
+database are built into the Source-Navigator Tcl interpreter called <i>hyper<a NAME="marker-1240067"></a></i>.</div>
+
+<br>&nbsp;
+<table WIDTH="100%" >
+<tr ALIGN=LEFT VALIGN=TOP>
+<td>
+<div CLASS="Label"><a NAME="pgfId-1176264"></a><b>Notes:</b></div>
+</td>
+
+<td>
+<div CLASS="Note"><a NAME="pgfId-1250351"></a>In previous versions of Source-Navigator,
+fields in the database were separated by space characters. To accommodate
+filenames that contain spaces, the field separator has been changed to
+an internal value that can be referenced through the read-only Tcl variable&nbsp;<a NAME="marker-1262626"></a><tt>sn_sep</tt>.
+See the scripts under <a href="dbaseAPI.html#23501" CLASS="XRef">Cross-Reference
+Tables</a> for more information on this variable.
+<br>&nbsp;</div>
+
+<div CLASS="Note"><a NAME="pgfId-1176266"></a>The first three lines of
+the scripts in this chapter are "boilerplate" text to run these scripts
+under UNIX. On Windows you must delete these lines and run the remainder
+from a file using <tt>SNsdk</tt>.&nbsp;
+<br>&nbsp;</div>
+
+<div CLASS="Note"><a NAME="pgfId-1176359"></a>To run standalone Tcl scripts
+(see <a href="dbaseAPI.html#14448" CLASS="XRef">multicludes.tcl</a>) under
+Windows NT, an execution command must be used. The usage of this command
+is:&nbsp;
+<br>&nbsp;</div>
+
+<div CLASS="Note"><a NAME="pgfId-1176268"></a><tt>SNsdk &lt;script name>
+&lt;arguments></tt>
+<br><tt></tt>&nbsp;</div>
+
+<div CLASS="Note"><a NAME="pgfId-1176269"></a>To run the <tt>multicludes.tcl</tt>
+example script on a project called <tt>test1</tt> in the <tt>C:\test</tt>
+directory the syntax would be:&nbsp;
+<br>&nbsp;</div>
+
+<div CLASS="Note"><a NAME="pgfId-1176270"></a><tt>SNsdk multicludes.tcl
+C:\test test1</tt></div>
+</td>
+</tr>
+</table>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-996770"></a><a NAME="structure"></a>Structure</h2>
+
+<div CLASS="Body"><a NAME="pgfId-996771"></a>The&nbsp;<a NAME="marker-1000014"></a>database
+may be accessed by a set of Tcl commands. The primary goals in designing
+the API were performance and flexibility; for high-level queries, the Tcl
+language provides a powerful and flexible solution.</div>
+
+<br>&nbsp;
+<p><img SRC="dbaseAPI-2.gif" >
+
+<p CLASS="Body"><a NAME="pgfId-996847"></a>The database supports the
+<tt>btree</tt>
+and <tt>hash</tt> file formats. The <tt>btree</tt> format is a representation
+of a sorted, balanced tree structure. The <tt>hash</tt> format is an extensible,
+dynamic hashing scheme.
+
+<p CLASS="Body"><a NAME="pgfId-1239981"></a>The&nbsp;<a NAME="dbopen"></a><tt>dbopen<a NAME="marker-1239975"></a></tt>,&nbsp;<a NAME="close1"></a><tt>close<a NAME="marker-1239976"></a></tt>,&nbsp;<a NAME="del"></a><tt>del<a NAME="marker-1239977"></a></tt>,&nbsp;<a NAME="get"></a><tt>get<a NAME="marker-1239978"></a></tt>,&nbsp;<a NAME="put"></a><tt>put<a NAME="marker-1239979"></a></tt>,
+and&nbsp;<a NAME="seq"></a><tt>seq<a NAME="marker-1239980"></a></tt> routines
+are used to access the database. Optimal database tuning calls and parameters
+may also be configured in Tcl using the <tt>cachesize<a NAME="marker-1239982"></a></tt>
+and <tt>pagesize<a NAME="marker-1239983"></a></tt> properties (see <a href="dbaseAPI.html#15148" CLASS="XRef">dbopen</a>)
+to give optimum performance in specific applications.
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1239988"></a><a NAME="28466"></a><a NAME="views"></a>Views</h2>
+
+<div CLASS="Body"><a NAME="pgfId-1012028"></a>Views define sets of files
+to include or exclude from queries. The&nbsp;<a NAME="marker-1012027"></a>hidden
+files list is stored in a&nbsp;<a NAME="marker-1012029"></a>view. For example,
+in a project where you have both database- and GUI-specific source files,
+you can hide the database file <tt>sql.c</tt> and save the remaining project
+information as a view<i>.</i> Hiding this view means the records with references
+to the file <tt>sql.c</tt> must be skipped. The following example lists
+a view table:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012030"></a>set db_view [dbopen nav_view .snprj/cpl.2 RDONLY 0644 hash \
+cachesize=300000]
+puts stdout [join [ $db_view seq -data] \n]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012032"></a>The list would be as follows:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012033"></a><b><tt>sql.c</tt></b></pre>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1012034"></a><b>Using Views</b></h3>
+
+<div CLASS="Body"><a NAME="pgfId-1012036"></a><a NAME="marker-1012035"></a>Views
+have to be specified when a table is opened using the <tt>dbopen</tt> command;
+the application does not have to be changed.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1012040"></a>The example below uses a
+view. The view table in the following example (<tt>.snprj/cpl.2</tt>) is
+created using the Editor. The first view in a project has the suffix <tt>.1</tt>,
+the second <tt>.2</tt>. There is no limit for views.</div>
+
+<div CLASS="Body"><a NAME="pgfId-1130275"></a></div>
+
+<p><br><tt>#!/bin/sh</tt>
+<br><tt># Replace $HOME/snavigator with the Source-Navigator</tt>
+<br><tt># installation directory! \</tt>
+<br><tt>exec $HOME/snavigator/bin/hyper "$0" "$@"</tt>
+<br><tt>#</tt>
+<br><tt># Don't forget the backslash before exec!</tt>
+<br><tt>#</tt>
+<br><tt>set db_view [dbopen nav_view .snprj/cpl.2 RDONLY 0644 \</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; hash cachesize=300000]</tt>
+<p><tt>set db_functions [dbopen nav_func .snprj/cpl.fu RDONLY \</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; 0644 btree cachesize=20000 $db_view]</tt>
+<p><tt># Output the list of matches with newline characters</tt>
+<br><tt># after each.</tt>
+<br><tt>puts [join [$db_functions seq -data] \n]</tt>
+<p><tt># Force our way out of this event-driven shell.</tt>
+<br><tt>exit</tt>
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1130277"></a><a NAME="marker-1130276"></a><a NAME="23501"></a><a NAME="xreftable"></a>Cross-Reference
+Tables</h2>
+
+<div CLASS="Body"><a NAME="pgfId-1239998"></a>Source-Navigator stores the&nbsp;<a NAME="marker-1239997"></a>cross-reference
+information in two tables with the suffixes <tt>by</tt> and <tt>to</tt>.
+They contain the same information, only their key format differs. The
+<tt>to</tt>
+table keeps the <i>Refers-to<a NAME="marker-1239999"></a></i> information
+and the <tt>by</tt> table the <i>Referred-by&nbsp;<a NAME="marker-1240000"></a></i>information.
+The following script opens the <tt>to</tt> cross-reference table of a project
+and lists its contents.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012063"></a>
+#!/bin/sh
+# Replace $HOME/snavigator with the Source-Navigator&nbsp;
+# installation directory! \
+exec $HOME/snavigator/bin/hyper "$0" "$@"
+#
+# Don't forget the backslash before exec!
+#
+set db_functions [dbopen nav_func .sn/cpl.to RDONLY 0644 btree \
+&nbsp; {cachesize=200000}]
+
+puts [join [$db_functions seq -data] \n]
+exit</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012076"></a>The above script would generate
+these results:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012077"></a><b><tt># len fu # strlen fu p 000019 c.c
+# main fu # glob_var gv w 000010 c.c
+# main fu # len fu p 000013 c.c
+# main fu # printf fu p 000013 c.c
+# main fu # strcpy fu p 000012 c.c</tt></b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012082"></a>The hash (<tt>#</tt>) characters
+mean that the symbols do not belong to any classes. To fetch only the references
+in the main function, modify the fetch instruction:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012083"></a>$db_functions seq -data [append "#" $sn_sep "main" $sn_sep]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012084"></a>In the query, note that the
+first character of the key must be a hash (<tt>#</tt>) character because
+<tt>main</tt>
+is not a method but a function. To be sure that only the references of
+main are reported, a separator character (<tt>$sn_sep</tt>) has to be added
+to the string <tt>main</tt>. Without the separator, the query would report
+the references of all functions whose names begin with the string <tt>main</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1012085"></a>An example of the result
+after the modification:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1012086"></a><b><tt># main fu # glob_var gv w 000010 c.c
+# main fu # len fu p 000013 c.c
+# main fu # printf fu p 000013 c.c
+# main fu # strcpy fu p 000012 c.c</tt></b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012090"></a>If an application collects
+references to a function <i>Referred-by</i>, it is better to use the <tt>by</tt>
+database table.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1012091"></a>The script below opens the
+<i>Referred-by</i>
+table and reports every reference to the global variable <tt>glob_var</tt>
+and the function <tt>len</tt>.
+<br>&nbsp;</div>
+<a NAME="pgfId-1012092"></a>
+<br><tt>#!/bin/sh</tt>
+<br><tt># Replace $HOME/snavigator with the Source-Navigator</tt>
+<br><tt># installation directory! \</tt>
+<br><tt>exec $HOME/snavigator/bin/hyper "$0" "$@"</tt>
+<br><tt>#</tt>
+<br><tt># Don't forget the backslash before exec!</tt>
+<br><tt>#</tt>
+<br><tt>global sn_sep</tt>
+<br><tt>set db_functions [dbopen nav_func .snprj/cpl.by RDONLY \</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; 0644 btree cachesize=200000]</tt>
+<br><tt># Output the cross-references which match the following</tt>
+<br><tt># criteria, with newline characters between all of them.</tt>
+<p><tt>puts [join $db_functions seq -data \</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [append "#" $sn_sep "glob_var" $sn_sep gv] \n]</tt>
+<br><tt>puts [join $db_functions seq -data&nbsp; \</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; [append "#" $sn_sep "len" $sn_sep fu] \n]</tt>
+<p><tt># Force our way out of this event-driven shell.</tt>
+<br><tt>exit</tt>
+
+<p CLASS="Body"><a NAME="pgfId-1012104"></a>The result will be:
+<pre CLASS="CodeExample"><a NAME="pgfId-1012105"></a><b># glob_var gv # main fu w 000010 c.c
+# len fu # main fu p 000013 c.c</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-1012024"></a>The output above indicates
+that the symbols <tt>glob_var</tt> and <tt>len</tt> are only used by the
+function <tt>main</tt>.</div>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-996849"></a><a NAME="marker-996848"></a><a NAME="tclapi"></a>Tcl
+API Functions</h2>
+
+<div CLASS="Body"><a NAME="pgfId-996850"></a>The Source-Navigator database
+tables can be accessed by means of Tcl commands created using the <tt>dbopen<a NAME="marker-1000022"></a></tt>
+command. The database API can access Source-Navigator tables regardless
+of whether Source-Navigator is running, or a project is using the target
+tables.</div>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-996852"></a><a NAME="marker-996851"></a><a NAME="15148"></a><a NAME="dbopen1"></a>dbopen</h3>
+
+<div CLASS="Body"><a NAME="pgfId-1007577"></a>The <tt>dbopen</tt> command
+opens a table for reading and/or writing. <tt>dbopen</tt> creates a new
+Tcl object (command) with the name <tt>dbobject</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1007609"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1151197"></a>dbopen <tt><i>dbobject</i> </tt>tableName access permission type ?openinfo?<a NAME="pgfId-1194785"></a></pre>
+
+<table>
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151645"></a><i><tt>dbobject</tt></i><a NAME="marker-1151676"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151647"></a>The desired name of the
+new command. <tt>dbopen</tt> will fail if there is already a command named
+<i><tt>dbobject</tt></i>.&nbsp;</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151649"></a><tt>tableName</tt><a NAME="marker-1151677"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151651"></a>The <tt>dbopen</tt> command
+opens a table for reading and/or writing. Files not intended for permanent
+storage on disk can be created by setting the <tt>tableName</tt> parameter
+to <tt>NULL</tt>.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151653"></a><tt>access</tt><a NAME="marker-1151678"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151655"></a>The <tt>access</tt> argument
+is as specified for the Tcl <tt>open</tt> routine; however, only the <tt>CREAT</tt>,
+<tt>EXCL</tt>,
+<tt>RDONLY</tt>,
+<tt>RDWR</tt>,
+and <tt>TRUNC</tt> flags are significant. Refer to the Tcl documentation
+for further information on modes for opening files.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151657"></a><tt>permission</tt><a NAME="marker-1151679"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151659"></a>If a new file is created
+as part of the process of opening it, <tt>permission</tt> (an integer)
+sets the permissions for the file. On UNIX, this is done in conjunction
+with the process' file mode creation mask.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151661"></a><tt>type</tt><a NAME="marker-1151680"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151663"></a>The <tt>type</tt> argument
+must be either <tt>btree</tt> or <tt>hash</tt>. The <tt>btree</tt> format
+represents a sorted, balanced tree structure. The hash format is an extensible,
+dynamic hashing scheme.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151665"></a><tt>openinfo</tt><a NAME="marker-1151681"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151667"></a>The <tt>openinfo</tt>
+optional argument must be a valid Tcl list and can be used to set type-specific
+properties of database tables. The syntax is as follows:</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1152227"></a><tt>property1=value,property2=value,...\</tt></div>
+<tt>propertyn=value&nbsp;</tt>
+<div CLASS="CellBody"><a NAME="pgfId-1152240"></a>See <a href="dbaseAPI.html#23293" CLASS="XRef">Hash
+Table Properties</a> and <a href="dbaseAPI.html#18818" CLASS="XRef">Btree
+Table Properties</a> for valid values for this parameter.&nbsp;</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-1151226"></a>
+<table BORDER >
+<caption>
+<div CLASS="TableTitle"><a NAME="pgfId-1162569"></a><a NAME="23293"></a><a NAME="table6"></a><b>Hash
+Table Properties</b></div>
+</caption>
+
+<tr>
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1151236"></a><a NAME="marker-1151235"></a>Hash
+table properties</div>
+</th>
+
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1151238"></a>Meaning</div>
+</th>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151240"></a><tt>bsize</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151242"></a>Defines the hash table
+bucket size, and is, by default, 256 bytes. It may be preferable to increase
+the page size for disk-resident tables and tables with large data items.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151244"></a><tt>factor</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151246"></a>Indicates a desired density
+within the hash table. It is an approximation of the number of keys allowed
+to accumulate in any one bucket, determining when the hash table grows
+or shrinks. The default value is 8.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151249"></a><tt>nelem</tt><a NAME="marker-1151248"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151251"></a>An estimate of the final
+size of the hash table. If not set, or set too low, hash tables will expand
+gradually as keys are entered. Although a slight degradation in performance
+may be noticed, the default value is 1.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151254"></a><tt>cachesize</tt><a NAME="marker-1151253"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1151256"></a>Suggested maximum size,
+in bytes, of the memory cache. This value is only advisory, and the access
+method will allocate more memory rather than fail.</div>
+</td>
+</tr>
+</table>
+
+<br>&nbsp;
+<table BORDER >
+<caption>
+<div CLASS="TableTitle"><a NAME="pgfId-1260934"></a><a NAME="18818"></a><a NAME="table7"></a><b>Btree
+Table Properties</b></div>
+</caption>
+
+<tr>
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1260939"></a><a NAME="marker-1260938"></a>Btree
+table properties</div>
+</th>
+
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1260941"></a>Meaning</div>
+</th>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260943"></a><tt>flags</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260945"></a>The <tt>flags</tt> value
+is specified by applying the bitwise OR operation with any of these values:</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1260949"></a><tt>R_DUP </tt>Permit
+duplicate keys in the tree; that is, permit insertion if the key to be
+inserted already exists in the tree. The default behavior is to overwrite
+a matching key when inserting a new key or to fail if the <tt>R_NOOVERWRITE</tt>
+flag is specified. The <tt>R_DUP</tt> flag is overridden by the <tt>R_NOOVERWRITE</tt>
+flag, and if the <tt>R_NOOVERWRITE</tt> flag is specified, attempts to
+insert duplicate keys into the tree will fail. If the database contains
+duplicate keys, the order of retrieval of key/data pairs is undefined if
+the get method is used; however, seq method calls with the <tt>R_CURSOR</tt>
+flag set will always return the logical "first" of any group of duplicate
+keys.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260952"></a><tt>cachesize</tt><a NAME="marker-1260951"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260954"></a>Suggested maximum size
+(in bytes) of the memory cache. This value is only advisory, and the access
+method will allocate more memory rather than fail. Since every search examines
+the root page of the tree, caching the most recently used pages substantially
+improves access time. In addition, physical writes are delayed as long
+as possible, so a moderate cache can reduce the number of I/O operations
+significantly. Using a cache increases (but only increases) the likelihood
+of corruption or lost data if the system crashes while a tree is being
+modified. If cachesize is 0 (no size is specified), a default cache is
+used.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260957"></a><tt>minkeypage</tt><a NAME="marker-1260956"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260959"></a>The minimum number of
+keys stored on any single page. This value determines which keys are stored
+on overflow pages; that is, if a key or data item is longer than the pagesize
+divided by the <tt>minkeypage</tt> value, it is stored on overflow pages
+instead of in the page itself. If <tt>minkeypage</tt> is 0 (no minimum
+number of keys is specified), a value of 2 is used.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260962"></a><tt>psize</tt><a NAME="marker-1260961"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260964"></a>Page size is the size
+(in bytes) of the pages used for nodes in the tree. The minimum page size
+is 512 bytes, and the maximum page size is 64K. If <tt>psize</tt> is 0
+(no page size is specified), a page size is selected based on the underlying
+file system I/O block size.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260967"></a><tt>lorder</tt><a NAME="marker-1260966"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1260969"></a>The byte order for integers
+in the stored database metadata. The number should represent the order
+as an integer; for example, big endian order would be the number 4,321.
+If <tt>lorder</tt> is 0 (no order is specified), the current host order
+is used.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-1151296"></a>If the file already exists
+(and the <tt>TRUNC</tt> flag is not specified), the values specified for
+the parameter <tt>flags</tt>, <tt>lorder</tt> and <tt>psize</tt> are ignored
+in favor of the values used when the tree was created.
+
+<p CLASS="Body"><a NAME="pgfId-996967"></a>Forward sequential scans of
+a tree are from the least key to the greatest.
+
+<p CLASS="Body"><a NAME="pgfId-996968"></a>Space freed up by deleting key/data
+pairs from the tree is never reclaimed, although it is normally made available
+for reuse. This means that the <tt>btree</tt> storage structure is grow-only.
+The only solution is to avoid excessive deletions, or to create a fresh
+tree periodically from a scan of an existing one (see <a href="dbaseutil.html#33334" CLASS="XRef">dbcp</a>).
+
+<p CLASS="Body"><a NAME="pgfId-996969"></a>The instruction below opens
+(for read-only) a <tt>btree</tt> database table using cachesize of 2 MB.
+<pre CLASS="CodeExample"><a NAME="pgfId-996970"></a>set db [dbopen nav_classes brow.cl RDONLY 0644 btree \
+&nbsp;&nbsp;&nbsp; {cachesize=2000000}]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-996972"></a>The next example opens a hash
+table that is used later as a view.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-996973"></a>set db_view [dbopen nav_view .snprj/progs.1 RDONLY \
+&nbsp;&nbsp;&nbsp; 0644 hash "cachesize=300000"]
+set db_functions [dbopen nav_func .snprj/progs.fu \
+&nbsp;&nbsp;&nbsp; RDONLY 0644 btree "cachesize=200000" $db_view]</pre>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1012185"></a>Methods</h3>
+
+<div CLASS="Body"><a NAME="pgfId-1012217"></a>With commands created by
+<tt>dbopen</tt>,
+these methods can be used: <tt>close</tt>, <tt>del</tt>,
+<tt>exclude</tt>,
+<tt>get</tt>,
+<tt>isempty</tt>,
+<tt>put</tt>,
+<tt>reopen</tt>,
+<tt>seq</tt>,
+and <tt>sync</tt>. In the following examples,
+<tt>dbobject</tt> represents
+the command returned from
+<tt>dbopen</tt>.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1012219"></a><a NAME="marker-1012218"></a>close</h4>
+
+<div CLASS="Body"><a NAME="pgfId-996981"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-996982"></a><tt><i>dbobject</i> </tt>close</pre>
+
+<div CLASS="Body"><a NAME="pgfId-996983"></a>This method flushes any cached
+information to disk, frees any allocated resources, and closes the underlying
+table. Since key/data pairs may be cached in memory, a database should
+be closed or synchronized before the application exits; this flushes the
+cache to disk. Failure to close or synchronize can cause data loss. As
+a final step, <i><tt>dbobject</tt></i> is also destroyed.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-996985"></a><a NAME="marker-996984"></a>del</h4>
+
+<div CLASS="Body"><a NAME="pgfId-996986"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-996987"></a><tt><i>dboject</i> </tt>del ?-glob pattern? ?-beg pattern? ?-end pattern?
+&nbsp;&nbsp;&nbsp; ?-regexp pattern? ?-strstr pattern? ?key? ?flags?</pre>
+
+<div CLASS="Body"><a NAME="pgfId-996989"></a>This method removes key/data
+pairs from the table.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-996990"></a>With <tt>glob</tt>, <tt>beg</tt>,
+<tt>end</tt>,
+<tt>regexp</tt>
+and <tt>strstr</tt> switches (applicable only to the <tt>btree</tt> tables),
+a pattern must be specified to delete every record whose key matches the
+pattern. If <tt>key</tt> is specified, only those records are checked for
+deletion whose keys begin with <tt>key</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-996991"></a>The parameter <tt>flags</tt>
+may be set to the value <tt>R_CURSOR.</tt> Delete the record referenced
+by the cursor. The cursor must have previously been initialized.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-996992"></a>This method returns the number
+of the deleted records.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-996994"></a><a NAME="marker-1002034"></a>exclude</h4>
+
+<div CLASS="Body"><a NAME="pgfId-996995"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-996996"></a><tt><i>dbobject</i> </tt>exclude view</pre>
+
+<div CLASS="Body"><a NAME="pgfId-996997"></a>This method effectively sets
+the view of <i><tt>dbobject</tt></i> by excluding all symbols not in the
+view.
+<tt>View</tt> must be the name of an already existing object created
+using an earlier
+<tt>dbopen</tt> command.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-996999"></a><a NAME="marker-996998"></a>get</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997000"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997001"></a><tt><i>dbobject</i> </tt>get key</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997002"></a>If <tt>key</tt> is found,
+this method returns <tt>key</tt> and the associated data in separate Tcl
+lists; otherwise, it returns an empty string. For more information, see
+<a href="dbaseAPI.html#11955" CLASS="XRef">Fetching
+Tables</a>.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997004"></a><a NAME="marker-997003"></a>isempty</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997005"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997006"></a><tt><i>dbobject</i> </tt>isempty</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997007"></a>This method returns 1 if the
+table (with its current view) is empty, otherwise 0.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997009"></a><a NAME="marker-997008"></a>put</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997010"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997011"></a><tt><i>dbobject</i> </tt>put key data ?flags?</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997012"></a>This method stores key/data
+pairs in the table.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997013"></a>The parameter <tt>flags</tt>
+may be set to one of these values:</div>
+
+<table>
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152275"></a><tt>R_CURSOR</tt><a NAME="marker-1152286"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152277"></a>Replace the key/data
+pair referenced by the cursor. The cursor must have previously been initialized.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152279"></a><tt>R_NOOVERWRITE</tt><a NAME="marker-1152287"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152281"></a>Enter the new key/data
+pair only if the key did not previously exist.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152283"></a><tt>R_SETCURSOR</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1152285"></a>Store the key/data pair,
+setting or initializing the position of the cursor to reference it. (Applicable
+only to the <tt>btree</tt> tables.)</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-997017"></a>The default behavior of the
+<tt>put</tt>
+routines is to enter the new key/data pair, replacing any previously existing
+key.
+
+<p CLASS="Body"><a NAME="pgfId-997018"></a>This method returns 0 on success,
+and 1 if the <tt>R_NOOVERWRITE</tt> flag was set and the key already exists
+in the table.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997020"></a><a NAME="marker-997019"></a>reopen</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997021"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997022"></a><tt><i>dbobject</i> </tt>reopen</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997023"></a>This method closes and reopens
+the table. This flushes data to disk and resets any views.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997025"></a><a NAME="marker-997024"></a><a NAME="27800"></a><a NAME="seq1"></a>seq</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997026"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997027"></a><tt><i>dbobject</i> </tt>seq option</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997028"></a>See <a href="dbaseAPI.html#11955" CLASS="XRef">Fetching
+Tables</a>.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997030"></a><a NAME="marker-997029"></a><a NAME="sync"></a>sync</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997031"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997032"></a><tt><i>dbobject</i> </tt>sync</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997033"></a>If the table is in memory
+only, this method has no effect and will always succeed. This method returns
+0 on success.</div>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-997035"></a><a NAME="11955"></a><a NAME="marker-997034"></a><a NAME="fetchtable"></a>Fetching
+Tables</h2>
+
+<div CLASS="Body"><a NAME="pgfId-997036"></a>Database tables can be fetched
+by the <tt>get</tt> and <tt>seq</tt> methods.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997037"></a><tt>get<a NAME="marker-1000038"></a></tt>
+returns only one record if the fully qualified key can be found. For more
+information, see the description of the <tt>get</tt> method above.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997038"></a><tt>seq<a NAME="marker-1000039"></a></tt>
+can be used to fetch tables sequentially. If the <tt>key</tt> argument
+is
+not given, the whole table is fetched (records to be retrieved can be filtered
+with patterns). <tt>key</tt> limits the records that should be fetched.
+<tt>seq</tt> may begin at any time, and the position of the cursor is not
+affected by calls to the <tt>del</tt>, <tt>get</tt>, <tt>put</tt>, or <tt>sync</tt>
+methods. Use the optional filters <tt>-end</tt>, <tt>-glob</tt>,
+<tt>-nocase</tt>,
+<tt>-regexp</tt>,
+<tt>-result_filter</tt>,
+and <tt>-strstr</tt> to limit the retrieved records.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-998299"></a>Using <tt>key</tt> assures
+the best performance because it already limits the records that should
+be fetched while the filters limit the results only after the records have
+been fetched.</div>
+
+
+<p CLASS="Body"><a NAME="pgfId-997039"></a>By fetching, the view (if any)
+assigned to the table while it was open is always processed.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-997041"></a><a NAME="marker-997040"></a><a NAME="10400"></a>Fetch
+Methods</h3>
+
+<div CLASS="Body"><a NAME="pgfId-997043"></a>Database tables can be fetched&nbsp;<a NAME="marker-997042"></a>sequentially
+using <tt>seq</tt> or with indexed <tt>get</tt> access.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997044"></a><a NAME="marker-1000040"></a><a NAME="11889"></a>seq</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997045"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997046"></a><i><tt>dbobject </tt></i>seq ?-columns column_list? ?-data? ?-end pattern?
+&nbsp;&nbsp;&nbsp; ?-first? ?-format format_string? ?-glob pattern? ?-key?
+&nbsp;&nbsp;&nbsp; ?-nocase pattern? ?-regexp expression?&nbsp;
+&nbsp;&nbsp;&nbsp; ?-result_filter pattern? ?-strstr pattern? ?-uniq? ?-list?
+&nbsp;&nbsp;&nbsp; ?key? ?flags?</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1154297"></a></div>
+
+<table>
+<tr>
+<td COLSPAN="3">
+<div CLASS="CellBody"><a NAME="pgfId-1164921"></a><tt>-columns column_list</tt><a NAME="17500"></a></div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164927"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1164929"></a>This switch determines
+the order and format in which the fields of the records are to be retrieved.
+<tt>column_list
+is</tt> a Tcl list with the format:</div>
+<tt>{{col_num1 ?format?} {col_num2 ?format?}...</tt>
+<br><tt>{column_numbern ?format?}}</tt>
+<div CLASS="CellBody"><a NAME="pgfId-1164930"></a>where <tt>format</tt>
+may be one of the following:</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164934"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164936"></a>/</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164938"></a>Only the remainder of
+the field after the last '<tt>/</tt>' character is retrieved.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164940"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164942"></a><tt>#separator</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164944"></a>The remainder of the
+field after the last '<tt>/</tt>' character is retrieved, and then <tt>separator</tt>
+and the field contents, until the last '<tt>/</tt>'.</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164945"></a>If the field doesn't
+contain any '<tt>/</tt>', only the field contents are retrieved.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164947"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164949"></a><tt>%</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164951"></a>The field is formatted
+with the <tt>sprintf</tt> C Programming function as if it were:&nbsp;</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164952"></a><tt>sprintf(result,format,field);</tt></div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164954"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164956"></a><tt>&amp;</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164958"></a>The formatted result
+up to the current field is formatted as if it were:&nbsp;</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164959"></a><tt>sprintf(new_result,
+format, current_result)</tt>;</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164960"></a>The '<tt>&amp;</tt>'
+character is interpreted as if it were `<tt>%</tt>'.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164962"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164964"></a><tt>:biteq:bitor</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164966"></a>Records are retrieved
+only if the current field contents fulfill the condition as follows:</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164967"></a><tt>(biteq &amp; field)
+== biteq &amp;&amp; (bitor &amp; field)</tt></div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164968"></a>Use this operator only
+for numerical fields.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164970"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164972"></a><tt>=value</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164974"></a>Records are retrieved
+only if the current field equals to <tt>value</tt>.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164976"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164978"></a><tt>-min:max</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164980"></a>Records are retrieved
+only if the current field is between <tt>min</tt> and <tt>max</tt>. The
+field is in the range if it equals to <tt>min</tt> or <tt>max</tt>.</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164981"></a>This operator can be
+used only for decimal numerical fields.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164983"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164985"></a><tt>&lt;value</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164987"></a>Records are retrieved
+only if the current field is less than <tt>value</tt>.</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164988"></a>Use this operator only
+for numerical fields.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164990"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164992"></a><tt>>value</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164994"></a>Records are retrieved
+only if the current field is greater than <tt>value</tt>.</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1164995"></a>Use this operator only
+for numerical fields.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164997"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1164999"></a><tt>|suffix</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165001"></a>A suffix is added to
+the contents of the field.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165003"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165005"></a>If <tt>format</tt> does
+not match any of the special characters listed above, it will just be appended
+after the field contents.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165009"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165011"></a>In <tt>column_list</tt>,
+every field can be defined only once.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165301"></a><tt>-data</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165303"></a>When this switch is specified,
+the fetched data of the record is not retrieved.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165307"></a><tt>-end pattern</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165309"></a>Only those records are
+fetched whose keys end with <tt>pattern</tt>.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165313"></a><tt>-first</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165315"></a>When this switch is specified,
+only the first record to match the conditions is retrieved.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165319"></a><tt>-format format_string</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165321"></a>If this option is specified,
+every retrieved record is additionally formatted with the <tt>sprintf</tt>
+C Programming function as if it were:</div>
+<tt>sprintf(new_result,format_string,result);</tt></td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165325"></a><tt>-glob pattern</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165328"></a>The record is retrieved
+only if its key matches the&nbsp;<a NAME="marker-1165327"></a><tt>glob</tt>
+pattern.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165332"></a><tt>-key</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165334"></a>If this key is specified,
+the keys of the selected records are not retrieved.&nbsp;</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165338"></a><tt>-nocase pattern</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165340"></a>The record is retrieved
+only if its key matches the non-case-sensitive <tt>glob</tt> pattern.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165344"></a><tt>-regexp expression</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165346"></a>The record is retrieved
+only if its key matches the&nbsp;<a NAME="marker-1165347"></a>regular expression.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165351"></a><tt>-result_filter pattern</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165353"></a>The record is retrieved
+only if the formatted fields match the <tt>glob</tt> pattern.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165357"></a><tt>-strstr pattern</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165359"></a>The record is fetched
+only if the pattern can be found in the key of the fetched record. (For
+more information, see the <tt>strstr</tt> C library function).</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165363"></a><tt>-uniq</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165365"></a>If this option is specified,
+duplicated lists in the result returned are eliminated.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165369"></a><tt>-list</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165371"></a>If neither the <tt>column</tt>,
+<tt>data</tt>,
+or <tt>key</tt> switch is used, the keys and data parts of the fetched
+records are retrieved in separated sub-Tcl list. If this switch is specified,
+the key and data parts are retrieved in the same lists.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165375"></a><tt>flags</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1165377"></a>The <tt>flags</tt> value
+may be set to one of these values:&nbsp;</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165999"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166009"></a><tt>R_CURSOR</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166011"></a>The data associated with
+the specified key is returned. This differs from the <tt>get</tt> routines
+in that it sets or initializes the cursor to the location of the key as
+well. (For the <tt>btree</tt> access method, the returned key is not necessarily
+an exact match for the specified key. The returned key is the smallest
+key greater than or equal to the specified key, permitting partial key
+matches and range searches.)</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165993"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166013"></a><tt>R_FIRST</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166015"></a>The first key/data pair
+of the database is returned, and the cursor is set or initialized to reference
+it.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165987"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166017"></a><tt>R_LAST</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166019"></a>The last key/data pair
+of the database is returned, and the cursor is set or initialized to reference
+it (applicable only to the <tt>btree</tt> tables.)</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165981"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166021"></a><tt>R_NEXT</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166023"></a>Retrieve the key/data
+pair immediately after the cursor. If the cursor is not yet set, this is
+the same as the <tt>R_FIRST</tt> flag. This value is taken if a flag is
+not given.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1165975"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166025"></a><tt>R_PREV</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1166027"></a>Retrieve the key/data
+pair immediately before the cursor. If the cursor is not yet set, this
+is the same as the <tt>R_LAST</tt> flag (applicable only to the <tt>btree</tt>
+tables). <tt>R_LAST</tt> and <tt>R_PREV</tt> are available only for the
+<tt>btree</tt>
+tables because they each imply that the keys have an inherent order that
+does not change.</div>
+</td>
+</tr>
+</table>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-997156"></a><a NAME="cprogapi"></a>C Programming API Functions</h2>
+
+<div CLASS="Body"><a NAME="pgfId-1013032"></a>This section provides the
+equivalent of manual pages for the&nbsp;<a NAME="marker-1013031"></a>C
+Programming API functions.</div>
+
+<br>&nbsp;
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td>
+<div CLASS="Label"><a NAME="pgfId-1013140"></a><b>Note:</b></div>
+</td>
+
+<td>
+<div CLASS="Note"><a NAME="pgfId-1263532"></a>You must <tt>#include &lt;db.h></tt>
+when using the C API, and you need to link the final executable with <tt>libpafdb.a</tt>
+and <tt>libtcl8.1.a</tt> to locate the database library routines.&nbsp;</div>
+</td>
+</tr>
+</table>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1013037"></a><a NAME="marker-1013034"></a><a NAME="marker-1013035"></a><a NAME="marker-1013036"></a>dbopen</h3>
+
+<div CLASS="Body"><a NAME="pgfId-997159"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997162"></a>#include &lt;db.h>
+
+DB *dbopen(const char *file, int flags, int mode, DBTYPE type, const void *openinfo);</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1006589"></a><tt>dbopen</tt> is the library
+interface to database files.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997167"></a><tt>dbopen</tt> opens <i><tt>file</tt></i>
+for reading and/or writing. Files that are never intended to be preserved
+on disk may be created by setting the file parameter to <tt>NULL</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997168"></a>The <tt>flags</tt> and <tt>mode</tt>
+arguments are as specified to the <tt>open(2)</tt> routine; however, only
+the <tt>O_CREAT</tt>, <tt>O_EXCL</tt>, <tt>O_EXLOCK</tt>, <tt>O_NONBLOCK</tt>,
+<tt>O_RDONLY</tt>,
+<tt>O_RDWR</tt>,
+<tt>O_SHLOCK</tt>, and <tt>O_TRUNC</tt> flags are meaningful. (Note that
+opening a database file <tt>O_WRONLY</tt> is meaningless.)
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997169"></a>The <tt>type</tt> argument
+is of type <tt>DBTYPE</tt>, defined in the <tt>&lt;db.h></tt> include file.
+It may be set to <tt>DB_BTREE</tt> or <tt>DB_HASH</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997170"></a>The <tt>openinfo</tt> argument
+is a pointer to an access method specific structure described in the <tt>access</tt>
+method's manual page. If <tt>openinfo</tt> is NULL, each access method
+will use defaults appropriate for the system and the access method.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997171"></a>The <tt>dbopen</tt> routine
+returns a pointer to a DB structure on success and NULL on error. The DB
+structure is defined in the <tt>&lt;db.h></tt> include file, and contains
+at least these fields:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997172"></a>typedef struct {
+&nbsp;&nbsp;&nbsp; DBTYPE type;
+&nbsp;&nbsp;&nbsp; int (*close)(const DB *db);
+&nbsp;&nbsp;&nbsp; int (*del)(const DB *db, const DBT *key, u_int flags);
+&nbsp;&nbsp;&nbsp; int (*fd)(const DB *db);
+&nbsp;&nbsp;&nbsp; int (*get)(const DB *db, DBT *key, DBT *data,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u_int flags);
+&nbsp;&nbsp;&nbsp; int (*put)(const DB *db, DBT *key, const DBT *data,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u_int flags);
+&nbsp;&nbsp;&nbsp; int (*sync)(const DB *db, u_int flags);
+&nbsp;&nbsp;&nbsp; int (*seq)(const DB *db, DBT *key, DBT *data,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u_int flags);
+} DB;</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997188"></a>The elements of this structure
+specify the database type and a set of functions required to perform operations
+on a database of this type. These functions take a pointer to a structure
+as returned by <tt>dbopen</tt>, and sometimes one or more pointers to key/data
+structures and a flag value.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1007734"></a>The structure elements are:</div>
+
+<table>
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263541"></a><tt>type</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263543"></a>The type of the underlying
+access method (and file format).</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263548"></a><a NAME="close2"></a><tt>close</tt><a NAME="marker-1263547"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263550"></a>A pointer to a routine
+to flush any cached information to disk, free any allocated resources,
+and close the underlying file(s). Since key/data pairs may be cached in
+memory, failing to sync the file with a <tt>close</tt> or <tt>sync</tt>
+function may result in inconsistent or lost information. <tt>close</tt>
+routines return -1 on error (setting <tt>errno</tt>), and 0 on success.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263555"></a><a NAME="marker-1263554"></a><tt>del</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263557"></a>A pointer to a routine
+to remove key/data pairs from the database.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263561"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263563"></a>The parameter <tt>flags</tt>
+may be set to:</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263567"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263569"></a><tt>R_CURSOR</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263571"></a>Delete the record referenced
+by the cursor. The cursor must have previously been initialized.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263573"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263575"></a><tt>del</tt> routines
+return -1 on error (setting <tt>errno</tt>), 0 on success, and 1 if the
+specified <tt>key</tt> was not in the file.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263580"></a><a NAME="marker-1263579"></a><tt>fd</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263582"></a>A pointer to a routine
+that returns a file descriptor representative of the underlying database.
+A file descriptor referencing the same file is returned to all processes
+that call <tt>dbopen</tt> with the same filename. This file descriptor
+may be safely used as an argument to the <tt>fcntl(2)</tt> and <tt>flock(2)</tt>
+locking functions. The file descriptor is not necessarily associated with
+any of the underlying files used by the access method. No file descriptor
+is available for use in memory databases. <tt>fd</tt> routines return -1
+on error (setting <tt>errno</tt>), and the file descriptor on success.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263587"></a><a NAME="marker-1263586"></a><tt>get</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263589"></a>A pointer to a routine
+that is the interface for keyed retrieval from the database. The address
+and length of the data associated with the specified <tt>key</tt> are returned
+in the structure referenced by <tt>data</tt>. <tt>get</tt> routines return
+-1 on error (setting <tt>errno</tt>), 0 on success, and 1 if the <tt>key</tt>
+was not in the file.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263594"></a><a NAME="marker-1263593"></a><tt>put</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263596"></a>A pointer to a routine
+to store key/data pairs in the database.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263600"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263602"></a>The parameter <tt>flags</tt>
+may be set to one of these values:</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263606"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263608"></a><tt>R_CURSOR</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263610"></a>Replace the key/data
+pair referenced by the cursor. The cursor must have previously been initialized.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263612"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263614"></a><tt>R_NOOVERWRITE</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263616"></a>Enter the new key/data
+pair only if the key does not previously exist.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263618"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263620"></a><tt>R_SETCURSOR</tt>
+is available only for the <tt>DB_BTREE</tt> access method because it implies
+that the keys have an inherent order that does not change.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263624"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263626"></a>The default behavior
+of the <tt>put</tt> routines is to enter the new key/data pair, replacing
+any previously existing key.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263630"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263632"></a><tt>put</tt> routines
+return -1 on error (setting <tt>errno</tt> ), 0 on success, and 1 if the
+<tt>R_NOOVERWRITE</tt>
+flag was set and the key already exists in the file.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263637"></a><a NAME="marker-1263636"></a><tt>seq</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263639"></a>A pointer to a routine
+that is the interface for sequential retrieval from the database. The address
+and length of the key are returned in the structure referenced by <tt>key</tt>,
+and the address and length of the data are returned in the structure referenced
+by <tt>data</tt>.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263643"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263645"></a>Sequential key/data pair
+retrieval may begin at any time, and the position of the "cursor" is not
+affected by calls to the <tt>del</tt>, <tt>get</tt>, <tt>put</tt>, or <tt>sync</tt>
+routines. Modifications to the database during a sequential scan are reflected
+in the scan, that is, records inserted behind the cursor are not returned
+while records inserted in front of the cursor are returned.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263649"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263651"></a>The <tt>flags</tt> value
+must be set to one of these values:</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263655"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263657"></a><tt>R_CURSOR</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263659"></a>The data associated with
+the specified key is returned. This differs from the <tt>get</tt> routines
+in that it sets or initializes the cursor to the location of the key as
+well. (For the <tt>DB_BTREE</tt> access method, the returned key is not
+necessarily an exact match for the specified key. The returned key is the
+smallest key greater than or equal to the specified key, permitting partial
+key matches and range searches.)</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263661"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263663"></a><tt>R_FIRST</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263665"></a>The first key/data pair
+of the database is returned, and the cursor is set or initialized to reference
+it.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263667"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263669"></a><tt>R_LAST</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263671"></a>The last key/data pair
+of the database is returned, and the cursor is set or initialized to reference
+it. (Applicable only to the <tt>DB_BTREE</tt> access method.)</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263673"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263675"></a><tt>R_NEXT</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263677"></a>Retrieve the key/data
+pair immediately after the cursor. If the cursor is not yet set, this is
+the same as the <tt>R_FIRST</tt> flag.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263679"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263681"></a><tt>R_PREV</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263683"></a>Retrieve the key/data
+pair immediately before the cursor. If the cursor is not yet set, this
+is the same as the <tt>R_LAST</tt> flag. (Applicable only to the <tt>DB_BTREE</tt>
+access method.)</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263685"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263687"></a><tt>R_LAST</tt> and <tt>R_PREV</tt>
+are available only for the <tt>DB_BTREE</tt> access method because they
+each imply that the keys have an inherent order that does not change.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263691"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263693"></a><tt>seq</tt> routines
+return -1 on error (setting <tt>errno</tt>), 0 on success, and 1 if there
+are no key/data pairs less than or greater than the specified or current
+key.&nbsp;</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263698"></a><a NAME="marker-1263697"></a><tt>sync</tt></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263700"></a>A pointer to a routine
+to flush any cached information to disk. If the database is in memory only,
+the <tt>sync</tt> routine has no effect and always succeeds.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263704"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263706"></a>The <tt>flags</tt> value
+may be set to this value:</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263710"></a></div>
+</td>
+
+<td COLSPAN="2">
+<div CLASS="CellBody"><a NAME="pgfId-1263712"></a><tt>sync</tt> routines
+return -1 on error (setting <tt>errno</tt>), and 0 on success.</div>
+</td>
+</tr>
+</table>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1004186"></a><a NAME="marker-1004185"></a>Key/Data Pairs</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1004187"></a>Access to all file types
+is based on key/data pairs. Both keys and data are represented by this
+data structure:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1260996"></a>typedef struct {
+&nbsp; void *data;
+&nbsp; size_t size;
+&nbsp; } DBT;</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1260997"></a>The elements of the DBT (mnemonic
+for "data base thang") structure are defined as follows:</div>
+
+<table>
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1261000"></a><tt>data</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1261002"></a>A pointer to a byte string.</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1261004"></a><tt>size</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1261006"></a>The length of the byte
+string.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-997295"></a>Key and data byte strings may
+reference strings of essentially unlimited length although any two of them
+must fit into available memory at the same time. It should be noted that
+the access methods provide no guarantees about byte string alignment.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997296"></a>Errors</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997297"></a>The <tt>dbopen<a NAME="marker-1000044"></a></tt>
+routine may fail and set <tt>errno</tt> for any of the errors specified
+for the library routines <tt>open(2)</tt> and <tt>malloc(3)</tt> or the
+following:</div>
+
+<table>
+<tr>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1155661"></a><tt>[EFTYPE]</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1155663"></a>A file is incorrectly
+formatted.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1155665"></a><tt>[EINVAL]</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1155667"></a>A parameter, such as
+hash function or pad byte, has been specified that is incompatible with
+the current file specification, or which is not meaningful for the function
+(for example, use of the cursor without prior initialization), or there
+is a mismatch between the version number of the file and the software.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-997300"></a>The <tt>close</tt> routines
+may fail and set <tt>errno</tt> for any of the errors specified for the
+library routines <tt>close(2)</tt>, <tt>read(2)</tt>, <tt>write(2)</tt>,
+<tt>free(3)</tt>,
+or <tt>fsync(2)</tt>.
+
+<p CLASS="Body"><a NAME="pgfId-997301"></a>The <tt>del</tt>, <tt>get</tt>,
+<tt>put</tt>,
+and <tt>seq</tt> routines may fail and set errno for any of the errors
+specified for the library routines <tt>read(2)</tt>, <tt>write(2)</tt>,
+<tt>free(3)</tt>,
+or <tt>malloc(3)</tt>.
+
+<p CLASS="Body"><a NAME="pgfId-997302"></a>The <tt>fd</tt> routines will
+fail and set <tt>errno</tt> to <tt>ENOENT</tt> for any of the errors specified
+in memory databases.
+
+<p CLASS="Body"><a NAME="pgfId-997303"></a>The <tt>sync</tt> routines may
+fail and set <tt>errno</tt> for any of the errors specified for the library
+routine <tt>fsync(2)</tt>.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997304"></a>Limitations</h4>
+
+<div CLASS="Body"><a NAME="pgfId-999219"></a>None of the access methods
+provides any form of concurrent access, locking, or transactions.</div>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-997309"></a><a NAME="marker-997308"></a>btree Database Access
+Method</h3>
+
+<div CLASS="Body"><a NAME="pgfId-1010453"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1010455"></a>#include &lt;db.h></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997313"></a>The routine <tt>dbopen</tt>
+is the library interface to&nbsp;<a NAME="marker-1000045"></a>database
+files. One of the supported file formats is <tt>btree</tt> files. For a
+general description of the database access methods, see <tt>dbopen(3)</tt>;
+this describes only the <tt>btree</tt> -specific information.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997314"></a>The <tt>btree<a NAME="marker-1000046"></a></tt>
+data structure is a sorted, balanced tree structure storing associated
+key/data pairs.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997315"></a>The <tt>btree</tt> access
+method specific data structure provided to <tt>dbopen</tt> is defined in
+the <tt>&lt;db.h></tt> include file as follows:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1155822"></a>typedef struct {
+&nbsp; u_long flags;
+&nbsp; u_int cachesize;
+&nbsp; int maxkeypage;
+&nbsp; int minkeypage;
+&nbsp; u_int psize;
+&nbsp; int (*compare)(const DBT *key1, const DBT *key2);
+&nbsp; size_t (*prefix)(const DBT *key1, const DBT *key2);
+&nbsp; int lorder;
+}&nbsp;<a NAME="marker-1155823"></a>BTREEINFO;</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997327"></a>The elements of this structure
+are as follows:</div>
+
+<br>&nbsp;
+<table>
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176640"></a><tt>flags</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176642"></a>The <tt>flags</tt> value
+is specified by applying the bitwise OR operation with any of the following
+values:</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176646"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176648"></a><tt>R_DUP</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176650"></a>Permit duplicate keys
+in the tree, that is, permit insertion if the key to be inserted already
+exists in the tree. The default behavior, as described in <tt>dbopen(3)</tt>,
+is to overwrite a matching key when inserting a new key or to fail if the
+<tt>R_NOOVERWRITE</tt>
+flag is specified. The <tt>R_DUP</tt> flag is overridden by the <tt>R_NOOVERWRITE</tt>
+flag, and if the <tt>R_NOOVERWRITE</tt> flag is specified, attempts to
+insert duplicate keys into the tree will fail.</div>
+
+<div CLASS="CellBody"><a NAME="pgfId-1176651"></a>If the database contains
+duplicate keys, the order of retrieval of key/data pairs is undefined if
+the <tt>get</tt> routine is used; however, <tt>seq</tt> routine calls with
+the <tt>R_CURSOR</tt> flag set will always return the logical "first" of
+any group of duplicate keys.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176654"></a><tt>cachesize</tt><a NAME="marker-1176653"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176656"></a>A suggested maximum size
+(in bytes) of the memory cache. This value is only advisory, and the access
+method will allocate more memory rather than fail. Since every search examines
+the root page of the tree, caching the most recently used pages substantially
+improves access time. In addition, physical writes are delayed as long
+as possible, so a moderate cache can reduce the number of I/O operations
+significantly. Using a cache slightly increases the likelihood of corruption
+or lost data if the system crashes while a tree is being modified. If <tt>cachesize</tt>
+is 0 (no size is specified), a default cache is used.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176661"></a><tt>maxkeypage</tt><a NAME="marker-1176660"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176663"></a>The maximum number of
+keys stored on any single page. Not currently implemented.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176668"></a><tt>minkeypage</tt><a NAME="marker-1176667"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176670"></a>The minimum number of
+keys stored on any single page. This value determines which keys are stored
+on overflow pages; that is, if a key or data item is longer than the pagesize
+divided by the <tt>minkeypage</tt> value, it is stored on overflow pages
+instead of in the page itself. If <tt>minkeypage</tt> is 0 (no minimum
+number of keys is specified), a value of 2 is used.&nbsp;</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176675"></a><tt>psize</tt><a NAME="marker-1176674"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176677"></a><tt>psize</tt> is the
+size (in bytes) of the pages used for nodes in the tree. The minimum page
+size is 512 bytes and the maximum page size is 64K. If <tt>psize</tt> is
+0 (no page size is specified) a page size is chosen based on the underlying
+file system I/O block size.<a NAME="marker-1176678"></a></div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176683"></a><tt>compare</tt><a NAME="marker-1176682"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176685"></a><tt>compare</tt> is the
+key comparison function. It must return an integer less than, equal to,
+or greater than zero if the first key argument is considered to be respectively
+less than, equal to, or greater than the second key argument. The same
+comparison function must be used on a given tree every time it is opened.
+If <tt>compare</tt> is NULL (no comparison function is specified), the
+keys are compared lexically, with shorter keys considered less than longer
+keys.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176690"></a><tt>prefix</tt><a NAME="marker-1176689"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176692"></a><tt>prefix</tt> is the
+prefix comparison function. If specified, this routine must return the
+number of bytes of the second key argument, which is necessary to determine
+that it is greater than the first key argument. If the keys are equal,
+the key length should be returned. Although the usefulness of this routine
+is very data dependent, in some data sets it can produce significantly
+reduced tree sizes and search times. If <tt>prefix</tt> is NULL (no prefix
+function is specified) <i>and</i> no comparison function is specified,
+a default lexical comparison routine is used. If <tt>prefix</tt> is NULL
+and a comparison routine is specified, no prefix comparison is done.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176697"></a><a NAME="marker-1176696"></a><tt>lorder</tt></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1176699"></a>The byte order for integers
+in the stored database metadata. The number should represent the order
+as an integer; for example, big endian order would be the number 4,321.
+If <tt>lorder</tt> is 0 (no order is specified), the current host order
+is used.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-1176703"></a>If the file already exists
+(and the <tt>O_TRUNC</tt> flag is not specified), the values specified
+for the parameters <tt>flags</tt>, <tt>lorder</tt> and <tt>psize</tt>,
+are ignored in favor of the values used when the tree was created.
+
+<p CLASS="Body"><a NAME="pgfId-1176704"></a>Forward sequential scans of
+a tree are from the least key to the greatest.
+
+<p CLASS="Body"><a NAME="pgfId-1176705"></a>Space freed up by deleting
+key/data pairs from the tree is never reclaimed, although it is normally
+made available for reuse. This means that the <tt>btree</tt> storage structure
+is grow-only. The only solutions are to avoid excessive deletions, or to
+create a fresh tree periodically from a scan of an existing one.
+
+<p CLASS="Body"><a NAME="pgfId-997350"></a>Searches, insertions, and deletions
+in a <tt>btree</tt> will all complete in <tt>O</tt> <tt>(ln N)</tt> where
+<tt>N</tt>
+is the average fill factor. Often, inserting ordered data into a <tt>btree</tt>
+results in a low fill factor. This implementation has been modified to
+make ordered insertion the best case, resulting in a much better-than-normal
+page fill factor.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997351"></a>Errors</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997352"></a>The <tt>btree<a NAME="marker-1000054"></a></tt>
+access method routines may fail and set <tt>errno</tt> for any of the errors
+specified for the library routine <tt>dbopen(3)</tt>.</div>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-997356"></a><a NAME="marker-997355"></a>hash database access
+method</h3>
+
+<div CLASS="Body"><a NAME="pgfId-997357"></a><b>SYNOPSIS</b></div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997359"></a>#include &lt;db.h></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997360"></a>The routine <tt>dbopen</tt>
+is the library interface to database files. One of the supported file formats
+is hash files. For a general description of the database access methods,
+see <tt>dbopen(3)</tt>; this describes only the hash specific information.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997361"></a>The hash data structure is
+an extensible, dynamic hashing scheme.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997362"></a>The access method specific
+data structure provided to <tt>dbopen<a NAME="marker-1000055"></a></tt>
+is defined in the <tt>&lt;db.h></tt> include file as follows:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997363"></a>typedef struct {
+&nbsp; u_int bsize;
+&nbsp; u_int ffactor;
+&nbsp; u_int nelem;
+&nbsp; u_int cachesize;
+&nbsp; u_int32_t (*hash)(const void *, size_t);
+&nbsp; int lorder;
+}&nbsp;<a NAME="marker-997370"></a>HASHINFO;</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997372"></a>The elements of this structure
+are as follows:</div>
+
+<table>
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156088"></a><tt>bsize</tt><a NAME="marker-1156111"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156090"></a><tt>bsize</tt> defines
+the hash table bucket size, and is, by default, 256 bytes. It may be preferable
+to increase the page size for disk-resident tables and tables with large
+data items.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156092"></a><tt>ffactor</tt><a NAME="marker-1156112"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156094"></a><tt>ffactor</tt> indicates
+a desired density within the hash table. It is an approximation of the
+number of keys allowed to accumulate in any one bucket, determining when
+the hash table grows or shrinks. The default value is 8.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156096"></a><tt>nelem</tt><a NAME="marker-1156113"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156098"></a><tt>nelem</tt> is an
+estimate of the final size of the hash table. If not set or set too low,
+hash tables will expand gracefully as keys are entered, although a slight
+performance degradation may be noticed. The default value is 1.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156100"></a><tt>cachesize</tt><a NAME="marker-1156114"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156102"></a>A suggested maximum size,
+in bytes, of the memory cache. This value is <i>only</i> advisory, and
+the access method will allocate more memory rather than fail.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156104"></a><tt>hash</tt><a NAME="marker-1156115"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156106"></a><tt>hash</tt> is a user-defined
+hash function. Since no hash function performs equally well on all possible
+data, the user may find that the built-in hash function performs poorly
+on a particular data set. User-specified hash functions must take two arguments
+(a pointer to a byte string and a length) and return a 32-bit quantity
+to be used as the hash value.</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156108"></a><tt>lorder</tt><a NAME="marker-1156116"></a></div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1156110"></a>The byte order for integers
+in the stored database metadata. The number should represent the order
+as an integer; for example, big endian order would be the number 4,321.
+If <tt>lorder</tt> is 0 (no order is specified), the current host order
+is used. If the file already exists, the specified value is ignored, and
+the value specified when the tree was created is used.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-997380"></a>If the file already exists (and
+the <tt>O_TRUNC</tt> flag is not specified), the values specified for the
+parameters <tt>bsize</tt>, <tt>ffactor</tt>, <tt>lorder</tt> and <tt>nelem</tt>
+are ignored and the values specified when the tree was created are used.
+
+<p CLASS="Body"><a NAME="pgfId-997381"></a>If a hash function is specified,
+<tt>hash_open</tt>
+attempts to determine if the hash function specified is the same as the
+one with which the database was created, and will fail if it is not.
+
+<p CLASS="Body"><a NAME="pgfId-997382"></a>Backwardly compatible interfaces
+to the routines described in <tt>dbm(3)</tt> and <tt>ndbm(3)</tt> are provided;
+however, these interfaces are not compatible with previous file formats.
+<h4 CLASS="Heading3">
+<a NAME="pgfId-997383"></a>Errors</h4>
+
+<div CLASS="Body"><a NAME="pgfId-997384"></a>The <tt>hash<a NAME="marker-1000061"></a></tt>
+access method routines may fail and set <tt>errno</tt> for any of the errors
+specified for the library routine <tt>dbopen(3)</tt>.</div>
+
+<h3 CLASS="Heading2">
+<a NAME="pgfId-997388"></a><a NAME="marker-997387"></a>Simple Query Tool</h3>
+
+<div CLASS="Body"><a NAME="pgfId-997389"></a>The example below shows a
+simple query tool written in the C programming language. Note that it works
+only for <tt>btree</tt> tables and that views are not supported.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1156144"></a>#include &lt;db.h>
+
+main(int argc,char *argv[])
+{
+&nbsp; DB&nbsp;&nbsp;&nbsp; *db;
+&nbsp; DBT&nbsp;&nbsp; data,key;
+&nbsp; int&nbsp;&nbsp; flag,len;
+&nbsp; char&nbsp; *pattern;
+&nbsp; if (argc != 3)
+&nbsp; {
+&nbsp;&nbsp;&nbsp; printf("usage: %s database pattern\n",argv[0]);
+&nbsp;&nbsp;&nbsp; exit(1);
+&nbsp; }
+&nbsp; if (!(db = dbopen(argv[1],O_RDONLY,0644,DB_BTREE,NULL)))
+&nbsp; {
+&nbsp;&nbsp;&nbsp; fprintf(stderr,"Could not open \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"%s\",%s\n",argv[1],
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; strerror(errno));
+&nbsp;&nbsp;&nbsp; exit(2);
+&nbsp; }
+&nbsp; pattern = argv[2];
+&nbsp; len = strlen(pattern);
+&nbsp; key.data = (void *)pattern;
+&nbsp; key.size = len;
+&nbsp; for(flag = R_FIRST;
+&nbsp;&nbsp;&nbsp; db->seq(db,&amp;key,&amp;data,flag) == 0 &amp;&amp;
+&nbsp;&nbsp;&nbsp; strncmp(key.data,pattern,len) == 0; flag = R_NEXT)
+&nbsp; {
+&nbsp;&nbsp;&nbsp; printf("key:&nbsp; %s\n",key.data);
+&nbsp;&nbsp;&nbsp; printf("data: %s\n",data.data);
+&nbsp; }
+&nbsp; db->close(db);
+&nbsp; exit (0);
+}</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1001172"></a>To compile and link you can
+use the following&nbsp;<a NAME="marker-997435"></a>Makefile:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1156150"></a>SDK=/export/home/tom/snavigator/sdk
+
+CFLAGS=&nbsp; -I$(SDK)/include
+LIB=&nbsp;&nbsp;&nbsp;&nbsp; -L$(SDK)/lib -lpafdb
+
+dbqry:&nbsp;&nbsp;&nbsp; dbqry.c
+&nbsp; $(CC) -o $@ $&lt; $(LIB)</pre>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1156153"></a><a NAME="marker-1156151"></a><a NAME="38112"></a><a NAME="dbstruct"></a>Database
+Table Structures</h2>
+
+<div CLASS="Body"><a NAME="pgfId-997446"></a>Source-Navigator stores information
+about source files in project (database) tables to assure high performance
+with flexible query possibilities.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997447"></a>With the exception of the
+project file (that is itself also a hash database table), every table normally
+relies on the<i> </i><tt>.snprj</tt> sub-directory of the project and can
+be accessed like any other database table. The following example shows
+what the table structure of a project database looks like on a UNIX system.
+It was produced using the shell command <tt>ls -l .snprj</tt>.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1261691"></a>-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16384 Aug 12 12:19 cpl.1
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16384 Aug 12 12:34 cpl.2
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.by
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.cl
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16384 Aug 12 12:19 cpl.f
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.fil
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.fu
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.gv
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.iv
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.md
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.mi
+-rw-r--r--&nbsp;&nbsp; 1 user sys&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8192 Aug 12 12:19 cpl.to</pre>
+
+<div CLASS="Body"><a NAME="pgfId-1262361"></a>In the following table, the
+symbol ? represents the <tt>sn_sep</tt> separator character. See the scripts
+under <a href="dbaseAPI.html#23501" CLASS="XRef">Cross-Reference Tables</a>
+for more information on this variable. Additionally, all of the following
+keys must be on one line.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1263245"></a>The hash # character in class
+names means that the symbol does not belong to any classes, and semicolon
+(<tt>;</tt>) separates the key and data parts. Positions consist of line
+and column numbers separated by a comma (<tt>,</tt>).</div>
+
+<table BORDER >
+<caption>
+<div CLASS="TableTitle"><a NAME="pgfId-1263251"></a><a NAME="table8"></a><b>Database
+Table Structures</b></div>
+</caption>
+
+<tr VALIGN=TOP>
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1263259"></a>File
+<br><a NAME="pgfId-1263260"></a>Suffix</div>
+</th>
+
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1263262"></a>Table
+<br><a NAME="pgfId-1263263"></a>Type</div>
+</th>
+
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1263265"></a>Table Description</div>
+</th>
+
+<th>
+<div CLASS="CellHeading"><a NAME="pgfId-1263267"></a>Record Format</div>
+</th>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263269"></a>0</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263271"></a>hash</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263273"></a>Ignored words</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263275"></a>word;#</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263277"></a>1</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263279"></a>hash</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263281"></a>Default view</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263283"></a>filename;#</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263285"></a>2</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263287"></a>hash</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263289"></a>Second view</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263291"></a>filename;#</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263293"></a>by</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263295"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263297"></a>Referred by</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263299"></a>ref-class?ref-symbol-name?ref-type?class?symbol?type?access?position?filename;\
+<br>{caller_argument_types}?{ref_argument_types}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263301"></a>cl</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263303"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263305"></a>Classes</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263308"></a>name?start_position?filename;end_position?attributes?{}?{class&nbsp;<a NAME="marker-1263307"></a>template}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263310"></a>com</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263312"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263314"></a>Common blocks</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263316"></a>name?start_position?filename;end_position?attributes?{}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263318"></a>con</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263320"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263322"></a>Constants</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263324"></a>name?start_position?filename;end_position?attributes?{dec_type}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263326"></a>cov</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263328"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263330"></a>Common value</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263332"></a>common-block?name?start_position?filename;end_position?attributes?{}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263334"></a>e</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263336"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263338"></a>Enumerations</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263340"></a>name?start_position?filename;end_position?attributes?{}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263342"></a>ec</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263344"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263346"></a>Enum-constants</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263348"></a>name?start_position?filename;end_position?attributes?{}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263350"></a>f</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263352"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263354"></a>Project files</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263356"></a>name;group?parsing-time?highlight-file</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263358"></a>fd</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263360"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263362"></a>Function</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263364"></a>name?start_position?filename;end_position?attributes?{ret_type}?{arg_types}?{arg_names}?\
+<br>{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263366"></a>fil</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263368"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263370"></a>Symbols of files</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263372"></a>filename?start_position?class?identifier?type;end_position?high_start_pos?high_end_pos?\
+<br>arg_types</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263374"></a>fr</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263376"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263378"></a>Friends</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263380"></a>name?start_position?filename;end_position?attributes?{ret_type}?{arg_types}?{arg_names}?\
+<br>{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263382"></a>fu</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263384"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263386"></a>Functions</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263388"></a>name?start_position?filename;end_position?attributes?{ret_type}?{arg_types}?{arg_names}?\
+<br>{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263390"></a>gv</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263392"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263394"></a>Variables</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263396"></a>name?position?filename;attributes?{type}?{template?parameter}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263398"></a>in</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263400"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263402"></a>Inheritances</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263405"></a>class?base-class?start_position?filename;end_position?attributes?{}?{class&nbsp;<a NAME="marker-1263404"></a>template}?\
+<br>{inheritance?template}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263407"></a>iu</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263409"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263411"></a>Include</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263413"></a>included_file?start_position?include_from_file;0.0?0x0?{}?{}?{}?{}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263415"></a>iv</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263417"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263419"></a>Instance variables</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263421"></a>class?variable-name?start_position?filename;end_position?attributes?{type}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263423"></a>lv</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263425"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263427"></a>Local variables</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263429"></a>function?variable-name?start_position?filename;end_position?attributes?{}?{type}?{}?\
+<br>{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263431"></a>ma</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263433"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263435"></a>Macros</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263437"></a>name?start_position?filename;end_position?attributes?{}?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263439"></a>md</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263441"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263443"></a>Method definitions</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263445"></a>class?name?start_position?filename;end_position?attributes?{ret_type}?{arg_types}?\
+<br>{arg_names}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263447"></a>mi</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263449"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263451"></a>Method implementations</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263453"></a>class?name?start_position?filename;end_position?attributes?{ret_type}?{arg_types}?\
+<br>{arg_names}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263455"></a>rem</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263457"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263459"></a>Remarks</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263461"></a>filename?position?class?method_or_function;comment</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263463"></a>su</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263465"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263467"></a>Subroutines</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263469"></a>name?position?filename;attributes?{}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263471"></a>t</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263473"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263475"></a>Typedefs</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263477"></a>name?position?filename;attributes?{original}?{}?{comment}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263479"></a>to</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263481"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263483"></a>Refers to</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263485"></a>class?symbol-name?type?ref-class?ref-symbol?ref-type?access?position?filename;\
+<br>{caller_argument_types}?{ref_argument_types}</div>
+</td>
+</tr>
+
+<tr VALIGN=TOP>
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263487"></a>un</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263489"></a>btree</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263491"></a>Unions</div>
+</td>
+
+<td>
+<div CLASS="CellBody"><a NAME="pgfId-1263493"></a>name?position?filename;attributes?{}?{}?{comment}</div>
+</td>
+</tr>
+</table>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1263496"></a><a NAME="marker-1263495"></a><a NAME="dbapi"></a>Database
+API Program Examples</h2>
+
+<div CLASS="Body"><a NAME="pgfId-997686"></a>The&nbsp;<a NAME="marker-1000068"></a>Tcl
+script below opens a table for a fictitious Source-Navigator project named
+<tt>pure</tt>.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1153714"></a>
+#!/bin/sh
+# Replace $HOME/snavigator with the Source-Navigator&nbsp;
+# installation directory! \
+exec $HOME/snavigator/bin/hyper "$0" "$@"
+#
+# Don't forget the backslash before exec!
+#
+set db_functions [dbopen nav_func .snprj/pure.fu RDONLY \
+&nbsp;&nbsp;&nbsp; 0644 btree cachesize=200000]
+# Output the list of matches with newline characters after
+# each.
+puts [join [$db_functions seq] \n]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997696"></a>This shell script produces
+the following result:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997697"></a><b>{chk 000011.012 chk.c} {17.1 0x8 {void} {int} {size} {}}
+{fnc1 000019.012 chk.c} {33.1 0x8 {void} {int,int,char *}
+&nbsp;&nbsp;&nbsp; {i,size,str} {}}
+{keys 000026.005 keybind.tcl} {28.1 0x0 {} {} {k} {}}
+{main 000035.000 chk.c} {38.1 0x0 {int} {} {} {}}</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997701"></a>Each record contains two Tcl
+lists: the first is the key part, the second is the data part. If <tt>-key</tt>,
+<tt>-data</tt>,
+or <tt>-columns</tt> is used, the key and the data parts are always retrieved
+in separate Tcl lists.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997702"></a>If you use the <tt>-data</tt>
+switch in the <b>fetch</b> command (e.g. <tt>$db_functions seq -data</tt>)
+in the example script above, only the key is fetched and the result is
+the following:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997703"></a><b>chk 000011.012 chk.c
+fnc1 000019.012 chk.c
+keys 000026.005 keybind.tcl
+main 000035.000 chk.c</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997707"></a>To restrict the result to
+functions whose names begin with <tt>main</tt>, use the following command:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997708"></a>$db_functions seq -data "main"</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997709"></a>To fetch only the functions
+with the name <tt>main</tt> , you should add a blank to the key value:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997710"></a>$db_functions seq -data "main$sn_sep"</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997711"></a>The <tt>-columns</tt> switch
+can be used to change the order of fields. The query below retrieves the
+name of the files, then the name of the functions and their positions:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997712"></a>$db_functions seq -data -columns [list 2 0 1]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997713"></a>The result is:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997714"></a><b>chk.c chk 000011.012
+chk.c fnc1 000019.012
+keybind.tcl keys 000026.005
+chk.c main 000035.000</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997718"></a>As described on <a href="dbaseAPI.html#10400" CLASS="XRef">Fetch
+Methods</a>, the Tcl list following <tt>-columns</tt> contains sub-lists.
+The first element of a sub-list identifies (offset number beginning from
+0) which field should be retrieved, and the second element is an optional
+format that controls formatting. In the example below, the "" appends a
+blank after every retrieved field. Sometimes it is useful to use <tt>\t</tt>
+(tab) instead of blanks. In Source-Navigator, types are often shown in
+parentheses.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-999077"></a>For example, to obtain a listing
+of every function, indicated as (<tt>fu</tt>), the following command</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997719"></a>$db_functions seq -data -columns [list {2 "(fu) "} 0 1]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997720"></a>produces the result:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997721"></a><b>chk.c(fu) chk 000011.012
+chk.c(fu) fnc1 000019.012
+keybind.tcl(fu) keys 000026.005
+chk.c(fu) main 000035.000</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997725"></a>The format characters <b>:</b>,
+<b>&lt;</b>,
+<b>></b>,
+and <b>=</b> can be used to make comparisons of database table field contents.
+When a condition is not true, the record is not retrieved.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997726"></a>For the purposes of this example,
+the source file where the following C++ class <tt>TEST</tt> is defined
+will be called <tt>test.cc</tt>.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1156169"></a>class TEST {
+private:
+&nbsp; int inm()
+&nbsp; {
+&nbsp;&nbsp;&nbsp; return 0;
+&nbsp; }
+&nbsp; outside(int x,int y);
+
+public:
+&nbsp; static void copy(){}
+
+protected:
+&nbsp; int var;
+};
+
+TEST::outside(int x,int y)
+{
+}</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997745"></a>The Tcl script below queries
+the project for all of the public methods of classes that have been defined
+in <tt>test.cc</tt> . The value 4 used in the example maps to the constant
+<tt>PAF_PUBLIC</tt>
+from <tt>sn.h</tt>.</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997746"></a><a NAME="22835"></a>#!/bin/sh
+# Replace $HOME/snavigator with the Source-Navigator&nbsp;
+# installation directory! \
+exec $HOME/snavigator/bin/hyper "$0" "$@"
+#
+# Don't forget the backslash before exec!
+#
+
+set db_prefix .sn/doc.md
+set db [dbopen methods_db $db_prefix RDONLY 0444 btree]
+
+set res [$db seq -col [list 0 1 3 2 "5 :0:4"] -end "test.cc"]
+# 4 -> 1 for private methods, 4 -> 5 for public and private methods
+
+puts [join $res "\n"]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997758"></a>The script produces this output:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997759"></a><b>TEST copy test.cc 000009.014 0x200c</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-1001176"></a>To query the private methods,
+change the value 4 to 1 (the value of <tt>PAF_PUBLIC</tt> ).
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997761"></a>This modified script produces
+this output:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997762"></a><b>TEST inm test.cc 000003.006 0x2001
+TEST outside test.cc 000007.002 0x1</b></pre>
+
+<div CLASS="Body"><a NAME="pgfId-997764"></a>To query the public and private
+methods, use the value 5. This is the bitwise OR of the values for <tt>PAF_PRIVATE</tt>
+and <tt>PAF_PUBLIC</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-997765"></a>To query all static (<tt>SN_STATIC</tt>)
+methods defined in <tt>test.cc</tt> , change the script as follows:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-997766"></a>set res [$db seq -col [list 0 1 3 2 "5 :8:7"] -end "test.cc"]</pre>
+
+<div CLASS="Body"><a NAME="pgfId-997768"></a>To query every method between
+lines 7-9 in <tt>test.cc</tt> , make the following query:</div>
+
+<pre CLASS="CodeExample"><a NAME="pgfId-1239952"></a>set res [$db seq -col [list 0 1 3 \
+"2 &lt;10" "2 >6"] -end "test.cc"]</pre>
+
+<h2 CLASS="Heading1">
+<a NAME="pgfId-1239953"></a><a NAME="dbappex"></a>Database Application
+Examples</h2>
+
+<div CLASS="Body"><a NAME="pgfId-1008001"></a>The Source-Navigator installation
+contains a number of larger examples for useful tools that can be quickly
+realized using the database API. They are located in <tt>.../share/sdk/api/tcl/database/examples</tt>.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1008005"></a>Source-Navigator can assist
+in a wide variety of software engineering and re-engineering tasks and
+these examples tend to address the common scenario of bringing under control
+inherited bodies of source code that may be poorly written and poorly understood.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1008010"></a>These examples are all written
+in the Tcl programming language. Some examples utilize the Tk toolkit.
+None of the examples require that Source-Navigator be running in order
+to use them. They work on the database directly using the database API
+provided by the <tt>hyper</tt> interpreter that comes with Source-Navigator.</div>
+
+<table WIDTH="100%" >
+<tr VALIGN=TOP>
+<td><b>Note:</b></td>
+
+<td>
+<div CLASS="Body">At the top of each script is a path to the interpreter
+that may need to be edited to locate <tt>hyper</tt> on your system.</div>
+</td>
+</tr>
+</table>
+
+
+<p CLASS="Body"><a NAME="pgfId-1008018"></a>Most of the examples require
+at least two command line arguments: the path to the Source-Navigator project
+directory and the name of the project you're interested in. More details
+can be found in the comment block at the top of each script file, and each
+script is quite heavily documented.
+<h3 CLASS="Heading2">
+<a NAME="pgfId-1008023"></a>Scripts</h3>
+
+<div CLASS="Body"><a NAME="pgfId-1008218"></a>The example scripts are described
+below.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008025"></a><a NAME="14448"></a>multicludes.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008027"></a>This tool reports on redundant
+header files. By reducing <tt>#include</tt> complexity in a source file,
+compilation time can be reduced. This tool locates simple duplication,
+whereby <tt>foo.c</tt> may include <tt>bar.h</tt> (e.g. <tt>#include</tt>
+"<tt>bar.h</tt>") and then <tt>bar.h</tt> again later. By optionally specifying
+a <tt>-transitive</tt> command line argument to the script, a more thorough
+search through the header file graph is performed, such that includes of
+<tt>stdio.h</tt>
+may be detected as unnecessary if another included header file includes
+it on your behalf.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008035"></a>diamonds.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008037"></a>This tool locates multiple
+inheritance "diamonds" in the class hierarchy of a project written in an
+object-oriented language like C++. In his book, <i>Effective C++</i><sup><a href="#pgfId-1008229" CLASS="footnote">4</a></sup>,
+Scott Myers points out the dangers associated with class hierarchies in
+which two classes derived from the same superclass are inherited by a fourth
+derived-most class. Diamonds are universally considered to be poor C++
+programming practice and this tool can locate them in a Source-Navigator
+project.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008045"></a>call-freq.tk</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008047"></a>This tool plots the caller/callee
+frequencies for all functions and methods in a project. Functions appearing
+to have called many functions or that are called by many functions may
+be ones that require coverage testing, additional documentation, optimization,
+etc.
+<br>&nbsp;</div>
+
+<div CLASS="Body"><a NAME="pgfId-1008052"></a>Each function is represented
+as a point on a graph. Clicking on a point opens a list box showing the
+name of the function and the caller/callee statistics.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008055"></a>clobber.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008057"></a>This tool shows the names
+of all the functions/methods in a project that modify a particular global
+variable.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008060"></a>constants.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008062"></a>This tool identifies global
+variables in projects which are accessed as read-only objects. These variables
+are therefore candidates for becoming constants.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008065"></a>unimp-methods.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008067"></a>This tool locates class method
+definitions that are surplus to a class (i.e. for which there is no method
+implementation). This tool is not always accurate, however, in that it
+will also make the suggestion that methods that are defined inline are
+not implemented when they actually are.</div>
+
+<h4 CLASS="Heading3">
+<a NAME="pgfId-1008072"></a>unused.tcl</h4>
+
+<div CLASS="Body"><a NAME="pgfId-1008074"></a>This tool determines where
+unused global variables exist in a project.</div>
+
+<div CLASS="Body"><a NAME="pgfId-1261290"></a>
+<hr></div>
+
+<div CLASS="Footnote"><span CLASS="footnoteNumber">1.</span><a NAME="pgfId-1005066"></a>
+Welch, Brent B. 1997. <i>Practical Programming in Tcl and Tk</i>. 2nd ed.
+ISBN 0-13-616830-2.</div>
+
+<div CLASS="Footnote"><span CLASS="footnoteNumber">2.</span><a NAME="pgfId-1006673"></a>
+Ousterhout, John K. 1994. <i>Tcl and the Tk Toolkit</i>. ISBN 0-201-63337-X.</div>
+
+<div CLASS="Footnote"><span CLASS="footnoteNumber">3.</span><a NAME="pgfId-1005069"></a>
+Kernighan, Brian W., and Dennis M. Ritchie. 1988. <i>The C Programming
+Language</i>. 2nd ed. ISBN 0-13-110362-8.</div>
+
+<div CLASS="Footnote"><span CLASS="footnoteNumber">4.</span><a NAME="pgfId-1008229"></a>
+Meyers, Scott. 1997. <i>Effective C++: 50 Specific Ways to Improve Your
+Programs and Designs</i>. 2nd ed. ISBN 0-20-192488-9.</div>
+
+</body>
+</html>

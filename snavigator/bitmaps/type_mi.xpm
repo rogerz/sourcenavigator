@@ -1,0 +1,26 @@
+/* XPM */
+static char * type_mi_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+"o	c red",
+/* pixels */
+"       .        ",
+"      .X.       ",
+"     .XXX.      ",
+"    .XXXXX.     ",
+"   .XXXXXXX.    ",
+"  .XoooXoooX.   ",
+" .XXoooooooXX.  ",
+".XXXooXoXooXXX. ",
+" .XXooXXXooXX.  ",
+"  .XooXXXooX.   ",
+"   .ooXXXoo.    ",
+"    .XXXXX.     ",
+"     .XXX.      ",
+"      .X.       ",
+"       .        ",
+"                "};

@@ -1,0 +1,33 @@
+/* XPM */
+static char * updir_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"24 24 3 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c lightyellow",
+/* pixels */
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"     ......             ",
+"    .XXXXXX.            ",
+"   .XXXXXXXX.           ",
+"  ..................... ",
+"  .XXXXXXXXXXXXXXXXXXX. ",
+"  .XXXX.XXXXXXXXXXXXXX. ",
+"  .XXX...XXXXXXXXXXXXX. ",
+"  .XX.....XXXXXXXXXXXX. ",
+"  .XXXX.XXXXXXXXXXXXXX. ",
+"  .XXXX.XXXXXXXXXXXXXX. ",
+"  .XXXX.XXXXXXXXXXXXXX. ",
+"  .XXXX..........XXXXX. ",
+"  .XXXXXXXXXXXXXXXXXXX. ",
+"  .XXXXXXXXXXXXXXXXXXX. ",
+"  ..................... ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        "};

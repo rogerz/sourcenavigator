@@ -1,0 +1,144 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <meta name="Author" content="Ian Roxborough">
+   <title>Code Fusion X: Enhanced Developement Environment</title>
+</head>
+<body>
+
+<h2>
+Code Fusion X: Enhanced Developement Environment.</h2>
+The following is a list of new features or enhancements to existing feature
+which would help Code Fusion become a&nbsp; premire developement environment
+for native developers.&nbsp; This list is not inclusive, please feel free
+to add to it (see end of document for contact information).
+<p>Editor:
+<blockquote><a href="#Static_lighting">Static source code highlighting.</a>
+<br><a href="#Dynamiclighting">Dynamic source code highlighting (On the
+fly).</a>
+<br><a href="#tab_handling">Handling of tab spaces.</a>
+<br><a href="#brace_matching">Enhanced brace matching.</a>
+<br><a href="#Symbol_comp">Symbol completion.</a>
+<br><a href="#White_spaces">Show white space feature.</a></blockquote>
+Source Code Comprehension:
+<blockquote>Java packages support.
+<br>Namespaces support.
+<br>C++ template support.
+<br><a href="#oo_bowsering">Enhanced object oriented bowsering tool.</a>
+<br>Perl parser.</blockquote>
+IDE features:
+<blockquote><a href="#Integrated_Project_manger">Integrated Project Editor,
+Target Manager and Target Editor in Symbol browser.</a>
+<br>Support for sub targets and complex builds.
+<br>Build tree mirrowing source tree structure.
+<br>Per file compiler settings.
+<br>Enhanced Java support.
+<br>Enhanced versioning control interface.
+<br>Automatic ChangeLog entry generation.
+<br>More Tool Chains supported (Note: is a Code Fusion 1.1 requirement)
+<br>Intergrate the Build/Make Window into main editor/browser Window.
+<br>Export Makefile.am.</blockquote>
+GUI:
+<blockquote>Better tool bar support.
+<br>Preferences dialog make over.</blockquote>
+Misc.:
+<blockquote>Stand alone editor.
+<br>Better reuse/context checkbox solutions.
+<br>Upgrade Manager.</blockquote>
+
+<p><br>Developement focus and support aids:
+<blockquote>SNUG email list (Source Navigator User Group).
+<br>Code Fusion focus groups.
+<br>Competitor evaluation.</blockquote>
+
+<h4>
+</h4>
+
+<h4>
+<a NAME="Static_lighting"></a>Static source code highlighting.</h4>
+This does not work well in every case.
+<br>TODO: specific examples of where it fails.
+<br>&nbsp;
+<h4>
+<a NAME="Dynamiclighting"></a>Dynamic source code highlighting.</h4>
+This only was for a sub set of syntax which static source code highlighting
+can highlight.
+<br>TODO: specific list of unsupported syntax and examples.
+<br>&nbsp;
+<h4>
+<a NAME="tab_handling"></a>Handling of tab spaces.</h4>
+Source Navigator fails to consistanty honor the tab settings which the
+user can select in the preferences dialog.&nbsp; For example, if the user
+has selected "tabs to spaces", auto indent will still use tab space instead
+of spaces.
+<br>&nbsp;
+<h4>
+<a NAME="brace_matching"></a>Enhanced brace matching.</h4>
+Source Navigator does have basic 'on the fly' brace match abilities.&nbsp;
+These could do with much enhancement to help users resolve unmatch braces
+in source code projects.
+<br>&nbsp;
+<h4>
+<a NAME="Symbol_comp"></a>Symbol completion.</h4>
+Once the user has started typing a symbol, for example, a function call
+starting with foo, symbol completion will help them&nbsp; quick find the
+symbol they desire, in this case it may list symbols such as foo_bar, foo_class,
+foo_bar_big_long_function_name_nobody_wants_to_type_out, then user can
+the select the symbol without having to type out the whole symbol name.
+<br>&nbsp;
+<h4>
+<a NAME="White_spaces"></a>Show White spaces feature.</h4>
+This would allow you the user to toggle where white spaces (spaces, tabs,
+return charactors) where displayed as WYSIWUG or repersented by a set of
+symbols (usually, small dot, right arrow and return arow).
+<br>&nbsp;
+<h4>
+<a NAME="oo_bowsering"></a>Enhanced object oriented bowsering tool.</h4>
+Although $PRODUCT_NAME does have OO related browsing features, such as
+the class browser and hierachy browser, many engineers seem to need a more
+powerful OO visualization tool.&nbsp; A good place to start for generating
+the requirements for such a tool would be Benjamin Kosnik &lt;bkoz@cygnus.com>.
+<br>&nbsp;
+<h3>
+IDE features:</h3>
+
+<h4>
+<a NAME="Integrated_Project_manger"></a>Integrated Project Editor, Target
+Manager and Target Editor in Symbol browser.</h4>
+Combining IDE feature with project creation and management tool will help
+the user to have easier access to the Code Fusion functionality.&nbsp;
+At the moment (Code Fusion 1.0) the IDE features are "bolted on", the user
+has to hunt for them in a menu, it is unlikely the user will fine these
+features/tool with great easy, unless reading the documentation or have
+the feature demostrated.
+<p>TODO: Proposel and Screen shots of the planned intergration.
+<br>&nbsp;
+<h3>
+Misc.:</h3>
+
+<h4>
+Upgrade Manager.</h4>
+An upgrade manager would allow Code Fusion to be upgrade safely via binary
+patches (simply replacing .tob files).&nbsp; The Upgrade Manager would
+normally be invisable to the user, only when there is something wrong with
+an binary patch will the Upgrade Manager notify the user that they need
+other upgrades.&nbsp; For example, a user downloads and installs a new
+V1.1 sninit.tob to
+<br>fix bug A, how ever V1.1 sninit.tob also fixes bug C and requires V2.3
+of multimake.tob, the upgrade manager would notify the user that they have
+to (or it's recommended to) download the latest version of multimake.tob.&nbsp;
+Currently we can supply binary patches in the form of .tob files, but if
+something goes wrong (i.e. the user installs the wrong version or gets
+the new and old files mixed up) the only thing that can be done is reinstall
+the product.
+<br>&nbsp;
+<br>&nbsp;
+<p><font size=-1>Contact information: Please feel free to contact me (<a href="mailto:irox@cygnus.com?subject=Code Futon X">irox@cygnus.com</a>)
+or <a href="mailto:sn-project@cygnus.com?subject=Code Futon X">sn-project@cygnus.com</a>&nbsp;
+with any questions or comments regarding this document.&nbsp; Spelling
+and grammar correction welcome.</font>
+<br>&nbsp;
+</body>
+</html>

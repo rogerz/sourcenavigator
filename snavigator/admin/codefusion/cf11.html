@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Ian Roxborough">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; U) [Netscape]">
+   <TITLE>Code Fusion 1.1 Specifications</TITLE>
+</HEAD>
+<BODY>
+
+<H2>
+Code Fusion 1.1 Specification.</H2>
+Some of the main goals of the 1.1 release are to implement features and
+bug fixes with minimal engineering and documentation changes.&nbsp; Any
+larger changes in the engineering space will be more effective in the in
+Code Fusion X release.&nbsp; The Code Fusion X release will be a release
+based on the code in devo, this has many enhancements, such as the Itcl3.0
+upgrade. (Refer to the <A HREF="file:////Celeste/irox/sndev/devo/snavigator/admin/codefusion/eide.html">Code
+Fusion X document</A> for more information.)
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+Main requirements:</H3>
+
+
+<P>1. Change all occurrences of Source-Navigator to Code Fusion.
+<BLOCKQUOTE>This has been achieved by adding a new option, --enable-product-name,
+to the configure script. If the this option is not specified and --enable-production
+is specified then it will set the default product name to Code Fusion.&nbsp;
+Another option will have to be added to allow the launch name to be changed,
+possibly --enable-exec-name=codefusion.&nbsp; This will allow the user
+to launch Code Fusion (the product formally know as Source-Navigator) by
+typing 'codefusion' at a command line.</BLOCKQUOTE>
+&nbsp;
+<BR>2. Add support for additional and cross compilation tool chains.
+<BLOCKQUOTE>Support for cross compilation tool chains and additional tool
+chains must be written in the form of a toolchain specification using the
+snToolChain class.&nbsp; Once this has been done, support must be added
+for configuring Code Fusion to use the required tool chains.&nbsp; When
+building Code Fusion, it will include the native tool chain for the build
+platform by default and, if --target is specified, it will include the
+tool chain specified by --target..&nbsp;&nbsp; Additional configuration
+option must be added to allow additional tool chains to be specified; --enable-toolchains=
+can be used to specify additional tool chains.&nbsp;&nbsp; All tool chains
+specified must exist in Code Fusion.</BLOCKQUOTE>
+
+<H3>
+Minor enhancements and features changes (with minimal documentation impact):</H3>
+
+<BLOCKQUOTE>The removal of the default 'b' prefix on executable names.
+(Minor document change.)
+
+<P>Correct handling of "xterm -e". (Minor, if any documentation change.)
+
+<P>Recursive dependancy generation. (No documentation changes required.)
+
+<P>Adding support for building a shared libraries. (Minor, if any documentation
+impact.)</BLOCKQUOTE>
+
+<H3>
+Additional information required or to be decided:</H3>
+
+<BLOCKQUOTE>Which tool chains are we going to support? (palm pilot, third
+party tool chains?)
+
+<P>Measure current documentation impact and assess time/resource to handle
+farther changes.
+<BR>(How much work can we do if it's only a minor docs impact?)</BLOCKQUOTE>
+
+
+<P><FONT SIZE=-1>Contact information: Please feel free to contact me (<A HREF="mailto:irox@cygnus.com?subject=Cod Fusion 1.1">irox@cygnus.com</A>)
+or <A HREF="mailto:sn-project@cygnus.com?subject=Cod Fusion 1.1">sn-project@cygnus.com</A>&nbsp;
+with any questions or comments regarding this document.&nbsp; Spelling
+and grammar correction welcome.</FONT>
+<BR>&nbsp;
+</BODY>
+</HTML>

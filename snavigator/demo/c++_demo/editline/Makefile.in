@@ -1,0 +1,76 @@
+# $Header$
+#
+# Makefile for editline C libraries.
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+RANLIB = @RANLIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+
+RM = rm -f
+
+SRCDIR = ..
+INC = -I$(SRCDIR)/include
+EDITLIB = $(ISTKLIBS)/libedit.a
+LOCAL_CFLAGS = -DANSI_ARROWS -DHAVE_TCGETATTR -DHIDE -DUSE_DIRENT -DSYS_UNIX
+
+ISTKPLACE = $(SRCDIR)/..
+ISTKLIBS = $(ISTKPLACE)/lib/$(ARCH)
+
+OBJS = complete.o editline.o sysunix.o
+
+TAR_FILE = editline.tar
+
+build:
+	@if [ -d $(ARCH) ]; then \
+		cd $(ARCH); $(MAKE) $(MFLAGS) -f ../Makefile libs; \
+		else $(MAKE) $(MFLAGS) -f ../Makefile libs; fi;
+
+libs: libedit.a
+
+libedit.a: $(OBJS)
+	$(RM) libedit.a
+	ar cru libedit.a $(OBJS)
+	$(RANLIB) libedit.a
+
+$(ISTKLIBS)/libedit.a: libedit.a
+	$(INSTALL_DATA) libedit.a $(ISTKLIBS)
+	$(RANLIB) $(ISTKLIBS)/libedit.a
+
+install: $(ISTKLIBS)/libedit.a
+
+install-all:
+	@if [ ! -d $(ARCH) ]; then mkdir $(ARCH); else exit 0; fi;
+	@echo Installing editline ...
+	@cd $(ARCH); $(MAKE) $(MFLAGS) -f ../Makefile install
+
+tar:
+	@rm -f $(TAR_FILE).Z tar-files
+	@$(MAKE) $(MFLAGS) tar-list >tar-files
+	tar cf $(TAR_FILE) -I tar-files
+	compress $(TAR_FILE)
+	@rm -f tar-files
+
+tar-list:
+	@echo editline >&2
+	@ls README Makefile.in *.c editline.3 include/*.h
+
+rcsinfo:
+	@echo editline
+	@rlog -L -S RCS/*,v
+clean:
+	@if [ -d $(ARCH) ]; then cd $(ARCH); fi; \
+		$(RM) errs *.o *~* $(APPS) core a.out *.a ../$(TAR_FILE).Z
+
+clean-all:
+	@$(MAKE) $(MFLAGS) clean
+
+editline.o: $(SRCDIR)/editline.c
+	$(CC) $(CFLAGS) $(LOCAL_CFLAGS) $(INC) -c $(SRCDIR)/editline.c
+
+complete.o: $(SRCDIR)/complete.c
+	$(CC) $(CFLAGS) $(LOCAL_CFLAGS) $(INC) -c $(SRCDIR)/complete.c
+
+sysunix.o: $(SRCDIR)/sysunix.c
+	$(CC) $(CFLAGS) $(LOCAL_CFLAGS) $(INC) -c $(SRCDIR)/sysunix.c

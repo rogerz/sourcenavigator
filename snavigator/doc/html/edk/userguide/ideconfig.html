@@ -1,0 +1,434 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus1.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Using the Red Hat EDK</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+</P>
+</TH></TR>
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progide.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998207"></A><A NAME="20060"></A>Using the Red Hat EDK<DIV>
+<IMG SRC="ideconfig-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-998212"></A>As mentioned in <STRONG CLASS="BoldEmphasis">
+Getting Started</STRONG>, the Red Hat Embedded DevKit is a toolkit that helps you develop programs for embedded systems. Once working, the application can then be downloaded to a target board or other embedded system. This toolkit provides a quicker way to progress through the edit-compile-download-debug cycle. After the configuration and project files are set up, you can repeat the cycle as many times as necessary, without having to recreate the configuration file.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998217"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998218"></A>The <KBD CLASS="Code">
+DHCP</KBD>, <KBD CLASS="Code">
+TFTP</KBD>, and <KBD CLASS="Code">
+NFS</KBD>
+ servers must be configured, your target board set up, and the embedded kernel and target filesystem template built before setting your EDK Preferences. See &quot;Installing Red Hat Embedded DevKit&quot; in <STRONG CLASS="BoldEmphasis">
+Getting Started</STRONG>
+ for more information.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998228"></A>Working With the Red Hat EDK</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998232"></A>There are five steps to using the Red Hat EDK:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998233"></A>configuring the environment for the host and target board,</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998234"></A>editing the program,</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998235"></A>compiling the program,</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998236"></A>optionally downloading the program to an embedded target board, and</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998237"></A>executing or debugging the program.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998241"></A>EDK Preferences Window</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998248"></A>Use the <SPAN CLASS="Bold">
+EDK Preferences</SPAN>
+ window to specify the Red Hat EDK-specific parameters. From the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, in the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+EDK Preferences</SPAN>. After setting your project parameters, click <SPAN CLASS="Bold">
+OK</SPAN>
+ to update the project with the current settings.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001668"></A><A NAME="marker-1001661"></A>EDK Preferences Tab</P>
+<DIV>
+<IMG SRC="ideconfig-2.gif">
+</DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1001670"></A><A NAME="marker-1001669"></A>Target tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1001671"></A>The <SPAN CLASS="Bold">
+Target</SPAN>
+ tab lets you input information specific to the target board.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998263"></A><SPAN CLASS="Bold">
+Target</SPAN>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998265"></A><A NAME="marker-998264"></A><B>Hostname</B><BR>
+Enter the host name of the target board, such as <KBD CLASS="Code">
+tuxedo</KBD>, <KBD CLASS="Code">
+tuxedo.company.com</KBD>, or an IP address.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998267"></A><A NAME="marker-998266"></A><B>Boot Image</B><BR>
+This is the filename of the boot image loaded by the target board when it boots. Enter the filename where the IDE will place the boot image. This must match the boot filename you entered in the <KBD CLASS="Code">
+/etc/dhcpd.conf</KBD> file. The boot filename is provided to the target board by the <KBD CLASS="Code">
+DHCP</KBD>
+ server.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998269"></A><SPAN CLASS="Bold">
+Networking IP</SPAN>
+<A NAME="marker-998268"></A></P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998270"></A>Select the type of IP address assignment your target board will use. You can choose between either dynamic IP assignment or a static IP address. With dynamic IP assignment, you have a choice between kernel-based (built-in <KBD CLASS="Code">
+BOOTP</KBD>) or <KBD CLASS="Code">
+DHCP</KBD>
+ IP resolution. If you choose dynamic IP assignment, you must have a <KBD CLASS="Code">
+DHCP</KBD>
+ server running. Do not use a Microsoft Windows NT<SUP>&#0174;</SUP> <KBD CLASS="Code">
+DHCP</KBD>
+ server if you want to use the kernel-based option, as it does not support the <KBD CLASS="Code">
+BOOTP</KBD>
+ protocol. See &quot;Setting Up Servers on the Host&quot; in<EM CLASS="Emphasis">
+ </EM>
+<STRONG CLASS="BoldEmphasis">
+Getting Started</STRONG>
+ for instructions on installing the Linux <KBD CLASS="Code">
+DHCP</KBD>
+ server <KBD CLASS="Code">
+(dhcpd)</KBD>.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998272"></A><A NAME="marker-998271"></A><B>Kernel</B><BR>
+Choose this option if you are using the kernel to acquire the IP address during bootup. This option requires that the Linux kernel be configured with <KBD CLASS="Code">
+BOOTP</KBD>
+ support. This option is selected by default.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998274"></A><A NAME="marker-998273"></A><B>DHCP</B><BR>
+Choose this option if you are using <KBD CLASS="Code">
+DHCP</KBD>
+ to acquire the IP address.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998276"></A><A NAME="marker-998275"></A><B>Static</B><BR>
+Choose this option when the IP address will not change. If you do not know any of this information, see your system administrator.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998277"></A><B>IP Address</B><BR>
+Enter the numeric IP address for the target board.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998278"></A><B>Mask</B><BR>
+Enter the numeric address mask for the target board.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998279"></A><B>Broadcast</B><BR>
+Enter the numeric broadcast address for the target board.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998280"></A><B>Gateway</B><BR>
+Optionally enter the numeric IP address of the default gateway to forward packets to other subnets. If the target board only needs to communicate with host on the same network, leave this field blank.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998282"></A><A NAME="21371"></A>Filesystem tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998284"></A>The <A NAME="marker-998283"></A><SPAN CLASS="Bold">
+Filesystem</SPAN>
+ tab lets you select what type of filesystem will be used by your application.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998288"></A>Filesystem Tab</P>
+<DIV>
+<IMG SRC="ideconfig-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998289"></A>Some applications do not require permanent storage; these systems use a RAM Disk, or virtual disk, filesystem. Other systems do require permanent storage, these systems use an NFS Root filesystem, which accesses files stored on a file server via a network. </P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998290"></A>RAM Disk</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998292"></A><A NAME="marker-998291"></A>RAM Disk is a virtual disk, such as an emulated disk drive, on the target board. Use RAM Disk as your filesystem only if you have sufficient RAM to hold the kernel, the running application, and the RAM Disk. If you choose this option, the target board must be rebooted each time the program is rebuilt.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998293"></A>Since all data resides in memory, it should not be necessary to create temporary files. <SPAN CLASS="Bold">
+</SPAN>
+<A NAME="marker-998294"></A>For this reason, a read-only filesystem, RAM Disk/ROMfs, is ideal for RAM Disk usage. However, if you need to create temporary files on the filesystem, such as for exchanging data between applications, you can use a <A NAME="marker-998295"></A>read-write filesystem (RAM Disk/Minix) instead. The default RAM Disk/Minix setting allows an additional 10% for files and disk space in the image. It is possible to change this allocated size through the <SPAN CLASS="Bold">
+Extra Space (Percentage)</SPAN>
+ field. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998296"></A><SPAN CLASS="Bold">RAM Disk/ROMfs</SPAN>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998297"></A>This option is selected by default.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998298"></A><B>Template Directory</B><BR>
+Enter the path to the RAM Disk/ROMfs directory. The path must specify the root directory to use for creating an image of your filesystem in RAM.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998299"></A>You can do this by either typing the directory path or 
+clicking the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. If you click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button, the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Select the template directory location.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998300"></A><SPAN CLASS="Bold">
+RAM Disk/Minix</SPAN>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998301"></A><B>Template Directory</B><BR>
+Enter the path to the RAM Disk/Minix directory. The path must specify the root directory to use for creating an image of your filesystem in RAM.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998302"></A>You can do this by either typing the directory path or clicking the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. If you click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button, the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Select the template directory location.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998304"></A><A NAME="marker-998303"></A><B>Extra Space (Percentage)</B><BR>
+Enter the additional disk space to allocate for the system, expressed as a percentage of disk space allocated for your template directory. The default is 10 percent.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998305"></A><B>Absolute Size</B><BR>
+Select this option to specify the exact size for the RAM Disk image.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998307"></A><A NAME="marker-998306"></A><B>Blocks</B><BR>
+Enter the number of blocks to create in the RAM Disk image.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998308"></A><B>Inodes</B><BR>
+Enter the number of inodes to create in the RAM Disk image.</P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-998310"></A><A NAME="marker-998309"></A>NFS Root</H5>
+<P CLASS="Body">
+<A NAME="pgfId-998311"></A>NFS Root allows access to files stored on the network. Use NFS Root as your filesystem if you have a large application, limited RAM, or require data persistence. If you choose this option, the target board must be rebooted each time the program is downloaded. For information on setting up NFS Root, see &quot;Setting Up Servers on the Host&quot; in <STRONG CLASS="BoldEmphasis">
+Getting Started</STRONG>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998312"></A><SPAN CLASS="Bold">
+NFS Root</SPAN>
+</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998313"></A><B>Root Directory</B><BR>
+Enter the path to the NFS Root directory. The path must specify the directory to be accessed over the network by the target board.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998314"></A>You can do this by either typing the 
+directory path or clicking the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. 
+If you click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button, the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Select the directory where the NFS Root is located. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to select the directory and close the dialog.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998316"></A><A NAME="marker-998315"></A>Mount Points tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998317"></A>The <SPAN CLASS="Bold">
+Mount Points</SPAN>
+ tab allows you to configure mount point information. See <KBD CLASS="Code">
+man</KBD>
+ <KBD CLASS="Code">
+fstab</KBD>
+ for syntax and description information.</P>
+<DIV>
+<IMG SRC="ideconfig-4.gif">
+</DIV>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998321"></A><SPAN CLASS="Bold">
+Mount Points<BR>
+</SPAN>
+Enter the mount point specifications using the following convention:<BR>
+<KBD CLASS="CodeVariant">
+&lt;device&gt; &lt;mount point&gt; &lt;filesystem type&gt;</KBD>
+<P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998322"></A>Some examples are:</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998323"></A><KBD CLASS="Code">
+none /proc proc</KBD><BR>
+<A NAME="pgfId-998324"></A><KBD CLASS="Code">
+none /dev/pts devpts</KBD>
+<BR><A NAME="pgfId-998325"></A><KBD CLASS="Code">
+/dev/cdrom /cdrom iso9660</KBD>
+</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998327"></A><A NAME="marker-998326"></A>Kernel tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998328"></A>The <SPAN CLASS="Bold">
+Kernel</SPAN>
+ tab allows you to specify paths and options for the kernel.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998332"></A>Kernel Tab</P>
+<DIV>
+<IMG SRC="ideconfig-5.gif">
+</DIV>
+<H3 CLASS="Label">
+<A NAME="pgfId-998333"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998334"></A> See &quot;Creating a Target Filesystem Image&quot; in <STRONG CLASS="BoldEmphasis">
+Getting Started</STRONG>
+ for information on building the kernel.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998335"></A><B>Arguments</B><BR>
+Enter the arguments to pass to the kernel, such as <KBD CLASS="Code">
+init=/sbin/init</KBD>. See <KBD CLASS="Code">
+man bootparam</KBD>
+ for a description of the syntax and available options.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998336"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998340"></A>It is not necessary to add arguments when using the default EDK Preferences configuration.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998341"></A><B>Source Path</B><BR>
+Enter the directory for the Linux kernel source tree. The Red Hat EDK uses this path to find the kernel image (zImage) and the modules, if any, to be used.</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998345"></A>To specify the directory, either enter the name of the 
+directory or click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button. 
+If you click the &quot;<SPAN CLASS="Bold">...</SPAN>&quot; button, 
+the <SPAN CLASS="Bold">
+Open</SPAN>
+ dialog appears. Select the top-level directory of the kernel sources. Click <SPAN CLASS="Bold">
+OK</SPAN>
+ to select the directory and close the dialog. The directory appears in the <SPAN CLASS="Bold">
+Source Path</SPAN>
+ field. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998347"></A><SPAN CLASS="Bold">
+Modules</SPAN>
+<A NAME="marker-998346"></A></P>
+<P CLASS="Body">
+<A NAME="pgfId-998348"></A>This section allows you to specify module information.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998349"></A><B>Monolithic</B><BR>
+Select this option when the kernel has been configured without modules. This means that no modules will be copied to the target board filesystem.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998350"></A><B>All Modules</B><BR>
+Install all of the built kernel modules on the target board filesystem. This option is selected by default.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-998351"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998352"></A>When this option is selected, <KBD CLASS="Code">
+make modules_install</KBD>
+ is invoked in the kernel directory. This make rule fails if the kernel has not been configured with module support (as is the case with the PowerPC configuration). If this happens, select the <SPAN CLASS="Bold">
+Monolithic</SPAN>
+ option instead.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998353"></A><B>Named Modules</B><BR>
+Add only specified modules. This provides greater control of which modules are copied to the target board filesystem.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998354"></A><B>Module Options</B><BR>
+Enter additional modules or module arguments. These modules must be located in the 
+specified source path. The format for this field is<BR>
+<KBD CLASS="Code">
+&lt;</KBD><KBD CLASS="CodeVariant">module name</KBD>
+<KBD CLASS="Code">&gt;,&lt;</KBD><KBD CLASS="CodeVariant">options</KBD><KBD CLASS="Code">&gt;</KBD>. Examples are</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998355"></A><KBD CLASS="Code">
+8390.o</KBD>
+<BR>
+<A NAME="pgfId-998356"></A><KBD CLASS="Code">
+ne.o,irq=5,io=0x0320</KBD>. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998357"></A>For more information on module options, refer to your driver sources documentation. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998358"></A>If <SPAN CLASS="Bold">
+All Modules</SPAN>
+ is selected, you should list only modules requiring options to be passed to them. </P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998359"></A>If <SPAN CLASS="Bold">
+Named Modules</SPAN>
+ is used, only the modules listed in this field are installed on the target board's filesystem. </P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998361"></A><A NAME="marker-998360"></A>Debugging tab</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998362"></A>The <SPAN CLASS="Bold">
+Debugging</SPAN>
+ tab allows you to set up your debugging process.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998366"></A>Debugging Tab</P>
+<DIV>
+<IMG SRC="ideconfig-6.gif">
+</DIV>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998367"></A><SPAN CLASS="Bold">
+Ethernet<BR>
+</SPAN>
+This option is selected by default as it provides faster debugging than possible with serial. Select this option if you are using a network connection to debug your application on a target board. </P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998368"></A><B>Port Number</B><BR>
+Enter the Ethernet TCP/IP port number on which the <KBD CLASS="Code">
+gdbserver</KBD>
+ should listen for <KBD CLASS="Code">
+gdb</KBD>
+ to connect.</P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-998369"></A><SPAN CLASS="Bold">
+Serial<BR>
+</SPAN>
+Select this option if you are using a serial port connection to debug your application on a target board.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998370"></A><B>Target Port</B><BR>
+Use the combo-box to select the serial port on the target board.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998371"></A><B>Host Port</B><BR>
+Use the combo-box to select the host serial port.</P>
+<P CLASS="BodyListFollow2">
+<A NAME="pgfId-998372"></A><B>Speed (bps)</B><BR>
+Use the combo-box to select the speed of the serial connection. The default is 9600 bits per second.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998373"></A>Editing the Project Files</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998377"></A>After configuring the <SPAN CLASS="Bold">
+EDK Preferences</SPAN>, you may need to edit your source code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998381"></A>From the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, double-click the name of the file to edit.</P>
+<DIV>
+<IMG SRC="ideconfig-7.gif">
+</DIV>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998386"></A>The <SPAN CLASS="Bold">
+Editor</SPAN>
+ window opens. After editing the file, save your changes (from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu select <SPAN CLASS="Bold">
+Save</SPAN>). For more information on the <SPAN CLASS="Bold">
+Editor</SPAN>, see <A HREF="editor.html#40005" CLASS="XRef">Editor</A>.</P>
+<DIV>
+<IMG SRC="ideconfig-8.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998391"></A>After entering the <SPAN CLASS="Bold">
+EDK Preferences</SPAN>
+ and editing any source files, you must create a build target before creating an 
+executable application. Build targets specify how the final binary is to be created. 
+You can create, execute, download and debug build targets for either native or 
+embedded targets. See <A HREF="progide.html#42744" CLASS="XRef">Building Programs</A> for information on creating build targets.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998197"></A>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+</P>
+</TH></TR>
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progide.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

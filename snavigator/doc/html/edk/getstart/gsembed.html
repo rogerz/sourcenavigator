@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus1.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Finding an Ethernet Address for Embedded Targets</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_gs.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="gsconfig.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="gslicense.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-464014"></A><A NAME="32425"></A>Finding an Ethernet Address for Embedded Targets <DIV>
+<IMG SRC="gsembed-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-464019"></A>You must use a specific Ethernet address appropriate 
+to your target when accessing the target over a network.</P>
+<P CLASS="Body">
+<A NAME="pgfId-464048"></A>For an <KBD CLASS="CodeVariant">
+x</KBD>&nbsp;86 target, see <A HREF="gsembed.html#23889" CLASS="XRef">Find an x86 
+Ethernet Address</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-464182"></A>For a PowerPC target, see <A HREF="gsembed.html#39266" CLASS="XRef">Find a PowerPC Ethernet Address</A>.</P>
+<DIV>
+<H2 CLASS="Heading1Top">
+<A NAME="pgfId-464068"></A><A NAME="x86ether"></A><A NAME="23889"></A>Find an 
+<KBD>x</KBD>86 Ethernet Address</H2>
+<P CLASS="Body">
+<A NAME="pgfId-464646"></A>To find an Ethernet address for an 
+<KBD CLASS="CodeVariant">x</KBD>&nbsp;86 target (if the address is not on a 
+sticker on the target board), use Tom's Single Floppy Linux distribution. </P>
+<OL>
+<LI CLASS="Numbered">
+<A NAME="pgfId-464647"></A>Get the distribution from the <A HREF="http://www.toms.net/rb/"><KBD CLASS="Code">
+http://www.toms.net/rb/</A></KBD>
+ site. Click on the &quot;1.7.185 install from Linux&quot; link to find a download.</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-465147"></A>Save the tomsrtbt-1.7.185.tar.gz file to <KBD CLASS="Code">
+/tmp</KBD>.</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-465141"></A>Log in as root.</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-465065"></A>Run the following commands in your shell window.
+<P><KBD CLASS="Code"><A NAME="pgfId-464650"></A>&nbsp;&nbsp;cd /tmp
+tar -xzvf tomsrtbt-1.7.185.tar.gz<BR>
+&nbsp;&nbsp;cd tomsrtbt-1.7.185<BR>
+&nbsp;&nbsp;./install.s</KBD><P>
+<A NAME="pgfId-464651"></A>Your system will then provide the following output:</P>
+<KBD CLASS="Code"><A NAME="pgfId-464652"></A><KBD CLASS="CodeOutput">&nbsp;&nbsp;Insert a 
+blank writable 3.5&quot; floppy diskette then strike ENTER.</KBD></KBD></LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-464653"></A>Put a floppy disk in the host system's floppy drive. 
+Press <B CLASS="Callout">
+Enter</B>. Your system will then provide the following output:<P>
+<KBD CLASS="Code"><A NAME="pgfId-464654"></A><KBD CLASS="CodeOutput">&nbsp;&nbsp;About to fdformat /dev/fd0u1722<BR>
+&nbsp;&nbsp;Double-sided, 82 tracks, 21 sec/track. Total capacity 1722 kB.<BR>
+&nbsp;&nbsp;Formatting ... done<BR>
+&nbsp;&nbsp;...<BR>
+&nbsp;&nbsp;About to verify floppy image<BR>
+&nbsp;&nbsp;Succeeded!</KBD>
+</KBD><P>
+<A NAME="pgfId-464655"></A>Remove the floppy disk from the floppy drive.
+</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-464656"></A>Ensure that all your connections have power 
+to the <KBD CLASS="Code">x</KBD>86 target. Insert the floppy disk before 
+powering up the target. Power up the target and get a prompt:<BR>
+<KBD CLASS="Code"><A NAME="pgfId-464658"></A><KBD CLASS="CodeOutput">&nbsp;&nbsp;boot:</KBD>
+</KBD>
+</LI><LI CLASS="NumberedNext">
+<A NAME="pgfId-464659"></A>Press <B CLASS="Callout">
+Enter</B>
+ and wait. The Linux kernel will boot and information about the target 
+will display. You should now see a prompt like:<BR>
+<KBD CLASS="CodeExample2"><A NAME="pgfId-464660"></A><KBD CLASS="CodeOutput">tty1 tomsrtbt login:</KBD>
+</KBD></LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-464661"></A>Re-log in as root user with &quot;xxxx&quot; as your password. Type:<BR>
+<KBD CLASS="Code"><A NAME="pgfId-464873"></A>&nbsp;&nbsp;dmesg | grep eth0</KBD><P>
+<A NAME="pgfId-464877"></A>You should see something like the 
+following output<A HREF="#pgfId-464965" CLASS="footnote"><SUP>1</SUP></A><A NAME="fn1"></A>.</P>
+<KBD CLASS="Code"><A NAME="pgfId-464887"></A><KBD CLASS="CodeOutput">&nbsp;&nbsp;eth0: 3Com 3c589, io 0x300, irq 3, hw_addr 00:00:86:1B:AA:9A</KBD>
+</KBD><P>
+<A NAME="pgfId-465205"></A>Following the 
+&quot;<KBD CLASS="CodeOutput">hw_addr</KBD>&quot; output is the 
+Ethernet a<A NAME="marker-465204"></A>ddress (in <KBD CLASS="Code">
+##:##:##:##:##:##</KBD>
+ format), which is the value for <KBD CLASS="CodeVariant">
+target-ethernet-address</KBD>
+&nbsp;in <A HREF="gsinstall.html#35667" CLASS="XRef">Network information</A>.
+<P><A NAME="pgfId-465209"></A>Write down the Ethernet address. You may also 
+want to write down the <KBD CLASS="CodeOutput">
+io</KBD>
+ address and the <KBD CLASS="CodeOutput">
+irq </KBD>
+ number, in case you need them to create a bootROM.</P>
+</LI></OL></DIV>
+<DIV>
+<H2 CLASS="Heading1Top">
+<A NAME="pgfId-464087"></A><A NAME="39266"></A><A NAME="ppcether"></A>Find a PowerPC Ethernet Address</H2>
+<P CLASS="Body">
+<A NAME="pgfId-464687"></A>To find an Ethernet address for accessing a 
+PowerPC target if the address is not on the target 
+board (see <A HREF="gsembed.html#13520" CLASS="XRef">MBX board</A> for location), 
+use the following procedure.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-464720"></A><A NAME="13520"></A>MBX board</P>
+<P CLASS="Figure">
+<A NAME="pgfId-465294"></A><IMG SRC="gsembed-2.gif">
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-465297"></A>If you don't have the Ethernet 
+address for <A HREF="gsinstall.html#19189" CLASS="XRef">Setting up the PowerPC Target</A>,
+ use the <KBD CLASS="Code">NIOT</KBD>
+ command; see <A HREF="gsinstall.html#29920" CLASS="XRef">Troubleshooting boot problems with a PowerPC target</A>. </P>
+<P CLASS="Body">
+<A NAME="pgfId-913144"></A>&nbsp;</P>
+</DIV>
+<HR>
+<DIV CLASS="footnotes">
+<DIV CLASS="footnote">
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">
+1.</SPAN>
+<A NAME="pgfId-464965"></A>If you do not see something like the output, 
+ensure that your network card is one of the cards we 
+support; see <A HREF="gsinstall.html#23008" CLASS="XRef">System Requirements</A>.
+<A HREF="#fn1">Return to top.</A></P>
+</DIV>
+</DIV>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_gs.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="gsconfig.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="gslicense.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,265 @@
+package require tcltest
+package require eventutils
+
+
+# The LabelEntryButton& class is currently defined in tools.tcl
+
+if {![winfo exists .t]} {
+    set t [toplevel .t]
+}
+
+set e $t.leb
+
+
+tcltest::test leb-command-1 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e cget -command
+} ""
+
+tcltest::test leb-command-2 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e -command foo
+    $e cget -command
+} foo
+
+tcltest::test leb-command-3 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -command bar
+    $e cget -command
+} bar
+
+tcltest::test leb-command-4 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -command bar
+    [$e component button] cget -command
+} bar
+
+
+
+tcltest::test leb-text-1 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e cget -text
+} ""
+
+tcltest::test leb-text-2 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e -text HI
+    $e cget -text
+} HI
+
+tcltest::test leb-text-3 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -text HELLO
+    $e cget -text
+} HELLO
+
+tcltest::test leb-text-4 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -text NAME
+    [$e component label] cget -text
+} NAME
+
+
+
+
+tcltest::test leb-value-1 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e cget -value
+} ""
+
+tcltest::test leb-value-2 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e -value foo
+    $e cget -value
+} foo
+
+tcltest::test leb-value-3 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -value bar
+    $e cget -value
+} bar
+
+tcltest::test leb-value-4 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -value foo
+    [$e component entry] get
+} foo
+
+
+
+
+tcltest::test leb-variable-1 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e cget -variable
+} ""
+
+tcltest::test leb-variable-2 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e -variable foo
+    $e cget -variable
+} foo
+
+tcltest::test leb-variable-3 { check configuration options } {
+    destroy $e
+    LabelEntryButton& $e
+    $e configure -variable bar
+    $e cget -variable
+} bar
+
+
+
+
+
+tcltest::test leb-value-variable-1 { querying -value should get
+        the value of the variable } {
+    destroy $e
+    set var VALUE
+    LabelEntryButton& $e -variable var
+    $e cget -value
+} VALUE
+
+tcltest::test leb-value-variable-2 { querying -value should get
+        the value of the variable } {
+    destroy $e
+    set var VALUE1
+    LabelEntryButton& $e -variable var
+    set var VALUE2
+    $e cget -value
+} VALUE2
+
+tcltest::test leb-value-variable-3 { configuring -value should
+        set the value of the variable } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -variable var
+    $e configure -value V2
+    set var
+} V2
+
+tcltest::test leb-value-variable-4 { configuring -value should
+        set the value of the variable } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -variable var
+    $e configure -value ""
+    set var
+} ""
+
+tcltest::test leb-value-variable-5 { configuring -variable should
+        query the value of the variable and not set it } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -value V2
+    $e configure -variable var
+    set var
+} V1
+
+tcltest::test leb-value-variable-6 { configuring -value before
+        -variable should query the value of the variable } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -value V2 -variable var
+    $e cget -value
+} V1
+
+tcltest::test leb-value-variable-7 { configuring -variable before
+        -value should set the value of the variable } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -variable var -value V2
+    $e cget -value
+} V2
+
+tcltest::test leb-value-variable-8 { configuring the -value
+        twice should set the variable twice } {
+    destroy $e
+    set var V1
+    LabelEntryButton& $e -variable var -value V2
+    list $var [$e configure -value V3] $var [$e cget -value]
+} {V2 {} V3 V3}
+
+tcltest::test leb-value-variable-9 { configuring the -variable
+        twice should query the variable twice } {
+    destroy $e
+    set var1 V1
+    set var2 V2
+    LabelEntryButton& $e
+    $e configure -variable var1
+    list [$e cget -value] \
+         [$e configure -variable var2] \
+         [$e cget -value]
+} {V1 {} V2}
+
+tcltest::test leb-value-variable-10 { configuring -variable to ""
+        should unlink the variable but retain the value } {
+    destroy $e
+    set var VALUE
+    LabelEntryButton& $e -variable var
+    $e cget -value
+    list [$e cget -value] \
+         [$e configure -variable ""] \
+         [set var new] \
+         [$e cget -value]
+} {VALUE {} new VALUE}
+
+
+
+
+tcltest::test leb-event-1 { send keypress events
+        to entry and then query the -value } {
+    destroy $e
+    LabelEntryButton& $e
+    pack $e
+    set entry [$e component entry]
+    enter_text $entry HELLO
+    list [$e cget -value] \
+         [$entry get]
+} {HELLO HELLO}
+
+tcltest::test leb-event-2 { send keypress events
+        to entry and then query the -value } {
+    destroy $e
+    LabelEntryButton& $e -value INITIAL
+    pack $e
+    set entry [$e component entry]
+    enter_text $entry HELLO
+    list [$e cget -value] \
+         [$entry get]
+} {HELLO HELLO}
+
+tcltest::test leb-event-3 { send keypress events
+        to entry and then query the variable } {
+    destroy $e
+    set var NONE
+    LabelEntryButton& $e -variable var
+    pack $e
+    enter_text [$e component entry] SOME
+    set var
+} SOME
+
+tcltest::test leb-event-4 { If the -command option is not
+        being properly updated, this test may block in a dialog } {
+    destroy $e
+    set result notpressed
+    LabelEntryButton& $e
+    $e configure -command {set result pressed}
+    pack $e
+    update
+    mouse_click [$e component button]
+    update
+    set result
+} pressed
+
+
+
+destroy $t

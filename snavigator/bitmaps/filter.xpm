@@ -1,0 +1,36 @@
+/* XPM */
+static char * filter_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"24 24 6 1",
+/* colors */
+" 	c None",
+".	c blue",
+"X	c darkred",
+"o	c cyan",
+"O	c darkgreen",
+"+	c darkblue",
+/* pixels */
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"     .  .    .   .      ",
+"          .     .  .    ",
+"       .    .           ",
+"     .    .   .  .      ",
+"                        ",
+"     XXoOXXoOXXoOXXo    ",
+"     OoXXOoXXOoXXOoX    ",
+"     XXoOXXoOXXoOXXo    ",
+"                        ",
+"        +               ",
+"                  +     ",
+"      +    +            ",
+"               +        ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        "};

@@ -1,0 +1,975 @@
+# Copyright (c) 2000, Red Hat, Inc.
+# 
+# This file is part of Source-Navigator.
+# 
+# Source-Navigator is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+# 
+# Source-Navigator is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with Source-Navigator; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+###############################################################################
+#
+# japanese.txt
+#
+# Copyright (C) 1998-2000 Red Hat, Inc.
+#
+# Description:
+# This file maps short tokens which are used in the program source onto the
+# strings that are actually displayed at run-time.
+#
+# The format is:
+#
+#	<token>,<value>
+#
+# A <value> cannot have embedded newlines.
+#
+# In some contexts, a left bracket indicates that the next character
+# will be underlined in the interface; for instance this works for
+# menu items.
+#
+# Entries in this file can appear in any order.
+#
+# Any changes to this file must be mirrored in other message catalogs.
+# If you don't know the language, put an entry in with `???' as the
+# "translation".  Then send email to the S-N list asking that someone
+# update the entry.
+#
+# Part of the token name is sometimes used to indicate usage.
+# Balloon help text tokens are usually suffixed with "INFO".
+#
+###############################################################################
+
+#Edition Strings
+DeveloperEdition,Developer Edition
+EnterpriseEdition,Enterprise Edition
+DemoEdition,Demo Version
+
+EditPreferences,設定を表示([F)...
+Format,フォーマット
+Work,ワーク
+Layout,レイアウト
+Project,プロジェクト
+Window,ウィンドウ
+FilePermRead,読み出し
+FilePermWrite,書き込み
+FilePermUser,所有者
+FilePermGroup,グループ
+FilePermOther,その他ユーザー
+KBytes,Kバイト
+HierarchyLayout,階層レイアウト
+CrossReferencing,クロスリファレンス
+Database,データベース
+Class,クラス
+Name,名前
+Parameters,パラメータ
+Type,タイプ
+Public,パブリック
+Static,スタティック
+Protected,プロテクト
+Virtual,仮想
+Private,プライベート
+Related,関係している
+Email,Email
+Web,ウェブ
+Loading,ローディング中...
+Untitled,(名称なし)
+AllRightsReserved,登録済
+BugReport,障害レポート
+Internationalization,国際化
+Encoding,文字セット変換([G)
+FileModifiedOutside,%s ファイルは修正されています。\n保存しますか?
+FileModifiedOutsideTitle,ファイルの修正
+ToUpgrade,アップグレードするには sn-support@cygnus.co.jp までご連絡ください。
+EvalExpires,この評価版ライセンスは %d 日で期限切れになります。
+EvalExpiresTonight,評価版ライセンスは午前 0 時で期限が切れます。
+EvalLicense,Source-Navigator 評価版
+NoLicenseFound,ライセンスが見つかりませんでした。
+WaitingForXref,クロスリファレンスの完了を待っています。
+ProjectBatchBuilt,プロジェクトのビルドが完了しました。
+ScanningFile,スキャン中: %s
+Continue,継続
+DefaultTitle,ファイルの選択
+SelFileColHelp,ディレクトリかファイルを 1 つ以上選択してください。
+Error,エラー
+FileExists,ファイルは既に存在します。
+File,ファイル
+Filter,フィルタ:
+Open,開く([O)...
+Overwrite,上書き
+PermRead,読み出し
+PermWrite,書き込み
+PermUser,ユーザ
+PermGroup,グループ
+PermOthers,その他
+Print,印刷([P)...
+Search,検索([S)
+SQLFfor,前進([F)
+SQLPcolor,色
+SQLPcolormodell,色
+SQLPcopies,部数
+SQLPfile,ファイルへ
+SQLPform,ページ フォーマット
+SQLPformland,横向き
+SQLPformnorm,縦向き
+SQLPgrey,グレースケール
+SQLPmono,モノクロ
+SQLPname,印刷中
+SQLPprintall,すべて
+SQLPprintwidth,ページ幅
+SQLPprintercmd,プリンタ コマンド
+SQLPprintit,印刷
+SQLPprintleftm,左の余白
+SQLPprinttopm,上の余白
+SQLPprintrange,範囲
+SQLPprintheight,高さ
+SQLPprintfactor,スケール([S) %
+SQLPprintPageV,ページ 縦([V)
+SQLPprintPageH,横([H)
+SQLPPrintPageNum,ページ番号を印刷
+SQLPPage,ページ
+cancel,キャンセル
+ok,OK
+preference,設定([P)...
+View,表示([V)
+ViewINFO,選択したファイルを表示
+PafCrossRef,クロスリファレンス([X)
+StartXRefINFO,選択した項目に対してクロスリファレンスを起動
+PafCrossToDetail,参照先詳細([D)
+PafCrossByDetail,参照元詳細([E)
+PafWrap,ワードラップ([W)
+PafOverWrite,上書き([V)
+ODDReportrightm,右の余白
+ODDReportbotm,下の余白
+PafExecFilter,フィルタ([F)...
+Marked,選択
+PrintFile,ファイルを印刷
+Symbols,シンボル([S)
+SymbolicTags,シンボリック タグ
+Abrav,省略形([A)
+ListSize,合計: %s 選択部分: %s
+UnknownDir,ディレクトリ "%s" は存在しません。
+ShowFNames,ファイル名([F)
+ShowFNamesInfo,ファイル名を表示
+Access,アクセス
+Read,読み
+Written,書き
+Passed,引数渡し
+Unused,未使用
+DrawProjTree,プロジェクト ツリー描画中...
+Statistics,統計
+StatisticsINFO,選択したファイルの統計を表示
+HTMLDoc,HTML ドキュメント([H)
+HTMLDocAll,プロジェクト HTML ドキュメント([O)
+Languages,言語
+Extensions,拡張子
+SelectAll,すべてを選択([A)
+SelectOnly,"%s" だけを選択
+
+Windows,ウィンドウ([W)
+Root,ルート:
+TakeRoot,現在のシンボルをルートにする([M)
+LimitScanMsg,最初の %s ファイルだけが処理可能です。\nこのバージョンでビルドできるプロジェクトは %s 行までです。\n\nアップグレードするには sn-support@cygnus.co.jp にご連絡ください。
+LimitOpenProjError,このバージョンの Source-Navigator ではこのプロジェクトは開けません。
+ChangeFontSize,フォント サイズを変更
+LimMsg,このバージョンの Source-Navigator はこの機能をサポートしていません。 アップグレードするには\nsn-support@cygnus.co.jp にご連絡ください。
+
+Warning,警告
+SelMrkFiles,マークしたファイルを選択
+SelAllFiles,すべてのファイルを選択
+DelMrkFiles,マークしたファイルを選択解除
+DelAllFiles,すべてのファイルを選択解除
+
+#Page formats
+PrtPageFormat,ページ サイズ
+PageFormatLetter,レター
+PageFormatLegal,リーガル
+PageFormatExecutive,エクゼクティブ
+PageFormatA4,A4
+
+Recursive,リカーシブ リスト
+
+TreeButton,ソート (左クリック)、\nカラム フィルタ (右クリック)
+TreeColumn,サイズ (左クリック)、\n行の分割 (右クリック)
+CrossBoxes,ボックスを表示([B)
+CrossBoxesINFO,エントリの周りに箱を表示
+CrossAcceptParam,パラメータを比較([M)
+CrossAcceptParamINFO,パラメータ リストと場所を比較 (C++)
+CrossAcceptStatic,静的情報を比較([F)
+CrossAcceptStaticINFO,参照関係を見つけるために静的情報を検索
+CrossDispParam,パラメータ リストを表示([D)
+CrossDispParamINFO,パラメータを表示
+XReferences,参照
+
+TreeBestFit,長さに合わせて調節([B)
+TreeTruncate,切り捨て([T)
+TreeViewSplitLines,分割した行を表示([V)
+HoldWindow,ホールド
+HoldWindowINFO,ウィンドウをホールド
+IgnoredDirectories,無視されたディレクトリ
+Indent,インデント([I)
+Sort,ソート([S)
+Toggle,表示/非表示([V)
+SaveDiasabled,'保存' は無効化されました。
+Parent,上へ移動
+Reread,現在の表示をリフレッシュ
+BackProcsRun,バックグラウンド処理を実行中のため操作を完了できません。
+OwnerRead,所有者の読み出し権
+OwnerWrite,所有者の書き込み権
+GroupRead,グループの読み出し権
+GroupWrite,グループの書き込み権
+OthersRead,その他ユーザーの読み出し権
+OthersWrite,その他ユーザーの書き込み権
+DirReadWriteExec,読み出し可能、書き込み可能、実行可能である必要があります。
+Permissions,パーミッション([M)
+DatabaseLocked,データベースはロックされています。
+DataBaseUnusable,データベース プロセスがクラッシュしました。 プロジェクトが破壊されている可能性があります。
+DataBaseCrashed,データベース プロセスがクラッシュしました。 現在のプロジェクトは、\n再度パーサーにかける必要があります。
+Mixer,フィルタ
+MixerINFO,メンバー用にフィルタを設定
+Or,OR
+OrINFO,少なくとも 1 つのフラグが真です
+And,AND
+AndINFO,すべてのフラグが真でなければなりません
+ClassAllINFO,すべてのフラグを設定
+ClassNoneINFO,フィルタを無効化
+ProjTitle,プロジェクト タイトル
+PafCloseProj,プロジェクトを閉じる([C)...
+XrefSortFile,高速クロスリファレンス更新
+XrefSortFileInfo,クロスリファレンスの作成に高速更新を許可
+ProjClone,プロジェクトを複製しますか?
+Close,閉じる([C)
+
+CreatProjFile,プロジェクト ファイルの作成
+CloseProj,プロジェクトを閉じる([C)...
+ProjectINFO,プロジェクト メニュー
+LoadNewFiles,追加([A)...
+LoadNewFilesINFO,プロジェクトに新規ファイルを追加
+LoadDirectory,ディレクトリを追加...
+LoadDirectoryINFO,一致したファイルをすべて指定ディレクトリから追加
+ProjectEditor,プロジェクト エディタ([E)
+ProjectEditorMenu,プロジェクト エディタ([E)...
+EditSymbol,シンボルを編集
+SaveChanges,変更を保存([S)
+Quit,終了([Q)
+NewProj,新規プロジェクト([N)...
+DeleteProject,現在のプロジェクトを削除([D)
+Grep,[Grep
+Hide,非表示([H)
+HideINFO,選択したファイルを非表示
+Make,Make([M)
+EditMakeCommand,Make コマンドを編集([A)...
+Undefined,未定義
+Functions,関数([F)
+FunctionsDec,関数宣言([D)
+Commons,共有([O)
+CommonsVars,共有変数([B)
+Classes,クラス([C)
+Methods,メソッド([H)
+Friends,フレンド([I)
+MethodImps,メソッドの実装([P)
+ClassVars,インスタンス変数([A)
+Files,ファイル([S)
+Typedefs,[Typedefs
+ClassHierarchy,クラス階層([A)
+ReadOnly,読み出し専用プロジェクト([E)
+Enums,列挙([E)
+Variables,変数([V)
+Defines,マクロ([M)
+FileBrowTitle,ファイル ブラウザ
+ComBrowTitle,共有ブラウザ
+ClassBrowTitle,クラス([C)
+Browser,ブラウザ([B)
+Browse,参照([B)
+ClassBrowOverridden,上書き([O)
+PafAbrOverride,ベース クラスのメンバーを上書き
+PafAbrOverridden,サブクラスで上書き
+CloseTool,ツールを閉じる([T)
+History,履歴([Y)
+Help,ヘルプ([H)
+HelpContents,目次([C)
+Version,バージョン情報([S)
+Copyright,Copyright
+INFOHide,プロジェクトをアイコン化([P)
+INFOGrep,プロジェクト内でパターンをgrep
+INFOHierarchy,選択したクラスに対してクラス階層ブラウザを起動
+INFOClasses,クラスをリスト
+INFOMethods,メソッドをリスト
+INFOFunctions,関数をリスト
+INFOFiles,ファイルをリスト
+INFOTypedefs,typedefs をリスト
+FileNotExist,ファイルが存在しません。
+Yes,はい
+No,いいえ
+Cancel,キャンセル
+ProjectCancelINFO,変更を元に戻してプロジェクト エディタを閉じる
+ProjectOkINFO,変更を適用してプロジェクト エディタを閉じる
+NoRegInter,Source-Navigator は未登録のプロジェクトとは通信できません
+SendTo,送信先:
+SearchingSubDirectories,サブディレクトリを検索中...
+Scanning, プロジェクトをスキャン中...
+ProjectDelete,プロジェクトを削除([D)...
+DeleteProjectQuestion,プロジェクトを削除しますか
+NoProjectFile,はプロジェクト ファイルではありません。
+RestoreWindows,ウィンドウを復元中...
+ClassTree,クラス ツリー
+TitleReadOnly, (読み出し専用)
+Lines,行
+IsNotReadable,が読み出せません。
+LineNumber,行番号:
+Goto,ジャンプ([T)
+ReplacePattern,置換パターン:
+Next,次([N)
+NextINFO,次を検索
+FindReplace,検索 - 置換
+All,すべて([A)
+IgnoreCase,大文字と小文字を区別しない
+RegExp,正規表現
+HasBeenModified,は修正されました。
+NewFile,新規ファイル
+OpenFile,ファイルを開く...
+OpenProj,参照([B)...
+RevertFile,ファイルを元のファイルと置き換え
+Revert,元のファイルと置き換え([V)
+Exit,終了([X)
+Save,保存
+DonotSave,保存しない
+EditSave,保存([S)
+EditFastSave,高速保存([F)
+EditDelete,削除([L)
+EditCut,切り取り([T)
+EditPaste,貼り付け([P)
+EditReplace,置換([R)...
+EditCopy,コピー([C)
+EditPattern,パターン([P)...
+EditNext,次([N)
+EditGotoLine,行へジャンプ([G)...
+EditGotoError,エラーへジャンプ([E)
+EditFile,ファイル([F)
+EditNewFile,新規作成([N)
+EditFind,検索([N)
+EditInsertFile,挿入([S)...
+EditSaveFileAs,名前を付けて保存([A)...
+EditViewFile,表示([V)
+EditQuit,終了([Q)
+EditEdit,編集([E)
+EditSelectTop,先頭を選択([T)
+EditSelectBottom,最後を選択([B)
+EditIdent,テキストをインデント([I)
+EditOutdent,テキストをインデント解除([O)
+EditSelection,選択([S)
+EditSearchFor,検索
+EditGrepSelection,Grep
+EditGoto,ジャンプ([G)
+EditLastPosition,最後の位置([L)
+EditSetMark,マークを設定([S)
+EditGotoMark,マークへジャンプ([M)
+EditGotoTop,先頭へジャンプ([T)
+EditGotoEnd,最後へジャンプ([N)
+FileViewOnly,(読み出し専用)
+EditExtras,エクストラ([X)
+EditCreateBackFiles,*.bak ファイルを作成([K)
+EditUpdateHighlights,ハイライト部分を更新([U)
+EditSoftTabWidth,タブの幅([W)
+EditAutoIndentWidth,自動インデント幅([I)
+EditBracketMatchDelay,括弧対応遅延([M)
+EditDefaultHeight,デフォルトの高さ([H)
+EditDefaultWidth,デフォルトの幅([D)
+#
+# Infotexte f・ den Editor
+#
+NewFileINFO,新規ファイルを編集
+EINFOSearchHistory,検索パターンの履歴
+EINFOOpenFile,ファイルを開く
+EINFOSaveChanges,変更を保存
+EINFODeleteSection,選択部分を削除
+EINFOCutSelection,クリップボードへ切り取り
+EINFOCopySelection,クリップボードへコピー
+EINFOPasteSelection,クリップボードから貼り付け
+EINFOEnterPattern,検索パターンを入力
+EINFOFindPattern,検索パターン
+EINFOFindNext,次のパターンを検索
+EINFOGotoLine,行へジャンプ
+EINFOStartMake,Make を開始
+EINFOActivateBrowser,シンボル ブラウザをアクティブにする
+EINFODragDrop,ウィンドウのサイズを変更するためにタブを引く
+Ok,OK
+Apply,適用
+DonotApply,適用しない
+ApplyINFO,変更を適用
+Select,選択
+ErrorNotWrite,は書き込み不可能です。
+SearchPattern,検索パターン
+UtilSearch,検索
+RetrieverSearchINFO,パターンに一致するシンボルを検索しフィルタリング
+UtilEdit,編集
+UtilView,表示
+UtilFiles,ファイル([L):
+ErrorNoMatches,一致するファイルがありません
+GrepStrings,Grep する文字列:
+Strings,文字列
+Kill,キル
+MakeKilled,+++ キルされました +++
+MakeEnd,+++ 終了 +++
+
+#
+# RCS in Choose
+#
+ChooseHiddenFiles,非表示ファイル
+CHooseUnloadFiles,アンロード
+ChooseFiles,プロジェクト ファイル
+ChooseHistory,履歴([Y)
+ChooseRevisionControl,バージョン管理([V)
+ChooseDiff,バージョン比較([C)...
+ChooseLock,ロック([L)...
+ChooseDel,バージョンを削除([D)...
+ChooseUnlock,ロック解除([U)...
+ChooseCheckIn,チェック イン([I)...
+ChooseCheckOut,チェック アウト([O)...
+ChooseWithLock,ロック付き
+ChooseDiscard,変更を破棄([D)
+ChooseRevision,バージョン:
+ChooseInfoDeselectOne,選択したファイルを非表示
+ChooseInfoDeselectAll,すべてのファイルを非表示
+ChooseInfoSelectOne,選択したファイルを元のファイルと置き換え
+ChooseInfoSelectAll,すべてのファイルを元のファイルと置き換え
+ChooseInfoRevisionControl,バージョン管理を起動/停止
+RCS,バージョン管理([V)
+
+Prev,前
+PrevINFO,前へジャンプ
+Of,-
+ChooseNothingCheckedOut,まだ何もチェック アウトされていません。
+PafExpand,展開([X)
+PafUnexpand,展開解除([U)
+PafCindent,C インデント([C)
+PafTclindent,Tcl インデント([T)
+INFOGlob,グローバル変数を参照
+Reparse,プロジェクトを再度パーサーにかける([P)
+DonotReparse,再度パーサーにかけない([P)
+PafReplace,置換
+EDITTagStop,タブ ストップ([O)
+EditUndo,元に戻す([U)
+EditUndoINFO,変更を元に戻す
+UndoINFO,すべての変更を元に戻す
+Retriever,リトリーバ([V)
+PrefRetriever,リトリーバ
+Retrieve,リトリーブ
+PafProjBusy,プロジェクト "%s" は "%s" が使用中です。
+PafWdDir,データベース ディレクトリ名([A)
+PafOpenProj,プロジェクト
+HierDefINFO,選択したクラスのスーパークラスを表示
+HierDef,スーパークラス([S)
+HierRelINFO,選択したクラスのサブクラスを表示
+HierRel,サブクラス([U)
+HierDispFiles,ファイル名を表示
+Topdown,上から下([T)
+LeftRight,左から右([L)
+ISI,ISI([I)
+Tree,ツリー([E)
+CrfRefTo,参照先([T)
+CrfRefToINFO,参照を表示
+CrfRefBy,参照元([B)
+CrfRefByINFO,参照元を表示
+CrfRemSubN,サブノードを削除([R)
+XRefLocalVars,ローカル変数への参照を生成([G)
+Subr,サブルーチン([R)
+Const,定数([N)
+EnumCons,列挙定数 ([L)
+Unions,ユニオン([U)
+ProjExit,終了してもよろしいですか?
+ProjSet,プロジェクトの設定
+PAfIgnDirs,無視したディレクトリ
+CommentDB,コメント データベースを作成([B)
+CommentDBINFO,コメントのデータベースを作成
+PafHtmlView,HTML ビューア
+PafLocVars,ローカル変数
+IgnoreWS,空白を無視
+Comment,コメント
+CacheSize,データベース キャッシュ サイズ([H)
+xrefCacheSize,クロスリファレンス データベース キャッシュ サイズ([Z)
+FileTrans,出力ファイルの形式([F):
+imp,実装([I):
+def,定義([D):
+IncBroTit,ブラウザをインクルード
+INFOStartClassBrw,選択したファイルに対してクラス ブラウザを起動
+
+Include,インクルード([N)
+IncludeTree,インクルード
+IncLevelTit,レベル([L)
+Includes,インクルード([N)
+IncludesINFO,選択したファイルに対してインクルード ブラウザを起動
+IncludedFrom,インクルード元([Y)
+IncludedFromINFO,選択したファイルをインクルードしているファイルを表示
+RemIncludedFrom,インクルード元のサブツリーを非表示([S)
+RemIncludes,インクルード サブツリーを非表示([H)
+
+ParserOpt,パーサー オプション
+ParserIgn,無視した単語
+
+EditorOpt,エディタ オプション:
+EditM3Sup,右マウス ボタン サポート([G):
+EditM3Scroll,スクローリング
+EditM3Menu,編集メニュー
+
+ProjectMenu,プロジェクト([R)
+DbgTitle,デバッガ([U)
+MultiEditor,編集([D)
+MultiClass,クラス([C)
+MultiClassHierarchy,階層([R)
+MultiXRef,クロスリファレンス([X)
+MultiInclude,インクルード([N)
+MultiBrowser,シンボル([S)
+MultiRetriever,リトリーバ([V)
+RetrieverINFO,一致したシンボルをプロジェクト データベースで検索
+
+OpenProject,プロジェクトを開く([O)...
+SaveProject,プロジェクトを保存([J)
+CloseProject,プロジェクトを閉じる([L)
+
+EditRedo,繰り返し([R)
+EditSaveAll,すべてを高速保存([T)
+WantToFastSave,Make コマンドを実行する前に修正したファイルを「高速保存｣しますか?
+EditClear,選択解除([N)
+ProjectPreferences,プロジェクトの設定([P)
+ProjectPreferencesMenu,プロジェクトの設定([P)...
+Preferences,設定([P)
+
+SearchFind,検索([F)...
+SearchNext,次を検索([N)
+SearchPrev,前を検索([P)
+SearchReplace,置換([R)...
+SearchGoto,ジャンプ([G)...
+SearchGotoLine,行へジャンプ([L)...
+SearchSetMark,マークをセット([S)
+SearchGotoMark,マークへジャンプ([M)
+SearchGotoError,エラーへジャンプ([E)
+SearchDefinition,宣言を検索([C)
+SearchImplementation,実装を検索([I)
+SearchGrep,[Grep...
+SearchFindSelectionINFO,選択部分または次のパターンを検索
+
+WindowsClose,閉じる([C)
+WindowsNew,エディタ([E)
+WindowsIconize,プロジェクトをアイコン化([P)
+AlighmentHorizontal,水平
+AlighmentVertical,垂直
+Alighment,配置([A)
+SplitWindows,ウィンドウを分割([L):
+
+SplitInto,ビューを追加([A)
+SplitIntoEditor,エディタ([E)
+SplitIntoClass,クラス([C)
+SplitIntoClassHierarchy,階層([H)
+SplitIntoXRef,クロスリファレンス([X)
+SplitIntoInclude,インクルード([N)
+SplitDeleteLast,最終ビューを削除([D)
+
+VMakeTitle,Vmake([K)
+Tools,ツール([T)
+
+#Multi Hierarchy
+MultiHierDef,スーパークラスを表示([S)
+MultiHierDefINFO,クラス、ベース クラス、スーパークラスを表示
+MultiHierRel,サブクラスを表示([U)
+MultiHierRelINFO,クラスとスーパークラスを表示
+MultiHierAll,すべてを表示([A)
+MultiHierAllINFO,クラス階層全体を表示
+
+SaveAsFastSaveTitle,名前を付けて保存...
+SaveAsFastSave,データベース生成中は「保存」できません。\nファイルを「高速保存」しますか?
+XRefIsRunning,Source-Navigator がクロスリファレンス データベースを作成中です。
+Justify,右揃え([J)
+Others,その他([O)
+Reuse,再利用
+Reusable, 再利用可能
+NewReusableINFO,現在のウィンドウを別のウィンドウに再利用
+Switchable,コンテキストを保つ
+NewSwitchableINFO,他のビューで選択されたシンボルのコンテキストを維持
+CreateNewWindow,新規ウィンドウ([W)
+Choose,[...
+ChooseINFO,ファイルを選択...
+Keep,コンテキスト
+KeepINFO,他のビューのシンボルのコンテキストを維持
+ReusableINFO,現在のウィンドウを別のウィンドウに再利用
+XRefFilter,フィルタ([F)...
+XRefFilterINFO,フィルタ...
+XRefCancelINFO,現在のクロスリファレンス処理をキャンセル
+CrossRetriever,クロスリファレンス リトリーバ([X)
+MultiRetrieverPattern,パターン:
+OpenNewBuffer,が修正されました。\n別のウィンドウで開きますか?
+MultiGrep,[Grep
+MultiMake,Make([M)
+MultiGrepPattern,パターン([P):
+MultiGrepFormat,フォーマット([O):
+MultiGrepBreakBy,最初の
+MultiGrepLines,エントリを検索([F)
+MultiGrepStop,停止([S)
+MultiMisc,その他([M)
+ColorAndFont,色とフォント([C)
+Color,色([C)
+FgColor,前景([G)
+BgColor,背景([B)
+Font,フォント([F)
+Reset,リセット([R)
+Sample,サンプル
+
+PrefTabWidth,挿入するタブの幅:
+PrefTabStop,タブ ストップ([A)
+
+PrefInNewWindows,オプションには新規ウィンドウでのみ有効なものがあります。
+PrefAfterRestart,オプションの中には Source-Navigator 再起動後に\nのみ有効になるものがあります。
+PrefAfterReparse,オプションの中にはプロジェクトを再度パーサーにかけた後にのみ有効になるものがあります。
+Wrap,ワードラップ単位([W):
+None,なし([N)
+Char,文字([C)
+Word,単語([W)
+AutoIndentWidth,自動インデント幅([U)
+PrefOverwrite,上書きモード([O):
+PrefDispOrder,表示順([I):
+PrefDispLayout,表示レイアウト スタイル([A):
+SpaceVertical,垂直スペース([L):
+SpaceHorizontal,水平スペース([H):
+GenerateXRef,クロスリファレンス データベースを作成([U)
+TermoGenerateXRef,クロスリファレンスの生成をキャンセルするにはマウス ボタンをクリックしてください。
+GenerateXRefINFO,クロスリファレンス データベースを作成
+Parser,パーサ([P)
+Rcs,バージョン管理([V)
+LanguageExt,言語拡張子
+ExternalEditor,外部エディタ([L)
+ExternalEditors,外部エディタ
+PrefRcs,バージョン管理システム
+ReportBugs,障害報告方法([B):
+PrefMailhost,メールホスト([M)
+PrefBugReport,障害レポート
+Orientation,方向([E)
+First,最初([F)
+Second,二番目([S)
+MembersOrder,メンバーを表示([M)
+PrefInclude,ディレクトリをインクルード([N)
+PrefClassAndHierarchy,クラス/階層
+PrefMake,Make
+PrefMakeCmd,Make コマンド([M)
+PrefUnknownError,プロジェクトに変更を適用することができません。
+PrefPrinter,プリンタ([P)
+PrefAsciiPrintCommand,ASCII 印刷コマンド([A)
+PrefPrintCommand,印刷コマンド([P)
+ChooseColor,色を選択
+ChooseFont,フォントを選択
+Views,ビューを開く([O)
+Family,ファミリー([F)
+FontName,名前([N)
+FontSize,サイズ([S)
+FontBold,太字([B)
+FontCursive,斜体([I)
+ParserCommands,パーサー コマンド
+ReparseINFO,プロジェクトを再度パーサーにかけます。
+Start,開始([S)
+StartMake,開始([S)
+StartMakeINFO,Make を開始
+CancelMakeINFO,Make をキャンセル
+MakeEntry,Make コマンド
+MakeEntryINFO,Make コマンドを入力してください。
+MakeStartDir,ディレクトリ
+Directory,ディレクトリ
+MakeStartDirINFO,開始ディレクトリ
+PrefScanProject,開始時にプロジェクトをリフレッシュ([F)
+PrefScanProjectINFO,オープン時にプロジェクトを再スキャン (大きなプロジェクトは時間がかかることがあります。)
+OfScreenSize,画面サイズ
+WindowSize,S-N ウィンドウ サイズは([I)
+WindowSizeINFO,画面サイズに相対するウィンドウ サイズ
+RetrieverFilter,フィルタ([F)
+RetrieverFilterINFO,リトリーバのフィルタ オプションを選択
+Definition,宣言([D)
+Implementation,実装([I)
+GotoDefImp,ジャンプ([G)
+goto,ジャンプ
+GrepFormat,フォーマット
+GrepSearchINFO,Grep を開始
+GrepCancelINFO,Grep をキャンセル
+GrepFormatINFO,現在のパターンをフォーマット
+AllFiles,すべてのファイル
+UsedFileDialog,ファイル ダイアログ ボックス
+UsedFileDialogSN,S-N([S)
+UsedFileDialogSystem,システム([S)
+UsedFileDialogSNINFO,Source-Navigator のファイル ダイアログ ボックスを使用
+UsedFileDialogSystemINFO,システムのファイル ダイアログ ボックスを使用
+WindowLayout,ユーザ インターフェイスのルック アンド フィール
+TkINFO,Tk インターフェイスのルック アンド フィールを使用
+MotifINFO,Motif インターフェイスのルック アンド フィールを使用
+New,新規作成([N)
+NewWork,新規ビュー([N)
+WindowsNewCTreeClass,階層 - クラス([R)
+WindowsNewClassEditor,クラス - エディタ([S)
+WindowsNewClassXRef,クラス - クロスリファレンス([F)
+WindowsNewFindEditor,[Grep - エディタ
+WindowsNewRetrEditor,リトリーバ - エディタ([V)
+WindowsNewCTreeClassEditor,階層 - クラス - エディタ([Y)
+ExclusiveMode,排他的検索([X)
+ExclusiveModeINFO,フィルタを単一カテゴリに設定して検索を実行
+NoSelection,何も選択されていません。
+RecentProjects,最近のプロジェクト([J)
+XRefBell,完了時に警告音で通知([W)
+XRefBellINFO,クロスリファレンス生成完了時に警告音で通知
+DeleteColumnFilters,すべてのカラム フィルタをリセット
+DebuggerCommand,GNU デバッガ コマンド
+ScanProject,プロジェクトをリフレッシュ([R)
+XRefReenabled,クロスリファレンスが再び有効になりました。 プロジェクトを再度パーサーにかけてください。
+ProjectName,プロジェクト ファイル
+ProjectLocation,場所([L)
+HiddenFiles,非表示
+ViewMode,プロジェクト ファイルの表示方法([D):  
+Categorie,カテゴリ([C)
+List,リスト([L)
+Unload,アンロード([U)
+UnloadINFO,選択したファイルをプロジェクトからアンロード
+UnloadedFiles,アンロード完了
+LoadFiles,ファイルを追加...
+Rename,名前を変更([R)
+Delete,削除([D)
+CannotDeleteProject,選択したプロジェクトは削除されませんでした。\nパーミッションを確認して再度実行してください。
+ProjectVerifyError,プロジェクトのオープン時に不明なエラーが発生しました。
+ProjectFiles,ファイル([F)
+InvalidProjectName,プロジェクト名が有効ではありません。
+InvalidProjectDir,ディレクトリ名が有効ではありません。
+AskForNewView,このビューは使用できません。\n新規ビューを作成しますか?
+Disp_Directories,フル パス名を表示
+Fullpath,フル パス名
+LoadFromProject,プロジェクトを追加...
+LoadFromProjectINFO,既存のプロジェクトからファイルを追加
+RevisionControlEditor,バージョン管理エディタ([R)...
+RevisionControlEditorNoKey,バージョン管理エディタ
+SaveDefault,デフォルトとして保存([T)
+SaveAsDefault,ディレクトリ設定に影響与える可能性のある\n設定が変更された可能性があります。\n変更をデフォルトとして保存しますか?
+GrepProcessing,Grep 処理中....
+ScanningHasBeenCanceled,パーサーの処理をキャンセルしますか?\nまだ処理されていないファイルはプロジェクトの一部ではなくなります。
+ErrorByScanning,パーサーの処理中にエラーが検出されました。\nファイルをスキップしてパーサーの処理を続けますか?
+Stop,停止([S)
+Processing,プロジェクトをパーサーで処理([P）
+ContinueProcessing,これまでに収集された情報でプロジェクトを開きますか?
+ContinueParsingOtherTypes,パーサーの処理が停止しました。\nパーサーで処理する追加の言語ファイルがある可能性があります。\n追加の言語も続けてパーサーで処理しますか?
+XRefHasBeenCrashed,Source-Navigator のクロスリファレンス生成時に問題が発生しました。\nクロスリファレンス情報は完全ではありません。
+UnableToExecuteParser,Source-Navigator が特定の言語のパーサーを見つけられませんでした。\n残りのファイルをパーサーで処理しますか?
+ContinueParsing,パーサーの処理を続けますか?
+Parsing,プロジェクトのパーサー処理([P)
+MacroFiles,C/C++ マクロ ファイル名([C)
+AddYourMacroFiles,C/C++ パーサーのファイル名を指定
+ProjAlreayOpened,プロジェクト '%s' は既に使用中です。\n前面に表示しますか?
+MoreEditorToolbarButtons,拡張ツールバー ボタン([E)
+MoreEditorToolbarButtonsINFO,エディタに拡張ツールバーを追加
+GotoPrevPosition,前ページへジャンプ
+GotoNextPosition,次ページへジャンプ
+FastCreateProject,プロジェクト自動生成
+FastCreateProjectQuestion,以下に基づいて Source-Navigator プロジェクトを自動生成しますか:
+ScanRecursive,サブディレクトリを含める
+ScanRecursiveINFO,選択したディレクトリのすべてのサブディレクトリを含める
+ManyMatchesTitle,リトリーバ:  複数一致しました。
+ManyMatchesINFO,選択したシンボル情報に基づいて検索した結果 2 つ以上が一致しました。\n処理を続けるには一致リストから 1 つを選択してください。
+DonotDisplay,このダイアログ ボックスを表示しない
+DoNotDisplayINFO,このダイアログ ボックスを再び表示しない
+DonotDisplayWarning,複数一致した時に警告のダイアログを表示しない([D)
+DonotDisplayWarningINFO,検索条件に一致した複数のシンボルをリストする前に警告ダイアログを表示するかしないかを指定
+CannotCloseWindow,処理中の Source-Navigator プロセスがあるのでこのウィンドウを閉じることができません。\n処理をキャンセルするか処理が終了するまでお待ちください。
+CannotProceed,別のプロセスが Source-Navigator データベースを使用中です。\nそのプロセスをキャンセルするか処理が完了するまでお待ちください。
+CancelXref,Source-Navigator がクロスリファレンス データベースを作成中です。\nこのプロセスをキャンセルすると関連するクロスリファレンス ファイルがすべて削除されます。
+XrefGeneration,クロスリファレンス プロセス
+DoYouWantToReparse,プロセスを再度パーサーで処理しますか?\nクロスリファレンス情報の再作成に多少時間がかかる場合があります。
+AddDirectory,ディレクトリを追加
+YouHaveAddedSomeDirectories,以下のディレクトリが指定されました。
+DoYouWantToInitProjEditor,これらの内容でプロジェクト エディタを初期化しますか?
+more,ディレクトリを追加
+
+#Debugger text variables (DON'T REMOVE1)
+DbgProgram,プログラム
+DbgWorkdir,ワーキングディレクトリ
+DbgProgXterm,[Xterm
+DbgExecutable,[Program to debug
+
+SelectDirectory,ディレクトリを選択
+Pattern,パターン:
+WaitOrCancelXRef,クロスリファレンス情報をロード中です。\nしばらくお待ちください。
+WaitOrCancelRetriever,シンボルをロード中です。\nしばらくお待ちください。
+ActiveSymbol,ビュー内のアクティブなシンボル
+ListRelatedSymbols,ビューに関連した別のシンボルを選択
+LimitLightVersion,このアクションを続けるにはエンタープライズ版の Source-Navigator が必要です。
+Compile,コンパイル([C)
+CompileINFO,このファイルをコンパイル
+FilesNotFound,以下のファイルが見つかりませんでした。\nプロジェクトから削除しますか?
+TryAgain,見つからないファイルを常に探す([A)
+TryAgainINFO,ファイルが見つからない時に、ダイアログを常に表示
+TryToLocalizeFile,ファイルが見つかりません。 場所を指定してください。
+Localize,ファイルの場所を探す([L)...
+EditorFileTranslation,ファイル変換([T)
+EditorFileTranslationAutoINFO,現在のプラットフォームに基づいてファイルを保存
+EditorFileTranslationUnixINFO,ファイルを UNIX フォーマットで保存
+EditorFileTranslationWindowsINFO,ファイルを Windows フォーマットで保存
+EditorFileTranslationCRINFO,ファイルをCR のみで保存
+EditorFileTranslationKeepINFO,ファイルを元のフォーマットで保存
+KeepLF,変換しない
+AutoLF,自動
+UNIXLF,UNIX
+WindowsCRLF,Windows
+MacintoshCR,Macintosh
+CannotSaveIncludeDirectories,Source-Navigator がインクルード ディレクトリを保存できません。
+LocateIncludeFiles,ヘッダーを探す([D)
+LocateIncludeFilesINFO,ヘッダー ファイルを探す (時間がかかる場合があります)。
+NowPrintingPage,%d ページを印刷中
+NowPrinting,印刷中...
+EditorTranslateTabs,タブをスペースに変換([B)
+EditorTranslateTabsINFO,タブをスペースで置換
+CannotFindDllLibrary,PostScript フォーマットで印刷するには %s' ライブラリが必要です。\n印刷はキャンセルされました。
+PrintSelection,ファイル全体を印刷しますか?
+OlderProjectOpened,このプロジェクトは古いバージョンの Source-Navigator で作成されています。\nプロジェクトを再度パーサーで処理する必要があります。 設定が一部失われる可能性があります。
+NewerProjectCannotBeOpened,このプロジェクトは新しいバージョンの Source-Navigator で作成されています。 アップグレードするには\nsn-support@cygnus.co.jp にご連絡ください。
+UnableToReparse,Source-Navigator はこのプロジェクトを再度パーサー処理することができません。 再ビルドが必要です。
+EditionCannotOpenThisProject,このプロジェクトは正しいバージョンの Source-Navigator で作成されていません。\nアップグレードするには sn-support@cygnus.co.jp にご連絡ください。
+CurrentLinesOfSourceCode,プロジェクトには %s 行のコードがあります。
+LimitedEdition,このバージョンで作成されたプロジェクトは、%s 行までのコードしか持つことができません。
+ScanningCanceld,スキャンを停止してよろしいですか?
+DatabaseFilesCouldNotBeDeleted,Source-Navigator は古いデータベース ファイルを削除できませんでした。\n処理を続けますか?
+WrongProjectName,プロジェクト名 '%s' は有効ではありません
+WrongDatabaseDirectory,データベース ディレクトリ名 '%s' は有効ではありません
+IDEProductName,Flik 1.0
+SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.
+SplashSupportText,サポートに関しては <sn-support@cygnus.co.jp> にご連絡いただくか、http://www.cygnus.com のウェブ サイトをご覧ください。
+SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
+SplashAllRightsReserved,All rights reserved. Source-NavigatorTM, the Source-NavigatorTM ロゴ および Red Hat, Inc. ロゴは米国 Cygnus Solutions 社の商標です。 その他のすべての製品名は、各社の商標です。
+ThisProjectIsTooBig,プロジェクトがデベロッパー版の制限を越えています。\nプロジェクトを開くことができません。
+SDK_UnknownRequest,Source-Navigator has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
+
+#Others tab in Preferences (those not in other places)
+Default,デフォルト
+General,全般
+Standard,標準
+Highlighting,ハイライト
+Balloon,バルーン ヘルプ
+BoldFont,太字フォント
+Editor,エディタ
+Text,テキスト
+FunctionsNoKey,関数
+FunctionsDecNoKey,関数宣言
+SubroutinesNoKey,サブルーチン
+Comments,コメント
+Keywords,キーワード
+ClassesNoKey,クラス
+EnumConsNoKey,列挙定数
+MethodsNoKey,メソッド
+FriendsNoKey,フレンド
+MethodImpsNoKey,メソッドの実装
+ClassVarsNoKey,インスタンス変数
+VariablesNoKey,変数
+ConstantsNoKey,定数
+CommonsNoKey,共有
+CommonsVarsNoKey,共有変数
+DefinesNoKey,マクロ
+Brackets,かっこ
+HierarchyNoKey,階層
+AbstractClass,抽象クラス
+CrossReference,クロスリファレンス
+StandardFont,標準フォント
+BranchFont,ブランチ フォント
+IncludeNoKey,インクルード
+OthersNoKey,その他
+Drawing,描画
+LinesTo,参照先行
+LinesBy,参照元行
+SelectedLines,選択行
+BranchToLines,ブランチの参照先行
+BranchByLines,ブランチの参照元行
+Listing,結果リスト
+FoundText,検索結果
+Checkbutton,チェックボタン
+UnionsNoKey,ユニオン
+ClassNoKey,クラス
+
+ButtonBugReport,バグ レポート
+ButtonMail,メール
+
+#Ide strings
+BuildTargetManager,??? [Build Setup...
+#target manager (gui/targetmgr.tcl)
+IDETargetMgrTitle,Build Settings
+IDETMBuildTargets,[Build Targets:
+IDETMCreateTarget,[Create
+IDETMCopyTarget,D[uplicate
+IDETMRenameTarget,[Rename
+IDETMEditTarget,[Edit
+IDETMDeleteTarget,[Delete
+IDETargetMgrDone,D[one
+
+#target editor
+IDETargetEdTitle,Edit Target:
+IDETEBuildDir,Build [Directory:
+IDETETargetType,[Target Type:
+IDETEToolChain,Tool [Chain:
+IDETEOK,OK
+IDETECancel,Cancel
+
+#target editor -> Source Files page
+IDETESourceFilesTab,[Source Files
+IDETEAddFiles,> [Add Files >
+IDETEProjectFiles,Project Files:
+IDETETargetFile,Target Files:
+IDETEClearFile,Cl[ear
+IDETEClearAllFiles,Clear All
+IDETEImportLabel,Import:
+IDETEImportFiles,Files
+IDETEImportDir,Directory
+
+#target editor -> Libs page
+IDETELibraryFileTab,[Library Files
+IDETELibraryLabel,Libraries:
+IDETEAddLib,[Add...
+IDETERemoveLib,R[emove
+IDETEMoveUp,Move [Up
+IDETEMoveDown,Move Dow[n
+
+#target editor -> Build rules tab
+IDETEBuildRulesTab,[Build Rules
+IDETEBuildRuleDisable,Disabl[e
+IDETEBuildRuleEnable,Enabl[e
+IDETEBuildRuleEdit,"Ed[it Rule"
+
+#target editor -> Link Rules tab
+IDETELinkRulesTab,Link [Rules
+IDETELinkOutputFile,[Output File:
+IDETELinkFlags,Link [flags:
+IDETELinkerExe,Li[nker:
+IDETELaunchSettingsLabel,Debug/Execute Settings:
+IDETELaunchCommand,Command to launch Application:
+IDETELaunchDebug,Debu[g
+IDETELaunchExecute,[Execute
+
+#Build Rule settings.
+IDEBuildRuleTitle,Build Rule Settings
+IDEBRSettingsTab,[Settings
+IDEBRIncludesTab,[Includes
+IDEBRDefinesTab,[Defines
+IDEBROK,OK
+IDEBRCancel,Cancel
+#Settings tab
+IDEBRDebugCombo,Debug:
+IDEBROptimizationCombo,Optimization:
+IDEBRWarningCombo,Warnings:
+IDEBRCodeGenCombo,Code Generation:
+IDEBRUserFlags,User Flags:
+IDEBRExecLocation,Executable:
+#Includes tab
+IDEBRAutoGenPathsLabel,Auto-Generated Include Paths:
+IDEBRUserGenPathsLabel,User Specified Include Paths:
+IDEBRGeneratePaths,[Generate
+IDEBRDeletePath,D[elete
+IDEBRAddPath,[Add...
+#defines tab
+IDEBRMacroDefinesLabel,Macro defines:
+IDEBRDeleteMacro,D[elete
+IDEBRCreateMacro,[New
+IDEBRChangeMacro,[Change

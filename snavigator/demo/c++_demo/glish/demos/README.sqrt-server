@@ -1,0 +1,24 @@
+There are three examples in this directory of "square root" servers.
+These are Glish clients that respond to particular events they receive
+by generating "square-root" response events.  The response event has
+a value which is the square root of the value of the received event.
+
+The first example is a C++ program, "sqrt_server.cc".  The comments in the
+program explain the various steps in writing a full C++ client, as well as
+how to compile and link the client.  The Glish program "sqrt_server.g" is
+used to test the client.  This client is the most flexible of the three
+examples (and the most typical), but also the most complicated.
+
+The second example is what is called a "shell" client.  Some Glish clients
+are simple enough that they can be expressed as a program that reads text
+from stdin and writes text to stdout.  This type of client is very simple
+to write, but often rather inflexible - unable to deal with array values
+or to generate error messages.  The example is found in "shell_sqrt.c",
+and the corresponding Glish program in "shell_sqrt.g".
+
+The final example demonstrates a "shell" client that is written using a
+Unix utility ("awk") rather than a C program.  Thus there is no source
+code, only a Glish program, "awk_sqrt.g".  This type of client is the
+simplest to write but is quite inflexible.  In particular (as explained
+in the comments in awk_sqrt.g) it does not generate any output events
+until its source of input events is closed.

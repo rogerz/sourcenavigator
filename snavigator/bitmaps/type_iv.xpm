@@ -1,0 +1,26 @@
+/* XPM */
+static char * type_iv_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+"o	c red",
+/* pixels */
+"       .        ",
+"      .X.       ",
+"     .XoX.      ",
+"    .XooXX.     ",
+"   .XXooXXX.    ",
+"  .XXXXXXXXX.   ",
+" .XXXoooXXXXX.  ",
+".XXXooooXXXXXX. ",
+" .XXoXooXXoXX.  ",
+"  .XXXooXoXX.   ",
+"   .XXoooXX.    ",
+"    .XooXX.     ",
+"     .XXX.      ",
+"      .X.       ",
+"       .        ",
+"                "};

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<TITLE>Version Control Systems</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<p>
+<A NAME="pgfId-1002140"></A>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1002142"></A>
+<A NAME="marker-1002141"></A><A NAME="35619"></A>Version Control Systems</h1>
+<IMG SRC="versctrl-1.gif">
+
+<P CLASS="Body">
+<A NAME="pgfId-1002143"></A>Source-Navigator provides a graphical user interface to several external version control systems. Source-Navigator allows you to manage <A NAME="marker-1002144"></A>version control tasks on a project level. With version control you can organize your development to manage versions, version history, labels, and related documents.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004575"></A>Version control systems use locks to prevent the same files from being modified by two developers simultaneously. If a <A NAME="marker-1004578"></A>lock is used while revising a file, no one can modify the file until it is unlocked. Locking and unlocking can be controlled by checking in or checking out versions.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1128735"></A>For more information, see the 
+&quot;Integrating with Version Control Systems&quot; chapter of the 
+<EM CLASS="Italics">
+Source-Navigator Programmer's Reference Guide</EM>.</P>
+<p>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996764"></A><A NAME="33489"></A>Using Version Control</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996765"></A>The following <A NAME="marker-997375"></A>version control systems have been integrated with Source-Navigator: GNU Revision Control System (<A NAME="marker-997319"></A>RCS), Concurrent Versions System (<A NAME="marker-1004469"></A>CVS), and the Source Code Control System (<A NAME="marker-997335"></A>SCCS). It has also been integrated with Rational's <A NAME="marker-1004480"></A>ClearCase version 3; other versions may also work, although these have not been tested. When creating a project, you must specify the correct version control system being used to manage the body of source code you wish to analyze. Make your selection in the <STRONG CLASS="Bold">
+Version Control</STRONG>
+ tab of the Preferences dialog (see <A HREF="versctrl.html#14496" CLASS="XRef">Version Control Preferences</A>).</P>
+<P CLASS="Body">
+<A NAME="pgfId-1123617"></A>To start <A NAME="marker-1123613"></A>version control, choose <STRONG CLASS="Bold">
+Tools -&gt; Revision Control -&gt; Revision Control Editor</STRONG>
+ (see <A HREF="versctrl.html#78460" CLASS="XRef">Version Control Window</A>).</P>
+<p>
+<H4 CLASS="FigureTitle">
+<A NAME="pgfId-1136084"></A><A NAME="marker-1136067"></A><A NAME="78460"></A>Version Control Window </H4>
+<IMG SRC="versctrl-3.gif">
+
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1136088"></A><A NAME="38024"></A>Checking Out a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1113084"></A>Choose <STRONG CLASS="Bold">
+Tools -&gt; Revision Control -&gt; Check Out...</STRONG>
+ to <A NAME="marker-1127778"></A>check out a file. Versions of a file can be checked out for modification either locked or unlocked. Checking out with <STRONG CLASS="Bold">
+With lock</STRONG>
+ selected in the <STRONG CLASS="Bold">
+Check Out </STRONG>
+dialog box prevents other users from checking out the same version in write mode. A file that will be displayed, but not modified, may be checked out without lock.</P>
+<p>
+<H4 CLASS="FigureTitle">
+<A NAME="pgfId-1137179"></A>Check Out Dialog</H4>
+<p>
+<IMG SRC="versctrl-4.gif">
+
+<H3 CLASS="Heading2">
+<A NAME="pgfId-997194"></A><A NAME="11033"></A>Checking in a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-997096"></A>You can <A NAME="marker-996794"></A>check in all or selected project files into your version control system. When you check in, you can enter descriptive text of the changes and a version number. Using the left-mouse button, select one or more files to check in. With these files highlighted, select <STRONG CLASS="Bold">
+Tools -&gt; Revision Control -&gt; Check In... </STRONG>. The <STRONG CLASS="Bold">
+Check In</STRONG>
+ dialog is displayed.</P>
+<p>
+<H4 CLASS="FigureTitle">
+<A NAME="pgfId-1137187"></A>Check In Dialog Box</H4>
+<p>
+<IMG SRC="versctrl-5.gif">
+</p>
+<P CLASS="Body">
+<A NAME="pgfId-1127322"></A>If you check in with <STRONG CLASS="Bold">
+With lock</STRONG>
+ selected in this dialog box, others may not use your version in write mode.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004493"></A>This is useful if you are continuously working on a particular file, but wish to register checkpoints in your work without giving other developers the opportunity to make modifications to that file. </P>
+</p>
+</p>
+<p>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996805"></A><A NAME="31808"></A>Discarding Changes to a File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996807"></A>Working files can be reverted to the repository version with <STRONG CLASS="Bold">
+Discard Changes</STRONG>
+<A NAME="marker-996806"></A>.</P>
+</p>
+<p>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1004570"></A><A NAME="12899"></A>Show Differences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1004501"></A>The <STRONG CLASS="Bold">
+Diff</STRONG>
+<A NAME="marker-1004499"></A> tool highlights differences between the current <A NAME="marker-1004500"></A>version of a file (the one you have checked out) and another one that you select from the list of available version numbers. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1113104"></A>To access this tool select <STRONG CLASS="Bold">
+Tools -&gt; Revision Control -&gt; Compare Revisions...</STRONG>
+ .</P>
+<p>
+<H4 CLASS="FigureTitle">
+<A NAME="pgfId-1136096"></A>Showing Differences</H4>
+<p>
+<IMG SRC="versctrl-7.gif">
+</p>
+</p>
+</p>
+</p>
+<p>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1002207"></A><A NAME="14496"></A>Version Control <A NAME="marker-1113046"></A>Preferences</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1002222"></A>Use the <STRONG CLASS="Bold">
+Version Control </STRONG>
+tab of the Preferences dialog to tell Source-Navigator what source code control system you're running. You can access this tab by selecting <STRONG CLASS="Bold">
+File -&gt; Project -&gt; Project Preferences...</STRONG>
+ from the Symbol Browser, or <STRONG CLASS="Bold">
+Edit -&gt; View Preferences...</STRONG>
+ from the Version Control window.</P>
+<p>
+<H4 CLASS="FigureTitle">
+<A NAME="pgfId-1002211"></A>Version Control Tab of the Preferences Dialog</H4>
+<p>
+<IMG SRC="versctrl-8.gif">
+</p>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-1002213"></A>Version control system<BR>
+Select your external version control system for the project. </P>
+<P CLASS="BodyHang1">
+<A NAME="pgfId-1113071"></A>Ignored directories<BR>
+These directories will be ignored by Source-Navigator as it scans for files to parse.</P>
+<A NAME="pgfId-996747"></A>
+</BODY>
+</HTML>
