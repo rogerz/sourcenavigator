@@ -105,6 +105,9 @@ ch_high.c: ch_high.l
 tcl_high.c: tcl_high.l
 	$(LEX) -t > $@ $(LFLAGS) -Ptcl_highlight_ $<
 
+clean-compile:
+	-rm -f j_high.c py_high.c c_high.c ch_high.c tcl_high.c
+
 highlight.$(OBJEXT): highlight.c
 	$(COMPILE) $(TK_DEFS) -c $<
 

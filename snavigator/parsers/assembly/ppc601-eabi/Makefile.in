@@ -181,7 +181,7 @@ abrowser_SOURCES = abrowser.l
 abrowser_LDADD = $(toolbox)/libsnptools.a $(db)/libdbutils.a 		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a 		$(libutils)/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-abrowser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a 			$(db)/libdbutils.a
+abrowser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a 			$(db)/libdbutils.a 			$(common)/libcommon.a 			$(toolbox)/libsnptools.a 			$(libutils)/libutils.a
 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -475,9 +475,6 @@ all-am all installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
-			$(common)/libcommon.a \
-			$(toolbox)/libsnptools.a \
-			$(libutils)/libutils.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

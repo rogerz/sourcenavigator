@@ -172,8 +172,23 @@ AC_EXEEXT
 
 AC_OBJEXT
 AC_PROG_AWK
+
+# Require GNU flex and bison, avoid lex and yacc
 AM_PROG_LEX
+if test "${LEX}" = ""; then
+    AC_MSG_ERROR([No scanner generator found, does flex appear on your path?])
+fi
+if test "${LEX}" != "flex"; then
+    AC_MSG_ERROR([Wrong scanner generator found, does flex appear on your path?])
+fi
+
 AC_PROG_YACC
+if test "${YACC}" = ""; then
+    AC_MSG_ERROR([No parser generator found, does bison appear on your path?])
+fi
+if test "${YACC}" != "bison -y"; then
+    AC_MSG_ERROR([Wrong parser generator found, does bison appear on your path?])
+fi
 
 AC_CHECK_TOOL(RANLIB, ranlib)
 AC_CHECK_TOOL(WINDRES, windres)

@@ -28,6 +28,12 @@ like /opt/sourcenav, these problems can be avoided.
 
 UNIX Build:
 
+GNU tools must be on the PATH before the configure script
+is run. GNU make, gcc, bison, and flex are required to build
+Source-Navigator. If the GNU make executable on your system
+is installed as gmake, type gmake instead of make in the
+following instructions.
+
 To build under a UNIX system, simply create a build directory
 and run the configure script. The following commands assume
 the release is 5.0.1 and that the user wants to install

@@ -1,3 +1,19 @@
+2002-11-20  Mo DeJong  <mdejong@uncounted.org>
+
+	* INSTALL.TXT: Inform users that GNU tools
+	are required to build Source-Navigator.
+	* configure: Regen.
+	* configure.in: Require GNU flex and
+	bison when building.
+	* hyper/Makefile.am: Remove generated
+	.c files as a results of 'make clean'.
+	* hyper/Makefile.in: Regen.
+	* parsers/assembly/ppc601-eabi/Makefile.am: Add
+	missing backslash.
+	* parsers/assembly/ppc601-eabi/Makefile.in: Regen.
+	* parsers/m4/Makefile.am: Add missing backslash.
+	* parsers/m4/Makefile.in: Regen.
+
 2002-11-16  Mo DeJong  <mdejong@uncounted.org>
 
 	* gui/editorpane.tcl (m3_post_menu_update):

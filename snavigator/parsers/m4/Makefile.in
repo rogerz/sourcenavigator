@@ -220,7 +220,7 @@ m4browser_SOURCES = m4browser.l
 m4browser_LDADD = $(toolbox)/libsnptools.a $(top_builddir)/db/libdbutils.a 		$(DB_LIBDIR)/libdb.a $(common)/libcommon.a 		$(top_builddir)/misc/libutils/libutils.a 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 
-m4browser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a 			$(top_builddir)/db/libdbutils.a
+m4browser_DEPENDENCIES = $(DB_LIBDIR)/libdb.a 			$(top_builddir)/db/libdbutils.a 			$(common)/libcommon.a 			$(toolbox)/libsnptools.a 			$(top_builddir)/misc/libutils/libutils.a
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../../config.h
@@ -434,9 +434,6 @@ install uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-			$(common)/libcommon.a \
-			$(toolbox)/libsnptools.a \
-			$(top_builddir)/misc/libutils/libutils.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
