@@ -587,6 +587,14 @@ MACRO_45
 }]
 } {1 fu 2.0 2.8}
 
+tcltest::test highlight-5.0 { CRLF -> LF translation } {
+    set fd [open f.m4 w]
+    fconfigure $fd -translation binary -encoding binary
+    puts -nonewline $fd "\r\nMACRO()\r\n"
+    close $fd
+    browse_highlights f.m4
+} {1 fu 2.0 2.5}
+
 
 # FIXME: Add support for sh heredoc style string
 # No subst should be done in the strings.
@@ -594,7 +602,9 @@ MACRO_45
 # ............
 # _ATEOF
 
-# AC_SUBST(RANLIB) should register a read xref for RANLIB
+# AC_SUBST(RANLIB) should register a read xref for RANLIB var
+# A Makefile.am or Makefile.in parser that could also
+# register a read there could also be handy.
 
 # Special variables that include variable are broken!
 # install_sh=${install_sh-"$am_aux_dir/install-sh"}
@@ -605,5 +615,6 @@ MACRO_45
 # cleanup
 file delete f.m4
 file delete xout
+file delete hout
 ::tcltest::cleanupTests
 return

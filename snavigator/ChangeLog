@@ -1,5 +1,18 @@
 2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/common/lexinput.c (sn_encoded_input,
+	translate_crlf): Add translate_crlf method
+	and use it to translate CRLF sequences to
+	LF in the buffer returned by sn_encoded_input.
+	Not having to deal with the CRLF vs LF mess
+	makes it easier to write parsers.
+	* tests/parsers/m4.test: Add CRLF test case.
+	Add FIXME notes and cleanup the hout file
+	when finishing.
+	* tests/parsers/php.test: Add CRLF test case.
+
+2003-07-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* parsers/assembly/ppc601-eabi/abrowser.c: Regen.
 	* parsers/assembly/ppc601-eabi/abrowser.l: Add
 	sn_reset_encoding call.

@@ -54,7 +54,15 @@ tcltest::test tokens-1.5 { parse into tokens } {
 1 VARIABLE "var" 2.3 2.7
 2 HTML "?>\n" 2.7 3.0}
 
-
+tcltest::test tokens-1.6 { CRLF -> LF translation } {
+    set fd [open f.php w]
+    fconfigure $fd -translation binary -encoding binary
+    puts -nonewline $fd "\r\n<?=\$var?>\r\n"
+    close $fd
+    browse_tokens f.php
+} {0 HTML "\n<?=" 1.0 2.3
+1 VARIABLE "var" 2.3 2.7
+2 HTML "?>\n" 2.7 3.0}
 
 tcltest::test tokens-2.0 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
@@ -2627,6 +2635,8 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 #
 # $row->cat_id
 
+# Emit a PASS xref when a variable is passed as an
+# argument to a function "foo($var)".
 
 # cleanup
 file delete f.php
