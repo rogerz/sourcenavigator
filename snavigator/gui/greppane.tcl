@@ -615,12 +615,10 @@ itcl::class Grep {
         update idletasks
 
         set t $itk_component(results)
-        $t configure -state normal
 
         $driver finish
 
         $t see end
-        $t configure -state disabled
 
         # Add the grep info to the history
 
@@ -910,9 +908,16 @@ itcl::class Grep {
             error "incr amount must be +1 or -1, you gave \"$amount\""            
         }
 
-        # Get last index and take last newline into account
-        set lastline [lindex [split [$itk_component(results) index end] .] 0]
-        incr lastline -1
+        # Ignore newlines to find last line of text.
+
+        for {set i 1} {1} {incr i} {
+            set index [$itk_component(results) index [list end - $i char]]
+            if {[$itk_component(results) get $index] != "\n" ||
+                    $index == "1.0"} {
+                break
+            }
+        }
+        set lastline [expr {int($index)}]
 
         set nextline [expr {$text_b1_current_line_num + $amount}]
 

@@ -65,6 +65,9 @@ itcl::class sourcenav::TclGrepDriver {
     # Max number of matches to insert into text widget
     private variable maxmatches
 
+    # number of lines we have already inserted
+    private variable lines_inserted
+
     # set to 1 if grep was canceled
     private variable grep_canceled
     private variable grep_truncated
@@ -88,6 +91,15 @@ itcl::body sourcenav::TclGrepDriver::destructor { } {
 }
 
 itcl::body sourcenav::TclGrepDriver::start { pat files nocase max } {
+    if {$text == ""} {
+        error "no text widget"
+    }
+    if {[$text index end] != "2.0"} {
+        error "text widget $text is not empty"
+    }
+
+    set lines_inserted 0
+
     set activePattern $pat
     set ignorecase $nocase
     set maxmatches $max
@@ -101,13 +113,14 @@ itcl::body sourcenav::TclGrepDriver::start { pat files nocase max } {
     set grep_truncated 0
     set grep_running 1
 
-    sn_log "Start grep :\t\t[clock seconds]"
+    sn_log "Start tcl grep :\t\t[clock seconds]"
 
     # wait until finish is invoked
     vwait [itcl::scope grep_running]
 }
 
 itcl::body sourcenav::TclGrepDriver::finish { } {
+    $text configure -state normal
     if {$grep_canceled} {
         $text insert end [get_indep String GrepCanceledString]
         $text insert end \n
@@ -115,6 +128,7 @@ itcl::body sourcenav::TclGrepDriver::finish { } {
         $text insert end [get_indep String GrepTruncatedString]
         $text insert end \n
     }
+    $text configure -state disabled
 }
 
 itcl::body sourcenav::TclGrepDriver::cancel {} {
@@ -200,7 +214,7 @@ itcl::body sourcenav::TclGrepDriver::inputReadyCallback {} {
         append currentFileBuffer [read $currentFileFD $currentFileBytesToRead]
     }
 
-#    sn_log "inputReadyCallback: read [string length $buf] bytes"
+#    sn_log "inputReadyCallback: read [string length $currentFileBuffer] bytes"
 
     if {[string length $currentFileBuffer] == $currentFileBytesToRead ||
             [eof $currentFileFD]} {
@@ -228,6 +242,13 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
         set index_list [list]
 
         foreach result $results {
+            if {$lines_inserted == $maxmatches} {
+                sn_log "truncating grep results to $lines_inserted lines"
+                set grep_truncated 1
+                set fileListIndex $fileListLength
+                break
+            }
+
             set matchlinenum [lindex $result 0]
             set matchline [lindex $result 1]
             set matchoffs [lindex $result 2]
@@ -236,6 +257,7 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
             set cur [$t index {end - 1 char}]
             $t insert end $matchline
             $t insert end \n
+            incr lines_inserted
 
             foreach matchoff $matchoffs {
                 set matchtext [lindex $matchoff 0]
@@ -243,15 +265,6 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
                 lappend index_list [list $cur + $matchlineoff chars]
                 lappend index_list [list $cur + $matchlineoff chars \
                     + [string length $matchtext] chars]
-            }
-
-            # If we have reached the max number of results, truncate now
-            set numlines [expr {int([$t index end]) - 1}]
-            if {$numlines >= $maxmatches} {
-                sn_log "truncating grep results"
-                set grep_truncated 1
-                set fileListIndex $fileListLength
-                break
             }
         }
 
@@ -270,7 +283,7 @@ itcl::body sourcenav::TclGrepDriver::doneReadingData {} {
     if {$fileListIndex < $fileListLength} {
         set nextIndexId [after idle [itcl::code $this processNextIndex]]
     } else {
-        sn_log "Done grep :\t\t[clock seconds]"
+        sn_log "Done tcl grep :\t\t[clock seconds]"
         set grep_running 0
     }
 }

@@ -1,5 +1,37 @@
 2002-06-21  Mo DeJong  <supermo@bayarea.net>
 
+	* gui/execgrepdriver.tcl (start, finish, grepReadableEvent):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Add a newline after the truncated or canceled message
+	so the test cases get a uniform output. If the search
+	has been canceled, look back at the last line to see
+	if it ends in a \n and add one if missing. This avoids
+	a problem where the canceled message shows up on
+	the same line as the last line of data.
+	Walk backward over the characters in the buffer to
+	find the last line of text when seeing if the max
+	number of matches has been reached.
+	* gui/greppane.tcl (finish_grep, incr_selected_line):
+	Don't change the -state of the text widget in finish_grep
+	since the drivers finish method now does it.
+	When moving the selected line up or down, check for the
+	last line by walking backwards over the buffer until
+	we find a non newline character. This fixes a problem
+	where you would have to hit the next button twice before
+	the selection would wrap around.
+	* gui/tclgrepdriver.tcl (start, finish, doneReadingData):
+	Assert that the text widget is empty before starting.
+	Toggle the -state of the text widget before/after
+	the processing in the finish method.
+	Check to see if adding next line would put us over the
+	max matches limit and truncate if it would.
+	* tests/gui/execgrepdriver.test: Add truncation tests.
+	* tests/gui/tclgrepdriver.test: Ditto.
+
+2002-06-21  Mo DeJong  <supermo@bayarea.net>
+
 	* gui/execgrepdriver.tcl (destructor, close, start, isAvailable):
 	Invoke isAvailable if it has not been called so that the
 	grep_exe variable will be set. Set the grep_fd to "" when

@@ -84,6 +84,14 @@ itcl::body sourcenav::ExecGrepDriver::destructor { } {
 itcl::body sourcenav::ExecGrepDriver::start { pat files nocase max } {
     global sn_path
     global errorInfo errorCode
+ 
+    # We should have an empty buffer to start with
+    if {$text == ""} {
+        error "no text widget"
+    }
+    if {[$text index end] != "2.0"} {
+        error "text widget $text is not empty"
+    }
 
     if {$nocase} {
         set case_sensitive 0
@@ -198,6 +206,7 @@ itcl::body sourcenav::ExecGrepDriver::finish { } {
     set scalevalue ${files_Count}
 
     set t $text
+    $t configure -state normal
 
     set pat $activePattern
     set pat_len [string length $pat]
@@ -258,13 +267,29 @@ itcl::body sourcenav::ExecGrepDriver::finish { } {
     if {$max_search_reached} {
         $t insert end \n
         $t insert end [get_indep String GrepTruncatedString]
+        $t insert end \n
     } elseif {$grep_canceled} {
-        # FIXME: We might want to check to see if the last
-        # character in the last line is a \n, if not add one!
-        #$t insert end \n
+        # Check if the last character in the buffer is a
+        # newline and add one if needed.
+
+        for {set i 1} {1} {incr i} {
+            set index [$t index [list end - $i char]]
+            if {[$t get $index] != "\n" || $index == "1.0"} {
+                break
+            }
+        }
+
+        set lastline [expr {int($index)}]
+        set lastline_text [$t get $lastline.0 {end - 1 char}]
+        if {[string index $lastline_text end] != "\n"} {
+            $t insert end \n
+        }
+
         $t insert end [get_indep String GrepCanceledString]
+        $t insert end \n
     }
 
+    $t configure -state disabled
     sn_log "Done tagging : [clock seconds], $numlines lines"
 }
 
@@ -284,7 +309,7 @@ itcl::body sourcenav::ExecGrepDriver::ExecGrepEvent {cmd} {
         regsub -all "~/" ${cmd} ${home} cmd
     }
 
-    sn_log "Start grep : [clock seconds]"
+    sn_log "Start exec grep : [clock seconds]"
 
     if {[catch {set grep_fd [open "| ${cmd}" r]} errmsg]} {
         sn_error_dialog "-code error -errorinfo ${errorInfo}\
@@ -309,7 +334,7 @@ itcl::body sourcenav::ExecGrepDriver::ExecGrepEvent {cmd} {
 itcl::body sourcenav::ExecGrepDriver::close {} {
     global sn_options
 
-    sn_log "Close grep : [clock seconds]"
+    sn_log "Close exec grep : [clock seconds]"
 
     # close older descriptor to be secure that no other grep
     # is running
@@ -338,14 +363,32 @@ itcl::body sourcenav::ExecGrepDriver::grepReadableEvent {} {
         $t insert end $buf
 
         # Trim the grep to the maximum number of lines
-        
-        set numlines [expr {int([$t index end]) - 1}]
+        # Walk backwards from the end of the buffer a
+        # character at a time until we find a non-newline.
+
+        for {set i 1} {1} {incr i} {
+            set index [$t index [list end - $i char]]
+            if {[$t get $index] != "\n" || $index == "1.0"} {
+                break
+            }
+        }
+        set numlines [expr {int($index)}]
         
         if {$numlines > $maxmatches} {
             set close_it 1
             set max_search_reached 1
             $t delete [list $maxmatches.0 + 1 lines] end
-            sn_log "trimmed results to [expr {int([$t index end]) - 1}] lines]"
+
+            # Walk back again to get the trimmed numlines
+            for {set i 1} {1} {incr i} {
+                set index [$t index [list end - $i char]]
+                if {[$t get $index] != "\n" || $index == "1.0"} {
+                    break
+                }
+            }
+            set numlines [expr {int($index)}]
+
+            sn_log "trimmed results to $numlines lines"
         }
 
         $t see end
@@ -354,7 +397,7 @@ itcl::body sourcenav::ExecGrepDriver::grepReadableEvent {} {
         # line out of the match, get the file name, and
         # then map that to the file position in the search.
 
-        set last [$t get {end - 2 lines} {end - 1 lines}]
+        set last [$t get $numlines.0 $numlines.end]
         sn_log "Last line from grep is \"$last\""
 
         if {$last != ""} {
