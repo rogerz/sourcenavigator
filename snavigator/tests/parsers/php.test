@@ -333,20 +333,25 @@ END;
 tcltest::test highlight-1.5 { highlight special keywords } {
     browse_highlights [save_file f.php {
 <?
-function
-global
-include
-include_once
-require
-require_once
+function foo($var="default") {}
+global $var;
+include "f1.php";
+include_once "f1.php";
+require "f1.php";
+require_once "f1.php";
 ?>
 }]
 } {1 key 3.0 3.8
-2 key 4.0 4.6
-3 key 5.0 5.7
-4 key 6.0 6.12
-5 key 7.0 7.7
-6 key 8.0 8.12}
+2 str 3.18 3.27
+3 key 4.0 4.6
+4 key 5.0 5.7
+5 str 5.8 5.16
+6 key 6.0 6.12
+7 str 6.13 6.21
+8 key 7.0 7.7
+9 str 7.8 7.16
+10 key 8.0 8.12
+11 str 8.13 8.21}
 
 tcltest::test highlight-1.6 { highlight other keywords } {
     browse_highlights [save_file f.php {
@@ -2452,6 +2457,13 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 #
 # $GLOBALS, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
 # $_ENV, $_REQUEST, $_SESSION
+
+# Should the global variable access symbol be extended
+# to include the full text of the global? This would
+# make is so that '$var[0] = 1;" would see a define
+# range of 0 to 7 instead of just 1 to 4. That would
+# make the combobox display the variable name over
+# the whole range instead of just over the highlight.
 
 # cleanup
 file delete f.php

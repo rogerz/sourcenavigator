@@ -391,9 +391,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
 
   /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol.
+   * Otherwise, insert a comment symbol and a highlight.
    */
-  if (highlight_file || token_dump_file) {
+  if (token_dump_file) {
     append_token(COMMENT, x,
             sn_line(),
             sn_column() - (x - yytext),
@@ -407,6 +407,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       x,
       sn_line(),
       sn_column());
+
+    sn_highlight(SN_HIGH_COMMENT,
+            sn_line(),
+            sn_column() - (x - yytext),
+            sn_line(),
+            sn_column() + strlen(x));
   }
 
   if (newline) {
@@ -1202,6 +1208,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   current_function_line_start = tokens_head->start_line;
   current_function_column_start = tokens_head->start_column;
 
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* FUNCTION_KEYWORD */
 
   /* FIXME: It would be better to create a state stack and push
@@ -1232,6 +1242,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
+    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+               (tokens_head->type == SINGLE_QUOTED_STRING)) {
+        sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
     }
 
     free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
@@ -1279,6 +1294,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "include statement begins at token %d\n", token_index);
 #endif
 
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* INCLUDE_KEYWORD */
 
   if (tokens_head->type == OPEN_PAREN) {
@@ -1311,6 +1330,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_STRING,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
 
   if (tokens_head->type == CLOSE_PAREN) {
@@ -1326,6 +1349,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "global statement found at %d\n", token_index);
 #endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* GLOBAL_KEYWORD */
 
@@ -1477,11 +1504,18 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
 #endif
 
+  sn_highlight(SN_HIGH_STRING,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   emit_var_access_for_dqstring(tokens_head);
+
   free_head_token(); /* VDOUBLE_QUOTED_STRING */
 }
 
 <TOKEN>{token} {
+  enum sn_highlights type;
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate token %d %s", token_index,
           TokenTypeToString(tokens_head));
@@ -1490,6 +1524,25 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
   fprintf(tokenout, "\n");
 #endif
+
+  if (highlight_file) {
+      switch (tokens_head->type) {
+          case DOUBLE_QUOTED_STRING:
+          case SINGLE_QUOTED_STRING:
+              type = SN_HIGH_STRING;
+              break;
+          case KEYWORD:
+              type = SN_HIGH_KEYWORD;
+              break;
+          default:
+              type = 0;
+      }
+      if (type != 0) {
+          sn_highlight(type,
+                  tokens_head->start_line, tokens_head->start_column,
+                  tokens_head->end_line, tokens_head->end_column);
+      }
+  }
 
   free_head_token(); /* ... */
 }
@@ -1609,50 +1662,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     fclose(dump_tokens);
 
     enter_html_mode();
-    yyterminate();
-  }
-
-  /*
-   * If the -h option was passed to indicate that
-   * highlighting should be done, do that now.
-   */
-
-  if (highlight_file) {
-    enum sn_highlights type;
-    int vdq_string;
-
-    for (tok = tokens_head ; tok ; tok = tok->next) {
-        vdq_string = 0;
-        switch (tok->type) {
-            case COMMENT:
-                type = SN_HIGH_COMMENT;
-                break;
-            case VDOUBLE_QUOTED_STRING:
-                vdq_string = 1;
-            case DOUBLE_QUOTED_STRING:
-            case SINGLE_QUOTED_STRING:
-                type = SN_HIGH_STRING;
-                break;
-            case HTML:
-                break;
-            case KEYWORD:
-            case FUNCTION_KEYWORD:
-            case GLOBAL_KEYWORD:
-            case INCLUDE_KEYWORD:
-                type = SN_HIGH_KEYWORD;
-                break;
-            default:
-                type = 0;
-        }
-        if (type != 0) {
-            sn_highlight(type, tok->start_line, tok->start_column,
-                    tok->end_line, tok->end_column);
-        }
-        if (vdq_string != 0) {
-            /* Write out VAR highlight for each embedded var */
-        }
-    }
-
     yyterminate();
   }
 
@@ -1966,9 +1975,9 @@ void emit_comment() {
 #endif
 
   /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol.
+   * Otherwise, insert a comment symbol and a highlight.
    */
-  if (highlight_file || token_dump_file) {
+  if (token_dump_file) {
     append_token(COMMENT, comment,
             mode_start_line,
             mode_start_column - 2,
@@ -1982,6 +1991,12 @@ void emit_comment() {
         comment,
         mode_start_line,
         mode_start_column);
+
+    sn_highlight(SN_HIGH_COMMENT,
+            mode_start_line,
+            mode_start_column - 2,
+            sn_line(),
+            sn_column() + 2);
   }
 
   mode_buff.free(&mode_buff);
@@ -2209,6 +2224,10 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
         assert(result == 0);
     }
+  }
+
+  if (highlight_file) {
+      /* Highlight as either a global or local var */
   }
 }
 

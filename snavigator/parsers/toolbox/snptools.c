@@ -387,8 +387,7 @@ void sn_highlight(enum sn_highlights type,
     long end_line, int end_column)
 {
   char * tag;
-  assert(highlight);
-  assert(highlightfp);
+  if (!highlight) return;
 
   switch (type) {
     case SN_HIGH_COMMENT:

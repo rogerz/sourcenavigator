@@ -1,5 +1,29 @@
 2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Rework the
+	highlight writing logic. Instead of
+	highlighting by looping over the tokens,
+	just process the tokens in the normal
+	way and highlight via the normal token
+	matching rules. Don't create a comment
+	token in this case, just emit a highlight
+	when the comment text is found.
+	* parsers/toolbox/snptools.c (sn_highlight):
+	If highlighting has not been activated
+	via the -h option, then  do nothing and
+	return. This is easier that checking to
+	see if -h was passed before each call to
+	sn_highlight.
+	* tests/parsers/php.test: Fixup test that
+	check for function, global, include,
+	include_once, require, and require_once
+	keywords. They must match the known usage
+	pattern to be highlighted. The word "function"
+	by itself will not be highlighted.
+
+2003-06-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/editorpane.tcl (UpdateHighlights,
 	sn_delete_editor_tags):
 	Add a new helper method that will delete

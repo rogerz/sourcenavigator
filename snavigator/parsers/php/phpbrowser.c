@@ -1857,9 +1857,9 @@ YY_RULE_SETUP
   }
 
   /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol.
+   * Otherwise, insert a comment symbol and a highlight.
    */
-  if (highlight_file || token_dump_file) {
+  if (token_dump_file) {
     append_token(COMMENT, x,
             sn_line(),
             sn_column() - (x - yytext),
@@ -1873,6 +1873,12 @@ YY_RULE_SETUP
       x,
       sn_line(),
       sn_column());
+
+    sn_highlight(SN_HIGH_COMMENT,
+            sn_line(),
+            sn_column() - (x - yytext),
+            sn_line(),
+            sn_column() + strlen(x));
   }
 
   if (newline) {
@@ -1885,7 +1891,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 420 "phpbrowser.l"
+#line 426 "phpbrowser.l"
 { /* A C style multi-line comment, just like this! */
 #if MATCH_DUMP
     matched_pattern("/*", yytext);
@@ -1900,7 +1906,7 @@ YY_RULE_SETUP
 
 case 8:
 YY_RULE_SETUP
-#line 432 "phpbrowser.l"
+#line 438 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\*\\n]*", yytext);
@@ -1916,7 +1922,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 444 "phpbrowser.l"
+#line 450 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\*\\n]*\\n", yytext);
@@ -1934,7 +1940,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 458 "phpbrowser.l"
+#line 464 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\*+[^\\*/\\n]*", yytext);
@@ -1951,7 +1957,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 471 "phpbrowser.l"
+#line 477 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
@@ -1969,7 +1975,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 485 "phpbrowser.l"
+#line 491 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\*+/", yytext);
@@ -2001,7 +2007,7 @@ YY_RULE_SETUP
 
 case 13:
 YY_RULE_SETUP
-#line 514 "phpbrowser.l"
+#line 520 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\\"\\\"", yytext);
@@ -2017,7 +2023,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 527 "phpbrowser.l"
+#line 533 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\\"", yytext);
@@ -2038,7 +2044,7 @@ YY_RULE_SETUP
 
 case 15:
 YY_RULE_SETUP
-#line 545 "phpbrowser.l"
+#line 551 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*", yytext);
@@ -2054,7 +2060,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 557 "phpbrowser.l"
+#line 563 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
@@ -2071,7 +2077,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 570 "phpbrowser.l"
+#line 576 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("(\\\")+", yytext);
@@ -2088,7 +2094,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 583 "phpbrowser.l"
+#line 589 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\", yytext);
@@ -2105,7 +2111,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 596 "phpbrowser.l"
+#line 602 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("${varname}", yytext);
@@ -2127,7 +2133,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 614 "phpbrowser.l"
+#line 620 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("$", yytext);
@@ -2140,7 +2146,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 623 "phpbrowser.l"
+#line 629 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\"", yytext);
@@ -2159,7 +2165,7 @@ YY_RULE_SETUP
 
 case 22:
 YY_RULE_SETUP
-#line 639 "phpbrowser.l"
+#line 645 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\\'\\\'", yytext);
@@ -2176,7 +2182,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 653 "phpbrowser.l"
+#line 659 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\\'", yytext);
@@ -2195,7 +2201,7 @@ YY_RULE_SETUP
 
 case 24:
 YY_RULE_SETUP
-#line 669 "phpbrowser.l"
+#line 675 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\\'\\n\\\\]*", yytext);
@@ -2211,7 +2217,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 681 "phpbrowser.l"
+#line 687 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^\\\'\\n\\\\]*\\n", yytext);
@@ -2229,7 +2235,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 695 "phpbrowser.l"
+#line 701 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\'+[^\\\'/\\n\\\\]*", yytext);
@@ -2246,7 +2252,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 708 "phpbrowser.l"
+#line 714 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\'+[^\\\'\\n\\\\]*\\n", yytext);
@@ -2264,7 +2270,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 722 "phpbrowser.l"
+#line 728 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\\", yytext);
@@ -2281,7 +2287,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 735 "phpbrowser.l"
+#line 741 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\'", yytext);
@@ -2300,7 +2306,7 @@ YY_RULE_SETUP
 
 case 30:
 YY_RULE_SETUP
-#line 751 "phpbrowser.l"
+#line 757 "phpbrowser.l"
 {
   char *x = yytext;
   char *y;
@@ -2345,7 +2351,7 @@ YY_RULE_SETUP
 
 case 31:
 YY_RULE_SETUP
-#line 793 "phpbrowser.l"
+#line 799 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("^{heredoc-id};\n", yytext);
@@ -2372,7 +2378,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 816 "phpbrowser.l"
+#line 822 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^;$\n]+", yytext);
@@ -2390,7 +2396,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 830 "phpbrowser.l"
+#line 836 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("[^;$\n]*\n", yytext);
@@ -2409,7 +2415,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 845 "phpbrowser.l"
+#line 851 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("${varname}", yytext);
@@ -2435,7 +2441,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 867 "phpbrowser.l"
+#line 873 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("$", yytext);
@@ -2458,7 +2464,7 @@ YY_RULE_SETUP
 
 case 36:
 YY_RULE_SETUP
-#line 887 "phpbrowser.l"
+#line 893 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("(", yytext);
@@ -2474,7 +2480,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 900 "phpbrowser.l"
+#line 906 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern(")", yytext);
@@ -2489,7 +2495,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 912 "phpbrowser.l"
+#line 918 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("[", yytext);
@@ -2504,7 +2510,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 924 "phpbrowser.l"
+#line 930 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("]", yytext);
@@ -2519,7 +2525,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 936 "phpbrowser.l"
+#line 942 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{", yytext);
@@ -2534,7 +2540,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 948 "phpbrowser.l"
+#line 954 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("}", yytext);
@@ -2549,7 +2555,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 960 "phpbrowser.l"
+#line 966 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("}", yytext);
@@ -2564,7 +2570,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 972 "phpbrowser.l"
+#line 978 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern(".", yytext);
@@ -2579,7 +2585,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 984 "phpbrowser.l"
+#line 990 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern(",", yytext);
@@ -2594,7 +2600,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 996 "phpbrowser.l"
+#line 1002 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("=", yytext);
@@ -2609,7 +2615,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 1008 "phpbrowser.l"
+#line 1014 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("&", yytext);
@@ -2624,7 +2630,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 1020 "phpbrowser.l"
+#line 1026 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{comparison-operators}", yytext);
@@ -2640,7 +2646,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 1033 "phpbrowser.l"
+#line 1039 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{assignment-operators}", yytext);
@@ -2656,7 +2662,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 1046 "phpbrowser.l"
+#line 1052 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{increment-operators}", yytext);
@@ -2672,7 +2678,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 1059 "phpbrowser.l"
+#line 1065 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("function", yytext);
@@ -2688,7 +2694,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 1072 "phpbrowser.l"
+#line 1078 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("global", yytext);
@@ -2703,7 +2709,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 1084 "phpbrowser.l"
+#line 1090 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{include-keywords}", yytext);
@@ -2718,7 +2724,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 1096 "phpbrowser.l"
+#line 1102 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{keywords}", yytext);
@@ -2734,7 +2740,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 1109 "phpbrowser.l"
+#line 1115 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("{someword}", yytext);
@@ -2750,7 +2756,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 1122 "phpbrowser.l"
+#line 1128 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("${varname}", yytext);
@@ -2766,7 +2772,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 1135 "phpbrowser.l"
+#line 1141 "phpbrowser.l"
 {
   char* x, *y;
   #if MATCH_DUMP
@@ -2789,7 +2795,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 1155 "phpbrowser.l"
+#line 1161 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern("\\$", yytext);
@@ -2806,7 +2812,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 1169 "phpbrowser.l"
+#line 1175 "phpbrowser.l"
 {
 #if MATCH_DUMP
   matched_pattern(".", yytext);
@@ -2830,7 +2836,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 1192 "phpbrowser.l"
+#line 1198 "phpbrowser.l"
 {
   int parens, noargs;
   LongString abuff;
@@ -2843,6 +2849,10 @@ YY_RULE_SETUP
 
   current_function_line_start = tokens_head->start_line;
   current_function_column_start = tokens_head->start_column;
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* FUNCTION_KEYWORD */
 
@@ -2874,6 +2884,11 @@ YY_RULE_SETUP
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
+    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+               (tokens_head->type == SINGLE_QUOTED_STRING)) {
+        sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
     }
 
     free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
@@ -2892,7 +2907,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 1251 "phpbrowser.l"
+#line 1266 "phpbrowser.l"
 {
   if (current_function) {
     current_function_brace_count++;
@@ -2902,7 +2917,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 1258 "phpbrowser.l"
+#line 1273 "phpbrowser.l"
 {
   if (current_function && (--current_function_brace_count == 0)) {
 #ifdef TOKEN_DEBUG
@@ -2921,7 +2936,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 1274 "phpbrowser.l"
+#line 1289 "phpbrowser.l"
 {
   int line_start, line_end, column_start, column_end;
   char * filename;
@@ -2929,6 +2944,10 @@ YY_RULE_SETUP
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "include statement begins at token %d\n", token_index);
 #endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* INCLUDE_KEYWORD */
 
@@ -2962,6 +2981,10 @@ YY_RULE_SETUP
 
   assert(result == 0);
 
+  sn_highlight(SN_HIGH_STRING,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
 
   if (tokens_head->type == CLOSE_PAREN) {
@@ -2973,13 +2996,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 1323 "phpbrowser.l"
+#line 1346 "phpbrowser.l"
 {
   SearchEntry entry;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "global statement found at %d\n", token_index);
 #endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* GLOBAL_KEYWORD */
 
@@ -3015,7 +3042,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 1362 "phpbrowser.l"
+#line 1389 "phpbrowser.l"
 {
   char* fname;
   int line;
@@ -3052,7 +3079,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1396 "phpbrowser.l"
+#line 1423 "phpbrowser.l"
 {
   int offset;
   
@@ -3075,7 +3102,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 1416 "phpbrowser.l"
+#line 1443 "phpbrowser.l"
 {
   int offset;
   
@@ -3098,7 +3125,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1436 "phpbrowser.l"
+#line 1463 "phpbrowser.l"
 {
   int offset, pre = 0;
 #ifdef TOKEN_DEBUG
@@ -3130,7 +3157,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 1465 "phpbrowser.l"
+#line 1492 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable read at token %d\n", token_index);
@@ -3143,20 +3170,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 1475 "phpbrowser.l"
+#line 1502 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
 #endif
 
+  sn_highlight(SN_HIGH_STRING,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
   emit_var_access_for_dqstring(tokens_head);
+
   free_head_token(); /* VDOUBLE_QUOTED_STRING */
 }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 1484 "phpbrowser.l"
+#line 1516 "phpbrowser.l"
 {
+  enum sn_highlights type;
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "ate token %d %s", token_index,
           TokenTypeToString(tokens_head));
@@ -3166,17 +3200,36 @@ YY_RULE_SETUP
   fprintf(tokenout, "\n");
 #endif
 
+  if (highlight_file) {
+      switch (tokens_head->type) {
+          case DOUBLE_QUOTED_STRING:
+          case SINGLE_QUOTED_STRING:
+              type = SN_HIGH_STRING;
+              break;
+          case KEYWORD:
+              type = SN_HIGH_KEYWORD;
+              break;
+          default:
+              type = 0;
+      }
+      if (type != 0) {
+          sn_highlight(type,
+                  tokens_head->start_line, tokens_head->start_column,
+                  tokens_head->end_line, tokens_head->end_column);
+      }
+  }
+
   free_head_token(); /* ... */
 }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 1497 "phpbrowser.l"
+#line 1550 "phpbrowser.l"
 
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 1499 "phpbrowser.l"
+#line 1552 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
@@ -3184,7 +3237,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 1505 "phpbrowser.l"
+#line 1558 "phpbrowser.l"
 {
 #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
@@ -3216,7 +3269,7 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 1530 "phpbrowser.l"
+#line 1583 "phpbrowser.l"
 {
   LongString token_buffer;
   char *base;
@@ -3302,50 +3355,6 @@ case YY_STATE_EOF(HDSTRING):
     yyterminate();
   }
 
-  /*
-   * If the -h option was passed to indicate that
-   * highlighting should be done, do that now.
-   */
-
-  if (highlight_file) {
-    enum sn_highlights type;
-    int vdq_string;
-
-    for (tok = tokens_head ; tok ; tok = tok->next) {
-        vdq_string = 0;
-        switch (tok->type) {
-            case COMMENT:
-                type = SN_HIGH_COMMENT;
-                break;
-            case VDOUBLE_QUOTED_STRING:
-                vdq_string = 1;
-            case DOUBLE_QUOTED_STRING:
-            case SINGLE_QUOTED_STRING:
-                type = SN_HIGH_STRING;
-                break;
-            case HTML:
-                break;
-            case KEYWORD:
-            case FUNCTION_KEYWORD:
-            case GLOBAL_KEYWORD:
-            case INCLUDE_KEYWORD:
-                type = SN_HIGH_KEYWORD;
-                break;
-            default:
-                type = 0;
-        }
-        if (type != 0) {
-            sn_highlight(type, tok->start_line, tok->start_column,
-                    tok->end_line, tok->end_column);
-        }
-        if (vdq_string != 0) {
-            /* Write out VAR highlight for each embedded var */
-        }
-    }
-
-    yyterminate();
-  }
-
   LongStringInit(&token_buffer,0);
 
   /* Print token info to in memory buffer and then reload
@@ -3388,7 +3397,7 @@ case YY_STATE_EOF(HDSTRING):
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 1699 "phpbrowser.l"
+#line 1708 "phpbrowser.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -4278,7 +4287,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 1699 "phpbrowser.l"
+#line 1708 "phpbrowser.l"
 
 
 /* Return a string that describes the current mode */
@@ -4549,9 +4558,9 @@ void emit_comment() {
 #endif
 
   /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol.
+   * Otherwise, insert a comment symbol and a highlight.
    */
-  if (highlight_file || token_dump_file) {
+  if (token_dump_file) {
     append_token(COMMENT, comment,
             mode_start_line,
             mode_start_column - 2,
@@ -4565,6 +4574,12 @@ void emit_comment() {
         comment,
         mode_start_line,
         mode_start_column);
+
+    sn_highlight(SN_HIGH_COMMENT,
+            mode_start_line,
+            mode_start_column - 2,
+            sn_line(),
+            sn_column() + 2);
   }
 
   mode_buff.free(&mode_buff);
@@ -4792,6 +4807,10 @@ void emit_var_access(Token *tok, VarAccess acc) {
 
         assert(result == 0);
     }
+  }
+
+  if (highlight_file) {
+      /* Highlight as either a global or local var */
   }
 }
 
