@@ -1,3 +1,17 @@
+2003-05-21  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/m4/m4browser.c: Regen.
+	* parsers/m4/m4browser.l: Add FUNCTION rule
+	to support read, write, and call xrefs
+	inside macros. Set the function declaration
+	to include the entire text of the macro
+	instead of just the macro name.
+	* tests/parsers/m4.test: Add new var test
+	cases for var xrefs in macros. Update
+	macro definition test cases so that
+	whole function is included, not just name.
+	Add test for comments in macros.
+
 2003-05-20  John Lash  <jkl@speakeasy.net>
 
 	* gui/misc.tcl (sn_session, sn_nosplash):

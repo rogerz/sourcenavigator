@@ -47,7 +47,33 @@ MA 02111-1307, USA.
 
 static char group[] = "m4";
 
-static char current_function[512] = {"GLOBAL"}; /* "" causes assert core dump */
+#define MAX_SIZE 512
+
+static char current_function[MAX_SIZE] = {"GLOBAL"}; /* "" causes assert core dump */
+
+/* line number where highlight starts and ends */
+static int  current_function_highlight_line;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'M' in "MACRO" */
+static int  current_function_highlight_column_start;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'O' in "MACRO" */
+static int  current_function_highlight_column_end;
+
+/* line where macro declaration begins */
+static int  current_function_line_start;
+
+/* line where closing paren of macro appears */
+static int  current_function_line_end;
+
+/* in "AC_DEFUN([MACRO], [])" column of 'A' in "AC_DEFUN" */
+static int  current_function_column_start;
+
+/* in "AC_DEFUN([MACRO], [])" column of ')' in "[])" */
+static int  current_function_column_end;
+
+static int  current_function_paren_count;
+
 static int result;
 
 /*
@@ -65,7 +91,13 @@ yywrap()
   return(1);
 }
 
+void dump_function_definition();
+
+void matched_pattern(char * pattern, char * text);
+
 %}
+
+%x FUNCTION
 
 ws		[ \t]
 symbol		[a-zA-Z0-9_]+
@@ -74,16 +106,48 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
 %%
 
-.		{ sn_advance_column(yyleng); /* eat text */ }
+<FUNCTION>\( {
+  matched_pattern("(", yytext);
+  sn_advance_column(yyleng);
+  current_function_paren_count++;
+}
 
-\\\$		{ sn_advance_column(yyleng); /* ignore \$ */ }
+<FUNCTION>\) {
+  matched_pattern(")", yytext);
+  sn_advance_column(yyleng);
+  assert(current_function_paren_count > 0);
+  current_function_paren_count--;
+  if (current_function_paren_count == 0) {
+    current_function_line_end = sn_line();
+    current_function_column_end = sn_column();
 
+    dump_function_definition();
 
-\n		{ sn_advance_line(); sn_reset_column(); }
+    BEGIN(INITIAL);
+  }
+}
 
-{ws}*(#|dnl{ws}).*\n {
+<INITIAL,FUNCTION>.		{
+  matched_pattern(".", yytext);
+  sn_advance_column(yyleng); /* eat text */
+}
+
+<INITIAL,FUNCTION>\\\$		{
+  matched_pattern("\\$", yytext);
+  sn_advance_column(yyleng); /* ignore \$ */
+}
+
+<INITIAL,FUNCTION>\n		{
+  matched_pattern("\\n", yytext);
+  sn_advance_line();
+  sn_reset_column();
+}
+
+<INITIAL,FUNCTION>{ws}*(#|dnl{ws}).*\n {
   char * x = (char *) yytext;
   char * y = x + yyleng - 1;
+
+  matched_pattern("{ws}*(#|dnl{ws}).*\\n", yytext);
 
   while (*x == '\t' || *x == ' ') { x++; }
   if (*x == '#') {
@@ -109,8 +173,10 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   sn_reset_column();
 }
 
-\${symbol} {
+<INITIAL,FUNCTION>\${symbol} {
   char * x = (char *) yytext;
+
+  matched_pattern("${symbol}", yytext);
 
   /* Trim leading $ off the front of the symbol */
 
@@ -125,7 +191,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
+                 current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -138,10 +204,12 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   sn_advance_column(yyleng);
 }
 
-{symbol}= {
+<INITIAL,FUNCTION>{symbol}= {
   char * x = (char *) yytext;
   char * y;
   
+  matched_pattern("{symbol}=", yytext);
+
   /* Trim the '=' off the end of the string */
   
   for (y=x; *y ; y++) {
@@ -183,7 +251,7 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 		                     /* This SN_REF_TO_GLOB_VAR thing does not jive with the docs */
                  SN_REF_SCOPE_GLOBAL,
                  NULL,
-                 "GLOBAL", /* FIXME: A global var would not have a current function ??? */
+                 current_function,
                  NULL,
                  NULL,
                  x, /* refsymbol */
@@ -196,11 +264,16 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   sn_advance_column(yyleng);
 }
 
-^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*, {
+<INITIAL>^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*, {
   char * x = (char *) yytext;
   char * y;
 
+  matched_pattern("^{ws}*{func-decl}\({ws}*{quoted-symbol}{ws}*,", yytext);
+
   /* FIXME : Insert an xref for the AC_DEFUN call. */
+
+  current_function_line_start = sn_line();
+  current_function_column_start = sn_column();
 
   /* Skip AC_DEFUN( */
 
@@ -237,29 +310,25 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
 
   /* x is now the name of the macro that is being defined */
 
-  /*strcpy(current_function, x);*/
+  strncpy(current_function, x, MAX_SIZE-1);
 
-  result = sn_insert_symbol(SN_FUNC_DEF, NULL, x, sn_current_file(), 
-		   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x),
-                   0 /* attribute */, NULL /* return type */,
-                   NULL /* argument types */, NULL /* argument names */,
-                   NULL /* comment */,
-                   sn_line(), sn_column(),
-                   sn_line(), sn_column() + (y - x) );
+  current_function_highlight_line = sn_line();
+  current_function_highlight_column_start = sn_column();
+  current_function_highlight_column_end = sn_column() + (y - x);
 
-  assert(result == 0);
+  sn_advance_column((yytext + yyleng) - x);
 
-  /* FIXME : need to declare function too, can that be done at the
-     same time or is this a bug in SN ?? */
+  current_function_paren_count = 1;
 
-  sn_advance_column(y - x);
+  BEGIN(FUNCTION);
 }
 
 
-{symbol}\( {
+<INITIAL,FUNCTION>{symbol}\( {
   char * x = (char *) yytext;
   char * y;
+
+  matched_pattern("{symbol}(", yytext);
 
   for (y=x; *y ; y++) {
       if (*y == '(') {
@@ -286,10 +355,51 @@ func-decl	("AU_DEFUN"|"AC_DEFUN"|"m4_define")
   assert(result == 0);
 
   sn_advance_column(yyleng);
+
+  current_function_paren_count++;
 }
 
 %%
-  
+
+void dump_function_definition() {
+    result = sn_insert_symbol(SN_FUNC_DEF, NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            NULL /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+
+    assert(result == 0);
+
+    strcpy(current_function, "GLOBAL");
+}
+
+/* Helper method that will print matches as they are made */
+
+void matched_pattern(char * pattern, char * text) {
+    char * mode = "UNKNOWN";
+    int imode = YY_START;
+
+    if (imode == INITIAL) {
+        mode = "INITIAL";
+    } else if (imode == FUNCTION) {
+        mode = "FUNCTION";
+    }
+
+    if (0) {
+    fprintf(stderr, "Matched pattern \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
+        pattern, text, mode, sn_line(), sn_column());
+    }
+}
+
 void
 reset()
 {
