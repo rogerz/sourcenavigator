@@ -57,9 +57,12 @@ itcl::class ClassTree& {
 		    -jump $sn_options(def,canvas-tree-jump)
 	}
 
-        pack $itk_component(scrollx) -side bottom -fill x
-        pack $itk_component(scrolly) -side right -fill y
-        pack $itk_component(canvas) -side top -fill both -expand y
+        grid $itk_component(canvas) -row 0 -column 0 -sticky news
+        grid $itk_component(scrollx) -row 1 -column 0 -sticky ew
+        grid $itk_component(scrolly) -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         $itk_component(canvas) bind cl <1> "${this} mark_class"
         $itk_component(canvas) bind cl <Control-1>\

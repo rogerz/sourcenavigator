@@ -168,15 +168,12 @@ itcl::class Editor& {
 	scrollbar $itk_component(hull).yview \
 	    -command "$itk_component(editor) yview"
 
-	pack $itk_component(hull).xview \
-	    -side bottom \
-	    -fill x
-	pack $itk_component(hull).yview \
-	    -side right \
-	    -fill y
-	pack $itk_component(editor) \
-	    -fill both \
-	    -expand y
+	grid $itk_component(editor) -row 0 -column 0 -sticky news
+	grid $itk_component(hull).xview -row 1 -column 0 -sticky ew
+	grid $itk_component(hull).yview -row 0 -column 1 -sticky ns
+
+	grid rowconfigure $itk_component(hull) 0 -weight 1
+	grid columnconfigure $itk_component(hull) 0 -weight 1
 
 	# Call user defined procedure.
 	if {[catch {sn_rc_editor $itk_component(hull) $itk_component(editor)} err]} {

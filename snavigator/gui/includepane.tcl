@@ -115,17 +115,18 @@ itcl::class Include& {
         scrollbar ${thull}.scrolly -command " ${can} yview "\
           -jump $sn_options(def,canvas-tree-jump)
 
-        pack ${thull}.scrollx -side bottom -fill x
-        pack ${thull}.scrolly -side right -fill y
-        pack ${can} -side top -fill both -expand y
+        grid ${can} -row 0 -column 0 -sticky news
+        grid ${thull}.scrollx -row 1 -column 0 -sticky ew
+        grid  ${thull}.scrolly -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         #Draw tree of required include
         start ${goto}
 
         #Display the built tree
         Redraw
-
-        pack ${can} -fill both -expand y
 
         Update_Layout
 

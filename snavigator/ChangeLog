@@ -1,3 +1,13 @@
+2003-02-22  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* gui/classtreepane.tcl (constructor):
+	* gui/editorpane.tcl (constructor):
+	* gui/includepane.tcl (constructor):
+	* gui/xrefpane.tcl (constructor): Grid scrollbars
+	and main window so that x scroll does not extend
+	below the y scroll. This makes the Edit, Hierarchy,
+	Xref, and Include tabs look correct.
+
 2003-02-18  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/fortran/fortran.c: Regen.

@@ -251,9 +251,12 @@ itcl::class XRef& {
           CrossAcceptStatic] -underline [get_indep Pos CrossAcceptStatic]\
           -variable ${this}-accept_static -command " ${this} toggle_static m "
 
-        pack $itk_component(hull).scrollx -side bottom -fill x
-        pack $itk_component(hull).scrolly -side right -fill y
-        pack $itk_component(hull).can -side top -fill both -expand y
+        grid ${can} -row 0 -column 0 -sticky news
+        grid $itk_component(hull).scrollx -row 1 -column 0 -sticky ew
+        grid $itk_component(hull).scrolly -row 0 -column 1 -sticky ns
+
+        grid rowconfigure $itk_component(hull) 0 -weight 1
+        grid columnconfigure $itk_component(hull) 0 -weight 1
 
         #Set colors and fonts
         Update_Layout
