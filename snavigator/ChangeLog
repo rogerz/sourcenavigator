@@ -1,3 +1,9 @@
+2002-09-04  Chris Drexler  <ckolumbus@users.sourceforge.net>
+
+	* demo/c++_demo/contrib/perl/sample_client:
+	Change hard coded path name of perl so that
+	rpm will not complain at install time.
+
 2002-09-04  Mo DeJong  <supermo@bayarea.net>
 
 	* gui/text.tcl (tkTextInsert): Sync other
