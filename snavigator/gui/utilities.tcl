@@ -451,15 +451,17 @@ proc sn_get_file_type {file} {
     global sn_options
     global Avail_Parsers Parser_Info
 
-    set suf [file extension $file]
+    set tail [file tail $file]
 
     #test "others" extension matching as last possibility
     #the user can add "*" to others to include all
     #file that don't match another languages.
     foreach p ${Avail_Parsers} {
         if {$Parser_Info(${p},TYPE) != "others"} {
-            foreach s $Parser_Info(${p},SUF) {
-                if {[string match ${s} ${suf}]} {
+            foreach pattern $Parser_Info(${p},SUF) {
+                if {[string equal $pattern $tail] ||
+                        [string match $pattern $tail]} {
+                    sn_log "$tail file type is $p"
                     return ${p}
                 }
             }

@@ -1,5 +1,20 @@
 2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* etc/sn_prop.cfg.in: Add *.c++ to cpp file
+	extensions. Enable the m4 parser by default.
+	Set the m4 file pattern to {*.m4 *.ac configure.in},
+	this depends on sn_get_file_type being able
+	to match a pattern exactly. Add *.am and *.in
+	patterns to the others rule.
+	* gui/utilities.tcl (sn_get_file_type): Use the
+	last component of the file name instead of
+	just the extension so that exact matches
+	like "configure.in" can be made. Earlier
+	attempts at using "*.in" in the m4 rule
+	were matching too many files like "Makefile.in".
+
+2003-05-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/editorpane.tcl (RetrieveObject):
 	* gui/misc.tcl (sn_create_new_project,
 	sn_parse_uptodate):

@@ -194,9 +194,9 @@ sn_add_parser cobol \
 # C++
 if {$tcl_platform(platform) == "windows"} {
 	#windows file dialog box doesn't understand with '[]' grouped extensions
-	set cpp_ext {*.h *.H *.c *.C *.cxx *.hxx *.cpp *.hpp *.cc *.hh *.CXX *.HXX *.CPP *.HPP *.CC *.HH}
+	set cpp_ext {*.h *.H *.c *.C *.cxx *.hxx *.cpp *.c++ *.hpp *.cc *.hh *.CXX *.HXX *.CPP *.HPP *.CC *.HH}
 } else {
-	set cpp_ext {*.[hHcC] *.[ch]xx *.[ch]pp *.cc *.hh *.[CH]XX *.[CH]PP *.CC *.HH}
+	set cpp_ext {*.[hHcC] *.[ch]xx *.[ch]pp *.c++ *.cc *.hh *.[CH]XX *.[CH]PP *.CC *.HH}
 }
 sn_add_parser c++ \
 	-suffix $cpp_ext \
@@ -250,30 +250,20 @@ sn_add_parser python \
 	-brow_cmd $sn_path(bindir)/pybrowser \
 	-high_cmd $sn_path(bindir)/pybrowser
 
-# m4 configuration files
-
-set use_m4parser 0
-
-if {$use_m4parser} {
+# M4 + autoconf files
 
 sn_add_parser m4 \
-        -suffix {*.m4 *.in *.am} \
+        -suffix {*.m4 *.ac configure.in} \
         -brow_cmd $sn_path(bindir)/m4browser \
 	-high_cmd $sn_path(bindir)/m4browser
-
-}
 
 # Files without a parser
 
 if {$tcl_platform(platform) == "windows"} {
 	#windows file dialog box doesn't understand with '[]' grouped extensions
-	set other_ext {*.l *.y *Makefile *makefile *Iakefile *.txt}
+	set other_ext {*.l *.y *Makefile *makefile *Iakefile *.txt *.am *.in}
 } else {
-	set other_ext {*.[ly] *[IMm]akefile *.txt}
-}
-
-if {! $use_m4parser} {
-    append other_ext " *.m4 *.in *.am"
+	set other_ext {*.[ly] *[IMm]akefile *.txt *.am *.in}
 }
 
 sn_add_parser others -suffix $other_ext
