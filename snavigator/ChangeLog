@@ -1,3 +1,8 @@
+2002-04-20  Mo DeJong  <supermo@bayarea.net>
+
+	* gui/tclIndex: Add file that got
+	ignored by the cvs import.
+
 2002-04-19  Mo DeJong  <supermo@bayarea.net>
 
 	* configure.in: Avoid setting HYPER_CONSOLE.
