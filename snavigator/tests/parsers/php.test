@@ -39,6 +39,24 @@ HTML}]
 2 HTML "?>\nHTML" 2.14 3.4}
 
 tcltest::test tokens-1.4 { parse into tokens } {
+    browse_tokens [save_file f.php {HTML
+<?PHP$var?>
+HTML}]
+} {0 HTML "HTML\n<?PHP" 1.0 2.5
+1 VARIABLE "var" 2.6 2.9
+2 HTML "?>\nHTML" 2.9 3.4}
+
+tcltest::test tokens-1.5 { parse into tokens } {
+    browse_tokens [save_file f.php {
+<?=$var?>
+}]
+} {0 HTML "\n<?=" 1.0 2.3
+1 VARIABLE "var" 2.4 2.7
+2 HTML "?>\n" 2.7 3.0}
+
+
+
+tcltest::test tokens-2.0 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 #My Comment
@@ -46,7 +64,7 @@ tcltest::test tokens-1.4 { parse into tokens } {
 }]]
 } {1 COMMENT "My Comment" 3.0 3.11}
 
-tcltest::test tokens-1.5 { parse into tokens } {
+tcltest::test tokens-2.1 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 //My Comment
@@ -54,7 +72,7 @@ tcltest::test tokens-1.5 { parse into tokens } {
 }]]
 } {1 COMMENT "My Comment" 3.0 3.12}
 
-tcltest::test tokens-1.6 { parse into tokens } {
+tcltest::test tokens-2.2 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 /*My Comment*/
@@ -62,7 +80,7 @@ tcltest::test tokens-1.6 { parse into tokens } {
 }]]
 } {1 COMMENT "My Comment" 3.0 3.14}
 
-tcltest::test tokens-1.7 { parse into tokens } {
+tcltest::test tokens-2.3 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 /*A "quoted" comment*/
@@ -70,7 +88,7 @@ tcltest::test tokens-1.7 { parse into tokens } {
 }]]
 } {1 COMMENT "A \"quoted\" comment" 3.0 3.22}
 
-tcltest::test tokens-1.8 { parse into tokens } {
+tcltest::test tokens-2.4 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 /*Another
@@ -80,9 +98,7 @@ Comment*/
 } {1 COMMENT "Another\nComment" 3.0 4.9}
 
 
-
-
-tcltest::test tokens-2.0 { parse into tokens } {
+tcltest::test tokens-3.0 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var
@@ -90,7 +106,7 @@ $var
 }]]
 } {1 VARIABLE "var" 3.1 3.4}
 
-tcltest::test tokens-2.1 { parse into tokens } {
+tcltest::test tokens-3.1 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var=1
@@ -100,7 +116,7 @@ $var=1
 2 ASSIGNMENT_OPERATOR "" 3.4 3.5
 3 SOMEWORD "1" 3.5 3.6}
 
-tcltest::test tokens-2.2 { parse into tokens } {
+tcltest::test tokens-3.2 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var[]=1
@@ -112,7 +128,7 @@ $var[]=1
 4 ASSIGNMENT_OPERATOR "" 3.6 3.7
 5 SOMEWORD "1" 3.7 3.8}
 
-tcltest::test tokens-2.3 { parse into tokens } {
+tcltest::test tokens-3.3 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $foo = &$bar;
@@ -124,7 +140,7 @@ $foo = &$bar;
 4 VARIABLE "bar" 3.9 3.12
 5 SEMICOLON "" 3.12 3.13}
 
-tcltest::test tokens-2.4 { parse into tokens } {
+tcltest::test tokens-3.4 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var++;
@@ -138,7 +154,7 @@ $var++;
 5 VARIABLE "var" 4.3 4.6
 6 SEMICOLON "" 4.6 4.7}
 
-tcltest::test tokens-2.5 { parse into tokens } {
+tcltest::test tokens-3.5 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 \$var;
@@ -148,7 +164,7 @@ tcltest::test tokens-2.5 { parse into tokens } {
 2 SOMEWORD "var" 3.2 3.5
 3 SEMICOLON "" 3.5 3.6}
 
-tcltest::test tokens-2.6 { parse into tokens } {
+tcltest::test tokens-3.6 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 <<<END
@@ -159,7 +175,7 @@ END;
 } {1 DOUBLE_QUOTED_STRING "/*not-comment*/" 3.0 5.3
 2 SEMICOLON "" 5.3 5.4}
 
-tcltest::test tokens-2.7 { parse into tokens } {
+tcltest::test tokens-3.7 { parse into tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 <<<END
@@ -172,7 +188,7 @@ END;
 2 SEMICOLON "" 6.3 6.4}
 
 
-tcltest::test tokens-3.0 { unknown tokens } {
+tcltest::test tokens-4.0 { unknown tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 !!$var;
@@ -183,7 +199,7 @@ tcltest::test tokens-3.0 { unknown tokens } {
 3 VARIABLE "var" 3.3 3.6
 4 SEMICOLON "" 3.6 3.7}
 
-tcltest::test tokens-3.1 { unknown tokens } {
+tcltest::test tokens-4.1 { unknown tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 $var ~= 1;
@@ -196,7 +212,7 @@ $var ~= 1;
 5 SEMICOLON "" 3.9 3.10}
 
 
-tcltest::test tokens-4.0 { double quoted string tokens } {
+tcltest::test tokens-5.0 { double quoted string tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 "hi"
@@ -204,7 +220,7 @@ tcltest::test tokens-4.0 { double quoted string tokens } {
 }]]
 } {1 DOUBLE_QUOTED_STRING "hi" 3.0 3.4}
 
-tcltest::test tokens-4.1 { double quoted string tokens } {
+tcltest::test tokens-5.1 { double quoted string tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 "hi
@@ -213,7 +229,7 @@ there"
 }]]
 } {1 DOUBLE_QUOTED_STRING "hi\nthere" 3.0 4.6}
 
-tcltest::test tokens-4.2 { double quoted string tokens } {
+tcltest::test tokens-5.2 { double quoted string tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 "hi\"there\""
@@ -221,7 +237,7 @@ tcltest::test tokens-4.2 { double quoted string tokens } {
 }]]
 } {1 DOUBLE_QUOTED_STRING "hi\\\"there\\\"" 3.0 3.13}
 
-tcltest::test tokens-4.3 { double quoted string tokens } {
+tcltest::test tokens-5.3 { double quoted string tokens } {
     filter_tokens HTML [browse_tokens [save_file f.php {
 <?
 "hi\\""
@@ -2209,18 +2225,14 @@ PAF_FUNC_DEF;bar<>000003.000<>f2.php;3.17<>0x0<>{}<>{}<>{}<>{}
 PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 }
 
-# Need to add tests for string processing. Some variable
-# recognition works inside strings but I don't think
-# function calls should be seen in string literals.
-
 # FIXME: Add check for function call inside function arguments,
-# is that valid?
+# is that valid? Later: I don't think this is valid, if we
+# don't match a known pattern the whole function decl is
+# ignored, is that the right approach to take or should
+# we still process the function even if the args are confused?
 
 # FIXME: Check for parens inside function argument, what if
 # they are not matched?
-
-# FIXME: I think we would loop forever if there was an extra
-# OPEN_PAREN token in the function arg loop! (out of date)
 
 # FIXME: What if a function call includes a syntax error,
 # should we still see this as a function invocation?
@@ -2249,9 +2261,6 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 # )
 # show('myArray');
  
-# FIXME: Need to deal with <?=cmd()?> blocks. They should not
-# generate an assignment token for the '='.
-
 # FIXME: Are there any cases where a DOUBLE_QUOTED_STRING
 # is accepted but a VDOUBLE_QUOTED_STRING is not or vice
 # versa. I think the include case is handled properly, but
@@ -2262,6 +2271,12 @@ PAF_FILE_SYMBOLS;f2.php<>000003.000<>#<>bar<>fu;3.17<>3.9<>3.12<>{}
 
 # FIXME: When if $var['hi'] appears in heredoc does that
 # just match $var and ignore the rest?
+
+# FIXME: Add support for super globals, vars that are
+# global even if they are not in the global table.
+#
+# $GLOBALS, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+# $_ENV, $_REQUEST, $_SESSION
 
 # cleanup
 file delete f.php

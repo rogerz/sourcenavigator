@@ -332,10 +332,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     }
     sn_advance_column(yyleng);
   }
-  ("<?"|"<?php") {
+  ("<?"|"<?="|"<?php"|"<?PHP") {
     /* HTML -> PHP mode switch */
     #if MATCH_DUMP
-    matched_pattern("(<?|<?php)", yytext);
+    matched_pattern("(<?|<?=|<?php|<?PHP)", yytext);
     #endif
     sn_advance_column(yyleng);
 

@@ -1,4 +1,13 @@
-2003-06-11  Mo DeJong  <mdejong@users.sourceforge.net>
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* parsers/php/phpbrowser.c: Regen.
+	* parsers/php/phpbrowser.l: Add support
+	for php mode entry tokens like "<?=" and
+	"<?PHP".
+	* tests/parsers/php.test: Add more tests
+	for php entry mode tokens.
+
+2003-06-12  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* parsers/php/phpbrowser.c: Regen.
 	* parsers/php/phpbrowser.l: Add a new token
