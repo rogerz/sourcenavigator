@@ -1,5 +1,12 @@
 2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
 
+	* configure: Regen.
+	* configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
 	* gui/makepane.tcl (sn_make): Fix build dialog
 	so that it does not flash on screen when first
 	mapped. The toplevel must be withdrawn and
