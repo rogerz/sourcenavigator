@@ -1,3 +1,9 @@
+2002-06-04  Mo DeJong  <supermo@bayarea.net>
+
+	* patches/itk_pathname.patch: Remove patch
+	since it has been integrated into the CVS
+	at sources.redhat.com.
+
 2002-06-01  Mo DeJong  <supermo@bayarea.net>
 
 	* patches/tcl_configure.patch: Add patch for
