@@ -343,7 +343,10 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
         #delete loading message window
         hide_loading_message
 
-        #format
+        # changed by Freek 2007: dont show ridiculous copyright message
+	# again and again when working with the app
+	#
+	# original format
         # ---------------------
         #|     COPY-RIGHT      |
         #| IMAGE TEXT          |
@@ -357,14 +360,6 @@ proc sn_loading_message {{str ""} {title ""} {first_interp 1}\
 
         frame ${w}.m -bg ${bg}
         pack ${w}.m -fill both -expand y
-
-        if {${first_interp}} {
-            global copyright
-            label ${w}.m.copyr -bg ${bg} -fg black\
-              -font $sn_options(def,layout-font) -cursor ${cursor}\
-              -anchor center -text ${copyright}
-            pack ${w}.m.copyr -pady 5 -fill x -expand y -side top
-        }
 
         label ${w}.m.img -bg black -cursor ${cursor} -image company_image \
             -anchor w
