@@ -334,8 +334,8 @@ proc sn_init_globals {} {
         set sn_options(both,others-read) 0
         set sn_options(both,others-write) 0
         set sn_options(both,create-comment-db) ""
-        set sn_options(def,db_cachesize) 300
-        set sn_options(def,xref-db-cachesize) 3000
+        set sn_options(def,db_cachesize) 2048
+        set sn_options(def,xref-db-cachesize) 8192
         sn_add_option def refresh-project "0" "logical"
 
         #parser switches to use.
