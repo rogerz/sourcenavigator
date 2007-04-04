@@ -387,6 +387,15 @@ itcl::class Grep {
 	bind $itk_component(results) <ButtonPress-1> [itcl::code $this text_b1_down %W %x %y]
         bind $itk_component(results) <Double-1> [itcl::code $this text_b1_double %W %x %y]
 
+	# FIXME - possible dirty fix: bind the scrolling to the mousewheel
+        bind $itk_component(results) <Button-4> {
+            %W yview scroll -5 units
+        }
+
+        bind $itk_component(results) <Button-5> {
+            %W yview scroll 5 units
+        }
+
         # Add history to the combo boxes
         refresh_combo_history
 
