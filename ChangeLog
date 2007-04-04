@@ -1,3 +1,9 @@
+--- forked by Freek Sat Mar 24 21:57:28 CET 2007
+
+i decided to fork sourcenavigator as it's been unmaintained for years.
+the file TODO lists whats on my top-level agenda.
+
+
 2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* config/acinclude.m4 (CYG_AC_LOAD_TCLCONFIG,
