@@ -131,7 +131,6 @@ SN_LAUNCH_SHELL = @SN_LAUNCH_SHELL@
 SN_PLATFORM_DIR = @SN_PLATFORM_DIR@
 SN_SDK_EXEC_PREFIX = @SN_SDK_EXEC_PREFIX@
 SOCKLIB = @SOCKLIB@
-SPLASHFILE = @SPLASHFILE@
 SUITE_NAME = @SUITE_NAME@
 TAR = @TAR@
 TCLCONFIG = @TCLCONFIG@
@@ -180,7 +179,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 imagedir = $(datadir)/bitmaps
 
-image_DATA = add.xpm addall.xpm arrow.xpm ascend.xpm browse.xpm build.xpm classes.xpm compile.xpm copy.xpm crossref.xpm cut.xpm del.xpm delall.xpm down.xpm editor.xbm enabled.xbm file.xbm files.xpm find.xpm folder.xbm function.xpm go.xpm goto.xpm grep.xpm ide_icon.xpm info.xpm insert.xpm join.xpm left.xpm hourglass.gif method.xpm minus.xbm move.xpm new.xpm next.xpm open.xpm paste.xpm plus.xbm print.xpm project.xpm question.xpm rarrow.xpm rebuild.xpm right.xpm shadowman.xpm save.xpm search.xpm sign.xpm stop.xpm stree.xpm trace.xpm tree.xpm undef.xbm undo.xpm up.xpm waste.xpm watch.xpm where.xpm sn-text.gif cygsol.gif cygcont.gif boxes.xpm clsbr.xpm clsbr_+-.xpm clsbr_+.xpm clsbr_-.xpm clsbr_p+-.xpm clsbr_p+.xpm clsbr_p-.xpm clsbr_p.xpm clsbr_pv+-.xpm clsbr_pv+.xpm clsbr_pv-.xpm clsbr_pv.xpm clsbr_s.xpm clsbr_v+-.xpm clsbr_v+.xpm clsbr_v-.xpm clsbr_v.xpm clsbr_private.xpm cross_by.xpm cross_dispparam.xpm cross_param.xpm cross_static.xpm cross_to.xpm dbg_redisp.xpm dir.xpm file.xpm key.xpm minus.xpm plus.xpm updir.xpm type_cl.xpm type_cl+.xpm type_cl-.xpm type_con.xpm type_e.xpm type_ec.xpm type_fd.xpm type_fr.xpm type_fu.xpm type_gv.xpm type_iv.xpm type_lv.xpm type_ma.xpm type_md.xpm type_mi.xpm type_t.xpm type_ud.xpm type_un.xpm undef.xpm enabled.xpm unvisited.xpm hold.xpm type_cov.xpm hold_on.xpm hold_off.xpm clsbr_s+-.xpm clsbr_s+.xpm clsbr_s-.xpm type_com.xpm type_su.xpm parent.xpm filter.xpm next2.xpm prev.xpm include.xpm file_b.xpm file_s.xpm file_+.xpm file_-.xpm dir_+.xpm dir_-.xpm file_h.xpm file_d.xpm unknown.xpm play.xpm rplay.xpm sourcenav.ico
+image_DATA = add.xpm addall.xpm arrow.xpm ascend.xpm browse.xpm build.xpm classes.xpm compile.xpm copy.xpm crossref.xpm cut.xpm del.xpm delall.xpm down.xpm editor.xbm enabled.xbm file.xbm files.xpm find.xpm folder.xbm function.xpm go.xpm goto.xpm grep.xpm ide_icon.xpm info.xpm insert.xpm join.xpm left.xpm hourglass.gif method.xpm minus.xbm move.xpm new.xpm next.xpm open.xpm paste.xpm plus.xbm print.xpm project.xpm question.xpm rarrow.xpm rebuild.xpm right.xpm shadowman.xpm save.xpm search.xpm sign.xpm stop.xpm stree.xpm trace.xpm tree.xpm undef.xbm undo.xpm up.xpm waste.xpm watch.xpm where.xpm sn-text.gif cygsol.gif cygcont.gif boxes.xpm clsbr.xpm clsbr_+-.xpm clsbr_+.xpm clsbr_-.xpm clsbr_p+-.xpm clsbr_p+.xpm clsbr_p-.xpm clsbr_p.xpm clsbr_pv+-.xpm clsbr_pv+.xpm clsbr_pv-.xpm clsbr_pv.xpm clsbr_s.xpm clsbr_v+-.xpm clsbr_v+.xpm clsbr_v-.xpm clsbr_v.xpm clsbr_private.xpm cross_by.xpm cross_dispparam.xpm cross_param.xpm cross_static.xpm cross_to.xpm dbg_redisp.xpm dir.xpm file.xpm key.xpm minus.xpm plus.xpm updir.xpm type_cl.xpm type_cl+.xpm type_cl-.xpm type_con.xpm type_e.xpm type_ec.xpm type_fd.xpm type_fr.xpm type_fu.xpm type_gv.xpm type_iv.xpm type_lv.xpm type_ma.xpm type_md.xpm type_mi.xpm type_t.xpm type_ud.xpm type_un.xpm undef.xpm enabled.xpm unvisited.xpm hold.xpm type_cov.xpm hold_on.xpm hold_off.xpm clsbr_s+-.xpm clsbr_s+.xpm clsbr_s-.xpm type_com.xpm type_su.xpm parent.xpm filter.xpm next2.xpm prev.xpm include.xpm file_b.xpm file_s.xpm file_+.xpm file_-.xpm dir_+.xpm dir_-.xpm file_h.xpm file_d.xpm unknown.xpm play.xpm rplay.xpm sourcenav.ico splashsn*.gif
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -307,7 +306,6 @@ mostlyclean distclean maintainer-clean
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(imagedir)
-	$(INSTALL_DATA) $(srcdir)/@SPLASHFILE@ $(DESTDIR)$(imagedir)/splash.gif
 	$(INSTALL_DATA) $(srcdir)/@X11ICON@ $(DESTDIR)$(imagedir)/paf.xbm
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
