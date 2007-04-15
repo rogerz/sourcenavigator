@@ -12,6 +12,9 @@
 # control software packages or new language parsers into Source-Navigator.
 # Refer to the Programmer's Reference Guide for more detailed information.
 #
+#   15 April, 2007 - E M Thornber
+#   Update Clearcase integration
+#
 ###############################################################################
 
 ###############################################################################
@@ -107,35 +110,39 @@ sn_add_version_control_system sccs \
 	-unlock-individual "sccs unget -n" \
 	-unlock-individual "sccs unget -n -r"
 
-# Rational's ClearCase configuration management system (version 3.x)
+# IBM's (ex Rational's) ClearCase configuration management system (version 4.x)
 #
 # This configuration uses the command line driven ClearCase diff tool to
 # produce UNIX-compatible diff output on stdout.  Then we use Source-
 # Navigator's built-in diff tool to view the results.
 
+# +EMT 070415
+# Use impedance matching scripts
 sn_add_version_control_system ccase \
-	-checkin "cleartool checkin -cq" \
+	-checkin "cleartool checkin -cq " \
 	-checkin-comment-via stdin \
-	-checkout "cleartool checkout -nc" \
-	-checkout-exclusive "cleartool checkout -nc -reserved" \
-	-checkout-individual "cleartool -nc checkout" \
-	-checkout-individual-to-stdout "cleartool checkout -o -" \
+	-checkout "ccase-checkout.sh " \
+	-checkout-exclusive "ccase-checkout-exclusive.sh " \
+	-checkout-individual "ccase-checkout-individual.sh " \
+	-checkout-individual-to-stdout "ccase-checkout-individual-to-stdout.sh " \
 	-checkout-with-lock no \
-	-delete-revision "cleartool rmver -force" \
-	-diff-command "cleartool diff -diff_format" \
+	-diff-command "cleartool diff -diff_format " \
 	-diff-ignore-case "" \
 	-diff-ignore-whitespace "-opt -blank_ignore" \
-	-discard "cleartool uncheckout" \
-	-history "cleartool lshistory" \
-	-history-individual "cleartool lshistory" \
-	-ignore-dirs archives \
-	-lock "cleartool reserve -nc" \
-	-lock-individual "cleartool reserve -nc" \
-	-revision-number-pattern {create version "(.*)"} \
-	-symbolic-tags-pattern {create version .*\((.*)\)} \
-	-title ClearCase \
-	-unlock "cleartool unreserve -nc" \
-	-unlock-individual "cleartool unreserve -nc"
+	-discard "cleartool uncheckout -keep " \
+	-history "ccase-history.sh " \
+	-history-pattern { {start end} } \
+	-history-individual "ccase-history-individual.sh " \
+	-history-individual-pattern { {start end} } \
+	-ignore-dirs lost+found \
+	-lock "cleartool reserve -nc " \
+	-lock-individual "ccase-lock-individual.sh " \
+	-revision-number-pattern "^Version:(/.*/\[0-9\])$" \
+	-symbolic-tags-pattern "^Labels:(.*)$" \
+	-title ClearCase4.1 \
+	-unlock "cleartool unreserve -nc " \
+	-unlock-individual "ccase-unlock-individual.sh "
+# -EMT 070415
 
 ###############################################################################
 #
