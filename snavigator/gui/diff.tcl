@@ -19,6 +19,10 @@
 # 
 # diff.tcl - Implement a UI on top of the familiar diff(1) tool.
 # Copyright (C) 1998-1999 Cygnus Solutions.
+#
+#   15 April, 2007 - E M Thornber
+#   Correct Prev and Next button behaviour
+#
 
 itcl::class RCSTopdiff& {
     inherit sourcenav::Window
@@ -363,7 +367,7 @@ itcl::class RCSTopdiff& {
         # visible.
 
         if {${setpos}} {
-            ${this} centerOnScreen
+            ${this} center
         }
     }
 
