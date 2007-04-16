@@ -21,6 +21,9 @@
 ##
 ## Grep (Find in Files...)
 ##
+#   15 April, 2007 - E M Thornber
+#   Make the grep pane forward and back buttons work properly
+#
 ########################################
 
 itcl::class sourcenav::GrepDriver {
@@ -572,7 +575,7 @@ itcl::class Grep {
         $itk_component(results) delete 0.0 end
         $itk_component(results) config -state disabled
         # Clear selected line property
-        set text_b1_current_line_num -1
+        set text_b1_current_line_num 0
         tixBusy $itk_component(results) off
 
         # FIXME : use one but not both!
@@ -930,7 +933,7 @@ itcl::class Grep {
 
         set nextline [expr {$text_b1_current_line_num + $amount}]
 
-        if {$nextline == 0} {
+        if {$nextline < 1} {
             # Text widget treats line 0 as line 1
             text_select_line $lastline
         } elseif {$nextline > $lastline} {
@@ -992,7 +995,7 @@ itcl::class Grep {
         global tcl_platform
 
         # No selection has been made
-        if {$text_b1_current_line_num == -1} {
+        if {$text_b1_current_line_num == 0} {
             return [list "" "" "" "" "" "" "" ""]
         }
 
@@ -1162,7 +1165,7 @@ itcl::class Grep {
     # bindings on the text widet
 
     private variable text_b1_really_up_after ""
-    private variable text_b1_current_line_num -1
+    private variable text_b1_current_line_num 0
 
     # The text from the currently selected line
     # in the text widget.
