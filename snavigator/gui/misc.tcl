@@ -557,11 +557,7 @@ proc sn_hide_show_project {cmd {mainw ""}} {
                 continue
             }
             set geo [wm geometry ${win}]
-            if {${win} == ${active}} {
-                set act 1
-            } else {
-                set act 0
-            }
+           set act [ expr {(${win} == ${active}) ? 1 : 0} ]
 
             set sn_HideShowParams(${win},EXISTS) 1
             set sn_HideShowParams(${win},WIN) ${win}
@@ -571,6 +567,11 @@ proc sn_hide_show_project {cmd {mainw ""}} {
 
             if {${mainw} == ${win}} {
                 #icon window
+
+               #save icon name and replace it with project name
+               set sn_HideShowParams(${win},ICONNAME) [wm iconname ${win}]
+               wm iconname ${win} $sn_options(sys,project-name)
+
                 wm iconify ${win}
 
                 #save close command and replace it to close the project
@@ -601,6 +602,10 @@ proc sn_hide_show_project {cmd {mainw ""}} {
             set geo $sn_HideShowParams(${p},GEOM)
             set sta $sn_HideShowParams(${p},STATE)
             set act $sn_HideShowParams(${p},ACTIVE)
+           if {${mainw} == ${win}} {
+               # icon window - restore icon name
+               wm iconname ${win} $sn_HideShowParams(${p},ICONNAME)
+           }
 
             catch {
                 if {${act} == 0} {
