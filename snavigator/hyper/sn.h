@@ -189,7 +189,10 @@ extern void Paf_panic (int level);
 extern char * SN_GetSymbolType(int type);
 
 #if WIN32
-extern int getopt _ANSI_ARGS_((int argc,char **argv,char *opt));
+/* this shouldn't be required anymore, but leave it here - getopt() is defined by getopt.h */
+/*
+ extern int getopt _ANSI_ARGS_((int argc,char **argv,char *opt));
+ */
 #endif /* WIN32 */
 
 #if (__cplusplus)
