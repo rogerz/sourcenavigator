@@ -56,7 +56,10 @@ typedef const char	*ARGTYPE;
 typedef char	*ARGTYPE;
 #endif /* WIN32 */
 
-extern ARGTYPE	optarg;
+/* optarg is already defined, do not redefine it */
+/*
+ extern ARGTYPE	optarg;
+ */
 
 extern	jmp_buf	BAD_IMPL_jmp_buf;
 
