@@ -1106,19 +1106,25 @@ proc load_xref_pipe {xreffd xfer_file} {
 
         sn_log "Cross-ref PIPE: ${line}"
 
-        #actualize termometer
-
+        # actualize termometer only in normal mode; do not show it in batch mode
         set scanning "Status: Scanning: "
         if {[string first $scanning ${line}] == 0} {
             set file [string range $line [string length $scanning] end]
-            xref_termometer_disp $file 0
+            if {[sn_batch_mode]} { 
+    	    } else { 
+               xref_termometer_disp $file 0
+            }
         }
 
         set deleting "Status: Deleting: "
         if {[string first $deleting ${line}] == 0} {
             set file [string range $line [string length $deleting] end]
-            xref_termometer_disp $file 1
+            if {[sn_batch_mode]} { 
+            } else { 
+               xref_termometer_disp $file 1
+            }
         }
+
     }
 
     update idletasks
@@ -1937,9 +1943,15 @@ proc sn_create_new_project {{import_file ""}} {
     # be mapped. This avoids a problem under Windown 95/98
     # where there is a long pause between the time the
     # file scanning is done and the symbol browser shows up.
+    #
+    # This delay causes the batch mode to stop prematurely,
+    # without creating the xref tables. (reason?)
+    # Therefore, I removed it again (Bart Van Rompaey - 
+    # bart.vanrompaey2@ua.ac.be)
     if {${xfer_file} != "" && [file exists ${xfer_file}] && [file size\
       ${xfer_file}] > 0} {
-        after 1000 [list sn_load_xref ${xfer_file} ${cbrowser_xref}]
+        #after 1000 [list sn_load_xref ${xfer_file} ${cbrowser_xref}]
+        sn_load_xref ${xfer_file} ${cbrowser_xref}
     }
 
     catch {paf_db_proj sync}
