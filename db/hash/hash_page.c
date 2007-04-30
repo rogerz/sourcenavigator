@@ -63,14 +63,15 @@ static char sccsid[] = "@(#)hash_page.c	8.7 (Berkeley) 8/14/96";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef DEBUG
-#include <assert.h>
-#endif
 
 #include <db.h>
 #include "hash.h"
 #include "page.h"
 #include "extern.h"
+
+#ifdef DEBUG
+#include <assert.h>
+#endif
 
 static u_int32_t	*fetch_bitmap __P((HTAB *, int));
 static u_int32_t	 first_free __P((u_int32_t));

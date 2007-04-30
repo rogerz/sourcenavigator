@@ -47,14 +47,15 @@ static char sccsid[] = "@(#)hash.c	8.9 (Berkeley) 6/16/94";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef DEBUG
-#include <assert.h>
-#endif
 
 #include <db.h>
 #include "hash.h"
 #include "page.h"
 #include "extern.h"
+
+#ifdef DEBUG
+#include <assert.h>
+#endif
 
 static int   alloc_segs __P((HTAB *, int));
 static int   flush_meta __P((HTAB *));
