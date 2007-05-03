@@ -47,6 +47,7 @@
 # Balloon help text tokens are usually suffixed with "INFO".
 #
 ###############################################################################
+ProductName,Source-Navigator
 
 Format,Form[at
 Work,[Arbeit
