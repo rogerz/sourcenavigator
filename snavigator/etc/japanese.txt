@@ -817,9 +817,9 @@ ScanningCanceld,スキャンを停止してよろしいですか?
 DatabaseFilesCouldNotBeDeleted,Source-Navigator は古いデータベース ファイルを削除できませんでした。\n処理を続けますか?
 WrongProjectName,プロジェクト名 '%s' は有効ではありません
 WrongDatabaseDirectory,データベース ディレクトリ名 '%s' は有効ではありません
-SplashCopyrightText,Copyright (c) 1997-2000 Red Hat, Inc.
-SplashSubCopyrightText,(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
-SplashAllRightsReserved,All rights reserved. Source-NavigatorTM, the Source-NavigatorTM ロゴ および Red Hat, Inc. ロゴは米国 Cygnus Solutions 社の商標です。 その他のすべての製品名は、各社の商標です。
+SplashCopyrightText,Copyright (c) 2007 Sourcenav NG Development Group
+SplashSubCopyrightText,(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
+SplashAllRightsReserved,Released under GPL.\nAll rights reserved. Source-NavigatorTM, the Source-NavigatorTM ロゴ および Red Hat, Inc. ロゴは米国 Cygnus Solutions 社の商標です。 その他のすべての製品名は、各社の商標です。
 SDK_UnknownRequest,Source-Navigator has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
 
 #Others tab in Preferences (those not in other places)
