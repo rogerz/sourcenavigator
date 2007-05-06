@@ -209,7 +209,10 @@ itcl::body sourcenav::ExecGrepDriver::finish { } {
     $t configure -state normal
 
     set pat $activePattern
-    set pat_len [string length $pat]
+    regsub -all "\<" ${pat} "\m" pat
+    regsub -all "\>" ${pat} "\M" pat
+
+    set pat_len 0
     set numlines [expr {int([$t index end]) - 1}]
     set index_list [list]
 
@@ -219,20 +222,31 @@ itcl::body sourcenav::ExecGrepDriver::finish { } {
         set case -exact
     }
 
-    # Preform highlighing (colorization) of the results.
+    # Perform highlighing (colorization) of the results.
 
-    set patt_len 0
-    set line_index [$t search -count patt_len -regexp -- \
-        {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)} 1.0 end]
+    set filename_len 0
+
+    # {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)}
+    # matches things like:
+    #
+    #        /home/user/work/files/project.c:108:
+    #        C:/home/user/work/files/project.c:108:
+    #
+    # So we don't color parts of the filename by mistake.
+
+    set filename_pat {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)}
+    set line_index [$t search -count filename_len -regexp -- \
+         $filename_pat 1.0 end]
   
     while {$line_index != ""} {
         set start_next_line [list $line_index + 1 lines]
-        set line_index [list $line_index + $patt_len chars]
-        set index [$t search $case -- $pat $line_index $start_next_line]
+        set line_index [list $line_index + $filename_len chars]
+        set index [$t search $case -count pat_len -regexp -- \
+	    $pat $line_index $start_next_line]
 
         if {$index == ""} {
             sn_log "GREP: Colorizing error at ($line_index,$start_next_line)\
-                or attempting to colorize a Formatted pattern."
+                or attempting to colorize a Formatted pattern >$pat<."
             break
         }
 
@@ -243,21 +257,14 @@ itcl::body sourcenav::ExecGrepDriver::finish { } {
         while {$index != ""} {
             set end_index [list $index + $pat_len chars]
             lappend index_list $index $end_index
-            set index [$t search $case -- $pat $end_index $start_next_line]
+            set index [$t search $case -count pat_len -regexp -- \
+	        $pat $end_index $start_next_line]
         }
 
         # Skip the filename and line number at the begining again.
-        # {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)}
-        # matches things like:
-        #
-        #        /home/user/work/files/project.c:108:
-        #        C:/home/user/work/files/project.c:108:
-        #
-        # So we don't color parts of the filename by mistake.
 
-	set line_index [$t search -count patt_len -regexp \
-            -- {^(([A-Z].)(:?)([^:]*)|([^:]*))(:?)([0-9]+)(:?)} \
-            $end_index end]
+	set line_index [$t search -count filename_len -regexp -- \
+            $filename_pat $end_index end]
     }
 
     if {$index_list != {}} {
@@ -451,7 +458,7 @@ itcl::body sourcenav::ExecGrepDriver::isAvailable {} {
     set grep_cmd [file join $sn_path(bindir) "grep$exeext"]
 
     if {! [file exists $grep_cmd]} {
-        set grep_cmd "grep"
+        set grep_cmd "egrep"
     }
 
     # Pass in an empty second file to make the first file's name
