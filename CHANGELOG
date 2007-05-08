@@ -1,3 +1,43 @@
+Release NG1 (Tue May  8 20:02:42 CEST 2007)
+
+(INTERNAL) update TODO file
+(ENHANCE) Highlight grep pattern when using format strings/regexps in greppane
+(INTERNAL) Add the possible new SN logo V
+(INTERNAL) Add the possible new SN logo IV
+(INTERNAL) Add the possible new SN logo III
+(INTERNAL) Add the possible new SN logo II
+(INTERNAL) Add the possible new SN logo
+(INTERNAL) Update TODO to list removal of -fwritable-strings compiler switch
+(BUGFIX) Allow for configure-generated french.txt, german.txt, part II
+(BUGFIX) Allow for configure-generated french.txt, german.txt
+(BUGFIX) Fix german language strings
+(DOCS) Change copyright msg and display GPL notice for french, japanese, german
+(DOCS) Change copyright msg and display GPL notice
+(INTERNAL) Move snavigator/MAINTAINERS to root of sourcetree and update
+(INTERNAL) Add Bart van Rompaey to CONTRIBUTORS
+(BUGFIX) Fix undefined references to assert() when building db/ with DEBUG
+(INTERNAL) Change version ID to NG1 and regenerate configure
+(BUGFIX) Fix xref-generation when using batch mode
+(BUGFIX) Fix double declaration of optarg that prevented compilation under Win32 for dbimp
+(BUGFIX) Fix multiple declarations of getopt() in hyper that prevented compilation under Win32
+(INTERNAL) Add CONTRIBUTORS file
+(BUGFIX) Fix building tcl library on Win32
+(ENHANCE) Make sure an iconized windows shows its according project name
+(BUGFIX) Fix prev & next buttons in diff-dialog
+(BUFIX) Fix arrow navigation in grep dialog (greppane)
+(ENHANCE) Better integration of Clearcase into SN
+(INTERNAL) Add docs about wanted toplevel svn commit msg format
+(BUGFIX) Remove diplaying of copyright msg when refreshing project
+(INTERNAL) Bugfix the splashscreen installing
+(ENHANCE) Randomly choose splashscreen + shorten splashscreen time
+(INTERNAL) Rename camelCaps ChangeLog to CHANGELOG
+(BUGFIX) Install text file COPYING as 644, not 755
+(INTERNAL) Remove Makefile and other configure auto-generated files from SVN
+(ENHANCE) Pretty up splash screen
+(DOCS) Add TODO file to list top-level goals
+(BUGFIX) enlarge default db caches
+(BUGFIX) fix scrolling in greppane (grep dialog)
+
 --- forked by Freek Sat Mar 24 21:57:28 CET 2007
 
 i decided to fork sourcenavigator as it's been unmaintained for years.
