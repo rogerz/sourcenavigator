@@ -75,8 +75,7 @@ int kill(pid_t pid, int sig);
 #define	sleep(s)	Sleep(s * 1000);
 #endif/* WIN32 */
 
-static	void
-my_panic(int sign)
+static void my_panic(int sign)
 {
 	killed = -1;
 
@@ -91,23 +90,20 @@ my_panic(int sign)
 	abort();
 }
 
-static  void
-term_catch(int sign)
+static void term_catch(int sign)
 {
 	signal(sign,term_catch);
 
 	killed = TRUE;
 #if TTY_TRACE
-	if (tty)
-	{
+	if(tty) {
 		fprintf(tty,"Received signal: %d (pid: %d)\n",
 			sign,(int)getpid());
 	}
 #endif /* TTY_TRACE */
 }
 
-static	int
-read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
+static int read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
 	unsigned short *lck_port,unsigned long *lck_db_pid)
 {
 	char	tmp[500];
@@ -116,13 +112,12 @@ read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
 	int	scan_ret;
 
 	fd = open(lock_file,O_RDONLY,0);
-	if (fd == -1)
+	if(fd == -1)
 		return -1;
 
 	tmp[sizeof(tmp) - 1] = '\0';
 	/* Try it 3 times ! */
-	for (scan_ret = 0, tmp[0] = '\0', cou = 0; cou < 3; cou++)
-	{
+	for(scan_ret = 0, tmp[0] = '\0', cou = 0; cou < 3; cou++) {
 		int	len;
 
 		len = read(fd,tmp,sizeof(tmp) -2);
@@ -150,8 +145,7 @@ read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
 
 	close(fd);
 
-	if (scan_ret != 4 && access(lock_file,F_OK) == 0)
-	{
+	if(scan_ret != 4 && access(lock_file,F_OK) == 0) {
 		return -1;	/* The file has strange contents. */
 	}
 
@@ -167,8 +161,7 @@ read_lock_file(char *lock_file, unsigned long *lck_sn_pid,char *lck_host,
  *	FALSE:		the lock is not active.
  *	-1:		the locker has probably crashed.
  */
-static	int
-check_running(char *lock_file)
+static int check_running(char *lock_file)
 {
   /* This is a legacy variable. */
   char dummy[MAXHOSTNAMELEN + 2];
@@ -177,34 +170,29 @@ check_running(char *lock_file)
   unsigned long lck_sn_pid = 0;
   unsigned long lck_db_pid = 0;
   
-  if (read_lock_file(lock_file,&lck_sn_pid,dummy,&lck_port,&lck_db_pid) == -1)
-    {
+  if(read_lock_file(lock_file,&lck_sn_pid,dummy,&lck_port,&lck_db_pid) == -1) {
       return FALSE;
-    }
+  }
   
-  if (lck_sn_pid == 0)
-    {
+  if(lck_sn_pid == 0) {
       /* Very strange; should never happen! */
       return FALSE;
-    }
+  }
   
   /* Is the project marked as unusable ? */
-  if (lck_db_pid == 0)
-    {
+  if(lck_db_pid == 0) {
       /* Yes, it is unusable. */
       return -1;
-    }
+  }
   
   /* Does the S-N process still exist? */
-  if (kill((pid_t) lck_sn_pid, 0) == -1 && errno == ESRCH)
-    {
+  if(kill((pid_t) lck_sn_pid, 0) == -1 && errno == ESRCH) {
       /* The lock is not active, the process has died. */
       return -1;
-    }
+  }
   
   /* Does the DB process still exist ? */
-  if (kill((pid_t) lck_db_pid, 0) == -1 && errno == ESRCH)
-    {
+  if(kill((pid_t) lck_db_pid, 0) == -1 && errno == ESRCH) {
       unsigned short chk_lck_port = 0;
       unsigned long chk_lck_sn_pid = 0;
       unsigned long chk_lck_db_pid = 0;
@@ -215,7 +203,7 @@ check_running(char *lock_file)
        * whether it contents has been changed since we read the lock
        * file.
        */
-      if (read_lock_file(lock_file,&chk_lck_sn_pid,chk_lck_host,&chk_lck_port,
+      if(read_lock_file(lock_file,&chk_lck_sn_pid,chk_lck_host,&chk_lck_port,
 			 &chk_lck_db_pid) == -1 ||
 	  chk_lck_sn_pid != lck_sn_pid || strcmp(dummy,chk_lck_host) != 0 ||
 	  lck_port != chk_lck_port)
@@ -229,7 +217,7 @@ check_running(char *lock_file)
       
       /* Here it is pretty sure that the database project has died. */
       return -1;
-    }
+  }
   
   /* Return TRUE or -1? Bleah. */
   return TRUE;
@@ -241,8 +229,7 @@ check_running(char *lock_file)
  *	FALSE:		The locker process died.
  *	-1:			No permission to lock.
  */
-static	int
-create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
+static int create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 {
 	int	fd;
 	char	status_buf[500];
@@ -258,24 +245,24 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 		(unsigned long)getpid());
 	status_len = strlen(status_buf);
 
-	while (!killed)
-	{
+	while (!killed) {
 		/* Check whether we can create the file! */
-		if ((fd = open(lock_file,O_RDWR|O_CREAT|O_EXCL,0666)) == -1)
-		{
+		if((fd = open(lock_file,O_RDWR|O_CREAT|O_EXCL,0666)) == -1) {
 			if (errno == EINTR)		/* Interrupted ? */
 				continue;
-			if (errno != EEXIST)
-			{						/* Even the file does not exist, it */
-				return -1;			/* was not possible to create it. */
+			/*
+			 Even the file does not exist, it
+			 was not possible to create it.
+			 */
+			if (errno != EEXIST) {
+				return -1;
 			}
 
-			switch (check_running(lock_file))
-			{
+			switch (check_running(lock_file)) {
 			case TRUE:
 				/* Lets try it again! */
 #if TTY_TRACE
-				if (tty)
+				if(tty)
 					fprintf(tty,"trying %d\n",(int)getpid());
 #endif /* TTY_TRACE */
 				sleep(1);
@@ -283,7 +270,7 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 
 			case FALSE:
 #if TTY_TRACE
-				if (tty)
+				if(tty)
 					fprintf(tty,"removing lock file %d\n",(int)getpid());
 #endif /* TTY_TRACE */
 				unlink(lock_file);
@@ -291,7 +278,7 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 
 			case -1:		/* The locker process died. */
 #if TTY_TRACE
-				if (tty)
+				if(tty)
 					fprintf(tty,"The locker process died.\n");
 #endif /* TTY_TRACE */
 				return FALSE;
@@ -302,21 +289,20 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 
 		/* We could create the file, now we write into it. */
 		write_ret = write(fd,status_buf,status_len);
-		if (write_ret == -1)
+		if(write_ret == -1)
 			return -1;
-		if (write_ret == status_len)
-		{
+
+		if(write_ret == status_len) {
 			char	read_buf[1000];
 
 			lseek(fd,(off_t)0,SEEK_SET);		/* Rewind ! */
 
-			if (read(fd,read_buf,sizeof(read_buf)) == status_len &&
-				memcmp(status_buf,read_buf,status_len) == 0)
-			{
+			if(read(fd,read_buf,sizeof(read_buf)) == status_len &&
+				memcmp(status_buf,read_buf,status_len) == 0) {
 				close(fd);
 
 #if TTY_TRACE
-				if (tty)
+				if(tty)
 					fprintf(tty,"Lock created %d.\n",(int)getpid());
 #endif /* TTY_TRACE */
 				return TRUE;	/* We read what we wrote. */
@@ -324,7 +310,7 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 		}
 		/* Lets try it again! */
 #if TTY_TRACE
-		if (tty)
+		if(tty)
 			fprintf(tty,"Trying again %d...\n",(int)getpid());
 #endif /* TTY_TRACE */
 		sleep(1);
@@ -333,8 +319,7 @@ create_lock_file(char *lock_file,const char *sn_host,const char *sn_pid)
 	return FALSE;		/* Reached, only when killed. */
 }
 
-static void
-set_signals()
+static void set_signals()
 {
 #ifdef SIGHUP
 	signal(SIGHUP,my_panic);
@@ -411,8 +396,8 @@ set_signals()
 
 #define	MAX_MACRO_FILES 500
 void Paf_Cpp_Cross_Ref_Clean();
-int
-main(int argc, char **argv)
+
+int main(int argc, char **argv)
 {
 	char	*data;
 	char	*key;
@@ -443,10 +428,8 @@ main(int argc, char **argv)
 	tty = fopen("/dev/tty","w");
 #endif /* !WIN32 && TTY_TRACE */
 
-	while((type = getopt(argc,argv,"c:C:f:H:O:P:M:sF:")) != EOF)
-	{
-		switch (type)
-		{
+	while((type = getopt(argc,argv,"c:C:f:H:O:P:M:sF:")) != EOF) {
+		switch (type) {
 		case 'c':
 			cache = optarg;
 			break;
@@ -480,30 +463,26 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (optind < argc)
-	{
+	if(optind < argc) {
 		db_prefix = argv[optind];
 	}
 
-	if (!db_prefix)
-	{
+	if(!db_prefix) {
 		fprintf(stderr, "Usage: %s ?-c cache_size? ?-C cross_cache_size? ?-f file? db_prefix\n",
 			argv[0]);
 		fflush(stderr);
 		exit(2);
 	}
 
-	if (set_sgns)
+	if(set_sgns)
 		set_signals();
 
 	killed = FALSE;
 
-	if (sn_host && sn_pid)
-	{
+	if(sn_host && sn_pid) {
 		sprintf(lock_file,"%s.lck",db_prefix);
 
-		switch (create_lock_file(lock_file,sn_host,sn_pid))
-		{
+		switch (create_lock_file(lock_file,sn_host,sn_pid)) {
 		case -1:
 			fprintf(stderr,"Could not create lock,%s\n",strerror(errno));
 			fflush(stderr);
@@ -516,22 +495,20 @@ main(int argc, char **argv)
 			exit(2);
 			break;
 		}
-	}
-	else
+	} else {
 		lock_file[0] = '\0';
+	}
 
-	if (file)
-	{
+	if(file) {
 		FILE	*in;
 
 		in = fopen(file,"r");
-		if (in)
+		if(in)
 			infp = in;
 	}
 
 	/*SN_DBIMP is set interactive in the tcl init procedure!*/
-	if (getenv("SN_DBIMP"))
-	{
+	if(getenv("SN_DBIMP")) {
 		char    tmp[MAXPATHLEN];
 		char    *e;
 
@@ -542,8 +519,7 @@ main(int argc, char **argv)
 			(unsigned long)getpid());
 
 		logfp = fopen(tmp,"w+");
-		if (logfp)
-		{
+		if(logfp) {
 			chmod(tmp,0666);
 			fprintf(logfp,"#dbimp (pid: %lu) started database\n#prefix: <%s> cache: %s ",
 				(unsigned long)getpid(),
@@ -552,12 +528,10 @@ main(int argc, char **argv)
 			fprintf(logfp,"cross_cache: %s file: <%s>\n",
 				cross_cache ? cross_cache : "#",
 				file ? file : "stdin");
-			if (macro_file_num)
-			{
+			if(macro_file_num) {
 				int cou;
 
-				for (cou = 0; cou < macro_file_num; cou++)
-				{
+				for(cou = 0; cou < macro_file_num; cou++) {
 					fprintf(logfp,"macro file %d: <%s>\n",
 						cou + 1,
 						macro_file[cou]);
@@ -572,8 +546,7 @@ main(int argc, char **argv)
 	linenum = 0;
 	type = -999;
 
-	switch (setjmp(BAD_IMPL_jmp_buf))
-	{
+	switch (setjmp(BAD_IMPL_jmp_buf)) {
 	case PAF_PANIC_SOFT:
 		killed = TRUE;
 
@@ -594,20 +567,18 @@ main(int argc, char **argv)
 		break;
 	}
 
-	while (!killed && (bufp = buf.fgets(&buf,infp)))
-	{
-		if (logfp)
-		{
+	while(!killed && (bufp = buf.fgets(&buf,infp))) {
+		if(logfp) {
 			fputs(bufp,logfp);
 			fputs("\n",logfp);
 			fflush(logfp);
 		}
 
-		if (bufp[0] == '#' || bufp[0] == '\0')
+		if(bufp[0] == '#' || bufp[0] == '\0')
 			continue;
 
 		/* Pass on status message from the parser. */
-		if (strncmp(bufp, "Status: ", 8) == 0) {
+		if(strncmp(bufp, "Status: ", 8) == 0) {
 			fprintf(stdout, "%s\n", bufp);
 			fflush(stdout);
 			continue;
@@ -616,13 +587,13 @@ main(int argc, char **argv)
 		linenum++;
 
 		key = strchr(bufp,';');
-		if (key)
+		if(key) {
 			data = strchr(key + 1,';');
-		else
+		} else {
 			data = NULL;
+		}
 
-		if (!key || !data)
-		{
+		if(!key || !data) {
 			fprintf(stderr,"dbimp: Error: unrecognized input \"%s\"\n",bufp);
 			fflush(stderr);
 			continue;
@@ -633,34 +604,24 @@ main(int argc, char **argv)
 		type = strtol(bufp,NULL,0);
 		*key = save_c;
 
-		if (type < -3)
-		{
+		if(type < -3) {
 			fprintf(stderr,"dbimp: Error: invalid type: %ld, %s\n",type,bufp);
 			fflush(stderr);
 			continue;
-		}
-		else if (type == -1)
-		{
+		} else if (type == -1) {
 			db_remove_file_def(0,data + 1);
-		}
-		else if (type == -3)
-		{
+		} else if (type == -3) {
 			db_remove_file_xfer_using_keys(0,data + 1);
-		}
-		else if (type == PAF_CROSS_REF_CPP)
-		{
+		} else if (type == PAF_CROSS_REF_CPP) {
                   panic("PAF_CROSS_REF_CPP input to dbimp");
-		}
-		else
-		{
+		} else {
 			*data = '\0';
 			db_insert_entry(type,key + 1,data + 1);
 		}
 	}
 
 #if TTY_TRACE
-	if (tty)
-	{
+	if(tty) {
 		fprintf(tty,"END (pid: %d) killed: %d eof: %d\n",
 			(int)getpid(),killed,feof(infp));
 	}
@@ -668,32 +629,27 @@ main(int argc, char **argv)
 
 	buf.free(&buf);
 
-	if (Paf_db_close_tables() == -1)
-	{
+	if(Paf_db_close_tables() == -1) {
 		fprintf(stderr,"Database closing error: %s\n",strerror(errno));
 		fflush(stderr);
 
 		killed = -1;
 	}
 
-	if (logfp)
-	{
+	if(logfp) {
 		fprintf(logfp,"#dbimp (pid: %lu) exited\n",(unsigned long)getpid());
 		fclose(logfp);
 	}
 
-	if (lock_file[0])
-	{
-		if (killed == -1)
-		{
+	if(lock_file[0]) {
+		if(killed == -1) {
 			/*
 			 * Mark the project as unusable. We must not open the
 			 * file with O_TRUNC, because if the disk is already full,
 			 * we will get a zero size file that we cannot write.
 			 */
 			int	fd = open(lock_file,O_WRONLY,0666);
-			if (fd != -1)
-			{
+			if(fd != -1) {
 				char	status_buf[500];
 
 				/* Now, we just overwrite the file. The 0000000 pid indicates
@@ -708,18 +664,14 @@ main(int argc, char **argv)
 
 				close(fd);
 			}
-		}
-		else
-		{
+		} else {
 			/* Delete the lock file to indicate, that we did not crash! */
-			if (unlink(lock_file) == -1 && access(lock_file,F_OK) != -1)
-			{
+			if(unlink(lock_file) == -1 && access(lock_file,F_OK) != -1) {
 				/* Under Windows, somebody might have open the file. */
 				sleep(1);
 
 #if TTY_TRACE
-				if (tty)
-				{
+				if(tty) {
 					fprintf(tty,"Removing lock file %d\n",(int)getpid());
 				}
 #endif /* TTY_TRACE */
