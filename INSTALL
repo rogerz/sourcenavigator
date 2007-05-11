@@ -1,7 +1,7 @@
 Binary Install:
 
 To install a binary release of Source-Navigator, extract the
-files from the archive and add the sourcenav-5.X.X/bin
+files from the archive and add the resulting sourcenavigator-<version>/bin
 directory to your PATH. There is no need to run an installer.
 You can run Source-Navigator from the command line using the
 snavigator script. Windows users can also double-click on
@@ -12,12 +12,8 @@ Generic Build Notes:
 These build/install instructions assume that you have already
 downloaded and extracted the source files from the zip or tar file.
 
-We suggest building outside of the src directory, this might
-be a new concept for most users, but it is really quite simple
-once you get the hang of it. With a build dir, all build
-related files for a specific architecture are stored outside
-of the src directory, so you can build multiple executables
-from the same source tree.
+Building outside the src directory is supported; you results may vary, 
+though.
 
 We also suggest installing into a directory other than /usr
 or /usr/local. Some users have reported version conflicts
@@ -36,13 +32,12 @@ gmake, type gmake instead of make in the following instructions.
 
 To build under a UNIX system, simply create a build directory
 and run the configure script. The following commands assume
-the release is 5.2.0 and that the user wants to install
-into a non-default location (/opt/sourcenav) that is owned
-by root. If the install directory is not owned by root, then
-you don't need to become root before the make install step.
+that the user wants to install into a non-default location 
+(/opt/sourcenav) that is owned by root. If the install directory 
+is not owned by root, then you don't need to become root before 
+the make install step.
 
-% mkdir snbuild ; cd snbuild
-% ../sourcenav-5.2.0/configure --prefix=/opt/sourcenav
+% ./configure --prefix=/opt/sourcenav
 % make
 (become root)
 % make install
@@ -62,8 +57,7 @@ Unzip the archive and double click on the msys shortcut to
 start the shell. You can then run the configure script in
 the normal way from inside the shell.
 
-% mkdir snbuild ; cd snbuild
-% ../sourcenav-5.2.0/configure --prefix=/opt/sourcenav
+% ./configure --prefix=/opt/sourcenav
 % make
 % make install
 
@@ -122,8 +116,7 @@ style path containing forward slashes (like D:/Cygwin/opt/sourcenav).
 The following example shows how a patch like /opt/sourcenav mounted
 at D:/Cygwin/opt/sourcenav would be passed.
 
-% mkdir snbuild ; cd snbuild
-% ../sourcenav-5.2.0/configure --host=windows32 --prefix=D:/Cygwin/opt/sourcenav
+% ./configure --host=windows32 --prefix=D:/Cygwin/opt/sourcenav
 % make
 % make install
 
