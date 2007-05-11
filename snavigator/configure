@@ -3155,7 +3155,7 @@ echo "${ECHO_T}$sn_cv_os_mingw32" >&6
 
 if test x$ide_cv_os_cygwin32 = xyes ||
        test x$sn_cv_os_mingw32 = xyes ; then
-   HYPER_CFLAGS="-Wall -fwritable-strings"
+   HYPER_CFLAGS="-Wall"
 fi
 
 

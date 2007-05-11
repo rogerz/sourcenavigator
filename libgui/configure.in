@@ -59,7 +59,7 @@ AC_EGREP_CPP(strncasecmp, [#include <string.h>],
 # Tcl8.1 requires writable strings for gcc
 
 if test "$GCC" = "yes"; then
-   LIBGUI_CFLAGS=-fwritable-strings
+   LIBGUI_CFLAGS=
 else
    LIBGUI_CFLAGS=
 fi

@@ -1924,7 +1924,7 @@ rm -f conftest*
 # Tcl8.1 requires writable strings for gcc
 
 if test "$GCC" = "yes"; then
-   LIBGUI_CFLAGS=-fwritable-strings
+   LIBGUI_CFLAGS=
 else
    LIBGUI_CFLAGS=
 fi
