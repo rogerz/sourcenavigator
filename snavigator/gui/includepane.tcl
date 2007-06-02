@@ -79,9 +79,9 @@ itcl::class Include& {
 
             #draw the entry for the levels in the toolbar of the include browser
             set frame ${exp}
-            frame ${frame}.space -width 5
+            frame ${frame}.space -width 10
             pack ${frame}.space -side left
-            label ${frame}.lbl -relief groove -text [get_indep String\
+            label ${frame}.lbl -anchor center -relief groove -text [get_indep String\
               IncLevelTit] -underline [get_indep Pos IncLevelTit]
             entry ${frame}.txt -relief groove -textvar ${this}.incMaxLevels\
               -width 3
