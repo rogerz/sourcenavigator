@@ -143,15 +143,19 @@ itcl::class XRef& {
             pack ${exp}.remove -side left
 
             #WE NEED A FILTER BUTTON IN THE TOOLBAR
-            button ${exp}.filter -image filter_image -takefocus 0 -command "\
-              [info class]::xref_filter "
-            balloon_bind_info ${exp}.filter [get_indep String XRefFilterINFO]
-            pack ${exp}.filter -side left
+	    button ${exp}.filter -text [get_indep String Mixer]\
+	    	-takefocus 0\
+	    	-underline [get_indep Pos Mixer]\
+	    	-pady 0\
+            	-command "[info class]::xref_filter "
+
+	    balloon_bind_info ${exp}.filter [get_indep String XRefFilterINFO]
+            pack ${exp}.filter -side left -fill y -expand n
 
             #we want to support levels by viewing references
-            frame ${exp}.space -width 5
+            frame ${exp}.space -width 10
             pack ${exp}.space -side left
-            label ${exp}.lbl -relief groove -text [get_indep String\
+            label ${exp}.lbl -anchor center -relief groove -text [get_indep String\
               IncLevelTit] -underline [get_indep Pos IncLevelTit]
             entry ${exp}.txt -relief groove -textvar ${this}-MaxLevels -width 3
             bind ${exp}.txt <Return> "${this} explore_calls"
