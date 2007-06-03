@@ -285,7 +285,7 @@ HelpContents,[Online Manuals...
 Version,About [@PRODUCT_NAME@
 Copyright,Copyright
 INFOHide,Iconize [Project
-INFOGrep,Grep pattern in project
+INFOGrep,Grep selected pattern in project
 INFOHierarchy,Launch Class Hierarchy Browser for selected class
 INFOClasses,List classes
 INFOMethods,List methods
