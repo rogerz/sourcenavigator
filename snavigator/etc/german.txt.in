@@ -577,7 +577,7 @@ ExclusiveModeINFO,Setzt den Filter nur für eine Kategorie und startet das Suchen
 UsedFileDialog,Dateidialog
 MultiGrepFormat,F[ormat:
 MultiGrepMaxMatches,Find f[irst:
-RetrieverINFO,Suche alle zutreffenden Symbole in der Projektdatenbank.
+RetrieverINFO,Sucht auf Selektion passende Symbole in der Projektdatenbank
 GotoNextPosition,Gehe zur nächsten Seite
 SearchGotoLine,Gehe zur Zeile...
 ViewINFO,Zeigt ausgewählte Dateien

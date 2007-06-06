@@ -518,7 +518,7 @@ MultiXRef,[Xref
 MultiInclude,I[nclude
 MultiBrowser,[Symbols
 MultiRetriever,Retrie[ver
-RetrieverINFO,Searches project databases for any matched symbols
+RetrieverINFO,Searches selected pattern in project databases for matching symbols
 
 OpenProject,[Open Project...
 SaveProject,Save Pro[ject
