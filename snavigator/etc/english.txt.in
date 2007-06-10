@@ -810,7 +810,7 @@ WindowsCRLF,Windows
 MacintoshCR,Macintosh
 CannotSaveIncludeDirectories,@PRODUCT_NAME@ is unable to save the include directories.
 LocateIncludeFiles,Locate Hea[ders
-LocateIncludeFilesINFO,Locate header files (This might be slow).
+LocateIncludeFilesINFO,Locate header files. This might slow down the programm.
 NowPrintingPage,Printing page number %d
 NowPrinting,Printing...
 EditorTranslateTabs,Translate Ta[bs To Spaces

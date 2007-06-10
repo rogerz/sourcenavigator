@@ -797,7 +797,7 @@ Localize,[Suche Datei...
 EditorFileTranslationUnixINFO,Speichere Dateien in UNIX format
 EditorFileTranslationWindowsINFO,Speichere Dateien in MSDOS format
 EditorFileTranslationKeepINFO,Speichere Dateien nach ihrem original format
-LocateIncludeFilesINFO,Suche den vollen Pfad für includierte Headerdateien
+LocateIncludeFilesINFO,Suche den vollen Pfad für includierte Headerdateien. Evtl. langsam.
 LocateIncludeFiles,Lokalisiere Includes
 EditorFileTranslation,Dateitranslation
 CannotSaveIncludeDirectories,Include-Verzeichnisse können nicht gespeichert werden

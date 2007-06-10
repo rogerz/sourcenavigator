@@ -814,7 +814,7 @@ WindowsCRLF,Windows
 MacintoshCR,Macintosh
 CannotSaveIncludeDirectories,Source-Navigator ne peut pas enregistrer le répertoire inclus.
 LocateIncludeFiles,Localisation des en-[têtes
-LocateIncludeFilesINFO,Localise les fichiers d'entête (Ceci peut être lent).
+LocateIncludeFilesINFO,Localise les fichiers d'entête Ceci peut être lent.
 NowPrintingPage,Impression de la page numéro %d
 NowPrinting,Impression...
 EditorTranslateTabs,Transforme les ta[bulations en espaces
