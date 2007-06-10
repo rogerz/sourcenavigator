@@ -1033,11 +1033,11 @@ itcl_class Preferences& {
           $sn_options(def,include-locatefiles)
         set lookforinc ${win}.lookforinc
         CheckButton& ${lookforinc} \
-          -labels [list [get_indep String LocateIncludeFiles]] \
-          -underlines [list [get_indep Pos LocateIncludeFiles]] \
+          -labels [list ""] \
           -variables sn_options(opt_def,include-locatefiles) \
+          -label [get_indep String LocateIncludeFiles] \
+          -underlines [list [get_indep Pos LocateIncludeFiles]] \
           -balloons [list [get_indep String LocateIncludeFilesINFO]] \
-          -label "" \
           -labelwidth 35
         pack ${lookforinc} -side top -anchor nw
 
