@@ -41,10 +41,12 @@ int tcl_highlight_lex();
 int c_highlight_lex();
 int java_highlight_lex();
 int ch_highlight_lex();
+int verilog_highlight_lex();
 int py_highlight_lex();
 void tcl_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
 void c_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
 void ch_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
+void verilog_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
 void java_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
 void py_highlight_init_func(int maxs, int lineno, int charno, void (**func) (), void *idx1, void *idx2);
 
@@ -229,6 +231,9 @@ int Sn_Syntax_Highlight(ClientData clientData, Tcl_Interp * interp, int argc, ch
 	} else if(strcmp(language, "chill") == 0) {
 		high_func = ch_highlight_lex;
 		high_init_func = ch_highlight_init_func;
+	} else if(strcmp(language, "verilog") == 0) {
+		high_func = verilog_highlight_lex;
+		high_init_func = verilog_highlight_init_func;
 	} else if(strcmp(language, "python") == 0) {
 		high_func = py_highlight_lex;
 		high_init_func = py_highlight_init_func;

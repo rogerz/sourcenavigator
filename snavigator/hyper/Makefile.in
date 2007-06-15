@@ -196,7 +196,7 @@ sdkinclude_HEADERS = sn.h
 
 bin_PROGRAMS = hyper
 
-hyper_SOURCES = compare.h compare.c dbsym.c exint.c recudir.c services.c sninit.c tclxlist.c tkTreeTable.c tcl_high.c c_high.c py_high.c ch_high.c j_high.c highlight.c tclfileutils.c
+hyper_SOURCES = compare.h compare.c dbsym.c exint.c recudir.c services.c sninit.c tclxlist.c tkTreeTable.c tcl_high.c c_high.c py_high.c ch_high.c j_high.c verilog_high.c highlight.c tclfileutils.c
 
 
 hyper_LDFLAGS = $(WIN32LDAPP)
