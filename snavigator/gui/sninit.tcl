@@ -655,8 +655,8 @@ proc sn_init_globals {} {
           nav_projs.lst]
         set sn_options(def,localhost) "127.0.0.1"
 
-        set sn_options(sys,builtin-highlighting) {c++ java tcl chill python}
-        set sn_options(sys,language-with-xref) {c++ java tcl fortran chill}
+        set sn_options(sys,builtin-highlighting) {c++ java tcl chill python verilog}
+        set sn_options(sys,language-with-xref) {c++ java tcl fortran chill verilog}
 
         #######################################
         ## new variables for multi functional #
