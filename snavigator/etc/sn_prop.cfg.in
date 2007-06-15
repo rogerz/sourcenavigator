@@ -221,6 +221,12 @@ sn_add_parser java \
 	-suffix {*.java} \
 	-brow_cmd $sn_path(bindir)/@JAVAEXE@
 
+# Verilog
+
+sn_add_parser verilog \
+        -suffix {*.vh *.v } \
+        -brow_cmd $sn_path(bindir)/veribrowser
+
 # Tcl/Tk and [incr Tcl]
 
 sn_add_parser tcl \
