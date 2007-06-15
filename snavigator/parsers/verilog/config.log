@@ -1,0 +1,31 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:533: checking for gcc
+configure:646: checking whether the C compiler (gcc  ) works
+configure:662: gcc -o conftest    conftest.c  1>&5
+configure:688: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:693: checking whether we are using GNU C
+configure:702: gcc -E conftest.c
+configure:721: checking whether gcc accepts -g
+configure:757: checking for c++
+configure:789: checking whether the C++ compiler (c++  ) works
+configure:805: c++ -o conftest    conftest.C  1>&5
+configure:831: checking whether the C++ compiler (c++  ) is a cross-compiler
+configure:836: checking whether we are using GNU C++
+configure:845: c++ -E conftest.C
+configure:864: checking whether c++ accepts -g
+configure:921: checking host system type
+configure:942: checking build system type
+configure:968: checking for strip
+configure:1033: checking how to run the C preprocessor
+configure:1054: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1116: checking for getopt.h
+configure:1126: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1164: checking for a BSD compatible install
+configure:1217: checking for main in -ldl
+configure:1232: gcc -o conftest -g -O2   conftest.c -ldl   1>&5
+configure:1260: checking host system type
+configure:1333: checking for leading and/or trailing underscores
+configure:1385: checking for -rdynamic compiler flag
+configure:1408: checking for platform dependent libraries
