@@ -4,7 +4,8 @@ dnl Initialization.
 AC_INIT(abrowser.l)
 AC_PREREQ(2.12.2)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(sn,5.0.0)
+AC_CONFIG_AUX_DIR(../../../..)
+AM_INIT_AUTOMAKE(sn,NG1)
 AM_MAINTAINER_MODE
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++
@@ -18,7 +19,6 @@ case "${host}" in
         ;;
 esac
 
-AC_CONFIG_AUX_DIR(../../../..)
 AC_CANONICAL_HOST
 
 AC_PROG_CC
