@@ -22,3 +22,6 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 SUBDIRS = @ASSEMBLER_DIRS@
+
+flexgen:
+	@for d in $(SUBDIRS); do ( cd $$d ; $(MAKE) flexgen ) ; done

@@ -54,7 +54,7 @@ USING_GNUPRO_NAME=
 PROGRAMMERS_REFERENCE_DIR=progref
 PROGRAMMERS_REFERENCE_INDEX=index_pr.html
 PROGRAMMERS_REFERENCE_NAME="Programmer's Reference Guide"
-ASSEMBLER_DIRS=ppc601-eabi
+ASSEMBLER_DIRS="ppc601-eabi intel8085"
 
 dnl Set all of the product specific variables.
 
@@ -91,14 +91,20 @@ echo $ASSEMBLER_DIRS
 dnl We can't use AC_CONFIG_SUBDIRS(parsers/assembly/$ASSEMBLER_DIRS)
 dnl because AC_CONFIG_SUBDIRS in 2.5X does not allow a variable argument.
 
-case "$ASSEMBLER_DIRS" in
-    ppc601-eabi)
-        AC_CONFIG_SUBDIRS(parsers/assembly/ppc601-eabi)
-        ;;
-    *)
-        AC_MSG_ERROR([Unknow assembly parser $ASSEMBLER_DIRS.])
-        ;;
-esac
+for d in $ASSEMBLER_DIRS
+do
+    case "$d" in
+	intel8085)
+	    AC_CONFIG_SUBDIRS([parsers/assembly/intel8085])
+	    ;;
+	ppc601-eabi)
+	    AC_CONFIG_SUBDIRS([parsers/assembly/ppc601-eabi])
+	    ;;
+	*)
+	    AC_MSG_ERROR([Unknow assembly parser $ASSEMBLER_DIRS.])
+	    ;;
+    esac
+done
 
 dnl The address to send bug reports to.
 AC_ARG_ENABLE(bug-address, [  --enable-bug-address    Specify a non-default address to send bug reports to],
