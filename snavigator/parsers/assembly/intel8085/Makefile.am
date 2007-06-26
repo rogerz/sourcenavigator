@@ -1,4 +1,5 @@
 # Copyright (c) 2000, Red Hat, Inc.
+# Chinese copy for Intel 8085 Assembler parser
 # 
 # This file is part of Source-Navigator.
 # 
@@ -21,31 +22,29 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
-snavigator bitmaps
+toolbox = $(top_builddir)/../../toolbox
+common = $(top_builddir)/../../common
+libutils = $(top_builddir)/../../../misc/libutils
 
-install-exec-local:
-	$(INSTALL) $(top_srcdir)/../COPYING $(DESTDIR)$(prefix)
-	(cd ../tcl; $(MAKE) install-libraries)
-	(cd ../tk; $(MAKE) install-libraries)
-	(cd ../tix; $(MAKE) install-libraries)
-	(cd ../itcl; $(MAKE) install-libraries)
-	(cd ../libgui; $(MAKE) install)
+bin_PROGRAMS = ibrowser
 
-rootdir = $(prefix)
+INCLUDES = $(WINFLAGS) -I$(top_srcdir)/../../../hyper \
+	-I$(top_srcdir)/../../toolbox \
+	-I$(top_srcdir)/../../common
 
-root_DATA = README.TXT NEWS
+ibrowser_SOURCES = ibrowser.c
+ibrowser_LDADD = $(toolbox)/libsnptools.a \
+		$(common)/libcommon.a \
+		$(libutils)/libutils.a \
+		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
-EXTRA_DIST = $(DATA)
+ibrowser_DEPENDENCIES = $(common)/libcommon.a \
+			$(toolbox)/libsnptools.a \
+			$(libutils)/libutils.a
 
+# Used to regenerate .c from .l file
 flexgen:
-	cd hyper ; $(MAKE) flexgen
-	cd parsers/assembly ; $(MAKE) flexgen
-	cd parsers/chill ; $(MAKE) flexgen
-	cd parsers/m4 ; $(MAKE) flexgen
-	cd parsers/python ; $(MAKE) flexgen
-	cd parsers/sendmail ; $(MAKE) flexgen
+	cp $(srcdir)/ibrowser.l .
+	$(LEX) -t $(LFLAGS) ibrowser.l > $(srcdir)/ibrowser.c
+	rm ibrowser.l
 
-bisongen:
-	cd parsers/chill ; $(MAKE) bisongen
-	cd parsers/fortran ; $(MAKE) bisongen

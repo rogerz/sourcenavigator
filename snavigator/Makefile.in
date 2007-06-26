@@ -600,7 +600,7 @@ install-exec-local:
 
 flexgen:
 	cd hyper ; $(MAKE) flexgen
-	cd parsers/assembly/ppc601-eabi ; $(MAKE) flexgen
+	cd parsers/assembly ; $(MAKE) flexgen
 	cd parsers/chill ; $(MAKE) flexgen
 	cd parsers/m4 ; $(MAKE) flexgen
 	cd parsers/python ; $(MAKE) flexgen

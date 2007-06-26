@@ -227,6 +227,12 @@ sn_add_parser tcl \
 	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
 	-brow_cmd $sn_path(bindir)/tbrowser
 
+# Intel 8085 assembly language
+
+sn_add_parser 8085 \
+	-suffix {*.src *.SRC}\
+	-brow_cmd $sn_path(bindir)/ibrowser
+
 # PowerPC 601 assembly language
 
 sn_add_parser asm \
