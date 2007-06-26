@@ -9,7 +9,7 @@ dnl because 10 sorts before 9. We also look for just tcl. We have to
 dnl be careful that we don't match stuff like tclX by accident.
 dnl the alternative search directory is involked by --with-tclinclude
 
-AC_DEFUN(CYG_AC_PATH_TCLH, [
+AC_DEFUN([CYG_AC_PATH_TCLH], [
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 no_tcl=true
 AC_MSG_CHECKING(for Tcl headers in the source tree)
@@ -97,7 +97,7 @@ AC_SUBST(TCLHDIR)
 
 dnl ====================================================================
 dnl Ok, lets find the tcl configuration
-AC_DEFUN(CYG_AC_PATH_TCLCONFIG, [
+AC_DEFUN([CYG_AC_PATH_TCLCONFIG], [
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 dnl First, look for one uninstalled.  
 dnl the alternative search directory is invoked by --with-tclconfig
@@ -186,7 +186,7 @@ AC_SUBST(TCLCONFIG)
 
 dnl Defined as a separate macro so we don't have to cache the values
 dnl from PATH_TCLCONFIG (because this can also be cached).
-AC_DEFUN(CYG_AC_LOAD_TCLCONFIG, [
+AC_DEFUN([CYG_AC_LOAD_TCLCONFIG], [
     . $TCLCONFIG
 
 dnl not used, don't export to save symbols
@@ -238,7 +238,7 @@ dnl not used, don't export to save symbols
 dnl    AC_SUBST(TCL_UNSHARED_LIB_SUFFIX)
 ])
 
-AC_DEFUN(CYG_AC_PATH_TKH, [
+AC_DEFUN([CYG_AC_PATH_TKH], [
 #
 # Ok, lets find the tk source trees so we can use the headers
 # If the directory (presumably symlink) named "tk" exists, use that one
@@ -333,7 +333,7 @@ fi
 AC_SUBST(TKHDIR)
 ])
 
-AC_DEFUN(CYG_AC_PATH_TKCONFIG, [
+AC_DEFUN([CYG_AC_PATH_TKCONFIG], [
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 dnl First, look for one uninstalled.  
 dnl the alternative search directory is invoked by --with-tkconfig
@@ -422,7 +422,7 @@ AC_SUBST(TKCONFIG)
 
 dnl Defined as a separate macro so we don't have to cache the values
 dnl from PATH_TKCONFIG (because this can also be cached).
-AC_DEFUN(CYG_AC_LOAD_TKCONFIG, [
+AC_DEFUN([CYG_AC_LOAD_TKCONFIG], [
     if test -f "$TKCONFIG" ; then
       . $TKCONFIG
     fi
@@ -456,7 +456,7 @@ dnl ====================================================================
 dnl Ok, lets find the itcl source trees so we can use the headers
 dnl the alternative search directory is involked by --with-itclinclude
 
-AC_DEFUN(CYG_AC_PATH_ITCLH, [
+AC_DEFUN([CYG_AC_PATH_ITCLH], [
 dirlist=".. ../../ ../../../ ../../../../ ../../../../../ ../../../../../../ ../../../../../../.. ../../../../../../../.. ../../../../../../../../.. ../../../../../../../../../.."
 no_itcl=true
 AC_MSG_CHECKING(for Itcl headers in the source tree)
@@ -527,7 +527,7 @@ fi
 AC_SUBST(ITCLHDIR)
 ])
 
-AC_DEFUN(CYG_AC_PATH_ITCLCONFIG, [
+AC_DEFUN([CYG_AC_PATH_ITCLCONFIG], [
 #
 # Ok, lets find the itcl configuration
 # First, look for one uninstalled.  
@@ -601,7 +601,7 @@ fi
 
 # Defined as a separate macro so we don't have to cache the values
 # from PATH_ITCLCONFIG (because this can also be cached).
-AC_DEFUN(CYG_AC_LOAD_ITCLCONFIG, [
+AC_DEFUN([CYG_AC_LOAD_ITCLCONFIG], [
     if test -f "$ITCLCONFIG" ; then
       . $ITCLCONFIG
     fi
@@ -617,7 +617,7 @@ dnl eval required to subst TCL_DBGX
 ])
 
 
-AC_DEFUN(CYG_AC_PATH_ITKCONFIG, [
+AC_DEFUN([CYG_AC_PATH_ITKCONFIG], [
 #
 # Ok, lets find the itk configuration
 # First, look for one uninstalled.  
@@ -691,7 +691,7 @@ fi
 
 # Defined as a separate macro so we don't have to cache the values
 # from PATH_ITKCONFIG (because this can also be cached).
-AC_DEFUN(CYG_AC_LOAD_ITKCONFIG, [
+AC_DEFUN([CYG_AC_LOAD_ITKCONFIG], [
     if test -f "$ITKCONFIG" ; then
       . $ITKCONFIG
     fi

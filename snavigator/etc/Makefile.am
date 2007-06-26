@@ -19,11 +19,13 @@
 # 
 AUTOMAKE_OPTIONS = cygnus
 
+LANG_TXT_FILES=english.txt french.txt german.txt
+
 ## Process this file with automake to produce Makefile.in.
 SUBDIRS = sn_toolchains
 
 etcdir = $(datadir)/etc
-etc_DATA = english.txt french.txt german.txt grep.fil sn_prop.cfg \
+etc_DATA = $(LANG_TXT_FILES) grep.fil sn_prop.cfg \
 sn.el sn_cmp_g.pat snscenario snavigator snpdbg
 
 # +EMT 070415
@@ -43,7 +45,7 @@ ccase-unlock-individual.sh
 ## Compare all language files against English.  english.txt must be first in
 ## the dependency list.
 
-stamp:		english.txt
+stamp:		$(LANG_TXT_FILES)
 		TCL_LIBRARY=$(TCL_LIBRARY); export TCL_LIBRARY; \
                 for lang in $^ ;\
 		do \

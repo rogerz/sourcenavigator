@@ -5,7 +5,7 @@ dnl major rewriting for Tcl 7.5 by Don Libes <libes@nist.gov>
 
 dnl Start of Tix stuff
 
-AC_DEFUN(CY_AC_PATH_TIXCONFIG, [
+AC_DEFUN([CY_AC_PATH_TIXCONFIG], [
 #
 # Ok, lets find the tix configuration
 # First, look for one uninstalled.  
@@ -79,7 +79,7 @@ fi
 
 # Defined as a separate macro so we don't have to cache the values
 # from PATH_TIXCONFIG (because this can also be cached).
-AC_DEFUN(CY_AC_LOAD_TIXCONFIG, [
+AC_DEFUN([CY_AC_LOAD_TIXCONFIG], [
     if test -f "$TIXCONFIG" ; then
       . $TIXCONFIG
     fi
@@ -90,7 +90,7 @@ AC_DEFUN(CY_AC_LOAD_TIXCONFIG, [
 # End of Tix stuff
 
 dnl Use this macro if you want to include db.h.
-AC_DEFUN(CY_AC_BERKELEY_DB,
+AC_DEFUN([CY_AC_BERKELEY_DB],
 [for type in int8_t u_int8_t int16_t u_int16_t int32_t u_int32_t int64_t u_int64_t ; do
   AC_MSG_CHECKING(for $type)
   AC_CACHE_VAL(db_cv_$type,

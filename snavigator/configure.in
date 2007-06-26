@@ -4,10 +4,9 @@ dnl Initialization.
 AC_INIT(hyper/sninit.c)
 AC_PREREQ(2.12.2)
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_AUX_DIR(..)
 AM_INIT_AUTOMAKE(sn,NG2)
 AM_MAINTAINER_MODE
-
-AC_CONFIG_AUX_DIR(..)
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++
 # needs extra hand holding.
@@ -252,88 +251,88 @@ dnl to support configuring with autoconf 2.13. Once the move to
 dnl 2.5X is made, the manual check below can be replaced with
 dnl the call to AC_CHECK_TYPES.
 
-dnl AC_CHECK_TYPES([ssize_t, size_t, mode_t, off_t, pid_t])
+AC_CHECK_TYPES([ssize_t, size_t, mode_t, off_t, pid_t, u_char])
 
-AC_MSG_CHECKING(for ssize_t)
-AC_CACHE_VAL(db_cv_type_ssize_t, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>], [ssize_t c = '0';],
-db_cv_type_ssize_t=yes,
-db_cv_type_ssize_t=no)])
-AC_MSG_RESULT($db_cv_type_ssize_t)
-if test "$db_cv_type_ssize_t" = yes; then
-   AC_DEFINE(HAVE_SSIZE_T,,[Define if ssize_t is defined.])
-fi
+dnl AC_MSG_CHECKING(for ssize_t)
+dnl AC_CACHE_VAL(db_cv_type_ssize_t, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>], [ssize_t c = '0';],
+dnl db_cv_type_ssize_t=yes,
+dnl db_cv_type_ssize_t=no)])
+dnl AC_MSG_RESULT($db_cv_type_ssize_t)
+dnl if test "$db_cv_type_ssize_t" = yes; then
+dnl    AC_DEFINE(HAVE_SSIZE_T,,[Define if ssize_t is defined.])
+dnl fi
 
-AC_MSG_CHECKING(for size_t)
-AC_CACHE_VAL(db_cv_type_size_t, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>], [size_t c = '0';],
-db_cv_type_size_t=yes,
-db_cv_type_size_t=no)])
-AC_MSG_RESULT($db_cv_type_size_t)
-if test "$db_cv_type_size_t" = yes; then
-   AC_DEFINE(HAVE_SIZE_T,,[Define if size_t is defined.])
-fi
+dnl AC_MSG_CHECKING(for size_t)
+dnl AC_CACHE_VAL(db_cv_type_size_t, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>], [size_t c = '0';],
+dnl db_cv_type_size_t=yes,
+dnl db_cv_type_size_t=no)])
+dnl AC_MSG_RESULT($db_cv_type_size_t)
+dnl if test "$db_cv_type_size_t" = yes; then
+dnl    AC_DEFINE(HAVE_SIZE_T,,[Define if size_t is defined.])
+dnl fi
 
-AC_MSG_CHECKING(for mode_t)
-AC_CACHE_VAL(db_cv_type_mode_t, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>], [mode_t c = '0';],
-db_cv_type_mode_t=yes,
-db_cv_type_mode_t=no)])
-AC_MSG_RESULT($db_cv_type_mode_t)
-if test "$db_cv_type_mode_t" = yes; then
-   AC_DEFINE(HAVE_MODE_T,,[Define if mode_t is defined.])
-fi
+dnl AC_MSG_CHECKING(for mode_t)
+dnl AC_CACHE_VAL(db_cv_type_mode_t, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>], [mode_t c = '0';],
+dnl db_cv_type_mode_t=yes,
+dnl db_cv_type_mode_t=no)])
+dnl AC_MSG_RESULT($db_cv_type_mode_t)
+dnl if test "$db_cv_type_mode_t" = yes; then
+dnl    AC_DEFINE(HAVE_MODE_T,,[Define if mode_t is defined.])
+dnl fi
 
-AC_MSG_CHECKING(for off_t)
-AC_CACHE_VAL(db_cv_type_off_t, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>], [off_t c = '0';],
-db_cv_type_off_t=yes,
-db_cv_type_off_t=no)])
-AC_MSG_RESULT($db_cv_type_off_t)
-if test "$db_cv_type_off_t" = yes; then
-   AC_DEFINE(HAVE_OFF_T,,[Define if off_t is defined.])
-fi
+dnl AC_MSG_CHECKING(for off_t)
+dnl AC_CACHE_VAL(db_cv_type_off_t, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>], [off_t c = '0';],
+dnl db_cv_type_off_t=yes,
+dnl db_cv_type_off_t=no)])
+dnl AC_MSG_RESULT($db_cv_type_off_t)
+dnl if test "$db_cv_type_off_t" = yes; then
+dnl    AC_DEFINE(HAVE_OFF_T,,[Define if off_t is defined.])
+dnl fi
 
-AC_MSG_CHECKING(for pid_t)
-AC_CACHE_VAL(db_cv_type_pid_t, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>], [pid_t c = '0';],
-db_cv_type_pid_t=yes,
-db_cv_type_pid_t=no)])
-AC_MSG_RESULT($db_cv_type_pid_t)
-if test "$db_cv_type_pid_t" = yes; then
-   AC_DEFINE(HAVE_PID_T,,[Define if pid_t is defined.])
-fi
+dnl AC_MSG_CHECKING(for pid_t)
+dnl AC_CACHE_VAL(db_cv_type_pid_t, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>], [pid_t c = '0';],
+dnl db_cv_type_pid_t=yes,
+dnl db_cv_type_pid_t=no)])
+dnl AC_MSG_RESULT($db_cv_type_pid_t)
+dnl if test "$db_cv_type_pid_t" = yes; then
+dnl    AC_DEFINE(HAVE_PID_T,,[Define if pid_t is defined.])
+dnl fi
 
-AC_MSG_CHECKING(for u_char)
-AC_CACHE_VAL(db_cv_type_u_char, [dnl
-AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>
-#if defined(__MINGW32__)
-# include <winsock.h>
-#endif
-], [u_char c = '0';], db_cv_type_u_char=yes,
-db_cv_type_u_char=no)])
-AC_MSG_RESULT($db_cv_type_u_char)
-if test "$db_cv_type_u_char" = yes; then
-   AC_DEFINE(HAVE_UCHAR_T,,[Define if uchar_t (and friends) are defined.])
-fi
+dnl AC_MSG_CHECKING(for u_char)
+dnl AC_CACHE_VAL(db_cv_type_u_char, [dnl
+dnl AC_TRY_COMPILE([#ifdef HAVE_UNISTD_H
+dnl #include <unistd.h>
+dnl #endif
+dnl #include <sys/types.h>
+dnl #if defined(__MINGW32__)
+dnl # include <winsock.h>
+dnl #endif
+dnl ], [u_char c = '0';], db_cv_type_u_char=yes,
+dnl db_cv_type_u_char=no)])
+dnl AC_MSG_RESULT($db_cv_type_u_char)
+dnl if test "$db_cv_type_u_char" = yes; then
+dnl    AC_DEFINE(HAVE_UCHAR_T,,[Define if uchar_t (and friends) are defined.])
+dnl fi
 
 dnl Test for GNU libc.
 AC_CACHE_CHECK([for GNU libc],sn_cv_lib_glibc,[AC_EGREP_CPP(yes, [
@@ -563,6 +562,8 @@ parsers/toolbox/Makefile
 bitmaps/Makefile
 etc/Makefile
 etc/english.txt
+etc/french.txt
+etc/german.txt
 etc/sn_prop.cfg
 etc/sn_toolchains/Makefile
 snavigator/Makefile
