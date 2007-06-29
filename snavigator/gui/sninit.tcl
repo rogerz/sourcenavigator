@@ -431,6 +431,7 @@ proc sn_init_globals {} {
 
         #text editor
         #external editor
+	set sn_options(def,edit-external-always) 0
         set sn_options(def,edit-external-editor) ""
         set sn_options(noname_file) "(noname)"
         if {$tcl_platform(platform) == "windows"} {
