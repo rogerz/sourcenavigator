@@ -558,6 +558,7 @@ Close,[Schließen
 SaveAsDefault,Einige Optionen wurden geändert, die zu den Standardoptionen gehören.\nMöchten Sie diese Änderungen als Standard speichern?
 MultiMake,[Make
 ExternalEditor,Externer [Editor
+ExternalEditorAlways,Externen Editor im[mer verwenden
 GenerateXRefINFO,Erstellt Cross-Referenz Datenbank
 Word,[Wort
 CannotDeleteProject,Das Projekt konnte nicht gelöscht werden.\nPrüfen Sie die Ursache und versuchen Sie es erneut.

@@ -484,7 +484,6 @@ itcl::class Editor& {
 	} else {
 	    set state "normal"
 	}
-
 	${m} add command \
 	    -label [get_indep String EditCut] \
 	    -underline [get_indep Pos EditCut] \
@@ -514,10 +513,19 @@ itcl::class Editor& {
 	    -accelerator "Ctrl+V" \
 	    -command "${this} Paste" \
 	    -state ${state}
+	
+	# NOT YET: external editor
+	#${m} add separator
 
-	# Text sensitive commands, (Retriever, Views).
+	#${m} add command \
+	#    -label "Open in external editor" \
+	#    -underline 2 \
+	#    -accelerator "Ctrl+U" \
+	#    -command "${this} open_external_editor" \
+	#    -state "normal"
 	${m} add separator
 
+	# Text sensitive commands, (Retriever, Views).
 	AddRetrieveMenu ${m} ${this} $itk_component(editor) ${x} ${y}
     }
 
@@ -806,6 +814,229 @@ itcl::class Editor& {
 	# NOBODY asks us to translate previous blanks to tabs when
 	# the user inserts a TAB.
 	return
+    }
+
+    # this function opens the external editor
+    # try to catch the saving / exiting and relaunch parsing
+    method open_external_editor {{line ""} {search 1}} {
+#        global sn_options
+#        set gvim "gvim"
+#        set gvimfile $itk_option(-filename)
+#        lappend gvim $itk_option(-filename)
+#        #append gvim "<" $sn_options(def,null_dev)
+#        sn_log "Editor command: ${gvim}"
+#        set fd [open "| ${gvim}"]
+#        fconfigure ${fd} \
+#        -encoding $sn_options(def,system-encoding) \
+#        -blocking 0
+#
+#        #wait until the contents are read,
+#        #some times the executed program is so fast, that the
+#        #following command failes.
+#        catch {fileevent ${fd} readable "wait_editor_end ${fd}"}
+#        after 500
+#        return ""
+	global sn_options
+	global tkeWinNumber sn_debug
+	set state "normal"
+	puts "open external editor start"
+	set w $itk_component(editor)
+	set line [${w} index insert]
+
+	# convert first the file name to be edited to a project-related name
+	set file $itk_option(-filename)
+	set file [sn_convert_FileName ${file}]
+
+	# make sure we stay in project directory (different interpreters)
+	catch {cd $sn_options(sys,project-dir)}
+
+	# check if we have a read-only project
+	if {${state} == ""} {
+	    if {$sn_options(readonly)} {
+		set state disabled
+	    } else {
+		set state normal
+	    }
+	}
+
+	# verify if the default external editor is not empty
+	if {${external_editor} == ""} {
+	    set external_editor $sn_options(def,edit-external-editor)
+	}
+
+	set external_editor [sn_filecmd format -internal ${external_editor}]
+
+	# use external editor
+	if {${external_editor} != ""} {
+	    if {[regexp "(emacs|gnuclient)" ${external_editor}]} {
+		if {[string compare ${line} ""] == 0} {
+		    set line 1.0
+		}
+		sn_start_emacs ${file} ${line} ${state} ${external_editor}
+	    } else {
+		if {${line} == ""} {
+		    set line 1
+		    set col 0
+		} else {
+		    set line [trim_text_index ${line}]
+		    set pos [split ${line} {.}]
+		    set line [lindex ${pos} 0]
+		    set col [lindex ${pos} 1]
+		}
+
+		regsub -all {%l} ${external_editor} ${line} external_editor
+		regsub -all {%c} ${external_editor} ${col} external_editor
+		regsub -all {%i} ${external_editor} [tk appname] external_editor
+		regsub -all {%d} ${external_editor} $sn_options(sys,project-dir) external_editor
+
+		if {![regsub \
+		    -all {%f} ${external_editor} ${file} external_editor]} {
+		    lappend external_editor ${file}
+		}
+
+		lappend external_editor "+call cursor($line,$col)"
+		lappend external_editor "<" $sn_options(def,null_dev)
+		sn_log "Editor command: ${external_editor}"
+		puts "external editor is $external_editor"
+		#read the contents into editor in the background
+		set fd [open "| ${external_editor}"]
+		fconfigure ${fd} \
+		    -encoding $sn_options(def,system-encoding) \
+		    -blocking 0
+
+		#wait until the contents are readed,
+		#some times the executed program is so fast, that the
+		#following command failes.
+		catch {fileevent ${fd} readable "wait_editor_end ${fd}"}
+		after 500
+		# FIXME : This will block the GUI for 0.5 sec, that is not acceptable
+	    }
+	    #return ""
+	}
+
+	# check if there is an existing window with the
+	# same file name
+	set name [find_window_with_file ${file} ${state}]
+
+	# if window is availiable, then raise it
+	if {[winfo exists ${name}]} {
+	    ${name} view edit
+	    set center 0
+	    if {${line} < 1.0} {
+		set line ""
+	    }
+	} else {
+	    # The file is not being edited, check whether is has been changed
+	    # outside of the project !
+	    # when the file is to update, the update window will be displayed
+	    if {${search} && [::info commands paf_db_f] != ""} {
+		#when auto-parsing is disabled, file has to be added, whe
+		#it's not in the project.
+		if {! $sn_options(def,auto-reparse)} {
+		    #set f [paf_db_f get -key $file]
+		    set f [paf_db_f seq \
+		        -col 0 ${file}]
+		}
+		#reparse file if it's modified outside or the file is new.
+		if {$sn_options(def,auto-reparse) || ${f} == ""} {
+		    if {![sn_parse_uptodate [list ${file}]]} {
+			return 0
+		    }
+		}
+	    }
+
+	    set center 1
+
+	    # Now, we check whether there is a reusable window.
+	    set win [MultiWindow&::find_Reusable]
+	    if {${win} != ""} {
+
+		#disable gotosymbol
+		global gotosymbol_active
+		set gotosymbol_active 0
+
+		#raise editor in the multi window
+		${win} view edit
+
+		#enable gotosymbol
+		set gotosymbol_active 1
+
+		#get editor class & widget
+		set ed [${win} editor]
+		set edw [${win} editw]
+		if {${ed} == ""} {
+		    return ""
+		    #Something wrong ??
+		}
+
+		#before edit the file, add the current position
+		#to the prev/next stack
+		${win} history_stack_add_point ${ed}
+
+		#edit file
+		${ed} editfile ${file} \
+		    -1 "" 0
+
+		#set edit position
+		if {${line} == ""} {
+		    ${edw} mark set insert 0.0
+		    ${edw} mark set anchor insert
+		}
+		${ed} SetFondPos ${line} ${center} 0
+
+		#return the edit widget
+		return ${edw}
+	    }
+
+	    #create a new multiple window
+	    incr tkeWinNumber
+	    set name .multiwindow-${tkeWinNumber}
+
+	    MultiWindow& ${name} \
+	        -symbolname ${file} \
+	        -raise edit
+	    incr tkeWinNumber
+    }
+
+	set editor [${name} component editor]
+	# FIXME: Should be using components.
+	set editw [$editor editor]
+
+	if {${line} != ""} {
+
+	    #before edit the file, add the current position
+	    #to the prev/next stack
+	    ${name} history_stack_add_point $editor
+
+	    if {[$editor cget -file_changed] && ${symbol} != "" && \
+	      [string last " " ${symbol}] != -1} {
+		set off [lindex ${symbol} 0]
+		if {${off} == "" || ${off} == "dummy"} {
+		    set off 0
+		}
+		set tg [join [lrange ${symbol} 1 end]]
+		set pos [${editw} tag ranges ${tg}]
+		set len [llength ${pos}]
+		set off [expr ${off} * 2]
+
+		if {${len} <= ${off}} {
+		    set off [expr ${len} - 2]
+		}
+		$editor SetFondPos [lindex ${pos} ${off}] ${center} 0
+	    } else {
+		$editor SetFondPos ${line} ${center} 0
+	    }
+	} else {
+	    $editor SetFondPos ${line} ${center} 0
+	}
+
+	#maybe readonly state
+	if {${state} != ""} {
+	    ${editw} config \
+	        -state ${state}
+	}
+
+	return ${editw}
     }
 
     method Undo {} {

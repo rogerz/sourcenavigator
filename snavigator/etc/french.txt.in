@@ -641,6 +641,7 @@ LanguageExtLanguage,Langage
 LanguageExtFileExtensions,Extensions des fichiers
 ExternalEditor,Editeur e[xterne
 ExternalEditors,Editeurs externes
+ExternalEditorAlways,Toujours utilise editeur externe
 PrefRcs,Gestion de configuration
 PrefMailhost,[Serveur de messagerie
 PrefBugReport,Rapports d'anomalie

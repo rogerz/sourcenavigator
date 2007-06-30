@@ -640,6 +640,7 @@ LanguageExtLanguage,Language
 LanguageExtFileExtensions,File Extensions
 ExternalEditor,Externa[l Editor
 ExternalEditors,External Editors
+ExternalEditorAlways,Use external editor instead of b[uiltin
 PrefRcs,Version control system
 PrefMailhost,[Mailhost
 PrefBugReport,Bug reports
