@@ -2416,11 +2416,11 @@ itcl::class Editor& {
 	    set external_editor $sn_options(def,edit-external-editor)
 	}
 
-	set external_editor [sn_filecmd format \
-	    -internal ${external_editor}]
+	set external_editor [sn_filecmd format -internal ${external_editor}]
+	set external_always $sn_options(def,edit-external-always)
 
-	#use external Editor !
-	if {${external_editor} != ""} {
+	# use external editor only of pref says so
+	if {${external_always} != 0} {
 	    if {[regexp "(emacs|gnuclient)" ${external_editor}]} {
 		if {[string compare ${line} ""] == 0} {
 		    set line 1.0
