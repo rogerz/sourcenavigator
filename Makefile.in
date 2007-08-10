@@ -32,7 +32,7 @@ all:
 		fi \
 	done;
 
-install:
+install: $(subdirs)
 	for dir in $(subdirs) ; do \
 		if test -d $$dir ; then \
 		    echo "$$dir: $(MAKE) $@" ;\
