@@ -91,7 +91,7 @@ ErrorImportFileIsADirectory,Erreur à l'ouverture du fichier d'import, %s est un 
 FileExists,Le fichier existe déjà.
 File,Fichier
 Filter,Filtre:
-Open,[Ouvrir...
+Open,[Ouvrir
 Overwrite,Ecraser
 PermRead,Lecture
 PermWrite,Ecriture

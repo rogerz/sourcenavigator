@@ -92,7 +92,7 @@ ErrorImportFileIsADirectory,Fehler beim Öffnen der Import-Datei, %s existiert ni
 FileExists,Datei existiert bereits!
 File,Datei
 Filter,Filter:
-Open,[Öffnen...
+Open,[Öffnen
 Overwrite,Überschreiben
 PermRead,Lesen
 PermWrite,Schreiben

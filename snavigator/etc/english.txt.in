@@ -90,7 +90,7 @@ ErrorImportFileIsADirectory,Error while opening import file, %s is a directory.
 FileExists,File already exists.
 File,File
 Filter,Filter:
-Open,[Open...
+Open,[Open
 Overwrite,Overwrite
 PermRead,Read
 PermWrite,Write
