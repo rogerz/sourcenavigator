@@ -1,3 +1,41 @@
+Release NG2 (Tue Sep 11 14:07:25 CEST 2007)
+
+(INTERNAL) cleanup (K&R'ify) dbimp.c source
+(BUGFIX) Fix building in seperate build directory for bitmaps
+(BUGFIX) Remove -fwritable-strings from CFLAGS which caused build problems on gcc 4+
+(INTERNAL) Move INSTALL.TXT into ./INSTALL and change default doc for building to in-source-tree.
+(INTERNAL) Bugfix move of snavigator/INSTALL.TXT to ./INSTALL
+(BUGFIX) Fix tcl + tk configure apostrophe runaways that prevented building
+(ENHANCE) New artwork
+(ENHANCE) New artwork II
+(INTERNAL) Up version to NG2
+(BUGFIX) Replace filter gfx with text in xrefpane and fix text alignment
+(BUGFIX) Fix alignment of "Levels"-text in includepane to center
+(ENHANCE) New artwork III
+(BUGFIX) Make bubble-text for the grep button more clear (english/german)
+(ENHANCE) New artwork IV
+(INTERNAL) Credit the original artwork generators, TANGO! Desktop Project
+(INTERNAL) Remove old and unused bitmaps and also remove them in Makefile.in 
+(ENHANCE) New artwork V
+(ENHANCE) New artwork I.2
+(ENHANCE) New artwork VI
+(INTERNAL) Credit the original artwork generators, Bosky Cinek
+(BUGFIX) Make bubble-text for retriever button more clear (english/german)
+(ENHANCE) New artwork VII
+(BUGFIX) Fix alignment of "Locate Headers" checkbox
+(ENHANCE) Make balloon text for "Locate Headers" nicer
+(INTERNAL) K&R'ize highlight.c source to prepare for merging
+(ENHANCE) Update autoconf et al to newer versions
+(ENHANCE) Support Intel 8085 ASM (extension .src) via parser
+(ENHANCE) Add right click -> edit in external editor cmd, part I
+(BUGFIX) Again fix installing of COPYING with 755 instead sensible 444
+(ENHANCE) Add right click -> edit in external editor cmd, part II
+(INTERNAL) Add Reid Thompson to CONTRIBUTORS
+(ENHANCE) Add right click -> edit in external editor cmd, part II - FIX
+(BUGFIX) dirty fix for mingw/msys building for install target in Makefile
+(BUGFIX) Remove "..." from "Open..." in startup project selection dialog
+
+
 Release NG1 (Tue May  8 20:02:42 CEST 2007)
 
 (INTERNAL) update TODO file
