@@ -5,6 +5,3 @@ usability improvements
 
 tcl/tk 8.3 -> 8.4
 o check included tix and libgui
-
-get rid of -fwritable-strings (deprecated in gcc 3.X, non-existant in gcc 4.X)
-o testing needed
