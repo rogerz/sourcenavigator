@@ -2712,7 +2712,7 @@ static
 int
 db_key_in_table(int type, char* key) {
     DB *dbp = db_syms[type];
-    DBT     dbkey;
+    DBT     dbkey, dbres;
     int csize;
     int result;
 
@@ -2730,7 +2730,7 @@ db_key_in_table(int type, char* key) {
 
     dbkey.data = key;
     dbkey.size = strlen(dbkey.data) + 1;
-    result = dbp->get(dbp, &dbkey, NULL, 0);
+    result = dbp->get(dbp, &dbkey, &dbres, 0);
     if (result < 0) {
         Paf_panic(PAF_PANIC_EMERGENCY);
     } else if (result == 0) {

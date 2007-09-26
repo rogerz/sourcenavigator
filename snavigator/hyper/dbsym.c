@@ -35,7 +35,7 @@ MA 02111-1307, USA.
 #include "mxdefine.h"
 #include "mxfuncs.h"
 #include "mxlogger.h"
-#include "db.h"
+#include "db_185.h"
 
 #include "tcl.h"
 #include "sn.h"
