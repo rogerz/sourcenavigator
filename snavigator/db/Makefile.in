@@ -304,30 +304,27 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper \
 @MSVC_FALSE@LINK = $(PURIFY) $(CC) $(LDFLAGS) -o $@
 @MSVC_TRUE@LINK = link -DEBUG $(LDFLAGS) -OUT:$@
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
-sdk_LIBRARIES = libdbutils.a libdbckalloc.a
+sdk_LIBRARIES = libdbutils.a
 dbcp_SOURCES = dbcp.c
-dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
-dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
+dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
+dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a
 dbdump_SOURCES = dbdump.c
 dbdump_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		$(DB_LIBDIR)/libdbmalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 
 dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		$(DB_LIBDIR)/libdbmalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 dbimp_SOURCES = dbimp.c
-@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb -ldbckalloc \
+@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb
 @MSVC_FALSE@		$(top_builddir)/misc/libutils/libutils.a \
 @MSVC_FALSE@		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
 
-@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a libdbckalloc.a \
+@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
 @MSVC_TRUE@		$(top_builddir)/misc/libutils/libutils.a \
 @MSVC_TRUE@		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
 
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		libdbckalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 libdbutils_a_SOURCES = dbutils.c dbutils.h
