@@ -1215,21 +1215,24 @@ proc sn_read_commandline_arguments {} {
                 }
             "--help" -
             "-h" {
-                    set sn_arguments(help) "valid parameters:
-    -b, --batchmode:   create a new project using batch mode
-    -p, --projectname: specifies the name for a new project
-    -c, --create:      creates a new project
-    -d, --databasedir: specifies the directory to store the project databases
+                    set sn_arguments(help) "Source Navigator - command line options
+		    
+    -b, --batchmode    create a new project using batch mode
+    -c, --create       creates a new project
+    -p, --projectname  specifies the name for a new project
+    -d, --databasedir  specifies the directory to store the project databases
                        default is (.snprj)
-    -i, --import:      imports the project list from a file
-    -x, --noxref:      disables creating cross-reference information
-    -o, --avail-options: lists all availiable options that can be set using\
-                      \"--define\"
-    -D, --define option=value
-                       Defines an option, see \"--avail-options\"
-    --nosplash:        disables splash screen
-    --debug:           enables debugging mode
-    --home:            installation directory"
+    -i, --import       imports the project list from a file
+    -x, --noxref       disables creating cross-reference information
+
+    -o, --avail-options         lists all availiable options for -D
+    -D, --define option=value   Defines an option, see \"--avail-options\"
+
+    --nosplash         disables splash screen
+    --debug <value>    enables debugging mode with verboseness <value>
+    --home             installation directory
+    
+    -h, -help          show tcl/tk options"
 
                     break
                 }
