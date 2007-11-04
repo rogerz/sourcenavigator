@@ -516,13 +516,13 @@ itcl::class Editor& {
 	
 	# NOT YET: external editor
 	#${m} add separator
-
-	#${m} add command \
-	#    -label "Open in external editor" \
-	#    -underline 2 \
 	#    -accelerator "Ctrl+U" \
-	#    -command "${this} open_external_editor" \
-	#    -state "normal"
+
+	${m} add command \
+	    -label "Open in external editor" \
+	    -underline 2 \
+	    -command "${this} open_external_editor" \
+	    -state "normal"
 	${m} add separator
 
 	# Text sensitive commands, (Retriever, Views).
@@ -839,7 +839,7 @@ itcl::class Editor& {
 	global sn_options
 	global tkeWinNumber sn_debug
 	set state "normal"
-	puts "open external editor start"
+	set external_editor ""
 	set w $itk_component(editor)
 	set line [${w} index insert]
 
@@ -865,7 +865,7 @@ itcl::class Editor& {
 	}
 
 	set external_editor [sn_filecmd format -internal ${external_editor}]
-
+	
 	# use external editor
 	if {${external_editor} != ""} {
 	    if {[regexp "(emacs|gnuclient)" ${external_editor}]} {
@@ -894,10 +894,15 @@ itcl::class Editor& {
 		    lappend external_editor ${file}
 		}
 
-		lappend external_editor "+call cursor($line,$col)"
+		# this seems to be a vim'ism
+		#lappend external_editor "+call cursor($line,$col)"
+		
+		# terminate with (usually) "<cmd> < /dev/null"
 		lappend external_editor "<" $sn_options(def,null_dev)
+		
+		#puts "external editor is $external_editor"
 		sn_log "Editor command: ${external_editor}"
-		puts "external editor is $external_editor"
+
 		#read the contents into editor in the background
 		set fd [open "| ${external_editor}"]
 		fconfigure ${fd} \
@@ -911,132 +916,12 @@ itcl::class Editor& {
 		after 500
 		# FIXME : This will block the GUI for 0.5 sec, that is not acceptable
 	    }
-	    #return ""
-	}
-
-	# check if there is an existing window with the
-	# same file name
-	set name [find_window_with_file ${file} ${state}]
-
-	# if window is availiable, then raise it
-	if {[winfo exists ${name}]} {
-	    ${name} view edit
-	    set center 0
-	    if {${line} < 1.0} {
-		set line ""
-	    }
+	    return ""
 	} else {
-	    # The file is not being edited, check whether is has been changed
-	    # outside of the project !
-	    # when the file is to update, the update window will be displayed
-	    if {${search} && [::info commands paf_db_f] != ""} {
-		#when auto-parsing is disabled, file has to be added, whe
-		#it's not in the project.
-		if {! $sn_options(def,auto-reparse)} {
-		    #set f [paf_db_f get -key $file]
-		    set f [paf_db_f seq \
-		        -col 0 ${file}]
-		}
-		#reparse file if it's modified outside or the file is new.
-		if {$sn_options(def,auto-reparse) || ${f} == ""} {
-		    if {![sn_parse_uptodate [list ${file}]]} {
-			return 0
-		    }
-		}
-	    }
-
-	    set center 1
-
-	    # Now, we check whether there is a reusable window.
-	    set win [MultiWindow&::find_Reusable]
-	    if {${win} != ""} {
-
-		#disable gotosymbol
-		global gotosymbol_active
-		set gotosymbol_active 0
-
-		#raise editor in the multi window
-		${win} view edit
-
-		#enable gotosymbol
-		set gotosymbol_active 1
-
-		#get editor class & widget
-		set ed [${win} editor]
-		set edw [${win} editw]
-		if {${ed} == ""} {
-		    return ""
-		    #Something wrong ??
-		}
-
-		#before edit the file, add the current position
-		#to the prev/next stack
-		${win} history_stack_add_point ${ed}
-
-		#edit file
-		${ed} editfile ${file} \
-		    -1 "" 0
-
-		#set edit position
-		if {${line} == ""} {
-		    ${edw} mark set insert 0.0
-		    ${edw} mark set anchor insert
-		}
-		${ed} SetFondPos ${line} ${center} 0
-
-		#return the edit widget
-		return ${edw}
-	    }
-
-	    #create a new multiple window
-	    incr tkeWinNumber
-	    set name .multiwindow-${tkeWinNumber}
-
-	    MultiWindow& ${name} \
-	        -symbolname ${file} \
-	        -raise edit
-	    incr tkeWinNumber
-    }
-
-	set editor [${name} component editor]
-	# FIXME: Should be using components.
-	set editw [$editor editor]
-
-	if {${line} != ""} {
-
-	    #before edit the file, add the current position
-	    #to the prev/next stack
-	    ${name} history_stack_add_point $editor
-
-	    if {[$editor cget -file_changed] && ${symbol} != "" && \
-	      [string last " " ${symbol}] != -1} {
-		set off [lindex ${symbol} 0]
-		if {${off} == "" || ${off} == "dummy"} {
-		    set off 0
-		}
-		set tg [join [lrange ${symbol} 1 end]]
-		set pos [${editw} tag ranges ${tg}]
-		set len [llength ${pos}]
-		set off [expr ${off} * 2]
-
-		if {${len} <= ${off}} {
-		    set off [expr ${len} - 2]
-		}
-		$editor SetFondPos [lindex ${pos} ${off}] ${center} 0
-	    } else {
-		$editor SetFondPos ${line} ${center} 0
-	    }
-	} else {
-	    $editor SetFondPos ${line} ${center} 0
+		# raise error that there is no editor defined
+		
 	}
 
-	#maybe readonly state
-	if {${state} != ""} {
-	    ${editw} config \
-	        -state ${state}
-	}
-
-	return ${editw}
     }
 
     method Undo {} {
