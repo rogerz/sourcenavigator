@@ -894,8 +894,10 @@ itcl::class Editor& {
 		    lappend external_editor ${file}
 		}
 
-		# this seems to be a vim'ism
-		#lappend external_editor "+call cursor($line,$col)"
+		# this is a vim'ism to position the cursor
+	        if {[regexp "(vim)" ${external_editor}]} {
+                    lappend external_editor "+call cursor($line,$col)"
+	        }
 		
 		# terminate with (usually) "<cmd> < /dev/null"
 		lappend external_editor "<" $sn_options(def,null_dev)
@@ -919,9 +921,7 @@ itcl::class Editor& {
 	    return ""
 	} else {
 		# raise error that there is no editor defined
-		
 	}
-
     }
 
     method Undo {} {
