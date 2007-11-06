@@ -559,6 +559,8 @@ SaveAsDefault,Einige Optionen wurden geändert, die zu den Standardoptionen gehör
 MultiMake,[Make
 ExternalEditor,Externer [Editor
 ExternalEditorAlways,Externen Editor im[mer verwenden
+ExternalEditorOpenIn,Im externen Editor öffnen
+ExternalEditorNotDefined,Kein externer Editor definiert.\nBitte konfigurieren Sie einen in den Projektoptionen.
 GenerateXRefINFO,Erstellt Cross-Referenz Datenbank
 Word,[Wort
 CannotDeleteProject,Das Projekt konnte nicht gelöscht werden.\nPrüfen Sie die Ursache und versuchen Sie es erneut.

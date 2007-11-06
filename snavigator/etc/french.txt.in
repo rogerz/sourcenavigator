@@ -642,6 +642,8 @@ LanguageExtFileExtensions,Extensions des fichiers
 ExternalEditor,Editeur e[xterne
 ExternalEditors,Editeurs externes
 ExternalEditorAlways,Toujours utilise editeur externe
+ExternalEditorOpenIn,Ouvrir editor externe
+ExternalEditorNotDefined,Un editor externe n'est pas defini.\nVeuillez configurer un dans les preferences de projet.
 PrefRcs,Gestion de configuration
 PrefMailhost,[Serveur de messagerie
 PrefBugReport,Rapports d'anomalie

@@ -641,6 +641,8 @@ LanguageExtFileExtensions,File Extensions
 ExternalEditor,Externa[l Editor
 ExternalEditors,External Editors
 ExternalEditorAlways,Use external editor instead of b[uiltin
+ExternalEditorOpenIn,Open in external editor
+ExternalEditorNotDefined,No external editor defined.\nPlease define one in the project preferences.
 PrefRcs,Version control system
 PrefMailhost,[Mailhost
 PrefBugReport,Bug reports
