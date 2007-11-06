@@ -519,7 +519,7 @@ itcl::class Editor& {
 	#    -accelerator "Ctrl+U" \
 
 	${m} add command \
-	    -label "Open in external editor" \
+	    -label [get_indep String ExternalEditorOpenIn] \
 	    -underline 2 \
 	    -command "${this} open_external_editor" \
 	    -state "normal"
@@ -921,6 +921,7 @@ itcl::class Editor& {
 	    return ""
 	} else {
 		# raise error that there is no editor defined
+		tk_dialog auto [get_indep String ExternalEditor] [get_indep String ExternalEditorNotDefined] question_image 0 [get_indep String ok] 0
 	}
     }
 
