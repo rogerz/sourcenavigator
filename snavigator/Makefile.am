@@ -34,7 +34,7 @@ install-exec-local:
 
 rootdir = $(prefix)
 
-root_DATA = ../README NEWS
+root_DATA = ../README
 
 EXTRA_DIST = $(DATA)
 

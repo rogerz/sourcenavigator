@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(srcdir)/../config.guess $(srcdir)/../config.sub NEWS \
+DIST_COMMON = $(srcdir)/../config.guess $(srcdir)/../config.sub \
 	AUTHORS ChangeLog $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in $(srcdir)/../mkinstalldirs
@@ -287,7 +287,7 @@ SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
 snavigator bitmaps
 
 rootdir = $(prefix)
-root_DATA = ../README NEWS
+root_DATA = ../README
 EXTRA_DIST = $(DATA)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
