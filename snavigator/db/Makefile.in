@@ -316,11 +316,11 @@ dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 dbimp_SOURCES = dbimp.c
-@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb
+@MSVC_FALSE@dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb \
 @MSVC_FALSE@		$(top_builddir)/misc/libutils/libutils.a \
 @MSVC_FALSE@		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
 
-@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
+@MSVC_TRUE@dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a \
 @MSVC_TRUE@		$(top_builddir)/misc/libutils/libutils.a \
 @MSVC_TRUE@		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
 
