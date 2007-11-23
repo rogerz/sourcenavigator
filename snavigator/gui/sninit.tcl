@@ -310,7 +310,7 @@ proc sn_init_globals {} {
 
         #project settings
         #export database directory to be not empty.
-        sn_add_option both db-directory ".snprj" string
+        sn_add_option both db-directory "SNDB4" string
         #export project-readonly flag
         sn_add_option "" readonly no logical
         set sn_options(project_extensions) [list [list {Project files}\
@@ -1220,7 +1220,7 @@ proc sn_read_commandline_arguments {} {
     -p, --projectname: specifies the name for a new project
     -c, --create:      creates a new project
     -d, --databasedir: specifies the directory to store the project databases
-                       default is (.snprj)
+                       default is (SNDB4)
     -i, --import:      imports the project list from a file
     -x, --noxref:      disables creating cross-reference information
     -o, --avail-options: lists all availiable options that can be set using\
