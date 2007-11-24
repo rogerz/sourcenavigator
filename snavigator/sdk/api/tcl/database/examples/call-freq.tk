@@ -195,7 +195,7 @@ proc countcalls {path projname} {
     global calleecount
     global callercount
 
-    foreach entry [torefs ${path}/.snprj ${projname}] {
+    foreach entry [torefs ${path}/SNDB4 ${projname}] {
         set subentry [lindex ${entry} 0]
         set callerclass [lindex ${subentry} 0]
         set callerfn [lindex ${subentry} 1]

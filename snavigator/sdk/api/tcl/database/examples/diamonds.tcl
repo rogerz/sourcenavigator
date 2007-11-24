@@ -87,7 +87,7 @@ if {${argc} != 2} {
     exit
 }
 
-set projdir [lindex ${argv} 0]/.snprj
+set projdir [lindex ${argv} 0]/SNDB4
 
 foreach entry [inhertable ${projdir} [lindex ${argv} 1]] {
     set derived [lindex ${entry} 0]
