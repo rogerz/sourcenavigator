@@ -61,10 +61,6 @@ sdkLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(sdk_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-libdbckalloc_a_AR = $(AR) $(ARFLAGS)
-libdbckalloc_a_LIBADD =
-am_libdbckalloc_a_OBJECTS = dbckalloc.$(OBJEXT)
-libdbckalloc_a_OBJECTS = $(am_libdbckalloc_a_OBJECTS)
 libdbutils_a_AR = $(AR) $(ARFLAGS)
 libdbutils_a_LIBADD =
 am_libdbutils_a_OBJECTS = dbutils.$(OBJEXT)
@@ -84,8 +80,7 @@ am__depfiles_maybe =
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-SOURCES = $(libdbckalloc_a_SOURCES) $(libdbutils_a_SOURCES) \
-	$(dbcp_SOURCES) $(dbdump_SOURCES) $(dbimp_SOURCES)
+SOURCES = $(libdbutils_a_SOURCES) $(dbcp_SOURCES) $(dbdump_SOURCES) $(dbimp_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 ACLOCAL = @ACLOCAL@
@@ -328,7 +323,6 @@ dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 libdbutils_a_SOURCES = dbutils.c dbutils.h
-libdbckalloc_a_SOURCES = dbckalloc.c
 all: all-am
 
 .SUFFIXES:
@@ -391,10 +385,6 @@ uninstall-sdkLIBRARIES:
 
 clean-sdkLIBRARIES:
 	-test -z "$(sdk_LIBRARIES)" || rm -f $(sdk_LIBRARIES)
-libdbckalloc.a: $(libdbckalloc_a_OBJECTS) $(libdbckalloc_a_DEPENDENCIES) 
-	-rm -f libdbckalloc.a
-	$(libdbckalloc_a_AR) libdbckalloc.a $(libdbckalloc_a_OBJECTS) $(libdbckalloc_a_LIBADD)
-	$(RANLIB) libdbckalloc.a
 libdbutils.a: $(libdbutils_a_OBJECTS) $(libdbutils_a_DEPENDENCIES) 
 	-rm -f libdbutils.a
 	$(libdbutils_a_AR) libdbutils.a $(libdbutils_a_OBJECTS) $(libdbutils_a_LIBADD)
