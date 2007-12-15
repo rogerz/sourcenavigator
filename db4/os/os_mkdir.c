@@ -29,9 +29,10 @@ __os_mkdir(dbenv, name, mode)
 		__db_msg(dbenv, "fileops: mkdir %s", name);
 
 	/* Make the directory, with paranoid permissions. */
-#if defined(HAVE_VXWORKS)
+#if defined(HAVE_VXWORKS) || defined(DB_WIN32)
 	RETRY_CHK((mkdir((char *)name)), ret);
-#else
+#else 
+	/* Unix */
 	RETRY_CHK((mkdir(name, __db_omode("rwx------"))), ret);
 #endif
 	if (ret != 0)
