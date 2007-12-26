@@ -7588,9 +7588,9 @@ done
 LIBS="$hold_libs"
 
 
-DB_LIBDIR='$(top_builddir)/../db/PORT'
+DB_LIBDIR='$(top_builddir)/../db4/PORT'
 
-DB_INCDIR='$(top_srcdir)/../db/include'
+DB_INCDIR='$(top_srcdir)/../db4/PORT'
 
 for type in int8_t u_int8_t int16_t u_int16_t int32_t u_int32_t int64_t u_int64_t ; do
   { echo "$as_me:$LINENO: checking for $type" >&5
