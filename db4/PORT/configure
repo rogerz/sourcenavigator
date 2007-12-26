@@ -2370,7 +2370,7 @@ echo $ECHO_N "checking if --enable-compat185 option specified... $ECHO_C" >&6; }
 if test "${enable_compat185+set}" = set; then
   enableval=$enable_compat185; db_cv_compat185="$enable_compat185"
 else
-  db_cv_compat185="no"
+  db_cv_compat185="yes"
 fi
 
 { echo "$as_me:$LINENO: result: $db_cv_compat185" >&5
