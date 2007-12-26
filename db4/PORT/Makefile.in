@@ -834,7 +834,6 @@ REALCLEAN_LIST=\
 
 distclean maintainer-clean realclean: clean
 	$(RM) -rf $(REALCLEAN_LIST)
-	$(RM) -rf libtool
 
 check depend dvi info obj TAGS:
 	@echo "make: $@ target not available"
