@@ -10,7 +10,7 @@
 ###############################################################################
 
 SDK     = ../../..
-LIBS	= ${SDK}/lib/libsnptools.a ${SDK}/lib/libdbutils.a ${SDK}/lib/libpafdb.a ${SDK}/lib/libutils.a ${SDK}/lib/libtcl81.a
+LIBS	= ${SDK}/lib/libsnptools.a ${SDK}/lib/libdbutils.a ${SDK}/lib/libdb.a ${SDK}/lib/libutils.a ${SDK}/lib/libtcl81.a
 INCLUDES= -I$(SDK)/include
 
 CC      = cl

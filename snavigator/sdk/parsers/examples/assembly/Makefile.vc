@@ -22,7 +22,7 @@ MV=mv
 SDK=../../..
 LIBEXEC=../../../../../libexec
 INCLUDES=-I${SDK}/include
-LIBS=${SDK}/lib/libsnptools.a ${SDK}/lib/libdbutils.a ${SDK}/lib/libpafdb.a ${SDK}/lib/libutils.a ${SDK}/lib/libtcl81.a
+LIBS=${SDK}/lib/libsnptools.a ${SDK}/lib/libdbutils.a ${SDK}/lib/libdb.a ${SDK}/lib/libutils.a ${SDK}/lib/libtcl81.a
 
 ASMS = a.s b.s
 OBJS = abrowser.obj
