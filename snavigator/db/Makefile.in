@@ -576,8 +576,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-sdkLIBRARIES
 
 
 install-data-local:
-	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(DESTDIR)$(sdkdir)/libpafdb.a
-	$(RANLIB) $(DESTDIR)$(sdkdir)/libpafdb.a
+	$(INSTALL_DATA) $(top_builddir)/../db4/PORT/libdb.a $(DESTDIR)$(sdkdir)
+	$(RANLIB) $(DESTDIR)$(sdkdir)/libdb.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -36,8 +36,8 @@ bin_PROGRAMS = dbcp dbdump dbimp
 sdk_LIBRARIES = libdbutils.a
 
 install-data-local:
-	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(DESTDIR)$(sdkdir)/libpafdb.a
-	$(RANLIB) $(DESTDIR)$(sdkdir)/libpafdb.a
+	$(INSTALL_DATA) $(top_builddir)/../db4/PORT/libdb.a $(DESTDIR)$(sdkdir)
+	$(RANLIB) $(DESTDIR)$(sdkdir)/libdb.a
 
 dbcp_SOURCES = dbcp.c
 dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a

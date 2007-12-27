@@ -270,7 +270,7 @@ target_alias = @target_alias@
 AUTOMAKE_OPTIONS = cygnus
 SUBDIRS = database
 sdkincludedir = $(datadir)/sdk/include
-sdkinclude_h = db.h cdefs.h
+sdkinclude_h = db.h db_185.h
 all: all-recursive
 
 .SUFFIXES:
@@ -529,7 +529,7 @@ uninstall-info: uninstall-info-recursive
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(sdkincludedir)
 	for h in $(sdkinclude_h) ; do \
-	    cp $(top_srcdir)/../db/include/$$h $(DESTDIR)$(sdkincludedir) ;\
+	    cp $(top_srcdir)/../db4/PORT/$$h $(DESTDIR)$(sdkincludedir) ;\
 	done
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
