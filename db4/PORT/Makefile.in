@@ -570,7 +570,10 @@ LIB_INSTALL_FILE_LIST=\
 ##################################################
 all: @BUILD_TARGET@
 
-install: all @INSTALL_TARGET@
+# Freek 12/2007
+# for now completely disable any installation of files
+#install: all @INSTALL_TARGET@
+install: all
 
 ##################################################
 # Library and standard utilities build.
