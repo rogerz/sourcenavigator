@@ -2251,7 +2251,7 @@ echo $ECHO_N "checking if --disable-cryptography option specified... $ECHO_C" >&
 if test "${enable_cryptography+set}" = set; then
   enableval=$enable_cryptography;
 else
-  enableval="yes"
+  enableval="no"
 fi
 
 db_cv_build_cryptography="$enableval"
@@ -2319,7 +2319,7 @@ echo $ECHO_N "checking if --disable-replication option specified... $ECHO_C" >&6
 if test "${enable_replication+set}" = set; then
   enableval=$enable_replication;
 else
-  enableval="yes"
+  enableval="no"
 fi
 
 db_cv_build_replication="$enableval"
