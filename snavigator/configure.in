@@ -21,6 +21,9 @@ esac
 
 AC_CANONICAL_HOST
 
+# To accomodate db4
+AC_CHECK_LIB(pthread, pthread_create)
+
 dnl Constants.  These _must_ come after the AC_INIT macro invocation.
 
 dnl Put default arguments for kind of releases here. Override them later with
