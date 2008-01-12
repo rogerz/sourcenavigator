@@ -5,7 +5,7 @@ AC_INIT(hyper/sninit.c)
 AC_PREREQ(2.12.2)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_AUX_DIR(..)
-AM_INIT_AUTOMAKE(sn,NG2)
+AM_INIT_AUTOMAKE(sn,NG3)
 AM_MAINTAINER_MODE
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++
