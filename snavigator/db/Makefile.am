@@ -33,11 +33,11 @@ endif
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
 bin_PROGRAMS = dbcp dbdump dbimp
-sdk_LIBRARIES = libdbutils.a libdbckalloc.a
+sdk_LIBRARIES = libdbutils.a
 
 install-data-local:
-	$(INSTALL_DATA) $(top_builddir)/../db/PORT/libdb.a $(DESTDIR)$(sdkdir)/libpafdb.a
-	$(RANLIB) $(DESTDIR)$(sdkdir)/libpafdb.a
+	$(INSTALL_DATA) $(top_builddir)/../db4/PORT/libdb.a $(DESTDIR)$(sdkdir)
+	$(RANLIB) $(DESTDIR)$(sdkdir)/libdb.a
 
 dbcp_SOURCES = dbcp.c
 dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
@@ -53,17 +53,15 @@ dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 
 dbimp_SOURCES = dbimp.c
 if MSVC
-dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a libdbckalloc.a \
+dbimp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) wsock32.lib
 else
-dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb -ldbckalloc \
+dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb \
 		$(top_builddir)/misc/libutils/libutils.a \
 		$(TCL_BUILD_LIB_SPEC) $(TCL_LIBS) @SOCKLIB@
 endif
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		libdbckalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 libdbutils_a_SOURCES = dbutils.c dbutils.h
-libdbckalloc_a_SOURCES = dbckalloc.c

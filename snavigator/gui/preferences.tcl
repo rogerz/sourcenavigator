@@ -2113,7 +2113,7 @@ itcl_class Preferences& {
               -key sn_sym_dir]
         }
         if {$sn_options(both,db-directory) == ""} {
-            set sn_options(both,db-directory) ".snprj"
+            set sn_options(both,db-directory) "SNDB4"
         }
 
         #check project name (title)
@@ -2138,7 +2138,7 @@ itcl_class Preferences& {
         global sn_options env tcl_platform
 
         if {$sn_options(both,db-directory) == ""} {
-            set sn_options(both,db-directory) ".snprj"
+            set sn_options(both,db-directory) "SNDB4"
         }
 
         #Convert the name into a native name related to the OS, so

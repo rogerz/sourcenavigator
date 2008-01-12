@@ -68,7 +68,7 @@ and can be shared between UNIX and Windows operating systems.</P>
 a database is created under the <KBD CLASS="CodeVariant">
 projectdir</KBD>
 <KBD CLASS="Code">
-/.snprj</KBD>
+/SNDB4</KBD>
  directory. By default, this location can be changed in the Project 
 Preferences dialog when the project is created. 
 See  <A HREF="../UsersGuide/customsn.html#40531" CLASS="XRef">General Project 
@@ -174,7 +174,7 @@ sql.c</KBD>
  Hiding this view means the records with references to the file <KBD CLASS="Code">
 sql.c</KBD>
  must be skipped. The following example lists a view table:</P>
-<PRE CLASS="CodeExample"><A NAME="pgfId-1012030"></A>set db_view [dbopen nav_view .snprj/cpl.2 RDONLY 0644 hash &#92;
+<PRE CLASS="CodeExample"><A NAME="pgfId-1012030"></A>set db_view [dbopen nav_view SNDB4/cpl.2 RDONLY 0644 hash &#92;
 cachesize=300000]
 puts stdout [join [ $db_view seq -data] &#92;n]</PRE>
 <P CLASS="Body">
@@ -189,7 +189,7 @@ dbopen</KBD>
  command; the application does not have to be changed. </P>
 <P CLASS="Body">
 <A NAME="pgfId-1012040"></A>The example below uses a view. The view table in the 
-following example (<KBD CLASS="Code">.snprj/cpl.2</KBD>) is created using the Editor. 
+following example (<KBD CLASS="Code">SNDB4/cpl.2</KBD>) is created using the Editor. 
 The first view in a project has the suffix <KBD CLASS="Code">
 .1</KBD>, the second <KBD CLASS="Code">
 .2</KBD>. There is no limit for views.</P>
@@ -201,10 +201,10 @@ exec $HOME/snavigator/bin/hyper &quot;$0&quot; &quot;$@&quot;
 #
 # Don't forget the backslash before exec!
 #
-set db_view [dbopen nav_view .snprj/cpl.2 RDONLY 0644 &#92;
+set db_view [dbopen nav_view SNDB4/cpl.2 RDONLY 0644 &#92;
     hash cachesize=300000]
 
-set db_functions [dbopen nav_func .snprj/cpl.fu RDONLY &#92;
+set db_functions [dbopen nav_func SNDB4/cpl.fu RDONLY &#92;
     0644 btree cachesize=20000 $db_view]
 
 # Output the list of matches with newline characters
@@ -297,7 +297,7 @@ exec $HOME/snavigator/bin/hyper &quot;$0&quot; &quot;$@&quot;
 # Don't forget the backslash before exec!
 #
 global sn_sep
-set db_functions [dbopen nav_func .snprj/cpl.by RDONLY &#92;
+set db_functions [dbopen nav_func SNDB4/cpl.by RDONLY &#92;
     0644 btree cachesize=200000]
 # Output the cross-references which match the following
 # criteria, with newline characters between all of them.
@@ -657,9 +657,9 @@ btree</KBD>
     {cachesize=2000000}]</PRE>
 <P CLASS="Body">
 <A NAME="pgfId-996972"></A>The next example opens a hash table that is used later as a view.</P>
-<PRE CLASS="CodeExample"><A NAME="pgfId-996973"></A>set db_view [dbopen nav_view .snprj/progs.1 RDONLY &#92;
+<PRE CLASS="CodeExample"><A NAME="pgfId-996973"></A>set db_view [dbopen nav_view SNDB4/progs.1 RDONLY &#92;
     0644 hash &quot;cachesize=300000&quot;]
-set db_functions [dbopen nav_func .snprj/progs.fu &#92;
+set db_functions [dbopen nav_func SNDB4/progs.fu &#92;
     RDONLY 0644 btree &quot;cachesize=200000&quot; $db_view]</PRE>
 <H3 CLASS="Heading2">
 <A NAME="pgfId-1012185"></A>Methods</H3>
@@ -1454,7 +1454,7 @@ btree</KBD>
 <A NAME="pgfId-1263532"></A>You must <KBD CLASS="Code">
 #include &lt;db.h&gt;</KBD>
  when using the C API, and you need to link the final executable with <KBD CLASS="Code">
-libpafdb.a</KBD>
+libdb.a</KBD>
  and <KBD CLASS="Code">
 libtcl8.1.a</KBD>
  to locate the database library routines. </P>
@@ -2515,9 +2515,9 @@ dbqry:    dbqry.c
 <A NAME="pgfId-997447"></A>With the exception of the project file (that is itself 
 also a hash database table), every table normally relies on the 
 <KBD CLASS="Code">
-.snprj</KBD>
+SNDB4</KBD>
  sub-directory of the project and can be accessed like any other database table. The following example shows what the table structure of a project database looks like on a UNIX system. It was produced using the shell command <KBD CLASS="Code">
-ls -l .snprj</KBD>.</P>
+ls -l SNDB4</KBD>.</P>
 <PRE CLASS="CodeExample"><A NAME="pgfId-1261691"></A>-rw-r--r--   1 user sys        16384 Aug 12 12:19 cpl.1
 -rw-r--r--   1 user sys        16384 Aug 12 12:34 cpl.2
 -rw-r--r--   1 user sys         8192 Aug 12 12:19 cpl.by
@@ -3091,7 +3091,7 @@ exec $HOME/snavigator/bin/hyper &quot;$0&quot; &quot;$@&quot;
 #
 # Don't forget the backslash before exec!
 #
-set db_functions [dbopen nav_func .snprj/pure.fu RDONLY &#92;
+set db_functions [dbopen nav_func SNDB4/pure.fu RDONLY &#92;
     0644 btree cachesize=200000]
 # Output the list of matches with newline characters after
 # each.

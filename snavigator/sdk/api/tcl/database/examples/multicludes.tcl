@@ -67,7 +67,7 @@ if {${argc} < 2} {
     exit
 }
 
-set table [includetable [lindex ${argv} 0]/.snprj [lindex ${argv} 1]]
+set table [includetable [lindex ${argv} 0]/SNDB4 [lindex ${argv} 1]]
 
 wm withdraw .
 

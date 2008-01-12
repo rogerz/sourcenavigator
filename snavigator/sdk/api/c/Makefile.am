@@ -24,11 +24,11 @@ AUTOMAKE_OPTIONS = cygnus
 SUBDIRS = database
 
 sdkincludedir = $(datadir)/sdk/include
-sdkinclude_h = db.h cdefs.h
+sdkinclude_h = db.h db_185.h
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(sdkincludedir)
 	for h in $(sdkinclude_h) ; do \
-	    cp $(top_srcdir)/../db/include/$$h $(DESTDIR)$(sdkincludedir) ;\
+	    cp $(top_srcdir)/../db4/PORT/$$h $(DESTDIR)$(sdkincludedir) ;\
 	done
 

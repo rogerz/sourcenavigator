@@ -68,9 +68,13 @@ Unzip the archive and double click on the msys shortcut to
 start the shell. You can then run the configure script in
 the normal way from inside the shell.
 
-% ./configure --prefix=/opt/sourcenav
+% ./configure --prefix=/opt/sourcenav --enable-mingw
+  (the --enable-mingw is for db4)
 % make
 % make install
+
+As there are a couple of header files missing in the default msys package
+you might want to get them from somewhere, e.g. FreeBSD.
 
 
 Windows Build (VC++):

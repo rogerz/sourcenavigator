@@ -87,7 +87,7 @@ if {${argc} != 3} {
     exit
 }
 
-set projdir [lindex ${argv} 0]/.snprj
+set projdir [lindex ${argv} 0]/SNDB4
 set var [lindex ${argv} 2]
 
 wm withdraw .

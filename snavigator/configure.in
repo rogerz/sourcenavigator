@@ -21,6 +21,9 @@ esac
 
 AC_CANONICAL_HOST
 
+# To accomodate db4
+AC_CHECK_LIB(pthread, pthread_create)
+
 dnl Constants.  These _must_ come after the AC_INIT macro invocation.
 
 dnl Put default arguments for kind of releases here. Override them later with
@@ -465,9 +468,9 @@ dnl Random other stuff
 dnl Why do this?  Because it gets the definition into every
 dnl Makefile.in without any extra work.  FIXME these should be in
 dnl CY_AC_BERKELEY_DB.
-DB_LIBDIR='$(top_builddir)/../db/PORT'
+DB_LIBDIR='$(top_builddir)/../db4/PORT'
 AC_SUBST(DB_LIBDIR)
-DB_INCDIR='$(top_srcdir)/../db/include'
+DB_INCDIR='$(top_srcdir)/../db4/PORT'
 AC_SUBST(DB_INCDIR)
 CY_AC_BERKELEY_DB
 

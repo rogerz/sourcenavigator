@@ -271,10 +271,28 @@ read_next_int_field (char *str, char sep)
 }
 
 /*
- * Create a new database file that reflect a table
- * Comments:
- * It's too bad to create a database for each used table in SN,
- * this is to be changed in 5.0
+ Create a new database file that reflect a table
+
+ Comments:
+ It's too bad to create a database for each used table in SN,
+ this is to be changed in 5.0
+
+ A feature that is missing compared to SN NG2 (and all prior
+ SN versions) is the possibility to override malloc() and friends
+ to use the TCL ckalloc() et al routines.
+ This was implemented by a dbckalloc.c which is now gone; it was only
+ usable because the SN guys patched the db-1.85 accordingly.
+ This feature can be revived by calling approx. the following code
+ on each freshly opened DB4 handle.
+
+ Note that currently the compat-1.85 layer is used; this means
+ you have to get to the underlying DB4 *, located in the void * internal,
+ and call the function on that!
+
+ #ifdef TCL_MEM_DEBUG
+ DB4 *DB4=(DB4 *)DB->internal;
+ DB4->set_alloc(DB4, ckalloc(), ckrealloc(), ckfree());
+ #endif
  */
 static	DB *
 create_table(int type,int mode,int cachesize)
@@ -286,8 +304,10 @@ create_table(int type,int mode,int cachesize)
 	HASHINFO	db_hash_info;
 	BTREEINFO       db_btree_info;
 
-	if (db_syms[type])	/* Don't open it twice ! */
+	/* Check if that DB has already been opened */
+	if (db_syms[type]) {
 		return db_syms[type];
+	}
 
 #if CREATE_ALWAYS_BTREES
 	db_type = DB_BTREE;
@@ -2712,7 +2732,7 @@ static
 int
 db_key_in_table(int type, char* key) {
     DB *dbp = db_syms[type];
-    DBT     dbkey;
+    DBT     dbkey, dbres;
     int csize;
     int result;
 
@@ -2730,7 +2750,7 @@ db_key_in_table(int type, char* key) {
 
     dbkey.data = key;
     dbkey.size = strlen(dbkey.data) + 1;
-    result = dbp->get(dbp, &dbkey, NULL, 0);
+    result = dbp->get(dbp, &dbkey, &dbres, 0);
     if (result < 0) {
         Paf_panic(PAF_PANIC_EMERGENCY);
     } else if (result == 0) {

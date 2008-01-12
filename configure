@@ -645,7 +645,7 @@ case "${host}" in
         ;;
 esac
 
-TOP_SUBDIRS="tcl tk itcl tix libgui db snavigator"
+TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"
 
 subdirs="$TOP_SUBDIRS"
 

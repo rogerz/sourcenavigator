@@ -319,7 +319,6 @@ c_high.c py_high.c ch_high.c j_high.c highlight.c tclfileutils.c
 hyper_LDFLAGS = $(WIN32LDAPP)
 @MSVC_FALSE@hyper_LDADD = @HYPER_MAIN@ \
 @MSVC_FALSE@-L$(DBUtilsLibDir) -ldbutils -L$(DB_LIBDIR) -ldb \
-@MSVC_FALSE@-ldbckalloc \
 @MSVC_FALSE@-L$(LibUtilsDir) -lutils \
 @MSVC_FALSE@-L$(top_builddir)/../libgui/src -lgui \
 @MSVC_FALSE@$(WIN32LIBS) \
@@ -329,7 +328,6 @@ hyper_LDFLAGS = $(WIN32LDAPP)
 
 @MSVC_TRUE@hyper_LDADD = @HYPER_MAIN@ \
 @MSVC_TRUE@$(DBUtilsLibDir)/libdbutils.a $(DB_LIBDIR)/libdb.a \
-@MSVC_TRUE@$(DBUtilsLibDir)/libdbckalloc.a \
 @MSVC_TRUE@$(LibUtils) \
 @MSVC_TRUE@$(top_builddir)/../libgui/src/libgui.a \
 @MSVC_TRUE@$(WIN32LIBS) \
@@ -339,7 +337,6 @@ hyper_LDFLAGS = $(WIN32LDAPP)
 
 hyper_DEPENDENCIES = @HYPER_MAIN@ \
 $(DBUtilsLib) $(DB_LIBDIR)/libdb.a \
-$(DBUtilsLibDir)/libdbckalloc.a \
 $(LibUtils) \
 $(TCL_LIB_FULL_PATH) $(TK_LIB_FULL_PATH) \
 $(ITCL_LIB_FULL_PATH) $(ITK_LIB_FULL_PATH)

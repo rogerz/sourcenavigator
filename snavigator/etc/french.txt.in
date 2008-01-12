@@ -833,7 +833,7 @@ DatabaseFilesCouldNotBeDeleted,Source-Navigator ne peut pas supprimer les vieux 
 WrongProjectName,Nom du projet '%s' invalide
 WrongDatabaseDirectory,Nom de répertoire de BD '%s' invalide
 SplashCopyrightText,Copyright (c) 2007 Sourcenav NG Development Group
-SplashSubCopyrightText,(c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n(c) 2004 Eric Lassauge pour la traduction
+SplashSubCopyrightText,(c) 2007 Oracle.\n(c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n(c) 2004 Eric Lassauge pour la traduction
 SplashAllRightsReserved,Distribué sous la GPL.\nTous droits réservés. Red Hat Embedded DevKit, Source-Navigator, le logo Source-Navigator, et le logo "shadow man" sont des marques déposées de Red Hat, Inc.. Tous les autres noms de produits sont les marques réservées de leur propriétaire.
 FileModifiedOutsideTitle,Fichier modifié
 FileModifiedOutside,Fichier %s modifié par ailleurs.\nEnregister malgré tout ?

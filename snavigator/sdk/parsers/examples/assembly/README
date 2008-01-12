@@ -88,7 +88,7 @@ format).  Therefore you should only attempt to parse them using the
 appropriate version of the assembly parser.
 
 Build and test the parser by running `make test'.  The Source-Navigator project
-database will be created in the .snprj subdirectory.  You may then use the
+database will be created in the SNDB4 subdirectory.  You may then use the
 database tools such as `dbdump' to inspect the project database.
 
 Because different operating systems have different library names for the

@@ -17,7 +17,7 @@ to the library which supports dynamic loading on your system. This is required
 to get rid of libtcl8.1 linker errors.
 
 Build and test the parser by running "make test".  The Source-Navigator
-project database will be created in the .snprj subdirectory.  During the test,
+project database will be created in the SNDB4 subdirectory.  During the test,
 the names of the known functions in the project will be displayed.
 
 Refer to the Source-Navigator Programmer's Reference Guide for details on
