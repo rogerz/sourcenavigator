@@ -205,7 +205,7 @@ CXXFLAGS=${CXXFLAGS-"$CFLAGS"}
 # The default compiler is cc (NOT gcc), the default CFLAGS is as specified
 # above, NOT what is set by AC_PROG_CC, as it won't set optimization flags
 # for any compiler other than gcc.
-AC_PROG_CC(cc gcc)
+AC_PROG_CC(gcc cc)
 
 # We know what compiler we're going to use, now.  Set per-compiler flags.
 if test "$GCC" = "yes"; then
