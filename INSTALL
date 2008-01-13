@@ -27,7 +27,7 @@ Source Layout:
 
 The main application code is located in the subdirectory 
 snavigator/ and is a mixture of C- and Tcl/Tk-code.
-In db/ a copy of the Berkeley DB library is located, whereas
+In db4/ a copy of the Berkeley DB library is located, whereas
 under tcl/, tk/, tix/ and itcl/ verified versions of those libraries
 are provided.
 The build process automatically configures and uses those
