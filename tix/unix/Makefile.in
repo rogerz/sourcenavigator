@@ -307,7 +307,7 @@ distclean::
 	    fi; \
 	done;
 	- rm -f config.status Makefile.bak config.status \
-	  config.cache config.log tixConfig.tcl *~ Makefile
+	  config.cache config.log tixConfig.tcl *~ Makefile pkgIndex.tcl
 
 # CYGNUS LOCAL: Makefile depends upon config.status
 Makefile:Makefile.in config.status

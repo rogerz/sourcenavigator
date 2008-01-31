@@ -28,7 +28,7 @@ mostlyclean: mostlyclean-recursive
 clean: clean-recursive
 
 distclean-local:
-	rm -f Makefile config.status config.cache config.log
+	rm -f Makefile config.status config.cache config.log tixConfig.sh
 
 distclean: distclean-recursive distclean-local
 
