@@ -1,3 +1,31 @@
+Release NG3 (Sat Feb  2 21:59:12 CET 2008)
+
+(BUGFIX) Fix tcl rng() problems on 64bit platforms
+(INTERNAL) Add Daniel to CONTRIBUTORS
+(INTERNAL) delete +x from snavigator/hyper/tclfileutils.c
+(INTERNAL) Remove +x from other .c files
+(INTERNAL) Remove +x from .h .xbm .gif .html files
+(INTERNAL) Remove +x from other non-executables
+(INTERNAL) Update TODO, remove already achieved goal
+(ENHANCE) Pretty up snavigator --help output
+(ENHANCE) Activate "Open in external editor" feature for editorpane, part I
+(ENHANCE) Activate "Open in external editor" feature for editorpane, part II
+(ENHANCE) Activate "Open in external editor" feature for editorpane, part III
+(ENHANCE) Activate "Open in external editor" feature for editorpane, part III
+(ENHANCE) Activate "Open in external editor" feature for editorpane, part IV
+(INTERNAL) Add a paragraph about source layout in INSTALL
+(INTERNAL) Move snavigator/README.TXT to ./README
+(INTERNAL) Alter README to account for SN NG and its homepage
+(INTERNAL) Move snavigator/README.TXT to ./README, part II
+(INTERNAL) Remove installing of snavigator/NEWS
+(ENHANCE) Migrate from db-1.85 to db-4.6.21
+(INTERNAL) Up version to NG3
+(INTERNAL) Adjust db/ to db4/ in INSTALL in source layout paragraph
+(ENHANCE) Tell SN to use the phpbrowser for .php3 and .php4 files also
+(BUGFIX) Make distclean more clean for tix/
+(BUGFIX) Fix INSTALL to clearly point out that out-of-tree building is currently not working
+
+
 Release NG2 (Tue Sep 11 14:07:25 CEST 2007)
 
 (INTERNAL) cleanup (K&R'ify) dbimp.c source
