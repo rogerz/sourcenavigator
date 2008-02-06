@@ -143,6 +143,40 @@ void sn_panic()
 
 
 /*
+ display all possible command line options
+ useful for debugging parsers or manually using them
+ 
+ made from the string "I:n:s:hy:g:x:i:luB:e:tCrDS:O:T:" found in sn_process_options()
+ */
+static void sn_parser_help()
+{
+	sn_error("Source Navigator - generic parser options:\n" \
+		 "-C          treat as C++\n" \
+		 "-g <grp>    set group or language string to <grp>\n" \
+                 "-h          highlight\n" \
+		 "-i <pipe>   incl_to_pipe <pipe>\n" \
+		 "-I <name>   includename <name>\n" \
+		 "-e <enc>    use TCL encoding <enc>\n" \
+		 "-l          report local variables\n" \
+		 "-r          comment database\n" \
+		 "-s <file>   output to <file>\n" \
+		 "-T <file>   dump tokens to <file> and exit\n" \
+		 "-t          drop headers in /usr\n" \
+		 "-u          be case-insensitive\n" \
+		 "-x          Xref filename\n" \
+		 "-y          list of files to parse\n" \
+                 "\n" \
+		 "Ignored options:\n" \
+                 "-n          remove db prefix - not implemented\n" \
+		 "-B          silently ignored\n" \
+		 "-D          silently ignored\n" \
+		 "-S          silently ignored\n" \
+		 "\n"
+		);
+}
+
+
+/*
  * A pseudo-main function that handles command line processing, opening of
  * source files and invoking the parser on those files.
  */
@@ -177,6 +211,7 @@ int sn_main(int argc, char *argv[], char * group, FILE ** lexstream, int (*lexer
 	}
 	else
 	{
+		sn_parser_help();
 		sn_error("-y or file name required\n");
 		return(1);
 	}
