@@ -278,7 +278,8 @@ proc snpdbg_parse_files { files } {
         update
 
         # Invoke dbimp to process symbols output by browser
-        lappend dbimp_cmd -c 300 -C 3000
+        # FIXME FREEK - GET VALUES FROM SN CONF!
+	lappend dbimp_cmd -c 300 -C 3000
 
         set cmd $dbimp_cmd
         lappend cmd -f $browser_output snpdbg
