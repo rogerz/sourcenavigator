@@ -921,7 +921,7 @@ itcl::class Editor& {
 	    return ""
 	} else {
 		# raise error that there is no editor defined
-		tk_dialog auto [get_indep String ExternalEditor] [get_indep String ExternalEditorNotDefined] question_image 0 [get_indep String ok] [get_indep String cancel]
+		tk_dialog auto [get_indep String ExternalEditor] [get_indep String ExternalEditorNotDefined] question_image 0 [get_indep String ok]
 	}
     }
 
