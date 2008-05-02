@@ -126,6 +126,8 @@ SQLPPrintPageNum,Imprimer les numéros de page
 SQLPPage,Page
 cancel,[Annuler
 ok,OK
+
+#
 preference,[Préférences...
 View,[Afficher
 ViewINFO,Afficher les fichiers sélectionnés
@@ -767,6 +769,7 @@ ProjAlreadyOpenedOtherSystem,L'utilisateur '%s' a déjà ouvert le projet '%s' sur
 ProjAlreadyOpenedThisUser,Projet '%s' déjà ouvert sur cette machine. Il apparait que le processus '%d' l'utilise.
 ProjAlreadyOpenedThisSystem,User '%s' already has the project '%s' open on this machine. It appears that the process '%d' is using it.
 ProjAlreadyOpenedThisSystem,L'utilisateur '%s' a déjà ouvert le projet '%s' sur cette machine. Il apparait que le processus '%d' l'utilise.
+ProjForceUnlock,Forcer le deverrouillage
 MoreEditorToolbarButtons,Barre d'outils [étendue
 MoreEditorToolbarButtonsINFO,Ajoute la barre d'outils étendue à l'éditeur
 GotoPrevPosition,Page précédente

@@ -125,6 +125,7 @@ SQLPPrintPageNum,ページ番号を印刷
 SQLPPage,ページ
 cancel,キャンセル
 ok,OK
+
 preference,設定([P)...
 View,表示([V)
 ViewINFO,選択したファイルを表示
@@ -746,29 +747,33 @@ ProjAlreadyOpenedThisProcess,?? '%s' ??
 ProjAlreadyOpenedOtherSystem,?? '%s' ?? '%s' ?? '%s'.
 ProjAlreadyOpenedThisUser,?? '%s' ?? '%d' ??.
 ProjAlreadyOpenedThisSystem,?? '%s' ?? '%s' ?? '%d' ??.
+ProjForceUnlock,Force unlock
 MoreEditorToolbarButtons,拡張ツールバー ボタン([E)
 MoreEditorToolbarButtonsINFO,エディタに拡張ツールバーを追加
-GotoPrevPosition,前ページへジャンプ
-GotoNextPosition,次ページへジャンプ
+GotoPrevPosition,前ページへジャンプ GotoNextPosition,次ページへジャンプ
 FastCreateProject,プロジェクト自動生成
-FastCreateProjectQuestion,以下に基づいて Source-Navigator プロジェクトを自動生成しますか:
-ScanRecursive,サブディレクトリを含める
+FastCreateProjectQuestion,以下に基づいて Source-Navigator
+プロジェクトを自動生成しますか: ScanRecursive,サブディレクトリを含める
 ScanRecursiveINFO,選択したディレクトリのすべてのサブディレクトリを含める
 ManyMatchesTitle,リトリーバ:  複数一致しました。
-ManyMatchesINFO,選択したシンボル情報に基づいて検索した結果 2 つ以上が一致しました。\n処理を続けるには一致リストから 1 つを選択してください。
-DonotDisplay,このダイアログ ボックスを表示しない
+ManyMatchesINFO,選択したシンボル情報に基づいて検索した結果 2
+つ以上が一致しました。\n処理を続けるには一致リストから 1
+つを選択してください。 DonotDisplay,このダイアログ ボックスを表示しない
 DoNotDisplayINFO,このダイアログ ボックスを再び表示しない
 DonotDisplayWarning,複数一致した時に警告のダイアログを表示しない([D)
 DonotDisplayWarningINFO,検索条件に一致した複数のシンボルをリストする前に警告ダイアログを表示するかしないかを指定
-CannotCloseWindow,処理中の Source-Navigator プロセスがあるのでこのウィンドウを閉じることができません。\n処理をキャンセルするか処理が終了するまでお待ちください。
-CannotProceed,別のプロセスが Source-Navigator データベースを使用中です。\nそのプロセスをキャンセルするか処理が完了するまでお待ちください。
-CancelXref,Source-Navigator がクロスリファレンス データベースを作成中です。\nこのプロセスをキャンセルすると関連するクロスリファレンス ファイルがすべて削除されます。
+CannotCloseWindow,処理中の Source-Navigator
+プロセスがあるのでこのウィンドウを閉じることができません。\n処理をキャンセルするか処理が終了するまでお待ちください。
+CannotProceed,別のプロセスが Source-Navigator
+データベースを使用中です。\nそのプロセスをキャンセルするか処理が完了するまでお待ちください。
+CancelXref,Source-Navigator がクロスリファレンス
+データベースを作成中です。\nこのプロセスをキャンセルすると関連するクロスリファレンス ファイルがすべて削除されます。
 XrefGeneration,クロスリファレンス プロセス
 DoYouWantToReparse,プロセスを再度パーサーで処理しますか?\nクロスリファレンス情報の再作成に多少時間がかかる場合があります。
 AddDirectory,ディレクトリを追加
 YouHaveAddedSomeDirectories,以下のディレクトリが指定されました。
-DoYouWantToInitProjEditor,これらの内容でプロジェクト エディタを初期化しますか?
-more,ディレクトリを追加
+DoYouWantToInitProjEditor,これらの内容でプロジェクト
+エディタを初期化しますか? more,ディレクトリを追加
 
 #Debugger text variables (DON'T REMOVE1)
 DbgProgram,プログラム

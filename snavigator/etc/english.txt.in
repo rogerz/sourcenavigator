@@ -125,6 +125,8 @@ SQLPPrintPageNum,Print page number
 SQLPPage,Page
 cancel,[Cancel
 ok,OK
+
+#
 preference,[Preferences...
 View,[View
 ViewINFO,View selected files
@@ -764,6 +766,7 @@ ProjAlreadyOpenedThisProcess,You already have the project '%s' open in this sess
 ProjAlreadyOpenedOtherSystem,User '%s' already has the project '%s' open on the system '%s'.
 ProjAlreadyOpenedThisUser,You already have the project '%s' open on this machine. It appears that the process '%d' is using it.
 ProjAlreadyOpenedThisSystem,User '%s' already has the project '%s' open on this machine. It appears that the process '%d' is using it.
+ProjForceUnlock,Force unlock
 MoreEditorToolbarButtons,[Extended toolbar buttons
 MoreEditorToolbarButtonsINFO,Add extended toolbar to Editor
 GotoPrevPosition,Go to previous page

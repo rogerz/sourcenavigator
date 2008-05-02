@@ -546,6 +546,7 @@ ProjAlreadyOpenedThisProcess,?? '%s' ??
 ProjAlreadyOpenedOtherSystem,?? '%s' ?? '%s' ?? '%s'.
 ProjAlreadyOpenedThisUser,?? '%s' ?? '%d' ??.
 ProjAlreadyOpenedThisSystem,?? '%s' ?? '%s' ?? '%d' ??.
+ProjForceUnlock,Sperrung aufheben
 Disp_Directories,Zeigt Dateien mit vollem Pfad
 ScanningHasBeenCanceled,Möchten Sie den Parsing-Prozeß abbrechen?\nDamit sing die übrigen Dateien nicht Teil des Projektes.
 InvalidProjectName,Projektname falsch angegeben. Bitte verwenden Sie keine Sonderzeichen.
