@@ -2532,60 +2532,74 @@ proc sn_choose_project {{win ""} {initdir ""} {open "open"}} {
     return ${nm}
 }
 
-#open an existing project by creating a new interpreter
+
+# open an existing project by creating a new interpreter
 proc sn_open_project {{nm ""}} {
-    global errorInfo tcl_platform
+	global errorInfo tcl_platform
 
-    if {${nm} == ""} {
-        set nm [sn_choose_project]
-        if {${nm} == ""} {
-            return
-        }
-    }
+	set lock_error ""
 
-    # Lets check it whether we are allowed to open it!
-    if {[catch {dbopen tmp_proj ${nm} RDONLY [sn_db_perms] hash} msg]} {
-        sn_error_dialog ${msg}
-        return
-    }
-    tmp_proj close
+	if {${nm} == ""} {
+		set nm [sn_choose_project]
+		if {${nm} == ""} {
+			return
+		}
+	}
 
-    set ret [sn_is_project_busy ${nm} in remuser remhost port pid]
-    switch -- ${ret} {
-        "othersystem" {
-                sn_error_dialog [format \
-                    [get_indep String ProjAlreadyOpenedOtherSystem] \
-                    ${remuser} ${nm} ${remhost}]
-                 return
-            }
-        "thisprocess" {
-                sn_error_dialog [format \
+	# Lets check it whether we are allowed to open it!
+	if {[catch {dbopen tmp_proj ${nm} RDONLY [sn_db_perms] hash} msg]} {
+	        sn_error_dialog ${msg}
+        	return
+	}
+	tmp_proj close
+
+	set ret [sn_is_project_busy ${nm} in remuser remhost port pid]
+    
+	switch -- ${ret} {
+	"othersystem" {
+		set lock_error [format [get_indep String ProjAlreadyOpenedOtherSystem] \
+				${remuser} ${nm} ${remhost}]
+		break
+	}
+        
+	"thisprocess" {
+                set lock_error [format \
                     [get_indep String ProjAlreadyOpenedThisProcess] \
                     ${nm}]
-                 return
-            }
-        "thisuser" {
-                sn_error_dialog [format \
+		break
+	}
+        
+	"thisuser" {
+                set lock_error [format \
                     [get_indep String ProjAlreadyOpenedThisUser]\
                     ${nm} ${pid}]
-                return
-            }
-        "thissystem" {
-                sn_error_dialog [format \
+                break
+	}
+        
+	"thissystem" {
+                set lock_error [format \
                     [get_indep String ProjAlreadyOpenedThisSystem] \
                     ${remuser} ${nm} ${pid}]
+                break
+	}
+        
+	"error" {
                 return
-            }
-        "error" {
-                return
-        }
-    }
+	}
+	
+	}
 
-# FIXME: why does this not call sn_new_project ??
-    create_interp "
-        wm withdraw .
-        sn_start_new_session [list [list ${nm}]]
-    "
+	if(ret == "") {
+		# everything is fine, just go forward with startup
+		# FIXME: why does this not call sn_new_project ??
+		create_interp "
+			wm withdraw .
+			sn_start_new_session [list [list ${nm}]]
+			"
+	} else {
+		sn_error_dialog lock_error
+	}
+	
 }
 
 proc sn_set_project_permission {perm} {
