@@ -30,6 +30,10 @@ are provided.
 The build process automatically configures and uses those
 libraries.
 
+The configure script, by default, does not cache the results of tests.
+To enable caching use the option --cache-file=<file>. Alternatively
+--config-cache and -C are an alias for --cache-file=config.cache
+
 
 UNIX Build:
 
@@ -43,9 +47,6 @@ The following commands assume that the user wants to install into
 a non-default location (/opt/sourcenav) that is owned by root.
 If the install directory is not owned by root, then you don't need 
 to become root before the make install step.
-
-Please note that building outside of the src directory is currently 
-not supported.
 
 % ./configure --prefix=/opt/sourcenav
 % make
