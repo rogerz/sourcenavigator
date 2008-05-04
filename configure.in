@@ -15,9 +15,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-AC_INIT(configure.in)
-AC_PREREQ(2.13)
-AC_CANONICAL_SYSTEM
+AC_INIT
+AC_CONFIG_SRCDIR([configure.in])
+AC_PREREQ(2.61)
+AC_CANONICAL_TARGET
 
 # When compiling with VC++ under Cygwin, we need to
 # check for a grep executable that does not treat
@@ -28,13 +29,14 @@ case "${host}" in
 *windows32*)
         result=`echo file.cA | tr A '\r' | grep -v '^file.c$'`
         if test "$result" = "file.c" ; then
-            AC_MSG_ERROR([Can't build with Cygwin grep, see INSTALL.TXT])
+            AC_MSG_ERROR([Cannot build with Cygwin grep, see INSTALL.TXT])
         fi
         ;;
 esac
 
 TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"
 AC_SUBST(TOP_SUBDIRS)
-AC_CONFIG_SUBDIRS($TOP_SUBDIRS)
+AC_CONFIG_SUBDIRS([tcl tk itcl tix libgui db4/PORT snavigator])
 
-AC_OUTPUT([Makefile])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

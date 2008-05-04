@@ -475,8 +475,7 @@ AM_TYPES
 AM_SOCKLEN_T
 
 AC_CACHE_CHECK([for ANSI C exit success/failure values], db_cv_exit_defines, [
-AC_TRY_COMPILE([#include <stdlib.h>], return (EXIT_SUCCESS);,
-    [db_cv_exit_defines=yes], [db_cv_exit_defines=no])])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]], [[return (EXIT_SUCCESS);]])],[db_cv_exit_defines=yes],[db_cv_exit_defines=no])])
 if test "$db_cv_exit_defines" = "yes"; then
 	AC_DEFINE(HAVE_EXIT_SUCCESS)
 	AH_TEMPLATE(HAVE_EXIT_SUCCESS,
@@ -510,10 +509,14 @@ LIBSO_LIBS="$LIBS"
 # !!!
 # We could be more exact about whether these libraries are needed, but don't
 # bother -- if they exist, we load them, it's only the test programs anyway.
-AC_HAVE_LIBRARY(m, TEST_LIBS="$TEST_LIBS -lm")
-AC_HAVE_LIBRARY(nsl, TEST_LIBS="$TEST_LIBS -lnsl")
-AC_HAVE_LIBRARY(pthread, TEST_LIBS="$TEST_LIBS -lpthread")
-AC_HAVE_LIBRARY(socket, TEST_LIBS="$TEST_LIBS -lsocket")
+AC_CHECK_LIB([m],[main],[TEST_LIBS="$TEST_LIBS -lm"],[],[])ac_cv_lib_m=ac_cv_lib_m_main
+
+AC_CHECK_LIB([nsl],[main],[TEST_LIBS="$TEST_LIBS -lnsl"],[],[])ac_cv_lib_nsl=ac_cv_lib_nsl_main
+
+AC_CHECK_LIB([pthread],[main],[TEST_LIBS="$TEST_LIBS -lpthread"],[],[])ac_cv_lib_pthread=ac_cv_lib_pthread_main
+
+AC_CHECK_LIB([socket],[main],[TEST_LIBS="$TEST_LIBS -lsocket"],[],[])ac_cv_lib_socket=ac_cv_lib_socket_main
+
 
 # Checks for system functions for which we have replacements.
 #
@@ -559,10 +562,10 @@ esac
 AC_CHECK_FUNCS(ctime_r)
 if test "$ac_cv_func_ctime_r" = "yes"; then
 AC_CACHE_CHECK([for 2 or 3 argument version of ctime_r], db_cv_ctime_r_3arg, [
-AC_TRY_LINK([
-#include <time.h>], [
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <time.h>]], [[
 	ctime_r(NULL, NULL, 100);
-],  [db_cv_ctime_r_3arg="3-argument"], [db_cv_ctime_r_3arg="2-argument"])])
+]])],[db_cv_ctime_r_3arg="3-argument"],[db_cv_ctime_r_3arg="2-argument"])])
 fi
 if test "$db_cv_ctime_r_3arg" = "3-argument"; then
 	AC_DEFINE(HAVE_CTIME_R_3ARG)
@@ -583,11 +586,11 @@ esac
 
 # Check for fcntl(2) to deny child process access to file descriptors.
 AC_CACHE_CHECK([for fcntl/F_SETFD], db_cv_fcntl_f_setfd, [
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
-#include <fcntl.h>], [
+#include <fcntl.h>]], [[
 	fcntl(1, F_SETFD, 1);
-], [db_cv_fcntl_f_setfd=yes], [db_cv_fcntl_f_setfd=no])])
+]])],[db_cv_fcntl_f_setfd=yes],[db_cv_fcntl_f_setfd=no])])
 if test "$db_cv_fcntl_f_setfd" = "yes"; then
 	AC_DEFINE(HAVE_FCNTL_F_SETFD)
 	AH_TEMPLATE(HAVE_FCNTL_F_SETFD,
@@ -604,11 +607,11 @@ esac
 # will fail.  Default to not using the O_DIRECT flag.
 if test "$db_cv_o_direct" = "yes"; then
 	AC_CACHE_CHECK([for open/O_DIRECT], db_cv_open_o_direct, [
-	AC_TRY_LINK([
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	#include <sys/types.h>
-	#include <fcntl.h>], [
+	#include <fcntl.h>]], [[
 		open("a", O_RDONLY | O_DIRECT, 0);
-	], [db_cv_open_o_direct=yes], [db_cv_open_o_direct=no])])
+	]])],[db_cv_open_o_direct=yes],[db_cv_open_o_direct=no])])
 	if test \
 	    "$db_cv_o_direct" = "yes" -a "$db_cv_open_o_direct" = "yes"; then
 		AC_DEFINE(HAVE_O_DIRECT)

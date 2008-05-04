@@ -1,9 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 
 dnl Initialization.
-AC_INIT(ibrowser.l)
-AC_PREREQ(2.12.2)
-AM_CONFIG_HEADER(config.h)
+AC_INIT
+AC_CONFIG_SRCDIR([ibrowser.l])
+AC_PREREQ(2.61)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(../../../..)
 AM_INIT_AUTOMAKE(sn,NG1)
 AM_MAINTAINER_MODE
@@ -123,4 +124,5 @@ AC_SUBST(WIN32LDAPP)
 AM_CONDITIONAL(WINDOWS, test x$ac_win_build = xyes)
 AM_CONDITIONAL(MSVC, test x$sn_cv_os_msvc = xyes)
 
-AC_OUTPUT([Makefile])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

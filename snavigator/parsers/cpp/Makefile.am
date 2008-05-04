@@ -27,7 +27,7 @@ SUBDIRS = cpplib
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib \
 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) \
-	-I$(top_srcdir)/parsers/common $(TCLHDIR)
+	-I$(DB_LIBDIR) -I$(top_srcdir)/parsers/common $(TCLHDIR)
 
 bin_PROGRAMS = cbrowser cbrowser2
 

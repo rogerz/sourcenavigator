@@ -51,7 +51,7 @@
 #include "tclPort.h"
 #include <utime.h>
 #include <grp.h>
-#ifndef HAVE_ST_BLKSIZE
+#ifndef HAVE_STRUCT_STAT_ST_BLKSIZE
 #ifndef NO_FSTATFS
 #include <sys/statfs.h>
 #endif
@@ -446,7 +446,7 @@ CopyFile(src, dst, statBufPtr)
 	return TCL_ERROR;
     }
 
-#ifdef HAVE_ST_BLKSIZE
+#ifdef HAVE_STRUCT_STAT_ST_BLKSIZE
     blockSize = statBufPtr->st_blksize;
 #else
 #ifndef NO_FSTATFS

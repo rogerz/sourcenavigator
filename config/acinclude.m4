@@ -284,18 +284,16 @@ if test x"${ac_cv_c_tkh}" = x ; then
     dnl find the top level Tk source directory
     for i in $dirlist; do
         if test -n "`ls -dr $srcdir/$i/tk* 2>/dev/null`" ; then
-	    tkpath=$srcdir/$i
-	    break
-	fi
-    done
 
-    dnl find the exact Tk source dir. We do it this way, cause there
-    dnl might be multiple version of Tk, and we want the most recent one.
-    for i in `ls -dr $tkpath/tk* 2>/dev/null ` ; do
-        if test -f $i/generic/tk.h ; then
-          ac_cv_c_tkh=`(cd $i/generic; ${PWDCMD-pwd})`
-          break
-        fi
+    		dnl find the exact Tk source dir. We do it this way, cause there
+    		dnl might be multiple version of Tk, and we want the most recent one.
+    		for j in `ls -dr $srcdir/$i/tk* 2>/dev/null ` ; do
+        		if test -f $j/generic/tk.h ; then
+          			ac_cv_c_tkh=`(cd $j/generic; ${PWDCMD-pwd})`
+          			break
+        		fi
+    		done
+		fi
     done
 fi
 
@@ -375,25 +373,23 @@ if test x"${no_tk}" = x ; then
         dnl find the top level Tk source directory
         for i in $dirlist; do
             if test -n "`ls -dr $i/tk* 2>/dev/null`" ; then
-	        tkconfpath=$i
-	        break
-	    fi
-        done
 
-        dnl find the exact Tk dir. We do it this way, cause there
-        dnl might be multiple version of Tk, and we want the most recent one.
-        for i in `ls -dr $tkconfpath/tk* 2>/dev/null ` ; do
-            dnl need to test both unix and win directories, since 
-            dnl cygwin's tkConfig.sh could be in either directory depending
-            dnl on the cygwin port of tk.
-            if test -f $i/unix/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $i/unix; ${PWDCMD-pwd})`
-                break
-            fi
-            if test -f $i/win/tkConfig.sh ; then
-                ac_cv_c_tkconfig=`(cd $i/win; ${PWDCMD-pwd})`
-                break
-            fi
+        		dnl find the exact Tk dir. We do it this way, cause there
+        		dnl might be multiple version of Tk, and we want the most recent one.
+        		for j in `ls -dr $i/tk* 2>/dev/null ` ; do
+            		dnl need to test both unix and win directories, since 
+            		dnl cygwin's tkConfig.sh could be in either directory depending
+            		dnl on the cygwin port of tk.
+            		if test -f $j/unix/tkConfig.sh ; then
+                		ac_cv_c_tkconfig=`(cd $j/unix; ${PWDCMD-pwd})`
+                		break
+            		fi
+            		if test -f $j/win/tkConfig.sh ; then
+                		ac_cv_c_tkconfig=`(cd $j/win; ${PWDCMD-pwd})`
+                		break
+            		fi
+        		done
+	    	fi
         done
     fi
 

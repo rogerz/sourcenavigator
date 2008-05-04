@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce configure.
 
-AC_INIT(src/subcommand.h)
+AC_INIT
+AC_CONFIG_SRCDIR([src/subcommand.h])
 AM_INIT_AUTOMAKE(libgui, 0.0)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
@@ -31,7 +32,7 @@ AC_CHECK_PROG(ITCL_SH, itcl_sh, itcl_sh,
 	[\$\$here/\$(top_builddir)/../itcl/itcl/unix/itcl_sh\$(EXEEXT)])
 
 AC_FUNC_ALLOCA
-AC_HAVE_HEADERS(stddef.h stdlib.h getopt.h unistd.h fcntl.h sys/file.h sys/wait.h string.h strings.h)
+AC_CHECK_HEADERS([stddef.h stdlib.h getopt.h unistd.h fcntl.h sys/file.h sys/wait.h string.h strings.h])
 AC_CHECK_FUNCS(raise)
 
 AC_ARG_ENABLE(ide, [  --enable-ide            Enable IDE support],
@@ -145,7 +146,8 @@ AM_CONDITIONAL(TCL_SHARED, test x$TCL_SHARED_BUILD = x1)
 
 AC_SUBST(RPATH_ENVVAR)
 
-AC_OUTPUT([Makefile library/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile library/Makefile src/Makefile])
+AC_OUTPUT
 
 
 

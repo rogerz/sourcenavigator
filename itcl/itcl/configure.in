@@ -9,10 +9,12 @@
 # find the sources.  The argument to AC_INIT should be a unique filename
 # for this package, and can be a relative path, such as:
 #
-# AC_INIT(../generic/tcl.h)
+# AC_INIT
+# AC_CONFIG_SRCDIR([../generic/tcl.h])
 #--------------------------------------------------------------------
 
-AC_INIT(generic/itcl.h)
+AC_INIT
+AC_CONFIG_SRCDIR([generic/itcl.h])
 # CYGNUS LOCAL
 AC_CONFIG_AUX_DIR(../..)
 
@@ -72,8 +74,8 @@ fi
 
 #--------------------------------------------------------------------
 # Check whether --enable-gcc or --disable-gcc was given.  Do this 
-# before AC_CYGWIN is called so the compiler can 
-# be fully tested by built-in autoconf tools.
+# before host os is checked so the compiler can # be fully tested by
+# built-in autoconf tools.
 # This macro also calls AC_PROG_CC to set the compiler if --enable-gcc
 # was not used.
 #--------------------------------------------------------------------
@@ -100,7 +102,11 @@ AC_PROG_RANLIB
 # This macro performs additional compiler tests.
 #--------------------------------------------------------------------
 
-AC_CYGWIN
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+  * )        CYGWIN=;;
+esac
+
 
 #--------------------------------------------------------------------
 # Determines the correct binary file extension (.o, .obj, .exe etc.)
@@ -433,8 +439,9 @@ ITCL_SH=NONE
 AC_SUBST(ITCL_SH)
 
 
-AC_OUTPUT([Makefile \
+AC_CONFIG_FILES([Makefile \
 	itclConfig.sh \
 	pkgIndex.tcl])
+AC_OUTPUT
 
 # END CYGNUS LOCAL

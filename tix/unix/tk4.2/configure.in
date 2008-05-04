@@ -2,7 +2,8 @@ dnl	This file is an input file used by the GNU "autoconf" program to
 dnl	generate the file "configure", which is run to configure the
 dnl	Makefile in this directory.
 
-AC_INIT(../../generic/tixInit.c)
+AC_INIT
+AC_CONFIG_SRCDIR([../../generic/tixInit.c])
 
 #--------------------------------------------------------------------
 #	Remove the ./config.cache file and rerun configure if
@@ -69,7 +70,7 @@ fi
 
 AC_PROG_INSTALL
 AC_PROG_RANLIB
-AC_HAVE_HEADERS(unistd.h limits.h)
+AC_CHECK_HEADERS([unistd.h limits.h])
 AC_PROG_MAKE_SET
 
 #--------------------------------------------------------------------
@@ -77,9 +78,9 @@ AC_PROG_MAKE_SET
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([unsigned char])
-AC_TRY_COMPILE([#include <stdio.h>],[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[
      unsigned char c = 'c';
-], tcl_ok=supported, tcl_ok=not supported)
+]])],[tcl_ok=supported],[tcl_ok=not supported])
 
 AC_MSG_RESULT($tcl_ok)
 if test $tcl_ok = supported; then
@@ -427,5 +428,6 @@ TIX_PKG_FILE="[[file join [file dirname \$dir] ${TIX_LIB_FILE}]]"
 AC_SUBST(TIX_PKG_FILE)
 AC_SUBST(TIX_SAM_PACKAGE_IFNEEDED)
 
-AC_OUTPUT(Makefile pkgIndex.tcl)
+AC_CONFIG_FILES([Makefile pkgIndex.tcl])
+AC_OUTPUT
 

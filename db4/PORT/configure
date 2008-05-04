@@ -1537,14 +1537,14 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-bigfile       Obsolete; use --disable-largefile instead.
-  --disable-cryptography  Do not build database cryptography support.
+  --enable-cryptography   Build database cryptography support.
   --disable-hash          Do not build Hash access method.
   --disable-mutexsupport  Do not build any mutex support.
   --disable-queue         Do not build Queue access method.
-  --disable-replication   Do not build database replication support.
+  --enable-replication    Build database replication support.
   --disable-statistics    Do not build statistics support.
   --disable-verify        Do not build database verification support.
-  --enable-compat185      Build DB 1.85 compatibility API.
+  --disable-compat185     Do not build DB 1.85 compatibility API.
   --enable-cxx            Build C++ API.
   --enable-debug          Build a debugging version.
   --enable-debug_rop      Build a version that logs read operations.
@@ -2229,7 +2229,7 @@ DB_VERSION_MINOR="6"
 
 DB_VERSION_PATCH="21"
 
-DB_VERSION_STRING='"Berkeley DB 4.6.21: (September 27, 2007)"'
+DB_VERSION_STRING='"Berkeley DB 4.6.21: (April 28, 2008)"'
 
 
 # Process all options before using them.
@@ -2245,22 +2245,17 @@ echo "$as_me: error: --enable-bigfile no longer supported, use --enable-largefil
 fi
 
 
-{ echo "$as_me:$LINENO: checking if --disable-cryptography option specified" >&5
-echo $ECHO_N "checking if --disable-cryptography option specified... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking if --enable-cryptography option specified" >&5
+echo $ECHO_N "checking if --enable-cryptography option specified... $ECHO_C" >&6; }
 # Check whether --enable-cryptography was given.
 if test "${enable_cryptography+set}" = set; then
-  enableval=$enable_cryptography;
+  enableval=$enable_cryptography; db_cv_build_cryptography="$enable-cryptography"
 else
-  enableval="no"
+  db_cv_build_cryptography="no"
 fi
 
-db_cv_build_cryptography="$enableval"
-case "$enableval" in
- no) { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; };;
-yes) { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; };;
-esac
+{ echo "$as_me:$LINENO: result: $db_cv_build_cryptography" >&5
+echo "${ECHO_T}$db_cv_build_cryptography" >&6; }
 
 { echo "$as_me:$LINENO: checking if --disable-hash option specified" >&5
 echo $ECHO_N "checking if --disable-hash option specified... $ECHO_C" >&6; }
@@ -2313,22 +2308,17 @@ yes) { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; };;
 esac
 
-{ echo "$as_me:$LINENO: checking if --disable-replication option specified" >&5
-echo $ECHO_N "checking if --disable-replication option specified... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking if --enable-replication option specified" >&5
+echo $ECHO_N "checking if --enable-replication option specified... $ECHO_C" >&6; }
 # Check whether --enable-replication was given.
 if test "${enable_replication+set}" = set; then
-  enableval=$enable_replication;
+  enableval=$enable_replication; db_cv_build_replication="$enable_replication"
 else
-  enableval="no"
+  db_cv_build_replication="no"
 fi
 
-db_cv_build_replication="$enableval"
-case "$enableval" in
- no) { echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6; };;
-yes) { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; };;
-esac
+{ echo "$as_me:$LINENO: result: $db_cv_build_replication" >&5
+echo "${ECHO_T}$db_cv_build_replication" >&6; }
 
 { echo "$as_me:$LINENO: checking if --disable-statistics option specified" >&5
 echo $ECHO_N "checking if --disable-statistics option specified... $ECHO_C" >&6; }
@@ -2364,17 +2354,22 @@ yes) { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; };;
 esac
 
-{ echo "$as_me:$LINENO: checking if --enable-compat185 option specified" >&5
-echo $ECHO_N "checking if --enable-compat185 option specified... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking if --disable-compat185 option specified" >&5
+echo $ECHO_N "checking if --disable-compat185 option specified... $ECHO_C" >&6; }
 # Check whether --enable-compat185 was given.
 if test "${enable_compat185+set}" = set; then
-  enableval=$enable_compat185; db_cv_compat185="$enable_compat185"
+  enableval=$enable_compat185;
 else
-  db_cv_compat185="yes"
+  enableval="yes"
 fi
 
-{ echo "$as_me:$LINENO: result: $db_cv_compat185" >&5
-echo "${ECHO_T}$db_cv_compat185" >&6; }
+db_cv_compat185="$enableval"
+case "$enableval" in
+ no) { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; };;
+yes) { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; };;
+esac
 
 { echo "$as_me:$LINENO: checking if --enable-cxx option specified" >&5
 echo $ECHO_N "checking if --enable-cxx option specified... $ECHO_C" >&6; }
@@ -3768,7 +3763,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 if test -n "$ac_tool_prefix"; then
-  for ac_prog in gcc cc
+  for ac_prog in cc gcc
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -3812,7 +3807,7 @@ fi
 fi
 if test -z "$CC"; then
   ac_ct_CC=$CC
-  for ac_prog in gcc cc
+  for ac_prog in cc gcc
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -6660,7 +6655,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6683 "configure"' > conftest.$ac_ext
+  echo '#line 6658 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -8922,11 +8917,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8945: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8920: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8949: \$? = $ac_status" >&5
+   echo "$as_me:8924: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9190,11 +9185,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9213: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9188: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9217: \$? = $ac_status" >&5
+   echo "$as_me:9192: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9294,11 +9289,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9317: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9292: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9321: \$? = $ac_status" >&5
+   echo "$as_me:9296: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11602,7 +11597,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11625 "configure"
+#line 11600 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11702,7 +11697,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11725 "configure"
+#line 11700 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14042,11 +14037,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14065: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14040: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14069: \$? = $ac_status" >&5
+   echo "$as_me:14044: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14146,11 +14141,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14169: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14144: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14173: \$? = $ac_status" >&5
+   echo "$as_me:14148: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15716,11 +15711,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15739: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15714: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:15743: \$? = $ac_status" >&5
+   echo "$as_me:15718: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -15820,11 +15815,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15843: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15818: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:15847: \$? = $ac_status" >&5
+   echo "$as_me:15822: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18022,11 +18017,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18045: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18020: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18049: \$? = $ac_status" >&5
+   echo "$as_me:18024: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -18290,11 +18285,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18313: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18288: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18317: \$? = $ac_status" >&5
+   echo "$as_me:18292: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -18394,11 +18389,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18417: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18392: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:18421: \$? = $ac_status" >&5
+   echo "$as_me:18396: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -21336,7 +21331,7 @@ else
 JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 cat << \EOF > $JAVA_TEST
-/* #line 21359 "configure" */
+/* #line 21334 "configure" */
 public class Test {
 }
 EOF
@@ -21605,7 +21600,7 @@ EOF
 if uudecode$EXEEXT Test.uue; then
         ac_cv_prog_uudecode_base64=yes
 else
-        echo "configure: 21628: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
+        echo "configure: 21603: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
         echo "configure: failed file was:" >&5
         cat Test.uue >&5
         ac_cv_prog_uudecode_base64=no
@@ -21727,7 +21722,7 @@ else
 JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 cat << \EOF > $JAVA_TEST
-/* #line 21750 "configure" */
+/* #line 21725 "configure" */
 public class Test {
 }
 EOF
@@ -21764,7 +21759,7 @@ JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 TEST=Test
 cat << \EOF > $JAVA_TEST
-/* [#]line 21787 "configure" */
+/* [#]line 21762 "configure" */
 public class Test {
 public static void main (String args[]) {
         System.exit (0);

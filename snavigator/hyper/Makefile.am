@@ -46,7 +46,7 @@ INCLUDES = $(HYPER_CFLAGS) $(WINFLAGS) -I$(LibUtilsSrc) \
 $(TKHDIR) $(TKHDIR)/../unix $(TKHDIR)/../win \
 $(TCLHDIR) $(TK_XINCLUDES) \
 -I$(top_srcdir)/../itcl/itcl/generic -I$(top_srcdir)/../itcl/itk/generic \
--I$(DB_INCDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src \
+-I$(DB_INCDIR) -I$(DB_LIBDIR) -I$(top_srcdir)/db -I$(top_srcdir)/../libgui/src \
 -I$(top_srcdir)/misc
 
 sdkincludedir = $(datadir)/sdk/include

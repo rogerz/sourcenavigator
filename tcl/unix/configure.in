@@ -4,10 +4,11 @@ dnl	generate the file "configure", which is run during Tcl installation
 dnl	to configure the system for the local environment.
 
 # CYGNUS LOCAL, need 2.5 or higher for --bindir et al
-AC_PREREQ(2.5)
+AC_PREREQ(2.61)
 # END CYGNUS LOCAL
 
-AC_INIT(../generic/tcl.h)
+AC_INIT
+AC_CONFIG_SRCDIR([../generic/tcl.h])
 # RCS: @(#) $Id$
 
 TCL_VERSION=8.3
@@ -35,7 +36,7 @@ TCL_SRC_DIR=`cd $srcdir/..; pwd`
 AC_PROG_CC
 AC_PROG_RANLIB
 
-AC_HAVE_HEADERS(unistd.h limits.h)
+AC_CHECK_HEADERS([unistd.h limits.h])
 
 # CYGNUS LOCAL
 # dje/win32
@@ -72,10 +73,8 @@ if test -n "$GCC"; then
   AC_MSG_CHECKING([if the compiler understands -pipe])
   OLDCC="$CC"  
   CC="$CC -pipe"
-  AC_TRY_COMPILE(,,
-    AC_MSG_RESULT(yes),
-    CC="$OLDCC"
-    AC_MSG_RESULT(no))
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[AC_MSG_RESULT(yes)],[CC="$OLDCC"
+    AC_MSG_RESULT(no)])
 fi  
 fi
 
@@ -128,10 +127,9 @@ SC_SERIAL_PORT
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([fd_set and sys/select])
-AC_TRY_COMPILE([#include <sys/types.h>],
-	[fd_set readMask, writeMask;], tk_ok=yes, tk_ok=no)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>]], [[fd_set readMask, writeMask;]])],[tk_ok=yes],[tk_ok=no])
 if test $tk_ok = no; then
-    AC_HEADER_EGREP(fd_mask, sys/select.h, tk_ok=yes)
+    AC_EGREP_HEADER([fd_mask],[sys/select.h],[tk_ok=yes])
     if test $tk_ok = yes; then
 	AC_DEFINE(HAVE_SYS_SELECT_H)
     fi
@@ -151,7 +149,8 @@ SC_TIME_HANDLER
 #	Some systems (e.g., IRIX 4.0.5) lack the st_blksize field
 #	in struct stat.  But we might be able to use fstatfs instead.
 #--------------------------------------------------------------------
-AC_STRUCT_ST_BLKSIZE
+AC_CHECK_MEMBERS([struct stat.st_blksize])
+
 AC_CHECK_FUNC(fstatfs, , AC_DEFINE(NO_FSTATFS))
 
 #--------------------------------------------------------------------
@@ -173,13 +172,13 @@ AC_CHECK_FUNC(memmove, , AC_DEFINE(NO_MEMMOVE) AC_DEFINE(NO_STRING_H))
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([proper strstr implementation])
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 extern int strstr();
 int main()
 {
     exit(strstr("\0test", "test") ? 1 : 0);
 }
-], tcl_ok=yes, tcl_ok=no, tcl_ok=no)
+]])],[tcl_ok=yes],[tcl_ok=no],[tcl_ok=no])
 if test $tcl_ok = yes; then
     AC_MSG_RESULT(yes)
 else
@@ -194,7 +193,7 @@ fi
 #--------------------------------------------------------------------
 
 AC_CHECK_FUNC(strtoul, tcl_ok=1, tcl_ok=0)
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 extern int strtoul();
 int main()
 {
@@ -206,7 +205,7 @@ int main()
         exit(1);
     }
     exit(0);
-}], , tcl_ok=0, tcl_ok=0)
+}]])],[],[tcl_ok=0],[tcl_ok=0])
 if test "$tcl_ok" = 0; then
     test -n "$verbose" && echo "	Adding strtoul.o."
     LIBOBJS="$LIBOBJS strtoul.o"
@@ -218,7 +217,7 @@ fi
 #--------------------------------------------------------------------
 
 AC_CHECK_FUNC(strtod, tcl_ok=1, tcl_ok=0)
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 extern double strtod();
 int main()
 {
@@ -230,7 +229,7 @@ int main()
 	exit(1);
     }
     exit(0);
-}], , tcl_ok=0, tcl_ok=0)
+}]])],[],[tcl_ok=0],[tcl_ok=0])
 if test "$tcl_ok" = 0; then
     test -n "$verbose" && echo "	Adding strtod.o."
     LIBOBJS="$LIBOBJS strtod.o"
@@ -273,12 +272,12 @@ AC_CHECK_FUNC(opendir, , AC_DEFINE(USE_DIRENT2_H))
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([union wait])
-AC_TRY_LINK([#include <sys/types.h> 
-#include <sys/wait.h>], [
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h> 
+#include <sys/wait.h>]], [[
 union wait x;
 WIFEXITED(x);		/* Generates compiler error if WIFEXITED
 			 * uses an int. */
-], tcl_ok=yes, tcl_ok=no)
+]])],[tcl_ok=yes],[tcl_ok=no])
 AC_MSG_RESULT($tcl_ok)
 if test $tcl_ok = no; then
     AC_DEFINE(NO_UNION_WAIT)
@@ -290,11 +289,11 @@ fi
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([matherr support])
-AC_TRY_COMPILE([#include <math.h>], [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[
 struct exception x;
 x.type = DOMAIN;
 x.type = SING;
-], tcl_ok=yes, tcl_ok=no)
+]])],[tcl_ok=yes],[tcl_ok=no])
 AC_MSG_RESULT($tcl_ok)
 if test $tcl_ok = yes; then
     AC_DEFINE(NEED_MATHERR)
@@ -312,7 +311,7 @@ AC_TYPE_SIGNAL()
 AC_CHECK_FUNC(vfork, tcl_ok=1, tcl_ok=0)
 if test "$tcl_ok" = 1; then
     AC_MSG_CHECKING([vfork/signal bug]);
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -336,7 +335,7 @@ main()
 	(void) wait(&sts);
     }
     exit((gotSignal) ? 0 : 1);
-}], tcl_ok=1, tcl_ok=0, tcl_ok=0)
+}]])],[tcl_ok=1],[tcl_ok=0],[tcl_ok=0])
     if test "$tcl_ok" = 1; then
 	AC_MSG_RESULT(ok)
     else
@@ -376,12 +375,12 @@ fi
 #	   declare it.
 #--------------------------------------------------------------------
 
-AC_CHECK_FUNC(BSDgettimeofday, AC_DEFINE(HAVE_BSDGETTIMEOFDAY),
-	AC_CHECK_FUNC(gettimeofday, , AC_DEFINE(NO_GETTOD)))
+AC_CHECK_FUNC(BSDgettimeofday, [AC_DEFINE(HAVE_BSDGETTIMEOFDAY)],
+	[AC_CHECK_FUNC(gettimeofday, , AC_DEFINE(NO_GETTOD))])
 AC_MSG_CHECKING([for gettimeofday declaration])
-AC_EGREP_HEADER(gettimeofday, sys/time.h, AC_MSG_RESULT(present), [
-    AC_MSG_RESULT(missing)
-    AC_DEFINE(GETTOD_NOT_DECLARED)
+AC_EGREP_HEADER([gettimeofday], [sys/time.h], [AC_MSG_RESULT(present)], [
+    AC_MSG_RESULT([missing])
+    AC_DEFINE([GETTOD_NOT_DECLARED])
 ])
 
 #--------------------------------------------------------------------
@@ -392,10 +391,10 @@ AC_EGREP_HEADER(gettimeofday, sys/time.h, AC_MSG_RESULT(present), [
 
 AC_C_CHAR_UNSIGNED
 AC_MSG_CHECKING([signed char declarations])
-AC_TRY_COMPILE(, [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 signed char *p;
 p = 0;
-], tcl_ok=yes, tcl_ok=no)
+]])],[tcl_ok=yes],[tcl_ok=no])
 AC_MSG_RESULT($tcl_ok)
 if test $tcl_ok = yes; then
     AC_DEFINE(HAVE_SIGNED_CHAR)
@@ -595,5 +594,6 @@ AC_SUBST(TCL_UNSHARED_LIB_SUFFIX)
 AC_SUBST(TCL_VERSION)
 AC_SUBST(VENDORPREFIX)
 
-AC_OUTPUT(Makefile tclConfig.sh)
+AC_CONFIG_FILES([Makefile tclConfig.sh])
+AC_OUTPUT
 

@@ -5,10 +5,11 @@ dnl	to configure the system for the local environment.
 # RCS: @(#) $Id$
 
 # CYGNUS LOCAL, autoconf 2.5 or higher to get --bindir et al
-AC_PREREQ(2.5)
+AC_PREREQ(2.61)
 # END CYGNUS LOCAL
 
-AC_INIT(../generic/tk.h)
+AC_INIT
+AC_CONFIG_SRCDIR([../generic/tk.h])
 # RCS: @(#) $Id$
 
 TK_VERSION=8.3
@@ -30,7 +31,7 @@ TCL_TOOL_PATH(TK_SRC_DIR, "`cd $srcdir/..; pwd`")
 AC_PROG_RANLIB
 AC_PROG_CC
 
-AC_HAVE_HEADERS(unistd.h limits.h)
+AC_CHECK_HEADERS([unistd.h limits.h])
 
 #------------------------------------------------------------------------
 # Threads support
@@ -48,10 +49,8 @@ if test -n "$GCC"; then
   AC_MSG_CHECKING([if the compiler understands -pipe])
   OLDCC="$CC"  
   CC="$CC -pipe"
-  AC_TRY_COMPILE(,,
-    AC_MSG_RESULT(yes),
-    CC="$OLDCC"
-    AC_MSG_RESULT(no))
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[AC_MSG_RESULT(yes)],[CC="$OLDCC"
+    AC_MSG_RESULT(no)])
 fi  
 fi
 
@@ -114,9 +113,9 @@ fi
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING(stdlib.h)
-AC_HEADER_EGREP(strtol, stdlib.h, tk_ok=yes, tk_ok=no)
-AC_HEADER_EGREP(strtoul, stdlib.h, , tk_ok=no)
-AC_HEADER_EGREP(strtod, stdlib.h, , tk_ok=no)
+AC_EGREP_HEADER([strtol],[stdlib.h],[tk_ok=yes],[tk_ok=no])
+AC_EGREP_HEADER([strtoul],[stdlib.h],[],[tk_ok=no])
+AC_EGREP_HEADER([strtod],[stdlib.h],[],[tk_ok=no])
 if test $tk_ok = no; then
     AC_DEFINE(NO_STDLIB_H)
 fi
@@ -133,10 +132,9 @@ AC_MSG_RESULT($tk_ok)
 #--------------------------------------------------------------------
 
 AC_MSG_CHECKING([fd_set and sys/select])
-AC_TRY_COMPILE([#include <sys/types.h>],
-	[fd_set readMask, writeMask;], tk_ok=yes, tk_ok=no)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>]], [[fd_set readMask, writeMask;]])],[tk_ok=yes],[tk_ok=no])
 if test $tk_ok = no; then
-    AC_HEADER_EGREP(fd_mask, sys/select.h, tk_ok=yes)
+    AC_EGREP_HEADER([fd_mask],[sys/select.h],[tk_ok=yes])
     if test $tk_ok = yes; then
 	AC_DEFINE(HAVE_SYS_SELECT_H)
     fi
@@ -168,8 +166,7 @@ AC_HEADER_TIME
 #-------------------------------------------
 
 AC_MSG_CHECKING([pw_gecos in struct pwd])
-AC_TRY_COMPILE([#include <pwd.h>],
-      [struct passwd pwd; pwd.pw_gecos;], tk_ok=yes, tk_ok=no)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <pwd.h>]], [[struct passwd pwd; pwd.pw_gecos;]])],[tk_ok=yes],[tk_ok=no])
 AC_MSG_RESULT($tk_ok)
 if test $tk_ok = yes; then
     AC_DEFINE(HAVE_PW_GECOS)
@@ -381,15 +378,15 @@ if test -d /usr/include/mit ; then
     CFLAGS="$CFLAGS -I/usr/include/mit"
     tk_oldLibs=$LIBS
     LIBS="$LIBS -lX11-mit"
-    AC_TRY_LINK([
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	#include <X11/Xlib.h>
-    ], [
+    ]], [[
 	XOpenDisplay(0);
-    ], [
+    ]])],[
 	AC_MSG_RESULT(yes)
 	XLIBSW="-lX11-mit"
 	XINCLUDES="-I/usr/include/mit"
-    ], AC_MSG_RESULT(no))
+    ],[AC_MSG_RESULT(no)])
     CFLAGS=$tk_oldCFlags
     LIBS=$tk_oldLibs
 fi
@@ -562,5 +559,6 @@ AC_SUBST(TK_SHARED_LIB_FILE)
 AC_SUBST(TK_UNSHARED_LIB_FILE)
 # END CYGNUS LOCAL
 
-AC_OUTPUT(Makefile tkConfig.sh)
+AC_CONFIG_FILES([Makefile tkConfig.sh])
+AC_OUTPUT
 

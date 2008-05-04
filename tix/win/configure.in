@@ -1,6 +1,7 @@
 dnl This whole file is CYGNUS LOCAL
 
-AC_INIT(../generic/tixInit.c)
+AC_INIT
+AC_CONFIG_SRCDIR([../generic/tixInit.c])
 AC_CONFIG_AUX_DIR(../..)
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++
@@ -18,8 +19,11 @@ AC_CANONICAL_HOST
 
 AC_PROG_CC
 AC_OBJEXT
-AC_CYGWIN
-CYGWIN=$ac_cv_cygwin
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+  * )        CYGWIN=no;;
+esac
+
 AC_SUBST(CYGWIN)
 AC_SUBST(GCC)
 
@@ -90,4 +94,5 @@ AC_SUBST(TIX_LIB_FILE)
 AC_SUBST(TIX_BUILD_LOCATION)
 AC_SUBST(TIX_LIB_FULL_PATH)
 
-AC_OUTPUT(Makefile ../tixConfig.sh)
+AC_CONFIG_FILES([Makefile ../tixConfig.sh])
+AC_OUTPUT

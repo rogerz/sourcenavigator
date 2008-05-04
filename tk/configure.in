@@ -4,9 +4,10 @@ dnl changed in 7.5, and this change lets us avoid changing the
 dnl configuration superstructure.
 dnl Tom Tromey <tromey@cygnus.com>
 
-AC_PREREQ(2.5)
+AC_PREREQ(2.61)
 
-AC_INIT(generic/tk.h)
+AC_INIT
+AC_CONFIG_SRCDIR([generic/tk.h])
 
 AC_CANONICAL_HOST
 
@@ -24,5 +25,6 @@ esac
 
 AC_PROG_MAKE_SET
 AC_CONFIG_SUBDIRS($CONFIGDIR)
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
 

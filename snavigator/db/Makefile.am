@@ -22,7 +22,7 @@ AUTOMAKE_OPTIONS = cygnus
 ## Process this file with automake to create Makefile.in.
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/misc/libutils -I$(top_srcdir)/hyper \
-		-I$(DB_INCDIR) $(TCLHDIR) -I$(top_srcdir)/misc
+		-I$(DB_INCDIR) -I$(DB_LIBDIR) $(TCLHDIR) -I$(top_srcdir)/misc
 
 if MSVC
 LINK = link -DEBUG $(LDFLAGS) -OUT:$@
@@ -40,15 +40,13 @@ install-data-local:
 	$(RANLIB) $(DESTDIR)$(sdkdir)/libdb.a
 
 dbcp_SOURCES = dbcp.c
-dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
-dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a $(DB_LIBDIR)/libdbmalloc.a
+dbcp_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a
+dbcp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a
 
 dbdump_SOURCES = dbdump.c
 dbdump_LDADD = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		$(DB_LIBDIR)/libdbmalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a $(TCL_BUILD_LIB_SPEC) $(TCL_LIBS)
 dbdump_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
-		$(DB_LIBDIR)/libdbmalloc.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
 dbimp_SOURCES = dbimp.c

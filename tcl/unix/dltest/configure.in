@@ -3,10 +3,11 @@ dnl	generate the file "configure", which is run to configure the
 dnl	Makefile in this directory.
 
 dnl CYGNUS LOCAL, need 2.5 or higher for --bindir et al
-AC_PREREQ(2.5)
+AC_PREREQ(2.61)
 dnl END CYGNUS LOCAL
 
-AC_INIT(pkga.c)
+AC_INIT
+AC_CONFIG_SRCDIR([pkga.c])
 # RCS: @(#) $Id$
 
 # Recover information that Tcl computed with its configure script.
@@ -42,5 +43,6 @@ AC_SUBST(TCL_VERSION)
 #fi
 #AC_SUBST(TCL_CFLAGS)
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
 
