@@ -42,17 +42,14 @@ if test x"${ac_cv_c_tclh}" = x ; then
     dnl find the top level Tcl source directory
     for i in $dirlist; do
         if test -n "`ls -dr $srcdir/$i/tcl* 2>/dev/null`" ; then
-	    tclpath=$srcdir/$i
-	    break
-	fi
-    done
-
-    dnl find the exact Tcl source dir. We do it this way, cause there
-    dnl might be multiple version of Tcl, and we want the most recent one.
-    for i in `ls -dr $tclpath/tcl* 2>/dev/null ` ; do
-        if test -f $i/generic/tcl.h ; then
-          ac_cv_c_tclh=`(cd $i/generic; ${PWDCMD-pwd})`
-          break
+            dnl find the exact Tcl source dir. We do it this way, cause there
+            dnl might be multiple version of Tcl, and we want the most recent one.
+            for j in `ls -dr $srcdir/$i/tcl* 2>/dev/null ` ; do
+                if test -f $j/generic/tcl.h ; then
+                    ac_cv_c_tclh=`(cd $j/generic; ${PWDCMD-pwd})`
+                    break
+                fi
+            done
         fi
     done
 fi
@@ -139,25 +136,22 @@ if test x"${no_tcl}" = x ; then
         dnl find the top level Tcl source directory
         for i in $dirlist; do
             if test -n "`ls -dr $i/tcl* 2>/dev/null`" ; then
-	        tclconfpath=$i
-	        break
+                dnl find the exact Tcl dir. We do it this way, cause there
+                dnl might be multiple version of Tcl, and we want the most recent one.
+                for j in `ls -dr $i/tcl* 2>/dev/null ` ; do
+                    dnl need to test both unix and win directories, since 
+                    dnl cygwin's tclConfig.sh could be in either directory depending
+                    dnl on the cygwin port of tcl.
+                    if test -f $j/unix/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/unix; ${PWDCMD-pwd})`
+                        break
+                    fi
+                    if test -f $j/win/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/win; ${PWDCMD-pwd})`
+                        break
+                    fi
+                done
 	    fi
-        done
-
-        dnl find the exact Tcl dir. We do it this way, cause there
-        dnl might be multiple version of Tcl, and we want the most recent one.
-        for i in `ls -dr $tclconfpath/tcl* 2>/dev/null ` ; do
-            dnl need to test both unix and win directories, since 
-            dnl cygwin's tclConfig.sh could be in either directory depending
-            dnl on the cygwin port of tcl.
-            if test -f $i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/unix; ${PWDCMD-pwd})`
-                break
-            fi
-            if test -f $i/win/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/win; ${PWDCMD-pwd})`
-                break
-            fi
         done
     fi
 

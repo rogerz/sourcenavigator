@@ -2105,7 +2105,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=sn
- VERSION=NG1
+ VERSION=NG3
 
 
 cat >>confdefs.h <<_ACEOF
@@ -3885,20 +3885,17 @@ echo "$as_me: error: ${with_tclconfig} directory doesn't contain tclConfig.sh" >
         if test x"${ac_cv_c_tclconfig}" = x ; then
                 for i in $dirlist; do
             if test -n "`ls -dr $i/tcl* 2>/dev/null`" ; then
-	        tclconfpath=$i
-	        break
+                                                for j in `ls -dr $i/tcl* 2>/dev/null ` ; do
+                                                                                if test -f $j/unix/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/unix; ${PWDCMD-pwd})`
+                        break
+                    fi
+                    if test -f $j/win/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/win; ${PWDCMD-pwd})`
+                        break
+                    fi
+                done
 	    fi
-        done
-
-                        for i in `ls -dr $tclconfpath/tcl* 2>/dev/null ` ; do
-                                                if test -f $i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/unix; ${PWDCMD-pwd})`
-                break
-            fi
-            if test -f $i/win/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/win; ${PWDCMD-pwd})`
-                break
-            fi
         done
     fi
 
