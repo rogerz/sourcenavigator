@@ -2589,7 +2589,7 @@ proc sn_open_project {{nm ""}} {
 	
 	}
 
-	if(ret == "") {
+	if {${ret} == ""} {
 		# everything is fine, just go forward with startup
 		# FIXME: why does this not call sn_new_project ??
 		create_interp "
@@ -3005,40 +3005,59 @@ proc sn_read_project {projfile} {
     set cloned 0
     set interactive 1
     while {${interactive}} {
-        set ret [sn_is_project_busy $sn_options(sys,project-file) in user host\
-          port pid]
-        switch -- ${ret} {
-            "othersystem" {
-                    sn_error_dialog [format \
-                        [get_indep String ProjAlreadyOpenedOtherSystem] \
-                        ${user} $sn_options(sys,project-file) ${host}]
-                    return -1
-            }
-            "thisprocess" {
-                    sn_error_dialog [format \
-                        [get_indep String ProjAlreadyOpenedThisProcess] \
-                        $sn_options(sys,project-file)]
-                    return -1
-            }
-            "thisuser" {
-                    sn_error_dialog [format \
-                        [get_indep String ProjAlreadyOpenedThisUser] \
-                        $sn_options(sys,project-file) ${pid}] 
-                    return -1
-            }
-            "thissystem" {
-	            sn_error_dialog [format \
-                        [get_indep String ProjAlreadyOpenedThisSystem] \
-                        ${user} $sn_options(sys,project-file) ${pid}]
-                    return -1
-            }
-            "error" {
-                    return 0
-            }
-            default {
-                    break
-            }
-        }
+	
+	# this code should be reworked. it's copy-pasted in sn_open_project
+	# however if change something here, SN will not come up anymore so
+	# I just made sure it currently works -Freek
+	set nm $sn_options(sys,project-file)
+        set ret [sn_is_project_busy $nm in user host port pid]
+	
+	switch -- ${ret} {
+	"othersystem" {
+		set lock_error [format [get_indep String ProjAlreadyOpenedOtherSystem] \
+				${remuser} ${nm} ${remhost}]
+	}
+        
+	"thisprocess" {
+                set lock_error [format \
+                    [get_indep String ProjAlreadyOpenedThisProcess] \
+                    ${nm}]
+	}
+        
+	"thisuser" {
+                set lock_error [format \
+                    [get_indep String ProjAlreadyOpenedThisUser]\
+                    ${nm} ${pid}]
+	}
+        
+	"thissystem" {
+                set lock_error [format \
+                    [get_indep String ProjAlreadyOpenedThisSystem] \
+                    ${remuser} ${nm} ${pid}]
+	}
+        
+	"error" {
+                return
+	}
+	
+	}
+
+	if {${ret} == ""} {
+    		break
+	} else {
+		# project is locked, do some error handling
+		puts "project is locked"
+		set ret [tk_dialog auto [get_indep String ExternalEditor] ${lock_error} \
+				question_image 0 \
+				[get_indep String ok] [get_indep String ProjForceUnlock]]
+	        
+		# force unlock has been chosen
+		if { ${ret} == 1 } {
+			sn_project_force_unlock ${nm}
+		} else {
+			return -1
+		}
+	}
     }
 
     if {${cloned} && [catch {file copy -force ${projfile}\
@@ -4187,5 +4206,34 @@ proc sn_update_scope_list {{refresh 1}} {
 
     #Figure out which symbol menus should be used in the editor!
     Editor&::combobox_scopes
+}
+
+
+# forcefully unlock the .proj file
+# contributed by Mark Thornber
+proc sn_project_force_unlock {proj_file} {
+	sn_log "forcing unlock of project ${proj_file}"
+	
+	# Check whether we can open it at all!
+	#if {[catch {set busyfd [open $proj_file r]} msg]} {
+	#	error "$proj_file can't be opened"
+ 	#}
+	#close ${busyfd}
+
+	if {[catch {dbopen proj ${proj_file} RDWR [sn_db_perms] hash}]} {
+		error "$proj_file can't be opened as hash table"
+	}
+
+	set inf [proj get -key open_info]
+
+	if {$inf == ""} {
+		puts "${proj_file} is not locked"
+		return -1
+	}
+
+	proj put open_info ""
+	proj close
+
+	sn_log "forcing unlock of project ${proj_file} was successful"
 }
 
