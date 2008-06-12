@@ -3,20 +3,29 @@
 # the directory where this script lives
 snbindir=`dirname $0`
 script=snavigator
+startup=hyper
 
 # $script is either in ../share/etc/ or ../../share/etc/
-
 if test -f $snbindir/../share/etc/$script; then
-    etcdir=`cd $snbindir/../share/etc; pwd`
+	scriptdir=`cd $snbindir/../share/etc; pwd`
 elif test -f $snbindir/../../share/etc/$script; then
-    etcdir=`cd $snbindir/../../share/etc; pwd`
+	scriptdir=`cd $snbindir/../../share/etc; pwd`
 else
-    echo "Cannot find Source-Navigator's startup script."
+	echo "Cannot find Source-Navigator's startup script."
+	exit 255
 fi
+echo "debug: found $script at $scriptdir"
 
-# Run SN inside GDB
-#echo "set args -file "$etcdir/$script" ${1+"$@"}" > gdb.run
-#exec gdb --command gdb.run $snbindir/hyper
+# now find the hyper executable
+testdir=$snbindir/../libexec
+if test -f $testdir/$startup; then
+	startupdir=`cd $testdir && pwd`
+else
+	echo "Cannot find $startup executable"
+	exit 255
+fi
+run=$startupdir/$startup
+echo "debug: found $startup at $run"
 
 # Run SN
-exec "$snbindir/hyper" -file "$etcdir/$script" ${1+"$@"}
+exec "$run" -file "$scriptdir/$script" ${1+"$@"}
