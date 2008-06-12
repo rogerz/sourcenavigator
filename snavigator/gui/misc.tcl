@@ -4002,7 +4002,7 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
     lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
     lappend cmd $sn_options(db_files_prefix)
 
-    sn_log "Parsing command: ${cmd}"
+    sn_log "Launching parser with command: ${cmd}"
 
     if {${sn_debug}} {
         sn_log "Include dir list: ${incl}"
