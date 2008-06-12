@@ -589,6 +589,8 @@ proc sn_add_parser {type args} {
     set Parser_Info(${type},CASE) ${case}
     set Parser_Info(${type},MACRO) ${macros}
     set Parser_Info(${type},EDIT) ""
+
+    sn_log "Added parser for types \{ ${suf} \} parser at ${brow_cmd}"
 }
 
 #executed when user specifies parser extensions on the
