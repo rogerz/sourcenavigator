@@ -121,27 +121,27 @@ sn_add_version_control_system sccs \
 sn_add_version_control_system ccase \
 	-checkin "cleartool checkin -cq " \
 	-checkin-comment-via stdin \
-	-checkout "ccase-checkout.sh " \
-	-checkout-exclusive "ccase-checkout-exclusive.sh " \
-	-checkout-individual "ccase-checkout-individual.sh " \
-	-checkout-individual-to-stdout "ccase-checkout-individual-to-stdout.sh " \
+	-checkout "$sn_path(libexecdir)/ccase-checkout.sh " \
+	-checkout-exclusive "$sn_path(libexecdir)/ccase-checkout-exclusive.sh " \
+	-checkout-individual "$sn_path(libexecdir)/ccase-checkout-individual.sh " \
+	-checkout-individual-to-stdout "$sn_path(libexecdir)/ccase-checkout-individual-to-stdout.sh " \
 	-checkout-with-lock no \
 	-diff-command "cleartool diff -diff_format " \
 	-diff-ignore-case "" \
 	-diff-ignore-whitespace "-opt -blank_ignore" \
 	-discard "cleartool uncheckout -keep " \
-	-history "ccase-history.sh " \
+	-history "$sn_path(libexecdir)/ccase-history.sh " \
 	-history-pattern { {start end} } \
-	-history-individual "ccase-history-individual.sh " \
+	-history-individual "$sn_path(libexecdir)/ccase-history-individual.sh " \
 	-history-individual-pattern { {start end} } \
 	-ignore-dirs lost+found \
 	-lock "cleartool reserve -nc " \
-	-lock-individual "ccase-lock-individual.sh " \
+	-lock-individual "$sn_path(libexecdir)/ccase-lock-individual.sh " \
 	-revision-number-pattern "^Version:(/.*/\[0-9\])$" \
 	-symbolic-tags-pattern "^Labels:(.*)$" \
 	-title ClearCase4.1 \
 	-unlock "cleartool unreserve -nc " \
-	-unlock-individual "ccase-unlock-individual.sh "
+	-unlock-individual "$sn_path(libexecdir)/ccase-unlock-individual.sh "
 # -EMT 070415
 
 ###############################################################################

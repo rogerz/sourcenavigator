@@ -30,7 +30,7 @@ sn.el sn_cmp_g.pat snscenario snavigator snpdbg
 
 # +EMT 070415
 # Impedance matching scripts for Clearcase commands
-bin_SCRIPTS = ccase-checkout-exclusive.sh \
+libexec_SCRIPTS = ccase-checkout-exclusive.sh \
 ccase-checkout-individual-to-stdout.sh \
 ccase-checkout-individual.sh \
 ccase-checkout.sh \
