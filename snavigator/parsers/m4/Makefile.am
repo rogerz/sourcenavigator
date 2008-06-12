@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = cygnus
 toolbox = $(top_builddir)/parsers/toolbox
 common = $(top_builddir)/parsers/common
 
-bin_PROGRAMS = m4browser
+libexec_PROGRAMS = m4browser
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/parsers/toolbox \
 	-I$(top_srcdir)/parsers/common

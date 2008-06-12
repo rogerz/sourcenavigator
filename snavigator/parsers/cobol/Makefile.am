@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 common = $(top_builddir)/parsers/common
 
-bin_PROGRAMS = obrowser
+libexec_PROGRAMS = obrowser
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(top_srcdir)/misc \
 	-I$(top_srcdir)/parsers/libjcreuse \

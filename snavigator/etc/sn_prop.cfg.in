@@ -166,8 +166,8 @@ sn_add_version_control_system ccase \
 
 sn_add_parser fortran \
 	-suffix {*.f *.for *.FOR} \
-	-brow_cmd $sn_path(bindir)/fbrowser \
-	-high_cmd $sn_path(bindir)/fbrowser \
+	-brow_cmd $sn_path(libexecdir)/fbrowser \
+	-high_cmd $sn_path(libexecdir)/fbrowser \
 	-high_switch "-h" \
 	-case 1
 
@@ -175,16 +175,16 @@ sn_add_parser fortran \
 
 #sn_add_parser elf \
 	-suffix {*.elf} \
-	-brow_cmd $sn_path(bindir)/ebrowser \
-	-high_cmd $sn_path(bindir)/ebrowser \
+	-brow_cmd $sn_path(libexecdir)/ebrowser \
+	-high_cmd $sn_path(libexecdir)/ebrowser \
 	-high_switch "-h"
 
 # ELF (using ApplixWare macro editor)
 
 #sn_add_parser elf \
 	-suffix {*.elf} \
-	-brow_cmd $sn_path(bindir)/ebrowser \
-	-high_cmd $sn_path(bindir)/ebrowser \
+	-brow_cmd $sn_path(libexecdir)/ebrowser \
+	-high_cmd $sn_path(libexecdir)/ebrowser \
 	-brow_switch "$asterx_home_dir/applix -macro sn_imporp -pass" \
 	-high_switch "-h"
 
@@ -192,8 +192,8 @@ sn_add_parser fortran \
 
 sn_add_parser cobol \
 	-suffix {*.cbl *.cob} \
-	-brow_cmd $sn_path(bindir)/obrowser \
-	-high_cmd $sn_path(bindir)/obrowser \
+	-brow_cmd $sn_path(libexecdir)/obrowser \
+	-high_cmd $sn_path(libexecdir)/obrowser \
 	-high_switch "-h" \
 	-case 0
 
@@ -206,73 +206,73 @@ if {$tcl_platform(platform) == "windows"} {
 }
 sn_add_parser c++ \
 	-suffix $cpp_ext \
-	-brow_cmd $sn_path(bindir)/cbrowser \
+	-brow_cmd $sn_path(libexecdir)/cbrowser \
 	-macros "-m"
 
 # C
 #sn_add_parser c \
 	-suffix {*.ec *.ep *.sc *.cpc} \
-	-brow_cmd $sn_path(bindir)/cbrowser \
+	-brow_cmd $sn_path(libexecdir)/cbrowser \
 	-brow_switch "-C"
 
 # Java
 
 sn_add_parser java \
 	-suffix {*.java} \
-	-brow_cmd $sn_path(bindir)/@JAVAEXE@
+	-brow_cmd $sn_path(libexecdir)/@JAVAEXE@
 
 # Tcl/Tk and [incr Tcl]
 
 sn_add_parser tcl \
 	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
-	-brow_cmd $sn_path(bindir)/tbrowser
+	-brow_cmd $sn_path(libexecdir)/tbrowser
 
 # Intel 8085 assembly language
 
 sn_add_parser 8085 \
 	-suffix {*.src *.SRC}\
-	-brow_cmd $sn_path(bindir)/ibrowser
+	-brow_cmd $sn_path(libexecdir)/ibrowser
 
 # PowerPC 601 assembly language
 
 sn_add_parser asm \
 	-suffix {*.asm *.s *.S}\
-	-brow_cmd $sn_path(bindir)/abrowser
+	-brow_cmd $sn_path(libexecdir)/abrowser
 
 # CCITT High Level Language (CHILL)
 
 #sn_add_parser chill \
 	-suffix {*.ch} \
-	-brow_cmd $sn_path(bindir)/chbrowser
+	-brow_cmd $sn_path(libexecdir)/chbrowser
 
 # Python
 
 sn_add_parser python \
 	-suffix {*.py *.pyw} \
-	-brow_cmd $sn_path(bindir)/pybrowser
+	-brow_cmd $sn_path(libexecdir)/pybrowser
 
 # M4 + autoconf files
 
 sn_add_parser m4 \
         -suffix {*.m4 *.ac configure.in} \
-        -brow_cmd $sn_path(bindir)/m4browser \
-        -high_cmd $sn_path(bindir)/m4browser \
+        -brow_cmd $sn_path(libexecdir)/m4browser \
+        -high_cmd $sn_path(libexecdir)/m4browser \
 	-high_switch "-h"
 
 # PHP files
 
 sn_add_parser php \
 	-suffix {*.php *.php3 *.php4} \
-	-brow_cmd $sn_path(bindir)/phpbrowser \
-	-high_cmd $sn_path(bindir)/phpbrowser \
+	-brow_cmd $sn_path(libexecdir)/phpbrowser \
+	-high_cmd $sn_path(libexecdir)/phpbrowser \
 	-high_switch "-h"
 
 # Example files
 
 sn_add_parser exl \
 	-suffix {*.exl} \
-	-brow_cmd $sn_path(bindir)/exlbrowser \
-	-high_cmd $sn_path(bindir)/exlbrowser \
+	-brow_cmd $sn_path(libexecdir)/exlbrowser \
+	-high_cmd $sn_path(libexecdir)/exlbrowser \
 	-high_switch "-h"
 
 
