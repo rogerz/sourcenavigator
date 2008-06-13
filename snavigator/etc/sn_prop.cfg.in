@@ -121,27 +121,27 @@ sn_add_version_control_system sccs \
 sn_add_version_control_system ccase \
 	-checkin "cleartool checkin -cq " \
 	-checkin-comment-via stdin \
-	-checkout "$sn_path(libexecdir)/ccase-checkout.sh " \
-	-checkout-exclusive "$sn_path(libexecdir)/ccase-checkout-exclusive.sh " \
-	-checkout-individual "$sn_path(libexecdir)/ccase-checkout-individual.sh " \
-	-checkout-individual-to-stdout "$sn_path(libexecdir)/ccase-checkout-individual-to-stdout.sh " \
+	-checkout "$sn_path(scriptsdir)/ccase-checkout.sh " \
+	-checkout-exclusive "$sn_path(scriptsdir)/ccase-checkout-exclusive.sh " \
+	-checkout-individual "$sn_path(scriptsdir)/ccase-checkout-individual.sh " \
+	-checkout-individual-to-stdout "$sn_path(scriptsdir)/ccase-checkout-individual-to-stdout.sh " \
 	-checkout-with-lock no \
 	-diff-command "cleartool diff -diff_format " \
 	-diff-ignore-case "" \
 	-diff-ignore-whitespace "-opt -blank_ignore" \
 	-discard "cleartool uncheckout -keep " \
-	-history "$sn_path(libexecdir)/ccase-history.sh " \
+	-history "$sn_path(scriptsdir)/ccase-history.sh " \
 	-history-pattern { {start end} } \
-	-history-individual "$sn_path(libexecdir)/ccase-history-individual.sh " \
+	-history-individual "$sn_path(scriptsdir)/ccase-history-individual.sh " \
 	-history-individual-pattern { {start end} } \
 	-ignore-dirs lost+found \
 	-lock "cleartool reserve -nc " \
-	-lock-individual "$sn_path(libexecdir)/ccase-lock-individual.sh " \
+	-lock-individual "$sn_path(scriptsdir)/ccase-lock-individual.sh " \
 	-revision-number-pattern "^Version:(/.*/\[0-9\])$" \
 	-symbolic-tags-pattern "^Labels:(.*)$" \
 	-title ClearCase4.1 \
 	-unlock "cleartool unreserve -nc " \
-	-unlock-individual "$sn_path(libexecdir)/ccase-unlock-individual.sh "
+	-unlock-individual "$sn_path(scriptsdir)/ccase-unlock-individual.sh "
 # -EMT 070415
 
 ###############################################################################
@@ -166,8 +166,8 @@ sn_add_version_control_system ccase \
 
 sn_add_parser fortran \
 	-suffix {*.f *.for *.FOR} \
-	-brow_cmd $sn_path(libexecdir)/fbrowser \
-	-high_cmd $sn_path(libexecdir)/fbrowser \
+	-brow_cmd $sn_path(parserdir)/fbrowser \
+	-high_cmd $sn_path(parserdir)/fbrowser \
 	-high_switch "-h" \
 	-case 1
 
@@ -175,16 +175,16 @@ sn_add_parser fortran \
 
 #sn_add_parser elf \
 	-suffix {*.elf} \
-	-brow_cmd $sn_path(libexecdir)/ebrowser \
-	-high_cmd $sn_path(libexecdir)/ebrowser \
+	-brow_cmd $sn_path(parserdir)/ebrowser \
+	-high_cmd $sn_path(parserdir)/ebrowser \
 	-high_switch "-h"
 
 # ELF (using ApplixWare macro editor)
 
 #sn_add_parser elf \
 	-suffix {*.elf} \
-	-brow_cmd $sn_path(libexecdir)/ebrowser \
-	-high_cmd $sn_path(libexecdir)/ebrowser \
+	-brow_cmd $sn_path(parserdir)/ebrowser \
+	-high_cmd $sn_path(parserdir)/ebrowser \
 	-brow_switch "$asterx_home_dir/applix -macro sn_imporp -pass" \
 	-high_switch "-h"
 
@@ -192,8 +192,8 @@ sn_add_parser fortran \
 
 sn_add_parser cobol \
 	-suffix {*.cbl *.cob} \
-	-brow_cmd $sn_path(libexecdir)/obrowser \
-	-high_cmd $sn_path(libexecdir)/obrowser \
+	-brow_cmd $sn_path(parserdir)/obrowser \
+	-high_cmd $sn_path(parserdir)/obrowser \
 	-high_switch "-h" \
 	-case 0
 
@@ -206,73 +206,73 @@ if {$tcl_platform(platform) == "windows"} {
 }
 sn_add_parser c++ \
 	-suffix $cpp_ext \
-	-brow_cmd $sn_path(libexecdir)/cbrowser \
+	-brow_cmd $sn_path(parserdir)/cbrowser \
 	-macros "-m"
 
 # C
 #sn_add_parser c \
 	-suffix {*.ec *.ep *.sc *.cpc} \
-	-brow_cmd $sn_path(libexecdir)/cbrowser \
+	-brow_cmd $sn_path(parserdir)/cbrowser \
 	-brow_switch "-C"
 
 # Java
 
 sn_add_parser java \
 	-suffix {*.java} \
-	-brow_cmd $sn_path(libexecdir)/@JAVAEXE@
+	-brow_cmd $sn_path(parserdir)/@JAVAEXE@
 
 # Tcl/Tk and [incr Tcl]
 
 sn_add_parser tcl \
 	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
-	-brow_cmd $sn_path(libexecdir)/tbrowser
+	-brow_cmd $sn_path(parserdir)/tbrowser
 
 # Intel 8085 assembly language
 
 sn_add_parser 8085 \
 	-suffix {*.src *.SRC}\
-	-brow_cmd $sn_path(libexecdir)/ibrowser
+	-brow_cmd $sn_path(parserdir)/ibrowser
 
 # PowerPC 601 assembly language
 
 sn_add_parser asm \
 	-suffix {*.asm *.s *.S}\
-	-brow_cmd $sn_path(libexecdir)/abrowser
+	-brow_cmd $sn_path(parserdir)/abrowser
 
 # CCITT High Level Language (CHILL)
 
 #sn_add_parser chill \
 	-suffix {*.ch} \
-	-brow_cmd $sn_path(libexecdir)/chbrowser
+	-brow_cmd $sn_path(parserdir)/chbrowser
 
 # Python
 
 sn_add_parser python \
 	-suffix {*.py *.pyw} \
-	-brow_cmd $sn_path(libexecdir)/pybrowser
+	-brow_cmd $sn_path(parserdir)/pybrowser
 
 # M4 + autoconf files
 
 sn_add_parser m4 \
         -suffix {*.m4 *.ac configure.in} \
-        -brow_cmd $sn_path(libexecdir)/m4browser \
-        -high_cmd $sn_path(libexecdir)/m4browser \
+        -brow_cmd $sn_path(parserdir)/m4browser \
+        -high_cmd $sn_path(parserdir)/m4browser \
 	-high_switch "-h"
 
 # PHP files
 
 sn_add_parser php \
 	-suffix {*.php *.php3 *.php4} \
-	-brow_cmd $sn_path(libexecdir)/phpbrowser \
-	-high_cmd $sn_path(libexecdir)/phpbrowser \
+	-brow_cmd $sn_path(parserdir)/phpbrowser \
+	-high_cmd $sn_path(parserdir)/phpbrowser \
 	-high_switch "-h"
 
 # Example files
 
 sn_add_parser exl \
 	-suffix {*.exl} \
-	-brow_cmd $sn_path(libexecdir)/exlbrowser \
-	-high_cmd $sn_path(libexecdir)/exlbrowser \
+	-brow_cmd $sn_path(parserdir)/exlbrowser \
+	-high_cmd $sn_path(parserdir)/exlbrowser \
 	-high_switch "-h"
 
 
