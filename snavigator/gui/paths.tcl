@@ -25,18 +25,19 @@
 # to figure out what belongs where.
 
 proc sn_initialize_paths {} {
-    global sn_path sn_home
+	global sn_path sn_home
 
-    # Following are extensions just for Source Navigator.
-    set sn_path(bindir) [file join ${sn_home} bin]
-    if {![file exists $sn_path(bindir)]} {
-        set sn_path(bindir) [file dirname [info nameofexecutable]]
-    }
-    set sn_path(htmldir) [file join ${sn_home} html]
-    set sn_path(bitmapdir) [file join ${sn_home} share bitmaps]
-    set sn_path(rundir) [file join ${sn_home} run]
-    set sn_path(etcdir) [file join ${sn_home} share etc]
-    set sn_path(libexecdir) [file join ${sn_home} libexec]
-    set sn_path(toolchaindir) [file join ${sn_home} share etc sn_toolchains]
+	# Following are extensions just for Source Navigator.
+	set sn_path(bindir) [file join ${sn_home} bin]
+    	if {![file exists $sn_path(bindir)]} {
+        	set sn_path(bindir) [file dirname [info nameofexecutable]]
+	}
+	
+	set sn_path(htmldir) [file join ${sn_home} html]
+	set sn_path(bitmapdir) [file join ${sn_home} share bitmaps]
+	set sn_path(rundir) [file join ${sn_home} run]
+	set sn_path(etcdir) [file join ${sn_home} share etc]
+	set sn_path(libexecdir) [file join ${sn_home} libexec]
+	set sn_path(toolchaindir) [file join ${sn_home} share etc sn_toolchains]
 }
 
