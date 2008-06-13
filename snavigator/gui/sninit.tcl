@@ -976,7 +976,7 @@ proc sn_tcl_tk_init {} {
     set sn_options(def,system-encoding) $sn_options(def,encoding)
 
     #read language dependent file
-    sn_log "Text file: [file join $sn_path(etcdir)\
+    sn_log "Loading language file: [file join $sn_path(etcdir)\
       $sn_options(def,language).txt]"
     sn_string_init [file join $sn_path(etcdir) $sn_options(def,language).txt]
 
