@@ -28,7 +28,6 @@
 ###############################################################################
 
 # GNU Revision Control System (RCS)
-
 sn_add_version_control_system rcs -default yes \
 	-checkin "ci -u" \
 	-checkin-comment-via stdin \
@@ -60,7 +59,6 @@ sn_add_version_control_system rcs -default yes \
 # documentation.  Files are checked out with read/write permissions. CVS is
 # multiuser version control system, so locking is not necessary and is
 # therefore not implemented.
-
 sn_add_version_control_system cvs \
 	-checkin "cvs commit -F " \
 	-checkin-comment-via file \
@@ -88,7 +86,6 @@ sn_add_version_control_system cvs \
 # similiarly named utilities in the path (e.g. "get").  Using the front-end
 # also insulates Source-Navigator from implementation details and potential
 # changes to a vendor's implementation of SCCS.
-
 sn_add_version_control_system sccs \
 	-checkin "sccs delget" \
 	-checkin-comment-via stdin \
@@ -115,7 +112,6 @@ sn_add_version_control_system sccs \
 # This configuration uses the command line driven ClearCase diff tool to
 # produce UNIX-compatible diff output on stdout.  Then we use Source-
 # Navigator's built-in diff tool to view the results.
-
 # +EMT 070415
 # Use impedance matching scripts
 sn_add_version_control_system ccase \
@@ -163,7 +159,6 @@ sn_add_version_control_system ccase \
 ###############################################################################
 
 # FORTRAN
-
 sn_add_parser fortran \
 	-suffix {*.f *.for *.FOR} \
 	-brow_cmd $sn_path(bindir)/fbrowser \
@@ -172,7 +167,6 @@ sn_add_parser fortran \
 	-case 1
 
 # ELF
-
 #sn_add_parser elf \
 	-suffix {*.elf} \
 	-brow_cmd $sn_path(bindir)/ebrowser \
@@ -180,7 +174,6 @@ sn_add_parser fortran \
 	-high_switch "-h"
 
 # ELF (using ApplixWare macro editor)
-
 #sn_add_parser elf \
 	-suffix {*.elf} \
 	-brow_cmd $sn_path(bindir)/ebrowser \
@@ -189,7 +182,6 @@ sn_add_parser fortran \
 	-high_switch "-h"
 
 # COBOL
-
 sn_add_parser cobol \
 	-suffix {*.cbl *.cob} \
 	-brow_cmd $sn_path(bindir)/obrowser \
@@ -216,43 +208,36 @@ sn_add_parser c++ \
 	-brow_switch "-C"
 
 # Java
-
 sn_add_parser java \
 	-suffix {*.java} \
 	-brow_cmd $sn_path(bindir)/@JAVAEXE@
 
 # Tcl/Tk and [incr Tcl]
-
 sn_add_parser tcl \
 	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
 	-brow_cmd $sn_path(bindir)/tbrowser
 
 # Intel 8085 assembly language
-
 sn_add_parser 8085 \
 	-suffix {*.src *.SRC}\
 	-brow_cmd $sn_path(bindir)/ibrowser
 
 # PowerPC 601 assembly language
-
 sn_add_parser asm \
 	-suffix {*.asm *.s *.S}\
 	-brow_cmd $sn_path(bindir)/abrowser
 
 # CCITT High Level Language (CHILL)
-
 #sn_add_parser chill \
 	-suffix {*.ch} \
 	-brow_cmd $sn_path(bindir)/chbrowser
 
 # Python
-
 sn_add_parser python \
 	-suffix {*.py *.pyw} \
 	-brow_cmd $sn_path(bindir)/pybrowser
 
 # M4 + autoconf files
-
 sn_add_parser m4 \
         -suffix {*.m4 *.ac configure.in} \
         -brow_cmd $sn_path(bindir)/m4browser \
@@ -260,7 +245,6 @@ sn_add_parser m4 \
 	-high_switch "-h"
 
 # PHP files
-
 sn_add_parser php \
 	-suffix {*.php *.php3 *.php4} \
 	-brow_cmd $sn_path(bindir)/phpbrowser \
@@ -268,7 +252,6 @@ sn_add_parser php \
 	-high_switch "-h"
 
 # Example files
-
 sn_add_parser exl \
 	-suffix {*.exl} \
 	-brow_cmd $sn_path(bindir)/exlbrowser \
@@ -277,14 +260,12 @@ sn_add_parser exl \
 
 
 # Files without a parser
-
 if {$tcl_platform(platform) == "windows"} {
 	#windows file dialog box doesn't understand with '[]' grouped extensions
 	set other_ext {*.l *.y *Makefile *makefile *Iakefile *.txt *.am *.in}
 } else {
 	set other_ext {*.[ly] *[IMm]akefile *.txt *.am *.in}
 }
-
 sn_add_parser others -suffix $other_ext
 
 
