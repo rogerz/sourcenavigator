@@ -1204,6 +1204,11 @@ if test -n "$ac_init_help"; then
 
   cat <<\_ACEOF
 
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-mingw          build under win32/minGW
+
 _ACEOF
 ac_status=$?
 fi
@@ -1798,6 +1803,16 @@ echo "$as_me: error: Cannot build with Cygwin grep, see INSTALL.TXT" >&2;}
         fi
         ;;
 esac
+
+
+# Check whether --enable-mingw was given.
+if test "${enable_mingw+set}" = set; then
+  enableval=$enable_mingw;
+else
+  with_mingw=no
+fi
+
+
 
 TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"
 
