@@ -3464,17 +3464,24 @@ proc sn_parse_uptodate {{files_to_check ""} {disp_win 1}} {
           -justify left
         pack ${w}.notfound -side top -fill x
 
+        # do the listbox, incl scrollbars
         set files_not_found [lsort -dictionary ${files_not_found}]
-        listbox ${w}.sel -height ${len} -width 40
+        listbox ${w}.sel -height ${len} -width 40 -yscroll "${w}.yscr set" -xscroll "${w}.xscr set"
+	scrollbar ${w}.xscr -orient horizontal -command "${w}.sel xview"
+	scrollbar ${w}.yscr -orient vertical -command "${w}.sel yview"
         eval ${w}.sel insert 0 ${files_not_found}
 
         # FIXME: we need to find a better way to do this or else
         # rethink the removal of this widgets bind command
-        bind ${w}.sel <Return> "${w}.button_0 invoke"
-        bind ${w}.sel <Escape> "${w}.button_2 invoke"
-
-        pack ${w}.sel -expand y -fill both
-
+	bind ${w}.sel <Return> "${w}.button_0 invoke"
+	bind ${w}.sel <Escape> "${w}.button_2 invoke"
+	bind ${w}.sel <Button-4> "${w}.sel yview scroll -5 units"
+	bind ${w}.sel <Button-5> "${w}.sel yview scroll 5 units"
+	
+	pack ${w}.yscr -side right -fill y
+	pack ${w}.xscr -side bottom -fill x
+        pack ${w}.sel -side left -expand y -fill both
+	
         ${w} move_to_mouse
         ${w} raise
         ${w} grab set
