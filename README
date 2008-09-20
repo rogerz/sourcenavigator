@@ -1,11 +1,17 @@
-This is Source-Navigator NG, an IDE for C/C++/Fortran/Java/Tcl/PHP/Python
+Your current package is Source-Navigator 6.0; it is feature-identical 
+to Source-Navigator NG3 which we deem the successor to the original SN 5.2.
+Due to database changes in the NG series you will have to reload all of
+your projects.
+
+
+This is Source-Navigator, an IDE for C/C++/Fortran/Java/Tcl/PHP/Python
 and a host of other languages. It includes powerful
 source code comprehension features that help a developer understand
 complex relationships between elements of a program's source.
 
 Source-Navigator NG is a fork of the original Source-Navigator and it is 
 released under the terms of the GPL; see the COPYING file for more 
-information about the GPL.
+information about the GPL. The original copyright belongs to Red Hat.
 
 The Source-Navigator NG project is hosted at
 

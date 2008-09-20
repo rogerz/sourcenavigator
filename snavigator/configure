@@ -2164,7 +2164,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=sn
- VERSION=NG3
+ VERSION=6.0
 
 
 cat >>confdefs.h <<_ACEOF
