@@ -1,3 +1,4 @@
+Release Source-Navigator 6.0 (Sat Sep 20 16:33:33 CEST 2008)
 Release NG3 (Sat Feb  2 21:59:12 CET 2008)
 
 (BUGFIX) Fix tcl rng() problems on 64bit platforms
