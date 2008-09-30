@@ -44,7 +44,7 @@ proc sn_splash_dialog {type} {
     wm withdraw ${w}
 
     ${w} configure -title [list ${sn_product_name}]
-    sn_log "creating splash image [file join $sn_path(bitmapdir) $splash_img]]"
+    sn_log "creating splash image [file join $sn_path(bitmapdir) $splash_img]"
 
     image create photo cyg-sol -file [file join $sn_path(bitmapdir) $splash_img] -palette 0/0/8
 
