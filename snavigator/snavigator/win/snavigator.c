@@ -259,5 +259,14 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
 		return GetLastError();
 	}
+
+	/*
+	 wait for process termination so semantic is similar to unix
+         close some handles as shown in msdn
+	 */
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+
 	return 0;
 }
