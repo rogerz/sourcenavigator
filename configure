@@ -1799,6 +1799,9 @@ echo "$as_me: error: Cannot build with Cygwin grep, see INSTALL.TXT" >&2;}
         ;;
 esac
 
+libexecdir='${exec_prefix}/libexec/snavigator'
+
+
 TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"
 
 subdirs="$subdirs tcl tk itcl tix libgui db4/PORT snavigator"

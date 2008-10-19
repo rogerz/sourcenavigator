@@ -20,6 +20,10 @@ case "${host}" in
         ;;
 esac
 
+dnl properly define libexecdir
+libexecdir='${exec_prefix}/libexec/snavigator'
+AC_SUBST(libexecdir)
+
 AC_CANONICAL_HOST
 
 AC_PROG_CC
