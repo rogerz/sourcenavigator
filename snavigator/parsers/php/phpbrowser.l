@@ -2844,8 +2844,7 @@ void emit_function_declaration() {
                current_function_highlight_line,
                current_function_highlight_column_end );
        assert(result == 0);
-       /* NOTE: removed function declaration to decrease conflict with variable declarations */
-#if 0
+       /* NOTE: both declare and define because PHP is almost an un-typed language */
        result = sn_insert_symbol(SN_MBR_FUNC_DCL,
                current_class,
                current_function,
@@ -2862,7 +2861,6 @@ void emit_function_declaration() {
                current_function_highlight_line,
                current_function_highlight_column_end );
        assert(result == 0);
-#endif
      } else {
 #ifdef TOKEN_DEBUG
        fprintf(tokenout, "emit function definition \"%s\"\n", current_function);
