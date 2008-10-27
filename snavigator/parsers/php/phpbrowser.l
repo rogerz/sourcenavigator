@@ -1849,7 +1849,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     ref_from_scope_type = SN_FUNC_DEF;
   }
 
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
+  result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
@@ -1873,6 +1873,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"THIS_VARIABLE CLASS_MEMBER_OPERATOR SOMEWORD" {
+  int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "this class variable read at token %d\n", token_index);
@@ -1884,7 +1885,29 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
 
-  /* FIXME: add xref at some point without breaking parser */
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 current_class,
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_READ);
+
+  assert(result == 0);
 
   free_head_token(); /* SOMEWORD */
 }
@@ -1946,12 +1969,42 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"PARENT_VARIABLE CLASS_MEMBER_OPERATOR SOMEWORD" {
+  int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "parent class variable read at token %d\n", token_index);
 #endif
   free_head_token(); /* $parent */
   free_head_token(); /* -> */
+
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 current_parent,
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
 
   sn_highlight(SN_HIGH_VAR_LOCAL,
       tokens_head->start_line, tokens_head->start_column,
@@ -2017,6 +2070,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"VARIABLE CLASS_MEMBER_OPERATOR SOMEWORD" {
+  int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "some class variable read at token %d\n", token_index);
@@ -2028,13 +2082,40 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
 
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 NULL, /* CHEAT: should use type of variable but typeless language interferes */
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_READ);
+
+  assert(result == 0);
+
   free_head_token(); /* SOMEWORD */
 }
 
 
 <TOKEN>"CLASS_MEMBER_OPERATOR SOMEWORD OPEN_PAREN" {
-  char* fname;
-  int line;
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
@@ -2043,6 +2124,35 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
 
   free_head_token(); /* -> */
+
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 NULL,	/* CHEAT: don't limit to class of var because of typeless language */
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
 
   sn_highlight(SN_HIGH_FUNCTION,
       tokens_head->start_line, tokens_head->start_column,
@@ -2053,17 +2163,47 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"CLASS_MEMBER_OPERATOR SOMEWORD" {
+  int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "class variable read at token %d\n", token_index);
 #endif
   free_head_token(); /* -> */
 
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 NULL,
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
+
   sn_highlight(SN_HIGH_VAR_LOCAL,
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
+  free_head_token(); /* SOMEWORD = class member */
 }
 
 <TOKEN>"VARIABLE" {
@@ -2086,6 +2226,56 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   emit_var_access(tokens_head, VAR_READ);
 
   free_head_token(); /* VARIABLE */
+}
+
+<TOKEN>"SOMEWORD CLASS_SCOPE_OPERATOR" {
+  /*
+   * Note: keep parsing "fuzzy" by stopping at the pattern 'classname::'
+   *  and then let other rules take over.
+   */
+  int ref_from_scope_type;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "direct class access at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  /*
+   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
+   * a function, otherwise pass SN_FUNC_DEF.
+   */   
+
+  if (current_function == NULL) {
+    if (current_class == NULL)
+       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
+    else
+       ref_from_scope_type = SN_MBR_FUNC_DEF;
+  } else {
+    ref_from_scope_type = SN_FUNC_DEF;
+  }
+
+  result = sn_insert_xref(SN_REF_TO_CLASS,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 tokens_head->strval, /* OK to use since explicit class name being used */
+                 tokens_head->strval, /* target class name == constructor name */
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
+
+  /* FIXME: is there a highlight for a reference to a class name? */
+  sn_highlight(SN_HIGH_CLASSDEF,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* REFCLASS */
+  free_head_token(); /* :: */
 }
 
 <TOKEN>"INCREMENT_OPERATORS VARIABLE OPEN_BRACKET" {
