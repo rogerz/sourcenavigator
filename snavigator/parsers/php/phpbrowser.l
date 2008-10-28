@@ -80,6 +80,7 @@ typedef enum {
     CLASS_KEYWORD, /* declaration of a class */
     CLASS_EXTENDS_KEYWORD, /* declaration of a derived class */
     NEW_KEYWORD, /* instantiation of a class into an object */
+    ARRAY_KEYWORD, /* keyword "array" */
 
     THIS_VARIABLE, /* Special class $this variable */
     PARENT_VARIABLE, /* Special class $parent variable */
@@ -296,14 +297,14 @@ any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
 include-keywords	("include"|"include_once"|"require"|"require_once")
 
-keywords	("abstract"|"and"|"or"|"xor"|"array"|"as"|"break"|"case"|"cfunction"|"clone"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"instanceof"|"interface"|"isset"|"list"|"null"|"old_function"|"print"|"private"|"protected"|"public"|"return"|"static"|"switch"|"true"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
+keywords	("abstract"|"and"|"or"|"xor"|"as"|"break"|"case"|"cfunction"|"clone"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"instanceof"|"interface"|"isset"|"list"|"null"|"old_function"|"print"|"private"|"protected"|"public"|"return"|"static"|"switch"|"true"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
 
 dq-string-token  "DOUBLE_QUOTED_STRING"
 sq-string-token  "SINGLE_QUOTED_STRING"
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token})
+function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
@@ -1261,6 +1262,19 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
+<PHP>"array" {
+#if MATCH_DUMP
+  matched_pattern("array", yytext);
+#endif
+  append_token(ARRAY_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+
 
 <PHP>{include-keywords} {
 #if MATCH_DUMP
@@ -1392,6 +1406,89 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 
+<TOKEN>"FUNCTION_KEYWORD REFERENCE_OPERATOR SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
+  int parens, noargs;
+  LongString abuff;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "function declaration returning reference at token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  assert(tokens_head->type == FUNCTION_KEYWORD);
+
+  current_function_line_start = tokens_head->start_line;
+  current_function_column_start = tokens_head->start_column;
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* FUNCTION_KEYWORD */
+
+  free_head_token(); /* REFERENCE_OPERATOR */
+
+  if (current_function != NULL) {
+    push_function();
+  }
+  current_function = SN_StrDup(tokens_head->strval);
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "start of function %s at token %d\n", current_function, token_index);
+#endif
+
+  current_function_highlight_line = tokens_head->start_line;
+  current_function_highlight_column_start = tokens_head->start_column;
+  current_function_highlight_column_end = tokens_head->end_column;
+
+  free_head_token(); /* SOMEWORD */
+  free_head_token(); /* OPEN_PAREN */
+
+  /* Save function arguments in current_function_args */  
+  parens = 1;
+  noargs = 1;
+  LongStringInit(&abuff,0);
+  while (parens > 0) {
+    if (tokens_head->type == OPEN_PAREN) {
+      parens++;
+    } else if (tokens_head->type == CLOSE_PAREN) {
+      parens--;
+    } else if (tokens_head->type == VARIABLE) {
+        /* We just ignore default values for arguments */
+        if (!noargs) {
+            abuff.append( &abuff, ",", -1);
+        }
+        abuff.append( &abuff, tokens_head->strval, -1);
+        noargs = 0;
+
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+               (tokens_head->type == SINGLE_QUOTED_STRING)) {
+        sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    }
+
+    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
+  }
+
+#ifdef TOKEN_DEBUG
+  if (current_function_args) {
+     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
+  }
+#endif
+
+  assert(current_function_args == NULL);
+  if (!noargs) {
+      current_function_args = SN_StrDup(abuff.buf);
+  }
+  abuff.free(&abuff);
+
+  free_head_token(); /* OPEN_BRACE */
+
+  current_function_brace_count = 1;
+}
 
 <TOKEN>"FUNCTION_KEYWORD SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
   int parens, noargs;
@@ -3018,6 +3115,10 @@ char * TokenTypeToString(Token *tok) {
             return "DOUBLE_QUOTED_STRING";
         case SINGLE_QUOTED_STRING:
             return "SINGLE_QUOTED_STRING";
+        case NEW_KEYWORD:
+            return "NEW_KEYWORD";
+        case ARRAY_KEYWORD:
+            return "ARRAY_KEYWORD";
         case UNKNOWN:
             return "UNKNOWN";
         case COMMENT:
