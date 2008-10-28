@@ -776,7 +776,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_advance_line();
     sn_reset_column();
   }
-  \\ {
+  \\\\ {
     #if MATCH_DUMP
     matched_pattern("\\\\", yytext);
     #endif
@@ -784,6 +784,21 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     #if SQSTRING_DUMP
     fprintf(stderr, "sqstring(5) \"%s\", %d\n", yytext, yyleng);
     #endif
+
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
+  \\ {
+    #if MATCH_DUMP
+    matched_pattern("\\", yytext);
+    #endif
+
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring(6) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
 
     mode_buff.append( &mode_buff,
         yytext, yyleng );
@@ -1442,6 +1457,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
     free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
   }
+
+#ifdef TOKEN_DEBUG
+  if (current_function_args) {
+     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
+  }
+#endif
 
   assert(current_function_args == NULL);
   if (!noargs) {
