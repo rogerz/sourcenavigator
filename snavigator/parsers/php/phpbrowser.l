@@ -304,7 +304,7 @@ sq-string-token  "SINGLE_QUOTED_STRING"
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
+function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR NEGATIVE_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
@@ -1599,14 +1599,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       fprintf(tokenout, "not in any class\n");
 #endif
   } else if (!current_function && current_class) {
+    if (current_function_brace_count <= 0) {
 #ifdef TOKEN_DEBUG
-    fprintf(tokenout, "exit out of class %s\n", current_class);
+      fprintf(tokenout, "exit out of class %s\n", current_class);
 #endif
-    ckfree((char*) current_class);
-    current_class = (char *)NULL;
-    if (current_parent) {
-      ckfree((char*) current_parent);
-      current_parent = (char *)NULL;
+      ckfree((char*) current_class);
+      current_class = (char *)NULL;
+      if (current_parent) {
+        ckfree((char*) current_parent);
+        current_parent = (char *)NULL;
+      }
     }
   }
 
