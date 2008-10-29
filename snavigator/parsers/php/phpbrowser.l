@@ -66,9 +66,8 @@ typedef enum {
     ASSIGNMENT_OPERATORS, /* = -= += and so on */
     COMPARISON_OPERATORS, /* == === != >= and so on */
     INCREMENT_OPERATORS,  /* ++ and -- */
-    MATH_OPERATORS,
     REFERENCE_OPERATOR,   /* & */
-    NEGATIVE_OPERATOR,   /* - */
+    UNI_OPERATORS,   /* -,+,!,~ */
     CLASS_SCOPE_OPERATOR,   /* :: */
     CLASS_MEMBER_OPERATOR,   /* -> */
 
@@ -81,6 +80,7 @@ typedef enum {
     CLASS_EXTENDS_KEYWORD, /* declaration of a derived class */
     NEW_KEYWORD, /* instantiation of a class into an object */
     ARRAY_KEYWORD, /* keyword "array" */
+    DEFINE_KEYWORD, /* define(constant-stringname,mixval,bool) */
 
     THIS_VARIABLE, /* Special class $this variable */
     PARENT_VARIABLE, /* Special class $parent variable */
@@ -291,7 +291,7 @@ heredoc-id	{symbol}
 assignment-operators	("+="|"-="|"*="|"/="|".="|"%="|"&="|"|="|"^="|"<<="|">>=")
 comparison-operators	("=="|"==="|"!="|"!=="|"<>"|"<"|">"|"<="|">=")
 increment-operators     ("++"|"--")
-math-operators	("+"|"*"|"/"|"%"|"!"|"<<"|"|"|">>"|"^"|"||"|"&&")
+uni-operators	("+"|"!"|"-"|"~")
 
 any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
@@ -304,7 +304,7 @@ sq-string-token  "SINGLE_QUOTED_STRING"
 literal-token ({someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR NEGATIVE_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
+function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"UNI_OPERATORS VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR UNI_OPERATORS "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
@@ -1124,37 +1124,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
-<PHP>\- {
+<PHP>{uni-operators} {
 #if MATCH_DUMP
-  matched_pattern("-", yytext);
-#endif
-  append_token(NEGATIVE_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
-}
-
-<PHP>\? {
-#if MATCH_DUMP
-  matched_pattern("?", yytext);
-#endif
-  append_token(MATH_OPERATORS, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
-}
-
-
-<PHP>{math-operators} {
-#if MATCH_DUMP
-  matched_pattern("{math-operators}", yytext);
+  matched_pattern("{uni-operators}", yytext);
 #endif
 
-  append_token(MATH_OPERATORS, yytext,
+  append_token(UNI_OPERATORS, yytext,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1267,6 +1242,18 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   matched_pattern("array", yytext);
 #endif
   append_token(ARRAY_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"define" {
+#if MATCH_DUMP
+  matched_pattern("define", yytext);
+#endif
+  append_token(DEFINE_KEYWORD, yytext,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1405,6 +1392,45 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng); /* eat text */
 }
 
+<TOKEN>"DEFINE_KEYWORD OPEN_PAREN "{include-string-token} {
+  int line_start, line_end, column_start, column_end;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "define token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* define */
+  free_head_token(); /* OPEN_PAREN */
+
+  sn_highlight(SN_HIGH_STRING,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  line_start = tokens_head->start_line;
+  column_start = tokens_head->start_column + 1;
+  line_end = tokens_head->end_line;
+  column_end = tokens_head->end_column - 1;
+  /* defines are considered global, even within class definitions */
+  result = sn_insert_symbol(SN_MACRO_DEF,
+          /* classname */ NULL,
+          tokens_head->strval,
+          sn_current_file(),
+          line_start, column_start,
+          line_end, column_end,
+          /* attr */ SN_PUBLIC,
+          /* ret type */ NULL,
+          /* arg_types */ NULL,
+          /* arg_names */ NULL,
+          /* comment */ NULL,
+          line_start, column_start,
+          line_end, column_end);
+
+  free_head_token(); /* STRING */
+}
 
 <TOKEN>"FUNCTION_KEYWORD REFERENCE_OPERATOR SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
   int parens, noargs;
@@ -1942,7 +1968,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class member function call tokens at %d\n", token_index);
+  fprintf(tokenout, "found $this class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
 
@@ -2038,7 +2064,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class member function call tokens at %d\n", token_index);
+  fprintf(tokenout, "found $parent class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
 
@@ -2139,9 +2165,13 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class member function call tokens at %d\n", token_index);
+  fprintf(tokenout, "found $var class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
+
+  sn_highlight(SN_HIGH_VAR_LOCAL,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* $variable */
   free_head_token(); /* -> */
@@ -2239,7 +2269,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class member function call tokens at %d\n", token_index);
+  fprintf(tokenout, "found deref class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
 
@@ -3075,14 +3105,12 @@ char * TokenTypeToString(Token *tok) {
             return "COLON_CHAR";
         case VARIABLE:
             return "VARIABLE";
-        case NEGATIVE_OPERATOR:
-            return "NEGATIVE_OPERATOR";
+        case UNI_OPERATORS:
+            return "UNI_OPERATORS";
         case ASSIGNMENT_OPERATOR:
             return "ASSIGNMENT_OPERATOR";
         case ASSIGNMENT_OPERATORS:
             return "ASSIGNMENT_OPERATORS";
-        case MATH_OPERATORS:
-            return "MATH_OPERATORS";
         case COMPARISON_OPERATORS:
             return "COMPARISON_OPERATORS";
         case INCREMENT_OPERATORS:
@@ -3121,6 +3149,8 @@ char * TokenTypeToString(Token *tok) {
             return "NEW_KEYWORD";
         case ARRAY_KEYWORD:
             return "ARRAY_KEYWORD";
+        case DEFINE_KEYWORD:
+            return "DEFINE_KEYWORD";
         case UNKNOWN:
             return "UNKNOWN";
         case COMMENT:
