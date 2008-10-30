@@ -387,7 +387,7 @@ proc sn_init_globals {} {
 
             if {$sn_options(iscolor)} {
                 set sn_options(def,select-fg) black
-                set sn_options(def,select-bg) "#598ade"
+                set sn_options(def,select-bg) "#d2d2ea"
             } else {
                 set sn_options(def,select-fg) white
                 set sn_options(def,select-bg) black
