@@ -417,6 +417,8 @@ proc sn_init_globals {} {
             set sn_options(def,balloon-bg) "#d2d2ea"
         }
 
+	set sn_options(def,progress-bg) "#598ade"
+
         #lines to draw between tree items
         #dark blue
         #set sn_options(def,canv-line-fg)        "#00008b"
