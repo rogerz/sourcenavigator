@@ -255,6 +255,8 @@ void append_dqstring_token(char* strval,
 
 void emit_var_access_for_dqstring(Token* tok);
 
+int from_what_scope();
+
 char * TokenTypeToString(Token *tok);
 
 int get_num_tokens_matched(char *match);
@@ -640,13 +642,26 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         yytext, yyleng );
     sn_advance_column(yyleng);
   }
+  \\\\ {
+    #if MATCH_DUMP
+    matched_pattern("\\\\", yytext);
+    #endif
+
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
+    #endif
+
+    mode_buff.append( &mode_buff,
+        yytext, yyleng );
+    sn_advance_column(yyleng);
+  }
   \\ {
     #if MATCH_DUMP
     matched_pattern("\\", yytext);
     #endif
 
     #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
+    fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
     #endif
 
     mode_buff.append( &mode_buff,
@@ -1485,10 +1500,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
-
-        sn_highlight(SN_HIGH_VAR_LOCAL,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
+        /* Removed to make highlighting more like java.
+        * sn_highlight(SN_HIGH_VAR_LOCAL,
+        *     tokens_head->start_line, tokens_head->start_column,
+        *     tokens_head->end_line, tokens_head->end_column);
+        */ 
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
@@ -1568,9 +1584,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
 
-        sn_highlight(SN_HIGH_VAR_LOCAL,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
+        /* Removed to make highlighting more like java.
+        * sn_highlight(SN_HIGH_VAR_LOCAL,
+        *     tokens_head->start_line, tokens_head->start_column,
+        *     tokens_head->end_line, tokens_head->end_column);
+        */
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
@@ -1785,8 +1803,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>"CLASS_KEYWORD SOMEWORD CLASS_EXTENDS_KEYWORD SOMEWORD OPEN_BRACE" {
-  char* clsname;
-  int ref_from_scope_type;
   int line_start, line_end, column_start, column_end;
 
 #ifdef TOKEN_DEBUG
@@ -1800,14 +1816,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
           tokens_head->end_line, tokens_head->end_column);
   free_head_token(); /* CLASS keyword */
 
-  clsname = tokens_head->strval;
+  assert(current_class == (char *)NULL);
+  current_class = SN_StrDup(tokens_head->strval);
   line_start = tokens_head->start_line;
   column_start = tokens_head->start_column + 1;
   line_end = tokens_head->end_line;
   column_end = tokens_head->end_column - 1;
-
-  assert(current_class == (char *)NULL);
-  current_class = SN_StrDup(clsname);
 
   /* add highlight ability to editor using parser toolbox */
   sn_highlight(SN_HIGH_CLASSDEF,
@@ -1844,12 +1858,80 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
 
+  /* WARNING: added hack so xref pane points back to parent class, however,
+   *   we needed to assume that there is a constructor with the same name
+   *   as the derived class being implemented.  Worst case is you get a
+   *   warning beep when clicking on the reference. Note that the hierarchy
+   *   pane still works as expected. FIXME: gui/xrefpane.tcl needs to also
+   *   deal with a '#' funcname similar to the special case '#' refclass.
+   */
+  result = sn_insert_xref(SN_REF_TO_CLASS,
+                 SN_MBR_FUNC_DEF,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_class,
+                 NULL,
+                 "#",
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+  assert(result == 0);
+
   assert(current_parent == (char *)NULL);
   current_parent = SN_StrDup(tokens_head->strval);
+
   free_head_token(); /* SOMEWORD=BASECLASSNAME */
 
   free_head_token(); /* OPEN_BRACE */
 }
+
+
+<TOKEN>"NEW_KEYWORD SOMEWORD OPEN_PAREN" {
+  int ref_from_scope_type;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found class instantiation tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
+  free_head_token(); /* "new" keyword */
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "class instance name is \"%s\"\n", tokens_head->strval);
+#endif
+
+  ref_from_scope_type = from_what_scope();
+
+  /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
+  result = sn_insert_xref(SN_REF_TO_CLASS,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_function,
+                 NULL,
+                 "#",
+                 tokens_head->strval,
+                 NULL, 
+                 sn_current_file(),
+                 tokens_head->start_line,
+                 SN_REF_PASS);
+
+  assert(result == 0);
+
+  sn_highlight(SN_HIGH_CLASSDEF,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* SOMEWORD=class name */
+  free_head_token(); /* OPEN_PAREN */
+}
+
+
 
 <TOKEN>"SOMEWORD OPEN_PAREN" {
   char* fname;
@@ -1867,19 +1949,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   line = tokens_head->start_line;
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
                  ref_from_scope_type,
@@ -1906,14 +1976,14 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 
 <TOKEN>"VARIABLE ASSIGNMENT_OPERATOR" {
-  int offset;
+  SearchEntry entry;
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "variable assignment at token %d\n", token_index);
 #endif
 
   if (current_class && !current_function) {
-    /* FIXME: assumes var declared public */
+    /* FIXME: assumes class var declared public */
     result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
       tokens_head->strval, sn_current_file(),
       tokens_head->start_line, tokens_head->start_column,
@@ -1922,8 +1992,37 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->start_line, tokens_head->end_column);
     assert(result == 0);
-  }
+  } else if (!current_class && !current_function) {
 
+    /* not a class member var nor a function var, so it is probably
+     * an implied global var. add to global list.
+     */
+
+    if (global_var_table == NULL) {
+      global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
+    }
+
+    entry.key = tokens_head->strval;
+    entry.key_len = -1;
+
+    if (global_var_table->search( &global_var_table, entry ) == NULL) {
+      result = sn_insert_symbol(SN_GLOB_VAR_DEF, current_class,
+        tokens_head->strval, sn_current_file(),
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->start_line, tokens_head->end_column,
+        SN_PUBLIC, NULL, NULL, NULL, NULL,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->start_line, tokens_head->end_column);
+      assert(result == 0);
+
+      entry.data = NULL;
+      entry.data_len = 0;
+      entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+      global_var_table->add( &global_var_table, entry );
+
+    }
+  }
+  /* now add the fact that we are modifying this var */
   emit_var_access(tokens_head, VAR_WRITE);
 
   free_head_token(); /* VARIABLE */
@@ -1971,7 +2070,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "found $this class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
-
   free_head_token(); /* $this */
   free_head_token(); /* -> */
 
@@ -1981,19 +2079,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   line = tokens_head->start_line;
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
                  ref_from_scope_type,
@@ -2027,18 +2113,13 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* $this */
   free_head_token(); /* -> */
 
-  sn_highlight(SN_HIGH_VAR_LOCAL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+  /* Remove to simplify editor, although should be instance var highlighting
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
 
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_VAR,
                  ref_from_scope_type,
@@ -2051,7 +2132,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
                  NULL, 
                  sn_current_file(),
                  tokens_head->start_line,
-                 SN_REF_READ);
+                 VAR_CLASS_DEREF);
 
   assert(result == 0);
 
@@ -2067,7 +2148,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "found $parent class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
-
   free_head_token(); /* $parent */
   free_head_token(); /* -> */
 
@@ -2077,19 +2157,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   line = tokens_head->start_line;
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
                  ref_from_scope_type,
@@ -2123,19 +2191,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* $parent */
   free_head_token(); /* -> */
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_VAR,
                  ref_from_scope_type,
@@ -2148,13 +2204,15 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
                  NULL, 
                  sn_current_file(),
                  tokens_head->start_line,
-                 SN_REF_PASS);
+                 VAR_CLASS_DEREF);
 
   assert(result == 0);
 
-  sn_highlight(SN_HIGH_VAR_LOCAL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+  /* Remove to simplify editor, although should be instance var highlighting
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
 
   free_head_token(); /* SOMEWORD */
 }
@@ -2168,10 +2226,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "found $var class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
-
-  sn_highlight(SN_HIGH_VAR_LOCAL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+  /* Remove highlight to be consistent with $this and $parent variables
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
 
   free_head_token(); /* $variable */
   free_head_token(); /* -> */
@@ -2182,19 +2241,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   line = tokens_head->start_line;
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_FUNCTION,
                  ref_from_scope_type,
@@ -2225,26 +2272,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "some class variable read at token %d\n", token_index);
 #endif
+  /* Remove highlight to be consistent with $this and $parent variables
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
+
   free_head_token(); /* $variable */
   free_head_token(); /* -> */
 
-  sn_highlight(SN_HIGH_VAR_LOCAL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_VAR,
                  ref_from_scope_type,
@@ -2257,9 +2294,15 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
                  NULL, 
                  sn_current_file(),
                  tokens_head->start_line,
-                 SN_REF_READ);
+                 VAR_CLASS_DEREF);
 
   assert(result == 0);
+
+  /* Remove to simplify editor, although should be instance var highlighting
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
 
   free_head_token(); /* SOMEWORD */
 }
@@ -2275,19 +2318,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   free_head_token(); /* -> */
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
                  ref_from_scope_type,
@@ -2320,19 +2351,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
   free_head_token(); /* -> */
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   result = sn_insert_xref(SN_REF_TO_MBR_VAR,
                  ref_from_scope_type,
@@ -2349,9 +2368,11 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   assert(result == 0);
 
-  sn_highlight(SN_HIGH_VAR_LOCAL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+  /* Remove to simplify editor, although should be instance var highlighting
+  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  *     tokens_head->start_line, tokens_head->start_column,
+  *     tokens_head->end_line, tokens_head->end_column);
+  */
 
   free_head_token(); /* SOMEWORD = class member */
 }
@@ -2390,27 +2411,16 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
+  ref_from_scope_type = from_what_scope();
 
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    ref_from_scope_type = SN_FUNC_DEF;
-  }
-
+  /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
   result = sn_insert_xref(SN_REF_TO_CLASS,
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
                  current_function,
                  NULL,
-                 tokens_head->strval, /* OK to use since explicit class name being used */
+                 "#",
                  tokens_head->strval, /* target class name == constructor name */
                  NULL, 
                  sn_current_file(),
@@ -3081,6 +3091,26 @@ void pop_function() {
     }
 }
 
+/* Determine the type of location where a cross reference is being initiated from */
+int from_what_scope()
+{
+  /* FIXME: SN_GLOBAL_NAMESPACE not forming a useable xref. See toolbox/snptools.c
+   * for the reason why a reference from the global namespace is a problem.
+   * xrefs from within classes and functions, for the most part, works.
+   */
+  if (current_function == NULL) {
+      if (current_class == NULL)
+        return(SN_GLOBAL_NAMESPACE);
+      else
+        return(SN_SUBR_DEF);
+  } else {
+      if (current_class == NULL)
+        return(SN_FUNC_DEF);
+      else
+        return(SN_MBR_FUNC_DEF);
+  }
+}
+
 char * TokenTypeToString(Token *tok) {
     switch(tok->type) {
         case OPEN_PAREN:
@@ -3383,7 +3413,7 @@ void emit_var_access_for_dqstring(Token* tok) {
   }
 }
 
-/* This method is invoked when a var write operation is matched.
+/* This method is invoked when a var operation is matched
  * in the token stream.
  */
 
@@ -3425,22 +3455,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
 #endif
   }
 
-  /*
-   * Pass SN_GLOBAL_NAMESPACE if the xref is outside of
-   * a function, otherwise pass SN_FUNC_DEF.
-   */   
-
-  if (current_function == NULL) {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_GLOBAL_NAMESPACE;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  } else {
-    if (current_class == NULL)
-       ref_from_scope_type = SN_FUNC_DEF;
-    else
-       ref_from_scope_type = SN_MBR_FUNC_DEF;
-  }
+  ref_from_scope_type = from_what_scope();
 
   if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
       ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
@@ -3531,11 +3546,14 @@ void emit_var_access(Token *tok, VarAccess acc) {
       sn_highlight(SN_HIGH_VAR_GLOBAL,
           line_start, column_start,
           line_end, column_end);
-  } else {
-      sn_highlight(SN_HIGH_VAR_LOCAL,
-          line_start, column_start,
-          line_end, column_end);
   }
+  /* Removed for now to make editor colors be more rational.
+   * else {
+   *     sn_highlight(SN_HIGH_VAR_LOCAL,
+   *        line_start, column_start,
+   *        line_end, column_end);
+   * }
+   */
 }
 
 int get_num_tokens_matched(char *match) {
