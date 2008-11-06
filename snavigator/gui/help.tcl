@@ -299,13 +299,13 @@ proc canvas_rebind_info {w id text {delay -1} {procedure\
     catch {
         ${w} bind ${id} <Enter> "
 			set balloon_bind_info(id)  \[after ${delay} ${procedure} ${w} ${id} %X %Y\
-          [list ${text}]\]
+          [list "{" ${text} "}"]\]
 		"
 
         ${w} bind ${id} <Motion> "
 			balloon_destroy
 			set balloon_bind_info(id)  \[after ${delay} ${procedure} ${w} ${id} %X %Y\
-          [list ${text}]\]
+          [list "{" ${text} "}"]\]
 		"
     }
 }
@@ -325,14 +325,14 @@ proc canvas_bind_info {w id text {delay -1} {procedure "canvas_display_info"}} {
     ${w} bind ${id} <Enter> "
 		if \[info exists balloon_bind_info(${w},${id},text)\] {
 		    set balloon_bind_info(id)  \[after ${delay} ${procedure}  ${w} ${id} %X\
-      %Y [list ${text}]\]
+      %Y [list "{" ${text} "}"]\]
 		}
 	"
     ${w} bind ${id} <Motion> "
 		balloon_destroy
 		if \[info exists balloon_bind_info(${w},${id},text)\] {
 			set balloon_bind_info(id)  \[after ${delay} ${procedure}  ${w} ${id} %X %Y\
-      [list ${text}]\]
+      [list "{" ${text} "}"]\]
 		}
 	"
     ${w} bind ${id} <Leave> {
