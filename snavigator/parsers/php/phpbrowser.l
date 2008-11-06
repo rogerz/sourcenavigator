@@ -299,7 +299,7 @@ any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
 include-keywords	("include"|"include_once"|"require"|"require_once")
 
-keywords	("abstract"|"and"|"or"|"xor"|"as"|"break"|"case"|"cfunction"|"clone"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"instanceof"|"interface"|"isset"|"list"|"null"|"old_function"|"print"|"private"|"protected"|"public"|"return"|"static"|"switch"|"true"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
+keywords	("abstract"|"and"|"or"|"xor"|"as"|"break"|"case"|"catch"|"cfunction"|"clone"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"implements"|"instanceof"|"interface"|"isset"|"list"|"null"|"old_function"|"print"|"private"|"protected"|"public"|"return"|"static"|"switch"|"throw"|"true"|"try"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
 
 dq-string-token  "DOUBLE_QUOTED_STRING"
 sq-string-token  "SINGLE_QUOTED_STRING"
@@ -1500,14 +1500,19 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
-        /* Removed to make highlighting more like java.
-        * sn_highlight(SN_HIGH_VAR_LOCAL,
-        *     tokens_head->start_line, tokens_head->start_column,
-        *     tokens_head->end_line, tokens_head->end_column);
-        */ 
+#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+#endif
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    } else if ((tokens_head->type == KEYWORD) ||
+               (tokens_head->type == ARRAY_KEYWORD)) {
+        sn_highlight(SN_HIGH_KEYWORD,
             tokens_head->start_line, tokens_head->start_column,
             tokens_head->end_line, tokens_head->end_column);
     }
@@ -1583,15 +1588,19 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
         }
         abuff.append( &abuff, tokens_head->strval, -1);
         noargs = 0;
-
-        /* Removed to make highlighting more like java.
-        * sn_highlight(SN_HIGH_VAR_LOCAL,
-        *     tokens_head->start_line, tokens_head->start_column,
-        *     tokens_head->end_line, tokens_head->end_column);
-        */
+#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+#endif
     } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
                (tokens_head->type == SINGLE_QUOTED_STRING)) {
         sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    } else if ((tokens_head->type == KEYWORD) ||
+               (tokens_head->type == ARRAY_KEYWORD)) {
+        sn_highlight(SN_HIGH_KEYWORD,
             tokens_head->start_line, tokens_head->start_column,
             tokens_head->end_line, tokens_head->end_column);
     }
@@ -1828,6 +1837,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
   free_head_token(); /* SOMEWORD=CLASSNAME */
+
+  sn_highlight(SN_HIGH_KEYWORD,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
   free_head_token(); /* EXTENDS keyword */
 
   /* insert the class name */
@@ -2114,7 +2127,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* -> */
 
   /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  * sn_highlight(SN_HIGH_MBR_VAR,
   *     tokens_head->start_line, tokens_head->start_column,
   *     tokens_head->end_line, tokens_head->end_column);
   */
@@ -2209,7 +2222,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   assert(result == 0);
 
   /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  * sn_highlight(SN_HIGH_MBR_VAR,
   *     tokens_head->start_line, tokens_head->start_column,
   *     tokens_head->end_line, tokens_head->end_column);
   */
@@ -2226,11 +2239,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "found $var class member function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
-  /* Remove highlight to be consistent with $this and $parent variables
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
 
   free_head_token(); /* $variable */
   free_head_token(); /* -> */
@@ -2272,11 +2280,6 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "some class variable read at token %d\n", token_index);
 #endif
-  /* Remove highlight to be consistent with $this and $parent variables
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
 
   free_head_token(); /* $variable */
   free_head_token(); /* -> */
@@ -2299,7 +2302,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   assert(result == 0);
 
   /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  * sn_highlight(SN_HIGH_MBR_VAR,
   *     tokens_head->start_line, tokens_head->start_column,
   *     tokens_head->end_line, tokens_head->end_column);
   */
@@ -2369,7 +2372,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   assert(result == 0);
 
   /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_VAR_LOCAL,
+  * sn_highlight(SN_HIGH_MBR_VAR,
   *     tokens_head->start_line, tokens_head->start_column,
   *     tokens_head->end_line, tokens_head->end_column);
   */
@@ -2648,6 +2651,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
           case SINGLE_QUOTED_STRING:
               type = SN_HIGH_STRING;
               break;
+          case DEFINE_KEYWORD:
+          case CLASS_KEYWORD:
+          case NEW_KEYWORD:
+          case ARRAY_KEYWORD:
           case KEYWORD:
               type = SN_HIGH_KEYWORD;
               break;
@@ -3546,14 +3553,13 @@ void emit_var_access(Token *tok, VarAccess acc) {
       sn_highlight(SN_HIGH_VAR_GLOBAL,
           line_start, column_start,
           line_end, column_end);
-  }
-  /* Removed for now to make editor colors be more rational.
-   * else {
-   *     sn_highlight(SN_HIGH_VAR_LOCAL,
-   *        line_start, column_start,
-   *        line_end, column_end);
-   * }
-   */
+  } else {
+#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+      sn_highlight(SN_HIGH_VAR_LOCAL,
+          line_start, column_start,
+          line_end, column_end);
+#endif
+   }
 }
 
 int get_num_tokens_matched(char *match) {
