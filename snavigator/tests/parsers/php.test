@@ -2720,5 +2720,5 @@ file delete xout
 file delete tout
 file delete hout
 ::tcltest::cleanupTests
-exit
+
 return
