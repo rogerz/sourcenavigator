@@ -2574,16 +2574,16 @@ tcltest::test class-1.0 { basic class support } {
 	class prog101 {
 		var $mvar;
 		function prog101() {
-			$this->avar = 0;
+			$this->mvar = 0;
 		}
 		function getvar() {
-			return $avar;
+			return $mvar;
 		}
 	}
 	$gvar = new prog101();
 ?>
 }]
-} {PAF_CROSS_REF;prog101<>prog101<>mi<>prog101<>avar<>iv<>u<>000006<>f.php;<>
+} {PAF_CROSS_REF;prog101<>prog101<>mi<>prog101<>mvar<>iv<>u<>000006<>f.php;<>
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>gvar<>gv<>w<>000012<>f.php;<>UNDECLARED
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>prog101<>cl<>p<>000012<>f.php;<>
 }
@@ -2620,6 +2620,29 @@ PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>gvar<>gv<>w<>000021<>f.php;<>UNDECLARED
 PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>progadv<>cl<>p<>000021<>f.php;<>
 }
 
+tcltest::test class-1.2 { class function direct access } {
+    browse_xref [save_file f.php {
+<?
+	class prog101 {
+		var $mvar;
+		function prog101() {
+			$this->avar = 0;
+		}
+		function getvar() {
+			return $avar;
+		}
+		function tagme($pvar) {
+			return "TAGX" . $pvar; 
+		}
+	}
+	$cvar = prog101::tagme("splat");
+?>
+}]
+} {PAF_CROSS_REF;prog101<>prog101<>mi<>prog101<>avar<>iv<>u<>000006<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>cvar<>gv<>w<>000015<>f.php;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>prog101<>cl<>p<>000015<>f.php;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>tagme<>fu<>p<>000015<>f.php;<>
+}
 
 # FIXME: Add check for function call inside function arguments,
 # is that valid? Later: I don't think this is valid, if we
