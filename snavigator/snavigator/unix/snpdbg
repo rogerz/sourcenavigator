@@ -39,4 +39,4 @@ echo "debug: found $script at $runscript"
 #exec gdb --command gdb.run $snbindir/hyper
 
 # and run it
-exec "$run" -home "$snbasedir" -file "$runscript" ${1+"$@"}
+exec "$run" --home "$snbasedir" -file "$runscript" ${1+"$@"}
