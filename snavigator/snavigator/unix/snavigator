@@ -1,31 +1,38 @@
 #!/bin/sh
 
-# the directory where this script lives
+# find SN base installation directory
 snbindir=`dirname $0`
-script=snavigator
+snbasedir=`cd $snbindir/.. ; pwd`
 startup=hyper
+script=snavigator
 
-# $script is either in ../share/etc/ or ../../share/etc/
-if test -f $snbindir/../share/etc/$script; then
-	scriptdir=`cd $snbindir/../share/etc; pwd`
-elif test -f $snbindir/../../share/etc/$script; then
-	scriptdir=`cd $snbindir/../../share/etc; pwd`
-else
-	echo "Cannot find Source-Navigator's startup script."
-	exit 255
-fi
-echo "debug: found $script at $scriptdir"
-
-# now find the hyper executable
-testdir=$snbindir/../libexec
-if test -f $testdir/$startup; then
-	startupdir=`cd $testdir && pwd`
-else
-	echo "Cannot find $startup executable"
-	exit 255
-fi
-run=$startupdir/$startup
+# find the main "hyper" executable
+for dir in libexec/snavigator libexec bin; do
+	try="$snbasedir/$dir/$startup"
+  	run=""
+	
+	echo "testing for: $try"
+	if test -f "$try"; then
+		run="$try"
+		break
+	fi
+done
 echo "debug: found $startup at $run"
 
-# Run SN
-exec "$run" -file "$scriptdir/$script" ${1+"$@"}
+
+# find the desired script
+for dir in share/snavigator/etc share/snavigator share/etc; do
+	try="$snbasedir/$dir/$script"
+  	runscript=""
+
+	echo "testing for: $try"
+	if test -f "$try"; then
+		runscript="$try"
+		break
+	fi
+done              	
+echo "debug: found $script at $runscript"
+
+
+# and run it
+exec "$run" -file "$runscript" ${1+"$@"}
