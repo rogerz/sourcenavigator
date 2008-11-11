@@ -27,6 +27,8 @@
 proc sn_initialize_paths {} {
 	global sn_path sn_home
 
+	puts "Initializing paths, SN home is at: $sn_home"
+
 	# Following are extensions just for Source Navigator.
 	set sn_path(bindir) [file join ${sn_home} bin]
     	if {![file exists $sn_path(bindir)]} {
@@ -37,7 +39,7 @@ proc sn_initialize_paths {} {
 	set sn_path(bitmapdir) [file join ${sn_home} share bitmaps]
 	set sn_path(rundir) [file join ${sn_home} run]
 	set sn_path(etcdir) [file join ${sn_home} share etc]
-	set sn_path(libexecdir) [file join ${sn_home} libexec]
+	set sn_path(libexecdir) [file join ${sn_home} libexec snavigator]
 	set sn_path(parserdir) $sn_path(libexecdir)
 	set sn_path(scriptsdir) $sn_path(libexecdir)
 	set sn_path(toolchaindir) [file join ${sn_home} share etc sn_toolchains]
