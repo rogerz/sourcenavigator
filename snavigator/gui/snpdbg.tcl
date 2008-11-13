@@ -55,10 +55,10 @@ proc snpdbg_session {} {
 
     $type_d configure -title "Source-Navigator Parser Debugger"
 
-    image create photo hourglass \
-        -file [file join $sn_path(bitmapdir) hourglass.gif]
+    image create photo sn_logo \
+        -file [file join $sn_path(bitmapdir) sn_logo.gif]
 
-    set img [label $hull.img -image hourglass -bg white]
+    set img [label $hull.img -image sn_logo -bg white]
     set msg [message $hull.msg -aspect 1000 -text "What would you like to do?" -bg white]
 
     set txt_one "Choose a directory containing files to parse"
