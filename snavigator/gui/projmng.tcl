@@ -492,7 +492,7 @@ proc sn_select_project {{waiting "wait"}} {
       -underline [get_indep Pos Delete] -command\
       " sn_delete_project_cb ${t}.btns $t.scrolllistbox.projs "
     # Cancel
-    button ${t}.btns.exit -text [get_indep String Cancel]\
+    button ${t}.btns.exit -text [get_indep String Quit]\
       -underline [get_indep Pos Cancel] -command [list Close_Project_List_cb\
       ${waiting}]
 # FIXME: this should all be gridded
