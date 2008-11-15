@@ -1,4 +1,5 @@
 AUTOMAKE_OPTIONS = cygnus
+DEMOS_TO_INSTALL = asm_demo c++_demo cob_demo for_demo jav_demo monop
 
 ## Process this file with automake to create Makefile.in.
 
@@ -6,7 +7,8 @@ demosdir = $(datadir)/snavigator/demos
 
 install-data-local:
 	@$(mkinstalldirs) $(DESTDIR)$(demosdir)
-	for p in @C_DEMO@ @ASM_DEMO@ @FOR_DEMO@ @COB_DEMO@ @MONOP_DEMO@ @JAV_DEMO@ ; do \
+	for p in $(DEMOS_TO_INSTALL) ; do \
+	  test -d "$p" || continue
 	  echo "copying $$p to $(DESTDIR)$(demosdir)" ; \
 	  ( \
 	  cd $(srcdir) ; \
