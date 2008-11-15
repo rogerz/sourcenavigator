@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = cygnus
-DEMOS_TO_INSTALL = asm c++ cobol fortran java monopoly
+DEMOS_TO_INSTALL = asm c++ cobol fortran java
 
 ## Process this file with automake to create Makefile.in.
 

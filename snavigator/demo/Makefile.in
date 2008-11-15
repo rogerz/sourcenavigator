@@ -227,7 +227,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = cygnus
-DEMOS_TO_INSTALL = asm c++ cobol fortran java monopoly
+DEMOS_TO_INSTALL = asm c++ cobol fortran java
 demosdir = $(datadir)/snavigator/demos
 all: all-am
 
