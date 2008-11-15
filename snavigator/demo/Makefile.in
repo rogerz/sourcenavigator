@@ -227,7 +227,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = cygnus
-demosdir = $(datadir)/demos
+demosdir = $(datadir)/snavigator/demos
 all: all-am
 
 .SUFFIXES:

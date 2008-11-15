@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-demosdir = $(datadir)/demos
+demosdir = $(datadir)/snavigator/demos
 
 install-data-local:
 	@$(mkinstalldirs) $(DESTDIR)$(demosdir)
