@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-htmldir = $(prefix)/html
+htmldir = $(prefix)/share/snavigator/html
 html_DATA=cygnus.css index-1.gif magnifying_glass.png index.html
 srchtmldir = $(top_srcdir)/doc/html
 
