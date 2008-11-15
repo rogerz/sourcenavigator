@@ -257,7 +257,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-progdir = $(datadir)/sourcenav/gui
+progdir = $(datadir)/snavigator/gui
 prog_DATA = tclIndex bindings.tcl bindxtnd.tcl bugreport.tcl \
 combo.tcl dialog.tcl diff.tcl dirdialog.tcl \
 elix.tcl emacs.tcl error.tcl \

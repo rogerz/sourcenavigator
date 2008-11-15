@@ -247,7 +247,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-progdir = $(datadir)/sourcenav/packages
+progdir = $(datadir)/snavigator/packages
 packages = eventutils snscenario
 all: all-am
 
