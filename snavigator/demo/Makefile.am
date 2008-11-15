@@ -8,7 +8,6 @@ demosdir = $(datadir)/snavigator/demos
 install-data-local:
 	@$(mkinstalldirs) $(DESTDIR)$(demosdir)
 	for p in $(DEMOS_TO_INSTALL) ; do \
-	  test -d "$p" || continue
 	  echo "copying $$p to $(DESTDIR)$(demosdir)" ; \
 	  ( \
 	  cd $(srcdir) ; \
