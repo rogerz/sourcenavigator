@@ -36,7 +36,7 @@ proc sn_initialize_paths {} {
 	}
 	
 	set sn_path(htmldir) [file join ${sn_home} share snavigator html]
-	set sn_path(bitmapdir) [file join ${sn_home} share bitmaps]
+	set sn_path(bitmapdir) [file join ${sn_home} share snavigator bitmaps]
 	set sn_path(rundir) [file join ${sn_home} run]
 	set sn_path(etcdir) [file join ${sn_home} share etc]
 	set sn_path(libexecdir) [file join ${sn_home} libexec snavigator]
