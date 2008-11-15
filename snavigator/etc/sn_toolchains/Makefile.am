@@ -21,6 +21,6 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to produce Makefile.in.
 
-sn_toolchainsdir = $(datadir)/etc/sn_toolchains
+sn_toolchainsdir = $(datadir)/snavigator/etc/sn_toolchains
 sn_toolchains_DATA = gnu-pro-native
 

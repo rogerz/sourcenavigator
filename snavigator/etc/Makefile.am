@@ -24,7 +24,7 @@ LANG_TXT_FILES=english.txt french.txt german.txt
 ## Process this file with automake to produce Makefile.in.
 SUBDIRS = sn_toolchains
 
-etcdir = $(datadir)/etc
+etcdir = $(datadir)/snavigator/etc
 etc_DATA = $(LANG_TXT_FILES) grep.fil sn_prop.cfg \
 sn.el sn_cmp_g.pat snscenario snavigator snpdbg
 

@@ -257,7 +257,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-sn_toolchainsdir = $(datadir)/etc/sn_toolchains
+sn_toolchainsdir = $(datadir)/snavigator/etc/sn_toolchains
 sn_toolchains_DATA = gnu-pro-native
 all: all-am
 
