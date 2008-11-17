@@ -29,7 +29,7 @@ MA 02111-1307, USA.
  * Copyright (C) 2003 Mo DeJong
  *
  * Description:
- * Lex input file for an php language processor.
+ * Lex input file for PHP version 5 language processor.
  */
 
 %{
@@ -60,6 +60,7 @@ typedef enum {
     COMMA,         /* ',' */
     PERIOD,        /* '.' */
     COLON_CHAR,    /* ':' open brace-like, or part of conditional, i.e., ?: */
+    ATSIGN_CHAR,   /* '@' function call error suppression char */
 
     VARIABLE,      /* $var */
     ASSIGNMENT_OPERATOR, /* '=' */
@@ -70,6 +71,7 @@ typedef enum {
     UNI_OPERATORS,   /* -,+,!,~ */
     CLASS_SCOPE_OPERATOR,   /* :: */
     CLASS_MEMBER_OPERATOR,   /* -> */
+    MAPPING_OPERATOR,   /* =>  usually used in array init */
 
     SOMEWORD,          /* a sequence of text */
     KEYWORD,       /* a key sequence in this language */
@@ -81,6 +83,15 @@ typedef enum {
     NEW_KEYWORD, /* instantiation of a class into an object */
     ARRAY_KEYWORD, /* keyword "array" */
     DEFINE_KEYWORD, /* define(constant-stringname,mixval,bool) */
+    ABSTRACT_KEYWORD,  /* abstract class or member function  */
+    TRY_KEYWORD, /* try {} catch() {} catch() {} ... */
+    CATCH_KEYWORD, /* try {} catch() {} catch() {} .. .*/
+    PUBLIC_KEYWORD,  /* visible declared public  */
+    PROTECTED_KEYWORD,  /* visiblity declared protected */
+    PRIVATE_KEYWORD,  /* visiblity declared private */
+    STATIC_KEYWORD,  /* deref using class scope only */
+    CONST_KEYWORD,  /* class constants only */
+    CLASS_IMPLEMENTS_KEYWORD,  /* class declaring implementation */
 
     THIS_VARIABLE, /* Special class $this variable */
     PARENT_VARIABLE, /* Special class $parent variable */
@@ -89,9 +100,12 @@ typedef enum {
     DOUBLE_QUOTED_STRING, /* "I am a double quoted string" */
     SINGLE_QUOTED_STRING,  /* 'I am a double quoted string' */
 
-    UNKNOWN,        /* Token that parser does not know about */
     COMMENT,        /* Emit COMMENT token only when debugging */
-    HTML            /* Emit HTML token only when debugging */
+    HTML,            /* Emit HTML token only when debugging */
+
+
+    UNKNOWN_TOKEN        /* Token that parser does not know about */
+
 } TokenType;
 
 typedef enum {
@@ -112,6 +126,9 @@ typedef struct Token {
     struct Token* next;
 } Token;
 
+int recent_vis;	/* recently consolidated visibility spec for class member */
+int recent_vis_toknum;	/* last token number of consolidated visibility spec */
+
 typedef struct NestedBracket {
     int count;
     int prefix_incr;
@@ -129,9 +146,14 @@ typedef struct NestedFunction {
     int   line_end;
     int   col_start;
     int   col_end;
-    int   brace_count;
     struct NestedFunction* next;
 } NestedFunction;
+
+typedef struct NestedBrace {
+    TokenType btype;
+    struct NestedBrace* next;
+} NestedBrace;
+
 
 /* Uncomment this to see debug output in token parsing stage */
 /* #define TOKEN_DEBUG */
@@ -176,10 +198,14 @@ static int  current_function_column_start;
 /* in "function fog() {}" column of '}' in "{}" */
 static int  current_function_column_end;
 
-static int  current_function_brace_count;
+/* (abstract)?(public|protected|private)?(static)? */
+static int  current_function_vis;
 
 static NestedFunction* function_nest_head = NULL;
 static NestedFunction* function_nest_tail = NULL;
+
+static NestedBrace* brace_nest_head = NULL;
+static NestedBrace* brace_nest_tail = NULL;
 
 
 static int current_array_bracket_count = 0;
@@ -232,6 +258,8 @@ Token* pop_head_token();
 void free_head_token();
 void push_bracket_counter();
 void pop_bracket_counter();
+void push_brace(TokenType braceType);
+TokenType pop_brace();
 void push_function();
 void pop_function();
 void append_token(TokenType type,
@@ -256,6 +284,8 @@ void append_dqstring_token(char* strval,
 void emit_var_access_for_dqstring(Token* tok);
 
 int from_what_scope();
+void reset_vis();
+void set_vis();
 
 char * TokenTypeToString(Token *tok);
 
@@ -299,25 +329,37 @@ any-tokens	(" "|" "{symbol}" "|" "{symbol}" "({symbol}" ")*)
 
 include-keywords	("include"|"include_once"|"require"|"require_once")
 
-keywords	("abstract"|"and"|"or"|"xor"|"as"|"break"|"case"|"catch"|"cfunction"|"clone"|"const"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"implements"|"instanceof"|"interface"|"isset"|"list"|"null"|"old_function"|"print"|"private"|"protected"|"public"|"return"|"static"|"switch"|"throw"|"true"|"try"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
+keywords	("and"|"or"|"xor"|"as"|"break"|"case"|"cfunction"|"clone"|"continue"|"declare"|"default"|"die"|"do"|"echo"|"else"|"elseif"|"empty"|"enddeclare"|"endfor"|"endforeach"|"endif"|"endswitch"|"endwhile"|"eval"|"exit"|"false"|"final"|"for"|"foreach"|"if"|"instanceof"|"isset"|"list"|"null"|"old_function"|"print"|"return"|"switch"|"throw"|"true"|"unset"|"use"|"var"|"while"|"__FUNCTION__"|"__FILE__"|"__CLASS__"|"__LINE__")
 
 dq-string-token  "DOUBLE_QUOTED_STRING"
 sq-string-token  "SINGLE_QUOTED_STRING"
-literal-token ({someword}|{dq-string-token}|{sq-string-token})
+literal-token ({someword}|{someword}" CLASS_SCOPE_OPERATOR "{someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"UNI_OPERATORS VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR UNI_OPERATORS "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN")
+
+arraymap-value-tokens ("UNI_OPERATORS ")?({literal-token})
+arraymap-kv1-token ({literal-token}" MAPPING_OPERATOR "{arraymap-value-tokens})
+arraymap-kvn-token (" "|" "{arraymap-kv1-token}" "("COMMA "{arraymap-kv1-token}" ")*)
+arraymap-tokens ("OPEN_PAREN"{arraymap-kvn-token}("COMMA ")?"CLOSE_PAREN")
+
+
+class-extends-tokens "CLASS_EXTENDS_KEYWORD "{someword}
+class-implements-tokens ("CLASS_IMPLEMENTS_KEYWORD "{someword}(" COMMA "{someword})*)
+class-clause-tokens ("CLASS_KEYWORD "{someword}(" "{class-extends-tokens})?(" "{class-implements-tokens})?" OPEN_BRACE")
+
+
+function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"UNI_OPERATORS VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR UNI_OPERATORS "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN"|"SOMEWORD VARIABLE"|{literal-token})
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 
 
-var-array-index-token ("SOMEWORD"|"VDOUBLE_QUOTED_STRING"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
-var-array-empty-tokens "OPEN_BRACKET CLOSE_BRACKET"
-var-array-index-tokens "OPEN_BRACKET "{var-array-index-token}" CLOSE_BRACKET")
-var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
+deleteme-var-array-empty-tokens "OPEN_BRACKET CLOSE_BRACKET"
+deleteme-var-array-index-token ("SOMEWORD"|"VDOUBLE_QUOTED_STRING"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
+deleteme-var-array-index-tokens ("OPEN_BRACKET "{var-array-index-token}" CLOSE_BRACKET")
+deleteme-var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
+deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 %%
     /* Start in HTML mode */
@@ -1067,6 +1109,18 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
+<PHP>"@" {
+#if MATCH_DUMP
+  matched_pattern("@", yytext);
+#endif
+  append_token(ATSIGN_CHAR, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
 <PHP>"." {
 #if MATCH_DUMP
   matched_pattern(".", yytext);
@@ -1084,6 +1138,18 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   matched_pattern(",", yytext);
 #endif
   append_token(COMMA, NULL,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"=>" {
+#if MATCH_DUMP
+  matched_pattern("=>", yytext);
+#endif
+  append_token(MAPPING_OPERATOR, NULL,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1240,6 +1306,32 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   sn_advance_column(yyleng);
 }
 
+<PHP>"implements" {
+#if MATCH_DUMP
+  matched_pattern("extends", yytext);
+#endif
+  append_token(CLASS_IMPLEMENTS_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+
+<PHP>"interface" {
+#if MATCH_DUMP
+  matched_pattern("interface", yytext);
+#endif
+  append_token(CLASS_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+
 <PHP>"new" {
 #if MATCH_DUMP
   matched_pattern("new", yytext);
@@ -1277,6 +1369,101 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 
+<PHP>"try" {
+#if MATCH_DUMP
+  matched_pattern("try", yytext);
+#endif
+  append_token(TRY_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"catch" {
+#if MATCH_DUMP
+  matched_pattern("catch", yytext);
+#endif
+  append_token(CATCH_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"abstract" {
+#if MATCH_DUMP
+  matched_pattern("public", yytext);
+#endif
+  append_token(ABSTRACT_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"public" {
+#if MATCH_DUMP
+  matched_pattern("public", yytext);
+#endif
+  append_token(PUBLIC_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"protected" {
+#if MATCH_DUMP
+  matched_pattern("protected", yytext);
+#endif
+  append_token(PROTECTED_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"private" {
+#if MATCH_DUMP
+  matched_pattern("private", yytext);
+#endif
+  append_token(PRIVATE_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"static" {
+#if MATCH_DUMP
+  matched_pattern("static", yytext);
+#endif
+  append_token(STATIC_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
+
+<PHP>"const" {
+#if MATCH_DUMP
+  matched_pattern("const", yytext);
+#endif
+  append_token(CONST_KEYWORD, yytext,
+          sn_line(),
+          sn_column(),
+          sn_line(),
+          sn_column() + yyleng);
+  sn_advance_column(yyleng);
+}
 
 <PHP>{include-keywords} {
 #if MATCH_DUMP
@@ -1391,12 +1578,12 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   matched_pattern(".", yytext);
 #endif
 
-  /* Add an UNKNOWN token for each
+  /* Add an UNKNOWN_TOKEN for each
    * character that we don't know
    * how to deal with.
    */
 
-  append_token(UNKNOWN, yytext,
+  append_token(UNKNOWN_TOKEN, yytext,
           sn_line(),
           sn_column(),
           sn_line(),
@@ -1447,97 +1634,37 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* STRING */
 }
 
-<TOKEN>"FUNCTION_KEYWORD REFERENCE_OPERATOR SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
+<TOKEN>"ARRAY_KEYWORD "{arraymap-tokens} {
   int parens, noargs;
-  LongString abuff;
-
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function declaration returning reference at token %d\n", token_index);
+  fprintf(tokenout, "array mapping init tokens %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
-  assert(tokens_head->type == FUNCTION_KEYWORD);
-
-  current_function_line_start = tokens_head->start_line;
-  current_function_column_start = tokens_head->start_column;
-
   sn_highlight(SN_HIGH_KEYWORD,
           tokens_head->start_line, tokens_head->start_column,
           tokens_head->end_line, tokens_head->end_column);
-
-  free_head_token(); /* FUNCTION_KEYWORD */
-
-  free_head_token(); /* REFERENCE_OPERATOR */
-
-  if (current_function != NULL) {
-    push_function();
-  }
-  current_function = SN_StrDup(tokens_head->strval);
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "start of function %s at token %d\n", current_function, token_index);
-#endif
-
-  current_function_highlight_line = tokens_head->start_line;
-  current_function_highlight_column_start = tokens_head->start_column;
-  current_function_highlight_column_end = tokens_head->end_column;
-
-  free_head_token(); /* SOMEWORD */
+  free_head_token(); /* array keyword */
   free_head_token(); /* OPEN_PAREN */
 
-  /* Save function arguments in current_function_args */  
+  /* FIXME: We currently do not PROPERLY handle recursive arrays.
+   *   flex does not allow it directly, though use of buffers
+   *   may be workable. We would need to use yacc/bison to do this.
+   */
+
+  /* FIXME: actually process key to value mapping in array */
   parens = 1;
-  noargs = 1;
-  LongStringInit(&abuff,0);
   while (parens > 0) {
     if (tokens_head->type == OPEN_PAREN) {
       parens++;
     } else if (tokens_head->type == CLOSE_PAREN) {
       parens--;
-    } else if (tokens_head->type == VARIABLE) {
-        /* We just ignore default values for arguments */
-        if (!noargs) {
-            abuff.append( &abuff, ",", -1);
-        }
-        abuff.append( &abuff, tokens_head->strval, -1);
-        noargs = 0;
-#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
-        sn_highlight(SN_HIGH_VAR_LOCAL,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-#endif
-    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
-               (tokens_head->type == SINGLE_QUOTED_STRING)) {
-        sn_highlight(SN_HIGH_STRING,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-    } else if ((tokens_head->type == KEYWORD) ||
-               (tokens_head->type == ARRAY_KEYWORD)) {
-        sn_highlight(SN_HIGH_KEYWORD,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
     }
-
-    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
+    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || assign map || COMMA */
   }
-
-#ifdef TOKEN_DEBUG
-  if (current_function_args) {
-     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
-  }
-#endif
-
-  assert(current_function_args == NULL);
-  if (!noargs) {
-      current_function_args = SN_StrDup(abuff.buf);
-  }
-  abuff.free(&abuff);
-
-  free_head_token(); /* OPEN_BRACE */
-
-  current_function_brace_count = 1;
 }
 
-<TOKEN>"FUNCTION_KEYWORD SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
+
+<TOKEN>("FUNCTION_KEYWORD "("REFERENCE_OPERATOR ")?"SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE ") {
   int parens, noargs;
   LongString abuff;
 
@@ -1556,6 +1683,9 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   free_head_token(); /* FUNCTION_KEYWORD */
 
+  if (tokens_head->type == REFERENCE_OPERATOR)
+    free_head_token(); /* REFERENCE_OPERATOR */
+
   if (current_function != NULL) {
     push_function();
   }
@@ -1620,49 +1750,188 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
   abuff.free(&abuff);
 
+  push_brace(FUNCTION_KEYWORD);
   free_head_token(); /* OPEN_BRACE */
+}
 
-  current_function_brace_count = 1;
+<TOKEN>"FUNCTION_KEYWORD SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN SEMICOLON " {
+  int parens, noargs;
+  LongString abuff;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "function declaration at token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  assert(tokens_head->type == FUNCTION_KEYWORD);
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* FUNCTION_KEYWORD */
+
+  current_function = SN_StrDup(tokens_head->strval);
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "declare function %s at token %d\n", current_function, token_index);
+#endif
+
+  current_function_line_start = tokens_head->start_line;
+  current_function_column_start = tokens_head->start_column;
+  current_function_line_end = tokens_head->end_line;
+  current_function_column_end = tokens_head->end_column;
+  current_function_highlight_line = tokens_head->start_line;
+  current_function_highlight_column_start = tokens_head->start_column;
+  current_function_highlight_column_end = tokens_head->end_column;
+
+  free_head_token(); /* SOMEWORD=funcname */
+  free_head_token(); /* OPEN_PAREN */
+
+  /* Save function arguments in current_function_args */  
+  parens = 1;
+  noargs = 1;
+  LongStringInit(&abuff,0);
+  while (parens > 0) {
+    if (tokens_head->type == OPEN_PAREN) {
+      parens++;
+    } else if (tokens_head->type == CLOSE_PAREN) {
+      parens--;
+    } else if (tokens_head->type == SOMEWORD) {
+      /* FIXME: type hinting xref */
+      sn_highlight(SN_HIGH_CLASSDEF,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+    } else if (tokens_head->type == VARIABLE) {
+        /* We just ignore default values for arguments */
+        if (!noargs) {
+            abuff.append( &abuff, ",", -1);
+        }
+        abuff.append( &abuff, tokens_head->strval, -1);
+        noargs = 0;
+#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+#endif
+    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+               (tokens_head->type == SINGLE_QUOTED_STRING)) {
+        sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    } else if ((tokens_head->type == KEYWORD) ||
+               (tokens_head->type == ARRAY_KEYWORD)) {
+        sn_highlight(SN_HIGH_KEYWORD,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    }
+
+    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
+  }
+
+#ifdef TOKEN_DEBUG
+  if (current_function_args) {
+     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
+  }
+#endif
+
+  assert(current_function_args == NULL);
+  if (!noargs) {
+      current_function_args = SN_StrDup(abuff.buf);
+  }
+  abuff.free(&abuff);
+
+  free_head_token(); /* SEMICOLON */
+
+  emit_function_declaration();
+}
+
+<TOKEN>"TRY_KEYWORD OPEN_BRACE" {
+  /* FIXME: do something here */
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  push_brace(TRY_KEYWORD);
+  free_head_token(); /* TRY keyword */
+  free_head_token(); /* OPEN_BRACE */
+}
+
+<TOKEN>"CATCH_KEYWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE " {
+  int parens, noargs;
+  LongString abuff;
+
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "catch block at token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* CATCH_KEYWORD */
+
+  free_head_token(); /* OPEN_PAREN */
+
+  /* Save function arguments in current_function_args */  
+  parens = 1;
+  noargs = 1;
+  LongStringInit(&abuff,0);
+  while (parens > 0) {
+    if (tokens_head->type == OPEN_PAREN) {
+      parens++;
+    } else if (tokens_head->type == CLOSE_PAREN) {
+      parens--;
+    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+               (tokens_head->type == SINGLE_QUOTED_STRING)) {
+        sn_highlight(SN_HIGH_STRING,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    } else {
+    }
+
+    free_head_token(); /* anything upto and including final CLOSE_PAREN */
+  }
+
+  push_brace(CATCH_KEYWORD);
+  free_head_token(); /* OPEN_BRACE */
 }
 
 <TOKEN>"OPEN_BRACE" {
-  if (current_function) {
-    current_function_brace_count++;
-  }
+  push_brace(UNKNOWN_TOKEN);
   free_head_token(); /* OPEN_BRACE */
 }
 
 <TOKEN>"CLOSE_BRACE" {
-  if (current_function && (--current_function_brace_count == 0)) {
+  TokenType braceMatch;
+
+  braceMatch = pop_brace();
+  if (braceMatch == FUNCTION_KEYWORD) {
 #ifdef TOKEN_DEBUG
-    fprintf(tokenout, "end of function %s at token %d\n",
-        current_function, token_index);
+      fprintf(tokenout, "end of function %s at token %d\n",
+          current_function, token_index);
 #endif
 
-    current_function_line_end = tokens_head->end_line;
-    current_function_column_end = tokens_head->end_column;
+      current_function_line_end = tokens_head->end_line;
+      current_function_column_end = tokens_head->end_column;
 
-    emit_function_declaration();
+      emit_function_declaration();
 
-    pop_function(); /* in case of nested function */
+      pop_function(); /* in case of nested function */
+  } else if (braceMatch == CLASS_KEYWORD) {
 #ifdef TOKEN_DEBUG
-    if (current_class)
-      fprintf(tokenout, "still in class %s\n", current_class);
-    else
-      fprintf(tokenout, "not in any class\n");
+    fprintf(tokenout, "exit out of class %s\n", current_class);
 #endif
-  } else if (!current_function && current_class) {
-    if (current_function_brace_count <= 0) {
-#ifdef TOKEN_DEBUG
-      fprintf(tokenout, "exit out of class %s\n", current_class);
-#endif
-      ckfree((char*) current_class);
-      current_class = (char *)NULL;
-      if (current_parent) {
-        ckfree((char*) current_parent);
-        current_parent = (char *)NULL;
-      }
+    ckfree((char*) current_class);
+    current_class = (char *)NULL;
+    if (current_parent) {
+      ckfree((char*) current_parent);
+      current_parent = (char *)NULL;
     }
+  } else {
+    /* all other brace types */
+#ifdef TOKEN_DEBUG
+    fprintf(tokenout, "close brace (0x%d)\n", braceMatch);
+#endif
   }
 
   free_head_token(); /* CLOSE_BRACE */
@@ -1767,8 +2036,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* SEMICOLON */
 }
 
-
-<TOKEN>"CLASS_KEYWORD SOMEWORD OPEN_BRACE" {
+<TOKEN>{class-clause-tokens} {
   char* clsname;
   int line;
   int ref_from_scope_type;
@@ -1793,7 +2061,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     sn_current_file(),
     tokens_head->start_line, tokens_head->start_column,
     tokens_head->start_line, tokens_head->end_column,
-    0L, NULL, NULL, NULL, NULL,
+    recent_vis, NULL, NULL, NULL, NULL,
     tokens_head->start_line, tokens_head->start_column,
     tokens_head->start_line, tokens_head->end_column);
   assert(result == 0);
@@ -1808,96 +2076,71 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   current_class = SN_StrDup(clsname);
 
   free_head_token(); /* SOMEWORD=CLASSNAME */
+  push_brace(CLASS_KEYWORD);
+
+  /* FIXME: do something with the rest of the clause */
+  while (tokens_head->type != OPEN_BRACE) {
+    if (tokens_head->type == SOMEWORD) {
+       sn_highlight(SN_HIGH_CLASSDEF,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+       result = sn_insert_xref(SN_REF_TO_CLASS,
+         SN_MBR_FUNC_DEF,
+         SN_REF_SCOPE_GLOBAL,
+         current_class,
+         current_class,
+         NULL,
+         "#",
+         tokens_head->strval,
+         NULL, 
+         sn_current_file(),
+         tokens_head->start_line,
+         SN_REF_PASS);
+
+         assert(result == 0);
+    } else if (tokens_head->type == CLASS_EXTENDS_KEYWORD) {
+        sn_highlight(SN_HIGH_KEYWORD,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+        free_head_token(); /* EXTENDS */
+        if (tokens_head->type == SOMEWORD) {
+	  sn_highlight(SN_HIGH_CLASSDEF,
+	    tokens_head->start_line, tokens_head->start_column,
+	    tokens_head->end_line, tokens_head->end_column);
+          /* WARNING: added hack so xref pane points back to parent class, however,
+           *   we needed to assume that there is a constructor with the same name
+           *   as the derived class being implemented.  Worst case is you get a
+           *   warning beep when clicking on the reference. Note that the hierarchy
+           *   pane still works as expected. FIXME: gui/xrefpane.tcl needs to also
+           *   deal with a '#' funcname similar to the special case '#' refclass.
+           */
+         result = sn_insert_xref(SN_REF_TO_CLASS,
+           SN_MBR_FUNC_DEF,
+           SN_REF_SCOPE_GLOBAL,
+           current_class,
+           current_class,
+           NULL,
+           "#",
+           tokens_head->strval,
+           NULL, 
+           sn_current_file(),
+           tokens_head->start_line,
+           SN_REF_PASS);
+
+          assert(result == 0);
+          assert(current_parent == (char *)NULL);
+          current_parent = SN_StrDup(tokens_head->strval);
+        }
+    } else if (tokens_head->type == CLASS_IMPLEMENTS_KEYWORD) {
+        sn_highlight(SN_HIGH_KEYWORD,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    }
+    free_head_token(); /* anything before OPEN_BRACE */
+  }
   free_head_token(); /* OPEN_BRACE */
-}
 
-<TOKEN>"CLASS_KEYWORD SOMEWORD CLASS_EXTENDS_KEYWORD SOMEWORD OPEN_BRACE" {
-  int line_start, line_end, column_start, column_end;
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found derived class tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-
-  assert(tokens_head->type == CLASS_KEYWORD);
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* CLASS keyword */
-
-  assert(current_class == (char *)NULL);
-  current_class = SN_StrDup(tokens_head->strval);
-  line_start = tokens_head->start_line;
-  column_start = tokens_head->start_column + 1;
-  line_end = tokens_head->end_line;
-  column_end = tokens_head->end_column - 1;
-
-  /* add highlight ability to editor using parser toolbox */
-  sn_highlight(SN_HIGH_CLASSDEF,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* SOMEWORD=CLASSNAME */
-
-  sn_highlight(SN_HIGH_KEYWORD,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* EXTENDS keyword */
-
-  /* insert the class name */
-  /* FIXME: assumes public class */
-  result = sn_insert_symbol(SN_CLASS_DEF, NULL, current_class,
-    sn_current_file(),
-    line_start, column_start,
-    line_end, column_end,
-    SN_PUBLIC, NULL, NULL, NULL, NULL,
-    line_start, column_start,
-    line_end, column_end);
-  assert(result == 0);
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "derived class name is \"%s\" baseclass %s\n", current_class, tokens_head->strval);
-#endif
-  result = sn_insert_symbol(SN_CLASS_INHERIT, current_class, tokens_head->strval, 
-    sn_current_file(),
-    line_start, column_start,
-    line_end, column_end,
-    SN_PUBLIC, NULL, NULL, NULL, NULL,
-    line_start, column_start,
-    line_end, column_end);
-  assert(result == 0);
-
-  /* now add highlight ability to editor using parser toolbox */
-  sn_highlight(SN_HIGH_CLASSDEF,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-
-  /* WARNING: added hack so xref pane points back to parent class, however,
-   *   we needed to assume that there is a constructor with the same name
-   *   as the derived class being implemented.  Worst case is you get a
-   *   warning beep when clicking on the reference. Note that the hierarchy
-   *   pane still works as expected. FIXME: gui/xrefpane.tcl needs to also
-   *   deal with a '#' funcname similar to the special case '#' refclass.
-   */
-  result = sn_insert_xref(SN_REF_TO_CLASS,
-                 SN_MBR_FUNC_DEF,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_class,
-                 NULL,
-                 "#",
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 SN_REF_PASS);
-  assert(result == 0);
-
-  assert(current_parent == (char *)NULL);
-  current_parent = SN_StrDup(tokens_head->strval);
-
-  free_head_token(); /* SOMEWORD=BASECLASSNAME */
-
-  free_head_token(); /* OPEN_BRACE */
+  reset_vis(); /* prep for visibility specs */
 }
 
 
@@ -1951,6 +2194,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   int line;
   int ref_from_scope_type;
 
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "found function call tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
@@ -2001,7 +2245,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->strval, sn_current_file(),
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->start_line, tokens_head->end_column,
-      SN_PUBLIC, NULL, NULL, NULL, NULL,
+      recent_vis, NULL, NULL, NULL, NULL,
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->start_line, tokens_head->end_column);
     assert(result == 0);
@@ -2072,6 +2316,39 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   if (!pre) {
     free_head_token(); /* INCREMENT_OPERATORS */
   }
+}
+
+<TOKEN>"CONST_KEYWORD SOMEWORD ASSIGNMENT_OPERATOR" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "class const token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* const keyword */
+
+  if ( !current_class )
+    return;
+
+  /* FIXME: do we need to pick up the right hand value */
+  result = sn_insert_symbol(SN_ENUM_CONST_DEF,
+          current_class,
+          tokens_head->strval,
+          sn_current_file(),
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column,
+          /* attr */ SN_PUBLIC,
+          /* ret type */ NULL,
+          /* arg_types */ NULL,
+          /* arg_names */ NULL,
+          /* comment */ NULL,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+
+  free_head_token(); /* class constant name */
+  free_head_token(); /* = */
 }
 
 <TOKEN>"THIS_VARIABLE CLASS_MEMBER_OPERATOR SOMEWORD OPEN_PAREN" {
@@ -2380,9 +2657,75 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* SOMEWORD = class member */
 }
 
+<TOKEN>"ABSTRACT_KEYWORD" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found abstract tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  free_head_token(); /* keyword */
+  set_vis(ABSTRACT_KEYWORD);
+}
+
+
+<TOKEN>"PUBLIC_KEYWORD" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found visibility public tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  free_head_token(); /* keyword */
+  set_vis(PUBLIC_KEYWORD);
+}
+
+<TOKEN>"PROTECTED_KEYWORD" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found visibility protected tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  set_vis(PROTECTED_KEYWORD);
+  free_head_token(); /* keyword */
+}
+
+<TOKEN>"PRIVATE_KEYWORD" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found visibility private tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  set_vis(PRIVATE_KEYWORD);
+  free_head_token(); /* keyword */
+}
+
+<TOKEN>"STATIC_KEYWORD" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "found class static tokens at %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  set_vis(STATIC_KEYWORD);
+  free_head_token(); /* keyword */
+}
+
 <TOKEN>"VARIABLE" {
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable read at token %d\n", token_index);
+  fprintf(tokenout, "variable read at token %d, vis 0x%x\n", token_index, recent_vis);
 #endif
 
   if (current_class && !current_function) {
@@ -2391,7 +2734,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
       tokens_head->strval, sn_current_file(),
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->start_line, tokens_head->end_column,
-      SN_PUBLIC, NULL, NULL, NULL, NULL,
+      recent_vis, NULL, NULL, NULL, NULL,
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->start_line, tokens_head->end_column);
     assert(result == 0);
@@ -2402,12 +2745,26 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   free_head_token(); /* VARIABLE */
 }
 
+
 <TOKEN>"SOMEWORD CLASS_SCOPE_OPERATOR" {
   /*
    * Note: keep parsing "fuzzy" by stopping at the pattern 'classname::'
    *  and then let other rules take over.
    */
   int ref_from_scope_type;
+  char *clsname;
+
+  if (strcmp(tokens_head->strval, "parent") == 0) {
+    clsname = current_parent;
+  } else if (strcmp(tokens_head->strval, "self") == 0) {
+    clsname = current_class;
+  } else {
+    clsname = tokens_head->strval;
+    /* FIXME: is there a highlight for a reference to a class name? */
+    sn_highlight(SN_HIGH_CLASSDEF,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+  }
 
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "direct class access at %d\n", token_index);
@@ -2424,7 +2781,7 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
                  current_function,
                  NULL,
                  "#",
-                 tokens_head->strval, /* target class name == constructor name */
+                 clsname, /* tokens_head->strval */ /* target class name == constructor name */
                  NULL, 
                  sn_current_file(),
                  tokens_head->start_line,
@@ -2432,14 +2789,10 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   assert(result == 0);
 
-  /* FIXME: is there a highlight for a reference to a class name? */
-  sn_highlight(SN_HIGH_CLASSDEF,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-
   free_head_token(); /* REFCLASS */
   free_head_token(); /* :: */
 }
+
 
 <TOKEN>"INCREMENT_OPERATORS VARIABLE OPEN_BRACKET" {
 #ifdef TOKEN_DEBUG
@@ -2645,6 +2998,8 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   fprintf(tokenout, "\n");
 #endif
 
+  reset_vis(); /* prep for visibility specs */
+
   if (highlight_file) {
       switch (tokens_head->type) {
           case DOUBLE_QUOTED_STRING:
@@ -2655,6 +3010,14 @@ var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
           case CLASS_KEYWORD:
           case NEW_KEYWORD:
           case ARRAY_KEYWORD:
+          case TRY_KEYWORD:
+          case CATCH_KEYWORD:
+          case PUBLIC_KEYWORD:
+          case ABSTRACT_KEYWORD:
+          case PROTECTED_KEYWORD:
+          case PRIVATE_KEYWORD:
+          case STATIC_KEYWORD:
+          case CONST_KEYWORD:
           case KEYWORD:
               type = SN_HIGH_KEYWORD;
               break;
@@ -3048,6 +3411,40 @@ void pop_bracket_counter() {
 }
 
 /*
+ * This method is invoked when nested braces occur.
+ */
+
+void push_brace(TokenType braceType) {
+    NestedBrace* nbp = (NestedBrace*) ckalloc(sizeof(NestedBrace));
+    if ( !nbp )
+        return;
+    nbp->btype = braceType;
+
+    if (brace_nest_head == NULL) {
+        brace_nest_head = brace_nest_tail = nbp;
+    } else {
+        nbp->next = brace_nest_head;
+        brace_nest_head = nbp;
+    }
+}
+
+TokenType pop_brace() {
+    TokenType retToken;
+    if (brace_nest_head != NULL) {
+        NestedBrace* nbp = brace_nest_head;
+        if (brace_nest_head == brace_nest_tail) {
+            brace_nest_head = brace_nest_tail = (NestedBrace*) NULL;
+        } else {
+            brace_nest_head = brace_nest_head->next;
+        }
+        retToken = nbp->btype;
+        ckfree((char*) nbp);
+	return(retToken);
+    }
+    return(UNKNOWN_TOKEN);
+}
+
+/*
  * This method is invoked when a nested function is
  * encountered.
  */
@@ -3064,7 +3461,6 @@ void push_function() {
     n->line_end = current_function_line_end;
     n->col_start = current_function_column_start;
     n->col_end = current_function_column_end;
-    n->brace_count = current_function_brace_count;
 
     if (function_nest_head == NULL) {
         function_nest_head = function_nest_tail = n;
@@ -3092,7 +3488,6 @@ void pop_function() {
         current_function_line_end = n->line_end;
         current_function_column_start = n->col_start;
         current_function_column_end = n->col_end;
-        current_function_brace_count = n->brace_count;
 
         ckfree((char*) n);
     }
@@ -3118,6 +3513,10 @@ int from_what_scope()
   }
 }
 
+/* Note: these strings get put into the token stream used during the
+ * token parsing portion of the program. Make sure the strings here
+ * are reflected in the rules above.
+ */
 char * TokenTypeToString(Token *tok) {
     switch(tok->type) {
         case OPEN_PAREN:
@@ -3140,6 +3539,8 @@ char * TokenTypeToString(Token *tok) {
             return "PERIOD";
         case COLON_CHAR:
             return "COLON_CHAR";
+        case ATSIGN_CHAR:
+            return "ATSIGN_CHAR";
         case VARIABLE:
             return "VARIABLE";
         case UNI_OPERATORS:
@@ -3158,6 +3559,8 @@ char * TokenTypeToString(Token *tok) {
             return "CLASS_SCOPE_OPERATOR";
         case CLASS_MEMBER_OPERATOR:
             return "CLASS_MEMBER_OPERATOR";
+        case MAPPING_OPERATOR:
+            return "MAPPING_OPERATOR";
         case THIS_VARIABLE:
             return "THIS_VARIABLE";
         case PARENT_VARIABLE:
@@ -3176,6 +3579,8 @@ char * TokenTypeToString(Token *tok) {
             return "CLASS_KEYWORD";
         case CLASS_EXTENDS_KEYWORD:
             return "CLASS_EXTENDS_KEYWORD";
+        case CLASS_IMPLEMENTS_KEYWORD:
+            return "CLASS_IMPLEMENTS_KEYWORD";
         case VDOUBLE_QUOTED_STRING:
             return "VDOUBLE_QUOTED_STRING";
         case DOUBLE_QUOTED_STRING:
@@ -3188,8 +3593,24 @@ char * TokenTypeToString(Token *tok) {
             return "ARRAY_KEYWORD";
         case DEFINE_KEYWORD:
             return "DEFINE_KEYWORD";
-        case UNKNOWN:
-            return "UNKNOWN";
+        case TRY_KEYWORD:
+            return "TRY_KEYWORD";
+        case CATCH_KEYWORD:
+            return "CATCH_KEYWORD";
+        case ABSTRACT_KEYWORD:
+            return "ABSTRACT_KEYWORD";
+        case PUBLIC_KEYWORD:
+            return "PUBLIC_KEYWORD";
+        case PROTECTED_KEYWORD:
+            return "PROTECTED_KEYWORD";
+        case PRIVATE_KEYWORD:
+            return "PRIVATE_KEYWORD";
+        case STATIC_KEYWORD:
+            return "STATIC_KEYWORD";
+        case CONST_KEYWORD:
+            return "CONST_KEYWORD";
+        case UNKNOWN_TOKEN:
+            return "UNKNOWN_TOKEN";
         case COMMENT:
             return "COMMENT";
         case HTML:
@@ -3215,7 +3636,7 @@ void emit_function_declaration() {
                sn_current_file(), 
                current_function_line_start, current_function_column_start,
                current_function_line_end, current_function_column_end,
-               SN_PUBLIC /* attribute, FIXME: assuming public member for now */,
+               recent_vis /* attribute, FIXME: assuming public member for now */,
                NULL /* return type */,
                current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
                current_function_args /* argument names */,
@@ -3232,7 +3653,7 @@ void emit_function_declaration() {
                sn_current_file(), 
                current_function_line_start, current_function_column_start,
                current_function_line_end, current_function_column_end,
-               SN_PUBLIC /* attribute, FIXME: assuming public member for now */,
+               recent_vis /* attribute, FIXME: assuming public member for now */,
                NULL /* return type */,
                current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
                current_function_args /* argument names */,
@@ -3274,6 +3695,7 @@ void emit_function_declaration() {
       global_var_table->destroy( &global_var_table );
       global_var_table = NULL;
     }
+  reset_vis(); /* prep for visibility specs */
 }
 
 void emit_comment() {
@@ -3559,7 +3981,8 @@ void emit_var_access(Token *tok, VarAccess acc) {
           line_start, column_start,
           line_end, column_end);
 #endif
-   }
+  }
+  reset_vis(); /* prep for visibility specs */
 }
 
 int get_num_tokens_matched(char *match) {
@@ -3590,6 +4013,35 @@ reset()
   sn_reset_line();
   sn_reset_column();
   sn_reset_encoding();
+}
+
+void
+reset_vis()
+{
+  recent_vis = SN_PUBLIC;
+  recent_vis_toknum = token_index - 1;
+}
+
+void
+set_vis(TokenType useTok)
+{
+  if (useTok == ABSTRACT_KEYWORD) {
+    recent_vis = SN_ABSTRACT;
+  } else if (useTok == STATIC_KEYWORD) {
+    recent_vis |= SN_STATIC;
+  } else {
+    if (useTok == PUBLIC_KEYWORD) {
+        recent_vis &= ~(SN_PROTECTED | SN_PRIVATE);
+        recent_vis |= SN_PUBLIC;
+    } else if (useTok == PROTECTED_KEYWORD) {
+        recent_vis &= ~(SN_PUBLIC | SN_PRIVATE);
+        recent_vis |= SN_PROTECTED;
+    } else if (useTok == PRIVATE_KEYWORD) {
+        recent_vis &= ~(SN_PUBLIC | SN_PROTECTED);
+        recent_vis |= SN_PRIVATE;
+    }
+  }
+  recent_vis_toknum = token_index;
 }
 
 int
