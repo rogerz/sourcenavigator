@@ -336,29 +336,19 @@ sq-string-token  "SINGLE_QUOTED_STRING"
 literal-token ({someword}|{someword}" CLASS_SCOPE_OPERATOR "{someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-
 arraymap-value-tokens ("UNI_OPERATORS ")?({literal-token})
 arraymap-kv1-token ({literal-token}" MAPPING_OPERATOR "{arraymap-value-tokens})
 arraymap-kvn-token (" "|" "{arraymap-kv1-token}" "("COMMA "{arraymap-kv1-token}" ")*)
 arraymap-tokens ("OPEN_PAREN"{arraymap-kvn-token}("COMMA ")?"CLOSE_PAREN")
 
-
 class-extends-tokens "CLASS_EXTENDS_KEYWORD "{someword}
 class-implements-tokens ("CLASS_IMPLEMENTS_KEYWORD "{someword}(" COMMA "{someword})*)
 class-clause-tokens ("CLASS_KEYWORD "{someword}(" "{class-extends-tokens})?(" "{class-implements-tokens})?" OPEN_BRACE")
-
 
 function-argument-token  ("VARIABLE"|"REFERENCE_OPERATOR VARIABLE"|"UNI_OPERATORS VARIABLE"|"VARIABLE ASSIGNMENT_OPERATOR "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR UNI_OPERATORS "{literal-token}|"VARIABLE ASSIGNMENT_OPERATOR ARRAY_KEYWORD OPEN_PAREN CLOSE_PAREN"|"SOMEWORD VARIABLE"|{literal-token})
 function-argument-tokens (" "|" "{function-argument-token}" "("COMMA "{function-argument-token}" ")*)
 
 variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
-
-
-deleteme-var-array-empty-tokens "OPEN_BRACKET CLOSE_BRACKET"
-deleteme-var-array-index-token ("SOMEWORD"|"VDOUBLE_QUOTED_STRING"|"DOUBLE_QUOTED_STRING"|"SINGLE_QUOTED_STRING"|"VARIABLE")
-deleteme-var-array-index-tokens ("OPEN_BRACKET "{var-array-index-token}" CLOSE_BRACKET")
-deleteme-var-array-token ({var-array-empty-tokens}|{var-array-index-tokens}
-deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
 
 %%
@@ -1649,6 +1639,7 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   /* FIXME: We currently do not PROPERLY handle recursive arrays.
    *   flex does not allow it directly, though use of buffers
    *   may be workable. We would need to use yacc/bison to do this.
+   *   May also limit scan upto open paren.
    */
 
   /* FIXME: actually process key to value mapping in array */
@@ -1935,6 +1926,7 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
 
   free_head_token(); /* CLOSE_BRACE */
+  reset_vis(); /* prep for visibility specs */
 }
 
 <TOKEN>("INCLUDE_KEYWORD "{include-string-token}" SEMICOLON")|("INCLUDE_KEYWORD OPEN_PAREN "{include-string-token}" CLOSE_PAREN") {
@@ -2037,7 +2029,6 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 }
 
 <TOKEN>{class-clause-tokens} {
-  char* clsname;
   int line;
   int ref_from_scope_type;
 
@@ -2052,12 +2043,11 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
           tokens_head->end_line, tokens_head->end_column);
   free_head_token(); /* CLASS keyword */
 
-  clsname = tokens_head->strval;
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "class name is \"%s\"\n", clsname);
+  fprintf(tokenout, "class name is \"%s\"\n", tokens_head->strval);
 #endif
   /* first insert the class name */
-  result = sn_insert_symbol(SN_CLASS_DEF, NULL, clsname,
+  result = sn_insert_symbol(SN_CLASS_DEF, NULL, tokens_head->strval,
     sn_current_file(),
     tokens_head->start_line, tokens_head->start_column,
     tokens_head->start_line, tokens_head->end_column,
@@ -2066,6 +2056,8 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     tokens_head->start_line, tokens_head->end_column);
   assert(result == 0);
 
+  reset_vis(); /* prep for visibility specs */
+
   /* now add highlight ability to editor using parser toolbox */
   sn_highlight(SN_HIGH_CLASSDEF,
       tokens_head->start_line, tokens_head->start_column,
@@ -2073,17 +2065,18 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 
   assert(current_class == (char *)NULL);
 
-  current_class = SN_StrDup(clsname);
+  current_class = SN_StrDup(tokens_head->strval);
 
   free_head_token(); /* SOMEWORD=CLASSNAME */
   push_brace(CLASS_KEYWORD);
 
-  /* FIXME: do something with the rest of the clause */
   while (tokens_head->type != OPEN_BRACE) {
     if (tokens_head->type == SOMEWORD) {
+       /* Note: at this point we are dealing with 'interfaces' */
        sn_highlight(SN_HIGH_CLASSDEF,
             tokens_head->start_line, tokens_head->start_column,
             tokens_head->end_line, tokens_head->end_column);
+
        result = sn_insert_xref(SN_REF_TO_CLASS,
          SN_MBR_FUNC_DEF,
          SN_REF_SCOPE_GLOBAL,
@@ -2097,7 +2090,10 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
          tokens_head->start_line,
          SN_REF_PASS);
 
-         assert(result == 0);
+        assert(result == 0);
+
+        /* FIXME: insert xref here as SN_IMPLEMENTS or direct inherit like 'extends'? */
+
     } else if (tokens_head->type == CLASS_EXTENDS_KEYWORD) {
         sn_highlight(SN_HIGH_KEYWORD,
             tokens_head->start_line, tokens_head->start_column,
@@ -2107,27 +2103,37 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 	  sn_highlight(SN_HIGH_CLASSDEF,
 	    tokens_head->start_line, tokens_head->start_column,
 	    tokens_head->end_line, tokens_head->end_column);
-          /* WARNING: added hack so xref pane points back to parent class, however,
-           *   we needed to assume that there is a constructor with the same name
-           *   as the derived class being implemented.  Worst case is you get a
-           *   warning beep when clicking on the reference. Note that the hierarchy
-           *   pane still works as expected. FIXME: gui/xrefpane.tcl needs to also
-           *   deal with a '#' funcname similar to the special case '#' refclass.
-           */
-         result = sn_insert_xref(SN_REF_TO_CLASS,
-           SN_MBR_FUNC_DEF,
-           SN_REF_SCOPE_GLOBAL,
-           current_class,
-           current_class,
-           NULL,
-           "#",
-           tokens_head->strval,
-           NULL, 
-           sn_current_file(),
-           tokens_head->start_line,
-           SN_REF_PASS);
+
+#ifdef TOKEN_DEBUG
+          fprintf(tokenout, "derived class name is \"%s\" baseclass %s\n", current_class, tokens_head->strval);
+#endif
+          result = sn_insert_symbol(SN_CLASS_INHERIT, current_class, tokens_head->strval, 
+            sn_current_file(),
+	    tokens_head->start_line, tokens_head->start_column,
+	    tokens_head->end_line, tokens_head->end_column,
+            SN_PUBLIC, NULL, NULL, NULL, NULL,
+	    tokens_head->start_line, tokens_head->start_column,
+	    tokens_head->end_line, tokens_head->end_column);
+          assert(result == 0);
+
+
+          /* WARNING: added hack so xref pane points back to parent class */
+          result = sn_insert_xref(SN_REF_TO_CLASS,
+            SN_MBR_FUNC_DEF,
+            SN_REF_SCOPE_GLOBAL,
+            current_class,
+            current_class,
+            NULL,
+            "#",
+            tokens_head->strval,
+            NULL, 
+            sn_current_file(),
+            tokens_head->start_line,
+            SN_REF_PASS);
 
           assert(result == 0);
+
+          /* Note: single predecessor for PHP classes (but zero or more interfaces) */
           assert(current_parent == (char *)NULL);
           current_parent = SN_StrDup(tokens_head->strval);
         }
@@ -2138,9 +2144,8 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
     }
     free_head_token(); /* anything before OPEN_BRACE */
   }
-  free_head_token(); /* OPEN_BRACE */
-
-  reset_vis(); /* prep for visibility specs */
+  if (tokens_head->type == OPEN_BRACE)
+    free_head_token(); /* OPEN_BRACE */
 }
 
 
@@ -2240,7 +2245,6 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
 
   if (current_class && !current_function) {
-    /* FIXME: assumes class var declared public */
     result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
       tokens_head->strval, sn_current_file(),
       tokens_head->start_line, tokens_head->start_column,
@@ -2729,7 +2733,6 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
 #endif
 
   if (current_class && !current_function) {
-    /* FIXME: assumes var declared public */
     result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
       tokens_head->strval, sn_current_file(),
       tokens_head->start_line, tokens_head->start_column,
@@ -2997,8 +3000,6 @@ deleteme-var-array-tokens (" "|" "{var-array-token}" "({var-array-token}" ")*)
   }
   fprintf(tokenout, "\n");
 #endif
-
-  reset_vis(); /* prep for visibility specs */
 
   if (highlight_file) {
       switch (tokens_head->type) {
@@ -3497,7 +3498,7 @@ void pop_function() {
 int from_what_scope()
 {
   /* FIXME: SN_GLOBAL_NAMESPACE not forming a useable xref. See toolbox/snptools.c
-   * for the reason why a reference from the global namespace is a problem.
+   * for the same reason that a reference from the global namespace is a problem.
    * xrefs from within classes and functions, for the most part, works.
    */
   if (current_function == NULL) {
@@ -3636,7 +3637,7 @@ void emit_function_declaration() {
                sn_current_file(), 
                current_function_line_start, current_function_column_start,
                current_function_line_end, current_function_column_end,
-               recent_vis /* attribute, FIXME: assuming public member for now */,
+               recent_vis,
                NULL /* return type */,
                current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
                current_function_args /* argument names */,
@@ -3653,7 +3654,7 @@ void emit_function_declaration() {
                sn_current_file(), 
                current_function_line_start, current_function_column_start,
                current_function_line_end, current_function_column_end,
-               recent_vis /* attribute, FIXME: assuming public member for now */,
+               recent_vis,
                NULL /* return type */,
                current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
                current_function_args /* argument names */,
