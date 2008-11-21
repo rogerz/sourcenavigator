@@ -251,7 +251,7 @@ proc init_some_font_attributes {} {
           "-$sn_options(def,font-family)-Helvetica-Medium-R-Normal--*-$sn_options(def,font-size)-*-*-*-*-iso8859-1"
         set sn_options(def,layout-fg) black
         #darkgray
-        set sn_options(def,layout-bg) "#c0c0c0"
+        set sn_options(def,layout-bg) "#e0e0e0"
     }
 }
 
@@ -387,7 +387,7 @@ proc sn_init_globals {} {
 
             if {$sn_options(iscolor)} {
                 set sn_options(def,select-fg) black
-                set sn_options(def,select-bg) yellow
+                set sn_options(def,select-bg) "#d2d2ea"
             } else {
                 set sn_options(def,select-fg) white
                 set sn_options(def,select-bg) black
@@ -398,7 +398,7 @@ proc sn_init_globals {} {
         if {$tcl_platform(platform) == "windows"} {
             set sn_options(def,checkbutton-select) white
         } else {
-            set sn_options(def,checkbutton-select) Seagreen
+            set sn_options(def,checkbutton-select) "#598ade"
         }
 
         #we use the same keybindings for unix&windows
@@ -413,9 +413,11 @@ proc sn_init_globals {} {
         } else {
             set sn_options(def,balloon-font)\
               "-*-Helvetica-Medium-R-Normal--*-$sn_options(def,balloon-font-size)-*-*-*-*-iso8859-1"
-            set sn_options(def,balloon-fg) black
-            set sn_options(def,balloon-bg) lightyellow
+            set sn_options(def,balloon-fg) "#000000"
+            set sn_options(def,balloon-bg) "#d2d2ea"
         }
+
+	set sn_options(def,progress-bg) "#8cb1d8"
 
         #lines to draw between tree items
         #dark blue

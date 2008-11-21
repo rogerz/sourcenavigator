@@ -294,7 +294,7 @@ itcl::class ProgressBar {
     itk_option define -width width Width 100
 
     public variable foreground "black"
-    public variable indicatorcolor "#5ae6fe"
+    public variable indicatorcolor $sn_options(def,progress-bg)
     public variable step 1
 }
 
