@@ -367,11 +367,10 @@ proc sn_init_globals {} {
             set sn_options(def,default-fg) black
             set sn_options(def,default-bg) white
             set sn_options(def,highlight-fg) black
-            set sn_options(def,highlight-bg) "#c0c0c0"
+            # color for the border around the widget - same as layout
+	    set sn_options(def,highlight-bg) $sn_options(def,layout-bg)
         }
 
-        #color for the border around the widget, should be the same
-        #as the background
 
         if {$tcl_platform(platform) == "windows"} {
             #bold font
