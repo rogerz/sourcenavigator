@@ -176,6 +176,8 @@ static char group[] = "php";
 /* FIXME: Can't pass NULL or "" as current function (core dump) */
 static char* current_function = (char *) NULL;
 static char* current_function_args = (char *) NULL;
+/* more workaround for forcing non-null function name */
+static char* current_refblock = (char *) NULL;
 
 /* line number where highlight starts and ends */
 static int  current_function_highlight_line;
@@ -1624,7 +1626,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   free_head_token(); /* STRING */
 }
 
-<TOKEN>"ARRAY_KEYWORD "{arraymap-tokens} {
+<TOKEN>"ARRAY_KEYWORD UNKNOWN_TOKEN"{arraymap-tokens} {
   int parens, noargs;
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array mapping init tokens %d\n", token_index);
@@ -1654,6 +1656,36 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   }
 }
 
+<TOKEN>"ARRAY_KEYWORD OPEN_PAREN" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array init tokens %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  sn_highlight(SN_HIGH_KEYWORD,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+  free_head_token(); /* array keyword */
+  free_head_token(); /* OPEN_PAREN */
+}
+
+<TOKEN>{literal-token}" MAPPING_OPERATOR" {
+#ifdef TOKEN_DEBUG
+  fprintf(tokenout, "array mapping token %d\n", token_index);
+  fprintf(tokenout, "match text was \"%s\"\n", yytext);
+#endif
+  while (tokens_head->type != MAPPING_OPERATOR) {
+    if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+        (tokens_head->type == SINGLE_QUOTED_STRING)) {
+          sn_highlight(SN_HIGH_STRING,
+              tokens_head->start_line, tokens_head->start_column,
+              tokens_head->end_line, tokens_head->end_column);
+    }
+    free_head_token();
+  }
+  free_head_token(); /* MAPPING_OPERATOR */
+}
+
+
 
 <TOKEN>("FUNCTION_KEYWORD "("REFERENCE_OPERATOR ")?"SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE ") {
   int parens, noargs;
@@ -1676,6 +1708,10 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 
   if (tokens_head->type == REFERENCE_OPERATOR)
     free_head_token(); /* REFERENCE_OPERATOR */
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
 
   if (current_function != NULL) {
     push_function();
@@ -1760,6 +1796,10 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
           tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* FUNCTION_KEYWORD */
+
+  sn_highlight(SN_HIGH_FUNCTION,
+      tokens_head->start_line, tokens_head->start_column,
+      tokens_head->end_line, tokens_head->end_column);
 
   current_function = SN_StrDup(tokens_head->strval);
 
@@ -1877,8 +1917,11 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
         sn_highlight(SN_HIGH_STRING,
             tokens_head->start_line, tokens_head->start_column,
             tokens_head->end_line, tokens_head->end_column);
-    } else {
-    }
+    } else if (tokens_head->type == SOMEWORD) {
+      sn_highlight(SN_HIGH_CLASSDEF,
+          tokens_head->start_line, tokens_head->start_column,
+          tokens_head->end_line, tokens_head->end_column);
+    } /* else { } */
 
     free_head_token(); /* anything upto and including final CLOSE_PAREN */
   }
@@ -2063,12 +2106,14 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
       tokens_head->start_line, tokens_head->start_column,
       tokens_head->end_line, tokens_head->end_column);
 
-  assert(current_class == (char *)NULL);
+  /* assert(current_class == (char *)NULL); */ /* removed to be more tolerant */
 
   current_class = SN_StrDup(tokens_head->strval);
 
   free_head_token(); /* SOMEWORD=CLASSNAME */
   push_brace(CLASS_KEYWORD);
+
+  ref_from_scope_type = from_what_scope();
 
   while (tokens_head->type != OPEN_BRACE) {
     if (tokens_head->type == SOMEWORD) {
@@ -2081,7 +2126,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
          SN_MBR_FUNC_DEF,
          SN_REF_SCOPE_GLOBAL,
          current_class,
-         current_class,
+         current_refblock,
          NULL,
          "#",
          tokens_head->strval,
@@ -2134,7 +2179,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
           assert(result == 0);
 
           /* Note: single predecessor for PHP classes (but zero or more interfaces) */
-          assert(current_parent == (char *)NULL);
+          /* assert(current_parent == (char *)NULL); */ /* removed to be more tolerant */
           current_parent = SN_StrDup(tokens_head->strval);
         }
     } else if (tokens_head->type == CLASS_IMPLEMENTS_KEYWORD) {
@@ -2173,7 +2218,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  "#",
                  tokens_head->strval,
@@ -2217,7 +2262,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  fname,
@@ -2379,7 +2424,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  current_class,
                  fname,
@@ -2419,7 +2464,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  current_class,
                  tokens_head->strval,
@@ -2457,7 +2502,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  current_parent,
                  fname,
@@ -2491,7 +2536,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  current_parent,
                  tokens_head->strval,
@@ -2536,7 +2581,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  fname,
@@ -2571,7 +2616,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL, /* CHEAT: should use type of variable but typeless language interferes */
                  tokens_head->strval,
@@ -2608,7 +2653,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,	/* CHEAT: don't limit to class of var because of typeless language */
                  tokens_head->strval,
@@ -2641,7 +2686,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  tokens_head->strval,
@@ -2781,14 +2826,14 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
                  ref_from_scope_type,
                  SN_REF_SCOPE_GLOBAL,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  "#",
-                 clsname, /* tokens_head->strval */ /* target class name == constructor name */
+                 clsname,
                  NULL, 
                  sn_current_file(),
                  tokens_head->start_line,
-                 SN_REF_PASS);
+                 SN_REF_READ);
 
   assert(result == 0);
 
@@ -3502,11 +3547,15 @@ int from_what_scope()
    * xrefs from within classes and functions, for the most part, works.
    */
   if (current_function == NULL) {
-      if (current_class == NULL)
+      if (current_class == NULL) {
+        current_refblock = "#";
         return(SN_GLOBAL_NAMESPACE);
-      else
+      } else {
+        current_refblock = "__construct";
         return(SN_SUBR_DEF);
+      }
   } else {
+      current_refblock = current_function;
       if (current_class == NULL)
         return(SN_FUNC_DEF);
       else
@@ -3902,7 +3951,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  ref_from_scope_type,
                  ref_to_symbol_scope,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  varname,
@@ -3930,7 +3979,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  ref_from_scope_type,
                  ref_to_symbol_scope,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  varname,
@@ -3955,7 +4004,7 @@ void emit_var_access(Token *tok, VarAccess acc) {
                  ref_from_scope_type,
                  ref_to_symbol_scope,
                  current_class,
-                 current_function,
+                 current_refblock,
                  NULL,
                  NULL,
                  varname,
