@@ -1669,17 +1669,32 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 }
 
 <TOKEN>{literal-token}" MAPPING_OPERATOR" {
+  int line_start, line_end, column_start, column_end;
+  TokenType prevToken;
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array mapping token %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
+  prevToken = UNKNOWN_TOKEN;
   while (tokens_head->type != MAPPING_OPERATOR) {
     if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
         (tokens_head->type == SINGLE_QUOTED_STRING)) {
           sn_highlight(SN_HIGH_STRING,
               tokens_head->start_line, tokens_head->start_column,
               tokens_head->end_line, tokens_head->end_column);
+    } else if (tokens_head->type == SOMEWORD) {
+      /* cheat with token lookback to highlight class references */
+      line_start = tokens_head->start_line;
+      column_start = tokens_head->start_column;
+      line_end = tokens_head->end_line;
+      column_end = tokens_head->end_column;
+    } else if (tokens_head->type == CLASS_SCOPE_OPERATOR) {
+      if (prevToken == SOMEWORD) {
+        sn_highlight(SN_HIGH_CLASSDEF, line_start, column_start, line_end, column_end);
+        /* FIXME: need to add xref to class here */
+      }
     }
+    prevToken = tokens_head->type;
     free_head_token();
   }
   free_head_token(); /* MAPPING_OPERATOR */
@@ -2274,8 +2289,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   assert(result == 0);
 
   sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    tokens_head->start_line, tokens_head->start_column,
+    tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* SOMEWORD */
   free_head_token(); /* OPEN_PAREN */
@@ -3548,7 +3563,8 @@ int from_what_scope()
    */
   if (current_function == NULL) {
       if (current_class == NULL) {
-        current_refblock = "#";
+        /* snptools.c asserts current function = NULL with SN_GLOBAL_NAMESPACE */
+        current_refblock = NULL;
         return(SN_GLOBAL_NAMESPACE);
       } else {
         current_refblock = "__construct";
