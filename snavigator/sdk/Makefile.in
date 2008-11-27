@@ -260,7 +260,7 @@ top_srcdir = @top_srcdir@
 # 
 AUTOMAKE_OPTIONS = cygnus
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
-SUBDIRS = api parsers
+SUBDIRS = api
 all: all-recursive
 
 .SUFFIXES:
