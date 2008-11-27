@@ -259,7 +259,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-SUBDIRS = c tcl
+SUBDIRS = tcl
 all: all-recursive
 
 .SUFFIXES:

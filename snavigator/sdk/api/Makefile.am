@@ -21,5 +21,5 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-SUBDIRS = c tcl
+SUBDIRS = tcl
 
