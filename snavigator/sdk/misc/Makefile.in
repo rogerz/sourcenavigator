@@ -32,7 +32,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = sdk/api/tcl/misc
+subdir = sdk/misc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -257,7 +257,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-misctcldir = $(datadir)/sdk/api/tcl/misc
+misctcldir = $(datadir)/snavigator/sdk/misc
 misctcl_DATA = java.rc.tcl paf_dump.tcl paf_rc.tcl paf_stat.sh sn_report.tcl \
 	       exportIndex.tcl
 
@@ -273,9 +273,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  sdk/api/tcl/misc/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  sdk/misc/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  sdk/api/tcl/misc/Makefile
+	  $(AUTOMAKE) --foreign  sdk/misc/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

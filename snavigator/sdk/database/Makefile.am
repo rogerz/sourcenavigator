@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Proecess this file with automake to create Makefile.in.
 
-tcldbdir = $(datadir)/sdk/api/tcl/database/examples
+tcldbdir = $(datadir)/snavigator/sdk/database
 
 tcldb_SCRIPTS = call-freq.tk clobber.tcl constants.tcl diamonds.tcl \
 	        multicludes.tcl unimp-methods.tcl unused.tcl

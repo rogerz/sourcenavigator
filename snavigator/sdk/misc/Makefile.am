@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-misctcldir = $(datadir)/sdk/api/tcl/misc
+misctcldir = $(datadir)/snavigator/sdk/misc
 
 misctcl_DATA = java.rc.tcl paf_dump.tcl paf_rc.tcl paf_stat.sh sn_report.tcl \
 	       exportIndex.tcl
