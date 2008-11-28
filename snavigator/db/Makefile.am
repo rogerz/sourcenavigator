@@ -32,7 +32,7 @@ endif
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
-bin_PROGRAMS = dbcp dbdump dbimp
+libexec_PROGRAMS = dbcp dbdump dbimp
 sdk_LIBRARIES = libdbutils.a
 
 install-data-local:

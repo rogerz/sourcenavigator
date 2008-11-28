@@ -980,7 +980,7 @@ proc sn_load_xref {xfer_file cbrowser_xref} {
         -C $sn_options(def,xref-db-cachesize)
     lappend cbr2_cmd ${xfer_file}
 
-    set dbimp_cmd [list [file join $sn_path(bindir) dbimp] \
+    set dbimp_cmd [list [file join $sn_path(parserdir) dbimp] \
         -H [info hostname] \
         -P [pid] -c $sn_options(def,db_cachesize) \
         -C $sn_options(def,xref-db-cachesize)]
@@ -2261,7 +2261,7 @@ proc sn_load_hide_unload_files {dir loadf {hidefiles ""} {unloadf ""} {view\
 
         close ${unloadfd}
 
-        set dbexec [file join $sn_path(bindir) dbimp]
+        set dbexec [file join $sn_path(parserdir) dbimp]
 
         set cmd [list ${dbexec} -f ${tmpf} -c $sn_options(def,db_cachesize)\
           -C $sn_options(def,xref-db-cachesize) $sn_options(db_files_prefix)]
@@ -3965,9 +3965,9 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         return 0
     }
     if {$tcl_platform(platform) == "windows"} {
-        set pipe [file join $sn_path(bindir) dbimp.exe]
+        set pipe [file join $sn_path(parserdirdir) dbimp.exe]
     } else {
-        set pipe [file join $sn_path(bindir) dbimp]
+        set pipe [file join $sn_path(parserdir) dbimp]
     }
 
     #verify if Xref generation will be started
