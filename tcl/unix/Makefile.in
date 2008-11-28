@@ -530,7 +530,7 @@ dltest/Makefile: $(DLTEST_DIR)/configure $(DLTEST_DIR)/Makefile.in tclConfig.sh
 	dldir=`cd $(DLTEST_DIR) && pwd`; cd dltest; \
 	if test -f configure; then ./configure; else $$dldir/configure; fi
 
-install: install-binaries install-libraries install-doc
+install: install-binaries install-libraries 
 
 install-strip:
 	$(MAKE) install INSTALL_PROGRAM="$(INSTALL_PROGRAM) -s"
