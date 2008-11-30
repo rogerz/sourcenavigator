@@ -338,11 +338,6 @@ sq-string-token  "SINGLE_QUOTED_STRING"
 literal-token ({someword}|{someword}" CLASS_SCOPE_OPERATOR "{someword}|{dq-string-token}|{sq-string-token})
 include-string-token ({dq-string-token}|{sq-string-token})
 
-arraymap-value-tokens ("UNI_OPERATORS ")?({literal-token})
-arraymap-kv1-token ({literal-token}" MAPPING_OPERATOR "{arraymap-value-tokens})
-arraymap-kvn-token (" "|" "{arraymap-kv1-token}" "("COMMA "{arraymap-kv1-token}" ")*)
-arraymap-tokens ("OPEN_PAREN"{arraymap-kvn-token}("COMMA ")?"CLOSE_PAREN")
-
 class-extends-tokens "CLASS_EXTENDS_KEYWORD "{someword}
 class-implements-tokens ("CLASS_IMPLEMENTS_KEYWORD "{someword}(" COMMA "{someword})*)
 class-clause-tokens ("CLASS_KEYWORD "{someword}(" "{class-extends-tokens})?(" "{class-implements-tokens})?" OPEN_BRACE")
@@ -1473,7 +1468,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 #if MATCH_DUMP
   matched_pattern("{keywords}", yytext);
 #endif
-
+  /* FIXME: why are words used in type casting not reserved? */
   append_token(KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -1626,35 +1621,6 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   free_head_token(); /* STRING */
 }
 
-<TOKEN>"ARRAY_KEYWORD UNKNOWN_TOKEN"{arraymap-tokens} {
-  int parens, noargs;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array mapping init tokens %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* array keyword */
-  free_head_token(); /* OPEN_PAREN */
-
-  /* FIXME: We currently do not PROPERLY handle recursive arrays.
-   *   flex does not allow it directly, though use of buffers
-   *   may be workable. We would need to use yacc/bison to do this.
-   *   May also limit scan upto open paren.
-   */
-
-  /* FIXME: actually process key to value mapping in array */
-  parens = 1;
-  while (parens > 0) {
-    if (tokens_head->type == OPEN_PAREN) {
-      parens++;
-    } else if (tokens_head->type == CLOSE_PAREN) {
-      parens--;
-    }
-    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || assign map || COMMA */
-  }
-}
 
 <TOKEN>"ARRAY_KEYWORD OPEN_PAREN" {
 #ifdef TOKEN_DEBUG
@@ -1701,19 +1667,15 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 }
 
 
-
-<TOKEN>("FUNCTION_KEYWORD "("REFERENCE_OPERATOR ")?"SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN OPEN_BRACE ") {
+<TOKEN>"FUNCTION_KEYWORD "("REFERENCE_OPERATOR ")?"SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN "("OPEN_BRACE"|"SEMICOLON") {
   int parens, noargs;
   LongString abuff;
 
 #ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function declaration at token %d\n", token_index);
+  fprintf(tokenout, "function at token %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
 #endif
   assert(tokens_head->type == FUNCTION_KEYWORD);
-
-  current_function_line_start = tokens_head->start_line;
-  current_function_column_start = tokens_head->start_column;
 
   sn_highlight(SN_HIGH_KEYWORD,
           tokens_head->start_line, tokens_head->start_column,
@@ -1737,6 +1699,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   fprintf(tokenout, "start of function %s at token %d\n", current_function, token_index);
 #endif
 
+  current_function_line_start = tokens_head->start_line;
+  current_function_column_start = tokens_head->start_column;
   current_function_highlight_line = tokens_head->start_line;
   current_function_highlight_column_start = tokens_head->start_column;
   current_function_highlight_column_end = tokens_head->end_column;
@@ -1792,107 +1756,17 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   }
   abuff.free(&abuff);
 
-  push_brace(FUNCTION_KEYWORD);
-  free_head_token(); /* OPEN_BRACE */
-}
-
-<TOKEN>"FUNCTION_KEYWORD SOMEWORD OPEN_PAREN"{function-argument-tokens}"CLOSE_PAREN SEMICOLON " {
-  int parens, noargs;
-  LongString abuff;
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function declaration at token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  assert(tokens_head->type == FUNCTION_KEYWORD);
-
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-
-  free_head_token(); /* FUNCTION_KEYWORD */
-
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-
-  current_function = SN_StrDup(tokens_head->strval);
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "declare function %s at token %d\n", current_function, token_index);
-#endif
-
-  current_function_line_start = tokens_head->start_line;
-  current_function_column_start = tokens_head->start_column;
-  current_function_line_end = tokens_head->end_line;
-  current_function_column_end = tokens_head->end_column;
-  current_function_highlight_line = tokens_head->start_line;
-  current_function_highlight_column_start = tokens_head->start_column;
-  current_function_highlight_column_end = tokens_head->end_column;
-
-  free_head_token(); /* SOMEWORD=funcname */
-  free_head_token(); /* OPEN_PAREN */
-
-  /* Save function arguments in current_function_args */  
-  parens = 1;
-  noargs = 1;
-  LongStringInit(&abuff,0);
-  while (parens > 0) {
-    if (tokens_head->type == OPEN_PAREN) {
-      parens++;
-    } else if (tokens_head->type == CLOSE_PAREN) {
-      parens--;
-    } else if (tokens_head->type == SOMEWORD) {
-      /* FIXME: type hinting xref */
-      sn_highlight(SN_HIGH_CLASSDEF,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-    } else if (tokens_head->type == VARIABLE) {
-        /* We just ignore default values for arguments */
-        if (!noargs) {
-            abuff.append( &abuff, ",", -1);
-        }
-        abuff.append( &abuff, tokens_head->strval, -1);
-        noargs = 0;
-#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
-        sn_highlight(SN_HIGH_VAR_LOCAL,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-#endif
-    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
-               (tokens_head->type == SINGLE_QUOTED_STRING)) {
-        sn_highlight(SN_HIGH_STRING,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-    } else if ((tokens_head->type == KEYWORD) ||
-               (tokens_head->type == ARRAY_KEYWORD)) {
-        sn_highlight(SN_HIGH_KEYWORD,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-    }
-
-    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
+  if (tokens_head->type == OPEN_BRACE) {
+    free_head_token(); /* OPEN_BRACE */
+    push_brace(FUNCTION_KEYWORD);
+  } else {
+    free_head_token(); /* SEMICOLON */
+    pop_function();	/* undo push_function() for declarations */
+    emit_function_declaration();
   }
-
-#ifdef TOKEN_DEBUG
-  if (current_function_args) {
-     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
-  }
-#endif
-
-  assert(current_function_args == NULL);
-  if (!noargs) {
-      current_function_args = SN_StrDup(abuff.buf);
-  }
-  abuff.free(&abuff);
-
-  free_head_token(); /* SEMICOLON */
-
-  emit_function_declaration();
 }
 
 <TOKEN>"TRY_KEYWORD OPEN_BRACE" {
-  /* FIXME: do something here */
   sn_highlight(SN_HIGH_KEYWORD,
           tokens_head->start_line, tokens_head->start_column,
           tokens_head->end_line, tokens_head->end_column);
@@ -2090,6 +1964,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   int line;
   int ref_from_scope_type;
 
+  /* NOTE: interface declarations are processed in this block also */
+
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "found class tokens at %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
@@ -2137,6 +2013,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
             tokens_head->start_line, tokens_head->start_column,
             tokens_head->end_line, tokens_head->end_column);
 
+       /* FIXME: insert xref here as SN_IMPLEMENTS or direct inherit like 'extends'? */
+
        result = sn_insert_xref(SN_REF_TO_CLASS,
          SN_MBR_FUNC_DEF,
          SN_REF_SCOPE_GLOBAL,
@@ -2151,8 +2029,6 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
          SN_REF_PASS);
 
         assert(result == 0);
-
-        /* FIXME: insert xref here as SN_IMPLEMENTS or direct inherit like 'extends'? */
 
     } else if (tokens_head->type == CLASS_EXTENDS_KEYWORD) {
         sn_highlight(SN_HIGH_KEYWORD,
