@@ -1468,7 +1468,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 #if MATCH_DUMP
   matched_pattern("{keywords}", yytext);
 #endif
-  /* FIXME: why are words used in type casting not reserved? */
+  /* NOTE: verify that words used in type casting not reserved? */
   append_token(KEYWORD, yytext,
           sn_line(),
           sn_column(),
@@ -1637,6 +1637,8 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 <TOKEN>{literal-token}" MAPPING_OPERATOR" {
   int line_start, line_end, column_start, column_end;
   TokenType prevToken;
+  int ref_from_scope_type;
+  char *clsname = NULL;
 #ifdef TOKEN_DEBUG
   fprintf(tokenout, "array mapping token %d\n", token_index);
   fprintf(tokenout, "match text was \"%s\"\n", yytext);
@@ -1654,16 +1656,38 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
       column_start = tokens_head->start_column;
       line_end = tokens_head->end_line;
       column_end = tokens_head->end_column;
+      if (strcmp(tokens_head->strval, "parent") && strcmp(tokens_head->strval, "self"))
+        clsname = SN_StrDup(tokens_head->strval);
     } else if (tokens_head->type == CLASS_SCOPE_OPERATOR) {
-      if (prevToken == SOMEWORD) {
+      if ((prevToken == SOMEWORD) && clsname) {
         sn_highlight(SN_HIGH_CLASSDEF, line_start, column_start, line_end, column_end);
-        /* FIXME: need to add xref to class here */
+        ref_from_scope_type = from_what_scope();
+
+        /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
+        result = sn_insert_xref(SN_REF_TO_CLASS,
+                 ref_from_scope_type,
+                 SN_REF_SCOPE_GLOBAL,
+                 current_class,
+                 current_refblock,
+                 NULL,
+                 "#",
+                 clsname,
+                 NULL, 
+                 sn_current_file(),
+                 line_start,
+                 SN_REF_READ);
+
+        assert(result == 0);
+        ckfree(clsname);
+        clsname = NULL;
       }
     }
     prevToken = tokens_head->type;
     free_head_token();
   }
   free_head_token(); /* MAPPING_OPERATOR */
+  if (clsname)
+    ckfree(clsname);
 }
 
 
@@ -2085,7 +2109,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
 }
 
 
-<TOKEN>"NEW_KEYWORD SOMEWORD OPEN_PAREN" {
+<TOKEN>"NEW_KEYWORD SOMEWORD "("OPEN_PAREN"|"SEMICOLON") {
   int ref_from_scope_type;
 
 #ifdef TOKEN_DEBUG
@@ -2125,7 +2149,7 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
       tokens_head->end_line, tokens_head->end_column);
 
   free_head_token(); /* SOMEWORD=class name */
-  free_head_token(); /* OPEN_PAREN */
+  free_head_token(); /* OPEN_PAREN || SEMICOLON */
 }
 
 
@@ -2272,7 +2296,6 @@ variable-tokens	(" VARIABLE "|" VARIABLE "("COMMA VARIABLE ")+)
   if ( !current_class )
     return;
 
-  /* FIXME: do we need to pick up the right hand value */
   result = sn_insert_symbol(SN_ENUM_CONST_DEF,
           current_class,
           tokens_head->strval,
