@@ -37,6 +37,19 @@
 (setplist 'sn-minor-mode (plist-put (symbol-plist 'sn-minor-mode)
 				    'permanent-local t))
 
+(defun sn-minor-mode (arg)
+  "Minor mode for working with Source Navigator.
+Adds some commands for looking up stuff in SN:
+\\{sn-keymap}
+This mode is automatically activated when files are opened by SN and cannot
+be activated for other buffers.  You can toggle it for SN-related buffers
+though.  This lets you access the command bindings that this mode overrides."
+  (interactive "P")
+  (unless sn-process
+    (error "This buffer has no Source Navigator connection"))
+  (setq sn-minor-mode (if (null arg) (not sn-minor-mode)
+			(> (prefix-numeric-value arg) 0))))
+
 ;; When we tell SN about a file, we must always send it exactly the
 ;; same name as it sent us.  So we stash the original filename here.
 (defvar sn-file-name nil)
@@ -44,25 +57,22 @@
 
 (defvar sn-keymap nil
   "Keymap for Source Navigator minor mode.")
-(or sn-keymap
-    (progn
-      (setq sn-keymap (make-sparse-keymap))
-      (if sn-is-xemacs
-	  (progn
-	    ;; XEmacs.
-	    (define-key sn-keymap "\M-." 'sn-find-tag)
-	    (define-key sn-keymap "\C-x4." 'sn-tag-unimplemented)
-	    (define-key sn-keymap "\C-x5." 'sn-tag-unimplemented)
-	    (define-key sn-keymap '(meta control ?.) 'sn-tag-unimplemented)
-	    (define-key sn-keymap "\M-," 'sn-tag-unimplemented)
-	    (define-key sn-keymap "\M-\t" 'sn-tag-unimplemented))
+(unless sn-keymap
+  (setq sn-keymap (make-sparse-keymap))
+  (define-key sn-keymap "\M-." 'sn-find-tag)
+  (define-key sn-keymap "\C-x4." 'sn-tag-unimplemented)
+  (define-key sn-keymap "\C-x5." 'sn-tag-unimplemented)
+  (define-key sn-keymap "\M-," 'sn-tag-unimplemented)
+  (define-key sn-keymap "\M-\t" 'sn-tag-unimplemented)
+  (define-key sn-keymap "\C-c.c" 'sn-classbrowser)
+  (define-key sn-keymap "\C-c.h" 'sn-classtree)
+  (define-key sn-keymap "\C-c.r" 'sn-retrieve)
+  (define-key sn-keymap "\C-c.x" 'sn-xref)
+  (cond (sn-is-xemacs
+	 (define-key sn-keymap '(meta control ?.) 'sn-tag-unimplemented))
 	;; GNU Emacs.
-	(define-key sn-keymap "\M-." 'sn-find-tag)
-	(define-key sn-keymap "\C-x4." 'sn-tag-unimplemented)
-	(define-key sn-keymap "\C-x5." 'sn-tag-unimplemented)
-	(define-key sn-keymap [\M-\C-.] 'sn-tag-unimplemented)
-	(define-key sn-keymap "\M-," 'sn-tag-unimplemented)
-	(define-key sn-keymap "\M-\t" 'sn-tag-unimplemented))))
+	(t (define-key sn-keymap [\M-\C-.] 'sn-tag-unimplemented))))
+
 (or (assoc 'sn-minor-mode minor-mode-map-alist)
     (setq minor-mode-map-alist (cons (cons 'sn-minor-mode sn-keymap)
 				     minor-mode-map-alist)))
@@ -91,6 +101,48 @@
   ;; We know a response is coming.  This makes things look a little
   ;; more synchronous.
   (accept-process-output))
+
+(defun sn-classbrowser (class)
+  "Browse the contents of a class in the Source Navigator."
+  (interactive
+   (progn
+     (require 'etags)
+     (list (read-string "Browse class: "
+			(find-tag-default)
+			'sn-history-list))))
+  (sn-send (concat "sn_classbrowser " (sn-tcl-quote class))))
+
+(defun sn-classtree (class)
+  "Browse a class in the Source Navigator hierarchy browser."
+  (interactive
+   (progn
+     (require 'etags)
+     (list (read-string "Browse class: "
+			(find-tag-default)
+			'sn-history-list))))
+  (sn-send (concat "sn_classtree " (sn-tcl-quote class))))
+
+(defun sn-retrieve (pattern)
+  "Tell Source Navigator to retrieve all symbols matching pattern.
+If there is only one match SN will take Emacs there.  If there are
+several they are listed in a pop-up where you can select one to edit."
+  (interactive
+   (progn
+     (require 'etags)
+     (list (read-string "Retrieve pattern: "
+                        (find-tag-default)
+                        'sn-history-list))))
+  (sn-send (concat "sn_retrieve_symbol " (sn-tcl-quote pattern) " all")))
+
+(defun sn-xref (symbol)
+  "Look up a symbol in the Source Navigator cross-referencer."
+  (interactive
+   (progn
+     (require 'etags)
+     (list (read-string "Xref symbol: "
+			(find-tag-default)
+			'sn-history-list))))
+  (sn-send (concat "sn_xref both " (sn-tcl-quote symbol))))
 
 (defun sn-tag-unimplemented ()
   "Bound to tags-finding keys that Source Navigator can't (yet) handle."
@@ -150,7 +202,8 @@
 ;; notify the appropriate SN.
 (defun sn-after-save ()
   (if sn-minor-mode
-      (sn-send (concat "sn_parse_uptodate " (sn-tcl-quote sn-file-name)))))
+      (sn-send (concat "sn_parse_uptodate " (sn-tcl-quote sn-file-name)
+                       " 0"))))         ; Disable annoying popup.
 
 ;; This is the process filter for reading from SN.  It just tries to
 ;; read the process buffer as a lisp object; when the read succeeds,
@@ -223,11 +276,11 @@
 (defun sn-visit (directory partial-file line column state)
   (let* ((file (expand-file-name partial-file directory))
 	 (obuf (get-file-buffer file)))
-    (if obuf
-	(switch-to-buffer obuf)
-      (set-buffer (if (string= state "disabled")
-		      (find-file-read-only file)
-		    (find-file file)))))
+    (cond (obuf (switch-to-buffer obuf)
+		(push-mark))
+	  (t (set-buffer (if (string= state "disabled")
+			     (find-file-read-only file)
+			   (find-file file))))))
   (setq sn-process sn-current-process)
   (goto-line line)
   (forward-char column)

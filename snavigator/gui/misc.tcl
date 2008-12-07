@@ -716,7 +716,7 @@ proc sn_db_get_symbol {scope sym {qry_exp ""} {off_var ""}} {
 
     sn_log "Query result <${lst}>"
 
-    set lst [lindex ${lst} ${off}]
+    set lst [join [lindex ${lst} ${off}]]
 
     set begpos_off [lsearch -regexp ${lst} {[0-9]+\.[0-9]+}]
     set beg_pos [lindex ${lst} ${begpos_off}]
