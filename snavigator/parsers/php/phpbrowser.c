@@ -3068,6 +3068,7 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "phpbrowser.l"
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 /*
 
 Copyright (c) 2003, Mo DeJong
@@ -3089,17 +3090,15 @@ with Source-Navigator; see the file COPYING.  If not, write to
 the Free Software Foundation, 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-
-
 */
 /*
- * phpbrowser.l
- *
- * Copyright (C) 2003 Mo DeJong
- *
- * Description:
- * Lex input file for PHP version 5 language processor.
- */
+* phpbrowser.l
+*
+* Copyright (C) 2003 Mo DeJong
+*
+* Description:
+* Lex input file for PHP version 5 language processor.
+*/
 #line 36 "phpbrowser.l"
 
 #include <ctype.h>
@@ -3168,8 +3167,8 @@ typedef enum {
     DOUBLE_QUOTED_STRING, /* "I am a double quoted string" */
     SINGLE_QUOTED_STRING,  /* 'I am a double quoted string' */
 
-    COMMENT,        /* Emit COMMENT token only when debugging */
-    HTML,            /* Emit HTML token only when debugging */
+    COMMENT_TOKEN,        /* Emit COMMENT token only when debugging */
+    HTML_TOKEN,            /* Emit HTML token only when debugging */
 
 
     UNKNOWN_TOKEN        /* Token that parser does not know about */
@@ -3194,8 +3193,8 @@ typedef struct Token {
     struct Token* next;
 } Token;
 
-int recent_vis;	/* recently consolidated visibility spec for class member */
-int recent_vis_toknum;	/* last token number of consolidated visibility spec */
+int recent_vis;    /* recently consolidated visibility spec for class member */
+int recent_vis_toknum;    /* last token number of consolidated visibility spec */
 
 typedef struct NestedBracket {
     int count;
@@ -3292,9 +3291,7 @@ static int result;
 static SearchTable * global_var_table = (SearchTable *) NULL;
 static SearchTable * super_global_var_table;
 
-/* Stores the contents of a special processing mode over
- * multiple lines/rules.
- */
+/* Stores the contents of a special processing mode over multiple lines/rules.  */
 LongString mode_buff;
 long mode_start_line;
 int mode_start_column;
@@ -3332,24 +3329,14 @@ void push_brace(TokenType braceType);
 TokenType pop_brace();
 void push_function();
 void pop_function();
-void append_token(TokenType type,
-                  char* strval,
-                  long start_line,
-                  int start_column,
-                  long end_line,
-                  int end_column);
+void append_token(TokenType type, char* strval, long start_line,
+    int start_column, long end_line, int end_column);
 
-void append_dqstring_var_token(char* var,
-                           long start_line,
-                           int start_column,
-                           long end_line,
-                           int end_column);
+void append_dqstring_var_token(char* var, long start_line, int start_column,
+    long end_line, int end_column);
 
-void append_dqstring_token(char* strval,
-                           long start_line,
-                           int start_column,
-                           long end_line,
-                           int end_column);
+void append_dqstring_token(char* strval, long start_line, int start_column,
+    long end_line, int end_column);
 
 void emit_var_access_for_dqstring(Token* tok);
 
@@ -3378,7 +3365,7 @@ int yywrap() { return 1; }
 
 
 
-#line 3382 "lex.yy.c"
+#line 3369 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT_MODE 1
@@ -3570,14 +3557,14 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 351 "phpbrowser.l"
+#line 339 "phpbrowser.l"
 
     /* Start in HTML mode */
     highlight_file = (int) sn_getopt(SN_OPT_HIGHLIGHT);
     token_dump_file = (char *) sn_getopt(SN_OPT_DUMP_TOKENS);
     enter_html_mode();
 
-#line 3581 "lex.yy.c"
+#line 3568 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -3663,7 +3650,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 357 "phpbrowser.l"
+#line 345 "phpbrowser.l"
 { /* PHP -> HTML mode */
     #if MATCH_DUMP
     matched_pattern("?>", yytext);
@@ -3672,8 +3659,7 @@ YY_RULE_SETUP
     enter_html_mode();
 
     if (token_dump_file) {
-      mode_buff.append( &mode_buff,
-          yytext, yyleng );
+        mode_buff.append(&mode_buff, yytext, yyleng);
     }
 
     sn_advance_column(2);
@@ -3682,169 +3668,162 @@ YY_RULE_SETUP
 
 case 2:
 YY_RULE_SETUP
-#line 373 "phpbrowser.l"
+#line 360 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^\\<\\n]*", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^\\<\\n]*", yytext);
+        #endif
 
-    #if HTML_DUMP
-    fprintf(stderr, "html(1) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HTML_DUMP
+        fprintf(stderr, "html(1) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    if (token_dump_file) {
-      mode_buff.append( &mode_buff,
-          yytext, yyleng );
+        if (token_dump_file) {
+            mode_buff.append(&mode_buff, yytext, yyleng);
+        }
+        sn_advance_column(yyleng);
     }
-    sn_advance_column(yyleng);
-  }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 388 "phpbrowser.l"
+#line 374 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^\\<\\n]*\\n", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^\\<\\n]*\\n", yytext);
+        #endif
 
-    #if HTML_DUMP
-    fprintf(stderr, "html(2) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HTML_DUMP
+        fprintf(stderr, "html(2) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    if (token_dump_file) {
-      mode_buff.append( &mode_buff,
-          yytext, yyleng );
+        if (token_dump_file) {
+            mode_buff.append(&mode_buff, yytext, yyleng);
+        }
+        sn_advance_line();
+        sn_reset_column();
     }
-    sn_advance_line();
-    sn_reset_column();
-  }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 404 "phpbrowser.l"
+#line 389 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("<", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("<", yytext);
+        #endif
 
-    #if HTML_DUMP
-    fprintf(stderr, "html(3) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HTML_DUMP
+        fprintf(stderr, "html(3) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    if (token_dump_file) {
-      mode_buff.append( &mode_buff,
-          yytext, yyleng );
+        if (token_dump_file) {
+            mode_buff.append(&mode_buff, yytext, yyleng);
+        }
+        sn_advance_column(yyleng);
     }
-    sn_advance_column(yyleng);
-  }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 419 "phpbrowser.l"
+#line 403 "phpbrowser.l"
 {
-    /* HTML -> PHP mode switch */
-    #if MATCH_DUMP
-    matched_pattern("(<?|<?=|<?php|<?PHP)", yytext);
-    #endif
-    sn_advance_column(yyleng);
+        /* HTML -> PHP mode switch */
+        #if MATCH_DUMP
+        matched_pattern("(<?|<?=|<?php|<?PHP)", yytext);
+        #endif
+        sn_advance_column(yyleng);
 
-    if (token_dump_file) {
-      mode_buff.append( &mode_buff,
-          yytext, yyleng );
+        if (token_dump_file) {
+            mode_buff.append(&mode_buff, yytext, yyleng);
+        }
+
+        emit_html();
+        BEGIN(PHP);
     }
-
-    emit_html();
-    BEGIN(PHP);
-  }
 	YY_BREAK
 /* Uncomment the next rule if you want to check to make sure
-   * the above rules cover all possible input. A warning
-   * "rule cannot be matched" should be printed by flex.
-   */
+    * the above rules cover all possible input. A warning
+    * "rule cannot be matched" should be printed by flex.
+    */
 /*. {}*/
 
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 441 "phpbrowser.l"
+#line 424 "phpbrowser.l"
 {
-  char * x = (char *) yytext;
-  char * y;
-  int newline = 0;
+    char * x = (char *) yytext;
+    char * y;
+    int newline = 0;
 
-#if MATCH_DUMP
-  matched_pattern("(//|#).*\\n", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("(//|#).*\\n", yytext);
+    #endif
 
-  while (*x == ' ' || *x == '\t') { x++; }
-  assert(*x == '#' || (*x == '/' && *(x+1) == '/'));
-  if (*x == '#') {
-    x++;
-  } else if (*x == '/') {
-    x += 2;
-  }
-  sn_advance_column(x - yytext);
-
-  /* Check for ?> in the text leading up to the newline.
-   * PHP has this special rule where a line comment
-   * can be terminated before the newline.
-   */
-
-  for (y=x; *y; y++) {
-    if (*y == '?' && *(y+1) == '>') {
-        int offset = (int) (y - yytext);
-        yyless(offset); /* send everything after ?> back */
-        break;
+    while (*x == ' ' || *x == '\t') { x++; }
+    assert(*x == '#' || (*x == '/' && *(x+1) == '/'));
+    if (*x == '#') {
+        x++;
+    } else if (*x == '/') {
+        x += 2;
     }
-  }
+    sn_advance_column(x - yytext);
 
-  y = yytext + yyleng - 1;
-  if (*y == '\n') {
-    newline = 1;
-    *y = 0;
-  }
+    /* Check for ?> in the text leading up to the newline.
+    * PHP has this special rule where a line comment
+    * can be terminated before the newline.
+    */
 
-  /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol and a highlight.
-   */
-  if (token_dump_file) {
-    append_token(COMMENT, x,
+    for (y=x; *y; y++) {
+        if (*y == '?' && *(y+1) == '>') {
+            int offset = (int) (y - yytext);
+            yyless(offset); /* send everything after ?> back */
+            break;
+        }
+    }
+
+    y = yytext + yyleng - 1;
+    if (*y == '\n') {
+        newline = 1;
+        *y = 0;
+    }
+
+    /* If dumping tokens, emit a special COMMENT token.
+    * Otherwise, insert a comment symbol and a highlight.
+    */
+    if (token_dump_file) {
+        append_token(COMMENT_TOKEN, x, sn_line(), sn_column() - (x - yytext),
+            sn_line(), sn_column() + strlen(x));
+    } else {
+        sn_insert_comment(
+            /* classname */ NULL,
+            /* funcname */ NULL,
+            sn_current_file(),
+            x,
+            sn_line(),
+            sn_column());
+
+        sn_highlight(SN_HIGH_COMMENT,
             sn_line(),
             sn_column() - (x - yytext),
             sn_line(),
             sn_column() + strlen(x));
-  } else {
-    sn_insert_comment(
-      /* classname */ NULL,
-      /* funcname */ NULL,
-      sn_current_file(),
-      x,
-      sn_line(),
-      sn_column());
+    }
 
-    sn_highlight(SN_HIGH_COMMENT,
-            sn_line(),
-            sn_column() - (x - yytext),
-            sn_line(),
-            sn_column() + strlen(x));
-  }
-
-  if (newline) {
-    sn_advance_line();
-    sn_reset_column();
-  } else {
-    sn_advance_column(yyleng - (x - yytext));
-  }
+    if (newline) {
+        sn_advance_line();
+        sn_reset_column();
+    } else {
+        sn_advance_column(yyleng - (x - yytext));
+    }
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 511 "phpbrowser.l"
+#line 491 "phpbrowser.l"
 { /* A C style multi-line comment, just like this! */
-#if MATCH_DUMP
+    #if MATCH_DUMP
     matched_pattern("/*", yytext);
-#endif
+    #endif
     BEGIN(COMMENT_MODE);
     sn_advance_column(2);
     LongStringInit(&mode_buff,0);
@@ -3855,2890 +3834,2863 @@ YY_RULE_SETUP
 
 case 8:
 YY_RULE_SETUP
-#line 523 "phpbrowser.l"
+#line 503 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^\\*\\n]*", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^\\*\\n]*", yytext);
+        #endif
 
-    #if COMMENT_DUMP
-    fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
-    #endif
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
+        #if COMMENT_DUMP
+        fprintf(stderr, "comment(1) \"%s\", %d\n", yytext, yyleng);
+        #endif
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 535 "phpbrowser.l"
+#line 514 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^\\*\\n]*\\n", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^\\*\\n]*\\n", yytext);
+        #endif
 
-    #if COMMENT_DUMP
-    fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if COMMENT_DUMP
+        fprintf(stderr, "comment(2) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
-  }
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_line();
+        sn_reset_column();
+    }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 549 "phpbrowser.l"
+#line 527 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("\\*+[^\\*/\\n]*", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("\\*+[^\\*/\\n]*", yytext);
+        #endif
 
-    #if COMMENT_DUMP
-    fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if COMMENT_DUMP
+        fprintf(stderr, "comment(3) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 562 "phpbrowser.l"
+#line 539 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("\\*+[^\\*/\\n]*\\n", yytext);
+        #endif
 
-    #if COMMENT_DUMP
-    fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if COMMENT_DUMP
+        fprintf(stderr, "comment(4) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
-  }
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_line();
+        sn_reset_column();
+    }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 576 "phpbrowser.l"
+#line 552 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("\\*+/", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("\\*+/", yytext);
+        #endif
 
-    /* Include multiple '*' characters in the comment */
-    if (yyleng > 2) {
-        int to_append = yyleng;
-        char *comment = (char *) yytext + yyleng - 1;
-        assert(*comment == '/');
-        comment--;
-        assert(*comment == '*');
-        *comment = '0';
-        to_append -= 2;
-        mode_buff.append( &mode_buff,
-            yytext, to_append );
+        /* Include multiple '*' characters in the comment */
+        if (yyleng > 2) {
+            int to_append = yyleng;
+            char *comment = (char *) yytext + yyleng - 1;
+            assert(*comment == '/');
+            comment--;
+            assert(*comment == '*');
+            *comment = '0';
+            to_append -= 2;
+            mode_buff.append(&mode_buff, yytext, to_append);
+        }
+
+        emit_comment();
+        sn_advance_column(yyleng);
+        BEGIN(PHP);
     }
-
-    emit_comment();
-    sn_advance_column(yyleng);
-    BEGIN(PHP);
-  }
 	YY_BREAK
 /* Uncomment the next rule if you want to check to make sure
-   * the above rules cover all possible input. A warning
-   * "rule cannot be matched" should be printed by flex.
-   */
+    * the above rules cover all possible input. A warning
+    * "rule cannot be matched" should be printed by flex.
+    */
 /*. {}*/
 
 case 13:
 YY_RULE_SETUP
-#line 605 "phpbrowser.l"
+#line 580 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("\\\"\\\"", yytext);
-#endif
-  /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
-  append_dqstring_token("",
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("\\\"\\\"", yytext);
+    #endif
+    /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
+    append_dqstring_token("",
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 618 "phpbrowser.l"
-{
-#if MATCH_DUMP
-  matched_pattern("\\\"", yytext);
-#endif
-
-#if DQSTRING_DUMP
-  fprintf(stderr, "dqstring started at (%d.%d)\n", sn_line(), sn_column());
-#endif
-  LongStringInit(&mode_buff,0);
-  mode_start_line = sn_line();
-  mode_start_column = sn_column();
-  embedded_dq_string_vars_head = NULL;
-  embedded_dq_string_vars_tail = NULL;
-  sn_advance_column(yyleng);
-  BEGIN(DQSTRING);
-}
-	YY_BREAK
-
-case 15:
-YY_RULE_SETUP
-#line 636 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("[^\\\"\\n\\\\]*", yytext);
-    #endif
-
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(1) \"%s\", %d\n", yytext, yyleng);
-    #endif
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 16:
-/* rule 16 can match eol */
-YY_RULE_SETUP
-#line 648 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
-    #endif
-
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(2) \"%s\", %d\n", yytext, yyleng);
-    #endif
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
-  }
-	YY_BREAK
-case 17:
-YY_RULE_SETUP
-#line 661 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("(\\\")+", yytext);
-    #endif
-
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(3) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 18:
-YY_RULE_SETUP
-#line 674 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\\\", yytext);
-    #endif
-
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 19:
-YY_RULE_SETUP
-#line 687 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\", yytext);
-    #endif
-
-    #if DQSTRING_DUMP
-    fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 20:
-YY_RULE_SETUP
-#line 700 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("${varname}", yytext);
-    #endif
-
-    append_dqstring_var_token(yytext+1,
-            sn_line(),
-            sn_column(),
-            sn_line(),
-            sn_column() + yyleng);
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 21:
-YY_RULE_SETUP
-#line 716 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("$", yytext);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 22:
-YY_RULE_SETUP
-#line 725 "phpbrowser.l"
+#line 593 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\"", yytext);
     #endif
 
+    #if DQSTRING_DUMP
+    fprintf(stderr, "dqstring started at (%d.%d)\n", sn_line(), sn_column());
+    #endif
+    LongStringInit(&mode_buff,0);
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
+    embedded_dq_string_vars_head = NULL;
+    embedded_dq_string_vars_tail = NULL;
     sn_advance_column(yyleng);
-    emit_dqstring();
-    BEGIN(PHP);
-  }
+    BEGIN(DQSTRING);
+}
+	YY_BREAK
+
+case 15:
+YY_RULE_SETUP
+#line 611 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("[^\\\"\\n\\\\]*", yytext);
+        #endif
+
+        #if DQSTRING_DUMP
+        fprintf(stderr, "dqstring(1) \"%s\", %d\n", yytext, yyleng);
+        #endif
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 16:
+/* rule 16 can match eol */
+YY_RULE_SETUP
+#line 622 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("[^\\\"\\n\\\\]*\\n", yytext);
+        #endif
+
+        #if DQSTRING_DUMP
+        fprintf(stderr, "dqstring(2) \"%s\", %d\n", yytext, yyleng);
+        #endif
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_line();
+        sn_reset_column();
+    }
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 634 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("(\\\")+", yytext);
+        #endif
+
+        #if DQSTRING_DUMP
+        fprintf(stderr, "dqstring(3) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 18:
+YY_RULE_SETUP
+#line 646 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\\", yytext);
+        #endif
+
+        #if DQSTRING_DUMP
+        fprintf(stderr, "dqstring(4) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 19:
+YY_RULE_SETUP
+#line 658 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\", yytext);
+        #endif
+
+        #if DQSTRING_DUMP
+        fprintf(stderr, "dqstring(5) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 20:
+YY_RULE_SETUP
+#line 670 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("${varname}", yytext);
+        #endif
+
+        append_dqstring_var_token(yytext+1,
+            sn_line(),
+            sn_column(),
+            sn_line(),
+            sn_column() + yyleng);
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 21:
+YY_RULE_SETUP
+#line 685 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("$", yytext);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 693 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\"", yytext);
+        #endif
+
+        sn_advance_column(yyleng);
+        emit_dqstring();
+        BEGIN(PHP);
+    }
 	YY_BREAK
 /* Uncomment the next rule if you want to check to make sure
-   * the above rules cover all possible input. A warning
-   * "rule cannot be matched" should be printed by flex.
-   */
+    * the above rules cover all possible input. A warning
+    * "rule cannot be matched" should be printed by flex.
+    */
 /*. {}*/
 
 case 23:
 YY_RULE_SETUP
-#line 741 "phpbrowser.l"
+#line 709 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("\\\'\\\'", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("\\\'\\\'", yytext);
+    #endif
 
-  /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
-  append_token(SINGLE_QUOTED_STRING, "",
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    /* FIXME: Can we pass NULL instead of "" after length issues worked out ? */
+    append_token(SINGLE_QUOTED_STRING, "",
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 755 "phpbrowser.l"
-{
-#if MATCH_DUMP
-  matched_pattern("\\\'", yytext);
-#endif
-
-#if SQSTRING_DUMP
-  fprintf(stderr, "sqstring started at (%d.%d)\n", sn_line(), sn_column());
-#endif
-  LongStringInit(&mode_buff,0);
-  mode_start_line = sn_line();
-  mode_start_column = sn_column();
-  sn_advance_column(yyleng);
-  BEGIN(SQSTRING);
-}
-	YY_BREAK
-
-case 25:
-YY_RULE_SETUP
-#line 771 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("[^\\\'\\n\\\\]*", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(1) \"%s\", %d\n", yytext, yyleng);
-    #endif
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 26:
-/* rule 26 can match eol */
-YY_RULE_SETUP
-#line 783 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("[^\\\'\\n\\\\]*\\n", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(2) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
-  }
-	YY_BREAK
-case 27:
-YY_RULE_SETUP
-#line 797 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\\'+[^\\\'/\\n\\\\]*", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(3) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 28:
-/* rule 28 can match eol */
-YY_RULE_SETUP
-#line 810 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\\'+[^\\\'\\n\\\\]*\\n", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(4) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_line();
-    sn_reset_column();
-  }
-	YY_BREAK
-case 29:
-YY_RULE_SETUP
-#line 824 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\\\", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(5) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 30:
-YY_RULE_SETUP
-#line 838 "phpbrowser.l"
-{
-    #if MATCH_DUMP
-    matched_pattern("\\", yytext);
-    #endif
-
-    #if SQSTRING_DUMP
-    fprintf(stderr, "sqstring(6) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
-	YY_BREAK
-case 31:
-YY_RULE_SETUP
-#line 852 "phpbrowser.l"
+#line 723 "phpbrowser.l"
 {
     #if MATCH_DUMP
     matched_pattern("\\\'", yytext);
     #endif
 
+    #if SQSTRING_DUMP
+    fprintf(stderr, "sqstring started at (%d.%d)\n", sn_line(), sn_column());
+    #endif
+    LongStringInit(&mode_buff,0);
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
     sn_advance_column(yyleng);
-    emit_sqstring();
-    BEGIN(PHP);
-  }
+    BEGIN(SQSTRING);
+}
+	YY_BREAK
+
+case 25:
+YY_RULE_SETUP
+#line 739 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("[^\\\'\\n\\\\]*", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(1) \"%s\", %d\n", yytext, yyleng);
+        #endif
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 26:
+/* rule 26 can match eol */
+YY_RULE_SETUP
+#line 750 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("[^\\\'\\n\\\\]*\\n", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(2) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_line();
+        sn_reset_column();
+    }
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 763 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\'+[^\\\'/\\n\\\\]*", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(3) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 28:
+/* rule 28 can match eol */
+YY_RULE_SETUP
+#line 775 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\'+[^\\\'\\n\\\\]*\\n", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(4) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_line();
+        sn_reset_column();
+    }
+	YY_BREAK
+case 29:
+YY_RULE_SETUP
+#line 788 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\\", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(5) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 801 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\", yytext);
+        #endif
+
+        #if SQSTRING_DUMP
+        fprintf(stderr, "sqstring(6) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
+	YY_BREAK
+case 31:
+YY_RULE_SETUP
+#line 814 "phpbrowser.l"
+{
+        #if MATCH_DUMP
+        matched_pattern("\\\'", yytext);
+        #endif
+
+        sn_advance_column(yyleng);
+        emit_sqstring();
+        BEGIN(PHP);
+    }
 	YY_BREAK
 /* Uncomment the next rule if you want to check to make sure
-   * the above rules cover all possible input. A warning
-   * "rule cannot be matched" should be printed by flex.
-   */
+    * the above rules cover all possible input. A warning
+    * "rule cannot be matched" should be printed by flex.
+    */
 /*. {}*/
 
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 868 "phpbrowser.l"
+#line 830 "phpbrowser.l"
 {
-  char *x = yytext;
-  char *y;
+    char *x = yytext;
+    char *y;
 
-#if MATCH_DUMP
-  matched_pattern("<<<{ws}*{heredoc-id}\\n", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("<<<{ws}*{heredoc-id}\\n", yytext);
+    #endif
 
-  mode_start_line = sn_line();
-  mode_start_column = sn_column();
+    mode_start_line = sn_line();
+    mode_start_column = sn_column();
 
-  x += 3;
-  while(*x == ' ' || *x == '\t') { x++; }
-  y = x;
-  while(*y != '\n') { y++; }
-  *y = 0;
+    x += 3;
+    while(*x == ' ' || *x == '\t') { x++; }
+    y = x;
+    while(*y != '\n') { y++; }
+    *y = 0;
 
-  LongStringInit(&mode_buff,0);
-  mode_buff.append( &mode_buff,
-          x, -1 );
-  mode_buff.append( &mode_buff,
-          ";\n", -1 );
-  heredoc_id = SN_StrDup(mode_buff.buf);
-  mode_buff.free(&mode_buff);
+    LongStringInit(&mode_buff,0);
+    mode_buff.append( &mode_buff, x, -1 );
+    mode_buff.append( &mode_buff, ";\n", -1 );
+    heredoc_id = SN_StrDup(mode_buff.buf);
+    mode_buff.free(&mode_buff);
 
-#if HDSTRING_DUMP
-  fprintf(stderr, "hdstring started at (%d.%d)\n", sn_line(), sn_column());
-  fprintf(stderr, "hdstring id is \"%s\"\n", heredoc_id);
-#endif
+    #if HDSTRING_DUMP
+    fprintf(stderr, "hdstring started at (%d.%d)\n", sn_line(), sn_column());
+    fprintf(stderr, "hdstring id is \"%s\"\n", heredoc_id);
+    #endif
 
-  LongStringInit(&mode_buff,0);
+    LongStringInit(&mode_buff,0);
 
-  embedded_dq_string_vars_head = NULL;
-  embedded_dq_string_vars_tail = NULL;
+    embedded_dq_string_vars_head = NULL;
+    embedded_dq_string_vars_tail = NULL;
 
-  sn_advance_line();
-  sn_reset_column();
+    sn_advance_line();
+    sn_reset_column();
 
-  BEGIN(HDSTRING);
+    BEGIN(HDSTRING);
 }
 	YY_BREAK
 
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 910 "phpbrowser.l"
+#line 870 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("^{heredoc-id};\n", yytext);
-    #endif
-
-    #if HDSTRING_DUMP
-    fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
-    #endif
-
-    if (strcmp(yytext, heredoc_id) == 0) {
-        #if HDSTRING_DUMP
-        fprintf(stderr, "hdstring end matched\n");
+        #if MATCH_DUMP
+        matched_pattern("^{heredoc-id};\n", yytext);
         #endif
 
-        sn_advance_column(yyleng-2); /* advance to ; */
-        emit_hdstring();
-        sn_advance_line();
-        sn_reset_column();
-        BEGIN(PHP);
-    } else {
-        mode_buff.append( &mode_buff, yytext, yyleng );
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring(1) \"%s\", %d\n", yytext, yyleng);
+        #endif
+
+        if (strcmp(yytext, heredoc_id) == 0) {
+            #if HDSTRING_DUMP
+            fprintf(stderr, "hdstring end matched\n");
+            #endif
+
+            sn_advance_column(yyleng-2); /* advance to ; */
+            emit_hdstring();
+            sn_advance_line();
+            sn_reset_column();
+            BEGIN(PHP);
+        } else {
+            mode_buff.append(&mode_buff, yytext, yyleng);
+        }
     }
-  }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 933 "phpbrowser.l"
+#line 893 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^;$\n]+", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^;$\n]+", yytext);
+        #endif
 
-    #if HDSTRING_DUMP
-    fprintf(stderr, "hdstring(2) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring(2) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
+        mode_buff.append(&mode_buff, yytext, yyleng);
 
-    sn_advance_column(yyleng);
-  }
+        sn_advance_column(yyleng);
+    }
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 947 "phpbrowser.l"
+#line 906 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("[^;$\n]*\n", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("[^;$\n]*\n", yytext);
+        #endif
 
-    #if HDSTRING_DUMP
-    fprintf(stderr, "hdstring(3) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring(3) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
+        mode_buff.append(&mode_buff, yytext, yyleng);
 
-    sn_advance_line();
-    sn_reset_column();
-  }
+        sn_advance_line();
+        sn_reset_column();
+    }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 962 "phpbrowser.l"
+#line 920 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("${varname}", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("${varname}", yytext);
+        #endif
 
-    #if HDSTRING_DUMP
-    fprintf(stderr, "hdstring(4) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring(4) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    append_dqstring_var_token(yytext+1,
+        append_dqstring_var_token(yytext+1,
             sn_line(),
             sn_column(),
             sn_line(),
             sn_column() + yyleng);
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
+        mode_buff.append(&mode_buff, yytext, yyleng);
 
-    sn_advance_column(yyleng);
-  }
+        sn_advance_column(yyleng);
+    }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 982 "phpbrowser.l"
+#line 939 "phpbrowser.l"
 {
-    #if MATCH_DUMP
-    matched_pattern("$", yytext);
-    #endif
+        #if MATCH_DUMP
+        matched_pattern("$", yytext);
+        #endif
 
-    #if HDSTRING_DUMP
-    fprintf(stderr, "hdstring(5) \"%s\", %d\n", yytext, yyleng);
-    #endif
+        #if HDSTRING_DUMP
+        fprintf(stderr, "hdstring(5) \"%s\", %d\n", yytext, yyleng);
+        #endif
 
-    mode_buff.append( &mode_buff,
-        yytext, yyleng );
-    sn_advance_column(yyleng);
-  }
+        mode_buff.append(&mode_buff, yytext, yyleng);
+        sn_advance_column(yyleng);
+    }
 	YY_BREAK
 /* Uncomment the next rule if you want to check to make sure
-   * the above rules cover all possible input. A warning
-   * "rule cannot be matched" should be printed by flex.
-   */
+    * the above rules cover all possible input. A warning
+    * "rule cannot be matched" should be printed by flex.
+    */
 /*. {}*/
 
 case 38:
 YY_RULE_SETUP
-#line 1002 "phpbrowser.l"
+#line 958 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("(", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("(", yytext);
+    #endif
 
-  append_token(OPEN_PAREN, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(OPEN_PAREN, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 1015 "phpbrowser.l"
+#line 971 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern(")", yytext);
-#endif
-  append_token(CLOSE_PAREN, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern(")", yytext);
+    #endif
+    append_token(CLOSE_PAREN, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 1027 "phpbrowser.l"
+#line 983 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("[", yytext);
-#endif
-  append_token(OPEN_BRACKET, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("[", yytext);
+    #endif
+    append_token(OPEN_BRACKET, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 1039 "phpbrowser.l"
+#line 995 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("]", yytext);
-#endif
-  append_token(CLOSE_BRACKET, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("]", yytext);
+    #endif
+    append_token(CLOSE_BRACKET, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 1051 "phpbrowser.l"
+#line 1007 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{", yytext);
-#endif
-  append_token(OPEN_BRACE, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("{", yytext);
+    #endif
+    append_token(OPEN_BRACE, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 1063 "phpbrowser.l"
+#line 1019 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern(":", yytext);
-#endif
-  append_token(COLON_CHAR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern(":", yytext);
+    #endif
+    append_token(COLON_CHAR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 1075 "phpbrowser.l"
+#line 1031 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("}", yytext);
-#endif
-  append_token(CLOSE_BRACE, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("}", yytext);
+    #endif
+    append_token(CLOSE_BRACE, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 1087 "phpbrowser.l"
+#line 1043 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("}", yytext);
-#endif
-  append_token(SEMICOLON, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("}", yytext);
+    #endif
+    append_token(SEMICOLON, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 1099 "phpbrowser.l"
+#line 1055 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("@", yytext);
-#endif
-  append_token(ATSIGN_CHAR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("@", yytext);
+    #endif
+    append_token(ATSIGN_CHAR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 1111 "phpbrowser.l"
+#line 1067 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern(".", yytext);
-#endif
-  append_token(PERIOD, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern(".", yytext);
+    #endif
+    append_token(PERIOD, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 1123 "phpbrowser.l"
+#line 1079 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern(",", yytext);
-#endif
-  append_token(COMMA, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern(",", yytext);
+    #endif
+    append_token(COMMA, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 1135 "phpbrowser.l"
+#line 1091 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("=>", yytext);
-#endif
-  append_token(MAPPING_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("=>", yytext);
+    #endif
+    append_token(MAPPING_OPERATOR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 1147 "phpbrowser.l"
+#line 1103 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("=", yytext);
-#endif
-  append_token(ASSIGNMENT_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("=", yytext);
+    #endif
+    append_token(ASSIGNMENT_OPERATOR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 1159 "phpbrowser.l"
+#line 1115 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("&", yytext);
-#endif
-  append_token(REFERENCE_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("&", yytext);
+    #endif
+    append_token(REFERENCE_OPERATOR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 1171 "phpbrowser.l"
+#line 1127 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("::", yytext);
-#endif
-  append_token(CLASS_SCOPE_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("::", yytext);
+    #endif
+    append_token(CLASS_SCOPE_OPERATOR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 1183 "phpbrowser.l"
+#line 1139 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("->", yytext);
-#endif
-  append_token(CLASS_MEMBER_OPERATOR, NULL,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("->", yytext);
+    #endif
+    append_token(CLASS_MEMBER_OPERATOR, NULL,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 1195 "phpbrowser.l"
+#line 1151 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{uni-operators}", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("{uni-operators}", yytext);
+    #endif
 
-  append_token(UNI_OPERATORS, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(UNI_OPERATORS, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 1208 "phpbrowser.l"
+#line 1164 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{comparison-operators}", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("{comparison-operators}", yytext);
+    #endif
 
-  append_token(COMPARISON_OPERATORS, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(COMPARISON_OPERATORS, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 1221 "phpbrowser.l"
+#line 1177 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{assignment-operators}", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("{assignment-operators}", yytext);
+    #endif
 
-  append_token(ASSIGNMENT_OPERATORS, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(ASSIGNMENT_OPERATORS, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 1234 "phpbrowser.l"
+#line 1190 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{increment-operators}", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("{increment-operators}", yytext);
+    #endif
 
-  append_token(INCREMENT_OPERATORS, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(INCREMENT_OPERATORS, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 1247 "phpbrowser.l"
+#line 1203 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("function", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("function", yytext);
+    #endif
 
-  append_token(FUNCTION_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(FUNCTION_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 1260 "phpbrowser.l"
+#line 1216 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("global", yytext);
-#endif
-  append_token(GLOBAL_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("global", yytext);
+    #endif
+    append_token(GLOBAL_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 1272 "phpbrowser.l"
+#line 1228 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("class", yytext);
-#endif
-  append_token(CLASS_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("class", yytext);
+    #endif
+    append_token(CLASS_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 1284 "phpbrowser.l"
+#line 1240 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("extends", yytext);
-#endif
-  append_token(CLASS_EXTENDS_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("extends", yytext);
+    #endif
+    append_token(CLASS_EXTENDS_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 1296 "phpbrowser.l"
+#line 1252 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("extends", yytext);
-#endif
-  append_token(CLASS_IMPLEMENTS_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("extends", yytext);
+    #endif
+    append_token(CLASS_IMPLEMENTS_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 1309 "phpbrowser.l"
+#line 1265 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("interface", yytext);
-#endif
-  append_token(CLASS_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("interface", yytext);
+    #endif
+    append_token(CLASS_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 1322 "phpbrowser.l"
+#line 1278 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("new", yytext);
-#endif
-  append_token(NEW_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("new", yytext);
+    #endif
+    append_token(NEW_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 1334 "phpbrowser.l"
+#line 1290 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("array", yytext);
-#endif
-  append_token(ARRAY_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("array", yytext);
+    #endif
+    append_token(ARRAY_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 1346 "phpbrowser.l"
+#line 1302 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("define", yytext);
-#endif
-  append_token(DEFINE_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("define", yytext);
+    #endif
+    append_token(DEFINE_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 1359 "phpbrowser.l"
+#line 1315 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("try", yytext);
-#endif
-  append_token(TRY_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("try", yytext);
+    #endif
+    append_token(TRY_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 1371 "phpbrowser.l"
+#line 1327 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("catch", yytext);
-#endif
-  append_token(CATCH_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("catch", yytext);
+    #endif
+    append_token(CATCH_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 1383 "phpbrowser.l"
+#line 1339 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("public", yytext);
-#endif
-  append_token(ABSTRACT_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("public", yytext);
+    #endif
+    append_token(ABSTRACT_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 1395 "phpbrowser.l"
+#line 1351 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("public", yytext);
-#endif
-  append_token(PUBLIC_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("public", yytext);
+    #endif
+    append_token(PUBLIC_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 1407 "phpbrowser.l"
+#line 1363 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("protected", yytext);
-#endif
-  append_token(PROTECTED_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("protected", yytext);
+    #endif
+    append_token(PROTECTED_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 1419 "phpbrowser.l"
+#line 1375 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("private", yytext);
-#endif
-  append_token(PRIVATE_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("private", yytext);
+    #endif
+    append_token(PRIVATE_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 1431 "phpbrowser.l"
+#line 1387 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("static", yytext);
-#endif
-  append_token(STATIC_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("static", yytext);
+    #endif
+    append_token(STATIC_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 1443 "phpbrowser.l"
+#line 1399 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("const", yytext);
-#endif
-  append_token(CONST_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("const", yytext);
+    #endif
+    append_token(CONST_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 1455 "phpbrowser.l"
+#line 1411 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{include-keywords}", yytext);
-#endif
-  append_token(INCLUDE_KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("{include-keywords}", yytext);
+    #endif
+    append_token(INCLUDE_KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 1467 "phpbrowser.l"
+#line 1423 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{keywords}", yytext);
-#endif
-  /* NOTE: verify that words used in type casting not reserved? */
-  append_token(KEYWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("{keywords}", yytext);
+    #endif
+    /* NOTE: verify that words used in type casting not reserved? */
+    append_token(KEYWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 1480 "phpbrowser.l"
+#line 1436 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("{someword}", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("{someword}", yytext);
+    #endif
 
-  append_token(SOMEWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    append_token(SOMEWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 1493 "phpbrowser.l"
+#line 1449 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("$this", yytext);
-#endif
-  append_token(THIS_VARIABLE, yytext+1,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("$this", yytext);
+    #endif
+    append_token(THIS_VARIABLE, yytext+1,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 1505 "phpbrowser.l"
+#line 1461 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("$parent", yytext);
-#endif
-  append_token(PARENT_VARIABLE, yytext+1,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("$parent", yytext);
+    #endif
+    append_token(PARENT_VARIABLE, yytext+1,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 1517 "phpbrowser.l"
+#line 1473 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("${varname}", yytext);
-#endif
-  append_token(VARIABLE, yytext+1,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
-  sn_advance_column(yyleng);
+    #if MATCH_DUMP
+    matched_pattern("${varname}", yytext);
+    #endif
+    append_token(VARIABLE, yytext+1,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
+        sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 81:
 /* rule 81 can match eol */
 YY_RULE_SETUP
-#line 1529 "phpbrowser.l"
+#line 1485 "phpbrowser.l"
 {
-  char* x, *y;
-  #if MATCH_DUMP
-  matched_pattern("{wsn}+", yytext);
-  #endif
+    char* x, *y;
+    #if MATCH_DUMP
+    matched_pattern("{wsn}+", yytext);
+    #endif
 
-  for (x=yytext, y=NULL; *x ; x++) {
-    if (*x == '\n') {
-        y=x+1;
-        sn_advance_line();
+    for (x=yytext, y=NULL; *x ; x++) {
+        if (*x == '\n') {
+            y=x+1;
+            sn_advance_line();
+        }
     }
-  }
-  if (y == NULL) {
-    sn_advance_column(yyleng);
-  } else {
-    sn_reset_column();
-    sn_advance_column(x-y);
-  }
+    if (y == NULL) {
+        sn_advance_column(yyleng);
+    } else {
+        sn_reset_column();
+        sn_advance_column(x-y);
+    }
 }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 1549 "phpbrowser.l"
+#line 1505 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern("\\$", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern("\\$", yytext);
+    #endif
 
-  append_token(SOMEWORD, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
+    append_token(SOMEWORD, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
 
-  sn_advance_column(yyleng);
+    sn_advance_column(yyleng);
 }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 1563 "phpbrowser.l"
+#line 1519 "phpbrowser.l"
 {
-#if MATCH_DUMP
-  matched_pattern(".", yytext);
-#endif
+    #if MATCH_DUMP
+    matched_pattern(".", yytext);
+    #endif
 
-  /* Add an UNKNOWN_TOKEN for each
-   * character that we don't know
-   * how to deal with.
-   */
+    /* Add an UNKNOWN_TOKEN for each
+    * character that we don't know
+    * how to deal with.
+    */
 
-  append_token(UNKNOWN_TOKEN, yytext,
-          sn_line(),
-          sn_column(),
-          sn_line(),
-          sn_column() + yyleng);
+    append_token(UNKNOWN_TOKEN, yytext,
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column() + yyleng);
 
-  /*fprintf(stderr, "adding unknown token for \"%s\"\n", yytext);*/
+    /*fprintf(stderr, "adding unknown token for \"%s\"\n", yytext);*/
 
-  sn_advance_column(yyleng); /* eat text */
+    sn_advance_column(yyleng); /* eat text */
 }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 1584 "phpbrowser.l"
+#line 1540 "phpbrowser.l"
 {
-  int line_start, line_end, column_start, column_end;
+    int line_start, line_end, column_start, column_end;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "define token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "define token %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* define */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* define */
+    free_head_token(); /* OPEN_PAREN */
 
-  sn_highlight(SN_HIGH_STRING,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_STRING,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  line_start = tokens_head->start_line;
-  column_start = tokens_head->start_column + 1;
-  line_end = tokens_head->end_line;
-  column_end = tokens_head->end_column - 1;
-  /* defines are considered global, even within class definitions */
-  result = sn_insert_symbol(SN_MACRO_DEF,
-          /* classname */ NULL,
-          tokens_head->strval,
-          sn_current_file(),
-          line_start, column_start,
-          line_end, column_end,
-          /* attr */ SN_PUBLIC,
-          /* ret type */ NULL,
-          /* arg_types */ NULL,
-          /* arg_names */ NULL,
-          /* comment */ NULL,
-          line_start, column_start,
-          line_end, column_end);
+    line_start = tokens_head->start_line;
+    column_start = tokens_head->start_column + 1;
+    line_end = tokens_head->end_line;
+    column_end = tokens_head->end_column - 1;
+    /* defines are considered global, even within class definitions */
+    result = sn_insert_symbol(SN_MACRO_DEF,
+        /* classname */ NULL,
+        tokens_head->strval,
+        sn_current_file(),
+        line_start, column_start,
+        line_end, column_end,
+        /* attr */ SN_PUBLIC,
+        /* ret type */ NULL,
+        /* arg_types */ NULL,
+        /* arg_names */ NULL,
+        /* comment */ NULL,
+        line_start, column_start,
+        line_end, column_end);
+    assert(result == 0);
 
-  free_head_token(); /* STRING */
+    free_head_token(); /* STRING */
 }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 1625 "phpbrowser.l"
+#line 1582 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array init tokens %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* array keyword */
-  free_head_token(); /* OPEN_PAREN */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array init tokens %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+        free_head_token(); /* array keyword */
+        free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 1637 "phpbrowser.l"
+#line 1594 "phpbrowser.l"
 {
-  int line_start, line_end, column_start, column_end;
-  TokenType prevToken;
-  int ref_from_scope_type;
-  char *clsname = NULL;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array mapping token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  prevToken = UNKNOWN_TOKEN;
-  while (tokens_head->type != MAPPING_OPERATOR) {
-    if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
-        (tokens_head->type == SINGLE_QUOTED_STRING)) {
-          sn_highlight(SN_HIGH_STRING,
-              tokens_head->start_line, tokens_head->start_column,
-              tokens_head->end_line, tokens_head->end_column);
-    } else if (tokens_head->type == SOMEWORD) {
-      /* cheat with token lookback to highlight class references */
-      line_start = tokens_head->start_line;
-      column_start = tokens_head->start_column;
-      line_end = tokens_head->end_line;
-      column_end = tokens_head->end_column;
-      if (strcmp(tokens_head->strval, "parent") && strcmp(tokens_head->strval, "self"))
-        clsname = SN_StrDup(tokens_head->strval);
-    } else if (tokens_head->type == CLASS_SCOPE_OPERATOR) {
-      if ((prevToken == SOMEWORD) && clsname) {
-        sn_highlight(SN_HIGH_CLASSDEF, line_start, column_start, line_end, column_end);
-        /* FIXME: need to add xref to class here */
-        ref_from_scope_type = from_what_scope();
+    int line_start, line_end, column_start, column_end;
+    TokenType prevToken;
+    int ref_from_scope_type;
+    char *clsname = NULL;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array mapping token %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    prevToken = UNKNOWN_TOKEN;
+    while (tokens_head->type != MAPPING_OPERATOR) {
+        if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+            (tokens_head->type == SINGLE_QUOTED_STRING)) {
+                sn_highlight(SN_HIGH_STRING,
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column);
+        } else if (tokens_head->type == SOMEWORD) {
+            /* cheat with token lookback to highlight class references */
+            line_start = tokens_head->start_line;
+            column_start = tokens_head->start_column;
+            line_end = tokens_head->end_line;
+            column_end = tokens_head->end_column;
+            if (strcmp(tokens_head->strval, "parent") && strcmp(tokens_head->strval, "self"))
+                clsname = SN_StrDup(tokens_head->strval);
+        } else if (tokens_head->type == CLASS_SCOPE_OPERATOR) {
+            if ((prevToken == SOMEWORD) && clsname) {
+                sn_highlight(SN_HIGH_CLASSDEF, line_start, column_start, line_end, column_end);
+                ref_from_scope_type = from_what_scope();
 
-        /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
-        result = sn_insert_xref(SN_REF_TO_CLASS,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 "#",
-                 clsname,
-                 NULL, 
-                 sn_current_file(),
-                 line_start,
-                 SN_REF_READ);
+                /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
+                result = sn_insert_xref(SN_REF_TO_CLASS,
+                    ref_from_scope_type,
+                    SN_REF_SCOPE_GLOBAL,
+                    current_class,
+                    current_refblock,
+                    NULL,
+                    "#",
+                    clsname,
+                    NULL, 
+                    sn_current_file(),
+                    line_start,
+                    SN_REF_READ);
 
-        assert(result == 0);
-        ckfree(clsname);
-        clsname = NULL;
-      }
+                assert(result == 0);
+                ckfree(clsname);
+                clsname = NULL;
+            }
+        }
+        prevToken = tokens_head->type;
+        free_head_token();
     }
-    prevToken = tokens_head->type;
-    free_head_token();
-  }
-  free_head_token(); /* MAPPING_OPERATOR */
-  if (clsname)
+    free_head_token(); /* MAPPING_OPERATOR */
+    if (clsname)
     ckfree(clsname);
 }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 1695 "phpbrowser.l"
+#line 1651 "phpbrowser.l"
 {
-  int parens, noargs;
-  LongString abuff;
+    int parens, noargs;
+    LongString abuff;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function at token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  assert(tokens_head->type == FUNCTION_KEYWORD);
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "function at token %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    assert(tokens_head->type == FUNCTION_KEYWORD);
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* FUNCTION_KEYWORD */
+    free_head_token(); /* FUNCTION_KEYWORD */
 
-  if (tokens_head->type == REFERENCE_OPERATOR)
-    free_head_token(); /* REFERENCE_OPERATOR */
+    if (tokens_head->type == REFERENCE_OPERATOR)
+        free_head_token(); /* REFERENCE_OPERATOR */
 
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  if (current_function != NULL) {
-    push_function();
-  }
-  current_function = SN_StrDup(tokens_head->strval);
+    if (current_function != NULL) {
+        push_function();
+    }
+    current_function = SN_StrDup(tokens_head->strval);
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "start of function %s at token %d\n", current_function, token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "start of function %s at token %d\n", current_function, token_index);
+    #endif
 
-  current_function_line_start = tokens_head->start_line;
-  current_function_column_start = tokens_head->start_column;
-  current_function_highlight_line = tokens_head->start_line;
-  current_function_highlight_column_start = tokens_head->start_column;
-  current_function_highlight_column_end = tokens_head->end_column;
+    current_function_line_start = tokens_head->start_line;
+    current_function_column_start = tokens_head->start_column;
+    current_function_highlight_line = tokens_head->start_line;
+    current_function_highlight_column_start = tokens_head->start_column;
+    current_function_highlight_column_end = tokens_head->end_column;
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 
-  /* Save function arguments in current_function_args */  
-  parens = 1;
-  noargs = 1;
-  LongStringInit(&abuff,0);
-  while (parens > 0) {
-    if (tokens_head->type == OPEN_PAREN) {
-      parens++;
-    } else if (tokens_head->type == CLOSE_PAREN) {
-      parens--;
-    } else if (tokens_head->type == VARIABLE) {
-        /* We just ignore default values for arguments */
-        if (!noargs) {
-            abuff.append( &abuff, ",", -1);
+    /* Save function arguments in current_function_args */  
+    parens = 1;
+    noargs = 1;
+    LongStringInit(&abuff,0);
+    while (parens > 0) {
+        if (tokens_head->type == OPEN_PAREN) {
+            parens++;
+        } else if (tokens_head->type == CLOSE_PAREN) {
+            parens--;
+        } else if (tokens_head->type == VARIABLE) {
+            /* We just ignore default values for arguments */
+            if (!noargs) {
+                abuff.append(&abuff, ",", -1);
+            }
+            abuff.append(&abuff, tokens_head->strval, -1);
+            noargs = 0;
+            #ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+            sn_highlight(SN_HIGH_VAR_LOCAL,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
+            #endif
+        } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+            (tokens_head->type == SINGLE_QUOTED_STRING)) {
+                sn_highlight(SN_HIGH_STRING,
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column);
+        } else if ((tokens_head->type == KEYWORD) ||
+            (tokens_head->type == ARRAY_KEYWORD)) {
+                sn_highlight(SN_HIGH_KEYWORD,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
         }
-        abuff.append( &abuff, tokens_head->strval, -1);
-        noargs = 0;
-#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
-        sn_highlight(SN_HIGH_VAR_LOCAL,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-#endif
-    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
-               (tokens_head->type == SINGLE_QUOTED_STRING)) {
-        sn_highlight(SN_HIGH_STRING,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-    } else if ((tokens_head->type == KEYWORD) ||
-               (tokens_head->type == ARRAY_KEYWORD)) {
-        sn_highlight(SN_HIGH_KEYWORD,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
+        free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
     }
 
-    free_head_token(); /* OPEN_PAREN || CLOSE_PAREN || VARIABLE || COMMA */
-  }
+    #ifdef TOKEN_DEBUG
+    if (current_function_args) {
+        fprintf(tokenout, "Oops, function %s left over function args?", current_function);
+    }
+    #endif
 
-#ifdef TOKEN_DEBUG
-  if (current_function_args) {
-     fprintf(tokenout, "Oops, function %s left over function args?", current_function);
-  }
-#endif
+    assert(current_function_args == NULL);
+    if (!noargs) {
+        current_function_args = SN_StrDup(abuff.buf);
+    }
+    abuff.free(&abuff);
 
-  assert(current_function_args == NULL);
-  if (!noargs) {
-      current_function_args = SN_StrDup(abuff.buf);
-  }
-  abuff.free(&abuff);
-
-  if (tokens_head->type == OPEN_BRACE) {
-    free_head_token(); /* OPEN_BRACE */
-    push_brace(FUNCTION_KEYWORD);
-  } else {
-    free_head_token(); /* SEMICOLON */
-    pop_function();	/* undo push_function() for declarations */
-    emit_function_declaration();
-  }
+    if (tokens_head->type == OPEN_BRACE) {
+        free_head_token(); /* OPEN_BRACE */
+        push_brace(FUNCTION_KEYWORD);
+    } else {
+        free_head_token(); /* SEMICOLON */
+        pop_function();    /* undo push_function() for declarations */
+        emit_function_declaration();
+    }
 }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 1794 "phpbrowser.l"
+#line 1749 "phpbrowser.l"
 {
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  push_brace(TRY_KEYWORD);
-  free_head_token(); /* TRY keyword */
-  free_head_token(); /* OPEN_BRACE */
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    push_brace(TRY_KEYWORD);
+    free_head_token(); /* TRY keyword */
+    free_head_token(); /* OPEN_BRACE */
 }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 1803 "phpbrowser.l"
+#line 1758 "phpbrowser.l"
 {
-  int parens, noargs;
-  LongString abuff;
+    int parens, noargs;
+    LongString abuff;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "catch block at token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "catch block at token %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* CATCH_KEYWORD */
+    free_head_token(); /* CATCH_KEYWORD */
+    free_head_token(); /* OPEN_PAREN */
 
-  free_head_token(); /* OPEN_PAREN */
+    /* Save function arguments in current_function_args */  
+    parens = 1;
+    noargs = 1;
+    LongStringInit(&abuff,0);
+    while (parens > 0) {
+        if (tokens_head->type == OPEN_PAREN) {
+            parens++;
+        } else if (tokens_head->type == CLOSE_PAREN) {
+            parens--;
+        } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
+            (tokens_head->type == SINGLE_QUOTED_STRING)) {
+                sn_highlight(SN_HIGH_STRING,
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column);
+        } else if (tokens_head->type == SOMEWORD) {
+            sn_highlight(SN_HIGH_CLASSDEF,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
+        } /* else { } */
 
-  /* Save function arguments in current_function_args */  
-  parens = 1;
-  noargs = 1;
-  LongStringInit(&abuff,0);
-  while (parens > 0) {
-    if (tokens_head->type == OPEN_PAREN) {
-      parens++;
-    } else if (tokens_head->type == CLOSE_PAREN) {
-      parens--;
-    } else if ((tokens_head->type == DOUBLE_QUOTED_STRING) ||
-               (tokens_head->type == SINGLE_QUOTED_STRING)) {
-        sn_highlight(SN_HIGH_STRING,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-    } else if (tokens_head->type == SOMEWORD) {
-      sn_highlight(SN_HIGH_CLASSDEF,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-    } /* else { } */
+        free_head_token(); /* anything upto and including final CLOSE_PAREN */
+    }
 
-    free_head_token(); /* anything upto and including final CLOSE_PAREN */
-  }
-
-  push_brace(CATCH_KEYWORD);
-  free_head_token(); /* OPEN_BRACE */
+    push_brace(CATCH_KEYWORD);
+    free_head_token(); /* OPEN_BRACE */
 }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 1847 "phpbrowser.l"
+#line 1801 "phpbrowser.l"
 {
-  push_brace(UNKNOWN_TOKEN);
-  free_head_token(); /* OPEN_BRACE */
+    push_brace(UNKNOWN_TOKEN);
+    free_head_token(); /* OPEN_BRACE */
 }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 1852 "phpbrowser.l"
+#line 1806 "phpbrowser.l"
 {
-  TokenType braceMatch;
+    TokenType braceMatch;
 
-  braceMatch = pop_brace();
-  if (braceMatch == FUNCTION_KEYWORD) {
-#ifdef TOKEN_DEBUG
-      fprintf(tokenout, "end of function %s at token %d\n",
-          current_function, token_index);
-#endif
+    braceMatch = pop_brace();
+    if (braceMatch == FUNCTION_KEYWORD) {
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "end of function %s at token %d\n",
+        current_function, token_index);
+        #endif
 
-      current_function_line_end = tokens_head->end_line;
-      current_function_column_end = tokens_head->end_column;
+        current_function_line_end = tokens_head->end_line;
+        current_function_column_end = tokens_head->end_column;
 
-      emit_function_declaration();
+        emit_function_declaration();
 
-      pop_function(); /* in case of nested function */
-  } else if (braceMatch == CLASS_KEYWORD) {
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "exit out of class %s\n", current_class);
-#endif
-    ckfree((char*) current_class);
-    current_class = (char *)NULL;
-    if (current_parent) {
-      ckfree((char*) current_parent);
-      current_parent = (char *)NULL;
+        pop_function(); /* in case of nested function */
+    } else if (braceMatch == CLASS_KEYWORD) {
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "exit out of class %s\n", current_class);
+        #endif
+        ckfree((char*) current_class);
+        current_class = (char *)NULL;
+        if (current_parent) {
+            ckfree((char*) current_parent);
+            current_parent = (char *)NULL;
+        }
+    } else {
+        /* all other brace types */
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "close brace (0x%d)\n", braceMatch);
+        #endif
     }
-  } else {
-    /* all other brace types */
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "close brace (0x%d)\n", braceMatch);
-#endif
-  }
 
-  free_head_token(); /* CLOSE_BRACE */
-  reset_vis(); /* prep for visibility specs */
+    free_head_token(); /* CLOSE_BRACE */
+    reset_vis(); /* prep for visibility specs */
 }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 1889 "phpbrowser.l"
+#line 1843 "phpbrowser.l"
 {
-  int line_start, line_end, column_start, column_end;
-  char * filename;
+    int line_start, line_end, column_start, column_end;
+    char * filename;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "include statement begins at token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "include statement begins at token %d\n", token_index);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* INCLUDE_KEYWORD */
+    free_head_token(); /* INCLUDE_KEYWORD */
 
-  if (tokens_head->type == OPEN_PAREN) {
-    free_head_token(); /* OPEN_PAREN */
-  }
+    if (tokens_head->type == OPEN_PAREN) {
+        free_head_token(); /* OPEN_PAREN */
+    }
 
-  assert((tokens_head->type == SINGLE_QUOTED_STRING) ||
-           (tokens_head->type == DOUBLE_QUOTED_STRING));
+    assert((tokens_head->type == SINGLE_QUOTED_STRING) ||
+        (tokens_head->type == DOUBLE_QUOTED_STRING));
 
-  line_start = tokens_head->start_line;
-  column_start = tokens_head->start_column + 1;
-  line_end = tokens_head->end_line;
-  column_end = tokens_head->end_column - 1;
+    line_start = tokens_head->start_line;
+    column_start = tokens_head->start_column + 1;
+    line_end = tokens_head->end_line;
+    column_end = tokens_head->end_column - 1;
 
-  filename = tokens_head->strval;
+    filename = tokens_head->strval;
 
-  result = sn_insert_symbol(SN_INCLUDE_DEF,
-          /* classname */ NULL,
-          filename,
-          sn_current_file(),
-          line_start, column_start,
-          line_end, column_end,
-          /* attr */ 0,
-          /* ret */ NULL,
-          /* arg_types */ NULL,
-          /* arg_names */ NULL,
-          /* comment */ NULL,
-          line_start, column_start,
-          line_end, column_end);
+    result = sn_insert_symbol(SN_INCLUDE_DEF,
+        /* classname */ NULL,
+        filename,
+        sn_current_file(),
+        line_start, column_start,
+        line_end, column_end,
+        /* attr */ 0,
+        /* ret */ NULL,
+        /* arg_types */ NULL,
+        /* arg_names */ NULL,
+        /* comment */ NULL,
+        line_start, column_start,
+        line_end, column_end);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_STRING,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_STRING,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
-  free_head_token(); /* CLOSE_PAREN || SEMICOLON */
+    free_head_token(); /* SINGLE_QUOTED_STRING || DOUBLE_QUOTED_STRING */
+    free_head_token(); /* CLOSE_PAREN || SEMICOLON */
 }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 1941 "phpbrowser.l"
+#line 1895 "phpbrowser.l"
 {
-  SearchEntry entry;
+    SearchEntry entry;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "global statement found at %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "global statement found at %d\n", token_index);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* GLOBAL_KEYWORD */
+    free_head_token(); /* GLOBAL_KEYWORD */
 
-  if (current_function && (global_var_table == NULL)) {
-    global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
-  }
-
-  /* Insert the variable name into the function's global table */
-
-  while (tokens_head->type != SEMICOLON) {
-    if (current_function && (tokens_head->type == VARIABLE)) {
-        entry.key = tokens_head->strval;
-        entry.key_len = -1;
-
-        if (global_var_table->search( &global_var_table, entry ) == NULL)
-        {
-            entry.data = NULL;
-            entry.data_len = 0;
-            entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
-            global_var_table->add( &global_var_table, entry );
-
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "added global \"%s\"\n", entry.key);
-#endif
-        }
-
-        sn_highlight(SN_HIGH_VAR_GLOBAL,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    if (current_function && (global_var_table == NULL)) {
+        global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
     }
 
-    free_head_token(); /* VARIABLE || COMMA */
-  }
+    /* Insert the variable name into the function's global table */
 
-  free_head_token(); /* SEMICOLON */
+    while (tokens_head->type != SEMICOLON) {
+        if (current_function && (tokens_head->type == VARIABLE)) {
+            entry.key = tokens_head->strval;
+            entry.key_len = -1;
+
+            if (global_var_table->search( &global_var_table, entry ) == NULL) {
+                entry.data = NULL;
+                entry.data_len = 0;
+                entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+                global_var_table->add( &global_var_table, entry );
+
+                #ifdef TOKEN_DEBUG
+                fprintf(tokenout, "added global \"%s\"\n", entry.key);
+                #endif
+            }
+
+            sn_highlight(SN_HIGH_VAR_GLOBAL,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
+        }
+
+        free_head_token(); /* VARIABLE || COMMA */
+    }
+
+    free_head_token(); /* SEMICOLON */
 }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 1988 "phpbrowser.l"
+#line 1941 "phpbrowser.l"
 {
-  int line;
-  int ref_from_scope_type;
+    int line;
+    int ref_from_scope_type;
 
-  /* NOTE: interface declarations are processed in this block also */
+    /* NOTE: interface declarations are processed in this block also */
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found class tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  assert(tokens_head->type == CLASS_KEYWORD);
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* CLASS keyword */
+    assert(tokens_head->type == CLASS_KEYWORD);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    free_head_token(); /* CLASS keyword */
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "class name is \"%s\"\n", tokens_head->strval);
-#endif
-  /* first insert the class name */
-  result = sn_insert_symbol(SN_CLASS_DEF, NULL, tokens_head->strval,
-    sn_current_file(),
-    tokens_head->start_line, tokens_head->start_column,
-    tokens_head->start_line, tokens_head->end_column,
-    recent_vis, NULL, NULL, NULL, NULL,
-    tokens_head->start_line, tokens_head->start_column,
-    tokens_head->start_line, tokens_head->end_column);
-  assert(result == 0);
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "class name is \"%s\"\n", tokens_head->strval);
+    #endif
+    /* first insert the class name */
+    result = sn_insert_symbol(SN_CLASS_DEF, NULL, tokens_head->strval,
+        sn_current_file(),
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->start_line, tokens_head->end_column,
+        recent_vis, NULL, NULL, NULL, NULL,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->start_line, tokens_head->end_column);
+    assert(result == 0);
 
-  reset_vis(); /* prep for visibility specs */
+    reset_vis(); /* prep for visibility specs */
 
-  /* now add highlight ability to editor using parser toolbox */
-  sn_highlight(SN_HIGH_CLASSDEF,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    /* now add highlight ability to editor using parser toolbox */
+    sn_highlight(SN_HIGH_CLASSDEF,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  /* assert(current_class == (char *)NULL); */ /* removed to be more tolerant */
+    /* assert(current_class == (char *)NULL); */ /* removed to be more tolerant */
 
-  current_class = SN_StrDup(tokens_head->strval);
+    current_class = SN_StrDup(tokens_head->strval);
 
-  free_head_token(); /* SOMEWORD=CLASSNAME */
-  push_brace(CLASS_KEYWORD);
+    free_head_token(); /* SOMEWORD=CLASSNAME */
+    push_brace(CLASS_KEYWORD);
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  while (tokens_head->type != OPEN_BRACE) {
-    if (tokens_head->type == SOMEWORD) {
-       /* Note: at this point we are dealing with 'interfaces' */
-       sn_highlight(SN_HIGH_CLASSDEF,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-
-       /* FIXME: insert xref here as SN_IMPLEMENTS or direct inherit like 'extends'? */
-
-       result = sn_insert_xref(SN_REF_TO_CLASS,
-         SN_MBR_FUNC_DEF,
-         SN_REF_SCOPE_GLOBAL,
-         current_class,
-         current_refblock,
-         NULL,
-         "#",
-         tokens_head->strval,
-         NULL, 
-         sn_current_file(),
-         tokens_head->start_line,
-         SN_REF_PASS);
-
-        assert(result == 0);
-
-    } else if (tokens_head->type == CLASS_EXTENDS_KEYWORD) {
-        sn_highlight(SN_HIGH_KEYWORD,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
-        free_head_token(); /* EXTENDS */
+    while (tokens_head->type != OPEN_BRACE) {
         if (tokens_head->type == SOMEWORD) {
-	  sn_highlight(SN_HIGH_CLASSDEF,
-	    tokens_head->start_line, tokens_head->start_column,
-	    tokens_head->end_line, tokens_head->end_column);
+            /* Note: at this point we are dealing with 'interfaces' */
+            sn_highlight(SN_HIGH_CLASSDEF,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
 
-#ifdef TOKEN_DEBUG
-          fprintf(tokenout, "derived class name is \"%s\" baseclass %s\n", current_class, tokens_head->strval);
-#endif
-          result = sn_insert_symbol(SN_CLASS_INHERIT, current_class, tokens_head->strval, 
-            sn_current_file(),
-	    tokens_head->start_line, tokens_head->start_column,
-	    tokens_head->end_line, tokens_head->end_column,
-            SN_PUBLIC, NULL, NULL, NULL, NULL,
-	    tokens_head->start_line, tokens_head->start_column,
-	    tokens_head->end_line, tokens_head->end_column);
-          assert(result == 0);
+            /* FIXME: insert xref here as SN_IMPLEMENTS or direct inherit like 'extends'? */
 
+            result = sn_insert_xref(SN_REF_TO_CLASS,
+                SN_MBR_FUNC_DEF,
+                SN_REF_SCOPE_GLOBAL,
+                current_class,
+                current_refblock,
+                NULL,
+                "#",
+                tokens_head->strval,
+                NULL, 
+                sn_current_file(),
+                tokens_head->start_line,
+                SN_REF_PASS);
 
-          /* WARNING: added hack so xref pane points back to parent class */
-          result = sn_insert_xref(SN_REF_TO_CLASS,
-            SN_MBR_FUNC_DEF,
-            SN_REF_SCOPE_GLOBAL,
-            current_class,
-            current_class,
-            NULL,
-            "#",
-            tokens_head->strval,
-            NULL, 
-            sn_current_file(),
-            tokens_head->start_line,
-            SN_REF_PASS);
+            assert(result == 0);
 
-          assert(result == 0);
+        } else if (tokens_head->type == CLASS_EXTENDS_KEYWORD) {
+            sn_highlight(SN_HIGH_KEYWORD,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
+            free_head_token(); /* EXTENDS */
+            if (tokens_head->type == SOMEWORD) {
+                sn_highlight(SN_HIGH_CLASSDEF,
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column);
 
-          /* Note: single predecessor for PHP classes (but zero or more interfaces) */
-          /* assert(current_parent == (char *)NULL); */ /* removed to be more tolerant */
-          current_parent = SN_StrDup(tokens_head->strval);
+                #ifdef TOKEN_DEBUG
+                fprintf(tokenout, "derived class name is \"%s\" baseclass %s\n", current_class, tokens_head->strval);
+                #endif
+                result = sn_insert_symbol(SN_CLASS_INHERIT, current_class, tokens_head->strval, 
+                    sn_current_file(),
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column,
+                    SN_PUBLIC, NULL, NULL, NULL, NULL,
+                    tokens_head->start_line, tokens_head->start_column,
+                    tokens_head->end_line, tokens_head->end_column);
+
+                assert(result == 0);
+
+                /* WARNING: added hack so xref pane points back to parent class */
+                result = sn_insert_xref(SN_REF_TO_CLASS,
+                    SN_MBR_FUNC_DEF,
+                    SN_REF_SCOPE_GLOBAL,
+                    current_class,
+                    current_class,
+                    NULL,
+                    "#",
+                    tokens_head->strval,
+                    NULL, 
+                    sn_current_file(),
+                    tokens_head->start_line,
+                    SN_REF_PASS);
+
+                assert(result == 0);
+
+                /* Note: single predecessor for PHP classes (but zero or more interfaces) */
+                /* assert(current_parent == (char *)NULL); */ /* removed to be more tolerant */
+                current_parent = SN_StrDup(tokens_head->strval);
+            }
+        } else if (tokens_head->type == CLASS_IMPLEMENTS_KEYWORD) {
+            sn_highlight(SN_HIGH_KEYWORD,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
         }
-    } else if (tokens_head->type == CLASS_IMPLEMENTS_KEYWORD) {
-        sn_highlight(SN_HIGH_KEYWORD,
-            tokens_head->start_line, tokens_head->start_column,
-            tokens_head->end_line, tokens_head->end_column);
+        free_head_token(); /* anything before OPEN_BRACE */
     }
-    free_head_token(); /* anything before OPEN_BRACE */
-  }
-  if (tokens_head->type == OPEN_BRACE)
-    free_head_token(); /* OPEN_BRACE */
+    if (tokens_head->type == OPEN_BRACE)
+        free_head_token(); /* OPEN_BRACE */
 }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 2113 "phpbrowser.l"
+#line 2066 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    /* FIXME: use only first two tokens for pattern 'callfunc(new blah);' */
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class instantiation tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found class instantiation tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* "new" keyword */
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    free_head_token(); /* "new" keyword */
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "class instance name is \"%s\"\n", tokens_head->strval);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "class instance name is \"%s\"\n", tokens_head->strval);
+    #endif
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
-  result = sn_insert_xref(SN_REF_TO_CLASS,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 "#",
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 SN_REF_PASS);
+    /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
+    result = sn_insert_xref(SN_REF_TO_CLASS,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        "#",
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_CLASSDEF,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_CLASSDEF,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD=class name */
-  free_head_token(); /* OPEN_PAREN || SEMICOLON */
+    free_head_token(); /* SOMEWORD=class name */
+    free_head_token(); /* OPEN_PAREN || SEMICOLON */
 }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 2158 "phpbrowser.l"
+#line 2112 "phpbrowser.l"
 {
-  char* fname;
-  int line;
-  int ref_from_scope_type;
+    char* fname;
+    int line;
+    int ref_from_scope_type;
 
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found function call tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found function call tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  fname = tokens_head->strval;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function name is \"%s\"\n", fname);
-#endif
-  line = tokens_head->start_line;
+    fname = tokens_head->strval;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "function name is \"%s\"\n", fname);
+    #endif
+    line = tokens_head->start_line;
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 fname,
-                 NULL, 
-                 sn_current_file(),
-                 line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_FUNCTION,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        NULL,
+        fname,
+        NULL, 
+        sn_current_file(),
+        line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_FUNCTION,
-    tokens_head->start_line, tokens_head->start_column,
-    tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 2201 "phpbrowser.l"
+#line 2155 "phpbrowser.l"
 {
-  SearchEntry entry;
+    SearchEntry entry;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable assignment at token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "variable assignment at token %d\n", token_index);
+    #endif
 
-  if (current_class && !current_function) {
-    result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
-      tokens_head->strval, sn_current_file(),
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->start_line, tokens_head->end_column,
-      recent_vis, NULL, NULL, NULL, NULL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->start_line, tokens_head->end_column);
-    assert(result == 0);
-  } else if (!current_class && !current_function) {
-
-    /* not a class member var nor a function var, so it is probably
-     * an implied global var. add to global list.
-     */
-
-    if (global_var_table == NULL) {
-      global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
-    }
-
-    entry.key = tokens_head->strval;
-    entry.key_len = -1;
-
-    if (global_var_table->search( &global_var_table, entry ) == NULL) {
-      result = sn_insert_symbol(SN_GLOB_VAR_DEF, current_class,
+    if (current_class && !current_function) {
+        result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
         tokens_head->strval, sn_current_file(),
         tokens_head->start_line, tokens_head->start_column,
         tokens_head->start_line, tokens_head->end_column,
-        SN_PUBLIC, NULL, NULL, NULL, NULL,
+        recent_vis, NULL, NULL, NULL, NULL,
         tokens_head->start_line, tokens_head->start_column,
         tokens_head->start_line, tokens_head->end_column);
-      assert(result == 0);
+        assert(result == 0);
+    } else if (!current_class && !current_function) {
+        /* not a class member var nor a function var, so it is probably
+        * an implied global var. add to global list.
+        */
+        if (global_var_table == NULL) {
+            global_var_table = SearchTableCreate(100, SEARCH_HASH_TABLE, FreeGlobalEntry);
+        }
 
-      entry.data = NULL;
-      entry.data_len = 0;
-      entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
-      global_var_table->add( &global_var_table, entry );
+        entry.key = tokens_head->strval;
+        entry.key_len = -1;
 
+        if (global_var_table->search( &global_var_table, entry ) == NULL) {
+            result = sn_insert_symbol(SN_GLOB_VAR_DEF, current_class,
+                tokens_head->strval, sn_current_file(),
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->start_line, tokens_head->end_column,
+                SN_PUBLIC, NULL, NULL, NULL, NULL,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->start_line, tokens_head->end_column);
+            assert(result == 0);
+
+            entry.data = NULL;
+            entry.data_len = 0;
+            entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+            global_var_table->add( &global_var_table, entry );
+        }
     }
-  }
-  /* now add the fact that we are modifying this var */
-  emit_var_access(tokens_head, VAR_WRITE);
+    /* now add the fact that we are modifying this var */
+    emit_var_access(tokens_head, VAR_WRITE);
 
-  free_head_token(); /* VARIABLE */
-  free_head_token(); /* ASSIGNMENT_OPERATOR */
+    free_head_token(); /* VARIABLE */
+    free_head_token(); /* ASSIGNMENT_OPERATOR */
 }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 2254 "phpbrowser.l"
+#line 2205 "phpbrowser.l"
 {
-  int offset;
+    int offset;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "variable modification assignment at token %d\n", token_index);
+    #endif
 
-  emit_var_access(tokens_head, VAR_READWRITE);
+    emit_var_access(tokens_head, VAR_READWRITE);
 
-  free_head_token(); /* VARIABLE */
-  free_head_token(); /* ASSIGNMENT_OPERATORS */
+    free_head_token(); /* VARIABLE */
+    free_head_token(); /* ASSIGNMENT_OPERATORS */
 }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 2267 "phpbrowser.l"
+#line 2218 "phpbrowser.l"
 {
-  int offset, pre = 0;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable increment at token %d\n", token_index);
-#endif
+    int offset, pre = 0;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "variable increment at token %d\n", token_index);
+    #endif
 
-  if (tokens_head->type == INCREMENT_OPERATORS) {
-    pre = 1;
-    free_head_token(); /* INCREMENT_OPERATORS */
-  }
+    if (tokens_head->type == INCREMENT_OPERATORS) {
+        pre = 1;
+        free_head_token(); /* INCREMENT_OPERATORS */
+    }
 
-  emit_var_access(tokens_head, VAR_READWRITE);
+    emit_var_access(tokens_head, VAR_READWRITE);
 
-  free_head_token(); /* VARIABLE */
-  if (!pre) {
-    free_head_token(); /* INCREMENT_OPERATORS */
-  }
+    free_head_token(); /* VARIABLE */
+    if (!pre) {
+        free_head_token(); /* INCREMENT_OPERATORS */
+    }
 }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 2286 "phpbrowser.l"
+#line 2237 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "class const token %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "class const token %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* const keyword */
+    free_head_token(); /* const keyword */
 
-  if ( !current_class )
-    return;
+    if ( !current_class )
+        return;
 
-  /* FIXME: do we need to pick up the right hand value */
-  result = sn_insert_symbol(SN_ENUM_CONST_DEF,
-          current_class,
-          tokens_head->strval,
-          sn_current_file(),
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column,
-          /* attr */ SN_PUBLIC,
-          /* ret type */ NULL,
-          /* arg_types */ NULL,
-          /* arg_names */ NULL,
-          /* comment */ NULL,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    result = sn_insert_symbol(SN_ENUM_CONST_DEF,
+        current_class,
+        tokens_head->strval,
+        sn_current_file(),
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column,
+        /* attr */ SN_PUBLIC,
+        /* ret type */ NULL,
+        /* arg_types */ NULL,
+        /* arg_names */ NULL,
+        /* comment */ NULL,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* class constant name */
-  free_head_token(); /* = */
+    assert(result == 0);
+
+    free_head_token(); /* class constant name */
+    free_head_token(); /* = */
 }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 2319 "phpbrowser.l"
+#line 2271 "phpbrowser.l"
 {
-  char* fname;
-  int line;
-  int ref_from_scope_type;
+    char* fname;
+    int line;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found $this class member function call tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  free_head_token(); /* $this */
-  free_head_token(); /* -> */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found $this class member function call tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    free_head_token(); /* $this */
+    free_head_token(); /* -> */
 
-  fname = tokens_head->strval;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function name is \"%s\"\n", fname);
-#endif
-  line = tokens_head->start_line;
+    fname = tokens_head->strval;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "function name is \"%s\"\n", fname);
+    #endif
+    line = tokens_head->start_line;
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 current_class,
-                 fname,
-                 NULL, 
-                 sn_current_file(),
-                 line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        current_class,
+        fname,
+        NULL, 
+        sn_current_file(),
+        line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 2362 "phpbrowser.l"
+#line 2314 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "this class variable read at token %d\n", token_index);
-#endif
-  free_head_token(); /* $this */
-  free_head_token(); /* -> */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "this class variable read at token %d\n", token_index);
+    #endif
+    free_head_token(); /* $this */
+    free_head_token(); /* -> */
 
-  /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_MBR_VAR,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
+    /* Remove to simplify editor, although should be instance var highlighting
+    * sn_highlight(SN_HIGH_MBR_VAR,
+    *     tokens_head->start_line, tokens_head->start_column,
+    *     tokens_head->end_line, tokens_head->end_column);
+    */
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 current_class,
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 VAR_CLASS_DEREF);
+    result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        current_class,
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        VAR_CLASS_DEREF);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  free_head_token(); /* SOMEWORD */
+    free_head_token(); /* SOMEWORD */
 }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 2397 "phpbrowser.l"
+#line 2349 "phpbrowser.l"
 {
-  char* fname;
-  int line;
-  int ref_from_scope_type;
+    char* fname;
+    int line;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found $parent class member function call tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
-  free_head_token(); /* $parent */
-  free_head_token(); /* -> */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found $parent class member function call tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
+    free_head_token(); /* $parent */
+    free_head_token(); /* -> */
 
-  fname = tokens_head->strval;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function name is \"%s\"\n", fname);
-#endif
-  line = tokens_head->start_line;
+    fname = tokens_head->strval;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "function name is \"%s\"\n", fname);
+    #endif
+    line = tokens_head->start_line;
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 current_parent,
-                 fname,
-                 NULL, 
-                 sn_current_file(),
-                 line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_FUNCTION,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        current_parent,
+        fname,
+        NULL, 
+        sn_current_file(),
+        line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 2440 "phpbrowser.l"
+#line 2392 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "parent class variable read at token %d\n", token_index);
-#endif
-  free_head_token(); /* $parent */
-  free_head_token(); /* -> */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "parent class variable read at token %d\n", token_index);
+    #endif
+    free_head_token(); /* $parent */
+    free_head_token(); /* -> */
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 current_parent,
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 VAR_CLASS_DEREF);
+    result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        current_parent,
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        VAR_CLASS_DEREF);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_MBR_VAR,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
+    /* Remove to simplify editor, although should be instance var highlighting
+    * sn_highlight(SN_HIGH_MBR_VAR,
+    *     tokens_head->start_line, tokens_head->start_column,
+    *     tokens_head->end_line, tokens_head->end_column);
+    */
 
-  free_head_token(); /* SOMEWORD */
+    free_head_token(); /* SOMEWORD */
 }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 2475 "phpbrowser.l"
+#line 2427 "phpbrowser.l"
 {
-  char* fname;
-  int line;
-  int ref_from_scope_type;
+    char* fname;
+    int line;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found $var class member function call tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found $var class member function call tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  free_head_token(); /* $variable */
-  free_head_token(); /* -> */
+    free_head_token(); /* $variable */
+    free_head_token(); /* -> */
 
-  fname = tokens_head->strval;
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "function name is \"%s\"\n", fname);
-#endif
-  line = tokens_head->start_line;
+    fname = tokens_head->strval;
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "function name is \"%s\"\n", fname);
+    #endif
+    line = tokens_head->start_line;
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_FUNCTION,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 fname,
-                 NULL, 
-                 sn_current_file(),
-                 line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_FUNCTION,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        NULL,
+        fname,
+        NULL, 
+        sn_current_file(),
+        line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 2519 "phpbrowser.l"
+#line 2471 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "some class variable read at token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "some class variable read at token %d\n", token_index);
+    #endif
 
-  free_head_token(); /* $variable */
-  free_head_token(); /* -> */
+    free_head_token(); /* $variable */
+    free_head_token(); /* -> */
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL, /* CHEAT: should use type of variable but typeless language interferes */
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 VAR_CLASS_DEREF);
+    result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        NULL, /* CHEAT: should use type of variable but typeless language interferes */
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        VAR_CLASS_DEREF);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_MBR_VAR,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
+    /* Remove to simplify editor, although should be instance var highlighting
+    *    sn_highlight(SN_HIGH_MBR_VAR,
+    *        tokens_head->start_line, tokens_head->start_column,
+    *        tokens_head->end_line, tokens_head->end_column);
+    */
 
-  free_head_token(); /* SOMEWORD */
+    free_head_token(); /* SOMEWORD */
 }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 2556 "phpbrowser.l"
+#line 2508 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found deref class member function call tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found deref class member function call tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  free_head_token(); /* -> */
+    free_head_token(); /* -> */
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,	/* CHEAT: don't limit to class of var because of typeless language */
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_MBR_FUNC,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        NULL,    /* CHEAT: don't limit to class of var because of typeless language */
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  sn_highlight(SN_HIGH_FUNCTION,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_FUNCTION,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  free_head_token(); /* SOMEWORD */
-  free_head_token(); /* OPEN_PAREN */
+    free_head_token(); /* SOMEWORD */
+    free_head_token(); /* OPEN_PAREN */
 }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 2591 "phpbrowser.l"
+#line 2543 "phpbrowser.l"
 {
-  int ref_from_scope_type;
+    int ref_from_scope_type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "class variable read at token %d\n", token_index);
-#endif
-  free_head_token(); /* -> */
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "class variable read at token %d\n", token_index);
+    #endif
+    free_head_token(); /* -> */
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  result = sn_insert_xref(SN_REF_TO_MBR_VAR,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 tokens_head->strval,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 SN_REF_PASS);
+    result = sn_insert_xref(SN_REF_TO_MBR_VAR,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        NULL,
+        tokens_head->strval,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        SN_REF_PASS);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  /* Remove to simplify editor, although should be instance var highlighting
-  * sn_highlight(SN_HIGH_MBR_VAR,
-  *     tokens_head->start_line, tokens_head->start_column,
-  *     tokens_head->end_line, tokens_head->end_column);
-  */
+    /* Remove to simplify editor, although should be instance var highlighting
+    *    sn_highlight(SN_HIGH_MBR_VAR,
+    *        tokens_head->start_line, tokens_head->start_column,
+    *        tokens_head->end_line, tokens_head->end_column);
+    */
 
-  free_head_token(); /* SOMEWORD = class member */
+    free_head_token(); /* SOMEWORD = class member */
 }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 2625 "phpbrowser.l"
+#line 2577 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found abstract tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found abstract tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* keyword */
-  set_vis(ABSTRACT_KEYWORD);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    free_head_token(); /* keyword */
+    set_vis(ABSTRACT_KEYWORD);
 }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 2639 "phpbrowser.l"
+#line 2591 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found visibility public tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found visibility public tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  free_head_token(); /* keyword */
-  set_vis(PUBLIC_KEYWORD);
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    free_head_token(); /* keyword */
+    set_vis(PUBLIC_KEYWORD);
 }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 2652 "phpbrowser.l"
+#line 2604 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found visibility protected tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found visibility protected tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  set_vis(PROTECTED_KEYWORD);
-  free_head_token(); /* keyword */
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    set_vis(PROTECTED_KEYWORD);
+    free_head_token(); /* keyword */
 }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 2665 "phpbrowser.l"
+#line 2617 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found visibility private tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found visibility private tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  set_vis(PRIVATE_KEYWORD);
-  free_head_token(); /* keyword */
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    set_vis(PRIVATE_KEYWORD);
+    free_head_token(); /* keyword */
 }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 2678 "phpbrowser.l"
+#line 2630 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "found class static tokens at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "found class static tokens at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  sn_highlight(SN_HIGH_KEYWORD,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
-  set_vis(STATIC_KEYWORD);
-  free_head_token(); /* keyword */
+    sn_highlight(SN_HIGH_KEYWORD,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
+    set_vis(STATIC_KEYWORD);
+    free_head_token(); /* keyword */
 }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 2691 "phpbrowser.l"
+#line 2643 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "variable read at token %d, vis 0x%x\n", token_index, recent_vis);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "variable read at token %d, vis 0x%x\n", token_index, recent_vis);
+    #endif
 
-  if (current_class && !current_function) {
-    result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
-      tokens_head->strval, sn_current_file(),
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->start_line, tokens_head->end_column,
-      recent_vis, NULL, NULL, NULL, NULL,
-      tokens_head->start_line, tokens_head->start_column,
-      tokens_head->start_line, tokens_head->end_column);
-    assert(result == 0);
-  }
+    if (current_class && !current_function) {
+        result = sn_insert_symbol(SN_MBR_VAR_DEF, current_class,
+            tokens_head->strval, sn_current_file(),
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->start_line, tokens_head->end_column,
+            recent_vis, NULL, NULL, NULL, NULL,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->start_line, tokens_head->end_column);
+        assert(result == 0);
+    }
 
-  emit_var_access(tokens_head, VAR_READ);
+    emit_var_access(tokens_head, VAR_READ);
 
-  free_head_token(); /* VARIABLE */
+    free_head_token(); /* VARIABLE */
 }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 2713 "phpbrowser.l"
+#line 2665 "phpbrowser.l"
 {
-  /*
-   * Note: keep parsing "fuzzy" by stopping at the pattern 'classname::'
-   *  and then let other rules take over.
-   */
-  int ref_from_scope_type;
-  char *clsname;
+    /*
+    * Note: keep parsing "fuzzy" by stopping at the pattern 'classname::'
+    *  and then let other rules take over.
+    */
+    int ref_from_scope_type;
+    char *clsname;
 
-  if (strcmp(tokens_head->strval, "parent") == 0) {
-    clsname = current_parent;
-  } else if (strcmp(tokens_head->strval, "self") == 0) {
-    clsname = current_class;
-  } else {
-    clsname = tokens_head->strval;
-    /* FIXME: is there a highlight for a reference to a class name? */
-    sn_highlight(SN_HIGH_CLASSDEF,
-        tokens_head->start_line, tokens_head->start_column,
-        tokens_head->end_line, tokens_head->end_column);
-  }
+    if (strcmp(tokens_head->strval, "parent") == 0) {
+        clsname = current_parent;
+    } else if (strcmp(tokens_head->strval, "self") == 0) {
+        clsname = current_class;
+    } else {
+        clsname = tokens_head->strval;
+        /* FIXME: is there a highlight for a reference to a class name? */
+        sn_highlight(SN_HIGH_CLASSDEF,
+            tokens_head->start_line, tokens_head->start_column,
+            tokens_head->end_line, tokens_head->end_column);
+    }
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "direct class access at %d\n", token_index);
-  fprintf(tokenout, "match text was \"%s\"\n", yytext);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "direct class access at %d\n", token_index);
+    fprintf(tokenout, "match text was \"%s\"\n", yytext);
+    #endif
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
-  result = sn_insert_xref(SN_REF_TO_CLASS,
-                 ref_from_scope_type,
-                 SN_REF_SCOPE_GLOBAL,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 "#",
-                 clsname,
-                 NULL, 
-                 sn_current_file(),
-                 tokens_head->start_line,
-                 SN_REF_READ);
+    /* NOTE: we use '#' as the refclass so the GUI will point to the class def */
+    result = sn_insert_xref(SN_REF_TO_CLASS,
+        ref_from_scope_type,
+        SN_REF_SCOPE_GLOBAL,
+        current_class,
+        current_refblock,
+        NULL,
+        "#",
+        clsname,
+        NULL, 
+        sn_current_file(),
+        tokens_head->start_line,
+        SN_REF_READ);
 
-  assert(result == 0);
+    assert(result == 0);
 
-  free_head_token(); /* REFCLASS */
-  free_head_token(); /* :: */
+    free_head_token(); /* REFCLASS */
+    free_head_token(); /* :: */
 }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 2761 "phpbrowser.l"
+#line 2713 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "increment array variable start token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "increment array variable start token %d\n", token_index);
+    #endif
 
-  /* This is the start of a prefix incremented array variable
-   *
-   *   ++$arr[0]
-   */
+    /* This is the start of a prefix incremented array variable
+    *
+    *   ++$arr[0]
+    */
 
-  if (current_array_bracket_count > 0) {
-    /* Nested brackets : $arr1[++$arr2[0]] */
-    push_bracket_counter();
-  }
-  current_array_bracket_count = 1;
-  current_array_prefix_incr = 1;
+    if (current_array_bracket_count > 0) {
+        /* Nested brackets : $arr1[++$arr2[0]] */
+        push_bracket_counter();
+    }
+    current_array_bracket_count = 1;
+    current_array_prefix_incr = 1;
 
-  free_head_token(); /* INCREMENT_OPERATORS */
-  current_array_token = pop_head_token(); /* VARIABLE */
-  free_head_token(); /* OPEN_BRACKET */
+    free_head_token(); /* INCREMENT_OPERATORS */
+    current_array_token = pop_head_token(); /* VARIABLE */
+    free_head_token(); /* OPEN_BRACKET */
 }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 2783 "phpbrowser.l"
+#line 2735 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable start token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable start token %d\n", token_index);
+    #endif
 
-  /* This is the start of an array variable.
-   *
-   *   $arr[0]
-   */
+    /* This is the start of an array variable.
+    *
+    *   $arr[0]
+    */
 
-  if (current_array_bracket_count > 0) {
-    /* Nested brackets : $arr1[$arr2[0]] */
-    push_bracket_counter();
-  }
-  current_array_bracket_count = 1;
-  current_array_token = pop_head_token(); /* VARIABLE */
-  free_head_token(); /* OPEN_BRACKET */
+    if (current_array_bracket_count > 0) {
+        /* Nested brackets : $arr1[$arr2[0]] */
+        push_bracket_counter();
+    }
+    current_array_bracket_count = 1;
+    current_array_token = pop_head_token(); /* VARIABLE */
+    free_head_token(); /* OPEN_BRACKET */
 }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 2802 "phpbrowser.l"
+#line 2754 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable array dimension tokens %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable array dimension tokens %d\n", token_index);
+    #endif
 
-  /* This rule matches the "][" tokens in the following statement:
-   *
-   * array["one"]["two"] = 1;
-   *
-   * Note that we don't change the current_array_bracket_count here.
-   */
+    /* This rule matches the "][" tokens in the following statement:
+    *
+    * array["one"]["two"] = 1;
+    *
+    * Note that we don't change the current_array_bracket_count here.
+    */
 
-  free_head_token(); /* CLOSE_BRACKET */
-  free_head_token(); /* OPEN_BRACKET */
+    free_head_token(); /* CLOSE_BRACKET */
+    free_head_token(); /* OPEN_BRACKET */
 }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 2818 "phpbrowser.l"
+#line 2770 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable assignment end token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable assignment end token %d\n", token_index);
+    #endif
 
-  /* This could be the end of an array variable.
-   *
-   *   $arr["num"] = 2;
-   */
+    /* This could be the end of an array variable.
+    *
+    *   $arr["num"] = 2;
+    */
 
-  if (current_array_bracket_count > 0) {
-    if (--current_array_bracket_count == 0) {
-        emit_var_access(current_array_token, VAR_WRITE);
-        FreeToken(current_array_token);
-        current_array_prefix_incr = 0;
+    if (current_array_bracket_count > 0) {
+        if (--current_array_bracket_count == 0) {
+            emit_var_access(current_array_token, VAR_WRITE);
+            FreeToken(current_array_token);
+            current_array_prefix_incr = 0;
 
-        pop_bracket_counter();
+            pop_bracket_counter();
 
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "assignment operator end of array variable\n");
-#endif
+            #ifdef TOKEN_DEBUG
+            fprintf(tokenout, "assignment operator end of array variable\n");
+            #endif
+        }
     }
-  }
 
-  free_head_token(); /* CLOSE_BRACKET */
-  free_head_token(); /* ASSIGNMENT_OPERATOR */
+    free_head_token(); /* CLOSE_BRACKET */
+    free_head_token(); /* ASSIGNMENT_OPERATOR */
 }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 2846 "phpbrowser.l"
+#line 2798 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable read/write assignment end token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable read/write assignment end token %d\n", token_index);
+    #endif
 
-  /* This could be the end of an array variable.
-   *
-   *   $arr["num"] += 2;
-   */
+    /* This could be the end of an array variable.
+    *
+    *   $arr["num"] += 2;
+    */
 
-  if (current_array_bracket_count > 0) {
-    if (--current_array_bracket_count == 0) {
-        emit_var_access(current_array_token, VAR_READWRITE);
-        FreeToken(current_array_token);
-        current_array_prefix_incr = 0;
-        pop_bracket_counter();
+    if (current_array_bracket_count > 0) {
+        if (--current_array_bracket_count == 0) {
+            emit_var_access(current_array_token, VAR_READWRITE);
+            FreeToken(current_array_token);
+            current_array_prefix_incr = 0;
+            pop_bracket_counter();
 
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "assignment operators end of array variable\n");
-#endif
+            #ifdef TOKEN_DEBUG
+            fprintf(tokenout, "assignment operators end of array variable\n");
+            #endif
+        }
     }
-  }
 
-  free_head_token(); /* CLOSE_BRACKET */
-  free_head_token(); /* ASSIGNMENT_OPERATORS */
+    free_head_token(); /* CLOSE_BRACKET */
+    free_head_token(); /* ASSIGNMENT_OPERATORS */
 }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 2873 "phpbrowser.l"
+#line 2825 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable post increment end token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable post increment end token %d\n", token_index);
+    #endif
 
-  /* This could be the end of an array variable increment
-   *
-   *   $arr[0]++
-   */
+    /* This could be the end of an array variable increment
+    *
+    *   $arr[0]++
+    */
 
-  if (current_array_bracket_count > 0) {
-    if (--current_array_bracket_count == 0) {
-        emit_var_access(current_array_token, VAR_READWRITE);
-        current_array_prefix_incr = 0;
-        FreeToken(current_array_token);
+    if (current_array_bracket_count > 0) {
+        if (--current_array_bracket_count == 0) {
+            emit_var_access(current_array_token, VAR_READWRITE);
+            current_array_prefix_incr = 0;
+            FreeToken(current_array_token);
 
-        pop_bracket_counter();
+            pop_bracket_counter();
 
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "end of array variable post increment\n");
-#endif
+            #ifdef TOKEN_DEBUG
+            fprintf(tokenout, "end of array variable post increment\n");
+            #endif
+        }
     }
-  }
 
-  free_head_token(); /* CLOSE_BRACKET */
-  free_head_token(); /* INCREMENT_OPERATORS */
+    free_head_token(); /* CLOSE_BRACKET */
+    free_head_token(); /* INCREMENT_OPERATORS */
 }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 2901 "phpbrowser.l"
+#line 2853 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "array variable read end token %d\n", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "array variable read end token %d\n", token_index);
+    #endif
 
-  /* This could be the end of an array variable
-   *
-   *   $arr[0] = 2;
-   *
-   * Or the end of an array variable that has
-   * a prefix increment.
-   *
-   *   ++$arr[0]
-   */
+    /* This could be the end of an array variable
+    *
+    *   $arr[0] = 2;
+    *
+    * Or the end of an array variable that has
+    * a prefix increment.
+    *
+    *   ++$arr[0]
+    */
 
-  if (current_array_bracket_count > 0) {
-    if (--current_array_bracket_count == 0) {
-        if (current_array_prefix_incr) {
-          emit_var_access(current_array_token, VAR_READWRITE);
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "read/write end of array variable\n");
-#endif
-        } else {
-          emit_var_access(current_array_token, VAR_READ);
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "read end of array variable\n");
-#endif
+    if (current_array_bracket_count > 0) {
+        if (--current_array_bracket_count == 0) {
+            if (current_array_prefix_incr) {
+                emit_var_access(current_array_token, VAR_READWRITE);
+                #ifdef TOKEN_DEBUG
+                fprintf(tokenout, "read/write end of array variable\n");
+                #endif
+            } else {
+                emit_var_access(current_array_token, VAR_READ);
+                #ifdef TOKEN_DEBUG
+                fprintf(tokenout, "read end of array variable\n");
+                #endif
+            }
+            current_array_prefix_incr = 0;
+            FreeToken(current_array_token);
+
+            pop_bracket_counter();
         }
-        current_array_prefix_incr = 0;
-        FreeToken(current_array_token);
-
-        pop_bracket_counter();
     }
-  }
 
-  free_head_token(); /* CLOSE_BRACKET */
+    free_head_token(); /* CLOSE_BRACKET */
 }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 2939 "phpbrowser.l"
+#line 2891 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "ate VDOUBLE_QUOTED_STRING token %d", token_index);
+    #endif
 
-  sn_highlight(SN_HIGH_STRING,
-          tokens_head->start_line, tokens_head->start_column,
-          tokens_head->end_line, tokens_head->end_column);
+    sn_highlight(SN_HIGH_STRING,
+        tokens_head->start_line, tokens_head->start_column,
+        tokens_head->end_line, tokens_head->end_column);
 
-  emit_var_access_for_dqstring(tokens_head);
+    emit_var_access_for_dqstring(tokens_head);
 
-  free_head_token(); /* VDOUBLE_QUOTED_STRING */
+    free_head_token(); /* VDOUBLE_QUOTED_STRING */
 }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 2953 "phpbrowser.l"
+#line 2905 "phpbrowser.l"
 {
-  enum sn_highlights type;
+    enum sn_highlights type;
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "ate token %d %s", token_index,
-          TokenTypeToString(tokens_head));
-  if (tokens_head->strval) {
-      fprintf(tokenout, " \"%s\"", tokens_head->strval);
-  }
-  fprintf(tokenout, "\n");
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "ate token %d %s", token_index,
+    TokenTypeToString(tokens_head));
+    if (tokens_head->strval) {
+        fprintf(tokenout, " \"%s\"", tokens_head->strval);
+    }
+    fprintf(tokenout, "\n");
+    #endif
 
-  if (highlight_file) {
-      switch (tokens_head->type) {
-          case DOUBLE_QUOTED_STRING:
-          case SINGLE_QUOTED_STRING:
-              type = SN_HIGH_STRING;
-              break;
-          case DEFINE_KEYWORD:
-          case CLASS_KEYWORD:
-          case NEW_KEYWORD:
-          case ARRAY_KEYWORD:
-          case TRY_KEYWORD:
-          case CATCH_KEYWORD:
-          case PUBLIC_KEYWORD:
-          case ABSTRACT_KEYWORD:
-          case PROTECTED_KEYWORD:
-          case PRIVATE_KEYWORD:
-          case STATIC_KEYWORD:
-          case CONST_KEYWORD:
-          case KEYWORD:
-              type = SN_HIGH_KEYWORD;
-              break;
-          default:
-              type = 0;
-      }
-      if (type != 0) {
-          sn_highlight(type,
-                  tokens_head->start_line, tokens_head->start_column,
-                  tokens_head->end_line, tokens_head->end_column);
-      }
-  }
+    if (highlight_file) {
+        switch (tokens_head->type)
+        {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+                type = SN_HIGH_STRING;
+                break;
+            case DEFINE_KEYWORD:
+            case CLASS_KEYWORD:
+            case NEW_KEYWORD:
+            case ARRAY_KEYWORD:
+            case TRY_KEYWORD:
+            case CATCH_KEYWORD:
+            case PUBLIC_KEYWORD:
+            case ABSTRACT_KEYWORD:
+            case PROTECTED_KEYWORD:
+            case PRIVATE_KEYWORD:
+            case STATIC_KEYWORD:
+            case CONST_KEYWORD:
+            case KEYWORD:
+                type = SN_HIGH_KEYWORD;
+                break;
+            default:
+                type = 0;
+        }
+        if (type != 0) {
+            sn_highlight(type,
+                tokens_head->start_line, tokens_head->start_column,
+                tokens_head->end_line, tokens_head->end_column);
+        }
+    }
 
-  free_head_token(); /* ... */
+    free_head_token(); /* ... */
 }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 2999 "phpbrowser.l"
+#line 2952 "phpbrowser.l"
 
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 3001 "phpbrowser.l"
+#line 2954 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
+    #ifdef TOKEN_DEBUG
     fprintf(tokenout, "matched unknown character \"%s\"\n", yytext);
-#endif
+    #endif
 }
 	YY_BREAK
 case YY_STATE_EOF(TOKEN):
-#line 3007 "phpbrowser.l"
+#line 2960 "phpbrowser.l"
 {
-#ifdef TOKEN_DEBUG
+    #ifdef TOKEN_DEBUG
     fprintf(tokenout, "reached EOF in TOKEN buffer\n");
-#endif
+    #endif
 
     /* A function closing brace was not found before we hit EOF */
     if (current_function) {
         current_function_line_end = sn_line();
         current_function_column_end = sn_column();
 
-#ifdef TOKEN_DEBUG
+        #ifdef TOKEN_DEBUG
         fprintf(tokenout, "found unfinished function at EOF in %s\n", sn_current_file());
-#endif
+        #endif
 
         emit_function_declaration();
     }
     /* A class closing brace was not found before we hit EOF */
     if (current_class) {
-#ifdef TOKEN_DEBUG
+        #ifdef TOKEN_DEBUG
         fprintf(tokenout, "found unfinished class at EOF in %s\n", sn_current_file());
-#endif
+        #endif
         ckfree(current_class);
         current_class = (char *)NULL;
         if (current_parent) {
-         ckfree(current_parent);
-         current_parent = (char *)NULL;
+            ckfree(current_parent);
+            current_parent = (char *)NULL;
         }
     }
 
@@ -6756,138 +6708,131 @@ case YY_STATE_EOF(COMMENT_MODE):
 case YY_STATE_EOF(DQSTRING):
 case YY_STATE_EOF(SQSTRING):
 case YY_STATE_EOF(HDSTRING):
-#line 3044 "phpbrowser.l"
+#line 2997 "phpbrowser.l"
 {
-  LongString token_buffer;
-  char *base;
-  int i;
-  Token* tok;
-  yy_size_t size;
-  YY_BUFFER_STATE yybs;
+    LongString token_buffer;
+    char *base;
+    int i;
+    Token* tok;
+    yy_size_t size;
+    YY_BUFFER_STATE yybs;
 
-#ifdef TOKEN_DEBUG
-  tokenout = fopen("tokens.out", "a");
-  fprintf(tokenout, "reached EOF in lex input buffer in mode %s\n", modestring());
-#endif
+    #ifdef TOKEN_DEBUG
+    tokenout = fopen("tokens.out", "a");
+    fprintf(tokenout, "reached EOF in lex input buffer in mode %s\n", modestring());
+    #endif
 
-  /* See if we ran off the end of the lex input buffer in a special mode */
-  switch (YY_START) {
-    case COMMENT_MODE:
-      emit_comment();
-      break;
-    case DQSTRING:
-      emit_dqstring();
-      break;
-    case SQSTRING:
-      emit_sqstring();
-      break;
-    case HDSTRING: 
-      emit_hdstring();
-      break;
-    case HTML_MODE:
-      emit_html();
-      break;
-  }
-
-  /* If no tokens were generated, then quit now */
-  if (tokens_head == NULL) {
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "no TOKENs generated\n");
-#endif
-    enter_html_mode();
-    yyterminate();
-  }
-
-  /*
-   * If the -T command line option was passed,
-   * dump all tokens to a file, skip the token
-   * matching phase and go on to the next file.
-   */
-
-  if (token_dump_file) {
-    FILE * dump_tokens = fopen(token_dump_file, "a");
-
-    for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
-        fprintf(dump_tokens, "%d %s", i, TokenTypeToString(tok));
-        if (tok->strval == NULL) {
-            fprintf(dump_tokens, " \"\"");
-        } else {
-            char *x;
-            fprintf(dump_tokens, " \"");
-            for (x=tok->strval; *x; x++) {
-                if (*x == '\n') {
-                    fprintf(dump_tokens, "\\n");
-                } else if (*x == '\\') {
-                    fprintf(dump_tokens, "\\\\");
-                } else if (*x == '\"') {
-                    fprintf(dump_tokens, "\\\"");
-                } else {
-                    fprintf(dump_tokens, "%c", *x);
-                }
-            }
-            fprintf(dump_tokens, "\"");
-        }
-        fprintf(dump_tokens, " %d.%d %d.%d",
-            tok->start_line,
-            tok->start_column,
-            tok->end_line,
-            tok->end_column
-        );
-        fprintf(dump_tokens, "\n");
+    /* See if we ran off the end of the lex input buffer in a special mode */
+    switch (YY_START)
+    {
+        case COMMENT_MODE:
+            emit_comment();
+            break;
+        case DQSTRING:
+            emit_dqstring();
+            break;
+        case SQSTRING:
+            emit_sqstring();
+            break;
+        case HDSTRING: 
+            emit_hdstring();
+            break;
+        case HTML_MODE:
+            emit_html();
+            break;
     }
 
-    fclose(dump_tokens);
+    /* If no tokens were generated, then quit now */
+    if (tokens_head == NULL) {
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "no TOKENs generated\n");
+        #endif
+        enter_html_mode();
+        yyterminate();
+    }
 
-    enter_html_mode();
-    yyterminate();
-  }
+    /*
+    * If the -T command line option was passed,
+    * dump all tokens to a file, skip the token
+    * matching phase and go on to the next file.
+    */
 
-  LongStringInit(&token_buffer,0);
+    if (token_dump_file) {
+        FILE * dump_tokens = fopen(token_dump_file, "a");
 
-  /* Print token info to in memory buffer and then reload
-     the input state machine and start out in the TOKEN mode. */
+        for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
+            fprintf(dump_tokens, "%d %s", i, TokenTypeToString(tok));
+            if (tok->strval == NULL) {
+                fprintf(dump_tokens, " \"\"");
+            } else {
+                char *x;
+                fprintf(dump_tokens, " \"");
+                for (x=tok->strval; *x; x++) {
+                    if (*x == '\n') {
+                        fprintf(dump_tokens, "\\n");
+                    } else if (*x == '\\') {
+                        fprintf(dump_tokens, "\\\\");
+                    } else if (*x == '\"') {
+                        fprintf(dump_tokens, "\\\"");
+                    } else {
+                        fprintf(dump_tokens, "%c", *x);
+                    }
+                }
+                fprintf(dump_tokens, "\"");
+            }
+            fprintf(dump_tokens, " %d.%d %d.%d",
+                tok->start_line, tok->start_column, tok->end_line, tok->end_column);
+            fprintf(dump_tokens, "\n");
+        }
 
-  for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
-#ifdef TOKEN_DEBUG
+        fclose(dump_tokens);
+
+        enter_html_mode();
+        yyterminate();
+    }
+
+    LongStringInit(&token_buffer,0);
+
+    /* Print token info to in memory buffer and then reload
+    the input state machine and start out in the TOKEN mode. */
+
+    for (i=0, tok = tokens_head ; tok ; tok = tok->next, i++) {
+        #ifdef TOKEN_DEBUG
         fprintf(tokenout, "token %d %s", i, TokenTypeToString(tok));
         if (tok->strval) {
             fprintf(tokenout, " \"%s\"", tok->strval);
         }
         fprintf(tokenout, " (%d.%d -> %d.%d)",
-            tok->start_line,
-            tok->start_column,
-            tok->end_line,
-            tok->end_column
-        );
+            tok->start_line, tok->start_column, tok->end_line, tok->end_column);
         fprintf(tokenout, "\n");
-#endif
-        
+        #endif
+
         token_buffer.append( &token_buffer, TokenTypeToString(tok), -1);
         token_buffer.append( &token_buffer, " ", -1);
-  }
+    }
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "token buffer data is \"%s\"\n", token_buffer.buf);
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "token buffer data is \"%s\"\n", token_buffer.buf);
+    #endif
 
-  original_buffer = YY_CURRENT_BUFFER;
-  yy_switch_to_buffer(yy_scan_string(token_buffer.buf) );
+    original_buffer = YY_CURRENT_BUFFER;
+    yy_switch_to_buffer(yy_scan_string(token_buffer.buf) );
 
-  token_buffer.free(&token_buffer);
+    token_buffer.free(&token_buffer);
 
-#ifdef TOKEN_DEBUG
-  fprintf(tokenout, "switching to token mode\n");
-#endif
+    #ifdef TOKEN_DEBUG
+    fprintf(tokenout, "switching to token mode\n");
+    #endif
 
-  BEGIN(TOKEN);
+    BEGIN(TOKEN);
 }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 3169 "phpbrowser.l"
+#line 3115 "phpbrowser.l"
 ECHO;
 	YY_BREAK
-#line 6891 "lex.yy.c"
+#line 6836 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -7888,16 +7833,18 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 3169 "phpbrowser.l"
+#line 3115 "phpbrowser.l"
 
 
 
 /* Return a string that describes the current mode */
 
-static char* modestring() {
+static char* modestring()
+{
     char* mode = "UNKNOWN";
 
-    switch (YY_START) {
+    switch (YY_START)
+    {
         case INITIAL:
             mode = "INITIAL";
             break;
@@ -7927,24 +7874,23 @@ static char* modestring() {
 }
 
 #if MATCH_DUMP
-
 /* Helper method that will print matches as they are made.
- * This method is typically used in the token generation phase.
- */
-
-static void matched_pattern(char * pattern, char * text) {
+* This method is typically used in the token generation phase.
+*/
+static void matched_pattern(char * pattern, char * text)
+{
     char * mode = modestring();
 
     fprintf(stderr, "Matched \"%s\", with text \"%s\", in mode \"%s\" (%d.%d)\n",
-        pattern, text, mode, sn_line(), sn_column());
+    pattern, text, mode, sn_line(), sn_column());
 }
-
 #endif /* MATCH_DUMP */
 
 static void FreeGlobalEntry(SearchEntry *entry) {}
 
 
-void FreeToken(Token* tok) {
+void FreeToken(Token* tok)
+{
     if (tok->strval != NULL) {
         ckfree(tok->strval);
     }
@@ -7959,11 +7905,9 @@ void FreeToken(Token* tok) {
     ckfree((char *) tok);
 }
 
-void append_dqstring_var_token(char* var,
-                           long start_line,
-                           int start_column,
-                           long end_line,
-                           int end_column) {
+void append_dqstring_var_token(char* var, long start_line, int start_column,
+ long end_line, int end_column)
+{
     Token* tok;
     tok = (Token*) ckalloc(sizeof(Token));
     tok->type = VARIABLE;
@@ -7987,39 +7931,26 @@ void append_dqstring_var_token(char* var,
     }
 }
 
-void append_dqstring_token(char* strval,
-                           long start_line,
-                           int start_column,
-                           long end_line,
-                           int end_column) {
+void append_dqstring_token(char* strval, long start_line, int start_column,
+ long end_line, int end_column)
+{
     if (embedded_dq_string_vars_head != NULL) {
-        append_token(VDOUBLE_QUOTED_STRING,
-                     strval,
-                     start_line,
-                     start_column,
-                     end_line,
-                     end_column);
-
+        append_token(VDOUBLE_QUOTED_STRING, strval, start_line,
+            start_column, end_line, end_column);
         tokens_tail->vars = embedded_dq_string_vars_head;
         embedded_dq_string_vars_head = NULL;
         embedded_dq_string_vars_tail = NULL;
     } else {
-        append_token(DOUBLE_QUOTED_STRING,
-                     strval,
-                     start_line,
-                     start_column,
-                     end_line,
-                     end_column);
+        append_token(DOUBLE_QUOTED_STRING, strval, start_line, start_column,
+            end_line, end_column);
     }
 }
 
-void append_token(TokenType type,
-                  char* strval,
-                  long start_line,
-                  int start_column,
-                  long end_line,
-                  int end_column) {
+void append_token(TokenType type, char* strval, long start_line,
+ int start_column, long end_line, int end_column)
+{
     Token* tok;
+
     tok = (Token*) ckalloc(sizeof(Token));
     tok->type = type;
     if (strval)
@@ -8045,7 +7976,8 @@ void append_token(TokenType type,
     }
 }
 
-Token* pop_head_token() {
+Token* pop_head_token()
+{
     Token* tok;
     assert(tokens_head);
     tok = tokens_head;
@@ -8058,16 +7990,17 @@ Token* pop_head_token() {
     return tok;
 }
 
-void free_head_token() {
+void free_head_token()
+{
     FreeToken(pop_head_token());
 }
 
 /*
- * This method is invoked when nested brackets within an
- * array name are encountered. For example: $arr1[++$arr2[0]]
- */
-
-void push_bracket_counter() {
+* This method is invoked when nested brackets within an
+* array name are encountered. For example: $arr1[++$arr2[0]]
+*/
+void push_bracket_counter()
+{
     NestedBracket* nbp = (NestedBracket*) ckalloc(sizeof(NestedBracket));
     nbp->var = current_array_token;
     nbp->count = current_array_bracket_count;
@@ -8081,7 +8014,8 @@ void push_bracket_counter() {
     }
 }
 
-void pop_bracket_counter() {
+void pop_bracket_counter()
+{
     if (array_nest_head != NULL) {
         NestedBracket* nbp = array_nest_head;
         if (array_nest_head == array_nest_tail) {
@@ -8097,10 +8031,10 @@ void pop_bracket_counter() {
 }
 
 /*
- * This method is invoked when nested braces occur.
- */
-
-void push_brace(TokenType braceType) {
+* This method is invoked when nested braces occur.
+*/
+void push_brace(TokenType braceType)
+{
     NestedBrace* nbp = (NestedBrace*) ckalloc(sizeof(NestedBrace));
     if ( !nbp )
         return;
@@ -8114,7 +8048,8 @@ void push_brace(TokenType braceType) {
     }
 }
 
-TokenType pop_brace() {
+TokenType pop_brace()
+{
     TokenType retToken;
     if (brace_nest_head != NULL) {
         NestedBrace* nbp = brace_nest_head;
@@ -8125,17 +8060,18 @@ TokenType pop_brace() {
         }
         retToken = nbp->btype;
         ckfree((char*) nbp);
-	return(retToken);
+        return(retToken);
     }
     return(UNKNOWN_TOKEN);
 }
 
 /*
- * This method is invoked when a nested function is
- * encountered.
- */
+* This method is invoked when a nested function is
+* encountered.
+*/
 
-void push_function() {
+void push_function()
+{
     NestedFunction* n = (NestedFunction*) ckalloc(sizeof(NestedFunction));
 
     n->name = current_function;
@@ -8156,7 +8092,8 @@ void push_function() {
     }
 }
 
-void pop_function() {
+void pop_function()
+{
     if (function_nest_head != NULL) {
         NestedFunction* n = function_nest_head;
         if (function_nest_head == function_nest_tail) {
@@ -8182,34 +8119,36 @@ void pop_function() {
 /* Determine the type of location where a cross reference is being initiated from */
 int from_what_scope()
 {
-  /* FIXME: SN_GLOBAL_NAMESPACE not forming a useable xref. See toolbox/snptools.c
-   * for the same reason that a reference from the global namespace is a problem.
-   * xrefs from within classes and functions, for the most part, works.
-   */
-  if (current_function == NULL) {
-      if (current_class == NULL) {
-        /* snptools.c asserts current function = NULL with SN_GLOBAL_NAMESPACE */
-        current_refblock = NULL;
-        return(SN_GLOBAL_NAMESPACE);
-      } else {
-        current_refblock = "__construct";
-        return(SN_SUBR_DEF);
-      }
-  } else {
-      current_refblock = current_function;
-      if (current_class == NULL)
-        return(SN_FUNC_DEF);
-      else
-        return(SN_MBR_FUNC_DEF);
-  }
+    /* FIXME: SN_GLOBAL_NAMESPACE not forming a useable xref. See toolbox/snptools.c
+    * for the same reason that a reference from the global namespace is a problem.
+    * xrefs from within classes and functions, for the most part, works.
+    */
+    if (current_function == NULL) {
+        if (current_class == NULL) {
+            /* snptools.c asserts current function = NULL with SN_GLOBAL_NAMESPACE */
+            current_refblock = NULL;
+            return(SN_GLOBAL_NAMESPACE);
+        } else {
+            current_refblock = "__construct";
+            return(SN_SUBR_DEF);
+        }
+    } else {
+        current_refblock = current_function;
+        if (current_class == NULL)
+            return(SN_FUNC_DEF);
+        else
+            return(SN_MBR_FUNC_DEF);
+    }
 }
 
 /* Note: these strings get put into the token stream used during the
- * token parsing portion of the program. Make sure the strings here
- * are reflected in the rules above.
- */
-char * TokenTypeToString(Token *tok) {
-    switch(tok->type) {
+* token parsing portion of the program. Make sure the strings here
+* are reflected in the rules above.
+*/
+char * TokenTypeToString(Token *tok)
+{
+    switch(tok->type)
+    {
         case OPEN_PAREN:
             return "OPEN_PAREN";
         case CLOSE_PAREN:
@@ -8302,79 +8241,79 @@ char * TokenTypeToString(Token *tok) {
             return "CONST_KEYWORD";
         case UNKNOWN_TOKEN:
             return "UNKNOWN_TOKEN";
-        case COMMENT:
-            return "COMMENT";
-        case HTML:
-            return "HTML";
+        case COMMENT_TOKEN:
+            return "COMMENT_TOKEN";
+        case HTML_TOKEN:
+            return "HTML_TOKEN";
         default:
             return "TOKEN_NOT_MATCHED";
     }
 }
 
 /* Called when the closing brace of a function is found
- * or when we hit EOF without finding the end of the
- * function.
- */
-
-void emit_function_declaration() {
+* or when we hit EOF without finding the end of the
+* function.
+*/
+void emit_function_declaration()
+{
     if (current_class) {
-#ifdef TOKEN_DEBUG
-       fprintf(tokenout, "emit class function definition \"%s\"\n", current_function);
-#endif
-       result = sn_insert_symbol(SN_MBR_FUNC_DEF,
-               current_class,
-               current_function,
-               sn_current_file(), 
-               current_function_line_start, current_function_column_start,
-               current_function_line_end, current_function_column_end,
-               recent_vis,
-               NULL /* return type */,
-               current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
-               current_function_args /* argument names */,
-               NULL /* comment */,
-               current_function_highlight_line,
-               current_function_highlight_column_start,
-               current_function_highlight_line,
-               current_function_highlight_column_end );
-       assert(result == 0);
-       /* NOTE: both declare and define because PHP is almost an un-typed language */
-       result = sn_insert_symbol(SN_MBR_FUNC_DCL,
-               current_class,
-               current_function,
-               sn_current_file(), 
-               current_function_line_start, current_function_column_start,
-               current_function_line_end, current_function_column_end,
-               recent_vis,
-               NULL /* return type */,
-               current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
-               current_function_args /* argument names */,
-               NULL /* comment */,
-               current_function_highlight_line,
-               current_function_highlight_column_start,
-               current_function_highlight_line,
-               current_function_highlight_column_end );
-       assert(result == 0);
-     } else {
-#ifdef TOKEN_DEBUG
-       fprintf(tokenout, "emit function definition \"%s\"\n", current_function);
-#endif
-       result = sn_insert_symbol(SN_FUNC_DEF,
-               NULL,
-               current_function,
-               sn_current_file(), 
-               current_function_line_start, current_function_column_start,
-               current_function_line_end, current_function_column_end,
-               0 /* attribute */,
-               NULL /* return type */,
-               NULL /* argument types */,
-               current_function_args /* argument names */,
-               NULL /* comment */,
-               current_function_highlight_line,
-               current_function_highlight_column_start,
-               current_function_highlight_line,
-               current_function_highlight_column_end );
-       assert(result == 0);
-     }
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "emit class function definition \"%s\"\n", current_function);
+        #endif
+        result = sn_insert_symbol(SN_MBR_FUNC_DEF,
+            current_class,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            recent_vis,
+            NULL /* return type */,
+            current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+        assert(result == 0);
+        /* NOTE: both declare and define because PHP is almost an un-typed language */
+        result = sn_insert_symbol(SN_MBR_FUNC_DCL,
+            current_class,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            recent_vis,
+            NULL /* return type */,
+            current_function_args /* argument types, FIXME: php not strongly typed, use names*/,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+        assert(result == 0);
+    } else {
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "emit function definition \"%s\"\n", current_function);
+        #endif
+        result = sn_insert_symbol(SN_FUNC_DEF,
+            NULL,
+            current_function,
+            sn_current_file(), 
+            current_function_line_start, current_function_column_start,
+            current_function_line_end, current_function_column_end,
+            0 /* attribute */,
+            NULL /* return type */,
+            NULL /* argument types */,
+            current_function_args /* argument names */,
+            NULL /* comment */,
+            current_function_highlight_line,
+            current_function_highlight_column_start,
+            current_function_highlight_line,
+            current_function_highlight_column_end );
+        assert(result == 0);
+    }
 
 
     ckfree(current_function);
@@ -8383,82 +8322,84 @@ void emit_function_declaration() {
     current_function_args = NULL;
 
     if (global_var_table) {
-      global_var_table->destroy( &global_var_table );
-      global_var_table = NULL;
+        global_var_table->destroy( &global_var_table );
+        global_var_table = NULL;
     }
-  reset_vis(); /* prep for visibility specs */
+    reset_vis(); /* prep for visibility specs */
 }
 
-void emit_comment() {
+void emit_comment()
+{
     char* comment = mode_buff.buf;
 
-#if COMMENT_DUMP
+    #if COMMENT_DUMP
     fprintf(stderr, "emit comment \"%s\"\n", comment);
-#endif
+    #endif
 
-  /* If dumping tokens, emit a special COMMENT token.
-   * Otherwise, insert a comment symbol and a highlight.
-   */
-  if (token_dump_file) {
-    append_token(COMMENT, comment,
+    /* If dumping tokens, emit a special COMMENT token.
+    * Otherwise, insert a comment symbol and a highlight.
+    */
+    if (token_dump_file) {
+        append_token(COMMENT_TOKEN, comment,
             mode_start_line,
             mode_start_column - 2,
             sn_line(),
             sn_column() + 2);
-  } else {
-    sn_insert_comment(
-        /* classname */ NULL,
-        /* funcname */ NULL,
-        sn_current_file(),
-        comment,
-        mode_start_line,
-        mode_start_column);
-
-    sn_highlight(SN_HIGH_COMMENT,
+    } else {
+        sn_insert_comment(
+            /* classname */ NULL,
+            /* funcname */ NULL,
+            sn_current_file(),
+            comment,
             mode_start_line,
-            mode_start_column - 2,
-            sn_line(),
-            sn_column() + 2);
-  }
+            mode_start_column);
 
-  mode_buff.free(&mode_buff);
+        sn_highlight(SN_HIGH_COMMENT,
+            mode_start_line, mode_start_column - 2,
+            sn_line(), sn_column() + 2);
+    }
+
+    mode_buff.free(&mode_buff);
 }
 
-void emit_dqstring() {
+void emit_dqstring()
+{
     char* dqstring = mode_buff.buf;
     char * x;
     char * var;
 
-#if DQSTRING_DUMP
+    #if DQSTRING_DUMP
     fprintf(stderr, "creating dqstring token \"%s\"\n", dqstring);
-#endif
+    #endif
 
     append_dqstring_token(dqstring,
-            mode_start_line,
-            mode_start_column,
-            sn_line(),
-            sn_column());
+        mode_start_line,
+        mode_start_column,
+        sn_line(),
+        sn_column());
 
     mode_buff.free(&mode_buff);
 }
 
-void emit_sqstring() {
+void emit_sqstring()
+{
     char* sqstring = mode_buff.buf;
 
-#if SQSTRING_DUMP
+    #if SQSTRING_DUMP
     fprintf(stderr, "creating sqstring token \'%s\'\n", sqstring);
-#endif
+    #endif
 
     append_token(SINGLE_QUOTED_STRING, sqstring,
-            mode_start_line,
-            mode_start_column,
-            sn_line(),
-            sn_column());
+        mode_start_line,
+        mode_start_column,
+        sn_line(),
+        sn_column());
 
     mode_buff.free(&mode_buff);
 }
 
-void emit_hdstring() {
+void emit_hdstring()
+{
     char* hdstring = mode_buff.buf;
 
     /* Nuke trailing newline in hdstring */
@@ -8467,297 +8408,301 @@ void emit_hdstring() {
         *end = '\0';
     }
 
-#if HDSTRING_DUMP
+    #if HDSTRING_DUMP
     fprintf(stderr, "creating hdstring token \"%s\"\n", hdstring);
-#endif
+    #endif
 
     /* sn_column() should be at the ; at the end of a heredoc */
 
     append_dqstring_token(hdstring,
-            mode_start_line,
-            mode_start_column,
-            sn_line(),
-            sn_column());
+        mode_start_line,
+        mode_start_column,
+        sn_line(),
+        sn_column());
 
     /* A heredoc string is followed by a SEMICOLON */
 
     append_token(SEMICOLON, NULL,
-            sn_line(),
-            sn_column(),
-            sn_line(),
-            sn_column()+1);
+        sn_line(),
+        sn_column(),
+        sn_line(),
+        sn_column()+1);
 
     mode_buff.free(&mode_buff);
 }
 
 
 /* Helper method to enter HTML mode.
- * Should be called in place of BEGIN(HTML_MODE) */
+* Should be called in place of BEGIN(HTML_MODE) */
 
-void enter_html_mode() {
+void enter_html_mode()
+{
     if (token_dump_file) {
-      LongStringInit(&mode_buff,0);
-      mode_start_line = sn_line();
-      mode_start_column = sn_column();
+        LongStringInit(&mode_buff,0);
+        mode_start_line = sn_line();
+        mode_start_column = sn_column();
     }
     BEGIN(HTML_MODE);
 }
 
 
-void emit_html() {
+void emit_html()
+{
     if (token_dump_file) {
-      char * html_text = mode_buff.buf;
+        char * html_text = mode_buff.buf;
 
-#if HTML_DUMP
-      fprintf(stderr, "creating html token \"%s\"\n", html_text);
-#endif
+        #if HTML_DUMP
+        fprintf(stderr, "creating html token \"%s\"\n", html_text);
+        #endif
 
-      append_token(HTML, html_text,
+        append_token(HTML_TOKEN, html_text,
             mode_start_line,
             mode_start_column,
             sn_line(),
             sn_column());
 
-      mode_buff.free(&mode_buff);
+        mode_buff.free(&mode_buff);
     }
 }
 
 /* Write out read xrefs for variables embedded in this
- * VDOUBLE_QUOTED_STRING token
- */
-
-void emit_var_access_for_dqstring(Token* tok) {
-  assert(tok->vars);
-  for (tok = tok->vars; tok; tok = tok->next) {
-      emit_var_access(tok, VAR_READ);
-  }
+* VDOUBLE_QUOTED_STRING token
+*/
+void emit_var_access_for_dqstring(Token* tok)
+{
+    assert(tok->vars);
+    for (tok = tok->vars; tok; tok = tok->next) {
+        emit_var_access(tok, VAR_READ);
+    }
 }
 
 /* This method is invoked when a var operation is matched
- * in the token stream.
- */
+* in the token stream.
+*/
+void emit_var_access(Token *tok, VarAccess acc)
+{
+    char* varname = tok->strval;
+    SearchEntry entry;
+    int ref_to_symbol_type, ref_to_symbol_scope;
+    int ref_from_scope_type;
+    int line_start, line_end, column_start, column_end;
 
-void emit_var_access(Token *tok, VarAccess acc) {
-  char* varname = tok->strval;
-  SearchEntry entry;
-  int ref_to_symbol_type, ref_to_symbol_scope;
-  int ref_from_scope_type;
-  int line_start, line_end, column_start, column_end;
+    line_start = tok->start_line;
+    column_start = tok->start_column;
+    line_end = tok->end_line;
+    column_end = tok->end_column;
 
-  line_start = tok->start_line;
-  column_start = tok->start_column;
-  line_end = tok->end_line;
-  column_end = tok->end_column;
+    /*
+    * A var is global if not currently in a function,
+    * if the variable is in the super global table,
+    * or if in the global table.
+    */
 
-  /*
-   * A var is global if not currently in a function,
-   * if the variable is in the super global table,
-   * or if in the global table.
-   */
+    entry.key = varname;
+    entry.key_len = -1;
 
-  entry.key = varname;
-  entry.key_len = -1;
-
-  if (((current_function == NULL) && (current_class == NULL)) ||
-      (super_global_var_table->search( &super_global_var_table, entry ) != NULL) ||
-      (global_var_table &&
+    if (((current_function == NULL) && (current_class == NULL)) ||
+        (super_global_var_table->search( &super_global_var_table, entry ) != NULL) ||
+        (global_var_table &&
         (global_var_table->search( &global_var_table, entry ) != NULL))) {
-    ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
-#ifdef TOKEN_DEBUG
-    fprintf(tokenout, "global var \"%s\"\n", varname);
-#endif
-  } else {
-    ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
-    ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
-#ifdef TOKEN_DEBUG
-       fprintf(tokenout, "local var \"%s\"\n", varname);
-#endif
-  }
+            ref_to_symbol_type = SN_REF_TO_GLOB_VAR;
+            ref_to_symbol_scope = SN_REF_SCOPE_GLOBAL;
+            #ifdef TOKEN_DEBUG
+            fprintf(tokenout, "global var \"%s\"\n", varname);
+            #endif
+    } else {
+        ref_to_symbol_type = SN_REF_TO_LOCAL_VAR;
+        ref_to_symbol_scope = SN_REF_SCOPE_LOCAL;
+        #ifdef TOKEN_DEBUG
+        fprintf(tokenout, "local var \"%s\"\n", varname);
+        #endif
+    }
 
-  ref_from_scope_type = from_what_scope();
+    ref_from_scope_type = from_what_scope();
 
-  if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
-      ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
-          ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
+    if ((ref_to_symbol_type == SN_REF_TO_GLOB_VAR) ||
+        ((ref_to_symbol_type == SN_REF_TO_LOCAL_VAR) &&
+        ((int) sn_getopt(SN_OPT_LOCAL_VARS) != 0))) {
 
-    if ((acc == VAR_READ) || (acc == VAR_READWRITE)) {
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "var readable insert xref \"%s\" from %d to %d class %s func %s rd %d\n",
-		varname, ref_from_scope_type, ref_to_symbol_scope,
-		(current_class ? current_class : "NULL"),
-		(current_function ? current_function : "NULL"), acc);
-#endif
+        if ((acc == VAR_READ) || (acc == VAR_READWRITE)) {
+            /*
+            * fprintf(tokenout,
+            *     "var readable insert xref \"%s\" from %d to %d class %s func %s rd %d\n",
+            *     varname, ref_from_scope_type, ref_to_symbol_scope,
+            *     (current_class ? current_class : "NULL"),
+            *     (current_function ? current_function : "NULL"), acc);
+            */
+            result = sn_insert_xref(ref_to_symbol_type,
+                ref_from_scope_type,
+                ref_to_symbol_scope,
+                current_class,
+                current_refblock,
+                NULL,
+                NULL,
+                varname,
+                "UNDECLARED",
+                sn_current_file(),
+                line_start,
+                SN_REF_READ);
+
+            assert(result == 0);
+        }
+        /*
+        *    fprintf(tokenout, "var not readable skip xref \"%s\" to %d acc %d\n",
+        *        varname, ref_to_symbol_scope, acc);
+        */
+
+        if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
+            /*
+            * fprintf(tokenout,
+            *     "var writeable insert xref \"%s\" from %d to %d class %s func %s rd %d\n",
+            *     varname, ref_from_scope_type, ref_to_symbol_scope,
+            *    (current_class ? current_class : "NULL"),
+            *    (current_function ? current_function : "NULL"), acc);
+            */
+            result = sn_insert_xref(ref_to_symbol_type,
+                ref_from_scope_type,
+                ref_to_symbol_scope,
+                current_class,
+                current_refblock,
+                NULL,
+                NULL,
+                varname,
+                "UNDECLARED",
+                sn_current_file(),
+                line_start,
+                SN_REF_WRITE);
+
+            assert(result == 0);
+        }
+        /*
+        * else
+        * fprintf(tokenout, "var not writeable skip xref \"%s\" to %d acc %d\n",
+        *    varname, ref_to_symbol_scope, acc);
+        */
+    } else if (acc == VAR_CLASS_DEREF) {
+        /*
+        * fprintf(tokenout, "class var insert xref \"%s\" to %d opt %d\n",
+        *    varname, ref_to_symbol_scope, (int) sn_getopt(SN_OPT_LOCAL_VARS));
+        */
         result = sn_insert_xref(ref_to_symbol_type,
-                 ref_from_scope_type,
-                 ref_to_symbol_scope,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 varname,
-                 "UNDECLARED",
-                 sn_current_file(),
-                 line_start,
-                 SN_REF_READ);
+            ref_from_scope_type,
+            ref_to_symbol_scope,
+            current_class,
+            current_refblock,
+            NULL,
+            NULL,
+            varname,
+            "UNDECLARED",
+            sn_current_file(),
+            line_start,
+            SN_REF_PASS);
 
         assert(result == 0);
     }
-#ifdef TOKEN_DEBUG
-    else
-        fprintf(tokenout, "var not readable skip xref \"%s\" to %d acc %d\n",
-		varname, ref_to_symbol_scope, acc);
-#endif
+    /*
+    * else
+    *    fprintf(tokenout, "local var skip insert xref \"%s\" to %d opt %d\n",
+    *        varname, ref_to_symbol_scope, (int) sn_getopt(SN_OPT_LOCAL_VARS));
+    */
 
-    if ((acc == VAR_WRITE) || (acc == VAR_READWRITE)) {
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "var writeable insert xref \"%s\" from %d to %d class %s func %s rd %d\n",
-		varname, ref_from_scope_type, ref_to_symbol_scope,
-		(current_class ? current_class : "NULL"),
-		(current_function ? current_function : "NULL"), acc);
-#endif
-        result = sn_insert_xref(ref_to_symbol_type,
-                 ref_from_scope_type,
-                 ref_to_symbol_scope,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 varname,
-                 "UNDECLARED",
-                 sn_current_file(),
-                 line_start,
-                 SN_REF_WRITE);
-
-        assert(result == 0);
+    if (ref_to_symbol_type == SN_REF_TO_GLOB_VAR) {
+        sn_highlight(SN_HIGH_VAR_GLOBAL,
+            line_start, column_start,
+            line_end, column_end);
+    } else {
+        #ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
+        sn_highlight(SN_HIGH_VAR_LOCAL,
+            line_start, column_start,
+            line_end, column_end);
+        #endif
     }
-#ifdef TOKEN_DEBUG
-    else
-        fprintf(tokenout, "var not writeable skip xref \"%s\" to %d acc %d\n",
-		varname, ref_to_symbol_scope, acc);
-#endif
-  } else if (acc == VAR_CLASS_DEREF) {
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "class var insert xref \"%s\" to %d opt %d\n",
-		varname, ref_to_symbol_scope, (int) sn_getopt(SN_OPT_LOCAL_VARS));
-#endif
-        result = sn_insert_xref(ref_to_symbol_type,
-                 ref_from_scope_type,
-                 ref_to_symbol_scope,
-                 current_class,
-                 current_refblock,
-                 NULL,
-                 NULL,
-                 varname,
-                 "UNDECLARED",
-                 sn_current_file(),
-                 line_start,
-                 SN_REF_PASS);
-
-        assert(result == 0);
-  } else {
-#ifdef TOKEN_DEBUG
-        fprintf(tokenout, "local var skip insert xref \"%s\" to %d opt %d\n",
-		varname, ref_to_symbol_scope, (int) sn_getopt(SN_OPT_LOCAL_VARS));
-#endif
-  }
-
-  if (ref_to_symbol_type == SN_REF_TO_GLOB_VAR) {
-      sn_highlight(SN_HIGH_VAR_GLOBAL,
-          line_start, column_start,
-          line_end, column_end);
-  } else {
-#ifdef ALLOW_LOCAL_VAR_HIGHLIGHT
-      sn_highlight(SN_HIGH_VAR_LOCAL,
-          line_start, column_start,
-          line_end, column_end);
-#endif
-  }
-  reset_vis(); /* prep for visibility specs */
+    reset_vis(); /* prep for visibility specs */
 }
 
-int get_num_tokens_matched(char *match) {
-  char *x;
-  int tokens;
+int get_num_tokens_matched(char *match)
+{
+    char *x;
+    int tokens;
 
-  assert(*match != '\0'); /* match must have some text */
-  assert(*match != ' '); /* match can't start with a space */
-  for (x=match, tokens=0; *x; x++) {
-    if (*x == ' ') {
-        /* We just got to the end of a token */
-        assert(*(x-1) != ' '); /* two spaces in a row is not allowed */
+    assert(*match != '\0'); /* match must have some text */
+    assert(*match != ' '); /* match can't start with a space */
+    for (x=match, tokens=0; *x; x++) {
+        if (*x == ' ') {
+            /* We just got to the end of a token */
+            assert(*(x-1) != ' '); /* two spaces in a row is not allowed */
+            tokens++;
+        }
+    }
+    if (*(x-1) != ' ') {
         tokens++;
     }
-  }
-  if (*(x-1) != ' ') {
-    tokens++;
-  }
-  return tokens;
+    return tokens;
 }
 
 void
 reset()
 {
-  assert(!current_function);
-  assert(!current_class);
-  assert(!current_parent);
-  sn_reset_line();
-  sn_reset_column();
-  sn_reset_encoding();
+    assert(!current_function);
+    assert(!current_class);
+    assert(!current_parent);
+    sn_reset_line();
+    sn_reset_column();
+    sn_reset_encoding();
 }
 
 void
 reset_vis()
 {
-  recent_vis = SN_PUBLIC;
-  recent_vis_toknum = token_index - 1;
+    recent_vis = SN_PUBLIC;
+    recent_vis_toknum = token_index - 1;
 }
 
 void
 set_vis(TokenType useTok)
 {
-  if (useTok == ABSTRACT_KEYWORD) {
-    recent_vis = SN_ABSTRACT;
-  } else if (useTok == STATIC_KEYWORD) {
-    recent_vis |= SN_STATIC;
-  } else {
-    if (useTok == PUBLIC_KEYWORD) {
-        recent_vis &= ~(SN_PROTECTED | SN_PRIVATE);
-        recent_vis |= SN_PUBLIC;
-    } else if (useTok == PROTECTED_KEYWORD) {
-        recent_vis &= ~(SN_PUBLIC | SN_PRIVATE);
-        recent_vis |= SN_PROTECTED;
-    } else if (useTok == PRIVATE_KEYWORD) {
-        recent_vis &= ~(SN_PUBLIC | SN_PROTECTED);
-        recent_vis |= SN_PRIVATE;
+    if (useTok == ABSTRACT_KEYWORD) {
+        recent_vis = SN_ABSTRACT;
+    } else if (useTok == STATIC_KEYWORD) {
+        recent_vis |= SN_STATIC;
+    } else {
+        if (useTok == PUBLIC_KEYWORD) {
+            recent_vis &= ~(SN_PROTECTED | SN_PRIVATE);
+            recent_vis |= SN_PUBLIC;
+        } else if (useTok == PROTECTED_KEYWORD) {
+            recent_vis &= ~(SN_PUBLIC | SN_PRIVATE);
+            recent_vis |= SN_PROTECTED;
+        } else if (useTok == PRIVATE_KEYWORD) {
+            recent_vis &= ~(SN_PUBLIC | SN_PROTECTED);
+            recent_vis |= SN_PRIVATE;
+        }
     }
-  }
-  recent_vis_toknum = token_index;
+    recent_vis_toknum = token_index;
 }
 
 int
 main(int argc, char *argv[])
 {
-  /* Init the super globals lookup table before starting
-   * since it will never change during parsing.
-   */
+    /* Init the super globals lookup table before starting
+    * since it will never change during parsing.
+    */
 
-  int i;
-  SearchEntry entry;
-  char* super_globals[] = {
-    "GLOBALS", "_SERVER", "_GET", "_POST", "_COOKIE",
-    "_FILES", "_ENV", "_REQUEST", "_SESSION", NULL
-  };
-  super_global_var_table =
+    int i;
+    SearchEntry entry;
+    char* super_globals[] = {
+        "GLOBALS", "_SERVER", "_GET", "_POST", "_COOKIE",
+        "_FILES", "_ENV", "_REQUEST", "_SESSION", NULL
+    };
+    super_global_var_table =
     SearchTableCreate(20, SEARCH_HASH_TABLE, FreeGlobalEntry);
 
-  for (i=0; super_globals[i]; i++) {
-    entry.key = super_globals[i];
-    entry.key_len = -1;
-    entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
-    super_global_var_table->add( &super_global_var_table, entry );
-  }
+    for (i=0; super_globals[i]; i++) {
+        entry.key = super_globals[i];
+        entry.key_len = -1;
+        entry.flag = SEARCH_DUP_KEY; /* add copy of entry.key */
+        super_global_var_table->add( &super_global_var_table, entry );
+    }
 
-  return sn_main(argc, argv, group, &yyin, yylex, reset);
+    return sn_main(argc, argv, group, &yyin, yylex, reset);
 }
 
