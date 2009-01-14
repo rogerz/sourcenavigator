@@ -384,7 +384,7 @@ XCVARS   = $(cvarsdll)
 ifeq ($(GCC),yes)
 
 $(TIXDLL): $(TIXOBJS)
-	$(CC) -shared -s -nostartfiles -o $(TIXDLLNAME) $(TIXOBJS) \
+	$(CC) -shared -s -o $(TIXDLLNAME) $(TIXOBJS) \
 	$(TKLIBDIR)/$(TKLIB) $(TCLLIBDIR)/$(TCLLIB) -lgdi32 \
 	-mwindows -e _DllMain@12 -Wl,--image-base,0x66600000 \
 	-Wl,--out-implib,$(TIXLIB)
