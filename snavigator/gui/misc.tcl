@@ -44,7 +44,7 @@ proc sn_splash_dialog {type} {
     wm withdraw ${w}
 
     ${w} configure -title [list ${sn_product_name}]
-    sn_log "creating splash image [file join $sn_path(bitmapdir) $splash_img]]"
+    sn_log "creating splash image [file join $sn_path(bitmapdir) $splash_img]"
 
     image create photo cyg-sol -file [file join $sn_path(bitmapdir) $splash_img] -palette 0/0/8
 
@@ -963,7 +963,7 @@ proc sn_load_xref {xfer_file cbrowser_xref} {
     # parsed then just pass the file name containing
     # xref output to dbimp.
 
-    set cbr2_cmd [list [file join $sn_path(bindir) cbrowser2]]
+    set cbr2_cmd [list [file join $sn_path(parserdir) cbrowser2]]
     
     if {[string first "-l" $sn_options(sys,parser_switches)] != -1} {
         lappend cbr2_cmd -l
@@ -980,7 +980,7 @@ proc sn_load_xref {xfer_file cbrowser_xref} {
         -C $sn_options(def,xref-db-cachesize)
     lappend cbr2_cmd ${xfer_file}
 
-    set dbimp_cmd [list [file join $sn_path(bindir) dbimp] \
+    set dbimp_cmd [list [file join $sn_path(parserdir) dbimp] \
         -H [info hostname] \
         -P [pid] -c $sn_options(def,db_cachesize) \
         -C $sn_options(def,xref-db-cachesize)]
@@ -2261,7 +2261,7 @@ proc sn_load_hide_unload_files {dir loadf {hidefiles ""} {unloadf ""} {view\
 
         close ${unloadfd}
 
-        set dbexec [file join $sn_path(bindir) dbimp]
+        set dbexec [file join $sn_path(parserdir) dbimp]
 
         set cmd [list ${dbexec} -f ${tmpf} -c $sn_options(def,db_cachesize)\
           -C $sn_options(def,xref-db-cachesize) $sn_options(db_files_prefix)]
@@ -3972,9 +3972,9 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         return 0
     }
     if {$tcl_platform(platform) == "windows"} {
-        set pipe [file join $sn_path(bindir) dbimp.exe]
+        set pipe [file join $sn_path(parserdirdir) dbimp.exe]
     } else {
-        set pipe [file join $sn_path(bindir) dbimp]
+        set pipe [file join $sn_path(parserdir) dbimp]
     }
 
     #verify if Xref generation will be started
@@ -4009,7 +4009,7 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
     lappend cmd -c $sn_options(def,db_cachesize) -H [info hostname] -P [pid]
     lappend cmd $sn_options(db_files_prefix)
 
-    sn_log "Parsing command: ${cmd}"
+    sn_log "Launching parser with command: ${cmd}"
 
     if {${sn_debug}} {
         sn_log "Include dir list: ${incl}"

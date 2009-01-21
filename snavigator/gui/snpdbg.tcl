@@ -229,7 +229,7 @@ proc snpdbg_parse_files { files } {
         set xref ${rname}_xref
         set browser_output ${rname}_${brow_tail}
         set dbimp_output ${rname}_dbimp
-        set dbimp_cmd [list [file join $sn_path(bindir) dbimp]]
+        set dbimp_cmd [list [file join $sn_path(parserdir) dbimp]]
 
         # If parsing c/c++ file with cbrowser, pass
         # a flag to sn_load_xref so that it knows to

@@ -257,7 +257,7 @@ top_srcdir = @top_srcdir@
 # MA 02111-1307, USA.
 # 
 AUTOMAKE_OPTIONS = cygnus
-imagedir = $(datadir)/bitmaps
+imagedir = $(datadir)/snavigator/bitmaps
 image_DATA = add.xpm addall.xpm arrow.xpm ascend.xpm \
 browse.xpm build.xpm \
 classes.xpm compile.xpm \

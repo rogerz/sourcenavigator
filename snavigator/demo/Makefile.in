@@ -227,7 +227,8 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = cygnus
-demosdir = $(datadir)/demos
+DEMOS_TO_INSTALL = asm c++ cobol fortran java
+demosdir = $(datadir)/snavigator/demos
 all: all-am
 
 .SUFFIXES:
@@ -364,7 +365,7 @@ uninstall-am:
 
 install-data-local:
 	@$(mkinstalldirs) $(DESTDIR)$(demosdir)
-	for p in @C_DEMO@ @ASM_DEMO@ @FOR_DEMO@ @COB_DEMO@ @MONOP_DEMO@ @JAV_DEMO@ ; do \
+	for p in $(DEMOS_TO_INSTALL) ; do \
 	  echo "copying $$p to $(DESTDIR)$(demosdir)" ; \
 	  ( \
 	  cd $(srcdir) ; \

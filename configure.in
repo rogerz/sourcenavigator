@@ -34,9 +34,11 @@ case "${host}" in
         ;;
 esac
 
-
 AC_ARG_ENABLE([mingw],AS_HELP_STRING([--enable-mingw], [build under win32/minGW]),[],[with_mingw=no])
 
+dnl properly define libexecdir
+libexecdir='${exec_prefix}/libexec/snavigator'
+AC_SUBST(libexecdir)
 
 TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"
 AC_SUBST(TOP_SUBDIRS)

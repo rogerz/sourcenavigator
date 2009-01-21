@@ -20,6 +20,10 @@ case "${host}" in
         ;;
 esac
 
+dnl properly define libexecdir
+libexecdir='${exec_prefix}/libexec/snavigator'
+AC_SUBST(libexecdir)
+
 AC_CANONICAL_HOST
 
 # To accomodate db4
@@ -43,12 +47,6 @@ SN_DOCSET=
 SN_BOOKS="userguide progref"
 SN_LAUNCH_SHELL=snavigator
 AC_DEFINE(SN_ELIX, 0, [Define this if we are building with elix features.])
-C_DEMO=c++_demo
-ASM_DEMO=asm_demo
-COB_DEMO=cob_demo
-FOR_DEMO=for_demo
-MONOP_DEMO=monop
-JAV_DEMO=jav_demo
 GETTING_STARTED_DIR=
 GETTING_STARTED_INDEX=
 GETTING_STARTED_NAME=
@@ -568,18 +566,8 @@ snavigator/Makefile
 misc/Makefile
 misc/libutils/Makefile
 sdk/Makefile
-sdk/api/Makefile
-sdk/api/tcl/Makefile
-sdk/api/tcl/misc/Makefile
-sdk/api/tcl/database/Makefile
-sdk/api/tcl/database/examples/Makefile
-sdk/api/c/Makefile
-sdk/api/c/database/Makefile
-sdk/api/c/database/examples/Makefile
-sdk/parsers/Makefile
-sdk/parsers/examples/Makefile
-sdk/parsers/examples/assembly/Makefile
-sdk/parsers/examples/elf/Makefile
+sdk/misc/Makefile
+sdk/database/Makefile
 snavigator/unix/Makefile
 snavigator/unix/snscenario
 snavigator/win/Makefile

@@ -477,25 +477,28 @@ proc sn_check_browsers_path {} {
 
     foreach type ${Avail_Parsers} {
         # Parser command.
-        set cmd [file rootname [file tail $Parser_Info(${type},BROW)]]
+        set cmd $Parser_Info(${type},BROW)
+	
+	puts "checking for $cmd"
+	
         if {${cmd} != ""} {
-            set cmd [file join $sn_path(bindir) ${cmd}]
-            if {$tcl_platform(platform) == "windows" && ! [file exists\
-              ${cmd}]} {
+            if {$tcl_platform(platform) == "windows" && ! [file exists ${cmd}]} {
                 append cmd ".exe"
             }
             set Parser_Info(${type},BROW) ${cmd}
+		puts "setting BROW to $cmd"
+
         }
 
         # Highlighting command.
-        set cmd [file rootname [file tail $Parser_Info(${type},HIGH)]]
+        set cmd $Parser_Info(${type},HIGH)
         if {${cmd} != ""} {
-            set cmd [file join $sn_path(bindir) ${cmd}]
-            if {$tcl_platform(platform) == "windows" && ! [file exists\
-              ${cmd}]} {
+            if {$tcl_platform(platform) == "windows" && ! [file exists ${cmd}]} {
                 append cmd ".exe"
             }
             set Parser_Info(${type},HIGH) ${cmd}
+    		puts "setting HIGH to $cmd"
+
         }
     }
 
@@ -589,6 +592,8 @@ proc sn_add_parser {type args} {
     set Parser_Info(${type},CASE) ${case}
     set Parser_Info(${type},MACRO) ${macros}
     set Parser_Info(${type},EDIT) ""
+
+    sn_log "Added parser for types \{ ${suf} \} parser at ${brow_cmd}"
 }
 
 #executed when user specifies parser extensions on the

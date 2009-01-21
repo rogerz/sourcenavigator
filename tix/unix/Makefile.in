@@ -126,8 +126,7 @@ install-binaries::
 #
 # Basic installtion
 #
-install-basic:: install-libraries install-headers install-demos \
-	install-man install-tools 
+install-basic:: install-libraries install-headers install-tools 
 
 install-tools:
 	@for i in $(BIN_DIR) ; \

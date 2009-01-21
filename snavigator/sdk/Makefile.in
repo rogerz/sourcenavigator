@@ -260,7 +260,7 @@ top_srcdir = @top_srcdir@
 # 
 AUTOMAKE_OPTIONS = cygnus
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
-SUBDIRS = api parsers
+SUBDIRS = database misc
 all: all-recursive
 
 .SUFFIXES:
@@ -475,7 +475,7 @@ install-data-am:
 
 install-dvi: install-dvi-recursive
 
-install-exec-am: install-exec-local
+install-exec-am:
 
 install-html: install-html-recursive
 
@@ -515,17 +515,14 @@ uninstall-am:
 	ctags-recursive distclean distclean-generic distclean-tags dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-local install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-recursive uninstall uninstall-am
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am
 
-
-install-exec-local:
-	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ $(DESTDIR)$(sdkdir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -274,6 +274,16 @@ int     high_end_colpos)
 		fprintf(stderr,
 			"Error: put_symbol argument #3 must not be empty, type: (%s), line: %d file: %s\n",
 			sym_str_type,start_lineno,file_name);
+			
+		fprintf(stderr,
+			"Dump: scope_name: %s, symbol_name: %s, file_name: %s, start_lineno: %d, start_colpos: %d, end_lineno: %d, end_colpos: %d, " \
+			"attr: %d, ret: %s, arg_types: %s, args: %s, comment: %s\n",
+			scope_name, symbol_name, file_name,
+			start_lineno, start_colpos, end_lineno, end_colpos,
+			attr,
+			ret, arg_types, args, comment
+		       );
+		 
 		fflush(stderr);
 		return -1;
 	}

@@ -52,7 +52,7 @@ $(TCLHDIR) $(TK_XINCLUDES) \
 sdkincludedir = $(datadir)/sdk/include
 sdkinclude_HEADERS = sn.h 
 
-bin_PROGRAMS = hyper
+libexec_PROGRAMS = hyper
 
 hyper_SOURCES = compare.h compare.c dbsym.c exint.c \
 recudir.c services.c sninit.c tclxlist.c tkTreeTable.c tcl_high.c \

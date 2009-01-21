@@ -25,7 +25,7 @@ toolbox = $(top_builddir)/../../toolbox
 common = $(top_builddir)/../../common
 libutils = $(top_builddir)/../../../misc/libutils
 
-bin_PROGRAMS = abrowser
+libexec_PROGRAMS = abrowser
 
 INCLUDES = $(WINFLAGS) -I$(top_srcdir)/../../../hyper \
 	-I$(top_srcdir)/../../toolbox \

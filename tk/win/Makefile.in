@@ -391,7 +391,7 @@ runtest: tktest
 	PATH="$(PATH):$(TCL_BIN_DIR)"; export PATH; \
 	./$(TKTEST) 
 
-install: all install-binaries install-libraries install-doc install-demos
+install: all install-binaries install-libraries
 
 install-binaries:
 	@for i in $(LIB_INSTALL_DIR) $(BIN_INSTALL_DIR) ; \

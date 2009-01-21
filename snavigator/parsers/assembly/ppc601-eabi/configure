@@ -2285,6 +2285,9 @@ case "${host}" in
         ;;
 esac
 
+libexecdir='${exec_prefix}/libexec/snavigator'
+
+
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   { { echo "$as_me:$LINENO: error: cannot run $SHELL $ac_aux_dir/config.sub" >&5

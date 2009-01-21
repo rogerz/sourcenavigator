@@ -29,7 +29,7 @@ INCLUDES = $(WINFLAGS) -I$(top_srcdir)/hyper -I$(srcdir)/cpplib \
 	-I$(top_srcdir)/db -I$(top_srcdir)/misc/libutils -I$(DB_INCDIR) \
 	-I$(DB_LIBDIR) -I$(top_srcdir)/parsers/common $(TCLHDIR)
 
-bin_PROGRAMS = cbrowser cbrowser2
+libexec_PROGRAMS = cbrowser cbrowser2
 
 cbrowser_SOURCES = cparser.c cpdefines.h skeleton.c
 

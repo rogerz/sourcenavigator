@@ -1804,7 +1804,6 @@ echo "$as_me: error: Cannot build with Cygwin grep, see INSTALL.TXT" >&2;}
         ;;
 esac
 
-
 # Check whether --enable-mingw was given.
 if test "${enable_mingw+set}" = set; then
   enableval=$enable_mingw;
@@ -1812,6 +1811,8 @@ else
   with_mingw=no
 fi
 
+
+libexecdir='${exec_prefix}/libexec/snavigator'
 
 
 TOP_SUBDIRS="tcl tk itcl tix libgui db4/PORT snavigator"

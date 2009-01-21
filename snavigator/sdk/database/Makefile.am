@@ -19,9 +19,12 @@
 # 
 AUTOMAKE_OPTIONS = cygnus
 
-## Process this file with automake to create Makefile.in.
+## Proecess this file with automake to create Makefile.in.
 
-elfdir = $(datadir)/sdk/parsers/examples/elf
+tcldbdir = $(datadir)/snavigator/sdk/database
 
-elf_DATA = README Makefile Makefile.vc blobsql.elf ebrowser.l
+tcldb_SCRIPTS = call-freq.tk clobber.tcl constants.tcl diamonds.tcl \
+	        multicludes.tcl unimp-methods.tcl unused.tcl
+
+tcldb_DATA = README
 

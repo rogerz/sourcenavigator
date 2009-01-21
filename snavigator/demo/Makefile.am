@@ -1,12 +1,13 @@
 AUTOMAKE_OPTIONS = cygnus
+DEMOS_TO_INSTALL = asm c++ cobol fortran java
 
 ## Process this file with automake to create Makefile.in.
 
-demosdir = $(datadir)/demos
+demosdir = $(datadir)/snavigator/demos
 
 install-data-local:
 	@$(mkinstalldirs) $(DESTDIR)$(demosdir)
-	for p in @C_DEMO@ @ASM_DEMO@ @FOR_DEMO@ @COB_DEMO@ @MONOP_DEMO@ @JAV_DEMO@ ; do \
+	for p in $(DEMOS_TO_INSTALL) ; do \
 	  echo "copying $$p to $(DESTDIR)$(demosdir)" ; \
 	  ( \
 	  cd $(srcdir) ; \

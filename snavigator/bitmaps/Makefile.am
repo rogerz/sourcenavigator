@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-imagedir = $(datadir)/bitmaps
+imagedir = $(datadir)/snavigator/bitmaps
 
 image_DATA = add.xpm addall.xpm arrow.xpm ascend.xpm \
 browse.xpm build.xpm \

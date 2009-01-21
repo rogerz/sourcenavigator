@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-progdir = $(datadir)/sourcenav/packages
+progdir = $(datadir)/snavigator/packages
 
 packages = eventutils snscenario
 

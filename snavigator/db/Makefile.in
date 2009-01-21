@@ -34,7 +34,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-bin_PROGRAMS = dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT)
+libexec_PROGRAMS = dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT)
 subdir = db
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,7 +52,7 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(sdkdir)" "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(sdkdir)" "$(DESTDIR)$(libexecdir)"
 sdkLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(sdk_LIBRARIES)
 AR = ar
@@ -61,8 +61,8 @@ libdbutils_a_AR = $(AR) $(ARFLAGS)
 libdbutils_a_LIBADD =
 am_libdbutils_a_OBJECTS = dbutils.$(OBJEXT)
 libdbutils_a_OBJECTS = $(am_libdbutils_a_OBJECTS)
-binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
+libexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(libexec_PROGRAMS)
 am_dbcp_OBJECTS = dbcp.$(OBJEXT)
 dbcp_OBJECTS = $(am_dbcp_OBJECTS)
 am_dbdump_OBJECTS = dbdump.$(OBJEXT)
@@ -378,29 +378,29 @@ libdbutils.a: $(libdbutils_a_OBJECTS) $(libdbutils_a_DEPENDENCIES)
 	-rm -f libdbutils.a
 	$(libdbutils_a_AR) libdbutils.a $(libdbutils_a_OBJECTS) $(libdbutils_a_LIBADD)
 	$(RANLIB) libdbutils.a
-install-binPROGRAMS: $(bin_PROGRAMS)
+install-libexecPROGRAMS: $(libexec_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(libexecdir)" || $(MKDIR_P) "$(DESTDIR)$(libexecdir)"
+	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(libexecPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(libexecdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(libexecPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(libexecdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-binPROGRAMS:
+uninstall-libexecPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(libexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(libexecdir)/$$f"; \
 	done
 
-clean-binPROGRAMS:
-	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+clean-libexecPROGRAMS:
+	-test -z "$(libexec_PROGRAMS)" || rm -f $(libexec_PROGRAMS)
 dbcp$(EXEEXT): $(dbcp_OBJECTS) $(dbcp_DEPENDENCIES) 
 	@rm -f dbcp$(EXEEXT)
 	$(LINK) $(dbcp_OBJECTS) $(dbcp_LDADD) $(LIBS)
@@ -474,7 +474,7 @@ check-am:
 check: check-am
 all-am: Makefile $(LIBRARIES) $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(sdkdir)" "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(sdkdir)" "$(DESTDIR)$(libexecdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -503,7 +503,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-sdkLIBRARIES \
+clean-am: clean-generic clean-libexecPROGRAMS clean-sdkLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -525,7 +525,7 @@ install-data-am: install-data-local install-sdkLIBRARIES
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-libexecPROGRAMS
 
 install-html: install-html-am
 
@@ -555,23 +555,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-sdkLIBRARIES
+uninstall-am: uninstall-libexecPROGRAMS uninstall-sdkLIBRARIES
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-sdkLIBRARIES ctags distclean \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libexecPROGRAMS clean-sdkLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-tags dvi dvi-am \
-	html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-data-local install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-sdkLIBRARIES install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	html html-am info info-am install install-am install-data \
+	install-data-am install-data-local install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-libexecPROGRAMS \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-sdkLIBRARIES install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-sdkLIBRARIES
+	uninstall-am uninstall-libexecPROGRAMS uninstall-sdkLIBRARIES
 
 
 install-data-local:

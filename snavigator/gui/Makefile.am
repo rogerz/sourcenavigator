@@ -21,7 +21,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-progdir = $(datadir)/sourcenav/gui
+progdir = $(datadir)/snavigator/gui
 
 prog_DATA = tclIndex bindings.tcl bindxtnd.tcl bugreport.tcl \
 combo.tcl dialog.tcl diff.tcl dirdialog.tcl \

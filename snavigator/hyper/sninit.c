@@ -1263,7 +1263,7 @@ Sn_setup_Init(Tcl_Interp *interp)		/* Interpreter for application. */
 			b1 = "";
 			b2 = "";
 		}
-	 	sprintf (tmp, "%s%s/share/sourcenav/gui%s %s%s/share/sourcenav/packages%s %s",
+	 	sprintf (tmp, "%s%s/share/snavigator/gui%s %s%s/share/snavigator/packages%s %s",
 						b1, parg, b2, b1, parg, b2,
 						Tcl_GetVar(interp,"auto_path", TCL_GLOBAL_ONLY));
 		Tcl_SetVar (interp, "auto_path", tmp, TCL_GLOBAL_ONLY);

@@ -2366,6 +2366,9 @@ case "${host}" in
         ;;
 esac
 
+libexecdir='${exec_prefix}/libexec/snavigator'
+
+
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   { { echo "$as_me:$LINENO: error: cannot run $SHELL $ac_aux_dir/config.sub" >&5
@@ -3632,12 +3635,6 @@ cat >>confdefs.h <<\_ACEOF
 #define SN_ELIX 0
 _ACEOF
 
-C_DEMO=c++_demo
-ASM_DEMO=asm_demo
-COB_DEMO=cob_demo
-FOR_DEMO=for_demo
-MONOP_DEMO=monop
-JAV_DEMO=jav_demo
 GETTING_STARTED_DIR=
 GETTING_STARTED_INDEX=
 GETTING_STARTED_NAME=
@@ -8606,20 +8603,17 @@ echo "$as_me: error: ${with_tclconfig} directory doesn't contain tclConfig.sh" >
         if test x"${ac_cv_c_tclconfig}" = x ; then
                 for i in $dirlist; do
             if test -n "`ls -dr $i/tcl* 2>/dev/null`" ; then
-	        tclconfpath=$i
-	        break
+                                                for j in `ls -dr $i/tcl* 2>/dev/null ` ; do
+                                                                                if test -f $j/unix/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/unix; ${PWDCMD-pwd})`
+                        break
+                    fi
+                    if test -f $j/win/tclConfig.sh ; then
+                        ac_cv_c_tclconfig=`(cd $j/win; ${PWDCMD-pwd})`
+                        break
+                    fi
+                done
 	    fi
-        done
-
-                        for i in `ls -dr $tclconfpath/tcl* 2>/dev/null ` ; do
-                                                if test -f $i/unix/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/unix; ${PWDCMD-pwd})`
-                break
-            fi
-            if test -f $i/win/tclConfig.sh ; then
-                ac_cv_c_tclconfig=`(cd $i/win; ${PWDCMD-pwd})`
-                break
-            fi
         done
     fi
 
@@ -8812,15 +8806,12 @@ fi
 if test x"${ac_cv_c_tclh}" = x ; then
         for i in $dirlist; do
         if test -n "`ls -dr $srcdir/$i/tcl* 2>/dev/null`" ; then
-	    tclpath=$srcdir/$i
-	    break
-	fi
-    done
-
-            for i in `ls -dr $tclpath/tcl* 2>/dev/null ` ; do
-        if test -f $i/generic/tcl.h ; then
-          ac_cv_c_tclh=`(cd $i/generic; ${PWDCMD-pwd})`
-          break
+                                    for j in `ls -dr $srcdir/$i/tcl* 2>/dev/null ` ; do
+                if test -f $j/generic/tcl.h ; then
+                    ac_cv_c_tclh=`(cd $j/generic; ${PWDCMD-pwd})`
+                    break
+                fi
+            done
         fi
     done
 fi
@@ -9485,7 +9476,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile gui/Makefile hyper/Makefile db/Makefile packages/Makefile parsers/Makefile parsers/assembly/Makefile parsers/chill/Makefile parsers/cobol/Makefile parsers/common/Makefile parsers/cpp/Makefile parsers/cpp/cpplib/Makefile parsers/example/Makefile parsers/fortran/Makefile parsers/gcj/Makefile parsers/java/Makefile parsers/libjcreuse/Makefile parsers/m4/Makefile parsers/php/Makefile parsers/python/Makefile parsers/sendmail/Makefile parsers/tcl/Makefile parsers/toolbox/Makefile bitmaps/Makefile etc/Makefile etc/english.txt etc/french.txt etc/german.txt etc/sn_prop.cfg etc/sn_toolchains/Makefile snavigator/Makefile misc/Makefile misc/libutils/Makefile sdk/Makefile sdk/api/Makefile sdk/api/tcl/Makefile sdk/api/tcl/misc/Makefile sdk/api/tcl/database/Makefile sdk/api/tcl/database/examples/Makefile sdk/api/c/Makefile sdk/api/c/database/Makefile sdk/api/c/database/examples/Makefile sdk/parsers/Makefile sdk/parsers/examples/Makefile sdk/parsers/examples/assembly/Makefile sdk/parsers/examples/elf/Makefile snavigator/unix/Makefile snavigator/unix/snscenario snavigator/win/Makefile demo/Makefile doc/Makefile doc/html/Makefile"
+ac_config_files="$ac_config_files Makefile gui/Makefile hyper/Makefile db/Makefile packages/Makefile parsers/Makefile parsers/assembly/Makefile parsers/chill/Makefile parsers/cobol/Makefile parsers/common/Makefile parsers/cpp/Makefile parsers/cpp/cpplib/Makefile parsers/example/Makefile parsers/fortran/Makefile parsers/gcj/Makefile parsers/java/Makefile parsers/libjcreuse/Makefile parsers/m4/Makefile parsers/php/Makefile parsers/python/Makefile parsers/sendmail/Makefile parsers/tcl/Makefile parsers/toolbox/Makefile bitmaps/Makefile etc/Makefile etc/english.txt etc/french.txt etc/german.txt etc/sn_prop.cfg etc/sn_toolchains/Makefile snavigator/Makefile misc/Makefile misc/libutils/Makefile sdk/Makefile sdk/misc/Makefile sdk/database/Makefile snavigator/unix/Makefile snavigator/unix/snscenario snavigator/win/Makefile demo/Makefile doc/Makefile doc/html/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -10156,18 +10147,8 @@ do
     "misc/Makefile") CONFIG_FILES="$CONFIG_FILES misc/Makefile" ;;
     "misc/libutils/Makefile") CONFIG_FILES="$CONFIG_FILES misc/libutils/Makefile" ;;
     "sdk/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/Makefile" ;;
-    "sdk/api/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/Makefile" ;;
-    "sdk/api/tcl/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/tcl/Makefile" ;;
-    "sdk/api/tcl/misc/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/tcl/misc/Makefile" ;;
-    "sdk/api/tcl/database/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/tcl/database/Makefile" ;;
-    "sdk/api/tcl/database/examples/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/tcl/database/examples/Makefile" ;;
-    "sdk/api/c/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/c/Makefile" ;;
-    "sdk/api/c/database/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/c/database/Makefile" ;;
-    "sdk/api/c/database/examples/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/api/c/database/examples/Makefile" ;;
-    "sdk/parsers/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/parsers/Makefile" ;;
-    "sdk/parsers/examples/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/parsers/examples/Makefile" ;;
-    "sdk/parsers/examples/assembly/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/parsers/examples/assembly/Makefile" ;;
-    "sdk/parsers/examples/elf/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/parsers/examples/elf/Makefile" ;;
+    "sdk/misc/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/misc/Makefile" ;;
+    "sdk/database/Makefile") CONFIG_FILES="$CONFIG_FILES sdk/database/Makefile" ;;
     "snavigator/unix/Makefile") CONFIG_FILES="$CONFIG_FILES snavigator/unix/Makefile" ;;
     "snavigator/unix/snscenario") CONFIG_FILES="$CONFIG_FILES snavigator/unix/snscenario" ;;
     "snavigator/win/Makefile") CONFIG_FILES="$CONFIG_FILES snavigator/win/Makefile" ;;

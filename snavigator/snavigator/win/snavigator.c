@@ -33,6 +33,8 @@ MA 02111-1307, USA.
 #define MAXPATHLEN 1024
 #endif
 
+#define HYPER_RELATIVE_PATH "libexec\\hyper"
+
 enum
 {
 	SN_PATH_WINDOWS, /* convert path to windows native */
@@ -211,7 +213,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
  	 */
  	sn_internal_convert_path(tmp, SN_PATH_UNIX);
  	SetEnvironmentVariable("SN_INSTALL_DIR", tmp);
-
+        strcpy(installDir, tmp);
 
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
@@ -223,7 +225,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 	 * construct a command "hyper -f <file>"
 	 */
 	hyper_cmd_line[0] = 0;
-	sprintf (tmp, "%s\\%s", sn_loc, "hyper");
+	sprintf (tmp, "%s\\%s", installDir, HYPER_RELATIVE_PATH);
 	sn_append_option_to_command_line (hyper_cmd_line, tmp);
 	sn_append_option_to_command_line (hyper_cmd_line, "-f");
 	sn_append_option_to_command_line (hyper_cmd_line, etc_dir);

@@ -46,9 +46,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = english.txt french.txt german.txt sn_prop.cfg
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(etcdir)"
-binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(bin_SCRIPTS)
+am__installdirs = "$(DESTDIR)$(libexecdir)" "$(DESTDIR)$(etcdir)"
+libexecSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(libexec_SCRIPTS)
 depcomp =
 am__depfiles_maybe =
 SOURCES =
@@ -276,14 +276,14 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = cygnus
 LANG_TXT_FILES = english.txt french.txt german.txt
 SUBDIRS = sn_toolchains
-etcdir = $(datadir)/etc
+etcdir = $(datadir)/snavigator/etc
 etc_DATA = $(LANG_TXT_FILES) grep.fil sn_prop.cfg \
 sn.el sn_cmp_g.pat snscenario snavigator snpdbg
 
 
 # +EMT 070415
 # Impedance matching scripts for Clearcase commands
-bin_SCRIPTS = ccase-checkout-exclusive.sh \
+libexec_SCRIPTS = ccase-checkout-exclusive.sh \
 ccase-checkout-individual-to-stdout.sh \
 ccase-checkout-individual.sh \
 ccase-checkout.sh \
@@ -332,24 +332,24 @@ german.txt: $(top_builddir)/config.status $(srcdir)/german.txt.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 sn_prop.cfg: $(top_builddir)/config.status $(srcdir)/sn_prop.cfg.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-binSCRIPTS: $(bin_SCRIPTS)
+install-libexecSCRIPTS: $(libexec_SCRIPTS)
 	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	test -z "$(libexecdir)" || $(MKDIR_P) "$(DESTDIR)$(libexecdir)"
+	@list='$(libexec_SCRIPTS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f $$d$$p; then \
 	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	    echo " $(binSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	    $(binSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(bindir)/$$f"; \
+	    echo " $(libexecSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(libexecdir)/$$f'"; \
+	    $(libexecSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(libexecdir)/$$f"; \
 	  else :; fi; \
 	done
 
-uninstall-binSCRIPTS:
+uninstall-libexecSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	@list='$(libexec_SCRIPTS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(libexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(libexecdir)/$$f"; \
 	done
 install-etcDATA: $(etc_DATA)
 	@$(NORMAL_INSTALL)
@@ -504,7 +504,7 @@ check: check-recursive
 all-am: Makefile $(SCRIPTS) $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(etcdir)"; do \
+	for dir in "$(DESTDIR)$(libexecdir)" "$(DESTDIR)$(etcdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -553,7 +553,7 @@ install-data-am: install-etcDATA
 
 install-dvi: install-dvi-recursive
 
-install-exec-am: install-binSCRIPTS
+install-exec-am: install-libexecSCRIPTS
 
 install-html: install-html-recursive
 
@@ -583,7 +583,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binSCRIPTS uninstall-etcDATA
+uninstall-am: uninstall-etcDATA uninstall-libexecSCRIPTS
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
 	install-strip
@@ -592,15 +592,15 @@ uninstall-am: uninstall-binSCRIPTS uninstall-etcDATA
 	all all-am check check-am clean clean-generic ctags \
 	ctags-recursive distclean distclean-generic distclean-tags dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-binSCRIPTS install-data install-data-am install-dvi \
-	install-dvi-am install-etcDATA install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-etcDATA install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am \
+	install-libexecSCRIPTS install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-binSCRIPTS uninstall-etcDATA
+	uninstall-etcDATA uninstall-libexecSCRIPTS
 
 # -EMT 070415
 

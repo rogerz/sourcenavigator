@@ -25,7 +25,6 @@ SUBDIRS = misc db @SDK_DIR@ packages parsers hyper gui demo doc etc \
 snavigator bitmaps
 
 install-exec-local:
-	$(INSTALL) -m 0444 $(top_srcdir)/../COPYING $(DESTDIR)$(prefix)
 	(cd ../tcl; $(MAKE) install-libraries)
 	(cd ../tk; $(MAKE) install-libraries)
 	(cd ../tix; $(MAKE) install-libraries)
@@ -33,8 +32,6 @@ install-exec-local:
 	(cd ../libgui; $(MAKE) install)
 
 rootdir = $(prefix)
-
-root_DATA = ../README
 
 EXTRA_DIST = $(DATA)
 

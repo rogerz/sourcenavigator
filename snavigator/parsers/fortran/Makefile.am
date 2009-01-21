@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 common = $(top_builddir)/parsers/common
 
-bin_PROGRAMS = fbrowser
+libexec_PROGRAMS = fbrowser
 
 INCLUDES = $(WINFLAGS) -DALLOW_INCLUDE -I$(top_srcdir)/hyper \
 	-I$(top_srcdir)/parsers/common $(TCLHDIR)

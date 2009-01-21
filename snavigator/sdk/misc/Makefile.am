@@ -21,14 +21,8 @@ AUTOMAKE_OPTIONS = cygnus
 
 ## Process this file with automake to create Makefile.in.
 
-SUBDIRS = database
+misctcldir = $(datadir)/snavigator/sdk/misc
 
-sdkincludedir = $(datadir)/sdk/include
-sdkinclude_h = db.h db_185.h
-
-install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(sdkincludedir)
-	for h in $(sdkinclude_h) ; do \
-	    cp $(top_builddir)/../db4/PORT/$$h $(DESTDIR)$(sdkincludedir) ;\
-	done
+misctcl_DATA = java.rc.tcl paf_dump.tcl paf_rc.tcl paf_stat.sh sn_report.tcl \
+	       exportIndex.tcl
 

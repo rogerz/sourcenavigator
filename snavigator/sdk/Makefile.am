@@ -23,7 +23,4 @@ AUTOMAKE_OPTIONS = cygnus
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
-SUBDIRS = api parsers
-
-install-exec-local:
-	$(INSTALL_DATA) @TCL_LIB_FULL_PATH@ $(DESTDIR)$(sdkdir)
+SUBDIRS = database misc
