@@ -9,4 +9,4 @@ into the subroutine called "reset_switches" in gzip.s.  This illustrates
 Source-Navigator's cross-language project capabilities.
 
 These files can be parsed using the assembly parser that is shipped
-with Source-Navigator 4.0.
+with Source-Navigator.
