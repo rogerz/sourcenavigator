@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 #define MAXPATHLEN 1024
 #endif
 
-#define HYPER_RELATIVE_PATH "libexec\\hyper"
+#define HYPER_RELATIVE_PATH "libexec\\snavigator\\hyper"
 
 enum
 {
@@ -124,6 +124,7 @@ sn_next_cmd_argument (char *cmd, char *buf, int size)
 		}
 	}
 	*q = 0;
+	
 	return p;
 }
 
@@ -158,7 +159,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		 * set path to current directory
 		 */
 		if (!GetCurrentDirectory(MAXPATHLEN, sn_loc)) {
-			MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
+			MessageBox(0, "Failed to start Source-Navigator1", "Error", MB_OK|MB_ICONERROR);
 			exit(1);
 		}
 	}
@@ -175,10 +176,10 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 
 	relativePtr = strrchr(tmp, '\\');
 	if (relativePtr == NULL) {
-		MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
+		MessageBox(0, "Failed to start Source-Navigator2", "Error", MB_OK|MB_ICONERROR);
 		exit(1);
 	}
-	strcpy(relativePtr, "\\share\\etc\\snavigator");
+	strcpy(relativePtr, "\\share\\snavigator\\etc\\snavigator");
 
 	testFile = CreateFile(tmp, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (INVALID_HANDLE_VALUE == testFile) {
@@ -187,14 +188,14 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		relativePtr[0] = '\0';
 		relativePtr = strrchr(tmp, '\\');
 		if (NULL == relativePtr) {
-			MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
+			MessageBox(0, "Failed to start Source-Navigator3", "Error", MB_OK|MB_ICONERROR);
 			exit(1);
 		}
 
-		strcpy(relativePtr, "\\share\\etc\\snavigator");
+		strcpy(relativePtr, "\\share\\snavigator\\etc\\snavigator");
 		testFile = CreateFile(tmp, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 		if (INVALID_HANDLE_VALUE == testFile) {
-			MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
+			MessageBox(0, "Failed to start Source-Navigator4", "Error", MB_OK|MB_ICONERROR);
 			exit(1);
 		}
 	}
@@ -258,7 +259,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		&si,	/* pointer to STARTUPINFO */
 		&pi 	/* pointer to PROCESS_INFORMATION   */
 	) == 0) {
-		MessageBox(0, "Failed to start Source-Navigator", "Error", MB_OK|MB_ICONERROR);
+		MessageBox(0, "Failed to start Source-Navigator5", "Error", MB_OK|MB_ICONERROR);
 		return GetLastError();
 	}
 
