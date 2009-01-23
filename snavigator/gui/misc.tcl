@@ -3972,7 +3972,7 @@ proc sn_load_part_files {cmd files xfer_file {sc "never_exists"}} {
         return 0
     }
     if {$tcl_platform(platform) == "windows"} {
-        set pipe [file join $sn_path(parserdirdir) dbimp.exe]
+        set pipe [file join $sn_path(parserdir) dbimp.exe]
     } else {
         set pipe [file join $sn_path(parserdir) dbimp]
     }
