@@ -736,7 +736,7 @@ AC_DEFUN([AC_PROG_VERSION_CHECK],
 
 	if [ ! -z "$ac_prog_wrong_$1" ]; then
 ]
-		AC_MSG_ERROR([found $ac_prog_version_$1, not ok])
+		AC_MSG_WARN([found $ac_prog_version_$1, not ok])
 	else
 		AC_MSG_RESULT([found $ac_prog_version_$1, ok])
 	fi
@@ -754,7 +754,7 @@ AC_DEFUN([AC_PROG_VERSION_CHECK],
 		[
 			if [ "$ac_prog_major_$1" -eq "$ac_prog_not_major_$1" -a "$ac_prog_minor_$1" -eq "$ac_prog_not_minor_$1" -a "$ac_prog_micro_$1" -eq "$ac_prog_not_micro_$1" ]; then
 		]
-				AC_MSG_ERROR([found $ac_prog_version_$1, not ok])
+				AC_MSG_WARN([found $ac_prog_version_$1, not ok])
 			else
 				AC_MSG_RESULT([not found, good])
 			fi
