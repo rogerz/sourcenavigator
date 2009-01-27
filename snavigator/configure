@@ -5101,6 +5101,68 @@ YACC="bison -y"
 
 
 
+	ac_prog_version_flex=`flex --version | head -n 1 | sed 's/([^)]*)//g;s/^[a-zA-Z\.\ \-\/]*//;s/ .*$//'`
+	ac_prog_major_flex=`echo $ac_prog_version_flex | cut -d. -f1`
+	ac_prog_minor_flex=`echo $ac_prog_version_flex | sed s/[-,a-z,A-Z].*// | cut -d. -f2`
+	ac_prog_micro_flex=`echo $ac_prog_version_flex | sed s/[-,a-z,A-Z].*// | cut -d. -f3`
+	[ -z "$ac_prog_minor_flex" ] && ac_prog_minor_flex=0
+	[ -z "$ac_prog_micro_flex" ] && ac_prog_micro_flex=0
+
+	ac_prog_min_major_flex=`echo 2.5.34 | cut -d. -f1`
+	ac_prog_min_minor_flex=`echo 2.5.34 | sed s/[-,a-z,A-Z].*// | cut -d. -f2`
+	ac_prog_min_micro_flex=`echo 2.5.34 | sed s/[-,a-z,A-Z].*// | cut -d. -f3`
+	[ -z "$ac_prog_min_minor_flex" ] && ac_prog_min_minor_flex=0
+	[ -z "$ac_prog_min_micro_flex" ] && ac_prog_min_micro_flex=0
+
+
+	{ echo "$as_me:$LINENO: checking for flex >= 2.5.34" >&5
+echo $ECHO_N "checking for flex >= 2.5.34... $ECHO_C" >&6; }
+
+
+	if [ "$ac_prog_major_flex" -lt "$ac_prog_min_major_flex" ]; then
+		ac_prog_wrong_flex=1
+	elif [ "$ac_prog_major_flex" -eq "$ac_prog_min_major_flex" ]; then
+		if [ "$ac_prog_minor_flex" -lt "$ac_prog_min_minor_flex" ]; then
+			ac_prog_wrong_flex=1
+		elif [ "$ac_prog_minor_flex" -eq "$ac_prog_min_minor_flex" -a "$ac_prog_micro_flex" -lt "$ac_prog_min_micro_flex" ]; then
+			ac_prog_wrong_flex=1
+		fi
+	fi
+
+	if [ ! -z "$ac_prog_wrong_flex" ]; then
+
+		{ echo "$as_me:$LINENO: WARNING: found $ac_prog_version_flex, not ok" >&5
+echo "$as_me: WARNING: found $ac_prog_version_flex, not ok" >&2;}
+	else
+		{ echo "$as_me:$LINENO: result: found $ac_prog_version_flex, ok" >&5
+echo "${ECHO_T}found $ac_prog_version_flex, ok" >&6; }
+	fi
+
+
+		for version in 2.5.33; do
+
+			ac_prog_not_major_flex=`echo $version | cut -d. -f1`
+			ac_prog_not_minor_flex=`echo $version | sed s/[-,a-z,A-Z].*// | cut -d. -f2`
+			ac_prog_not_micro_flex=`echo $version | sed s/[-,a-z,A-Z].*// | cut -d. -f3`
+			[ -z "$ac_prog_not_minor_flex" ] && ac_prog_not_minor_flex=0
+			[ -z "$ac_prog_not_micro_flex" ] && ac_prog_not_micro_flex=0
+
+			{ echo "$as_me:$LINENO: checking for flex != $version" >&5
+echo $ECHO_N "checking for flex != $version... $ECHO_C" >&6; }
+
+			if [ "$ac_prog_major_flex" -eq "$ac_prog_not_major_flex" -a "$ac_prog_minor_flex" -eq "$ac_prog_not_minor_flex" -a "$ac_prog_micro_flex" -eq "$ac_prog_not_micro_flex" ]; then
+
+				{ echo "$as_me:$LINENO: WARNING: found $ac_prog_version_flex, not ok" >&5
+echo "$as_me: WARNING: found $ac_prog_version_flex, not ok" >&2;}
+			else
+				{ echo "$as_me:$LINENO: result: not found, good" >&5
+echo "${ECHO_T}not found, good" >&6; }
+			fi
+		done
+
+
+
+
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
