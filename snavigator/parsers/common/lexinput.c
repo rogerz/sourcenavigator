@@ -152,8 +152,14 @@ size_t translate_crlf(char* buffer, size_t size)
 		if(*buffer == '\n') {
 			/* Do nothing, removes CR */
 		} else {
-			/* A lone CR should never appear in the input */
-			panic("CR without trailing LF on buffer border");
+			/*
+			 A lone CR should never appear in the input.
+
+			 Freek: Do not panic, simply remove it as with the CR.
+			 This fixes potential aborts with some wrongly formatted
+                         windows source files.
+			 */
+			/* panic("CR without trailing LF on buffer border"); */
 		}
 		saved_cr = 0;
 	}
