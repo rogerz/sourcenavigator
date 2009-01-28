@@ -27,7 +27,7 @@
 proc sn_initialize_paths {} {
 	global sn_path sn_home
 
-	puts "Initializing paths, SN home is at: $sn_home"
+	sn_log "Initializing paths, SN home is at: $sn_home"
 
 	# Following are extensions just for Source Navigator.
 	set sn_path(bindir) [file join ${sn_home} bin]

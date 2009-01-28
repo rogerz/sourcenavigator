@@ -479,14 +479,11 @@ proc sn_check_browsers_path {} {
         # Parser command.
         set cmd $Parser_Info(${type},BROW)
 	
-	puts "checking for $cmd"
-	
         if {${cmd} != ""} {
             if {$tcl_platform(platform) == "windows" && ! [file exists ${cmd}]} {
                 append cmd ".exe"
             }
             set Parser_Info(${type},BROW) ${cmd}
-		puts "setting BROW to $cmd"
 
         }
 
@@ -497,7 +494,6 @@ proc sn_check_browsers_path {} {
                 append cmd ".exe"
             }
             set Parser_Info(${type},HIGH) ${cmd}
-    		puts "setting HIGH to $cmd"
 
         }
     }
