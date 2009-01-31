@@ -54,27 +54,27 @@ to become root before the make install step.
 % make install
 
 
-Windows Build (gcc):
+Windows Build (gcc on msys/mingw):
 
 The Windows version of Source-Navigator is now built with gcc.
 The Mingw and Msys packages provide a minimal environment
 and the compiler needed to build Win32 applications on
-a Win32 system. Start by downloading the most recent msys + mingw
-zip file from this URL (scroll down, it is near the bottom).
+a Win32 system. Get the MSYS and MinGW installers here:
 
-http://sourceforge.net/project/showfiles.php?group_id=10894
+http://sourceforge.net/project/showfiles.php?group_id=2435
 
-Unzip the archive and double click on the msys shortcut to
-start the shell. You can then run the configure script in
-the normal way from inside the shell.
+Install BOTH MSYS and MinGW and then start the msys shell.
+You can then run the configure script in the normal way from inside 
+the shell.
 
 % ./configure --prefix=/opt/sourcenav --enable-mingw
   (the --enable-mingw is for db4)
 % make
 % make install
 
-As there are a couple of header files missing in the default msys package
-you might want to get them from somewhere, e.g. FreeBSD.
+As there are a couple of header files missing in the default msys package,
+most prominently socket.h - you might want to get them from somewhere, 
+e.g. FreeBSD.
 
 
 Windows Build (VC++):
@@ -154,3 +154,4 @@ regions are also placed at the front and end of each memory region
 to check for memory overwriting problems. This memory debug mode
 will slow down normal execution so it is only advised when
 investigating a specific memory allocation problem.
+
