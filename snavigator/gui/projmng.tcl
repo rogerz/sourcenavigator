@@ -536,7 +536,6 @@ proc sn_select_project {{waiting "wait"}} {
 	    -relief flat -borderwidth 1 -highlightthickness 0
 
     listbox $f.projs -width 55 -relief flat -height $height \
-	    -borderwidth 0 \
 	    -xscrollcommand "scrollListbox $f.horizsb" \
 	    -yscrollcommand "scrollListbox $f.vertsb"
 
