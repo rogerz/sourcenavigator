@@ -246,6 +246,14 @@ TransferXEventsToTcl(display)
 
     while (numFound > 0) {
 	XNextEvent(display, &event);
+#ifdef GenericEvent
+	if (event.type == GenericEvent) {
+	    xGenericEvent *xgePtr = (xGenericEvent *) &event;
+
+	    Tcl_Panic("Wild GenericEvent; panic! (extension=%d,evtype=%d)",
+		      xgePtr->extension, xgePtr->evtype);
+	}
+#endif
 	Tk_QueueWindowEvent(&event, TCL_QUEUE_TAIL);
 	numFound--;
     }
