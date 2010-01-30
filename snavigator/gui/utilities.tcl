@@ -780,6 +780,8 @@ proc sn_convert_FileName {orig_name {any ""}} {
     global tcl_platform
     global sn_root
 
+    #sn_log "sncf: called with orig_name: ${orig_name} and any: ${any}"
+    
     if {[catch {set name [join [realpath -pwd $sn_options(sys,project-dir)\
       ${orig_name}]]}]} {
         set name ${orig_name}
@@ -809,7 +811,7 @@ proc sn_convert_FileName {orig_name {any ""}} {
     if {[info commands paf_db_f] != ""} {
         set f [paf_db_f get -col 0 -first ${name}]
         if {${f} != ""} {
-            return ${f}
+	    return ${f}
         }
     }
 
@@ -820,20 +822,30 @@ proc sn_convert_FileName {orig_name {any ""}} {
     } else {
         #look for the file with full path
         if {[info commands paf_db_f] != ""} {
-            set file [paf_db_f seq -col 0 -first -glob "*${name}"]
+            
+	    # be more careful when globbing files on the first try
+	    # this partly solves problems with the makepane and wrongly
+	    # opened files on cc errors
+	    set file [paf_db_f seq -col 0 -first -glob "*${path_sep}${name}"]
             if {${file} != ""} {
-                return ${file}
+		return ${file}
+	    }
+	    
+	    # now be quite fuzzy about filesearch
+	    set file [paf_db_f seq -col 0 -first -glob "*${name}"]
+            if {${file} != ""} {
+		return ${file}
             }
         }
 
-        #look for any file that match this file, but can be with different\
-          pathes
+        # look for any file that match this file, but can be
+	# with different pathes
         if {${any} != "" && ! [file exists ${name}]} {
             set f [file join * [file tail ${name}]]
             if {[info commands paf_db_f] != ""} {
                 set file [paf_db_f seq -col 0 -first -glob ${f}]
                 if {${file} != ""} {
-                    return ${file}
+		    return ${file}
                 }
             }
         }
