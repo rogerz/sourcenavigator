@@ -28,7 +28,7 @@ Variables: Global, super global, instance/class variables,
 Functions: Functions are fully supported. Nested functions
            are also supported. Class member functions using
            object derefencing with '->' and '::' is now
-           available with the PHPv4 class support. Functions
+           available with the PHP class support. Functions
            are highlighted inside the editor.
 
 Include: The keywords include, include_once, require, and 
@@ -40,17 +40,19 @@ Include: The keywords include, include_once, require, and
 
 Keywords: Keywords defined in the keyword appendix of the
           PHP manual are, for the most part, recognized and
-          highlighted in the editor. However, some keywords
-          (particularly the PHPv5 variety) and code patterns
-          may not yet be fully recognized.
+          highlighted in the editor.
 
-Classes: Support for PHPv4 classes are implemented. Note
-         that PHPv5 classes and exception handling code
-         patterns are not yet fully implemented. There is
-         support for cross references which use the reserved
-         variables '$this' and '$parent', and also class
-         functions that use the pattern
-                     'classname::funcname($args)'
+Classes: Support for PHPv4 and PHPv5 classes are implemented.
+         There is support for cross references which use the
+	 reserved variables '$this' and '$parent', and also
+	 class static functions and properties that use the
+	 patterns:
+		'classname::funcname($args)'
+		'classname::propname'
+		'self::funcname($args)'
+		'self::propname'
+		'parent::funcname($args)'
+		'parent::propname'
 
 
 Note to developers:
