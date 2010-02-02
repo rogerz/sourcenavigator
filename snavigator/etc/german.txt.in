@@ -826,7 +826,7 @@ ScanningCanceld,Wollen Sie wirklich das Durchsuchen nach Source-Code Dateien sto
 DatabaseFilesCouldNotBeDeleted,Source-Navigator kann die alten Projekt-Datenbankdateien aus\neinem unbekannten Grund nicht löschen.
 WrongProjectName,Falscher Projektname '%s'
 WrongDatabaseDirectory,Falsches Datenbankverzeichnis '%s'
-SplashCopyrightText,Copyright (c) 2007-2009 Sourcenav NG Development Group
+SplashCopyrightText,Copyright (c) 2007-2010 Sourcenav NG Development Group
 SplashSubCopyrightText,(c) 2007 Oracle.\n(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,Veröffentlicht unter den Bedingungen der GPL.\nAlle Rechte vorbehalten. Source-NavigatorTM und das Cygnus Solutions Logo sind Trademarks von Red Hat, Inc. Alle anderen Produktnamen sind Trademarks ihrer rechtmäßigen Inhaber.
 FileModifiedOutsideTitle,Datei geändert
