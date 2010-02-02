@@ -1,3 +1,15 @@
+Release NG4.1 (Tue Feb  2 21:07:20 CET 2010)
+
+(INTERNAL) Reorganize CONTRIBUTORS, add Maurice Havelday
+(INTERNAL) Merge 672:747 of https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4-phpv5_support for basic php5 support
+(BUGFIX) Try to be more careful when glob'ing files and paths in sn_convert_FileName
+(BUGFIX) Fix "no event type or button # or keysym" tcl/tk error on Fedora
+(INTERNAL) Add John Mills to CONTRIBUTORS
+(BUGFIX) Fix rendering of project selection dialog on FC10
+(BUGFIX) Remove unneeded cscope file (db4/dist/cscope.out)
+(INTERNAL) Properly AM_INIT_AUTOMAKE with package name snavigator instead of sn
+
+
 Release NG4 (Thu Feb  5 13:28:54 CET 2009)
 
 (INTERNAL) Reformat snptools.c to sensible K&R style
