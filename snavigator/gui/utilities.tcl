@@ -826,7 +826,7 @@ proc sn_convert_FileName {orig_name {any ""}} {
 	    # be more careful when globbing files on the first try
 	    # this partly solves problems with the makepane and wrongly
 	    # opened files on cc errors
-	    set file [paf_db_f seq -col 0 -first -glob "*${path_sep}${name}"]
+	    set file [paf_db_f seq -col 0 -first -glob [file join * ${name}] ]
             if {${file} != ""} {
 		return ${file}
 	    }
