@@ -4170,6 +4170,9 @@ global SyncEditors_Active
 set SyncEditors_Disabled 0
 set SyncEditors_Active 0
 
+# whenever we exit this function prematurely we need to
+# reset $SyncEditors_Active - else the famous 
+# "cant save changed files" bug creeps up again.
 proc SyncEditors {cls args} {
     global sn_options
     global SyncEditors_Disabled
@@ -4205,8 +4208,9 @@ proc SyncEditors {cls args} {
             "insert" {
                     set pos [${editor} index [lindex ${args} 1]]
                     set args [lreplace ${args} 1 1 ${pos}]
-                    if {[string compare [lindex ${args} 2] ""] == 0} {
-                        return
+            	    if {[string compare [lindex ${args} 2] ""] == 0} {
+			set SyncEditors_Active 0
+			return
                     }
                 }
             "delete" {
@@ -4219,6 +4223,7 @@ proc SyncEditors {cls args} {
                     }
                 }
             default {
+                    set SyncEditors_Active 0
                     return
                 }
         }
