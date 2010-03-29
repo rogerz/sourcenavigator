@@ -1,3 +1,10 @@
+Release NG4.2 (Mon Mar 29 19:37:20 CEST 2010)
+
+(INTERNAL) Add Ray Minnerly to CONTRIBUTORS
+(BUGFIX) Fix "can't save modified files" bug
+(BUGFIX) Fix non-portable globbing via $path_sep, use "file join" instead
+
+
 Release NG4.1 (Tue Feb  2 21:07:20 CET 2010)
 
 (INTERNAL) Reorganize CONTRIBUTORS, add Maurice Havelday
