@@ -34,9 +34,9 @@ done
 #echo "debug: found $script at $runscript"
 
 
-# uncomment to run in debugger
-#echo "set args -file "$etcdir/$script" ${1+"$@"}" > gdb.run
-#exec gdb --command gdb.run $snbindir/hyper
+# uncomment the following to run in debugger
+#echo "set args -file "$runscript" ${1+"$@"}" > gdb.run
+#gdb --command gdb.run $run
 
-# and run it
+# ordinary startup 
 exec "$run" --home "$snbasedir" -file "$runscript" ${1+"$@"}
