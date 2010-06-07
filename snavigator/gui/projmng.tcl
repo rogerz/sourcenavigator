@@ -454,7 +454,7 @@ proc sn_select_project {{waiting "wait"}} {
     global tcl_platform
 
     #read project list
-    set proj_list [sn_read_exist_projects]
+    set proj_list [lsort -dictionary [sn_read_exist_projects]]
 
     set t .sn_open_proj
     if {[winfo exists ${t}]} {
