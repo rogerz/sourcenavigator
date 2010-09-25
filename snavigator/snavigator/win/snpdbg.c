@@ -176,7 +176,7 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		MessageBox(0, "Failed to start snpdbg", "Error", MB_OK|MB_ICONERROR);
 		exit(1);
 	}
-	strcpy(relativePtr, "\\share\\etc\\snpdbg");
+	strcpy(relativePtr, "\\share\\snavigator\\etc\\snpdbg");
 
 	testFile = CreateFile(tmp, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (INVALID_HANDLE_VALUE == testFile) {
@@ -259,5 +259,10 @@ int WINAPI WinMain( HINSTANCE cur, HINSTANCE prev, LPSTR cmd, int show)
 		MessageBox(0, "Failed to start snpdbg", "Error", MB_OK|MB_ICONERROR);
 		return GetLastError();
 	}
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+
 	return 0;
 }
