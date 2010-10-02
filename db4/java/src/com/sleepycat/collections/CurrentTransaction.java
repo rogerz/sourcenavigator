@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: CurrentTransaction.java,v 12.9 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.collections;
@@ -38,15 +38,23 @@ public class CurrentTransaction {
 
     /* For internal use, this class doubles as an Environment wrapper. */
 
-    private static WeakHashMap envMap = new WeakHashMap();
+    private static WeakHashMap<Environment,CurrentTransaction> envMap =
+        new WeakHashMap<Environment,CurrentTransaction>();
 
     private LockMode writeLockMode;
     private boolean cdbMode;
     private boolean txnMode;
     private boolean lockingMode;
-    private Environment env;
     private ThreadLocal localTrans = new ThreadLocal();
     private ThreadLocal localCdbCursors;
+
+    /*
+     * Use a WeakReference to the Environment to avoid pinning the environment
+     * in the envMap.  The WeakHashMap envMap uses the Environment as a weak
+     * key, but this won't prevent GC of the Environment if the map's value has
+     * a hard reference to the Environment.  [#15444]
+     */
+    private WeakReference<Environment> envRef;
 
     /**
      * Gets the CurrentTransaction accessor for a specified Berkeley DB
@@ -72,21 +80,17 @@ public class CurrentTransaction {
      */
     static CurrentTransaction getInstanceInternal(Environment env) {
         synchronized (envMap) {
-            CurrentTransaction myEnv = null;
-            WeakReference myEnvRef = (WeakReference) envMap.get(env);
-            if (myEnvRef != null) {
-                myEnv = (CurrentTransaction) myEnvRef.get();
+            CurrentTransaction ct = envMap.get(env);
+            if (ct == null) {
+                ct = new CurrentTransaction(env);
+                envMap.put(env, ct);
             }
-            if (myEnv == null) {
-                myEnv = new CurrentTransaction(env);
-                envMap.put(env, new WeakReference(myEnv));
-            }
-            return myEnv;
+            return ct;
         }
     }
 
     private CurrentTransaction(Environment env) {
-        this.env = env;
+        envRef = new WeakReference<Environment>(env);
         try {
             EnvironmentConfig config = env.getConfig();
             txnMode = config.getTransactional();
@@ -145,7 +149,7 @@ public class CurrentTransaction {
      */
     public final Environment getEnvironment() {
 
-        return env;
+        return envRef.get();
     }
 
     /**
@@ -167,7 +171,7 @@ public class CurrentTransaction {
 	throws DatabaseException {
 
         return getTransaction() == null &&
-               DbCompat.getThreadTransaction(env) == null;
+               DbCompat.getThreadTransaction(getEnvironment()) == null;
     }
 
     /**
@@ -190,6 +194,7 @@ public class CurrentTransaction {
     public final Transaction beginTransaction(TransactionConfig config)
         throws DatabaseException {
 
+        Environment env = getEnvironment();
         Trans trans = (Trans) localTrans.get();
         if (trans != null) {
             if (trans.txn != null) {
@@ -306,8 +311,10 @@ public class CurrentTransaction {
      * Opens a cursor for a given database, dup'ing an existing CDB cursor if
      * one is open for the current thread.
      */
-    Cursor openCursor(Database db, CursorConfig cursorConfig,
-                      boolean writeCursor, Transaction txn)
+    Cursor openCursor(Database db,
+                      CursorConfig cursorConfig,
+                      boolean writeCursor,
+                      Transaction txn)
         throws DatabaseException {
 
         if (cdbMode) {
@@ -334,7 +341,7 @@ public class CurrentTransaction {
             CursorConfig cdbConfig;
             if (writeCursor) {
                 if (cdbCursors.readCursors.size() > 0) {
-                    
+
                     /*
                      * Although CDB allows opening a write cursor when a read
                      * cursor is open, a self-deadlock will occur if a write is
@@ -438,9 +445,7 @@ public class CurrentTransaction {
      * Returns true if a CDB cursor is open and therefore a Database write
      * operation should not be attempted since a self-deadlock may result.
      */
-    boolean isCDBCursorOpen(Database db)
-        throws DatabaseException {
-
+    boolean isCDBCursorOpen(Database db) {
         if (cdbMode) {
             WeakHashMap cdbCursorsMap = (WeakHashMap) localCdbCursors.get();
             if (cdbCursorsMap != null) {

@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1999,2007 Oracle.  All rights reserved.
+# Copyright (c) 1999-2009 Oracle.  All rights reserved.
 #
-# $Id: recd010.tcl,v 12.5 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # TEST	recd010
 # TEST	Test stability of btree duplicates across btree off-page dup splits
@@ -102,9 +102,9 @@ proc recd010_main { method select largs } {
 			}
 		}
 		set reverse [string first "reverse" $msg]
-		op_recover abort $testdir $env_cmd $testfile $cmd $msg
+		op_recover abort $testdir $env_cmd $testfile $cmd $msg $largs
 		recd010_check $testdir $testfile $opts abort $reverse $firstkeys
-		op_recover commit $testdir $env_cmd $testfile $cmd $msg
+		op_recover commit $testdir $env_cmd $testfile $cmd $msg $largs
 		recd010_check $testdir $testfile $opts commit $reverse $firstkeys
 	}
 	puts "\tRecd010.i: Verify db_printlog can read logfile"

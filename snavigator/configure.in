@@ -6,7 +6,7 @@ AC_CONFIG_SRCDIR([hyper/sninit.c])
 AC_PREREQ(2.61)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(..)
-AM_INIT_AUTOMAKE(snavigator,NG4.2)
+AM_INIT_AUTOMAKE(snavigator,NG4.3)
 AM_MAINTAINER_MODE
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++

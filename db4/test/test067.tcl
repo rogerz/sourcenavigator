@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1999,2007 Oracle.  All rights reserved.
+# Copyright (c) 1999-2009 Oracle.  All rights reserved.
 #
-# $Id: test067.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test067
 # TEST	Test of DB_CURRENT partial puts onto almost empty duplicate
@@ -68,8 +68,10 @@ proc test067 { method {ndups 1000} {tnum "067"} args } {
 	    $method ($args) Partial puts on near-empty duplicate pages."
 
 	foreach dupopt { "-dup" "-dup -dupsort" } {
-		if { $is_je_test && $dupopt == "-dup" } {
-			continue
+		if { $is_je_test || [is_compressed $args] } {
+			if { $dupopt == "-dup" } {
+				continue
+			}
 		}
 
 		#

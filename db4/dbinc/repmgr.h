@@ -1,25 +1,47 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2006,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2006-2009 Oracle.  All rights reserved.
  *
- * $Id: repmgr.h,v 12.13 2007/05/17 15:15:05 bostic Exp $
+ * $Id$
  */
 
 #ifndef _DB_REPMGR_H_
 #define	_DB_REPMGR_H_
+
+#include "dbinc_auto/repmgr_auto.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 /*
- * Replication Framework message types.  Normal replication messages are
- * encapsulated in repmgr messages of type REP_MESSAGE.
+ * Replication Framework message types.  These values are transmitted to
+ * identify messages sent between sites, even sites running differing versions
+ * of software.  Therefore, once assigned, the values are permanently "frozen".
+ * New message types added in later versions always get new (higher) values.
+ *
+ * For example, in repmgr wire protocol version 1 the highest assigned message
+ * type value was 3, for REPMGR_REP_MESSAGE.  Wire protocol version 2 added the
+ * HEARTBEAT message type (4).
+ *
+ * We still list them in alphabetical order, for ease of reference.  But this
+ * generally does not correspond to numerical order.
  */
 #define	REPMGR_ACK		1	/* Acknowledgement. */
 #define	REPMGR_HANDSHAKE	2	/* Connection establishment sequence. */
+#define	REPMGR_HEARTBEAT	4	/* Monitor connection health. */
 #define	REPMGR_REP_MESSAGE	3	/* Normal replication message. */
+
+/* Heartbeats were introduced in version 2. */
+#define	REPMGR_MAX_V1_MSG_TYPE	3
+#define	REPMGR_MAX_V2_MSG_TYPE	4
+#define	REPMGR_MAX_V3_MSG_TYPE	4
+#define	HEARTBEAT_MIN_VERSION	2
+
+/* The range of protocol versions we're willing to support. */
+#define	DB_REPMGR_VERSION	3
+#define	DB_REPMGR_MIN_VERSION	1
 
 #ifdef DB_WIN32
 typedef SOCKET socket_t;
@@ -36,6 +58,20 @@ typedef struct iovec db_iovec_t;
 #endif
 
 /*
+ * The (arbitrary) maximum number of outgoing messages we're willing to hold, on
+ * a queue per connection, waiting for TCP buffer space to become available in
+ * the kernel.  Rather than exceeding this limit, we simply discard additional
+ * messages (since this is always allowed by the replication protocol).
+ *    As a special dispensation, if a message is destined for a specific remote
+ * site (i.e., it's not a broadcast), then we first try blocking the sending
+ * thread, waiting for space to become available (though we only wait a limited
+ * time).  This is so as to be able to handle the immediate flood of (a
+ * potentially large number of) outgoing messages that replication generates, in
+ * a tight loop, when handling PAGE_REQ, LOG_REQ and ALL_REQ requests.
+ */
+#define	OUT_QUEUE_LIMIT	10
+
+/*
  * The system value is available from sysconf(_SC_HOST_NAME_MAX).
  * Historically, the maximum host name was 256.
  */
@@ -46,6 +82,11 @@ typedef struct iovec db_iovec_t;
 /* A buffer big enough for the string "site host.domain.com:65535". */
 #define	MAX_SITE_LOC_STRING (MAXHOSTNAMELEN+20)
 typedef char SITE_STRING_BUFFER[MAX_SITE_LOC_STRING+1];
+
+/* Default timeout values, in seconds. */
+#define	DB_REPMGR_DEFAULT_ACK_TIMEOUT		(1 * US_PER_SEC)
+#define	DB_REPMGR_DEFAULT_CONNECTION_RETRY	(30 * US_PER_SEC)
+#define	DB_REPMGR_DEFAULT_ELECTION_RETRY	(10 * US_PER_SEC)
 
 struct __repmgr_connection;
     typedef struct __repmgr_connection REPMGR_CONNECTION;
@@ -63,7 +104,7 @@ typedef TAILQ_HEAD(__repmgr_retry_q, __repmgr_retry) RETRY_Q_HEADER;
 
 /* Information about threads managed by Replication Framework. */
 struct __repmgr_runnable {
-	DB_ENV *dbenv;
+	ENV *env;
 	thread_id_t thread_id;
 	void *(*run) __P((void *));
 	int finished;
@@ -171,19 +212,48 @@ struct __repmgr_connection {
 #ifdef DB_WIN32
 	WSAEVENT event_object;
 #endif
-#define	CONN_CONNECTING	0x01	/* nonblocking connect in progress */
-#define	CONN_DEFUNCT	0x02	/* socket close pending */
+
+	u_int32_t version;	/* Wire protocol version on this connection. */
+				/* (0 means not yet determined.) */
+
+#define	CONN_INCOMING	0x01	/* We received this via accept(). */
 	u_int32_t flags;
+
+/*
+ * When we initiate an outgoing connection, it starts off in CONNECTING state
+ * (or possibly CONNECTED).  When the (non-blocking) connection operation later
+ * completes, we move to CONNECTED state.  When we get the response to our
+ * version negotiation, we move to READY.
+ *     For incoming connections that we accept, we start in NEGOTIATE, then to
+ * PARAMETERS, and then to READY.
+ *     CONGESTED is a hierarchical substate of READY: it's just like READY, with
+ * the additional wrinkle that we don't bother waiting for the outgoing queue to
+ * drain in certain circumstances.
+ */
+#define	CONN_CONGESTED	1	/* Long-lived full outgoing queue. */
+#define	CONN_CONNECTED	2	/* Awaiting reply to our version negotiation. */
+#define	CONN_CONNECTING	3	/* Awaiting completion of non-block connect. */
+#define	CONN_DEFUNCT	4	/* Basically dead, awaiting clean-up. */
+#define	CONN_NEGOTIATE	5	/* Awaiting version proposal. */
+#define	CONN_PARAMETERS	6	/* Awaiting parameters handshake. */
+#define	CONN_READY	7	/* Everything's fine. */
+	int state;
 
 	/*
 	 * Output: usually we just simply write messages right in line, in the
 	 * send() function's thread.  But if TCP doesn't have enough network
 	 * buffer space for us when we first try it, we instead allocate some
 	 * memory, and copy the message, and then send it as space becomes
-	 * available in our main select() thread.
+	 * available in our main select() thread.  In some cases, if the queue
+	 * gets too long we wait until it's drained, and then append to it.
+	 * This condition variable's associated mutex is the normal per-repmgr
+	 * db_rep->mutex, because that mutex is always held anyway whenever the
+	 * output queue is consulted.
 	 */
 	OUT_Q_HEADER outbound_queue;
 	int out_queue_length;
+	cond_var_t drained;
+	int blockers;		/* ref count of msg threads waiting on us */
 
 	/*
 	 * Input: while we're reading a message, we keep track of what phase
@@ -209,6 +279,8 @@ struct __repmgr_connection {
 		} repmgr_msg;
 	} input;
 };
+
+#define	IS_READY_STATE(s)	((s) == CONN_READY || (s) == CONN_CONGESTED)
 
 #ifdef HAVE_GETADDRINFO
 typedef struct addrinfo	ADDRINFO;
@@ -238,6 +310,17 @@ typedef struct __addrinfo {
 } ADDRINFO;
 #endif /* HAVE_GETADDRINFO */
 
+/*
+ * Unprocessed network address configuration, as stored in shared region.
+ */
+typedef struct {
+	roff_t host;		/* Separately allocated copy of string. */
+	u_int16_t port;		/* Stored in plain old host-byte-order. */
+} SITEADDR;
+
+/*
+ * Local copy of local and remote addresses, with resolved addrinfo.
+ */
 typedef struct {
 	char *host;		/* Separately allocated copy of string. */
 	u_int16_t port;		/* Stored in plain old host-byte-order. */
@@ -248,7 +331,7 @@ typedef struct {
 /*
  * Each site that we know about is either idle or connected.  If it's connected,
  * we have a reference to a connection object; if it's idle, we have a reference
- * to a retry object.
+ * to a retry object.  (But see note about sub_conns, below.)
  *     We store site objects in a simple array in the machtab, indexed by EID.
  * (We allocate EID numbers for other sites simply according to their index
  * within this array; we use the special value INT_MAX to represent our own
@@ -257,42 +340,108 @@ typedef struct {
 struct __repmgr_site {
 	repmgr_netaddr_t net_addr;
 	DB_LSN max_ack;		/* Best ack we've heard from this site. */
-	int priority;
-
-#define	SITE_IDLE 1		/* Waiting til time to retry connecting. */
-#define	SITE_CONNECTED 2
-	int state;
+	u_int32_t priority;
+	db_timespec last_rcvd_timestamp;
 
 	union {
 		REPMGR_CONNECTION *conn; /* when CONNECTED */
 		REPMGR_RETRY *retry; /* when IDLE */
 	} ref;
+
+	/*
+	 * Subordinate connections (connections from subordinate processes at a
+	 * multi-process site).  Note that the SITE_CONNECTED state, and all the
+	 * ref.retry stuff above is irrelevant to subordinate connections.  If a
+	 * connection is on this list, it exists; and we never bother trying to
+	 * reconnect lost connections (indeed we can't, for these are always
+	 * incoming-only).
+	 */
+	CONNECTION_LIST	sub_conns;
+
+#define	SITE_IDLE 1		/* Waiting til time to retry connecting. */
+#define	SITE_CONNECTED 2
+	int state;
+
+#define	SITE_HAS_PRIO	0x01	/* Set if priority field has valid value. */
+	u_int32_t flags;
 };
 
 /*
- * Repmgr message formats.  We pass these in the "control" portion of a message.
- * For an ack, we just let the "rec" part go unused.  But for a handshake, the
- * "rec" part contains the variable-length host name (including terminating NUL
- * character).
+ * Repmgr keeps track of references to connection information (instances
+ * of struct __repmgr_connection).  There are three kinds of places
+ * connections may be found: (1) SITE->ref.conn, (2) SITE->sub_conns, and
+ * (3) db_rep->connections.
+ *
+ * 1. SITE->ref.conn points to our connection with the main process running
+ * at the given site, if such a connection exists.  We may have initiated
+ * the connection to the site ourselves, or we may have received it as an
+ * incoming connection.  Once it is established there is very little
+ * difference between those two cases.
+ *
+ * 2. SITE->sub_conns is a list of connections we have with subordinate
+ * processes running at the given site.  There can be any number of these
+ * connections, one per subordinate process.  Note that these connections
+ * are always incoming: there's no way for us to initiate this kind of
+ * connection because subordinate processes do not "listen".
+ *
+ * 3. The db_rep->connections list contains the references to any
+ * connections that are not actively associated with any site (we
+ * sometimes call these "orphans").  There are two times when this can
+ * be:
+ *
+ *   a) When we accept an incoming connection, we don't know what site it
+ *      comes from until we read the initial handshake message.
+ *
+ *   b) When an error occurs on a connection, we first mark it as DEFUNCT
+ *      and stop using it.  Then, at a later, well-defined time, we close
+ *      the connection's file descriptor and get rid of the connection
+ *      struct.
+ *
+ * In light of the above, we can see that the following describes the
+ * rules for how connections may be moved among these three kinds of
+ * "places":
+ *
+ * - when we initiate an outgoing connection, we of course know what site
+ *   it's going to be going to, and so we immediately put the pointer to
+ *   the connection struct into SITE->ref.conn
+ *
+ * - when we accept an incoming connection, we don't immediately know
+ *   whom it's from, so we have to put it on the orphans list
+ *   (db_rep->connections).
+ *
+ * - (incoming, cont.) But as soon as we complete the initial "handshake"
+ *   message exchange, we will know which site it's from and whether it's
+ *   a subordinate or main connection.  At that point we remove it from
+ *   db_rep->connections and either point to it by SITE->ref.conn, or add
+ *   it to the SITE->sub_conns list.
+ *
+ * - (for any active connection) when an error occurs, we move the
+ *   connection to the orphans list until we have a chance to close it.
  */
-typedef struct {
-	u_int32_t generation;
-	DB_LSN lsn;
-} DB_REPMGR_ACK;
 
 /*
- * The hand-shake message is exchanged upon establishment of a connection.  The
- * message protocol version number here refers to the connection as a whole.  In
- * other words, it's an assertion that every message sent or received on this
- * connection shall be of the specified version.  Since repmgr uses TCP, a
- * reliable stream-oriented protocol, this assertion is meaningful.
+ * Repmgr message formats.
+ *
+ * Declarative definitions of current message formats appear in repmgr.src.
+ * (The s_message/gen_msg.awk utility generates C code.)  In general, we send
+ * the buffers marshaled from those structure formats in the "control" portion
+ * of a message.
+ */
+
+/*
+ * Flags for the handshake message (new in 4.8).
+ */
+#define	REPMGR_SUBORDINATE	0x01	/* This is a subordinate connection. */
+
+/*
+ * Legacy V1 handshake message format.  For compatibility, we send this as part
+ * of version negotiation upon connection establishment.
  */
 typedef struct {
-#define	DB_REPMGR_VERSION	1
 	u_int32_t version;
 	u_int16_t port;
 	u_int32_t priority;
-} DB_REPMGR_HANDSHAKE;
+} DB_REPMGR_V1_HANDSHAKE;
 
 /*
  * We store site structs in a dynamically allocated, growable array, indexed by
@@ -304,21 +453,43 @@ typedef struct {
 #define	SITE_FROM_EID(eid)	(&db_rep->sites[eid])
 #define	EID_FROM_SITE(s)	((int)((s) - (&db_rep->sites[0])))
 #define	IS_VALID_EID(e)		((e) >= 0)
+#define	IS_KNOWN_REMOTE_SITE(e)	((e) >= 0 && ((u_int)(e)) < db_rep->site_cnt)
 #define	SELF_EID		INT_MAX
+
+#define	IS_SUBORDINATE(db_rep)	(db_rep->listen_fd == INVALID_SOCKET)
 
 #define	IS_PEER_POLICY(p) ((p) == DB_REPMGR_ACKS_ALL_PEERS ||		\
     (p) == DB_REPMGR_ACKS_QUORUM ||		\
     (p) == DB_REPMGR_ACKS_ONE_PEER)
 
+/*
+ * Most of the code in repmgr runs while holding repmgr's main mutex, which
+ * resides in db_rep->mutex.  This mutex is owned by a single repmgr process,
+ * and serializes access to the (large) critical sections among threads in the
+ * process.  Unlike many other mutexes in DB, it is specifically coded as either
+ * a POSIX threads mutex or a Win32 mutex.  Note that although it's a large
+ * fraction of the code, it's a tiny fraction of the time: repmgr spends most of
+ * its time in a call to select(), and as well a bit in calls into the Base
+ * replication API.  All of those release the mutex.
+ *     Access to repmgr's shared list of site addresses is protected by
+ * another mutex: mtx_repmgr.  And, when changing space allocation for that site
+ * list we conform to the convention of acquiring renv->mtx_regenv.  These are
+ * less frequent of course.
+ *     When it's necessary to acquire more than one of these mutexes, the
+ * ordering priority is:
+ *        db_rep->mutex (first)
+ *        mtx_repmgr    (briefly)
+ *        mtx_regenv    (last, and most briefly)
+ */
 #define	LOCK_MUTEX(m) do {						\
 	int __ret;							\
-	if ((__ret = __repmgr_lock_mutex(&(m))) != 0)			\
+	if ((__ret = __repmgr_lock_mutex(m)) != 0)			\
 		return (__ret);						\
 } while (0)
 
 #define	UNLOCK_MUTEX(m) do {						\
 	int __ret;							\
-	if ((__ret = __repmgr_unlock_mutex(&(m))) != 0)			\
+	if ((__ret = __repmgr_unlock_mutex(m)) != 0)			\
 		return (__ret);						\
 } while (0)
 
@@ -336,7 +507,7 @@ typedef char * sockopt_t;
 
 typedef DWORD threadsync_timeout_t;
 
-#define	REPMGR_SYNC_INITED(db_rep) (db_rep->waiters != NULL)
+#define	REPMGR_INITED(db_rep) (db_rep->waiters != NULL)
 #else
 
 #define	INVALID_SOCKET		-1
@@ -351,13 +522,23 @@ typedef void * sockopt_t;
 
 typedef struct timespec threadsync_timeout_t;
 
-#define	REPMGR_SYNC_INITED(db_rep) (db_rep->read_pipe >= 0)
+#define	REPMGR_INITED(db_rep) (db_rep->read_pipe >= 0)
 #endif
 
 /* Macros to proceed, as with a cursor, through the address_list: */
 #define	ADDR_LIST_CURRENT(na)	((na)->current)
 #define	ADDR_LIST_FIRST(na)	((na)->current = (na)->address_list)
 #define	ADDR_LIST_NEXT(na)	((na)->current = (na)->current->ai_next)
+#define	ADDR_LIST_INIT(na, al)	do {	\
+	(na)->address_list = (al);	\
+	ADDR_LIST_FIRST(na);		\
+} while (0)
+
+/*
+ * Generic definition of some action to be performed on each connection, in the
+ * form of a call-back function.
+ */
+typedef int (*CONNECTION_ACTION) __P((ENV *, REPMGR_CONNECTION *, void *));
 
 #include "dbinc_auto/repmgr_ext.h"
 

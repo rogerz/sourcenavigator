@@ -2,7 +2,7 @@
 package BerkeleyDB;
 
 
-#     Copyright (c) 1997-2007 Paul Marquess. All rights reserved.
+#     Copyright (c) 1997-2009 Paul Marquess. All rights reserved.
 #     This program is free software; you can redistribute it and/or
 #     modify it under the same terms as Perl itself.
 #
@@ -10,14 +10,14 @@ package BerkeleyDB;
 # The documentation for this module is at the bottom of this file,
 # after the line __END__.
 
-BEGIN { require 5.004_04 }
+BEGIN { require 5.005 }
 
 use strict;
 use Carp;
 use vars qw($VERSION @ISA @EXPORT $AUTOLOAD
 		$use_XSLoader);
 
-$VERSION = '0.32';
+$VERSION = '0.39';
 
 require Exporter;
 #require DynaLoader;
@@ -74,6 +74,8 @@ BEGIN {
 	DB_CREATE
 	DB_CURLSN
 	DB_CURRENT
+	DB_CURSOR_BULK
+	DB_CURSOR_TRANSIENT
 	DB_CXX_NO_EXCEPTIONS
 	DB_DEGREE_2
 	DB_DELETED
@@ -103,6 +105,7 @@ BEGIN {
 	DB_ENV_DIRECT_LOG
 	DB_ENV_DSYNC_DB
 	DB_ENV_DSYNC_LOG
+	DB_ENV_FAILCHK
 	DB_ENV_FATAL
 	DB_ENV_LOCKDOWN
 	DB_ENV_LOCKING
@@ -141,6 +144,8 @@ BEGIN {
 	DB_EVENT_NOT_HANDLED
 	DB_EVENT_NO_SUCH_EVENT
 	DB_EVENT_PANIC
+	DB_EVENT_REG_ALIVE
+	DB_EVENT_REG_PANIC
 	DB_EVENT_REP_CLIENT
 	DB_EVENT_REP_ELECTED
 	DB_EVENT_REP_MASTER
@@ -150,6 +155,7 @@ BEGIN {
 	DB_EVENT_WRITE_FAILED
 	DB_EXCL
 	DB_EXTENT
+	DB_FAILCHK
 	DB_FAST_STAT
 	DB_FCNTL_LOCKING
 	DB_FILEOPEN
@@ -158,13 +164,19 @@ BEGIN {
 	DB_FIXEDLEN
 	DB_FLUSH
 	DB_FORCE
+	DB_FOREIGN_ABORT
+	DB_FOREIGN_CASCADE
+	DB_FOREIGN_CONFLICT
+	DB_FOREIGN_NULLIFY
 	DB_FREELIST_ONLY
 	DB_FREE_SPACE
 	DB_GETREC
 	DB_GET_BOTH
 	DB_GET_BOTHC
+	DB_GET_BOTH_LTE
 	DB_GET_BOTH_RANGE
 	DB_GET_RECNO
+	DB_GID_SIZE
 	DB_HANDLE_LOCK
 	DB_HASH
 	DB_HASHMAGIC
@@ -228,17 +240,23 @@ BEGIN {
 	DB_LOCK_UPGRADE
 	DB_LOCK_UPGRADE_WRITE
 	DB_LOCK_YOUNGEST
+	DB_LOGCHKSUM
 	DB_LOGC_BUF_SIZE
 	DB_LOGFILEID_INVALID
 	DB_LOGMAGIC
 	DB_LOGOLDVER
 	DB_LOGVERSION
+	DB_LOGVERSION_LATCHING
 	DB_LOG_AUTOREMOVE
+	DB_LOG_AUTO_REMOVE
 	DB_LOG_BUFFER_FULL
 	DB_LOG_CHKPNT
 	DB_LOG_COMMIT
+	DB_LOG_DIRECT
 	DB_LOG_DISK
+	DB_LOG_DSYNC
 	DB_LOG_INMEMORY
+	DB_LOG_IN_MEMORY
 	DB_LOG_LOCKED
 	DB_LOG_NOCOPY
 	DB_LOG_NOT_DURABLE
@@ -246,6 +264,7 @@ BEGIN {
 	DB_LOG_RESEND
 	DB_LOG_SILENT_ERR
 	DB_LOG_WRNOSYNC
+	DB_LOG_ZERO
 	DB_MAX_PAGES
 	DB_MAX_RECORDS
 	DB_MPOOL_CLEAN
@@ -259,7 +278,9 @@ BEGIN {
 	DB_MPOOL_NEW
 	DB_MPOOL_NEW_GROUP
 	DB_MPOOL_NOFILE
+	DB_MPOOL_NOLOCK
 	DB_MPOOL_PRIVATE
+	DB_MPOOL_TRY
 	DB_MPOOL_UNLINK
 	DB_MULTIPLE
 	DB_MULTIPLE_KEY
@@ -271,6 +292,7 @@ BEGIN {
 	DB_MUTEX_LOGICAL_LOCK
 	DB_MUTEX_PROCESS_ONLY
 	DB_MUTEX_SELF_BLOCK
+	DB_MUTEX_SHARED
 	DB_MUTEX_THREAD
 	DB_NEEDSPLIT
 	DB_NEXT
@@ -300,6 +322,7 @@ BEGIN {
 	DB_OPFLAGS_MASK
 	DB_ORDERCHKONLY
 	DB_OVERWRITE
+	DB_OVERWRITE_DUP
 	DB_PAD
 	DB_PAGEYIELD
 	DB_PAGE_LOCK
@@ -351,6 +374,7 @@ BEGIN {
 	DB_REPMGR_ACKS_ONE
 	DB_REPMGR_ACKS_ONE_PEER
 	DB_REPMGR_ACKS_QUORUM
+	DB_REPMGR_CONF_2SITE_STRICT
 	DB_REPMGR_CONNECTED
 	DB_REPMGR_DISCONNECTED
 	DB_REPMGR_PEER
@@ -361,6 +385,8 @@ BEGIN {
 	DB_REP_CLIENT
 	DB_REP_CONF_BULK
 	DB_REP_CONF_DELAYCLIENT
+	DB_REP_CONF_INMEM
+	DB_REP_CONF_LEASE
 	DB_REP_CONF_NOAUTOINIT
 	DB_REP_CONF_NOWAIT
 	DB_REP_CONNECTION_RETRY
@@ -374,6 +400,8 @@ BEGIN {
 	DB_REP_FULL_ELECTION
 	DB_REP_FULL_ELECTION_TIMEOUT
 	DB_REP_HANDLE_DEAD
+	DB_REP_HEARTBEAT_MONITOR
+	DB_REP_HEARTBEAT_SEND
 	DB_REP_HOLDELECTION
 	DB_REP_IGNORE
 	DB_REP_ISPERM
@@ -390,6 +418,7 @@ BEGIN {
 	DB_REP_NOTPERM
 	DB_REP_OUTDATED
 	DB_REP_PAGEDONE
+	DB_REP_PAGELOCKED
 	DB_REP_PERMANENT
 	DB_REP_REREQUEST
 	DB_REP_STARTUPDONE
@@ -401,6 +430,8 @@ BEGIN {
 	DB_RPC_SERVERVERS
 	DB_RUNRECOVERY
 	DB_SALVAGE
+	DB_SA_SKIPFIRSTKEY
+	DB_SA_UNKNOWNKEY
 	DB_SECONDARY_BAD
 	DB_SEQUENCE_OLDVER
 	DB_SEQUENCE_VERSION
@@ -412,10 +443,13 @@ BEGIN {
 	DB_SEQ_WRAPPED
 	DB_SET
 	DB_SET_LOCK_TIMEOUT
+	DB_SET_LTE
 	DB_SET_RANGE
 	DB_SET_RECNO
+	DB_SET_REG_TIMEOUT
 	DB_SET_TXN_NOW
 	DB_SET_TXN_TIMEOUT
+	DB_SHALLOW_DUP
 	DB_SNAPSHOT
 	DB_SPARE_FLAG
 	DB_STAT_ALL
@@ -425,8 +459,17 @@ BEGIN {
 	DB_STAT_LOCK_OBJECTS
 	DB_STAT_LOCK_PARAMS
 	DB_STAT_MEMP_HASH
+	DB_STAT_MEMP_NOERROR
 	DB_STAT_NOERROR
 	DB_STAT_SUBSYSTEM
+	DB_ST_DUPOK
+	DB_ST_DUPSET
+	DB_ST_DUPSORT
+	DB_ST_IS_RECNO
+	DB_ST_OVFL_LEAF
+	DB_ST_RECNUM
+	DB_ST_RELEN
+	DB_ST_TOPLEVEL
 	DB_SURPRISE_KID
 	DB_SWAPBYTES
 	DB_SYSTEM_MEM
@@ -457,7 +500,6 @@ BEGIN {
 	DB_TXNVERSION
 	DB_TXN_ABORT
 	DB_TXN_APPLY
-	DB_TXN_BACKWARD_ALLOC
 	DB_TXN_BACKWARD_ROLL
 	DB_TXN_CKP
 	DB_TXN_FORWARD_ROLL
@@ -497,10 +539,19 @@ BEGIN {
 	DB_VERB_RECOVERY
 	DB_VERB_REGISTER
 	DB_VERB_REPLICATION
+	DB_VERB_REPMGR_CONNFAIL
+	DB_VERB_REPMGR_MISC
+	DB_VERB_REP_ELECT
+	DB_VERB_REP_LEASE
+	DB_VERB_REP_MISC
+	DB_VERB_REP_MSGS
+	DB_VERB_REP_SYNC
+	DB_VERB_REP_TEST
 	DB_VERB_WAITSFOR
 	DB_VERIFY
 	DB_VERIFY_BAD
 	DB_VERIFY_FATAL
+	DB_VERIFY_PARTITION
 	DB_VERSION_MAJOR
 	DB_VERSION_MINOR
 	DB_VERSION_MISMATCH
@@ -750,6 +801,7 @@ sub new
 					Server		=> undef,
 					Mode		=> 0666,
 					ErrFile  	=> undef,
+					MsgFile  	=> undef,
 					ErrPrefix 	=> undef,
 					Flags     	=> 0,
 					SetFlags     	=> 0,
@@ -759,6 +811,7 @@ sub new
 					Config		=> undef,
 					Encrypt		=> undef,
 					SharedMemKey	=> undef,
+					ThreadCount	=> 0,
 					}, @_) ;
 
     my $errfile  = $got->{ErrFile} ;				
@@ -767,6 +820,15 @@ sub new
 	    my $handle = new IO::File ">$got->{ErrFile}"
 		or croak "Cannot open file $got->{ErrFile}: $!\n" ;
 	    $errfile = $got->{ErrFile} = $handle ;
+	}
+    }
+
+    if (defined $got->{MsgFile}) {
+        my $msgfile  = $got->{MsgFile} ;				
+	if (!isaFilehandle($msgfile)) {
+	    my $handle = new IO::File ">$msgfile"
+		or croak "Cannot open file $msgfile: $!\n" ;
+	    $got->{MsgFile} = $handle ;
 	}
     }
 
@@ -784,6 +846,7 @@ sub new
                 croak $BerkeleyDB::Error ;
 	    }
 	    push @BerkeleyDB::a, "$k\t$v" ;
+	    $got->{$k} = $v;
 	}
 
         $got->{"Config"} = pack("p*", @BerkeleyDB::a, undef) 
@@ -792,24 +855,24 @@ sub new
 
     BerkeleyDB::parseEncrypt($got);
 
-    my ($addr) = _db_appinit($pkg, $got, $errfile) ;
+    my ($addr) = _db_appinit($pkg, $got, $errfile);
     my $obj ;
     $obj = bless [$addr] , $pkg if $addr ;
-    if ($obj && $BerkeleyDB::db_version >= 3.1 && keys %config) {
-	my ($k, $v);
-	while (($k, $v) = each %config) {
-	    if ($k eq 'DB_DATA_DIR')
-	      { $obj->set_data_dir($v) }
-	    elsif ($k eq 'DB_LOG_DIR')
-	      { $obj->set_lg_dir($v) }
-	    elsif ($k eq 'DB_TEMP_DIR' || $k eq 'DB_TMP_DIR')
-	      { $obj->set_tmp_dir($v) }
-	    else {
-	      $BerkeleyDB::Error = "illegal name-value pair: $k $v\n" ; 
-              croak $BerkeleyDB::Error 
-            }
-	}
-    }
+#    if ($obj && $BerkeleyDB::db_version >= 3.1 && keys %config) {
+#	my ($k, $v);
+#	while (($k, $v) = each %config) {
+#	    if ($k eq 'DB_DATA_DIR')
+#	      { $obj->set_data_dir($v) }
+#	    elsif ($k eq 'DB_LOG_DIR')
+#	      { $obj->set_lg_dir($v) }
+#	    elsif ($k eq 'DB_TEMP_DIR' || $k eq 'DB_TMP_DIR')
+#	      { $obj->set_tmp_dir($v) }
+#	    else {
+#	      $BerkeleyDB::Error = "illegal name-value pair: $k $v\n" ; 
+#              croak $BerkeleyDB::Error 
+#            }
+#	}
+#    }
     return $obj ;
 }
 
@@ -935,16 +998,34 @@ sub new
 			Compare		=> undef,
 			DupCompare	=> undef,
 			Prefix 		=> undef,
+			set_bt_compress	=> undef,
 		      }, @_) ;
 
     croak("Env not of type BerkeleyDB::Env")
-	if defined $got->{Env} and ! isa($got->{Env},'BerkeleyDB::Env');
+        if defined $got->{Env} and ! isa($got->{Env},'BerkeleyDB::Env');
 
     croak("Txn not of type BerkeleyDB::Txn")
-	if defined $got->{Txn} and ! isa($got->{Txn},'BerkeleyDB::Txn');
+        if defined $got->{Txn} and ! isa($got->{Txn},'BerkeleyDB::Txn');
 
     croak("-Tie needs a reference to a hash")
-	if defined $got->{Tie} and $got->{Tie} !~ /HASH/ ;
+        if defined $got->{Tie} and $got->{Tie} !~ /HASH/ ;
+
+#    if (defined $got->{set_bt_compress} )
+#    {
+#
+#        croak("-set_bt_compress needs a reference to a 2-element array")
+#            if $got->{set_bt_compress} !~ /ARRAY/ ||
+#
+#        croak("-set_bt_compress needs a reference to a 2-element array")
+#            if $got->{set_bt_compress} !~ /ARRAY/ ||
+#               @{ $got->{set_bt_compress} } != 2;
+#
+#        $got->{"_btcompress1"} =  $got->{set_bt_compress}[0] 
+#            if defined $got->{set_bt_compress}[0];
+#
+#        $got->{"_btcompress2"} =  $got->{set_bt_compress}[1] 
+#            if defined $got->{set_bt_compress}[1];
+#    }
 
     BerkeleyDB::parseEncrypt($got);
 

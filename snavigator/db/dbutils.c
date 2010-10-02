@@ -108,7 +108,11 @@ static  DB      *db_scopes;
 /* return db4 version
  will look something like
  Berkeley DB version Berkeley DB 4.8.30: (April  9, 2010)
+
+ we also need to do a nasty forward declaration, because we don't
+ have access to "normal" db4 routines here (due to db185-compat mode)
  */
+char * db_version(int *, int*, int*);
 char * Paf_db_get_version(void)
 {
 	int _unused;

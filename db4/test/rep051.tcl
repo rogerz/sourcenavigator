@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2001,2007 Oracle.  All rights reserved.
+# Copyright (c) 2001-2009 Oracle.  All rights reserved.
 #
-# $Id: rep051.tcl,v 12.15 2007/07/11 14:50:17 paula Exp $
+# $Id$
 #
 # TEST	rep051
 # TEST	Test of compaction with replication.
@@ -12,8 +12,11 @@
 # TEST	Propagate the changes to the client and make sure client and
 # TEST	master match.
 
-proc rep051 { method { niter 5000 } { tnum "051" } args } {
+proc rep051 { method { niter 1000 } { tnum "051" } args } {
 	source ./include.tcl
+	global databases_in_memory
+	global repfiles_in_memory
+
 	if { $is_windows9x_test == 1 } {
 		puts "Skipping replication test on Win9x platform."
 		return
@@ -35,6 +38,22 @@ proc rep051 { method { niter 5000 } { tnum "051" } args } {
 		return
 	}
 
+	# Set up for on-disk or in-memory databases.
+	set msg "using on-disk databases"
+	if { $databases_in_memory } {
+		set msg "using named in-memory databases"
+		if { [is_queueext $method] } { 
+			puts -nonewline "Skipping rep$tnum for method "
+			puts "$method with named in-memory databases."
+			return
+		}
+	}
+
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
+	}
+
 	# Run tests with and without recovery.  If we're doing testing
 	# of in-memory logging, skip the combination of recovery
 	# and in-memory logging -- it doesn't make sense.
@@ -51,8 +70,8 @@ proc rep051 { method { niter 5000 } { tnum "051" } args } {
 			}
 			set envargs ""
 			set args $saved_args
-			puts "Rep$tnum:\
-			    Replication with compaction ($method $recopt)."
+			puts "Rep$tnum: Replication with\
+			    compaction ($method $recopt) $msg $msg2."
 			puts "Rep$tnum: Master logs are [lindex $l 0]"
 			puts "Rep$tnum: Client logs are [lindex $l 1]"
 			rep051_sub $method \
@@ -63,11 +82,19 @@ proc rep051 { method { niter 5000 } { tnum "051" } args } {
 
 proc rep051_sub { method niter tnum envargs logset recargs largs } {
 	source ./include.tcl
+	global databases_in_memory
+	global repfiles_in_memory
 	global rep_verbose
+	global verbose_type
 
 	set verbargs ""
 	if { $rep_verbose == 1 } {
-		set verbargs " -verbose {rep on} "
+		set verbargs " -verbose {$verbose_type on} "
+	}
+
+	set repmemargs ""
+	if { $repfiles_in_memory } {
+		set repmemargs "-rep_inmem_files "
 	}
 
 	env_cleanup $testdir
@@ -99,7 +126,7 @@ proc rep051_sub { method niter tnum envargs logset recargs largs } {
 	# Open a master.
 	repladd 1
 	set env_cmd(M) "berkdb_env_noerr -create $verbargs \
-	    -log_max 1000000 $envargs $m_logargs $recargs \
+	    -log_max 1000000 $envargs $m_logargs $recargs $repmemargs \
 	    -home $masterdir -errpfx MASTER $m_txnargs -rep_master \
 	    -rep_transport \[list 1 replsend\]"
 	set masterenv [eval $env_cmd(M)]
@@ -107,7 +134,7 @@ proc rep051_sub { method niter tnum envargs logset recargs largs } {
 	# Open a client
 	repladd 2
 	set env_cmd(C) "berkdb_env_noerr -create $verbargs \
-	    -log_max 1000000 $envargs $c_logargs $recargs \
+	    -log_max 1000000 $envargs $c_logargs $recargs $repmemargs \
 	    -home $clientdir -errpfx CLIENT $c_txnargs -rep_client \
 	    -rep_transport \[list 2 replsend\]"
 	set clientenv [eval $env_cmd(C)]
@@ -118,21 +145,28 @@ proc rep051_sub { method niter tnum envargs logset recargs largs } {
 
 	# Explicitly create the db handle so we can do deletes,
 	# and also to make the page size small.
-	set testfile "test.db"
+	if { $databases_in_memory } {
+		set dbname { "" "test.db" }
+	} else { 
+		set dbname "test.db"
+	} 
+
 	set omethod [convert_method $method]
 	set db [eval {berkdb_open_noerr -env $masterenv -auto_commit\
-	    -pagesize 512 -create -mode 0644} $largs $omethod $testfile]
+	    -pagesize 512 -create -mode 0644} $largs $omethod $dbname]
  	error_check_good db_open [is_valid_db $db] TRUE
 
 	# Run rep_test in the master and update client.
 	puts "\tRep$tnum.a:\
 	    Running rep_test in replicated env ($envargs $recargs)."
-	eval rep_test $method $masterenv $db $niter 0 0 0 0 $largs
+
+	eval rep_test $method $masterenv $db $niter 0 0 0 $largs
 	process_msgs $envlist
 
 	# Verify that contents match.
 	puts "\tRep$tnum.b: Verifying client database contents."
-	rep_verify $masterdir $masterenv $clientdir $clientenv $verify_subset
+	rep_verify $masterdir $masterenv\
+	    $clientdir $clientenv $verify_subset 1 1
 
 	# Delete most entries.  Since some of our methods renumber,
 	# delete starting at $niter and working down to 0.
@@ -158,9 +192,20 @@ proc rep051_sub { method niter tnum envargs logset recargs largs } {
 	error_check_good dbc_close [$dbc close] 0
 	error_check_good t_commit [$t commit] 0
 
+	# Open read-only handle on client, so we can call $db stat.
+	set client_db \
+	    [eval {berkdb_open_noerr} -env $clientenv -rdonly $dbname]
+ 	error_check_good client_open [is_valid_db $client_db] TRUE
+
+	# Check database size on both client and master.
+	process_msgs $envlist
+	set master_pages_before [stat_field $db stat "Page count"]
+	set client_pages_before [stat_field $client_db stat "Page count"]
+	error_check_good \
+	    pages_match_before $client_pages_before $master_pages_before
+
 	# Compact database.
 	puts "\tRep$tnum.d: Compact database."
-	set free1 [stat_field $db stat "Pages on freelist"]
 	set t [$masterenv txn]
 	error_check_good txn [is_valid_txn $t $masterenv] TRUE
 	set txn "-txn $t"
@@ -169,15 +214,26 @@ proc rep051_sub { method niter tnum envargs logset recargs largs } {
 
 	error_check_good t_commit [$t commit] 0
 	error_check_good db_sync [$db sync] 0
-	set free2 [stat_field $db stat "Pages on freelist"]
-	error_check_good more_free_pages [expr $free2 > $free1] 1
 
-	# Process messages.
+	# There will be fewer pages in use after the compact -freespace call.
+	set master_pages_after [stat_field $db stat "Page count"]
+	set page_reduction [expr $master_pages_before - $master_pages_after]
+	error_check_good page_reduction [expr $page_reduction > 0] 1
+	
+	# Process messages so the client sees the reduction in pages used.
 	process_msgs $envlist
+
+	set client_pages_after [stat_field $client_db stat "Page count"]
+	error_check_good \
+	    pages_match_after $client_pages_after $master_pages_after
+
+	# Close client handle.
+	error_check_good client_handle [$client_db close] 0
 
 	# Reverify.
 	puts "\tRep$tnum.b: Verifying client database contents."
-	rep_verify $masterdir $masterenv $clientdir $clientenv $verify_subset
+	rep_verify $masterdir $masterenv\
+	    $clientdir $clientenv $verify_subset 1 1
 
 	# Clean up.
 	error_check_good db_close [$db close] 0

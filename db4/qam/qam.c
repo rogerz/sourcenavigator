@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1999,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1999-2009 Oracle.  All rights reserved.
  *
- * $Id: qam.c,v 12.51 2007/05/17 17:18:03 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -18,7 +18,7 @@
 
 static int __qam_bulk __P((DBC *, DBT *, u_int32_t));
 static int __qamc_close __P((DBC *, db_pgno_t, int *));
-static int __qamc_del __P((DBC *));
+static int __qamc_del __P((DBC *, u_int32_t));
 static int __qamc_destroy __P((DBC *));
 static int __qamc_get __P((DBC *, DBT *, DBT *, u_int32_t, db_pgno_t *));
 static int __qamc_put __P((DBC *, DBT *, DBT *, u_int32_t, db_pgno_t *));
@@ -33,44 +33,35 @@ static int __qam_getno __P((DB *, const DBT *, db_recno_t *));
  *	Position a queued access method cursor at a record.  This returns
  *	the page locked.  *exactp will be set if the record is valid.
  * PUBLIC: int __qam_position
- * PUBLIC:      __P((DBC *, db_recno_t *, db_lockmode_t, u_int32_t, int *));
+ * PUBLIC:      __P((DBC *, db_recno_t *, u_int32_t, int *));
  */
 int
-__qam_position(dbc, recnop, lock_mode, get_mode, exactp)
+__qam_position(dbc, recnop, get_mode, exactp)
 	DBC *dbc;		/* open cursor */
 	db_recno_t *recnop;	/* pointer to recno to find */
-	db_lockmode_t lock_mode;/* locking: read or write */
 	u_int32_t get_mode;	/* flags to __memp_fget */
 	int *exactp;		/* indicate if it was found */
 {
-	QUEUE_CURSOR *cp;
 	DB *dbp;
 	QAMDATA  *qp;
+	QUEUE_CURSOR *cp;
 	db_pgno_t pg;
-	int ret, t_ret;
+	int ret;
 
 	dbp = dbc->dbp;
 	cp = (QUEUE_CURSOR *)dbc->internal;
 
 	/* Fetch the page for this recno. */
-	pg = QAM_RECNO_PAGE(dbp, *recnop);
+	cp->pgno = pg = QAM_RECNO_PAGE(dbp, *recnop);
 
-	if ((ret = __db_lget(dbc, 0, pg, lock_mode, 0, &cp->lock)) != 0)
-		return (ret);
 	cp->page = NULL;
 	*exactp = 0;
-	if ((ret = __qam_fget(dbp, &pg,
-	    dbc->txn, get_mode, &cp->page)) != 0) {
+	if ((ret = __qam_fget(dbc, &pg, get_mode, &cp->page)) != 0) {
 		if (!FLD_ISSET(get_mode, DB_MPOOL_CREATE) &&
 		    (ret == DB_PAGE_NOTFOUND || ret == ENOENT))
 			ret = 0;
-
-		/* We did not fetch it, we can release the lock. */
-		if ((t_ret = __LPUT(dbc, cp->lock)) != 0 && ret == 0)
-			ret = t_ret;
 		return (ret);
 	}
-	cp->pgno = pg;
 	cp->indx = QAM_RECNO_INDEX(dbp, pg, *recnop);
 
 	if (PGNO(cp->page) == 0) {
@@ -83,7 +74,7 @@ __qam_position(dbc, recnop, lock_mode, get_mode, exactp)
 			*exactp = 0;
 			return (0);
 		}
-		DB_ASSERT(dbp->dbenv, FLD_ISSET(get_mode, DB_MPOOL_CREATE));
+		DB_ASSERT(dbp->env, FLD_ISSET(get_mode, DB_MPOOL_CREATE));
 		PGNO(cp->page) = pg;
 		TYPE(cp->page) = P_QAMDATA;
 	}
@@ -113,35 +104,35 @@ __qam_pitem(dbc, pagep, indx, recno, data)
 	db_recno_t recno;
 	DBT *data;
 {
-	DB_ENV *dbenv;
 	DB *dbp;
 	DBT olddata, pdata, *datap;
+	ENV *env;
 	QAMDATA *qp;
 	QUEUE *t;
 	u_int8_t *dest, *p;
 	int allocated, ret;
 
 	dbp = dbc->dbp;
-	dbenv = dbp->dbenv;
+	env = dbp->env;
 	t = (QUEUE *)dbp->q_internal;
 	allocated = ret = 0;
 
 	if (data->size > t->re_len)
-		return (__db_rec_toobig(dbenv, data->size, t->re_len));
+		return (__db_rec_toobig(env, data->size, t->re_len));
 	qp = QAM_GET_RECORD(dbp, pagep, indx);
 
 	p = qp->data;
 	datap = data;
 	if (F_ISSET(data, DB_DBT_PARTIAL)) {
 		if (data->doff + data->dlen > t->re_len) {
-			__db_errx(dbenv,
+			__db_errx(env,
 		"%s: data offset plus length larger than record size of %lu",
 			    "Record length error", (u_long)t->re_len);
 			return (EINVAL);
 		}
 
 		if (data->size != data->dlen)
-			return (__db_rec_repl(dbenv, data->size, data->dlen));
+			return (__db_rec_repl(env, data->size, data->dlen));
 
 		if (data->size == t->re_len)
 			goto no_partial;
@@ -162,7 +153,7 @@ __qam_pitem(dbc, pagep, indx, recno, data)
 			datap = &pdata;
 			memset(datap, 0, sizeof(*datap));
 
-			if ((ret = __os_malloc(dbenv,
+			if ((ret = __os_malloc(env,
 			    t->re_len, &datap->data)) != 0)
 				return (ret);
 			allocated = 1;
@@ -208,7 +199,7 @@ no_partial:
 		    (int)t->re_pad, t->re_len - datap->size);
 
 err:	if (allocated)
-		__os_free(dbenv, datap->data);
+		__os_free(env, datap->data);
 
 	return (ret);
 }
@@ -225,9 +216,8 @@ __qamc_put(dbc, key, data, flags, pgnop)
 	db_pgno_t *pgnop;
 {
 	DB *dbp;
-	DB_ENV *dbenv;
-	DB_LOCK lock;
 	DB_MPOOLFILE *mpf;
+	ENV *env;
 	QMETA *meta;
 	QUEUE_CURSOR *cp;
 	db_pgno_t pg;
@@ -236,7 +226,7 @@ __qamc_put(dbc, key, data, flags, pgnop)
 	int exact, ret, t_ret, writelock;
 
 	dbp = dbc->dbp;
-	dbenv = dbp->dbenv;
+	env = dbp->env;
 	mpf = dbp->mpf;
 	if (pgnop != NULL)
 		*pgnop = PGNO_INVALID;
@@ -247,6 +237,7 @@ __qamc_put(dbc, key, data, flags, pgnop)
 	case DB_KEYFIRST:
 	case DB_KEYLAST:
 	case DB_NOOVERWRITE:
+	case DB_OVERWRITE_DUP:
 		if ((ret = __qam_getno(dbp, key, &cp->recno)) != 0)
 			return (ret);
 		/* FALLTHROUGH */
@@ -254,7 +245,7 @@ __qamc_put(dbc, key, data, flags, pgnop)
 		break;
 	default:
 		/* The interface shouldn't let anything else through. */
-		return (__db_ferr(dbenv, "DBC->put", 0));
+		return (__db_ferr(env, "DBC->put", 0));
 	}
 
 	/* Write lock the record. */
@@ -262,12 +253,10 @@ __qamc_put(dbc, key, data, flags, pgnop)
 	    cp->recno, DB_LOCK_WRITE, DB_LOCK_RECORD, &cp->lock)) != 0)
 		return (ret);
 
-	lock = cp->lock;
-
-	if ((ret = __qam_position(dbc, &cp->recno, DB_LOCK_WRITE,
+	if ((ret = __qam_position(dbc, &cp->recno,
 	    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &exact)) != 0) {
 		/* We could not get the page, we can release the record lock. */
-		(void)__LPUT(dbc, lock);
+		(void)__LPUT(dbc, cp->lock);
 		return (ret);
 	}
 
@@ -278,14 +267,10 @@ __qamc_put(dbc, key, data, flags, pgnop)
 		ret = __qam_pitem(dbc,
 		     (QPAGE *)cp->page, cp->indx, cp->recno, data);
 
-	/* Doing record locking, release the page lock */
-	if ((t_ret = __LPUT(dbc, cp->lock)) != 0 && ret == 0)
-		ret = t_ret;
-	if ((t_ret = __qam_fput(dbp,
+	if ((t_ret = __qam_fput(dbc,
 	    cp->pgno, cp->page, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 	cp->page = NULL;
-	cp->lock = lock;
 	cp->lock_mode = DB_LOCK_WRITE;
 	if (ret != 0)
 		return (ret);
@@ -293,18 +278,13 @@ __qamc_put(dbc, key, data, flags, pgnop)
 	/* We may need to reset the head or tail of the queue. */
 	pg = ((QUEUE *)dbp->q_internal)->q_meta;
 
-	/*
-	 * Get the meta page first, we don't want to lock it while trying
-	 * to pin it.
-	 */
 	writelock = 0;
-	if ((ret = __memp_fget(mpf, &pg, dbc->txn, 0, &meta)) != 0)
-		return (ret);
 	if ((ret = __db_lget(dbc, LCK_COUPLE,
-	    pg,  DB_LOCK_READ, 0, &cp->lock)) != 0) {
-		(void)__memp_fput(mpf, meta, dbc->priority);
+	    pg,  DB_LOCK_READ, 0, &cp->lock)) != 0)
 		return (ret);
-	}
+	if ((ret = __memp_fget(mpf, &pg,
+	    dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+		goto err;
 
 	opcode = 0;
 	new_cur = new_first = 0;
@@ -344,15 +324,13 @@ recheck:
 
 	/* Drop the read lock and get the a write lock on the meta page. */
 	if (writelock == 0 && (ret = __db_lget(dbc, LCK_COUPLE_ALWAYS,
-	     pg,  DB_LOCK_WRITE, 0, &cp->lock)) != 0) {
-		(void)__memp_fput(mpf, meta, dbc->priority);
-		return (ret);
-	}
+	     pg,  DB_LOCK_WRITE, 0, &cp->lock)) != 0)
+		goto done;
 	if (writelock++ == 0)
 		goto recheck;
 
-	if (((ret = __memp_dirty(mpf,
-	    &meta, dbc->txn, dbc->priority, DB_MPOOL_DIRTY)) != 0 ||
+	if (((ret = __memp_dirty(mpf, &meta,
+	    dbc->thread_info, dbc->txn, dbc->priority, DB_MPOOL_DIRTY)) != 0 ||
 	    (DBC_LOGGING(dbc) &&
 	    (ret = __qam_mvptr_log(dbp, dbc->txn,
 	    &meta->dbmeta.lsn, 0, opcode, meta->first_recno,
@@ -365,11 +343,11 @@ recheck:
 	if (opcode & QAM_SETFIRST)
 		meta->first_recno = new_first;
 
-done:	if ((t_ret = __memp_fput(mpf,
-	    meta, dbc->priority)) != 0 && ret == 0)
+done:	if (meta != NULL && (t_ret = __memp_fput(mpf,
+	    dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 
-	/* Don't hold the meta page long term. */
+err:	/* Don't hold the meta page long term. */
 	if ((t_ret = __LPUT(dbc, cp->lock)) != 0 && ret == 0)
 		ret = t_ret;
 	return (ret);
@@ -393,7 +371,7 @@ __qam_append(dbc, key, data)
 	QPAGE *page;
 	QUEUE *qp;
 	QUEUE_CURSOR *cp;
-	db_pgno_t pg;
+	db_pgno_t pg, metapg;
 	db_recno_t recno;
 	int ret, t_ret;
 
@@ -401,18 +379,13 @@ __qam_append(dbc, key, data)
 	mpf = dbp->mpf;
 	cp = (QUEUE_CURSOR *)dbc->internal;
 
-	pg = ((QUEUE *)dbp->q_internal)->q_meta;
-	/*
-	 * Get the meta page first, we don't want to write lock it while
-	 * trying to pin it.
-	 */
-	if ((ret = __memp_fget(mpf, &pg, dbc->txn, DB_MPOOL_DIRTY, &meta)) != 0)
-		return (ret);
 	/* Write lock the meta page. */
-	if ((ret = __db_lget(dbc, 0, pg,  DB_LOCK_WRITE, 0, &lock)) != 0) {
-		(void)__memp_fput(mpf, meta, dbc->priority);
+	metapg = ((QUEUE *)dbp->q_internal)->q_meta;
+	if ((ret = __db_lget(dbc, 0, metapg,  DB_LOCK_WRITE, 0, &lock)) != 0)
 		return (ret);
-	}
+	if ((ret = __memp_fget(mpf, &metapg,
+	    dbc->thread_info, dbc->txn, DB_MPOOL_DIRTY, &meta)) != 0)
+		return (ret);
 
 	/* Get the next record number. */
 	recno = meta->cur_recno;
@@ -423,7 +396,6 @@ __qam_append(dbc, key, data)
 		meta->cur_recno--;
 		if (meta->cur_recno == RECNO_OOB)
 			meta->cur_recno--;
-		ret = __LPUT(dbc, lock);
 
 		if (ret == 0)
 			ret = EFBIG;
@@ -436,6 +408,11 @@ __qam_append(dbc, key, data)
 	/* Lock the record and release meta page lock. */
 	ret = __db_lget(dbc, LCK_COUPLE_ALWAYS,
 	    recno, DB_LOCK_WRITE, DB_LOCK_RECORD, &lock);
+	/* Release the meta page. */
+	if ((t_ret = __memp_fput(mpf,
+	    dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
+		ret = t_ret;
+	meta = NULL;
 
 	/*
 	 * The application may modify the data based on the selected record
@@ -451,25 +428,19 @@ __qam_append(dbc, key, data)
 	 * Capture errors from either the lock couple or the call to
 	 * dbp->db_append_recno.
 	 */
-	if (ret != 0) {
-		(void)__LPUT(dbc, lock);
+	if (ret != 0)
 		goto err;
-	}
 
 	cp->lock = lock;
 	cp->lock_mode = DB_LOCK_WRITE;
+	LOCK_INIT(lock);
 
 	pg = QAM_RECNO_PAGE(dbp, recno);
 
-	/* Fetch and write lock the data page. */
-	if ((ret = __db_lget(dbc, 0, pg,  DB_LOCK_WRITE, 0, &lock)) != 0)
+	/* Fetch for write the data page. */
+	if ((ret = __qam_fget(dbc, &pg,
+	    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &page)) != 0)
 		goto err;
-	if ((ret = __qam_fget(dbp, &pg, dbc->txn,
-	    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &page)) != 0) {
-		/* We did not fetch it, we can release the lock. */
-		(void)__LPUT(dbc, lock);
-		goto err;
-	}
 
 	/* See if this is a new page. */
 	if (page->pgno == 0) {
@@ -481,17 +452,13 @@ __qam_append(dbc, key, data)
 	ret = __qam_pitem(dbc, page,
 	    QAM_RECNO_INDEX(dbp, pg, recno), recno, data);
 
-	/* Doing record locking, release the page lock */
-	if ((t_ret = __LPUT(dbc, lock)) != 0 && ret == 0)
-		ret = t_ret;
-
-	if ((t_ret =
-	    __qam_fput(dbp, pg, page, dbc->priority)) != 0 && ret == 0)
+	if ((t_ret = __qam_fput(dbc,
+	    pg, page, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 
 	/* Return the record number to the user. */
 	if (ret == 0 && key != NULL)
-		ret = __db_retcopy(dbp->dbenv, key,
+		ret = __db_retcopy(dbp->env, key,
 		    &recno, sizeof(recno), &dbc->rkey->data, &dbc->rkey->ulen);
 
 	/* Position the cursor on this record. */
@@ -503,17 +470,20 @@ __qam_append(dbc, key, data)
 	    (recno % (qp->page_ext * qp->rec_page) == 0 ||
 	    recno == UINT32_MAX)) {
 		if ((ret = __db_lget(dbc,
-		    0, ((QUEUE *)dbp->q_internal)->q_meta,
-		    DB_LOCK_WRITE, 0, &lock)) != 0)
+		    0, metapg, DB_LOCK_READ, 0, &lock)) != 0)
+			goto err;
+		if ((ret = __memp_fget(mpf, &metapg,
+		    dbc->thread_info, dbc->txn, 0, &meta)) != 0)
 			goto err;
 		if (!QAM_AFTER_CURRENT(meta, recno))
 			ret = __qam_fclose(dbp, pg);
-		if ((t_ret = __LPUT(dbc, lock)) != 0 && ret == 0)
-			ret = t_ret;
 	}
 
 err:	/* Release the meta page. */
-	if ((t_ret = __memp_fput(mpf, meta, dbc->priority)) != 0 && ret == 0)
+	if (meta != NULL && (t_ret = __memp_fput(mpf,
+	    dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
+		ret = t_ret;
+	if ((t_ret = __LPUT(dbc, lock)) != 0 && ret == 0)
 		ret = t_ret;
 
 	return (ret);
@@ -524,57 +494,58 @@ err:	/* Release the meta page. */
  *	Qam cursor->am_del function
  */
 static int
-__qamc_del(dbc)
+__qamc_del(dbc, flags)
 	DBC *dbc;
+	u_int32_t flags;
 {
 	DB *dbp;
 	DBT data;
-	DB_LOCK lock, metalock;
+	DB_LOCK metalock;
 	DB_MPOOLFILE *mpf;
 	PAGE *pagep;
 	QAMDATA *qp;
 	QMETA *meta;
 	QUEUE_CURSOR *cp;
 	db_pgno_t pg;
+	db_recno_t first;
 	int exact, ret, t_ret;
 
 	dbp = dbc->dbp;
 	mpf = dbp->mpf;
 	cp = (QUEUE_CURSOR *)dbc->internal;
-	LOCK_INIT(lock);
 
 	pg = ((QUEUE *)dbp->q_internal)->q_meta;
-	/*
-	 * Get the meta page first, we don't want to write lock it while
-	 * trying to pin it.
-	 */
-	if ((ret = __memp_fget(mpf, &pg, dbc->txn, 0, &meta)) != 0)
+	/* Read lock the meta page. */
+	if ((ret = __db_lget(dbc, 0, pg,  DB_LOCK_READ, 0, &metalock)) != 0)
 		return (ret);
-	/* Write lock the meta page. */
-	if ((ret = __db_lget(dbc, 0, pg,  DB_LOCK_READ, 0, &metalock)) != 0) {
-		(void)__memp_fput(mpf, meta, dbc->priority);
-		return (ret);
-	}
 
-	if (QAM_NOT_VALID(meta, cp->recno))
+	if ((ret = __memp_fget(mpf, &pg,
+	    dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+		return (ret);
+
+	if (QAM_NOT_VALID(meta, cp->recno)) {
 		ret = DB_NOTFOUND;
+		goto err;
+	}
+	first = meta->first_recno;
 
 	/* Don't hold the meta page long term. */
-	if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
-		ret = t_ret;
-
-	if (ret != 0)
+	if ((ret = __memp_fput(mpf,
+	     dbc->thread_info, meta, dbc->priority)) != 0)
+		goto err;
+	meta = NULL;
+	if ((ret = __LPUT(dbc, metalock)) != 0)
 		goto err;
 
+	/* Get the record. */
 	if ((ret = __db_lget(dbc, LCK_COUPLE,
 	    cp->recno, DB_LOCK_WRITE, DB_LOCK_RECORD, &cp->lock)) != 0)
 		goto err;
 	cp->lock_mode = DB_LOCK_WRITE;
-	lock = cp->lock;
 
-	/* Find the record ; delete only deletes exact matches. */
-	if ((ret = __qam_position(dbc, &cp->recno, DB_LOCK_WRITE,
-	    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &exact)) != 0)
+	/* Find the record; delete only deletes exact matches. */
+	if ((ret = __qam_position(dbc, &cp->recno,
+	    DB_MPOOL_DIRTY, &exact)) != 0)
 		goto err;
 
 	if (!exact) {
@@ -604,38 +575,42 @@ __qamc_del(dbc)
 		LSN_NOT_LOGGED(LSN(pagep));
 
 	F_CLR(qp, QAM_VALID);
+	if ((ret = __qam_fput(dbc,
+	    cp->pgno, cp->page, dbc->priority)) != 0)
+		goto err;
+	cp->page = NULL;
 
 	/*
-	 * Peek at the first_recno before locking the meta page.
 	 * Other threads cannot move first_recno past
 	 * our position while we have the record locked.
 	 * If it's pointing at the deleted record then lock
 	 * the metapage and check again as lower numbered
 	 * record may have been inserted.
 	 */
-	if (cp->recno == meta->first_recno) {
+	if (LF_ISSET(DB_CONSUME) || cp->recno == first) {
 		pg = ((QUEUE *)dbp->q_internal)->q_meta;
 		if ((ret =
 		    __db_lget(dbc, 0, pg,  DB_LOCK_WRITE, 0, &metalock)) != 0)
 			goto err;
-		if (cp->recno == meta->first_recno)
+		if ((ret = __memp_fget(mpf, &pg,
+		    dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+			goto err;
+		if (LF_ISSET(DB_CONSUME) || cp->recno == meta->first_recno)
 			ret = __qam_consume(dbc, meta, meta->first_recno);
-		if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
-			ret = t_ret;
 	}
 
-err:	if ((t_ret = __memp_fput(mpf, meta, dbc->priority)) != 0 && ret == 0)
+err:	if (meta != NULL && (t_ret = __memp_fput(mpf, dbc->thread_info,
+	    meta, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
+	/* Don't hold the meta page long term. */
+	if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
+		ret = t_ret;
+
 	if (cp->page != NULL &&
-	    (t_ret = __qam_fput(dbp,
+	    (t_ret = __qam_fput(dbc,
 	    cp->pgno, cp->page, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 	cp->page = NULL;
-
-	/* Doing record locking, release the page lock */
-	if ((t_ret = __LPUT(dbc, cp->lock)) != 0 && ret == 0)
-		ret = t_ret;
-	cp->lock = lock;
 
 	return (ret);
 }
@@ -658,9 +633,9 @@ __qamc_get(dbc, key, data, flags, pgnop)
 	DB *dbp;
 	DBC *dbcdup;
 	DBT tmp;
-	DB_ENV *dbenv;
-	DB_LOCK lock, pglock, metalock;
+	DB_LOCK lock, metalock;
 	DB_MPOOLFILE *mpf;
+	ENV *env;
 	PAGE *pg;
 	QAMDATA *qp;
 	QMETA *meta;
@@ -673,11 +648,10 @@ __qamc_get(dbc, key, data, flags, pgnop)
 	int retrying;
 
 	dbp = dbc->dbp;
-	dbenv = dbp->dbenv;
+	env = dbp->env;
 	mpf = dbp->mpf;
 	cp = (QUEUE_CURSOR *)dbc->internal;
 	LOCK_INIT(lock);
-	LOCK_INIT(pglock);
 
 	lock_mode = F_ISSET(dbc, DBC_RMW) ? DB_LOCK_WRITE : DB_LOCK_READ;
 	meta_mode = DB_LOCK_READ;
@@ -711,29 +685,15 @@ __qamc_get(dbc, key, data, flags, pgnop)
 	LOCK_INIT(metalock);
 
 	/*
-	 * Get the meta page first, we don't want to write lock it while
-	 * trying to pin it.  This is because someone my have it pinned
-	 * but not locked.
+	 * Get the meta page first
 	 */
-	if ((ret = __memp_fget(mpf, &metapno, dbc->txn, 0, &meta)) != 0)
+	if (locked == 0 && (ret = __db_lget(dbc,
+	    0, metapno, meta_mode, 0, &metalock)) != 0)
+		goto err;
+	locked = 1;
+	if ((ret = __memp_fget(mpf, &metapno,
+	     dbc->thread_info, dbc->txn, 0, &meta)) != 0)
 		return (ret);
-
-get_next:
-	switch (flags) {
-	case DB_NEXT:
-	case DB_NEXT_NODUP:
-	case DB_FIRST:
-	case DB_PREV:
-	case DB_PREV_NODUP:
-	case DB_LAST:
-		if ((ret = __db_lget(dbc,
-		    0, metapno, meta_mode, 0, &metalock)) != 0)
-			goto err;
-		locked = 1;
-		break;
-	default:
-		break;
-	}
 
 	/* Release any previous lock if not in a transaction. */
 	if ((ret = __TLPUT(dbc, cp->lock)) != 0)
@@ -776,26 +736,27 @@ retry:	/* Update the record number. */
 					goto retry;
 				}
 
-				if (CDB_LOCKING(dbenv)) {
+				if (CDB_LOCKING(env)) {
 					/* Drop the metapage before we wait. */
-					ret = __memp_fput(mpf,
+					ret = __memp_fput(mpf, dbc->thread_info,
 					    meta, dbc->priority);
 					meta = NULL;
 					if (ret != 0)
 						goto err;
 					if ((ret = __lock_get(
-					    dbenv, dbc->locker,
+					    env, dbc->locker,
 					    DB_LOCK_SWITCH, &dbc->lock_dbt,
 					    DB_LOCK_WAIT, &dbc->mylock)) != 0)
 						goto err;
 
-					if ((ret = __memp_fget(mpf, &metapno,
-					    dbc->txn, 0, &meta)) != 0)
-						goto err;
 					if ((ret = __lock_get(
-					    dbenv, dbc->locker,
+					    env, dbc->locker,
 					    DB_LOCK_UPGRADE, &dbc->lock_dbt,
 					    DB_LOCK_WRITE, &dbc->mylock)) != 0)
+						goto err;
+					if ((ret = __memp_fget(mpf, &metapno,
+					    dbc->thread_info,
+					    dbc->txn, 0, &meta)) != 0)
 						goto err;
 					goto retry;
 				}
@@ -815,7 +776,8 @@ retry:	/* Update the record number. */
 						goto retry;
 				}
 				/* Drop the metapage before we wait. */
-				ret = __memp_fput(mpf, meta, dbc->priority);
+				ret = __memp_fput(mpf,
+				     dbc->thread_info, meta, dbc->priority);
 				meta = NULL;
 				if (ret != 0)
 					goto err;
@@ -826,9 +788,6 @@ retry:	/* Update the record number. */
 						ret = DB_LOCK_NOTGRANTED;
 					goto err;
 				}
-				if ((ret = __memp_fget(mpf, &metapno, dbc->txn,
-				    0, &meta)) != 0)
-					goto err;
 				if ((ret = __db_lget(dbc, 0,
 				    PGNO_INVALID, DB_LOCK_WRITE,
 				    DB_LOCK_UPGRADE, &metalock)) != 0) {
@@ -836,6 +795,10 @@ retry:	/* Update the record number. */
 						ret = DB_LOCK_NOTGRANTED;
 					goto err;
 				}
+				if ((ret = __memp_fget(mpf,
+				     &metapno, dbc->thread_info, dbc->txn,
+				    0, &meta)) != 0)
+					goto err;
 				locked = 1;
 				goto retry;
 			}
@@ -882,7 +845,7 @@ retry:	/* Update the record number. */
 			goto err;
 		break;
 	default:
-		ret = __db_unknown_flag(dbenv, "__qamc_get", flags);
+		ret = __db_unknown_flag(env, "__qamc_get", flags);
 		goto err;
 	}
 
@@ -893,6 +856,11 @@ retry:	/* Update the record number. */
 		locked = 0;
 	}
 
+	if ((ret = __memp_fput(mpf,
+	    dbc->thread_info, meta, dbc->priority)) != 0)
+		goto err;
+	meta = NULL;
+
 	/* Lock the record. */
 	if (((ret = __db_lget(dbc, LCK_COUPLE, cp->recno, lock_mode,
 	    (with_delete && !inorder && !retrying) ?
@@ -901,16 +869,19 @@ retry:	/* Update the record number. */
 	    with_delete) {
 #ifdef QDEBUG
 		if (DBC_LOGGING(dbc))
-			(void)__log_printf(dbenv,
-			    dbc->txn, "Queue S: %x %d %d %d",
+			(void)__log_printf(env,
+			    dbc->txn, "Queue S: %x %d %d",
 			    dbc->locker ? dbc->locker->id : 0,
-			    cp->recno, first, meta->first_recno);
+			    cp->recno, first);
 #endif
 		first = 0;
 		if ((ret =
 		    __db_lget(dbc, 0, metapno, meta_mode, 0, &metalock)) != 0)
 			goto err;
 		locked = 1;
+		if ((ret = __memp_fget(mpf, &metapno,
+		     dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+			goto err;
 		goto retry;
 	}
 
@@ -942,6 +913,9 @@ retry:	/* Update the record number. */
 		    __db_lget(dbc, 0, metapno, meta_mode, 0, &metalock)) != 0)
 			goto lerr;
 		locked = 1;
+		if ((ret = __memp_fget(mpf, &metapno,
+		     dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+			goto lerr;
 		if ((is_first && cp->recno != meta->first_recno) ||
 		    (flags == DB_LAST && cp->recno != meta->cur_recno - 1)) {
 			if ((ret = __LPUT(dbc, lock)) != 0)
@@ -972,18 +946,20 @@ retry:	/* Update the record number. */
 		if ((ret = __LPUT(dbc, metalock)) != 0)
 			goto err;
 		locked = 0;
+		if ((ret = __memp_fput(mpf,
+		    dbc->thread_info, meta, dbc->priority)) != 0)
+			goto err;
+		meta = NULL;
 	}
 
 	/* Position the cursor on the record. */
-	if ((ret = __qam_position(dbc, &cp->recno,
-	    lock_mode, 0, &exact)) != 0) {
+	if ((ret = __qam_position(dbc, &cp->recno, 0, &exact)) != 0) {
 		/* We cannot get the page, release the record lock. */
 		(void)__LPUT(dbc, lock);
 		goto err;
 	}
 
 	pg = cp->page;
-	pglock = cp->lock;
 	cp->lock = lock;
 	cp->lock_mode = lock_mode;
 	LOCK_INIT(lock);
@@ -991,16 +967,21 @@ retry:	/* Update the record number. */
 	if (!exact) {
 release_retry:	/* Release locks and retry, if possible. */
 		if (pg != NULL)
-			(void)__qam_fput(dbp, cp->pgno, pg, dbc->priority);
+			(void)__qam_fput(dbc, cp->pgno, pg, dbc->priority);
 		cp->page = pg = NULL;
-		if ((ret = __LPUT(dbc, pglock)) != 0)
-			goto err1;
 		if (with_delete) {
 			if ((ret = __LPUT(dbc, cp->lock)) != 0)
 				goto err1;
 		} else if ((ret = __TLPUT(dbc, cp->lock)) != 0)
 			goto err1;
 
+		if (locked == 0 && (ret =
+		    __db_lget(dbc, 0, metapno, meta_mode, 0, &metalock)) != 0)
+			goto err1;
+		locked = 1;
+		if (meta == NULL && (ret = __memp_fget(mpf, &metapno,
+		     dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+			goto err1;
 		/*
 		 * If we don't need locks and we are out of range
 		 * then we can just skip to the FIRST/LAST record
@@ -1041,7 +1022,7 @@ release_retry:	/* Release locks and retry, if possible. */
 			goto err1;
 		}
 		retrying = 0;
-		goto get_next;
+		goto retry;
 	}
 
 	qp = QAM_GET_RECORD(dbp, pg, cp->indx);
@@ -1063,7 +1044,7 @@ release_retry:	/* Release locks and retry, if possible. */
 
 	/* Return the key if the user didn't give us one. */
 	if (key != NULL && !F_ISSET(key, DB_DBT_ISSET)) {
-		if ((ret = __db_retcopy(dbp->dbenv,
+		if ((ret = __db_retcopy(dbp->env,
 		    key, &cp->recno, sizeof(cp->recno),
 		    &dbc->rkey->data, &dbc->rkey->ulen)) != 0)
 			goto err1;
@@ -1073,7 +1054,7 @@ release_retry:	/* Release locks and retry, if possible. */
 	if (data != NULL &&
 	    !F_ISSET(dbc, DBC_MULTIPLE|DBC_MULTIPLE_KEY) &&
 	    !F_ISSET(data, DB_DBT_ISSET)) {
-		if ((ret = __db_retcopy(dbp->dbenv, data, qp->data, t->re_len,
+		if ((ret = __db_retcopy(dbp->env, data, qp->data, t->re_len,
 		    &dbc->rdata->data, &dbc->rdata->ulen)) != 0)
 			goto err1;
 		F_SET(data, DB_DBT_ISSET);
@@ -1087,28 +1068,30 @@ release_retry:	/* Release locks and retry, if possible. */
 		 * DB_APPEND there;  attempting one should be forbidden by
 		 * the interface.
 		 */
-		DB_ASSERT(dbenv, !F_ISSET(dbp, DB_AM_SECONDARY));
-
-		if ((ret = __qam_dirty(dbp, cp->pgno, &cp->page,
-		    dbc->txn, dbc->priority)) != 0)
-			goto err1;
-		pg = cp->page;
+		DB_ASSERT(env, !F_ISSET(dbp, DB_AM_SECONDARY));
 
 		/*
-		 * Check and see if we *have* any secondary indices.
-		 * If we do, we're a primary, so call __dbc_del_primary
-		 * to delete the references to the item we're about to
-		 * delete.
+		 * If we have any secondary indices, call __dbc_del_primary to
+		 * delete the references to the item we're about to delete.
 		 *
 		 * Note that we work on a duplicated cursor, since the
 		 * __db_ret work has already been done, so it's not safe
 		 * to perform any additional ops on this cursor.
 		 */
-		if (LIST_FIRST(&dbp->s_secondaries) != NULL) {
+		if (DB_IS_PRIMARY(dbp)) {
 			if ((ret = __dbc_idup(dbc,
 			    &dbcdup, DB_POSITION)) != 0)
 				goto err1;
 
+			if ((ret = __qam_fput(dbc,
+			    cp->pgno, cp->page, dbc->priority)) != 0)
+				goto err1;
+			cp->page = NULL;
+			if (meta != NULL &&
+			    (ret = __memp_fput(mpf,
+			    dbc->thread_info, meta, dbc->priority)) != 0)
+				goto err1;
+			meta = NULL;
 			if ((ret = __dbc_del_primary(dbcdup)) != 0) {
 				/*
 				 * The __dbc_del_primary return is more
@@ -1120,7 +1103,14 @@ release_retry:	/* Release locks and retry, if possible. */
 
 			if ((ret = __dbc_close(dbcdup)) != 0)
 				goto err1;
-		}
+			if ((ret = __qam_fget(dbc,
+			    &cp->pgno, DB_MPOOL_DIRTY, &cp->page)) != 0)
+				goto err;
+		} else if ((ret = __qam_dirty(dbc,
+		     cp->pgno, &cp->page, dbc->priority)) != 0)
+			goto err1;
+
+		pg = cp->page;
 
 		if (DBC_LOGGING(dbc)) {
 			if (t->page_ext == 0 || t->re_len == 0) {
@@ -1140,9 +1130,10 @@ release_retry:	/* Release locks and retry, if possible. */
 			LSN_NOT_LOGGED(LSN(pg));
 
 		F_CLR(qp, QAM_VALID);
-
-		if ((ret = __LPUT(dbc, pglock)) != 0)
-			goto err1;
+		if ((ret = __qam_fput(dbc,
+		    cp->pgno, cp->page, dbc->priority)) != 0)
+			goto err;
+		cp->page = NULL;
 
 		/*
 		 * Now we need to update the metapage
@@ -1160,10 +1151,14 @@ release_retry:	/* Release locks and retry, if possible. */
 		    dbc, 0, metapno, meta_mode, 0, &metalock)) != 0)
 			goto err1;
 		locked = 1;
+		if (meta == NULL &&
+		     (ret = __memp_fget(mpf,
+		     &metapno, dbc->thread_info, dbc->txn, 0, &meta)) != 0)
+			goto err1;
 
 #ifdef QDEBUG
 		if (DBC_LOGGING(dbc))
-			(void)__log_printf(dbenv,
+			(void)__log_printf(env,
 			    dbc->txn, "Queue D: %x %d %d %d",
 			    dbc->locker ? dbc->locker->id : 0,
 			    cp->recno, first, meta->first_recno);
@@ -1185,13 +1180,10 @@ release_retry:	/* Release locks and retry, if possible. */
 
 done:
 err1:	if (cp->page != NULL) {
-		if ((t_ret = __qam_fput(dbp,
+		if ((t_ret = __qam_fput(dbc,
 		    cp->pgno, cp->page, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 
-		/* Doing record locking, release the page lock */
-		if ((t_ret = __LPUT(dbc, pglock)) != 0 && ret == 0)
-			ret = t_ret;
 		cp->page = NULL;
 	}
 	if (0) {
@@ -1201,7 +1193,7 @@ lerr:		(void)__LPUT(dbc, lock);
 err:	if (meta) {
 		/* Release the meta page. */
 		if ((t_ret = __memp_fput(mpf,
-		    meta, dbc->priority)) != 0 && ret == 0)
+		    dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 
 		/* Don't hold the meta page long term. */
@@ -1209,11 +1201,10 @@ err:	if (meta) {
 			if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
 				ret = t_ret;
 	}
-	DB_ASSERT(dbenv, !LOCK_ISSET(metalock));
+	DB_ASSERT(env, !LOCK_ISSET(metalock));
 
-	return ((ret == DB_LOCK_NOTGRANTED &&
-	    !F_ISSET(dbenv, DB_ENV_TIME_NOTGRANTED)) ?
-	    DB_LOCK_DEADLOCK : ret);
+	return ((ret == DB_LOCK_NOTGRANTED && !F_ISSET(env->dbenv,
+	    DB_ENV_TIME_NOTGRANTED)) ? DB_LOCK_DEADLOCK : ret);
 }
 
 /*
@@ -1254,24 +1245,22 @@ __qam_consume(dbc, meta, first)
 	if (first != cp->recno) {
 		ret = __db_lget(dbc, 0, first, DB_LOCK_READ,
 		    DB_LOCK_NOWAIT | DB_LOCK_RECORD, &lock);
-		if (ret == DB_LOCK_DEADLOCK) {
+		if (ret == DB_LOCK_NOTGRANTED || ret == DB_LOCK_DEADLOCK) {
 			ret = 0;
 			goto done;
 		}
 		if (ret != 0)
 			goto done;
-		if ((ret =
-		    __qam_fput(dbp, cp->pgno, cp->page, dbc->priority)) != 0)
+		if (cp->page != NULL && (ret =
+		    __qam_fput(dbc, cp->pgno, cp->page, dbc->priority)) != 0)
 			goto done;
 		cp->page = NULL;
 		if ((ret = __qam_position(dbc,
-		    &first, DB_LOCK_READ, 0, &exact)) != 0 || exact != 0) {
+		    &first, 0, &exact)) != 0 || exact != 0) {
 			(void)__LPUT(dbc, lock);
 			goto done;
 		}
 		if ((ret =__LPUT(dbc, lock)) != 0)
-			goto done;
-		if ((ret = __LPUT(dbc, cp->lock)) != 0)
 			goto done;
 	}
 
@@ -1291,7 +1280,7 @@ __qam_consume(dbc, meta, first)
 		 * Wait for the lagging readers to move off the
 		 * page.
 		 */
-		if (cp->page != NULL && rec_extent != 0 &&
+		if (rec_extent != 0 &&
 		    ((exact = (first % rec_extent == 0)) ||
 		    (first % meta->rec_page == 0) ||
 		    first == UINT32_MAX)) {
@@ -1300,12 +1289,12 @@ __qam_consume(dbc, meta, first)
 				break;
 #ifdef QDEBUG
 			if (DBC_LOGGING(dbc))
-				(void)__log_printf(dbp->dbenv, dbc->txn,
+				(void)__log_printf(dbp->env, dbc->txn,
 				    "Queue R: %x %d %d %d",
 				    dbc->locker ? dbc->locker->id : 0,
 				    cp->pgno, first, meta->first_recno);
 #endif
-			if ((ret = __qam_fput(dbp,
+			if (cp->page != NULL && (ret = __qam_fput(dbc,
 			    cp->pgno, cp->page, DB_PRIORITY_VERY_LOW)) != 0)
 				break;
 			cp->page = NULL;
@@ -1318,8 +1307,8 @@ __qam_consume(dbc, meta, first)
 			}
 			if (ret != 0)
 				break;
-		} else if (cp->page != NULL && (ret = __qam_fput(dbp,
-		    cp->pgno, cp->page, dbc->priority)) != 0)
+		} else if (cp->page != NULL && (ret = __qam_fput(dbc,
+		     cp->pgno, cp->page, dbc->priority)) != 0)
 			break;
 		cp->page = NULL;
 		first++;
@@ -1337,21 +1326,19 @@ __qam_consume(dbc, meta, first)
 
 		ret = __db_lget(dbc, 0, first, DB_LOCK_READ,
 		    DB_LOCK_NOWAIT | DB_LOCK_RECORD, &lock);
-		if (ret == DB_LOCK_DEADLOCK) {
+		if (ret == DB_LOCK_NOTGRANTED || ret == DB_LOCK_DEADLOCK) {
 			ret = 0;
 			break;
 		}
 		if (ret != 0)
 			break;
 
-		if ((ret = __qam_position(dbc,
-		    &first, DB_LOCK_READ, 0, &exact)) != 0) {
+		if ((ret = __qam_position(dbc, &first, 0, &exact)) != 0) {
 			(void)__LPUT(dbc, lock);
 			break;
 		}
-		if ((ret =__LPUT(dbc, lock)) != 0 ||
-		    (ret = __LPUT(dbc, cp->lock)) != 0 || exact) {
-			if ((t_ret = __qam_fput(dbp, cp->pgno,
+		if ((ret =__LPUT(dbc, lock)) != 0 || exact) {
+			if ((t_ret = __qam_fput(dbc, cp->pgno,
 			    cp->page, dbc->priority)) != 0 && ret == 0)
 				ret = t_ret;
 			cp->page = NULL;
@@ -1370,11 +1357,11 @@ __qam_consume(dbc, meta, first)
 	 */
 	if (ret == 0 && meta->first_recno != first) {
 		if ((ret = __memp_dirty(mpf,
-		    &meta, dbc->txn, dbc->priority, 0)) != 0)
+		    &meta, dbc->thread_info, dbc->txn, dbc->priority, 0)) != 0)
 			goto done;
 #ifdef QDEBUG
 		if (DBC_LOGGING(dbc))
-			(void)__log_printf(dbp->dbenv, dbc->txn,
+			(void)__log_printf(dbp->env, dbc->txn,
 			    "Queue M: %x %d %d %d",
 			    dbc->locker ? dbc->locker->id : 0,
 			    cp->recno, first, meta->first_recno);
@@ -1403,8 +1390,8 @@ __qam_bulk(dbc, data, flags)
 	DB_LOCK metalock, rlock;
 	DB_MPOOLFILE *mpf;
 	PAGE *pg;
-	QMETA *meta;
 	QAMDATA *qp;
+	QMETA *meta;
 	QUEUE_CURSOR *cp;
 	db_indx_t indx;
 	db_lockmode_t lkmode;
@@ -1431,7 +1418,8 @@ __qam_bulk(dbc, data, flags)
 
 	if ((ret = __db_lget(dbc, 0, metapno, DB_LOCK_READ, 0, &metalock)) != 0)
 		return (ret);
-	if ((ret = __memp_fget(mpf, &metapno, dbc->txn, 0, &meta)) != 0) {
+	if ((ret = __memp_fget(mpf, &metapno,
+	     dbc->thread_info, dbc->txn, 0, &meta)) != 0) {
 		/* We did not fetch it, we can release the lock. */
 		(void)__LPUT(dbc, metalock);
 		return (ret);
@@ -1456,7 +1444,7 @@ next_pg:
 	/* Wrap around, skipping zero. */
 	if (cp->recno == RECNO_OOB)
 		cp->recno++;
-	if ((ret = __qam_position(dbc, &cp->recno, lkmode, 0, &exact)) != 0)
+	if ((ret = __qam_position(dbc, &cp->recno, 0, &exact)) != 0)
 		goto done;
 
 	pg = cp->page;
@@ -1525,12 +1513,8 @@ get_space:
 	} while (++indx < recs && cp->recno != RECNO_OOB &&
 	    !QAM_AFTER_CURRENT(meta, cp->recno));
 
-	/* Drop the page lock. */
-	if ((t_ret = __LPUT(dbc, cp->lock)) != 0 && ret == 0)
-		ret = t_ret;
-
 	if (cp->page != NULL) {
-		if ((t_ret = __qam_fput(dbp,
+		if ((t_ret = __qam_fput(dbc,
 		    cp->pgno, cp->page, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 		cp->page = NULL;
@@ -1555,7 +1539,8 @@ get_space:
 		*offp = (u_int32_t)-1;
 
 done:	/* Release the meta page. */
-	if ((t_ret = __memp_fput(mpf, meta, dbc->priority)) != 0 && ret == 0)
+	if ((t_ret = __memp_fput(mpf,
+	     dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 	if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
 		ret = t_ret;
@@ -1627,8 +1612,8 @@ int
 __qamc_init(dbc)
 	DBC *dbc;
 {
-	QUEUE_CURSOR *cp;
 	DB *dbp;
+	QUEUE_CURSOR *cp;
 	int ret;
 
 	dbp = dbc->dbp;
@@ -1637,13 +1622,14 @@ __qamc_init(dbc)
 	cp = (QUEUE_CURSOR *)dbc->internal;
 	if (cp == NULL) {
 		if ((ret =
-		    __os_calloc(dbp->dbenv, 1, sizeof(QUEUE_CURSOR), &cp)) != 0)
+		    __os_calloc(dbp->env, 1, sizeof(QUEUE_CURSOR), &cp)) != 0)
 			return (ret);
 		dbc->internal = (DBC_INTERNAL *)cp;
 	}
 
 	/* Initialize methods. */
 	dbc->close = dbc->c_close = __dbc_close_pp;
+	dbc->cmp = __dbc_cmp_pp;
 	dbc->count = dbc->c_count = __dbc_count_pp;
 	dbc->del = dbc->c_del = __dbc_del_pp;
 	dbc->dup = dbc->c_dup = __dbc_dup_pp;
@@ -1670,7 +1656,7 @@ __qamc_destroy(dbc)
 	DBC *dbc;
 {
 	/* Discard the structures. */
-	__os_free(dbc->dbp->dbenv, dbc->internal);
+	__os_free(dbc->env, dbc->internal);
 
 	return (0);
 }
@@ -1685,8 +1671,14 @@ __qam_getno(dbp, key, rep)
 	const DBT *key;
 	db_recno_t *rep;
 {
+	/* If passed an empty DBT from Java, key->data may be NULL */
+	if (key->size != sizeof(db_recno_t)) {
+		__db_errx(dbp->env, "illegal record number size");
+		return (EINVAL);
+	}
+
 	if ((*rep = *(db_recno_t *)key->data) == 0) {
-		__db_errx(dbp->dbenv, "illegal record number of 0");
+		__db_errx(dbp->env, "illegal record number of 0");
 		return (EINVAL);
 	}
 	return (0);
@@ -1727,7 +1719,7 @@ __qam_truncate(dbc, countp)
 		return (ret);
 
 	mpf = dbp->mpf;
-	if ((ret = __memp_fget(mpf, &metapno, dbc->txn,
+	if ((ret = __memp_fget(mpf, &metapno, dbc->thread_info, dbc->txn,
 	    DB_MPOOL_DIRTY, &meta)) != 0) {
 		/* We did not fetch it, we can release the lock. */
 		(void)__LPUT(dbc, metalock);
@@ -1737,7 +1729,7 @@ __qam_truncate(dbc, countp)
 	if (meta->cur_recno > 1 && ((QUEUE *)dbp->q_internal)->page_ext != 0) {
 		if ((ret = __qam_fremove(dbp,
 		    QAM_RECNO_PAGE(dbp, meta->cur_recno - 1))) != 0)
-			return (ret);
+			goto err;
 	}
 
 	if (DBC_LOGGING(dbc)) {
@@ -1749,7 +1741,8 @@ __qam_truncate(dbc, countp)
 	if (ret == 0)
 		meta->first_recno = meta->cur_recno = 1;
 
-	if ((t_ret = __memp_fput(mpf, meta, dbc->priority)) != 0 && ret == 0)
+err:	if ((t_ret = __memp_fput(mpf,
+	     dbc->thread_info, meta, dbc->priority)) != 0 && ret == 0)
 		ret = t_ret;
 	if ((t_ret = __LPUT(dbc, metalock)) != 0 && ret == 0)
 		ret = t_ret;
@@ -1764,12 +1757,13 @@ __qam_truncate(dbc, countp)
  * __qam_delete --
  *	Queue fast delete function.
  *
- * PUBLIC: int __qam_delete __P((DBC *,  DBT *));
+ * PUBLIC: int __qam_delete __P((DBC *,  DBT *, u_int32_t));
  */
 int
-__qam_delete(dbc, key)
+__qam_delete(dbc, key, flags)
 	DBC *dbc;
 	DBT *key;
+	u_int32_t flags;
 {
 	QUEUE_CURSOR *cp;
 	int ret;
@@ -1778,7 +1772,7 @@ __qam_delete(dbc, key)
 	if ((ret = __qam_getno(dbc->dbp, key, &cp->recno)) != 0)
 		goto err;
 
-	ret = __qamc_del(dbc);
+	ret = __qamc_del(dbc, flags);
 
 err:	return (ret);
 }

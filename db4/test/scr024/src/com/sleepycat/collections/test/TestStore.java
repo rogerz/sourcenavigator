@@ -1,14 +1,13 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  *
- * $Id: TestStore.java,v 12.6 2007/05/04 00:28:29 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.collections.test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -212,6 +211,10 @@ class TestStore {
         return DbCompat.isTypeQueue(config) || DbCompat.isTypeRecno(config);
     }
 
+    boolean areKeyRangesAllowed() {
+        return isOrdered() && !isQueueOrRecno();
+    }
+
     boolean areDuplicatesAllowed() {
 
         return DbCompat.getSortedDuplicates(config) ||
@@ -236,14 +239,14 @@ class TestStore {
     }
 
     Database open(Environment env, String fileName)
-        throws IOException, DatabaseException {
+        throws DatabaseException {
 
         int fixedLen = (isQueueOrRecno() ? 1 : 0);
         return openDb(env, fileName, fixedLen, null);
     }
 
     Database openIndex(Database primary, String fileName)
-        throws IOException, DatabaseException {
+        throws DatabaseException {
 
         int fixedLen = (isQueueOrRecno() ? 4 : 0);
         config.setKeyCreator(isRecNumFormat ? RECNO_EXTRACTOR
@@ -254,7 +257,7 @@ class TestStore {
 
     private Database openDb(Environment env, String fileName, int fixedLen,
                             Database primary)
-        throws IOException, DatabaseException {
+        throws DatabaseException {
 
         if (fixedLen > 0) {
             DbCompat.setRecordLength(config, fixedLen);
@@ -266,13 +269,11 @@ class TestStore {
         DbCompat.setReadUncommitted(config, true);
         config.setTransactional(CurrentTransaction.getInstance(env) != null);
         if (primary != null) {
-            return DbCompat.openSecondaryDatabase(env, null, 
-                                                  fileName, null,
-                                                  primary, config);
+            return DbCompat.testOpenSecondaryDatabase
+                (env, null, fileName, null, primary, config);
         } else {
-            return DbCompat.openDatabase(env, null, 
-                                         fileName, null,
-                                         config);
+            return DbCompat.testOpenDatabase
+                (env, null, fileName, null, config);
         }
     }
 }

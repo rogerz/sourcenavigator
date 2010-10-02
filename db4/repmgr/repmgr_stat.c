@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2005,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2005-2009 Oracle.  All rights reserved.
  *
- * $Id: repmgr_stat.c,v 1.35 2007/06/22 18:26:52 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -12,11 +12,11 @@
 #include "db_int.h"
 
 #ifdef HAVE_STATISTICS
-static int __repmgr_print_all __P((DB_ENV *, u_int32_t));
-static int __repmgr_print_sites __P((DB_ENV *));
-static int __repmgr_print_stats __P((DB_ENV *, u_int32_t));
-static int __repmgr_stat __P((DB_ENV *, DB_REPMGR_STAT **, u_int32_t));
-static int __repmgr_stat_print __P((DB_ENV *, u_int32_t));
+static int __repmgr_print_all __P((ENV *, u_int32_t));
+static int __repmgr_print_sites __P((ENV *));
+static int __repmgr_print_stats __P((ENV *, u_int32_t));
+static int __repmgr_stat __P((ENV *, DB_REPMGR_STAT **, u_int32_t));
+static int __repmgr_stat_print __P((ENV *, u_int32_t));
 
 /*
  * __repmgr_stat_pp --
@@ -30,31 +30,28 @@ __repmgr_stat_pp(dbenv, statp, flags)
 	DB_REPMGR_STAT **statp;
 	u_int32_t flags;
 {
-	DB_THREAD_INFO *ip;
+	ENV *env;
 	int ret;
 
-	PANIC_CHECK(dbenv);
-	ENV_REQUIRES_CONFIG_XX(
-	    dbenv, rep_handle, "DB_ENV->repmgr_stat", DB_INIT_REP);
+	env = dbenv->env;
 
-	if ((ret = __db_fchk(dbenv,
+	ENV_REQUIRES_CONFIG_XX(
+	    env, rep_handle, "DB_ENV->repmgr_stat", DB_INIT_REP);
+
+	if ((ret = __db_fchk(env,
 	    "DB_ENV->repmgr_stat", flags, DB_STAT_CLEAR)) != 0)
 		return (ret);
 
-	ENV_ENTER(dbenv, ip);
-	ret = __repmgr_stat(dbenv, statp, flags);
-	ENV_LEAVE(dbenv, ip);
-
-	return (ret);
+	return (__repmgr_stat(env, statp, flags));
 }
 
 /*
  * __repmgr_stat --
- *	DB_ENV->repmgr_stat.
+ *	ENV->repmgr_stat.
  */
 static int
-__repmgr_stat(dbenv, statp, flags)
-	DB_ENV *dbenv;
+__repmgr_stat(env, statp, flags)
+	ENV *env;
 	DB_REPMGR_STAT **statp;
 	u_int32_t flags;
 {
@@ -62,12 +59,12 @@ __repmgr_stat(dbenv, statp, flags)
 	DB_REPMGR_STAT *stats;
 	int ret;
 
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 
 	*statp = NULL;
 
 	/* Allocate a stat struct to return to the user. */
-	if ((ret = __os_umalloc(dbenv, sizeof(DB_REPMGR_STAT), &stats)) != 0)
+	if ((ret = __os_umalloc(env, sizeof(DB_REPMGR_STAT), &stats)) != 0)
 		return (ret);
 
 	memcpy(stats, &db_rep->region->mstat, sizeof(*stats));
@@ -89,27 +86,24 @@ __repmgr_stat_print_pp(dbenv, flags)
 	DB_ENV *dbenv;
 	u_int32_t flags;
 {
-	DB_THREAD_INFO *ip;
+	ENV *env;
 	int ret;
 
-	PANIC_CHECK(dbenv);
-	ENV_REQUIRES_CONFIG_XX(
-	    dbenv, rep_handle, "DB_ENV->repmgr_stat_print", DB_INIT_REP);
+	env = dbenv->env;
 
-	if ((ret = __db_fchk(dbenv, "DB_ENV->repmgr_stat_print",
+	ENV_REQUIRES_CONFIG_XX(
+	    env, rep_handle, "DB_ENV->repmgr_stat_print", DB_INIT_REP);
+
+	if ((ret = __db_fchk(env, "DB_ENV->repmgr_stat_print",
 	    flags, DB_STAT_ALL | DB_STAT_CLEAR)) != 0)
 		return (ret);
 
-	ENV_ENTER(dbenv, ip);
-	ret = __repmgr_stat_print(dbenv, flags);
-	ENV_LEAVE(dbenv, ip);
-
-	return (ret);
+	return (__repmgr_stat_print(env, flags));
 }
 
-int
-__repmgr_stat_print(dbenv, flags)
-	DB_ENV *dbenv;
+static int
+__repmgr_stat_print(env, flags)
+	ENV *env;
 	u_int32_t flags;
 {
 	u_int32_t orig_flags;
@@ -118,70 +112,76 @@ __repmgr_stat_print(dbenv, flags)
 	orig_flags = flags;
 	LF_CLR(DB_STAT_CLEAR | DB_STAT_SUBSYSTEM);
 	if (flags == 0 || LF_ISSET(DB_STAT_ALL)) {
-		if ((ret = __repmgr_print_stats(dbenv, orig_flags)) == 0)
-			ret = __repmgr_print_sites(dbenv);
+		if ((ret = __repmgr_print_stats(env, orig_flags)) == 0)
+			ret = __repmgr_print_sites(env);
 		if (flags == 0 || ret != 0)
 			return (ret);
 	}
 
 	if (LF_ISSET(DB_STAT_ALL) &&
-	    (ret = __repmgr_print_all(dbenv, orig_flags)) != 0)
+	    (ret = __repmgr_print_all(env, orig_flags)) != 0)
 		return (ret);
 
 	return (0);
 }
 
 static int
-__repmgr_print_stats(dbenv, flags)
-	DB_ENV *dbenv;
+__repmgr_print_stats(env, flags)
+	ENV *env;
 	u_int32_t flags;
 {
 	DB_REPMGR_STAT *sp;
 	int ret;
 
-	if ((ret = __repmgr_stat(dbenv, &sp, flags)) != 0)
+	if ((ret = __repmgr_stat(env, &sp, flags)) != 0)
 		return (ret);
 
-	__db_dl(dbenv, "Number of PERM messages not acknowledged",
+	__db_dl(env, "Number of PERM messages not acknowledged",
 	    (u_long)sp->st_perm_failed);
-	__db_dl(dbenv, "Number of messages queued due to network delay",
+	__db_dl(env, "Number of messages queued due to network delay",
 	    (u_long)sp->st_msgs_queued);
-	__db_dl(dbenv, "Number of messages discarded due to queue length",
+	__db_dl(env, "Number of messages discarded due to queue length",
 	    (u_long)sp->st_msgs_dropped);
-	__db_dl(dbenv, "Number of existing connections dropped",
+	__db_dl(env, "Number of existing connections dropped",
 	    (u_long)sp->st_connection_drop);
-	__db_dl(dbenv, "Number of failed new connection attempts",
+	__db_dl(env, "Number of failed new connection attempts",
 	    (u_long)sp->st_connect_fail);
 
-	__os_ufree(dbenv, sp);
+	__os_ufree(env, sp);
 
 	return (0);
 }
 
 static int
-__repmgr_print_sites(dbenv)
-	DB_ENV *dbenv;
+__repmgr_print_sites(env)
+	ENV *env;
 {
 	DB_REPMGR_SITE *list;
+	DB_MSGBUF mb;
 	u_int count, i;
 	int ret;
 
-	if ((ret = __repmgr_site_list(dbenv, &count, &list)) != 0)
+	if ((ret = __repmgr_site_list(env->dbenv, &count, &list)) != 0)
 		return (ret);
 
 	if (count == 0)
 		return (0);
 
-	__db_msg(dbenv, "%s", DB_GLOBAL(db_line));
-	__db_msg(dbenv, "DB_REPMGR site information:");
+	__db_msg(env, "%s", DB_GLOBAL(db_line));
+	__db_msg(env, "DB_REPMGR site information:");
 
+	DB_MSGBUF_INIT(&mb);
 	for (i = 0; i < count; ++i) {
-		__db_msg(dbenv, "%s (eid: %d, port: %u, %sconnected)",
-		    list[i].host, list[i].eid, list[i].port,
-		    list[i].status == DB_REPMGR_CONNECTED ? "" : "dis");
+		__db_msgadd(env, &mb, "%s (eid: %d, port: %u",
+		    list[i].host, list[i].eid, list[i].port);
+		if (list[i].status != 0)
+			__db_msgadd(env, &mb, ", %sconnected",
+			    list[i].status == DB_REPMGR_CONNECTED ? "" : "dis");
+		__db_msgadd(env, &mb, ")");
+		DB_MSGBUF_FLUSH(env, &mb);
 	}
 
-	__os_ufree(dbenv, list);
+	__os_ufree(env, list);
 
 	return (0);
 }
@@ -191,11 +191,11 @@ __repmgr_print_sites(dbenv)
  *	Display debugging replication manager statistics.
  */
 static int
-__repmgr_print_all(dbenv, flags)
-	DB_ENV *dbenv;
+__repmgr_print_all(env, flags)
+	ENV *env;
 	u_int32_t flags;
 {
-	COMPQUIET(dbenv, NULL);
+	COMPQUIET(env, NULL);
 	COMPQUIET(flags, 0);
 	return (0);
 }
@@ -211,7 +211,7 @@ __repmgr_stat_pp(dbenv, statp, flags)
 	COMPQUIET(statp, NULL);
 	COMPQUIET(flags, 0);
 
-	return (__db_stat_not_built(dbenv));
+	return (__db_stat_not_built(dbenv->env));
 }
 
 int
@@ -221,7 +221,7 @@ __repmgr_stat_print_pp(dbenv, flags)
 {
 	COMPQUIET(flags, 0);
 
-	return (__db_stat_not_built(dbenv));
+	return (__db_stat_not_built(dbenv->env));
 }
 #endif
 
@@ -235,22 +235,38 @@ __repmgr_site_list(dbenv, countp, listp)
 	DB_REPMGR_SITE **listp;
 {
 	DB_REP *db_rep;
+	REP *rep;
 	DB_REPMGR_SITE *status;
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	REPMGR_SITE *site;
 	size_t array_size, total_size;
 	u_int count, i;
 	int locked, ret;
 	char *name;
 
-	db_rep = dbenv->rep_handle;
-	if (REPMGR_SYNC_INITED(db_rep)) {
+	env = dbenv->env;
+	db_rep = env->rep_handle;
+	ret = 0;
+
+	ENV_NOT_CONFIGURED(
+	    env, db_rep->region, "DB_ENV->repmgr_site_list", DB_INIT_REP);
+
+	if (REP_ON(env)) {
+		rep = db_rep->region;
 		LOCK_MUTEX(db_rep->mutex);
 		locked = TRUE;
+
+		ENV_ENTER(env, ip);
+		if (rep->siteaddr_seq > db_rep->siteaddr_seq)
+			ret = __repmgr_sync_siteaddr(env);
+		ENV_LEAVE(env, ip);
+		if (ret != 0)
+			goto err;
 	} else
 		locked = FALSE;
 
 	/* Initialize for empty list or error return. */
-	ret = 0;
 	*countp = 0;
 	*listp = NULL;
 
@@ -267,7 +283,7 @@ __repmgr_site_list(dbenv, countp, listp)
 		total_size += strlen(site->net_addr.host) + 1;
 	}
 
-	if ((ret = __os_umalloc(dbenv, total_size, &status)) != 0)
+	if ((ret = __os_umalloc(env, total_size, &status)) != 0)
 		goto err;
 
 	/*
@@ -285,8 +301,19 @@ __repmgr_site_list(dbenv, countp, listp)
 		name += strlen(name) + 1;
 
 		status[i].port = site->net_addr.port;
-		status[i].status = site->state == SITE_CONNECTED ?
-		    DB_REPMGR_CONNECTED : DB_REPMGR_DISCONNECTED;
+
+		/*
+		 * If we haven't started a communications thread, connection
+		 * status is kind of meaningless.  This distinction is useful
+		 * for calls from the db_stat utility: it could be useful for
+		 * db_stat to display known sites with EID; but would be
+		 * confusing for it to display "disconnected" if another process
+		 * does indeed have a connection established (db_stat can't know
+		 * that).
+		 */
+		status[i].status = db_rep->selector == NULL ? 0 :
+		    (site->state == SITE_CONNECTED ?
+		    DB_REPMGR_CONNECTED : DB_REPMGR_DISCONNECTED);
 	}
 
 	*countp = count;

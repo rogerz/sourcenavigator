@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2005,2007 Oracle.  All rights reserved.
+# Copyright (c) 2005-2009 Oracle.  All rights reserved.
 #
-# $Id: log008.tcl,v 12.7 2007/05/24 18:20:47 carol Exp $
+# $Id$
 #
 # TEST	log008
 # TEST	Test what happens if a txn_ckp record falls into a

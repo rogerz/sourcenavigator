@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2003,2007 Oracle.  All rights reserved.
+# Copyright (c) 2003-2009 Oracle.  All rights reserved.
 #
-# $Id: fop003.tcl,v 12.5 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # TEST	fop003
 # TEST

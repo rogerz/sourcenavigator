@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1996,2007 Oracle.  All rights reserved.
+# Copyright (c) 1996-2009 Oracle.  All rights reserved.
 #
-# $Id: test033.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test033
 # TEST	DB_GET_BOTH without comparison function
@@ -22,6 +22,12 @@ proc test033 { method {nentries 10000} {ndups 5} {tnum "033"} args } {
 	set omethod [convert_method $method]
 	if { [is_rbtree $method] == 1 } {
 		puts "Test$tnum skipping for method $method"
+		return
+	}
+
+	# Btree with compression does not support unsorted duplicates.
+	if { [is_compressed $args] == 1 } {
+		puts "Test$tnum skipping for btree with compression."
 		return
 	}
 

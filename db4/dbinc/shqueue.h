@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1996,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1996-2009 Oracle.  All rights reserved.
  *
- * $Id: shqueue.h,v 12.12 2007/05/17 15:15:05 bostic Exp $
+ * $Id$
  */
 
 #ifndef	_DB_SHQUEUE_H_

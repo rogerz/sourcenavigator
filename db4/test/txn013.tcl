@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2005,2007 Oracle.  All rights reserved.
+# Copyright (c) 2005-2009 Oracle.  All rights reserved.
 #
-# $Id: txn013.tcl,v 12.6 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	txn013
 # TEST	Test of txns used in the wrong environment.

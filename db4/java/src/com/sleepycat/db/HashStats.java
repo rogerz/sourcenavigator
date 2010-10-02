@@ -1,102 +1,127 @@
 /*-
- * DO NOT EDIT: automatically built by dist/s_java_stat.
+ * Automatically built by dist/s_java_stat.
+ * Only the javadoc comments can be edited.
  *
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  */
 
 package com.sleepycat.db;
 
+/**
+The HashStats object is used to return Hash database statistics.
+*/
 public class HashStats extends DatabaseStats {
     // no public constructor
     /* package */ HashStats() {}
 
     private int hash_magic;
+    /** TODO */
     public int getMagic() {
         return hash_magic;
     }
 
     private int hash_version;
+    /** TODO */
     public int getVersion() {
         return hash_version;
     }
 
     private int hash_metaflags;
+    /** TODO */
     public int getMetaFlags() {
         return hash_metaflags;
     }
 
     private int hash_nkeys;
+    /** TODO */
     public int getNumKeys() {
         return hash_nkeys;
     }
 
     private int hash_ndata;
+    /** TODO */
     public int getNumData() {
         return hash_ndata;
     }
 
     private int hash_pagecnt;
+    /** TODO */
     public int getPageCount() {
         return hash_pagecnt;
     }
 
     private int hash_pagesize;
+    /** TODO */
     public int getPageSize() {
         return hash_pagesize;
     }
 
     private int hash_ffactor;
+    /** TODO */
     public int getFfactor() {
         return hash_ffactor;
     }
 
     private int hash_buckets;
+    /** TODO */
     public int getBuckets() {
         return hash_buckets;
     }
 
     private int hash_free;
+    /** TODO */
     public int getFree() {
         return hash_free;
     }
 
-    private int hash_bfree;
-    public int getBFree() {
+    private long hash_bfree;
+    /** TODO */
+    public long getBFree() {
         return hash_bfree;
     }
 
     private int hash_bigpages;
+    /** TODO */
     public int getBigPages() {
         return hash_bigpages;
     }
 
-    private int hash_big_bfree;
-    public int getBigBFree() {
+    private long hash_big_bfree;
+    /** TODO */
+    public long getBigBFree() {
         return hash_big_bfree;
     }
 
     private int hash_overflows;
+    /** TODO */
     public int getOverflows() {
         return hash_overflows;
     }
 
-    private int hash_ovfl_free;
-    public int getOvflFree() {
+    private long hash_ovfl_free;
+    /** TODO */
+    public long getOvflFree() {
         return hash_ovfl_free;
     }
 
     private int hash_dup;
+    /** TODO */
     public int getDup() {
         return hash_dup;
     }
 
-    private int hash_dup_free;
-    public int getDupFree() {
+    private long hash_dup_free;
+    /** TODO */
+    public long getDupFree() {
         return hash_dup_free;
     }
 
+    /**
+    For convenience, the HashStats class has a toString method
+    that lists all the data fields.
+    */
     public String toString() {
         return "HashStats:"
             + "\n  hash_magic=" + hash_magic

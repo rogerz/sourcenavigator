@@ -44,6 +44,22 @@
 /* Define to 1 if you have the `atol' function. */
 #define HAVE_ATOL 1
 
+/* Define to 1 to use Solaris library routes for atomic operations. */
+/* #undef HAVE_ATOMIC_SOLARIS */
+
+/* Define to 1 to use native atomic operations. */
+/* #undef HAVE_ATOMIC_SUPPORT */
+
+/* Define to 1 to use GCC and x86 or x86_64 assemlby language atomic
+   operations. */
+/* #undef HAVE_ATOMIC_X86_GCC_ASSEMBLY */
+
+/* Define to 1 if you have the `backtrace' function. */
+/* #undef HAVE_BACKTRACE */
+
+/* Define to 1 if you have the `backtrace_symbols' function. */
+/* #undef HAVE_BACKTRACE_SYMBOLS */
+
 /* Define to 1 if building BREW. */
 /* #undef HAVE_BREW */
 
@@ -52,6 +68,12 @@
 
 /* Define to 1 if you have the `clock_gettime' function. */
 #define HAVE_CLOCK_GETTIME 1
+
+/* Define to 1 if clock_gettime supports CLOCK_MONOTONIC. */
+/* #undef HAVE_CLOCK_MONOTONIC */
+
+/* Define to 1 if building compression support. */
+/* #undef HAVE_COMPRESSION */
 
 /* Define to 1 if Berkeley DB release includes strong cryptography. */
 /* #undef HAVE_CRYPTO */
@@ -71,6 +93,9 @@
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
+
+/* Define to 1 if you have the <execinfo.h> header file. */
+/* #undef HAVE_EXECINFO_H */
 
 /* Define to 1 if you have EXIT_SUCCESS/EXIT_FAILURE #defines. */
 #define HAVE_EXIT_SUCCESS 1
@@ -99,9 +124,6 @@
 /* Define to 1 if allocated filesystem blocks are not zeroed. */
 #define HAVE_FILESYSTEM_NOTZERO 1
 
-/* Define to 1 to build Berkeley DB with a fine-grained lock manager. */
-/* #undef HAVE_FINE_GRAINED_LOCK_MANAGER */
-
 /* Define to 1 if you have the `fopen' function. */
 #define HAVE_FOPEN 1
 
@@ -120,8 +142,14 @@
 /* Define to 1 if you have the `getenv' function. */
 #define HAVE_GETENV 1
 
+/* Define to 1 if you have the `getgid' function. */
+#define HAVE_GETGID 1
+
 /* Define to 1 if you have the `getopt' function. */
 /* #undef HAVE_GETOPT */
+
+/* Define to 1 if getopt supports the optreset variable. */
+/* #undef HAVE_GETOPT_OPTRESET */
 
 /* Define to 1 if you have the `getrusage' function. */
 /* #undef HAVE_GETRUSAGE */
@@ -299,6 +327,9 @@
 /* Define to 1 if you have the O_DIRECT flag. */
 /* #undef HAVE_O_DIRECT */
 
+/* Define to 1 if building partitioned database support. */
+/* #undef HAVE_PARTITION */
+
 /* Define to 1 if you have the `pread' function. */
 /* #undef HAVE_PREAD */
 
@@ -308,11 +339,11 @@
 /* Define to 1 if you have the `pstat_getdynamic' function. */
 /* #undef HAVE_PSTAT_GETDYNAMIC */
 
-/* Define to 1 to configure Berkeley DB for POSIX pthread API. */
-/* #undef HAVE_PTHREAD_API */
+/* Define to 1 if you have the `pthread_self' function. */
+/* #undef HAVE_PTHREAD_SELF */
 
 /* Define to 1 if you have the `pthread_yield' function. */
-#define HAVE_PTHREAD_YIELD 1
+/* #undef HAVE_PTHREAD_YIELD */
 
 /* Define to 1 if you have the `pwrite' function. */
 /* #undef HAVE_PWRITE */
@@ -332,6 +363,9 @@
 /* Define to 1 if you have the `rand' function. */
 #define HAVE_RAND 1
 
+/* Define to 1 if you have the `random' function. */
+/* #undef HAVE_RANDOM */
+
 /* Define to 1 if building replication support. */
 /* #undef HAVE_REPLICATION */
 
@@ -349,6 +383,18 @@
 
 /* Define to 1 if you have the `select' function. */
 #define HAVE_SELECT 1
+
+/* Define to 1 if you have the `setgid' function. */
+#define HAVE_SETGID 1
+
+/* Define to 1 if you have the `setuid' function. */
+#define HAVE_SETUID 1
+
+/* Define to 1 to configure Berkeley DB to use shared, read/write latches. */
+#define HAVE_SHARED_LATCHES 1
+
+/* Define to 1 if shmctl/SHM_LOCK locks down shared memory segments. */
+/* #undef HAVE_SHMCTL_SHM_LOCK */
 
 /* Define to 1 if you have the `shmget' function. */
 /* #undef HAVE_SHMGET */
@@ -475,6 +521,9 @@
 /* Define to 1 if you have the `_fstati64' function. */
 /* #undef HAVE__FSTATI64 */
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries. */
+/* #undef LT_OBJDIR */
+
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "Oracle Technology Network Berkeley DB forum"
 
@@ -482,13 +531,13 @@
 #define PACKAGE_NAME "Berkeley DB"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Berkeley DB 4.6.21"
+#define PACKAGE_STRING "Berkeley DB 4.8.30"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "db-4.6.21"
+#define PACKAGE_TARNAME "db-4.8.30"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.6.21"
+#define PACKAGE_VERSION "4.8.30"
 
 /* The size of a `char', as computed by sizeof. */
 /* #undef SIZEOF_CHAR */

@@ -1,4 +1,4 @@
-# $Id: options.m4,v 12.7 2007/05/04 13:46:25 bostic Exp $
+# $Id$
 
 # Process user-specified options.
 AC_DEFUN(AM_OPTIONS_SET, [
@@ -31,11 +31,41 @@ case "$enableval" in
 yes) AC_MSG_RESULT(no);;
 esac
 
+AC_MSG_CHECKING(if --disable-partition option specified)
+AC_ARG_ENABLE(partition,
+	AC_HELP_STRING([--disable-partition],
+	    [Do not build partitioned database support.]),, enableval="yes")
+db_cv_build_partition="$enableval"
+case "$enableval" in
+ no) AC_MSG_RESULT(yes);;
+yes) AC_MSG_RESULT(no);;
+esac
+
+AC_MSG_CHECKING(if --disable-compression option specified)
+AC_ARG_ENABLE(compression,
+	AC_HELP_STRING([--disable-compression],
+	    [Do not build compression support.]),, enableval="yes")
+db_cv_build_compression="$enableval"
+case "$enableval" in
+ no) AC_MSG_RESULT(yes);;
+yes) AC_MSG_RESULT(no);;
+esac
+
 AC_MSG_CHECKING(if --disable-mutexsupport option specified)
 AC_ARG_ENABLE(mutexsupport,
 	AC_HELP_STRING([--disable-mutexsupport],
 	    [Do not build any mutex support.]),, enableval="yes")
 db_cv_build_mutexsupport="$enableval"
+case "$enableval" in
+ no) AC_MSG_RESULT(yes);;
+yes) AC_MSG_RESULT(no);;
+esac
+
+AC_MSG_CHECKING(if --disable-atomicsupport option specified)
+AC_ARG_ENABLE(atomicsupport,
+	AC_HELP_STRING([--disable-atomicsupport],
+	    [Do not build any native atomic operation support.]),, enableval="yes")
+db_cv_build_atomicsupport="$enableval"
 case "$enableval" in
  no) AC_MSG_RESULT(yes);;
 yes) AC_MSG_RESULT(no);;
@@ -157,19 +187,6 @@ AC_ARG_ENABLE(mingw,
 	[db_cv_mingw="$enable_mingw"], [db_cv_mingw="no"])
 AC_MSG_RESULT($db_cv_mingw)
 
-AC_MSG_CHECKING(if --enable-fine_grained_lock_manager option specified)
-AC_ARG_ENABLE(fine_grained_lock_manager,
-	[AC_HELP_STRING([--enable-fine_grained_lock_manager],
-			[Build Berkeley DB with a fine-grained lock manager.])],
-	[db_cv_fine_grained_lock_manager="$enable_fine_grained_lock_manager"],
-	[db_cv_fine_grained_lock_manager="no"])
-AC_MSG_RESULT($db_cv_fine_grained_lock_manager)
-AH_TEMPLATE(HAVE_FINE_GRAINED_LOCK_MANAGER,
-    [Define to 1 to build Berkeley DB with a fine-grained lock manager.])
-if test "$db_cv_fine_grained_lock_manager" = "yes"; then
-	AC_DEFINE(HAVE_FINE_GRAINED_LOCK_MANAGER)
-fi
-
 AC_MSG_CHECKING(if --enable-o_direct option specified)
 AC_ARG_ENABLE(o_direct,
 	[AC_HELP_STRING([--enable-o_direct],
@@ -184,33 +201,19 @@ AC_ARG_ENABLE(posixmutexes,
 	[db_cv_posixmutexes="$enable_posixmutexes"], [db_cv_posixmutexes="no"])
 AC_MSG_RESULT($db_cv_posixmutexes)
 
-AC_ARG_ENABLE(pthread_self,
-	[AC_HELP_STRING([--enable-pthread_self],
-			[Obsolete; use --enable-pthread_api instead.])],
-	[AC_MSG_ERROR(
-    [--enable-pthread_self no longer supported, use --enable-pthread_api])])
+AC_ARG_ENABLE(pthread_self,,
+	[AC_MSG_WARN([--enable-pthread_self is now always enabled])])
 
-AC_MSG_CHECKING(if --enable-pthread_api option specified)
-AC_ARG_ENABLE(pthread_api,
-	[AC_HELP_STRING([--enable-pthread_api],
-			[Configure Berkeley DB for POSIX pthread API.])],
-	[db_cv_pthread_api="$enable_pthread_api"], [db_cv_pthread_api="no"])
-# POSIX mutexes implies other POSIX APIs.
-if test "$db_cv_posixmutexes" != "no"; then
-	db_cv_pthread_api="yes"
-fi
-AC_MSG_RESULT($db_cv_pthread_api)
-AH_TEMPLATE(HAVE_PTHREAD_API,
-    [Define to 1 to configure Berkeley DB for POSIX pthread API.])
-if test "$db_cv_pthread_api" = "yes"; then
-	AC_DEFINE(HAVE_PTHREAD_API)
-fi
+AC_ARG_ENABLE(pthread_api,,
+	[AC_MSG_WARN([--enable-pthread_api is now always enabled])])
 
 AC_MSG_CHECKING(if --enable-rpc option specified)
-AC_ARG_ENABLE(rpc,
-	[AC_HELP_STRING([--enable-rpc],
-			[Build RPC client/server.])],
-	[db_cv_rpc="$enable_rpc"], [db_cv_rpc="no"])
+AC_ARG_ENABLE(rpc,,
+	[if test "x$DB_FORCE_RPC" = x ; then
+		AC_MSG_ERROR([RPC support has been removed from Berkeley DB.  Please check the release notes]);
+	 else
+		db_cv_rpc="$enable_rpc";
+	 fi], [db_cv_rpc="no"])
 AC_MSG_RESULT($db_cv_rpc)
 
 AC_MSG_CHECKING(if --enable-smallbuild option specified)
@@ -225,8 +228,20 @@ if test "$db_cv_smallbuild" = "yes"; then
 	db_cv_build_replication="no"
 	db_cv_build_statistics="no"
 	db_cv_build_verify="no"
+	db_cv_build_partition="no"
+	db_cv_build_compression="no"
 fi
 AC_MSG_RESULT($db_cv_smallbuild)
+
+AC_MSG_CHECKING(if --enable-stl option specified)
+AC_ARG_ENABLE(stl,
+	[AC_HELP_STRING([--enable-stl],
+			[Build STL API.])],
+	[db_cv_stl="$enable_stl"], [db_cv_stl="no"])
+if test "$db_cv_stl" = "yes" -a "$db_cv_cxx" = "no"; then
+	db_cv_cxx="yes"
+fi
+AC_MSG_RESULT($db_cv_stl)
 
 AC_MSG_CHECKING(if --enable-tcl option specified)
 AC_ARG_ENABLE(tcl,

@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: StoredClassCatalogTestInit.java,v 12.6 2007/05/04 00:28:29 mark Exp $
+ * $Id$
  */
 package com.sleepycat.collections.test.serial;
 
@@ -18,12 +18,12 @@ import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.TransactionRunner;
 import com.sleepycat.collections.TransactionWorker;
-import com.sleepycat.collections.test.DbTestUtil;
-import com.sleepycat.collections.test.TestEnv;
 import com.sleepycat.compat.DbCompat;
 import com.sleepycat.db.Database;
 import com.sleepycat.db.DatabaseConfig;
 import com.sleepycat.db.Environment;
+import com.sleepycat.util.test.SharedTestUtils;
+import com.sleepycat.util.test.TestEnv;
 
 /**
  * Runs part one of the StoredClassCatalogTest.  This part is run with the
@@ -40,9 +40,7 @@ public class StoredClassCatalogTestInit extends TestCase
     static final String CATALOG_FILE = StoredClassCatalogTest.CATALOG_FILE;
     static final String STORE_FILE = StoredClassCatalogTest.STORE_FILE;
 
-    public static void main(String[] args)
-        throws Exception {
-
+    public static void main(String[] args) {
         junit.framework.TestResult tr =
             junit.textui.TestRunner.run(suite());
         if (tr.errorCount() > 0 ||
@@ -53,9 +51,7 @@ public class StoredClassCatalogTestInit extends TestCase
         }
     }
 
-    public static Test suite()
-        throws Exception {
-
+    public static Test suite() {
         TestSuite suite = new TestSuite();
         for (int i = 0; i < TestEnv.ALL.length; i += 1) {
             suite.addTest(new StoredClassCatalogTestInit(TestEnv.ALL[i]));
@@ -76,10 +72,11 @@ public class StoredClassCatalogTestInit extends TestCase
         this.testEnv = testEnv;
     }
 
+    @Override
     public void setUp()
         throws Exception {
 
-        DbTestUtil.printTestName(getName());
+        SharedTestUtils.printTestName(getName());
         env = testEnv.open(StoredClassCatalogTest.makeTestName(testEnv));
         runner = new TransactionRunner(env);
 
@@ -101,9 +98,10 @@ public class StoredClassCatalogTestInit extends TestCase
         config.setTransactional(testEnv.isTxnMode());
         config.setAllowCreate(true);
 
-        return DbCompat.openDatabase(env, null, file, null, config);
+        return DbCompat.testOpenDatabase(env, null, file, null, config);
     }
 
+    @Override
     public void tearDown() {
 
         try {
@@ -131,15 +129,14 @@ public class StoredClassCatalogTestInit extends TestCase
         }
     }
 
+    @Override
     public void runTest()
         throws Exception {
 
         runner.run(this);
     }
 
-    public void doWork()
-        throws Exception {
-
+    public void doWork() {
         TestSerial one = new TestSerial(null);
         TestSerial two = new TestSerial(one);
         assertNull("Likely the classpath contains the wrong version of the" +

@@ -1,17 +1,18 @@
 /*-
- * DO NOT EDIT: automatically built by dist/s_java_stat.
+ * Automatically built by dist/s_java_stat.
+ * Only the javadoc comments can be edited.
  *
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  */
 
 package com.sleepycat.db;
 
 import com.sleepycat.db.internal.DbUtil;
 
-public class CompactStats
-{
+/** TODO */
+public class CompactStats {
     // no public constructor
     /* package */ CompactStats() {}
 
@@ -38,26 +39,31 @@ public class CompactStats
     }
 
     private int compact_pages_free;
+    /** TODO */
     public int getPagesFree() {
         return compact_pages_free;
     }
 
     private int compact_pages_examine;
+    /** TODO */
     public int getPagesExamine() {
         return compact_pages_examine;
     }
 
     private int compact_levels;
+    /** TODO */
     public int getLevels() {
         return compact_levels;
     }
 
     private int compact_deadlock;
+    /** TODO */
     public int getDeadlock() {
         return compact_deadlock;
     }
 
     private int compact_pages_truncated;
+    /** TODO */
     public int getPagesTruncated() {
         return compact_pages_truncated;
     }
@@ -67,6 +73,7 @@ public class CompactStats
         return compact_truncate;
     }
 
+    /** TODO */
     public String toString() {
         return "CompactStats:"
             + "\n  compact_fillpercent=" + compact_fillpercent
@@ -81,4 +88,3 @@ public class CompactStats
             ;
     }
 }
-// end of TransactionStats.java

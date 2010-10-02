@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: TupleMarshalledBinding.java,v 12.6 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.tuple;
@@ -13,16 +13,17 @@ import com.sleepycat.util.RuntimeExceptionWrapper;
 /**
  * A concrete <code>TupleBinding</code> that delegates to the
  * <code>MarshalledTupleEntry</code> interface of the data or key object.
- * 
+ *
  * <p>This class works by calling the methods of the {@link
  * MarshalledTupleEntry} interface, which must be implemented by the key or
  * data class, to convert between the key or data entry and the object.</p>
  *
  * @author Mark Hayes
  */
-public class TupleMarshalledBinding extends TupleBinding {
+public class TupleMarshalledBinding<E extends MarshalledTupleEntry>
+    extends TupleBinding<E> {
 
-    private Class cls;
+    private Class<E> cls;
 
     /**
      * Creates a tuple marshalled binding object.
@@ -34,7 +35,7 @@ public class TupleMarshalledBinding extends TupleBinding {
      *
      * @param cls is the class of the key or data objects.
      */
-    public TupleMarshalledBinding(Class cls) {
+    public TupleMarshalledBinding(Class<E> cls) {
 
         this.cls = cls;
 
@@ -46,11 +47,10 @@ public class TupleMarshalledBinding extends TupleBinding {
     }
 
     // javadoc is inherited
-    public Object entryToObject(TupleInput input) {
+    public E entryToObject(TupleInput input) {
 
         try {
-            MarshalledTupleEntry obj =
-                (MarshalledTupleEntry) cls.newInstance();
+            E obj = cls.newInstance();
             obj.unmarshalEntry(input);
             return obj;
         } catch (IllegalAccessException e) {
@@ -61,9 +61,8 @@ public class TupleMarshalledBinding extends TupleBinding {
     }
 
     // javadoc is inherited
-    public void objectToEntry(Object object, TupleOutput output) {
+    public void objectToEntry(E object, TupleOutput output) {
 
-        MarshalledTupleEntry obj = (MarshalledTupleEntry) object;
-        obj.marshalEntry(output);
+        object.marshalEntry(output);
     }
 }

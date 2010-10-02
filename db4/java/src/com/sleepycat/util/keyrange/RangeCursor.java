@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  *
- * $Id: RangeCursor.java,v 1.6 2007/05/17 18:17:20 bostic Exp $
+ * $Id$
  */
 
 package com.sleepycat.util.keyrange;
@@ -50,6 +50,12 @@ public class RangeCursor implements Cloneable {
     private KeyRange pkRange;
 
     /**
+     * If the DB supported sorted duplicates, then calling
+     * Cursor.getSearchBothRange is allowed.
+     */
+    private boolean sortedDups;
+
+    /**
      * The privXxx entries are used only when the range is bounded.  We read
      * into these private entries to avoid modifying the caller's entry
      * parameters in the case where we read successfully but the key is out of
@@ -72,27 +78,18 @@ public class RangeCursor implements Cloneable {
     private boolean initialized;
 
     /**
-     * Creates a range cursor.
-     */
-    public RangeCursor(KeyRange range, Cursor cursor)
-        throws DatabaseException {
-
-        this.range = range;
-        this.cursor = cursor;
-        init();
-    }
-
-    /**
      * Creates a range cursor with a duplicate range.
      */
-    public RangeCursor(KeyRange range, KeyRange pkRange, Cursor cursor)
-        throws DatabaseException {
-
+    public RangeCursor(KeyRange range,
+                       KeyRange pkRange,
+                       boolean sortedDups,
+                       Cursor cursor) {
         if (pkRange != null && !range.singleKey) {
             throw new IllegalArgumentException();
         }
         this.range = range;
         this.pkRange = pkRange;
+        this.sortedDups = sortedDups;
         this.cursor = cursor;
         init();
         if (pkRange != null && secCursor == null) {
@@ -159,7 +156,8 @@ public class RangeCursor implements Cloneable {
      * callers entry parameters directly, to avoid the extra step of copying
      * between the private entries and the caller's entries.
      */
-    private void setParams(DatabaseEntry key, DatabaseEntry pKey,
+    private void setParams(DatabaseEntry key,
+                           DatabaseEntry pKey,
                            DatabaseEntry data) {
         privKey = key;
         privPKey = pKey;
@@ -198,8 +196,10 @@ public class RangeCursor implements Cloneable {
      * the cursor.  Always call endOperation when a successful operation ends,
      * in order to set the initialized field.
      */
-    private void endOperation(Cursor oldCursor, OperationStatus status,
-                              DatabaseEntry key, DatabaseEntry pKey,
+    private void endOperation(Cursor oldCursor,
+                              OperationStatus status,
+                              DatabaseEntry key,
+                              DatabaseEntry pKey,
                               DatabaseEntry data)
         throws DatabaseException {
 
@@ -278,7 +278,7 @@ public class RangeCursor implements Cloneable {
                 status = OperationStatus.NOTFOUND;
                 Cursor oldCursor = beginOperation();
                 try {
-                    if (pkRange.beginKey == null) {
+                    if (pkRange.beginKey == null || !sortedDups) {
                         status = doGetSearchKey(lockMode);
                     } else {
                         KeyRange.copy(pkRange.beginKey, privPKey);
@@ -345,7 +345,9 @@ public class RangeCursor implements Cloneable {
             if (pkRange != null) {
                 KeyRange.copy(range.beginKey, privKey);
                 boolean doLast = false;
-                if (pkRange.endKey == null) {
+                if (!sortedDups) {
+                    status = doGetSearchKey(lockMode);
+                } else if (pkRange.endKey == null) {
                     doLast = true;
                 } else {
                     KeyRange.copy(pkRange.endKey, privPKey);
@@ -735,7 +737,7 @@ public class RangeCursor implements Cloneable {
         throws DatabaseException {
 
         if (!initialized) {
-            throw new DatabaseException("Cursor not initialized");
+            throw new IllegalStateException("Cursor not initialized");
         }
         OperationStatus status;
         if (!range.hasBound()) {
@@ -768,7 +770,7 @@ public class RangeCursor implements Cloneable {
         throws DatabaseException {
 
         if (!initialized) {
-            throw new DatabaseException("Cursor not initialized");
+            throw new IllegalStateException("Cursor not initialized");
         }
         OperationStatus status;
         if (!range.hasBound()) {
@@ -801,7 +803,7 @@ public class RangeCursor implements Cloneable {
         throws DatabaseException {
 
         if (!initialized) {
-            throw new DatabaseException("Cursor not initialized");
+            throw new IllegalStateException("Cursor not initialized");
         }
         if (secCursor != null && pKey != null) {
             return secCursor.getCurrent(key, pKey, data, lockMode);
@@ -1000,8 +1002,8 @@ public class RangeCursor implements Cloneable {
             return OperationStatus.NOTFOUND;
         }
         if (secCursor != null && privPKey != null) {
-            return secCursor.getSearchBothRange(privKey, privPKey, privData,
-                                                lockMode);
+            return secCursor.getSearchBothRange(privKey, privPKey,
+                                                privData, lockMode);
         } else {
             return cursor.getSearchBothRange(privKey, privData, lockMode);
         }

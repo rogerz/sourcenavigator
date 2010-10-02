@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: DoubleBinding.java,v 12.7 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.tuple;
@@ -30,24 +30,24 @@ import com.sleepycat.db.DatabaseEntry;
  * TupleBinding#getPrimitiveBinding} method.</li>
  * </ol>
  */
-public class DoubleBinding extends TupleBinding {
+public class DoubleBinding extends TupleBinding<Double> {
 
     private static final int DOUBLE_SIZE = 8;
 
     // javadoc is inherited
-    public Object entryToObject(TupleInput input) {
+    public Double entryToObject(TupleInput input) {
 
-        return new Double(input.readDouble());
+        return input.readDouble();
     }
 
     // javadoc is inherited
-    public void objectToEntry(Object object, TupleOutput output) {
+    public void objectToEntry(Double object, TupleOutput output) {
 
-        output.writeDouble(((Number) object).doubleValue());
+        output.writeDouble(object);
     }
 
     // javadoc is inherited
-    protected TupleOutput getTupleOutput(Object object) {
+    protected TupleOutput getTupleOutput(Double object) {
 
         return sizedOutput();
     }

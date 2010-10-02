@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2004,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2004-2009 Oracle.  All rights reserved.
  *
- * $Id: rep_backup.c,v 12.120 2007/06/22 18:46:45 paula Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -18,60 +18,87 @@
 #include "dbinc/qam.h"
 #include "dbinc/txn.h"
 
-static int __rep_check_uid __P((DB_ENV *, u_int8_t *, u_int8_t *, u_int8_t *));
-static int __rep_filedone __P((DB_ENV *, int, REP *, __rep_fileinfo_args *,
-    u_int32_t));
-static int __rep_find_dbs __P((DB_ENV *, u_int8_t **, size_t *,
-    size_t *, u_int32_t *));
-static int __rep_get_fileinfo __P((DB_ENV *, const char *,
-    const char *, __rep_fileinfo_args *, u_int8_t *, u_int32_t *));
-static int __rep_get_file_list __P((DB_ENV *, DB_FH *, DBT *));
-static int __rep_log_setup __P((DB_ENV *,
+/*
+ * Context information needed for buffer management during the building of a
+ * list of database files present in the environment.  When fully built, the
+ * buffer is in the form of an UPDATE message: a (marshaled) update_args,
+ * followed by some number of (marshaled) fileinfo_args.
+ *
+ * Note that the fileinfo for the first file in the list always appears at
+ * (constant) offset __REP_UPDATE_SIZE in the buffer.
+ */
+typedef struct {
+	u_int8_t	*buf;	/* Buffer base address. */
+	size_t		size;	/* Total allocated buffer size. */
+	u_int8_t	*fillptr; /* Pointer to first unused space. */
+	u_int32_t	count;	/* Number of entries currently in list. */
+} FILE_LIST_CTX;
+#define	FIRST_FILE_PTR(buf)	((buf) + __REP_UPDATE_SIZE)
+
+static int __rep_check_uid __P((ENV *, FILE_LIST_CTX *, u_int32_t,
+    u_int8_t *));
+static int __rep_clean_interrupted __P((ENV *));
+static int __rep_cleanup_nimdbs __P((ENV *));
+static int __rep_filedone __P((ENV *, DB_THREAD_INFO *ip, int,
+     REP *, __rep_fileinfo_args *, u_int32_t));
+static int __rep_find_dbs __P((ENV *, u_int32_t, FILE_LIST_CTX *));
+static int __rep_get_fileinfo __P((ENV *, const char *,
+    const char *, __rep_fileinfo_args *, u_int8_t *));
+static int __rep_get_file_list __P((ENV *,
+    DB_FH *, u_int32_t, u_int32_t *, DBT *));
+static int __rep_log_setup __P((ENV *,
     REP *, u_int32_t, u_int32_t, DB_LSN *));
-static int __rep_mpf_open __P((DB_ENV *, DB_MPOOLFILE **,
+static int __rep_mpf_open __P((ENV *, DB_MPOOLFILE **,
     __rep_fileinfo_args *, u_int32_t));
-static int __rep_nextfile __P((DB_ENV *, int, REP *));
-static int __rep_page_gap __P((DB_ENV *, REP *, __rep_fileinfo_args *,
-    u_int32_t));
-static int __rep_page_sendpages __P((DB_ENV *, int,
-    __rep_fileinfo_args *, DB_MPOOLFILE *, DB *));
-static int __rep_queue_filedone __P((DB_ENV *, REP *, __rep_fileinfo_args *));
-static int __rep_remove_all __P((DB_ENV *, DBT *));
-static int __rep_remove_file __P((DB_ENV *, u_int8_t *, const char *,
-    u_int32_t, u_int32_t));
-static int __rep_remove_logs __P((DB_ENV *));
-static int __rep_remove_by_list __P((DB_ENV *, void *, u_int32_t));
-static int __rep_remove_by_prefix __P((DB_ENV *, const char *, const char *,
+static int __rep_nextfile __P((ENV *, int, REP *));
+static int __rep_page_gap __P((ENV *,
+     REP *, __rep_fileinfo_args *, u_int32_t));
+static int __rep_page_sendpages __P((ENV *, DB_THREAD_INFO *, int,
+    __rep_control_args *, __rep_fileinfo_args *, DB_MPOOLFILE *, DB *));
+static int __rep_queue_filedone __P((ENV *,
+    DB_THREAD_INFO *, REP *, __rep_fileinfo_args *));
+static int __rep_remove_all __P((ENV *, u_int32_t, DBT *));
+static int __rep_remove_by_list __P((ENV *, u_int32_t,
+    u_int8_t *, u_int32_t, u_int32_t));
+static int __rep_remove_by_prefix __P((ENV *, const char *, const char *,
     size_t, APPNAME));
-static int __rep_walk_dir __P((DB_ENV *, const char *, u_int8_t **, u_int8_t *,
-    size_t *, size_t *, u_int32_t *));
-static int __rep_write_page __P((DB_ENV *, REP *, __rep_fileinfo_args *));
+static int __rep_remove_file __P((ENV *, u_int8_t *, const char *,
+    u_int32_t, u_int32_t));
+static int __rep_remove_logs __P((ENV *));
+static int __rep_remove_nimdbs __P((ENV *));
+static int __rep_rollback __P((ENV *, DB_LSN *));
+static int __rep_unlink_by_list __P((ENV *, u_int32_t,
+    u_int8_t *, u_int32_t, u_int32_t));
+static int __rep_walk_dir __P((ENV *, const char *, u_int32_t, FILE_LIST_CTX*));
+static int __rep_write_page __P((ENV *,
+    DB_THREAD_INFO *, REP *, __rep_fileinfo_args *));
 
 /*
  * __rep_update_req -
  *	Process an update_req and send the file information to the client.
  *
- * PUBLIC: int __rep_update_req __P((DB_ENV *, int));
+ * PUBLIC: int __rep_update_req __P((ENV *, __rep_control_args *, int));
  */
 int
-__rep_update_req(dbenv, eid)
-	DB_ENV *dbenv;
+__rep_update_req(env, rp, eid)
+	ENV *env;
+	__rep_control_args *rp;
 	int eid;
 {
 	DBT updbt, vdbt;
 	DB_LOG *dblp;
 	DB_LOGC *logc;
 	DB_LSN lsn;
-	size_t filelen, filesz, updlen;
-	u_int32_t filecnt, flag, version;
-	u_int8_t *buf, *fp;
+	__rep_update_args u_args;
+	FILE_LIST_CTX context;
+	size_t updlen;
+	u_int32_t flag, version;
 	int ret, t_ret;
 
 	/*
-	 * Allocate enough for all currently open files and then some.
-	 * Optimize for the common use of having most databases open.
-	 * Allocate dbentry_cnt * 2 plus an estimated 60 bytes per
-	 * file for the filename/path (or multiplied by 120).
+	 * Start by allocating 1Meg, which ought to be plenty enough to describe
+	 * all databases in the environment.  (If it's not, __rep_walk_dir can
+	 * grow the size.)
 	 *
 	 * The data we send looks like this:
 	 *	__rep_update_args
@@ -79,22 +106,16 @@ __rep_update_req(dbenv, eid)
 	 *	__rep_fileinfo_args
 	 *	...
 	 */
-	dblp = dbenv->lg_handle;
+	dblp = env->lg_handle;
 	logc = NULL;
-	filecnt = 0;
-	filelen = 0;
-	updlen = 0;
-	filesz = MEGABYTE;
-	if ((ret = __os_calloc(dbenv, 1, filesz, &buf)) != 0)
+	if ((ret = __os_calloc(env, 1, MEGABYTE, &context.buf)) != 0)
 		return (ret);
+	context.size = MEGABYTE;
+	context.count = 0;
 
-	/*
-	 * First get our file information.  Get in-memory files first
-	 * then get on-disk files.
-	 */
-	fp = buf + sizeof(__rep_update_args);
-	if ((ret = __rep_find_dbs(
-	    dbenv, &fp, &filesz, &filelen, &filecnt)) != 0)
+	/* Reserve space for the update_args, and fill in file info. */
+	context.fillptr = FIRST_FILE_PTR(context.buf);
+	if ((ret = __rep_find_dbs(env, rp->rep_version, &context)) != 0)
 		goto err;
 
 	/*
@@ -102,7 +123,7 @@ __rep_update_req(dbenv, eid)
 	 * non-archivable log file.
 	 */
 	flag = DB_SET;
-	if ((ret = __log_get_stable_lsn(dbenv, &lsn)) != 0) {
+	if ((ret = __log_get_stable_lsn(env, &lsn)) != 0) {
 		if (ret != DB_NOTFOUND)
 			goto err;
 		/*
@@ -116,7 +137,7 @@ __rep_update_req(dbenv, eid)
 	/*
 	 * Now get the version number of the log file of that LSN.
 	 */
-	if ((ret = __log_cursor(dbenv, &logc)) != 0)
+	if ((ret = __log_cursor(env, &logc)) != 0)
 		goto err;
 
 	memset(&vdbt, 0, sizeof(vdbt));
@@ -141,21 +162,33 @@ __rep_update_req(dbenv, eid)
 	/*
 	 * Package up the update information.
 	 */
-	if ((ret = __rep_update_buf(buf, filesz, &updlen,
-	    &lsn, version, filecnt)) != 0)
+	u_args.first_lsn = lsn;
+	u_args.first_vers = version;
+	u_args.num_files = context.count;
+	if ((ret = __rep_update_marshal(env, rp->rep_version,
+	    &u_args, context.buf, __REP_UPDATE_SIZE, &updlen)) != 0)
 		goto err;
+	DB_ASSERT(env, updlen == __REP_UPDATE_SIZE);
+
 	/*
 	 * We have all the file information now.  Send it to the client.
 	 */
-	DB_INIT_DBT(updbt, buf, filelen + updlen);
+	DB_INIT_DBT(updbt, context.buf, context.fillptr - context.buf);
 
-	LOG_SYSTEM_LOCK(dbenv);
+	LOG_SYSTEM_LOCK(env);
 	lsn = ((LOG *)dblp->reginfo.primary)->lsn;
-	LOG_SYSTEM_UNLOCK(dbenv);
+	LOG_SYSTEM_UNLOCK(env);
 	(void)__rep_send_message(
-	    dbenv, eid, REP_UPDATE, &lsn, &updbt, 0, 0);
+	    env, eid, REP_UPDATE, &lsn, &updbt, 0, 0);
 
-err:	__os_free(dbenv, buf);
+err:	__os_free(env, context.buf);
+	/*
+	 * If we got here because the lower code could not get the page
+	 * lock then we skipped sending the message, but we don't want
+	 * to return an error to the user.
+	 */
+	if (ret == DB_REP_PAGELOCKED)
+		ret = 0;
 	if (logc != NULL && (t_ret = __logc_close(logc)) != 0 && ret == 0)
 		ret = t_ret;
 	return (ret);
@@ -166,56 +199,49 @@ err:	__os_free(dbenv, buf);
  *	Walk through all the named files/databases including those in the
  *	environment or data_dirs and those that in named and in-memory.  We
  *	need to	open them, gather the necessary information and then close
- *	them. Then we need to figure out if they're already in the dbentry
- *	array.
+ *	them.
  *
- * !!!
- * The pointer *fp is expected to point into a buffer that may be used for an
- * UPDATE message, at an offset equal to the size of __rep_update_args.  This
- * assumption is relied upon if the buffer is found to be too small and must be
- * reallocated.
+ * May be called either while holding REP_SYSTEM_LOCK or without.
  */
 static int
-__rep_find_dbs(dbenv, fp, fileszp, filelenp, filecntp)
-	DB_ENV *dbenv;
-	u_int8_t **fp;
-	size_t *fileszp, *filelenp;
-	u_int32_t *filecntp;
+__rep_find_dbs(env, version, context)
+	ENV *env;
+	u_int32_t version;
+	FILE_LIST_CTX *context;
 {
+	DB_ENV *dbenv;
 	int ret;
 	char **ddir, *real_dir;
-	u_int8_t *origfp;
 
+	dbenv = env->dbenv;
 	ret = 0;
 	real_dir = NULL;
+
 	if (dbenv->db_data_dir == NULL) {
 		/*
 		 * If we don't have a data dir, we have just the
 		 * env home dir.
 		 */
-		ret = __rep_walk_dir(dbenv, dbenv->db_home, fp, NULL,
-		    fileszp, filelenp, filecntp);
+		ret = __rep_walk_dir(env, env->db_home, version, context);
 	} else {
-		origfp = *fp;
 		for (ddir = dbenv->db_data_dir; *ddir != NULL; ++ddir) {
-			if ((ret = __db_appname(dbenv, DB_APP_NONE,
-			    *ddir, 0, NULL, &real_dir)) != 0)
+			if ((ret = __db_appname(env,
+			    DB_APP_NONE, *ddir, NULL, &real_dir)) != 0)
 				break;
-			if ((ret = __rep_walk_dir(dbenv, real_dir, fp, origfp,
-			    fileszp, filelenp, filecntp)) != 0)
+			if ((ret = __rep_walk_dir(env,
+			    real_dir, version, context)) != 0)
 				break;
-			__os_free(dbenv, real_dir);
+			__os_free(env, real_dir);
 			real_dir = NULL;
 		}
 	}
 
 	/* Now, collect any in-memory named databases. */
 	if (ret == 0)
-		ret = __rep_walk_dir(dbenv, NULL,
-		    fp, NULL, fileszp, filelenp, filecntp);
+		ret = __rep_walk_dir(env, NULL, version, context);
 
 	if (real_dir != NULL)
-		__os_free(dbenv, real_dir);
+		__os_free(env, real_dir);
 	return (ret);
 }
 
@@ -228,55 +254,50 @@ __rep_find_dbs(dbenv, fp, fileszp, filelenp, filecntp)
  * walk the list of in-memory named files.
  */
 static int
-__rep_walk_dir(dbenv, dir, fp, origfp, fileszp, filelenp, filecntp)
-	DB_ENV *dbenv;
+__rep_walk_dir(env, dir, version, context)
+	ENV *env;
 	const char *dir;
-	u_int8_t **fp, *origfp;
-	size_t *fileszp, *filelenp;
-	u_int32_t *filecntp;
+	u_int32_t version;
+	FILE_LIST_CTX *context;
 {
-	DBT namedbt, uiddbt;
 	__rep_fileinfo_args tmpfp;
-	size_t len, offset;
+	size_t avail, len;
 	int cnt, first_file, i, ret;
-	u_int8_t *rfp, uid[DB_FILE_ID_LEN];
+	u_int8_t uid[DB_FILE_ID_LEN];
 	char *file, **names, *subdb;
 
-	memset(&namedbt, 0, sizeof(namedbt));
-	memset(&uiddbt, 0, sizeof(uiddbt));
 	if (dir == NULL) {
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Walk_dir: Getting info for in-memory named files"));
-		if ((ret = __memp_inmemlist(dbenv, &names, &cnt)) != 0)
+		if ((ret = __memp_inmemlist(env, &names, &cnt)) != 0)
 			return (ret);
 	} else {
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Walk_dir: Getting info for dir: %s", dir));
-		if ((ret = __os_dirlist(dbenv, dir, &names, &cnt)) != 0)
+		if ((ret = __os_dirlist(env, dir, 0, &names, &cnt)) != 0)
 			return (ret);
 	}
-	rfp = NULL;
-	if (fp != NULL)
-		rfp = *fp;
-	RPRINT(dbenv, (dbenv, "Walk_dir: Dir %s has %d files",
+	RPRINT(env, DB_VERB_REP_SYNC, (env, "Walk_dir: Dir %s has %d files",
 	    (dir == NULL) ? "INMEM" : dir, cnt));
 	first_file = 1;
 	for (i = 0; i < cnt; i++) {
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Walk_dir: File %d name: %s", i, names[i]));
 		/*
 		 * Skip DB-owned files: __db*, DB_CONFIG, log*
 		 */
-		if (strncmp(names[i], "__db", 4) == 0)
-			continue;
+		if (strncmp(names[i],
+		    DB_REGION_PREFIX, sizeof(DB_REGION_PREFIX) - 1) == 0) {
+			/* Process partition files: "__dbp.*". */
+			if (names[i][sizeof(DB_REGION_PREFIX) - 1] != 'p')
+				continue;
+		}
 		if (strncmp(names[i], "DB_CONFIG", 9) == 0)
 			continue;
-		if (strncmp(names[i], "log", 3) == 0)
+		if (strncmp(names[i], "log.", 4) == 0)
 			continue;
-		/*
-		 * We found a file to process.  Check if we need
-		 * to allocate more space.
-		 */
+
+		/* We found a file to process. */
 		if (dir == NULL) {
 			file = NULL;
 			subdb = names[i];
@@ -284,159 +305,215 @@ __rep_walk_dir(dbenv, dir, fp, origfp, fileszp, filelenp, filecntp)
 			file = names[i];
 			subdb = NULL;
 		}
-		if ((ret = __rep_get_fileinfo(dbenv,
-		    file, subdb, &tmpfp, uid, filecntp)) != 0) {
+		if ((ret = __rep_get_fileinfo(env,
+		    file, subdb, &tmpfp, uid)) != 0) {
 			/*
 			 * If we find a file that isn't a database, skip it.
 			 */
-			RPRINT(dbenv, (dbenv,
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
 			    "Walk_dir: File %d %s: returned error %s",
 			    i, names[i], db_strerror(ret)));
+			if (ret == DB_REP_PAGELOCKED)
+				goto err;
 			ret = 0;
 			continue;
 		}
-		RPRINT(dbenv, (dbenv,
-    "Walk_dir: File %d (of %d) %s at 0x%lx: pgsize %lu, max_pgno %lu",
-		    tmpfp.filenum, *filecntp, names[i], P_TO_ULONG(rfp),
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
+		    "Walk_dir: File %s at 0x%lx: pgsize %lu, max_pgno %lu",
+		    names[i], P_TO_ULONG(context->fillptr),
 		    (u_long)tmpfp.pgsize, (u_long)tmpfp.max_pgno));
 
 		/*
-		 * Check if we already have info on this file.  Since we're
-		 * walking directories, we only need to check the first
-		 * file to discover if we have a duplicate data_dir.
+		 * On the first time through the loop, check to see if the file
+		 * we're about to add is already on the list.  If it is, it must
+		 * have been added in a previous call, and that means the
+		 * directory we're currently scanning has already been scanned
+		 * before.  (This can happen if the user called
+		 * env->set_data_dir() more than once for the same directory.)
+		 * If that's the case, we're done: not only is it a waste of
+		 * time to scan the same directory again, but doing so would
+		 * result in the same files appearing in the list more than
+		 * once.
 		 */
-		if (first_file && origfp != NULL) {
-			/*
-			 * If we have any file info, check if we have this uid.
-			 */
-			if (rfp != origfp &&
-			    (ret = __rep_check_uid(dbenv, origfp,
-			    origfp + *filelenp, uid)) != 0) {
-				/*
-				 * If we have this uid.  Adjust the file
-				 * count and stop processing this dir.
-				 */
-				if (ret == DB_KEYEXIST) {
-					ret = 0;
-					(*filecntp)--;
-				}
-				goto err;
-			}
-			first_file = 0;
+		if (first_file && dir != NULL &&
+		    (ret = __rep_check_uid(env, context, version, uid)) != 0) {
+			if (ret == DB_KEYEXIST)
+				ret = 0;
+			goto err;
 		}
+		first_file = 0;
 
-		DB_SET_DBT(namedbt, names[i], strlen(names[i]) + 1);
-		DB_SET_DBT(uiddbt, uid, DB_FILE_ID_LEN);
-retry:		ret = __rep_fileinfo_buf(rfp, *fileszp, &len,
-		    tmpfp.pgsize, tmpfp.pgno, tmpfp.max_pgno,
-		    tmpfp.filenum, tmpfp.id, tmpfp.type,
-		    tmpfp.flags, &uiddbt, &namedbt);
+		/*
+		 * Finally we know that this file is a suitable database file
+		 * that we haven't yet included on our list.
+		 */
+		tmpfp.filenum = context->count++;
+
+		DB_SET_DBT(tmpfp.info, names[i], strlen(names[i]) + 1);
+		DB_SET_DBT(tmpfp.uid, uid, DB_FILE_ID_LEN);
+retry:		avail = (size_t)(&context->buf[context->size] -
+		    context->fillptr);
+		ret = __rep_fileinfo_marshal(env, version,
+		    &tmpfp, context->fillptr, avail, &len);
 		if (ret == ENOMEM) {
-			offset = (size_t)(rfp - *fp);
-			*fileszp *= 2;
 			/*
-			 * Need to account for update info on both sides
-			 * of the allocation.
+			 * Here, 'len' is the total space in use in the buffer.
 			 */
-			*fp -= sizeof(__rep_update_args);
-			if ((ret = __os_realloc(dbenv, *fileszp, *fp)) != 0)
-				break;
-			*fp += sizeof(__rep_update_args);
-			rfp = *fp + offset;
+			len = (size_t)(context->fillptr - context->buf);
+			context->size *= 2;
+
+			if ((ret = __os_realloc(env,
+			    context->size, &context->buf)) != 0)
+				goto err;
+			context->fillptr = context->buf + len;
+
 			/*
 			 * Now that we've reallocated the space, try to
 			 * store it again.
 			 */
 			goto retry;
 		}
-		rfp += len;
-		*fp = rfp;
-		*filelenp += len;
+		/*
+		 * Here, 'len' (still) holds the length of the marshaled
+		 * information about the current file (as filled in by the last
+		 * call to  __rep_fileinfo_marshal()).
+		 */
+		context->fillptr += len;
 	}
 err:
-	__os_dirfree(dbenv, names, cnt);
+	__os_dirfree(env, names, cnt);
 	return (ret);
 }
 
 /*
- * This function is called when we process the first file of any
- * new directory for internal init.  We walk the list of current
- * files to see if we have already processed these files.  This
- * is to prevent transmitting the same file multiple times if the
- * user calls dbenv->set_data_dir on the same directory more than once.
+ * Check whether the given uid is already present in the list of files being
+ * built in the context buffer.  A return of DB_KEYEXIST means it is.
  */
 static int
-__rep_check_uid(dbenv, fp, endfp, uid)
-	DB_ENV *dbenv;
-	u_int8_t *fp, *endfp, *uid;
+__rep_check_uid(env, context, version, uid)
+	ENV *env;
+	FILE_LIST_CTX *context;
+	u_int32_t version;
+	u_int8_t *uid;
 {
 	__rep_fileinfo_args *rfp;
-	u_int8_t *fuid;
+	size_t max;
+	u_int8_t *fp;
+	u_int32_t i;
 	int ret;
-	void *next;
 
 	ret = 0;
-	next = fp;
 	rfp = NULL;
-	while (next <= (void *)endfp) {
-		if ((ret =
-		    __rep_fileinfo_read(dbenv, next, &next, &rfp)) != 0) {
-			__db_errx(dbenv, "Rep_check_uid: Could not malloc");
+	fp = FIRST_FILE_PTR(context->buf);
+	for (i = 0; i < context->count; i++) {
+		max = (size_t)(context->fillptr - fp);
+		if ((ret = __rep_fileinfo_unmarshal(env, version,
+		    &rfp, fp, max, &fp)) != 0) {
+			__db_errx(env, "rep_check_uid: Could not malloc");
 			goto err;
 		}
-		fuid = (u_int8_t *)rfp->uid.data;
-		if (memcmp(fuid, uid, DB_FILE_ID_LEN) == 0) {
-			RPRINT(dbenv, (dbenv,
+		if (memcmp(rfp->uid.data, uid, DB_FILE_ID_LEN) == 0) {
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
 			    "Check_uid: Found matching file."));
 			ret = DB_KEYEXIST;
 			goto err;
 		}
-		__os_free(dbenv, rfp);
+		__os_free(env, rfp);
 		rfp = NULL;
 	}
 err:
 	if (rfp != NULL)
-		__os_free(dbenv, rfp);
+		__os_free(env, rfp);
 	return (ret);
 
 }
 
 static int
-__rep_get_fileinfo(dbenv, file, subdb, rfp, uid, filecntp)
-	DB_ENV *dbenv;
+__rep_get_fileinfo(env, file, subdb, rfp, uid)
+	ENV *env;
 	const char *file, *subdb;
 	__rep_fileinfo_args *rfp;
 	u_int8_t *uid;
-	u_int32_t *filecntp;
 {
-	DB *dbp, *entdbp;
-	DB_LOCK lk;
-	DB_LOG *dblp;
-	DB_MPOOLFILE *mpf;
+	DB *dbp;
 	DBC *dbc;
 	DBMETA *dbmeta;
+	DB_LOCK lk;
+	DB_MPOOLFILE *mpf;
+	DB_THREAD_INFO *ip;
+	DB_TXN *txn;
 	PAGE *pagep;
-	int i, ret, t_ret;
+	int lorder, ret, retry, t_ret;
 
 	dbp = NULL;
 	dbc = NULL;
 	pagep = NULL;
 	mpf = NULL;
+	txn = NULL;
 	LOCK_INIT(lk);
 
-	if ((ret = __db_create_internal(&dbp, dbenv, 0)) != 0)
-		goto err;
-	if ((ret = __db_open(dbp, NULL, file, subdb, DB_UNKNOWN,
-	    DB_RDONLY | (F_ISSET(dbenv, DB_ENV_THREAD) ? DB_THREAD : 0),
-	    0, PGNO_BASE_MD)) != 0)
-		goto err;
+	ENV_GET_THREAD_INFO(env, ip);
 
-	if ((ret = __db_cursor(dbp, NULL, &dbc, 0)) != 0)
+	/*
+	 * If the meta page is locked, try a few times.  If we cannot
+	 * get it, return.
+	 */
+	for (retry = 0; retry < REP_META_RETRY; retry++) {
+		if ((ret = __db_create_internal(&dbp, env, 0)) != 0)
+			goto err;
+		if ((ret = __txn_begin(env, NULL, NULL, &txn,
+		    DB_TXN_NOWAIT)) != 0)
+			goto err;
+		if ((ret = __db_open(dbp, ip, txn, file, subdb, DB_UNKNOWN,
+		    DB_RDONLY | (F_ISSET(env, ENV_THREAD) ? DB_THREAD : 0),
+		    0, PGNO_BASE_MD)) != 0) {
+			RPRINT(env, DB_VERB_REP_SYNC,
+			    (env, "get_fileinfo: open error %d", ret));
+			(void)__txn_abort(txn);
+			txn = NULL;
+			(void)__db_close(dbp, NULL, DB_NOSYNC);
+			dbp = NULL;
+			if (ret == DB_LOCK_DEADLOCK ||
+			    ret == DB_LOCK_NOTGRANTED) {
+				__os_yield(env, 1, 0);
+				RPRINT(env, DB_VERB_REP_SYNC,
+    (env, "get_fileinfo: Try %d could not get meta lock for open", retry));
+				continue;
+			} else
+				goto err;
+		} else
+			break;
+	}
+	if (retry == REP_META_RETRY) {
+		ret = DB_REP_PAGELOCKED;
 		goto err;
-	if ((ret = __db_lget(
-	    dbc, 0, dbp->meta_pgno, DB_LOCK_READ, 0, &lk)) != 0)
+	}
+
+	if ((ret = __db_cursor(dbp, ip, txn, &dbc, 0)) != 0)
 		goto err;
-	if ((ret = __memp_fget(dbp->mpf, &dbp->meta_pgno, dbc->txn,
+	/*
+	 * If the meta page is locked, try a few times.  If we cannot
+	 * get it, return.
+	 */
+	for (retry = 0; retry < REP_META_RETRY; retry++) {
+		if ((ret = __db_lget(dbc, 0, dbp->meta_pgno,
+		    DB_LOCK_READ, DB_LOCK_NOWAIT, &lk)) != 0) {
+			if (ret == DB_LOCK_DEADLOCK ||
+			    ret == DB_LOCK_NOTGRANTED) {
+				RPRINT(env, DB_VERB_REP_SYNC,
+    (env, "get_fileinfo: Try %d could not get meta lock", retry));
+				__os_yield(env, 1, 0);
+				continue;
+			} else
+				goto err;
+		} else
+			break;
+	}
+	if (retry == REP_META_RETRY) {
+		ret = DB_REP_PAGELOCKED;
+		goto err;
+	}
+	if ((ret = __memp_fget(dbp->mpf, &dbp->meta_pgno, ip, dbc->txn,
 	    0, &pagep)) != 0)
 		goto err;
 	/*
@@ -454,11 +531,19 @@ __rep_get_fileinfo(dbenv, file, subdb, rfp, uid, filecntp)
 		rfp->max_pgno = dbmeta->last_pgno;
 	rfp->pgsize = dbp->pgsize;
 	memcpy(uid, dbp->fileid, DB_FILE_ID_LEN);
-	rfp->filenum = (*filecntp)++;
 	rfp->type = (u_int32_t)dbp->type;
-	rfp->flags = dbp->flags;
-	rfp->id = DB_LOGFILEID_INVALID;
-	ret = __memp_fput(dbp->mpf, pagep, dbc->priority);
+	rfp->db_flags = dbp->flags;
+	rfp->finfo_flags = 0;
+	/*
+	 * Send the lorder of this database.
+	 */
+	(void)__db_get_lorder(dbp, &lorder);
+	if (lorder == 1234)
+		FLD_SET(rfp->finfo_flags, REPINFO_DB_LITTLEENDIAN);
+	else
+		FLD_CLR(rfp->finfo_flags, REPINFO_DB_LITTLEENDIAN);
+
+	ret = __memp_fput(dbp->mpf, ip, pagep, dbc->priority);
 	pagep = NULL;
 	if ((t_ret = __LPUT(dbc, lk)) != 0 && ret == 0)
 		ret = t_ret;
@@ -467,37 +552,15 @@ __rep_get_fileinfo(dbenv, file, subdb, rfp, uid, filecntp)
 err:
 	if ((t_ret = __LPUT(dbc, lk)) != 0 && ret == 0)
 		ret = t_ret;
+	if (pagep != NULL && (t_ret =
+	    __memp_fput(mpf, ip, pagep, dbc->priority)) != 0 && ret == 0)
+		ret = t_ret;
 	if (dbc != NULL && (t_ret = __dbc_close(dbc)) != 0 && ret == 0)
 		ret = t_ret;
-	if (pagep != NULL && (t_ret =
-	    __memp_fput(mpf, pagep, dbc->priority)) != 0 && ret == 0)
-		ret = t_ret;
+	if (txn != NULL)
+		(void)__txn_abort(txn);
 	if (dbp != NULL && (t_ret = __db_close(dbp, NULL, 0)) != 0 && ret == 0)
 		ret = t_ret;
-	/*
-	 * We walk the entry table now, after closing the dbp because
-	 * otherwise we find the open from this function and the id
-	 * is useless in that case.
-	 */
-	if (ret == 0) {
-		LOG_SYSTEM_LOCK(dbenv);
-		/*
-		 * Walk entry table looking for this uid.
-		 * If we find it, save the id.
-		 */
-		for (dblp = dbenv->lg_handle,
-		    i = 0; i < dblp->dbentry_cnt; i++) {
-			entdbp = dblp->dbentry[i].dbp;
-			if (entdbp == NULL)
-				break;
-			DB_ASSERT(dbenv, entdbp->log_filename != NULL);
-			if (memcmp(uid,
-			    entdbp->log_filename->ufid,
-			    DB_FILE_ID_LEN) == 0)
-				rfp->id = i;
-		}
-		LOG_SYSTEM_UNLOCK(dbenv);
-	}
 	return (ret);
 }
 
@@ -505,99 +568,77 @@ err:
  * __rep_page_req
  *	Process a page_req and send the page information to the client.
  *
- * PUBLIC: int __rep_page_req __P((DB_ENV *, int, DBT *));
+ * PUBLIC: int __rep_page_req __P((ENV *,
+ * PUBLIC:     DB_THREAD_INFO *, int, __rep_control_args *, DBT *));
  */
 int
-__rep_page_req(dbenv, eid, rec)
-	DB_ENV *dbenv;
+__rep_page_req(env, ip, eid, rp, rec)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
+	__rep_control_args *rp;
 	DBT *rec;
 {
 	__rep_fileinfo_args *msgfp;
-	DB *dbp;
-	DBT msgdbt;
-	DB_LOG *dblp;
 	DB_MPOOLFILE *mpf;
 	DB_REP *db_rep;
 	REP *rep;
 	int ret, t_ret;
-	void *next;
+	u_int8_t *next;
 
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 	rep = db_rep->region;
-	dblp = dbenv->lg_handle;
 
-	if ((ret = __rep_fileinfo_read(dbenv, rec->data, &next, &msgfp)) != 0)
+	if ((ret = __rep_fileinfo_unmarshal(env, rp->rep_version,
+	    &msgfp, rec->data, rec->size, &next)) != 0)
 		return (ret);
 
-	/*
-	 * See if we can find it already.  If so we can quickly access its
-	 * mpool and process.  Otherwise we have to open the file ourselves.
-	 */
-	RPRINT(dbenv, (dbenv, "page_req: file %d page %lu to %lu",
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "page_req: file %d page %lu to %lu",
 	    msgfp->filenum, (u_long)msgfp->pgno, (u_long)msgfp->max_pgno));
-	LOG_SYSTEM_LOCK(dbenv);
-	if (msgfp->id >= 0 && dblp->dbentry_cnt > msgfp->id) {
-		dbp = dblp->dbentry[msgfp->id].dbp;
-		if (dbp != NULL) {
-			DB_ASSERT(dbenv, dbp->log_filename != NULL);
-			if (memcmp(msgfp->uid.data, dbp->log_filename->ufid,
-			    DB_FILE_ID_LEN) == 0) {
-				LOG_SYSTEM_UNLOCK(dbenv);
-				RPRINT(dbenv, (dbenv,
-				    "page_req: found %d in dbreg",
-				    msgfp->filenum));
-				ret = __rep_page_sendpages(dbenv, eid,
-				    msgfp, dbp->mpf, dbp);
-				goto err;
-			}
-		}
-	}
-	LOG_SYSTEM_UNLOCK(dbenv);
 
 	/*
-	 * If we get here, we do not have the file open via dbreg.
 	 * We need to open the file and then send its pages.
 	 * If we cannot open the file, we send REP_FILE_FAIL.
 	 */
-	RPRINT(dbenv,
-	    (dbenv, "page_req: Open %d via mpf_open", msgfp->filenum));
-	if ((ret = __rep_mpf_open(dbenv, &mpf, msgfp, 0)) != 0) {
-		memset(&msgdbt, 0, sizeof(msgdbt));
-		msgdbt.data = msgfp;
-		msgdbt.size = sizeof(*msgfp);
-		RPRINT(dbenv, (dbenv, "page_req: Open %d failed",
-		    msgfp->filenum));
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "page_req: Open %d via mpf_open", msgfp->filenum));
+	if ((ret = __rep_mpf_open(env, &mpf, msgfp, 0)) != 0) {
+		RPRINT(env, DB_VERB_REP_SYNC,
+		    (env, "page_req: Open %d failed", msgfp->filenum));
 		if (F_ISSET(rep, REP_F_MASTER))
-			(void)__rep_send_message(dbenv, eid, REP_FILE_FAIL,
-			    NULL, &msgdbt, 0, 0);
+			(void)__rep_send_message(env, eid, REP_FILE_FAIL,
+			    NULL, rec, 0, 0);
 		else
 			ret = DB_NOTFOUND;
 		goto err;
 	}
 
-	ret = __rep_page_sendpages(dbenv, eid, msgfp, mpf, NULL);
+	ret = __rep_page_sendpages(env, ip, eid, rp, msgfp, mpf, NULL);
 	t_ret = __memp_fclose(mpf, 0);
 	if (ret == 0 && t_ret != 0)
 		ret = t_ret;
 err:
-	__os_free(dbenv, msgfp);
+	__os_free(env, msgfp);
 	return (ret);
 }
 
 static int
-__rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
-	DB_ENV *dbenv;
+__rep_page_sendpages(env, ip, eid, rp, msgfp, mpf, dbp)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
+	__rep_control_args *rp;
 	__rep_fileinfo_args *msgfp;
 	DB_MPOOLFILE *mpf;
 	DB *dbp;
 {
 	DB *qdbp;
-	DBT lockdbt, msgdbt, pgdbt;
+	DBC *qdbc;
+	DBT lockdbt, msgdbt;
 	DB_LOCK lock;
-	DB_LOCK_ILOCK lock_obj;
 	DB_LOCKER *locker;
+	DB_LOCK_ILOCK lock_obj;
 	DB_LOG *dblp;
 	DB_LSN lsn;
 	DB_REP *db_rep;
@@ -612,42 +653,46 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 	int opened, ret, t_ret;
 	u_int8_t *buf;
 
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 	rep = db_rep->region;
 	locker = NULL;
 	opened = 0;
+	t_ret = 0;
 	qdbp = NULL;
+	qdbc = NULL;
 	buf = NULL;
 	bulk.addr = NULL;
 	use_bulk = FLD_ISSET(rep->config, REP_C_BULK);
 	if (msgfp->type == (u_int32_t)DB_QUEUE) {
 		if (dbp == NULL) {
-			if ((ret = __db_create_internal(&qdbp, dbenv, 0)) != 0)
+			if ((ret = __db_create_internal(&qdbp, env, 0)) != 0)
 				goto err;
 			/*
 			 * We need to check whether this is in-memory so that
 			 * we pass the name correctly as either the file or
 			 * the database name.
 			 */
-			if ((ret = __db_open(qdbp, NULL,
-			    FLD_ISSET(msgfp->flags, DB_AM_INMEM) ?
+			if ((ret = __db_open(qdbp, ip, NULL,
+			    FLD_ISSET(msgfp->db_flags, DB_AM_INMEM) ?
 			    NULL : msgfp->info.data,
-			    FLD_ISSET(msgfp->flags, DB_AM_INMEM) ?
+			    FLD_ISSET(msgfp->db_flags, DB_AM_INMEM) ?
 			    msgfp->info.data : NULL,
 			    DB_UNKNOWN,
-			    DB_RDONLY | (F_ISSET(dbenv, DB_ENV_THREAD) ?
-			    DB_THREAD : 0), 0, PGNO_BASE_MD)) != 0)
+			DB_RDONLY | (F_ISSET(env, ENV_THREAD) ? DB_THREAD : 0),
+			    0, PGNO_BASE_MD)) != 0)
 				goto err;
 			opened = 1;
 		} else
 			qdbp = dbp;
+		if ((ret = __db_cursor(qdbp, ip, NULL, &qdbc, 0)) != 0)
+			goto err;
 	}
-	msgsz = sizeof(__rep_fileinfo_args) + DB_FILE_ID_LEN + msgfp->pgsize;
-	if ((ret = __os_calloc(dbenv, 1, msgsz, &buf)) != 0)
+	msgsz = __REP_FILEINFO_SIZE + DB_FILE_ID_LEN + msgfp->pgsize;
+	if ((ret = __os_calloc(env, 1, msgsz, &buf)) != 0)
 		goto err;
 	memset(&msgdbt, 0, sizeof(msgdbt));
-	memset(&pgdbt, 0, sizeof(pgdbt));
-	RPRINT(dbenv, (dbenv, "sendpages: file %d page %lu to %lu",
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "sendpages: file %d page %lu to %lu",
 	    msgfp->filenum, (u_long)msgfp->pgno, (u_long)msgfp->max_pgno));
 	memset(&repth, 0, sizeof(repth));
 	/*
@@ -659,22 +704,22 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 	 * Use a local var so that we don't need to worry if someone else
 	 * turns on/off bulk in the middle of our call here.
 	 */
-	if (use_bulk && (ret = __rep_bulk_alloc(dbenv, &bulk, eid,
+	if (use_bulk && (ret = __rep_bulk_alloc(env, &bulk, eid,
 	    &bulkoff, &bulkflags, REP_BULK_PAGE)) != 0)
 		goto err;
-	REP_SYSTEM_LOCK(dbenv);
+	REP_SYSTEM_LOCK(env);
 	repth.gbytes = rep->gbytes;
 	repth.bytes = rep->bytes;
 	repth.type = REP_PAGE;
 	repth.data_dbt = &msgdbt;
-	REP_SYSTEM_UNLOCK(dbenv);
+	REP_SYSTEM_UNLOCK(env);
 
 	/*
 	 * Set up locking.
 	 */
 	LOCK_INIT(lock);
 	memset(&lock_obj, 0, sizeof(lock_obj));
-	if ((ret = __lock_id(dbenv, NULL, &locker)) != 0)
+	if ((ret = __lock_id(env, NULL, &locker)) != 0)
 		goto err;
 	memcpy(lock_obj.fileid, mpf->fileid, DB_FILE_ID_LEN);
 	lock_obj.type = DB_PAGE_LOCK;
@@ -690,13 +735,16 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 		 * code will rerequest it.
 		 */
 		lock_obj.pgno = p;
-		if ((ret = __lock_get(dbenv, locker, DB_LOCK_NOWAIT, &lockdbt,
+		if ((ret = __lock_get(env, locker, DB_LOCK_NOWAIT, &lockdbt,
 		    DB_LOCK_READ, &lock)) != 0) {
 			/*
 			 * Continue if we couldn't get the lock.
 			 */
-			if (ret == DB_LOCK_NOTGRANTED)
+			if (ret == DB_LOCK_DEADLOCK ||
+			    ret == DB_LOCK_NOTGRANTED) {
+				ret = 0;
 				continue;
+			}
 			/*
 			 * Otherwise we have an error.
 			 */
@@ -704,24 +752,22 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 		}
 		if (msgfp->type == (u_int32_t)DB_QUEUE && p != 0)
 #ifdef HAVE_QUEUE
-			ret = __qam_fget(qdbp, &p, NULL,
-			    DB_MPOOL_CREATE, &pagep);
+			ret = __qam_fget(qdbc, &p, DB_MPOOL_CREATE, &pagep);
 #else
 			ret = DB_PAGE_NOTFOUND;
 #endif
 		else
-			ret = __memp_fget(mpf, &p, NULL,
+			ret = __memp_fget(mpf, &p, ip, NULL,
 			    DB_MPOOL_CREATE, &pagep);
+		msgfp->pgno = p;
 		if (ret == DB_PAGE_NOTFOUND) {
-			memset(&pgdbt, 0, sizeof(pgdbt));
 			ZERO_LSN(lsn);
-			msgfp->pgno = p;
 			if (F_ISSET(rep, REP_F_MASTER)) {
 				ret = 0;
-				RPRINT(dbenv, (dbenv,
+				RPRINT(env, DB_VERB_REP_SYNC, (env,
 				    "sendpages: PAGE_FAIL on page %lu",
 				    (u_long)p));
-				(void)__rep_send_message(dbenv, eid,
+				(void)__rep_send_message(env, eid,
 				    REP_PAGE_FAIL, &lsn, &msgdbt, 0, 0);
 			} else
 				ret = DB_NOTFOUND;
@@ -729,17 +775,30 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 		} else if (ret != 0)
 			goto lockerr;
 		else
-			DB_SET_DBT(pgdbt, pagep, msgfp->pgsize);
+			DB_SET_DBT(msgfp->info, pagep, msgfp->pgsize);
 		len = 0;
-		RPRINT(dbenv, (dbenv,
+		/*
+		 * Send along an indication of the byte order of this mpool
+		 * page.  Since mpool always keeps pages in the native byte
+		 * order of the local environment, this is simply my
+		 * environment's byte order.
+		 *
+		 * Since pages can be served from a variety of sites when using
+		 * client-to-client synchronization, the receiving client needs
+		 * to know the byte order of each page independently.
+		 */
+		if (F_ISSET(env, ENV_LITTLEENDIAN))
+			FLD_SET(msgfp->finfo_flags, REPINFO_PG_LITTLEENDIAN);
+		else
+			FLD_CLR(msgfp->finfo_flags, REPINFO_PG_LITTLEENDIAN);
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "sendpages: %lu, page lsn [%lu][%lu]", (u_long)p,
 		    (u_long)pagep->lsn.file, (u_long)pagep->lsn.offset));
-		ret = __rep_fileinfo_buf(buf, msgsz, &len,
-		    msgfp->pgsize, p, msgfp->max_pgno,
-		    msgfp->filenum, msgfp->id, msgfp->type,
-		    msgfp->flags, &msgfp->uid, &pgdbt);
+		ret = __rep_fileinfo_marshal(env, rp->rep_version,
+		    msgfp, buf, msgsz, &len);
 		if (msgfp->type != (u_int32_t)DB_QUEUE || p == 0)
-			t_ret = __memp_fput(mpf, pagep, DB_PRIORITY_UNCHANGED);
+			t_ret = __memp_fput(mpf,
+			    ip, pagep, DB_PRIORITY_UNCHANGED);
 #ifdef HAVE_QUEUE
 		else
 			/*
@@ -747,31 +806,33 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 			 * we're not compiled with queue, then we're guaranteed
 			 * to have set REP_PAGE_FAIL above.
 			 */
-			t_ret = __qam_fput(qdbp, p, pagep, qdbp->priority);
+			t_ret = __qam_fput(qdbc, p, pagep, qdbp->priority);
 #endif
-		if ((t_ret = __ENV_LPUT(dbenv, lock)) != 0 && ret == 0)
+		if (t_ret != 0 && ret == 0)
+			ret = t_ret;
+		if ((t_ret = __ENV_LPUT(env, lock)) != 0 && ret == 0)
 			ret = t_ret;
 		if (ret != 0)
 			goto err;
 
-		DB_ASSERT(dbenv, len <= msgsz);
+		DB_ASSERT(env, len <= msgsz);
 		DB_SET_DBT(msgdbt, buf, len);
 
-		dblp = dbenv->lg_handle;
-		LOG_SYSTEM_LOCK(dbenv);
+		dblp = env->lg_handle;
+		LOG_SYSTEM_LOCK(env);
 		repth.lsn = ((LOG *)dblp->reginfo.primary)->lsn;
-		LOG_SYSTEM_UNLOCK(dbenv);
+		LOG_SYSTEM_UNLOCK(env);
 		/*
 		 * If we are configured for bulk, try to send this as a bulk
 		 * request.  If not configured, or it is too big for bulk
 		 * then just send normally.
 		 */
 		if (use_bulk)
-			ret = __rep_bulk_message(dbenv, &bulk, &repth,
+			ret = __rep_bulk_message(env, &bulk, &repth,
 			    &repth.lsn, &msgdbt, 0);
 		if (!use_bulk || ret == DB_REP_BULKOVF)
-			ret = __rep_send_throttle(dbenv, eid, &repth, 0, 0);
-		RPRINT(dbenv, (dbenv,
+			ret = __rep_send_throttle(env, eid, &repth, 0, 0);
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "sendpages: %lu, lsn [%lu][%lu]", (u_long)p,
 		    (u_long)repth.lsn.file, (u_long)repth.lsn.offset));
 		/*
@@ -787,7 +848,7 @@ __rep_page_sendpages(dbenv, eid, msgfp, mpf, dbp)
 	}
 
 	if (0) {
-lockerr:	if ((t_ret = __ENV_LPUT(dbenv, lock)) != 0 && ret == 0)
+lockerr:	if ((t_ret = __ENV_LPUT(env, lock)) != 0 && ret == 0)
 			ret = t_ret;
 	}
 err:
@@ -796,14 +857,17 @@ err:
 	 * free it.
 	 */
 	if (use_bulk && bulk.addr != NULL &&
-	    (t_ret = __rep_bulk_free(dbenv, &bulk, 0)) != 0 && ret == 0)
+	    (t_ret = __rep_bulk_free(env, &bulk, 0)) != 0 && ret == 0 &&
+	    t_ret != DB_REP_UNAVAIL)
+		ret = t_ret;
+	if (qdbc != NULL && (t_ret = __dbc_close(qdbc)) != 0 && ret == 0)
 		ret = t_ret;
 	if (opened && (t_ret = __db_close(qdbp, NULL, DB_NOSYNC)) != 0 &&
 	    ret == 0)
 		ret = t_ret;
 	if (buf != NULL)
-		__os_free(dbenv, buf);
-	if (locker != NULL && (t_ret = __lock_id_free(dbenv,
+		__os_free(env, buf);
+	if (locker != NULL && (t_ret = __lock_id_free(env,
 	    locker)) != 0 && ret == 0)
 		ret = t_ret;
 	return (ret);
@@ -813,38 +877,93 @@ err:
  * __rep_update_setup
  *	Process and setup with this file information.
  *
- * PUBLIC: int __rep_update_setup __P((DB_ENV *, int, REP_CONTROL *, DBT *));
+ * PUBLIC: int __rep_update_setup __P((ENV *, int, __rep_control_args *,
+ * PUBLIC:     DBT *, time_t));
  */
 int
-__rep_update_setup(dbenv, eid, rp, rec)
-	DB_ENV *dbenv;
+__rep_update_setup(env, eid, rp, rec, savetime)
+	ENV *env;
 	int eid;
-	REP_CONTROL *rp;
+	__rep_control_args *rp;
 	DBT *rec;
+	time_t savetime;
 {
 	DB_LOG *dblp;
 	DB_REP *db_rep;
+	DB_THREAD_INFO *ip;
 	LOG *lp;
 	REGENV *renv;
 	REGINFO *infop;
 	REP *rep;
 	__rep_update_args *rup;
-	int ret;
-	u_int32_t count, infolen;
-	void *next;
+	__rep_fileinfo_args *finfo;
+	DB_LSN verify_lsn;
+	size_t max;
+	int found, ret;
+	u_int32_t count;
+	u_int8_t *end, *next;
 
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 	rep = db_rep->region;
-	dblp = dbenv->lg_handle;
+	dblp = env->lg_handle;
 	lp = dblp->reginfo.primary;
 	ret = 0;
 
-	REP_SYSTEM_LOCK(dbenv);
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	verify_lsn = lp->verify_lsn;
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
+	REP_SYSTEM_LOCK(env);
 	if (!F_ISSET(rep, REP_F_RECOVER_UPDATE) || IN_ELECTION(rep)) {
-		REP_SYSTEM_UNLOCK(dbenv);
+		REP_SYSTEM_UNLOCK(env);
 		return (0);
 	}
 	F_CLR(rep, REP_F_RECOVER_UPDATE);
+
+	if ((ret = __rep_update_unmarshal(env, rp->rep_version,
+	    &rup, rec->data, rec->size, &next)) != 0)
+		return (ret);
+	DB_ASSERT(env, next == FIRST_FILE_PTR((u_int8_t*)rec->data));
+	end = &((u_int8_t*)rec->data)[rec->size];
+
+	/*
+	 * If we're doing an abbreviated internal init, it's because we found a
+	 * sync point but we needed to materialize any NIMDBs.  However, if we
+	 * now see that there are no NIMDBs we can just skip to verify_match,
+	 * just as we would have done if we had already loaded the NIMDBs.  In
+	 * other words, if there are no NIMDBs, then I can trivially say that
+	 * I've already loaded all of them!  The whole abbreviated internal init
+	 * turns out not to have been necessary after all.
+	 */
+	if (F_ISSET(rep, REP_F_ABBREVIATED)) {
+		count = rup->num_files;
+		found = 0;
+		while (count-- > 0) {
+			max = (size_t)(end - next);
+			if ((ret = __rep_fileinfo_unmarshal(env,
+			    rp->rep_version, &finfo, next, max, &next)) != 0)
+				goto err;
+			found = FLD_ISSET(finfo->db_flags, DB_AM_INMEM);
+			__os_free(env, finfo);
+			if (found)
+				break;
+		}
+		if (!found) {
+			/*
+			 * Revert to VERIFY state, so that we can pick up where
+			 * we left off, except that from now on (i.e., future
+			 * master changes) we can skip checking for NIMDBs if we
+			 * find a sync point.
+			 */
+			F_SET(rep, REP_F_NIMDBS_LOADED | REP_F_RECOVER_VERIFY);
+			F_CLR(rep, REP_F_ABBREVIATED);
+
+			REP_SYSTEM_UNLOCK(env);
+			ret = __rep_verify_match(env, &verify_lsn, savetime);
+			__os_free(env, rup);
+			return (ret);
+		}
+	}
+
 	/*
 	 * We know we're the first to come in here due to the
 	 * REP_F_RECOVER_UPDATE flag.
@@ -853,110 +972,207 @@ __rep_update_setup(dbenv, eid, rp, rec)
 	/*
 	 * We should not ever be in internal init with a lease granted.
 	 */
-	DB_ASSERT(dbenv,
-	    !IS_USING_LEASES(dbenv) || __rep_islease_granted(dbenv) == 0);
+	DB_ASSERT(env,
+	    !IS_USING_LEASES(env) || __rep_islease_granted(env) == 0);
 
 	/*
 	 * We do not clear REP_F_READY_* in this code.
 	 * We'll eventually call the normal __rep_verify_match recovery
 	 * code and that will clear all the flags and allow others to
-	 * proceed.  We only need to lockout the API here.  We do not
-	 * need to lockout other message threads.
+	 * proceed.  We lockout both the messages and API here.
+	 * We lockout messages briefly because we are about to reset
+	 * all our LSNs and we do not want another thread possibly
+	 * using/needing those.  We have to lockout the API for
+	 * the duration of internal init.
 	 */
-	if ((ret = __rep_lockout_api(dbenv, rep)) != 0)
+	if ((ret = __rep_lockout_msg(env, rep, 1)) != 0)
+		goto err;
+
+	if ((ret = __rep_lockout_api(env, rep)) != 0)
 		goto err;
 	/*
 	 * We need to update the timestamp and kill any open handles
 	 * on this client.  The files are changing completely.
 	 */
-	infop = dbenv->reginfo;
+	infop = env->reginfo;
 	renv = infop->primary;
 	(void)time(&renv->rep_timestamp);
 
-	REP_SYSTEM_UNLOCK(dbenv);
-	MUTEX_LOCK(dbenv, rep->mtx_clientdb);
-	lp->wait_recs = rep->request_gap;
-	lp->rcvd_recs = 0;
+	REP_SYSTEM_UNLOCK(env);
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	__os_gettime(env, &lp->rcvd_ts, 1);
+	lp->wait_ts = rep->request_gap;
 	ZERO_LSN(lp->ready_lsn);
 	ZERO_LSN(lp->verify_lsn);
+	ZERO_LSN(lp->prev_ckp);
 	ZERO_LSN(lp->waiting_lsn);
 	ZERO_LSN(lp->max_wait_lsn);
 	ZERO_LSN(lp->max_perm_lsn);
 	if (db_rep->rep_db == NULL)
-		ret = __rep_client_dbinit(dbenv, 0, REP_DB);
-	MUTEX_UNLOCK(dbenv, rep->mtx_clientdb);
+		ret = __rep_client_dbinit(env, 0, REP_DB);
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
 	if (ret != 0)
-		goto err_nolock;
-	if ((ret = __rep_update_read(dbenv, rec->data, &next, &rup)) != 0)
 		goto err_nolock;
 
 	/*
 	 * We need to empty out any old log records that might be in the
 	 * temp database.
 	 */
-	if ((ret = __db_truncate(db_rep->rep_db, NULL, &count)) != 0)
+	ENV_GET_THREAD_INFO(env, ip);
+	if ((ret = __db_truncate(db_rep->rep_db, ip, NULL, &count)) != 0)
 		goto err_nolock;
+	rep->stat.st_log_queued = 0;
 
-	/*
-	 * We will remove all logs we have so we need to request
-	 * from the master's beginning.
-	 */
-	REP_SYSTEM_LOCK(dbenv);
-	rep->first_lsn = rup->first_lsn;
-	rep->first_vers = rup->first_vers;
+	REP_SYSTEM_LOCK(env);
+	if (F_ISSET(rep, REP_F_ABBREVIATED)) {
+		/*
+		 * For an abbreviated internal init, the place from which we'll
+		 * want to request master's logs after (NIMDB) pages are loaded
+		 * is precisely the sync point we found during VERIFY.  We'll
+		 * roll back to there in a moment.
+		 *
+		 * We don't need first_vers, because it's only used with
+		 * __log_newfile, which only happens with non-ABBREVIATED
+		 * internal init.
+		 */
+		rep->first_lsn = verify_lsn;
+	} else {
+		/*
+		 * We will remove all logs we have so we need to request
+		 * from the master's beginning.
+		 */
+		rep->first_lsn = rup->first_lsn;
+		rep->first_vers = rup->first_vers;
+	}
 	rep->last_lsn = rp->lsn;
 	rep->nfiles = rup->num_files;
 
-	__os_free(dbenv, rup);
-
-	RPRINT(dbenv, (dbenv,
-	    "Update setup for %d files.", rep->nfiles));
-	RPRINT(dbenv, (dbenv, "Update setup:  First LSN [%lu][%lu].",
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "Update setup for %d files.", rep->nfiles));
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "Update setup:  First LSN [%lu][%lu].",
 	    (u_long)rep->first_lsn.file, (u_long)rep->first_lsn.offset));
-	RPRINT(dbenv, (dbenv, "Update setup:  Last LSN [%lu][%lu]",
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "Update setup:  Last LSN [%lu][%lu]",
 	    (u_long)rep->last_lsn.file, (u_long)rep->last_lsn.offset));
 
 	if (rep->nfiles > 0) {
-		infolen = rec->size - sizeof(__rep_update_args);
-		if ((ret = __os_calloc(dbenv, 1, infolen, &rep->originfo)) != 0)
+		rep->infoversion = rp->rep_version;
+		rep->originfolen = rep->infolen =
+		    rec->size - __REP_UPDATE_SIZE;
+		if ((ret = __os_calloc(env, 1, rep->infolen,
+		    &rep->originfo)) != 0)
 			goto err;
-		memcpy(rep->originfo, next, infolen);
+		memcpy(rep->originfo,
+		    FIRST_FILE_PTR((u_int8_t*)rec->data), rep->infolen);
 		rep->nextinfo = rep->originfo;
 	}
 
 	/*
-	 * We need to remove all logs and databases the client has prior to
-	 * getting pages for current databases on the master.
+	 * Clear the decks to make room for the logs and databases that we will
+	 * request as part of this internal init.  For a normal, full internal
+	 * init, that means all logs and databases.  For an abbreviated internal
+	 * init, it means only the NIMDBs, and only that portion of the log
+	 * after the sync point.
 	 */
-	if ((ret = __rep_remove_all(dbenv, rec)) != 0)
+	if (F_ISSET(rep, REP_F_ABBREVIATED)) {
+		/*
+		 * Note that in order to pare the log back to the sync point, we
+		 * can't just crudely hack it off there.  We need to make sure
+		 * that pages in regular databases get rolled back to a state
+		 * consistent with that sync point.  So we have to do a real
+		 * recovery step.
+		 */
+		if ((ret = __rep_rollback(env, &rep->first_lsn)) != 0)
+			goto err;
+		ret = __rep_remove_nimdbs(env);
+	} else
+		ret = __rep_remove_all(env, rp->rep_version, rec);
+	if (ret != 0)
 		goto err;
+	F_CLR(rep, REP_F_READY_MSG);
 
 	rep->curfile = 0;
-	if ((ret = __rep_nextfile(dbenv, eid, rep)) != 0)
+	ret = __rep_nextfile(env, eid, rep);
+	if (ret != 0)
 		goto err;
 
 	if (0) {
-err_nolock:	REP_SYSTEM_LOCK(dbenv);
+err_nolock:	REP_SYSTEM_LOCK(env);
 	}
 
 err:	/*
 	 * If we get an error, we cannot leave ourselves in the RECOVER_PAGE
 	 * state because we have no file information.  That also means undo'ing
 	 * the rep_lockout.  We need to move back to the RECOVER_UPDATE stage.
+	 * In the non-error path, we will have already cleared READY_MSG, but it
+	 * doesn't hurt to clear it again.
 	 */
+	F_CLR(rep, REP_F_READY_MSG);
 	if (ret != 0) {
 		if (rep->originfo != NULL) {
-			__os_free(dbenv, rep->originfo);
+			__os_free(env, rep->originfo);
 			rep->originfo = NULL;
 		}
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Update_setup: Error: Clear PAGE, set UPDATE again. %s",
 		    db_strerror(ret)));
 		F_CLR(rep, REP_F_RECOVER_PAGE | REP_F_READY_API |
 		    REP_F_READY_OP);
 		F_SET(rep, REP_F_RECOVER_UPDATE);
 	}
-	REP_SYSTEM_UNLOCK(dbenv);
+	REP_SYSTEM_UNLOCK(env);
+	__os_free(env, rup);
+	return (ret);
+}
+
+/*
+ * Removes any currently existing NIMDBs.  We do this at the beginning of
+ * abbreviated internal init, when any existing NIMDBs should be intact, so
+ * walk_dir should produce reliable results.
+ */
+static int
+__rep_remove_nimdbs(env)
+	ENV *env;
+{
+	__rep_fileinfo_args *finfo;
+	FILE_LIST_CTX context;
+	size_t max;
+	u_int8_t *fp;
+	int ret;
+
+	finfo = NULL;
+
+	if ((ret = __os_calloc(env, 1, MEGABYTE, &context.buf)) != 0)
+		return (ret);
+	context.size = MEGABYTE;
+	context.count = 0;
+	context.fillptr = context.buf;
+
+	/* NB: "NULL" asks walk_dir to consider only in-memory DBs */
+	if ((ret = __rep_walk_dir(env, NULL, DB_REPVERSION, &context)) != 0)
+		goto out;
+
+	if ((ret = __rep_closefiles(env)) != 0)
+		goto out;
+
+	fp = context.buf;
+	while (context.count-- > 0) {
+		max = (size_t)(context.fillptr - fp);
+		if ((ret = __rep_fileinfo_unmarshal(env, DB_REPVERSION,
+		    &finfo, fp, max, &fp)) != 0)
+			goto out;
+		if ((ret = __rep_remove_file(env, finfo->uid.data,
+		    finfo->info.data, finfo->type, finfo->db_flags)) != 0)
+			goto out;
+		__os_free(env, finfo);
+		finfo = NULL;
+	}
+
+out:
+	if (finfo != NULL)
+		__os_free(env, finfo);
+	__os_free(env, context.buf);
 	return (ret);
 }
 
@@ -972,79 +1188,135 @@ err:	/*
  * For the sake of simplicity, these database lists are in the form of an UPDATE
  * message (since we already have the mechanisms in place), even though strictly
  * speaking that contains more information than we really need to store.
+ *
+ * !!! Must be called with the REP_SYSTEM_LOCK held.
  */
 static int
-__rep_remove_all(dbenv, rec)
-	DB_ENV *dbenv;
+__rep_remove_all(env, msg_version, rec)
+	ENV *env;
+	u_int32_t msg_version;
 	DBT *rec;
 {
+	FILE_LIST_CTX context;
 	__rep_fileinfo_args *finfo;
+	__rep_update_args u_args;
 	DB_FH *fhp;
-	DB_LSN unused;
-	size_t cnt, filelen, filesz, updlen;
-	u_int32_t bufsz, filecnt;
-	char *fname;
+	DB_REP *db_rep;
+	REP *rep;
+	size_t cnt, max, updlen;
+	u_int32_t bufsz, fvers, mvers, zero;
+	u_int8_t *fp;
 	int ret, t_ret;
-	u_int8_t *buf, *fp, *origfp;
+	char *fname;
 
-	ZERO_LSN(unused);
 	finfo = NULL;
 	fname = NULL;
 	fhp = NULL;
+	db_rep = env->rep_handle;
+	rep = db_rep->region;
 
 	/*
 	 * 1. Get list of databases currently present at this client, which we
 	 *    intend to remove.
 	 */
-	filelen = 0;
-	filecnt = 0;
-	filesz = MEGABYTE;
-	if ((ret = __os_calloc(dbenv, 1, filesz, &buf)) != 0)
+	if ((ret = __os_calloc(env, 1, MEGABYTE, &context.buf)) != 0)
 		return (ret);
-	origfp = fp = buf + sizeof(__rep_update_args);
-	if ((ret = __rep_find_dbs(
-	    dbenv, &fp, &filesz, &filelen, &filecnt)) != 0)
+	context.size = MEGABYTE;
+	context.count = 0;
+
+	/* Reserve space for the marshaled update_args. */
+	context.fillptr = FIRST_FILE_PTR(context.buf);
+
+	if ((ret = __rep_find_dbs(env, DB_REPVERSION, &context)) != 0)
 		goto out;
-	if ((ret = __rep_update_buf(buf, filesz, &updlen,
-	    &unused, 0, filecnt)) != 0)
+	ZERO_LSN(u_args.first_lsn);
+	u_args.first_vers = 0;
+	u_args.num_files = context.count;
+	if ((ret = __rep_update_marshal(env, DB_REPVERSION,
+	    &u_args, context.buf, __REP_UPDATE_SIZE, &updlen)) != 0)
 		goto out;
+	DB_ASSERT(env, updlen == __REP_UPDATE_SIZE);
 
 	/*
 	 * 2. Before removing anything, safe-store the database list, so that in
 	 *    case we crash before we've removed them all, when we restart we
-	 *    can clean up what we were doing.
+	 *    can clean up what we were doing. Only write database list to
+	 *    file if not running in-memory replication.
+	 *
+	 * The original version of the file contains:
+	 * data1 size (4 bytes)
+	 * data1
+	 * data2 size (possibly) (4 bytes)
+	 * data2 (possibly)
+	 *
+	 * As of 4.7 the file has the following form:
+	 * 0 (4 bytes - to indicate a new style file)
+	 * file version (4 bytes)
+	 * data1 version (4 bytes)
+	 * data1 size (4 bytes)
+	 * data1
+	 * data2 version (possibly) (4 bytes)
+	 * data2 size (possibly) (4 bytes)
+	 * data2 (possibly)
 	 */
-	if ((ret = __db_appname(
-	    dbenv, DB_APP_NONE, REP_INITNAME, 0, NULL, &fname)) != 0)
-		goto out;
-	bufsz = updlen + filelen;
-	/* (Short writes aren't possible, so we don't have to verify 'cnt'.) */
-	if ((ret = __os_open(dbenv, fname, 0,
-	    DB_OSO_CREATE | DB_OSO_TRUNC, __db_omode(OWNER_RW), &fhp)) != 0 ||
-	    (ret = __os_write(dbenv, fhp, &bufsz, sizeof(bufsz), &cnt)) != 0 ||
-	    (ret = __os_write(dbenv, fhp, buf, bufsz, &cnt)) != 0 ||
-	    (ret = __os_fsync(dbenv, fhp)) != 0) {
-		__db_err(dbenv, ret, "%s", fname);
-		goto out;
+	if (!FLD_ISSET(rep->config, REP_C_INMEM)) {
+		if ((ret = __db_appname(env,
+		    DB_APP_NONE, REP_INITNAME, NULL, &fname)) != 0)
+			goto out;
+		/* Sanity check that the write size fits into 32 bits. */
+		DB_ASSERT(env, (size_t)(context.fillptr - context.buf) ==
+		    (u_int32_t)(context.fillptr - context.buf));
+		bufsz = (u_int32_t)(context.fillptr - context.buf);
+
+		/*
+		 * (Short writes aren't possible, so we don't have to verify
+		 * 'cnt'.) This first list is generated internally, so it is
+		 * always in the form of the current message version.
+		 */
+		zero = 0;
+		fvers = REP_INITVERSION;
+		mvers = DB_REPVERSION;
+		if ((ret = __os_open(env, fname, 0,
+		    DB_OSO_CREATE | DB_OSO_TRUNC, DB_MODE_600, &fhp)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, &zero, sizeof(zero), &cnt)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, &fvers, sizeof(fvers), &cnt)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, &mvers, sizeof(mvers), &cnt)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, &bufsz, sizeof(bufsz), &cnt)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, context.buf, bufsz, &cnt)) != 0 ||
+		    (ret = __os_fsync(env, fhp)) != 0) {
+			__db_err(env, ret, "%s", fname);
+			goto out;
+		}
 	}
 
 	/*
 	 * 3. Go ahead and remove logs and databases.  The databases get removed
 	 *    according to the list we just finished safe-storing.
+	 *
+	 * Clearing NIMDBS_LOADED might not really be necessary, since once
+	 * we've committed to removing all there's no chance of doing an
+	 * abbreviated internal init.  This just keeps us honest.
 	 */
-	if ((ret = __rep_remove_logs(dbenv)) != 0)
+	if ((ret = __rep_remove_logs(env)) != 0)
 		goto out;
-	if ((ret = __rep_closefiles(dbenv, 0)) != 0)
+	if ((ret = __rep_closefiles(env)) != 0)
 		goto out;
-	fp = origfp;
-	while (filecnt-- > 0) {
-		if ((ret =__rep_fileinfo_read(dbenv,
-		    fp, (void*)&fp, &finfo)) != 0)
+	F_CLR(rep, REP_F_NIMDBS_LOADED);
+	fp = FIRST_FILE_PTR(context.buf);
+	while (context.count-- > 0) {
+		max = (size_t)(context.fillptr - fp);
+		if ((ret = __rep_fileinfo_unmarshal(env, DB_REPVERSION,
+		    &finfo, fp, max, &fp)) != 0)
 			goto out;
-		if ((ret = __rep_remove_file(dbenv, finfo->uid.data,
-		    finfo->info.data, finfo->type, finfo->flags)) != 0)
+		if ((ret = __rep_remove_file(env, finfo->uid.data,
+		    finfo->info.data, finfo->type, finfo->db_flags)) != 0)
 			goto out;
-		__os_free(dbenv, finfo);
+		__os_free(env, finfo);
 		finfo = NULL;
 	}
 
@@ -1052,24 +1324,32 @@ __rep_remove_all(dbenv, rec)
 	 * 4. Safe-store the (new) list of database files we intend to copy from
 	 *    the master (again, so that in case we crash before we're finished
 	 *    doing so, we'll have enough information to clean up and start over
-	 *    again).
+	 *    again).  This list is the list from the master, so it uses
+	 *    the message version. Only write to file if not running
+	 *    in-memory replication.
 	 */
-	if ((ret = __os_write(dbenv, fhp,
-	    &rec->size, sizeof(rec->size), &cnt)) != 0 ||
-	    (ret = __os_write(dbenv, fhp, rec->data, rec->size, &cnt)) != 0 ||
-	    (ret = __os_fsync(dbenv, fhp)) != 0) {
-		__db_err(dbenv, ret, "%s", fname);
-		goto out;
+	if (!FLD_ISSET(rep->config, REP_C_INMEM)) {
+		mvers = msg_version;
+		if ((ret =
+		    __os_write(env, fhp, &mvers, sizeof(mvers), &cnt)) != 0 ||
+		    (ret = __os_write(env, fhp,
+		    &rec->size, sizeof(rec->size), &cnt)) != 0 ||
+		    (ret =
+		    __os_write(env, fhp, rec->data, rec->size, &cnt)) != 0 ||
+		    (ret = __os_fsync(env, fhp)) != 0) {
+			__db_err(env, ret, "%s", fname);
+			goto out;
+		}
 	}
 
 out:
-	if (fhp != NULL && (t_ret = __os_closehandle(dbenv, fhp)) && ret == 0)
+	if (fhp != NULL && (t_ret = __os_closehandle(env, fhp)) && ret == 0)
 		ret = t_ret;
 	if (fname != NULL)
-		__os_free(dbenv, fname);
+		__os_free(env, fname);
 	if (finfo != NULL)
-		__os_free(dbenv, finfo);
-	__os_free(dbenv, buf);
+		__os_free(env, finfo);
+	__os_free(env, context.buf);
 	return (ret);
 }
 
@@ -1078,8 +1358,8 @@ out:
  *	Remove our logs to prepare for internal init.
  */
 static int
-__rep_remove_logs(dbenv)
-	DB_ENV *dbenv;
+__rep_remove_logs(env)
+	ENV *env;
 {
 	DB_LOG *dblp;
 	DB_LSN lsn;
@@ -1088,7 +1368,7 @@ __rep_remove_logs(dbenv)
 	int ret;
 	char *name;
 
-	dblp = dbenv->lg_handle;
+	dblp = env->lg_handle;
 	lp = dblp->reginfo.primary;
 	ret = 0;
 
@@ -1098,10 +1378,10 @@ __rep_remove_logs(dbenv)
 	 * dirty pages, the log isn't flushed.  Yet the log buffers could still
 	 * be dirty: __log_flush should take care of this rare situation.
 	 */
-	if ((ret = __memp_sync_int(dbenv,
+	if ((ret = __memp_sync_int(env,
 	    NULL, 0, DB_SYNC_CACHE | DB_SYNC_INTERRUPT_OK, NULL, NULL)) != 0)
 		return (ret);
-	if ((ret = __log_flush(dbenv, NULL)) != 0)
+	if ((ret = __log_flush(env, NULL)) != 0)
 		return (ret);
 	/*
 	 * Forcibly remove existing log files or reset
@@ -1109,7 +1389,7 @@ __rep_remove_logs(dbenv)
 	 */
 	if (lp->db_log_inmemory) {
 		ZERO_LSN(lsn);
-		if ((ret = __log_zero(dbenv, &lsn)) != 0)
+		if ((ret = __log_zero(env, &lsn)) != 0)
 			return (ret);
 	} else {
 		lastfile = lp->lsn.file;
@@ -1117,8 +1397,8 @@ __rep_remove_logs(dbenv)
 			if ((ret = __log_name(dblp, fnum, &name, NULL, 0)) != 0)
 				return (ret);
 			(void)time(&lp->timestamp);
-			(void)__os_unlink(dbenv, name);
-			__os_free(dbenv, name);
+			(void)__os_unlink(env, name, 0);
+			__os_free(env, name);
 		}
 	}
 	return (0);
@@ -1129,20 +1409,25 @@ __rep_remove_logs(dbenv)
  * active; therefore, this can't be used for internal init crash recovery.
  */
 static int
-__rep_remove_file(dbenv, uid, name, type, flags)
-	DB_ENV *dbenv;
+__rep_remove_file(env, uid, name, type, flags)
+	ENV *env;
 	u_int8_t *uid;
 	const char *name;
 	u_int32_t type, flags;
 {
+	DB *dbp;
+#ifdef HAVE_QUEUE
+	DB_THREAD_INFO *ip;
+#endif
+	int ret, t_ret;
+
+	dbp = NULL;
+
 	/*
 	 * Calling __fop_remove will both purge any matching
 	 * fileid from mpool and unlink it on disk.
 	 */
 #ifdef HAVE_QUEUE
-	DB *dbp;
-	int ret;
-
 	/*
 	 * Handle queue separately.  __fop_remove will not
 	 * remove extent files.  Use __qam_remove to remove
@@ -1150,7 +1435,7 @@ __rep_remove_file(dbenv, uid, name, type, flags)
 	 * in-memory queue databases can't have extent files.
 	 */
 	if (type == (u_int32_t)DB_QUEUE && !LF_ISSET(DB_AM_INMEM)) {
-		if ((ret = __db_create_internal(&dbp, dbenv, 0)) != 0)
+		if ((ret = __db_create_internal(&dbp, env, 0)) != 0)
 			return (ret);
 
 		/*
@@ -1163,50 +1448,63 @@ __rep_remove_file(dbenv, uid, name, type, flags)
 		 * API to allow us to remove a database without write-locking
 		 * its handle.
 		 */
-		if ((ret = __lock_id(dbenv, NULL, &dbp->locker)) != 0)
-			return (ret);
+		if ((ret = __lock_id(env, NULL, &dbp->locker)) != 0)
+			goto out;
 
-		RPRINT(dbenv, (dbenv, "QAM: Unlink %s via __qam_remove", name));
-		if ((ret = __qam_remove(dbp, NULL, name, NULL)) != 0) {
-			RPRINT(dbenv, (dbenv, "qam_remove returned %d", ret));
-			(void)__db_close(dbp, NULL, DB_NOSYNC);
-			return (ret);
+		ENV_GET_THREAD_INFO(env, ip);
+		RPRINT(env, DB_VERB_REP_SYNC,
+		    (env, "QAM: Unlink %s via __qam_remove", name));
+		if ((ret = __qam_remove(dbp, ip, NULL, name, NULL, 0)) != 0) {
+			RPRINT(env, DB_VERB_REP_SYNC,
+			    (env, "qam_remove returned %d", ret));
+			goto out;
 		}
-		if ((ret = __db_close(dbp, NULL, DB_NOSYNC)) != 0)
-			return (ret);
 	}
 #else
 	COMPQUIET(type, 0);
-	COMPQUIET(flags, 0);
 #endif
 	/*
 	 * We call fop_remove even if we've called qam_remove.
 	 * That will only have removed extent files.  Now
 	 * we need to deal with the actual file itself.
 	 */
-	return (__fop_remove(dbenv, NULL, uid, name, DB_APP_DATA, 0));
+	if (LF_ISSET(DB_AM_INMEM)) {
+		if ((ret = __db_create_internal(&dbp, env, 0)) != 0)
+			return (ret);
+		MAKE_INMEM(dbp);
+		F_SET(dbp, DB_AM_RECOVER); /* Skirt locking. */
+		ret = __db_inmem_remove(dbp, NULL, name);
+	} else
+		ret = __fop_remove(env, NULL, uid, name, NULL, DB_APP_DATA, 0);
+#ifdef HAVE_QUEUE
+out:
+#endif
+	if (dbp != NULL &&
+	    (t_ret = __db_close(dbp, NULL, DB_NOSYNC)) != 0 && ret == 0)
+		ret = t_ret;
+	return (ret);
 }
 
 /*
  * __rep_bulk_page
  *	Process a bulk page message.
  *
- * PUBLIC: int __rep_bulk_page __P((DB_ENV *, int, REP_CONTROL *, DBT *));
+ * PUBLIC: int __rep_bulk_page __P((ENV *,
+ * PUBLIC:     DB_THREAD_INFO *, int, __rep_control_args *, DBT *));
  */
 int
-__rep_bulk_page(dbenv, eid, rp, rec)
-	DB_ENV *dbenv;
+__rep_bulk_page(env, ip, eid, rp, rec)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
-	REP_CONTROL *rp;
+	__rep_control_args *rp;
 	DBT *rec;
 {
-	DBT pgrec;
-	REP_CONTROL tmprp;
-	u_int32_t len;
+	__rep_control_args tmprp;
+	__rep_bulk_args b_args;
 	int ret;
 	u_int8_t *p, *ep;
 
-	memset(&pgrec, 0, sizeof(pgrec));
 	/*
 	 * We're going to be modifying the rp LSN contents so make
 	 * our own private copy to play with.  We need to set the
@@ -1218,29 +1516,28 @@ __rep_bulk_page(dbenv, eid, rp, rec)
 	tmprp.rectype = REP_PAGE;
 	ret = 0;
 	for (ep = (u_int8_t *)rec->data + rec->size, p = (u_int8_t *)rec->data;
-	    p < ep; p += len) {
+	    p < ep;) {
 		/*
 		 * First thing in the buffer is the length.  Then the LSN
 		 * of this page, then the page info itself.
 		 */
-		memcpy(&len, p, sizeof(len));
-		p += sizeof(len);
-		memcpy(&tmprp.lsn, p, sizeof(DB_LSN));
-		p += sizeof(DB_LSN);
-		pgrec.data = p;
-		pgrec.size = len;
-		RPRINT(dbenv, (dbenv,
+		if ((ret = __rep_bulk_unmarshal(env,
+		    &b_args, p, rec->size, &p)) != 0)
+			return (ret);
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "rep_bulk_page: Processing LSN [%lu][%lu]",
 		    (u_long)tmprp.lsn.file, (u_long)tmprp.lsn.offset));
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
     "rep_bulk_page: p %#lx ep %#lx pgrec data %#lx, size %lu (%#lx)",
-		    P_TO_ULONG(p), P_TO_ULONG(ep), P_TO_ULONG(pgrec.data),
-		    (u_long)pgrec.size, (u_long)pgrec.size));
+		    P_TO_ULONG(p), P_TO_ULONG(ep),
+		    P_TO_ULONG(b_args.bulkdata.data),
+		    (u_long)b_args.bulkdata.size,
+		    (u_long)b_args.bulkdata.size));
 		/*
 		 * Now send the page info DBT to the page processing function.
 		 */
-		ret = __rep_page(dbenv, eid, &tmprp, &pgrec);
-		RPRINT(dbenv, (dbenv,
+		ret = __rep_page(env, ip, eid, &tmprp, &b_args.bulkdata);
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "rep_bulk_page: rep_page ret %d", ret));
 
 		/*
@@ -1259,13 +1556,15 @@ __rep_bulk_page(dbenv, eid, rp, rec)
  * __rep_page
  *	Process a page message.
  *
- * PUBLIC: int __rep_page __P((DB_ENV *, int, REP_CONTROL *, DBT *));
+ * PUBLIC: int __rep_page __P((ENV *,
+ * PUBLIC:     DB_THREAD_INFO *, int, __rep_control_args *, DBT *));
  */
 int
-__rep_page(dbenv, eid, rp, rec)
-	DB_ENV *dbenv;
+__rep_page(env, ip, eid, rp, rec)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
-	REP_CONTROL *rp;
+	__rep_control_args *rp;
 	DBT *rec;
 {
 
@@ -1275,25 +1574,47 @@ __rep_page(dbenv, eid, rp, rec)
 	__rep_fileinfo_args *msgfp;
 	db_recno_t recno;
 	int ret;
-	void *next;
 
 	ret = 0;
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 	rep = db_rep->region;
 
 	if (!F_ISSET(rep, REP_F_RECOVER_PAGE))
 		return (DB_REP_PAGEDONE);
-	if ((ret = __rep_fileinfo_read(dbenv, rec->data, &next, &msgfp)) != 0)
+	/*
+	 * If we restarted internal init, it is possible to receive
+	 * an old REP_PAGE message, while we're in the current
+	 * stage of recovering pages.  Until we have some sort of
+	 * an init generation number, ignore any message that has
+	 * a message LSN that is before this internal init's first_lsn.
+	 */
+	if (LOG_COMPARE(&rp->lsn, &rep->first_lsn) < 0) {
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
+		    "PAGE: Old page: msg LSN [%lu][%lu] first_lsn [%lu][%lu]",
+		    (u_long)rp->lsn.file, (u_long)rp->lsn.offset,
+		    (u_long)rep->first_lsn.file,
+		    (u_long)rep->first_lsn.offset));
+		return (DB_REP_PAGEDONE);
+	}
+	if ((ret = __rep_fileinfo_unmarshal(env, rp->rep_version,
+	    &msgfp, rec->data, rec->size, NULL)) != 0)
 		return (ret);
-	MUTEX_LOCK(dbenv, rep->mtx_clientdb);
-	REP_SYSTEM_LOCK(dbenv);
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	REP_SYSTEM_LOCK(env);
+	/*
+	 * Check if the world changed.
+	 */
+	if (!F_ISSET(rep, REP_F_RECOVER_PAGE)) {
+		ret = DB_REP_PAGEDONE;
+		goto err;
+	}
 	/*
 	 * We should not ever be in internal init with a lease granted.
 	 */
-	DB_ASSERT(dbenv,
-	    !IS_USING_LEASES(dbenv) || __rep_islease_granted(dbenv) == 0);
+	DB_ASSERT(env,
+	    !IS_USING_LEASES(env) || __rep_islease_granted(env) == 0);
 
-	RPRINT(dbenv, (dbenv,
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "PAGE: Received page %lu from file %d",
 	    (u_long)msgfp->pgno, msgfp->filenum));
 	/*
@@ -1306,7 +1627,8 @@ __rep_page(dbenv, eid, rp, rec)
 	 * is updating, then we'd have to verify the file's uid here too.
 	 */
 	if (msgfp->filenum != rep->curfile) {
-		RPRINT(dbenv, (dbenv, "Msg file %d != curfile %d",
+		RPRINT(env, DB_VERB_REP_SYNC,
+		    (env, "Msg file %d != curfile %d",
 		    msgfp->filenum, rep->curfile));
 		ret = DB_REP_PAGEDONE;
 		goto err;
@@ -1315,8 +1637,8 @@ __rep_page(dbenv, eid, rp, rec)
 	 * We want to create/open our dbp to the database
 	 * where we'll keep our page information.
 	 */
-	if ((ret = __rep_client_dbinit(dbenv, 1, REP_PG)) != 0) {
-		RPRINT(dbenv, (dbenv,
+	if ((ret = __rep_client_dbinit(env, 1, REP_PG)) != 0) {
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "PAGE: Client_dbinit %s", db_strerror(ret)));
 		goto err;
 	}
@@ -1333,9 +1655,9 @@ __rep_page(dbenv, eid, rp, rec)
 	 * rewriting it into the file.  Otherwise, any other error
 	 * we want to return.
 	 */
-	ret = __db_put(rep->file_dbp, NULL, &key, &data, DB_NOOVERWRITE);
+	ret = __db_put(rep->file_dbp, ip, NULL, &key, &data, DB_NOOVERWRITE);
 	if (ret == DB_KEYEXIST) {
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "PAGE: Received duplicate page %lu from file %d",
 		    (u_long)msgfp->pgno, msgfp->filenum));
 		STAT(rep->stat.st_pg_duplicated++);
@@ -1345,12 +1667,12 @@ __rep_page(dbenv, eid, rp, rec)
 	if (ret != 0)
 		goto err;
 
-	RPRINT(dbenv, (dbenv,
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "PAGE: Write page %lu into mpool", (u_long)msgfp->pgno));
 	/*
 	 * We put the page in the database file itself.
 	 */
-	ret = __rep_write_page(dbenv, rep, msgfp);
+	ret = __rep_write_page(env, ip, rep, msgfp);
 	if (ret != 0) {
 		/*
 		 * We got an error storing the page, therefore, we need
@@ -1361,7 +1683,7 @@ __rep_page(dbenv, eid, rp, rec)
 		 * and we cannot delete the item we just put, what should
 		 * we do?  Panic the env and return DB_RUNRECOVERY?
 		 */
-		(void)__db_del(rep->file_dbp, NULL, &key, 0);
+		(void)__db_del(rep->file_dbp, NULL, NULL, &key, 0);
 		goto err;
 	}
 	STAT(rep->stat.st_pg_records++);
@@ -1380,12 +1702,12 @@ __rep_page(dbenv, eid, rp, rec)
 	 * have all the pages expected and if so, set up for the next
 	 * file and send out a page request for the next file's pages.
 	 */
-	ret = __rep_filedone(dbenv, eid, rep, msgfp, rp->rectype);
+	ret = __rep_filedone(env, ip, eid, rep, msgfp, rp->rectype);
 
-err:	REP_SYSTEM_UNLOCK(dbenv);
-	MUTEX_UNLOCK(dbenv, rep->mtx_clientdb);
+err:	REP_SYSTEM_UNLOCK(env);
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
 
-	__os_free(dbenv, msgfp);
+	__os_free(env, msgfp);
 	return (ret);
 }
 
@@ -1393,12 +1715,15 @@ err:	REP_SYSTEM_UNLOCK(dbenv);
  * __rep_page_fail
  *	Process a page fail message.
  *
- * PUBLIC: int __rep_page_fail __P((DB_ENV *, int, DBT *));
+ * PUBLIC: int __rep_page_fail __P((ENV *,
+ * PUBLIC:     DB_THREAD_INFO *, int, __rep_control_args *, DBT *));
  */
 int
-__rep_page_fail(dbenv, eid, rec)
-	DB_ENV *dbenv;
+__rep_page_fail(env, ip, eid, rp, rec)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
+	__rep_control_args *rp;
 	DBT *rec;
 {
 
@@ -1406,15 +1731,15 @@ __rep_page_fail(dbenv, eid, rec)
 	REP *rep;
 	__rep_fileinfo_args *msgfp, *rfp;
 	int ret;
-	void *next;
 
 	ret = 0;
-	db_rep = dbenv->rep_handle;
+	db_rep = env->rep_handle;
 	rep = db_rep->region;
 
 	if (!F_ISSET(rep, REP_F_RECOVER_PAGE))
 		return (0);
-	if ((ret = __rep_fileinfo_read(dbenv, rec->data, &next, &msgfp)) != 0)
+	if ((ret = __rep_fileinfo_unmarshal(env, rp->rep_version,
+	    &msgfp, rec->data, rec->size, NULL)) != 0)
 		return (ret);
 	/*
 	 * Check if this page is from the file we're expecting.
@@ -1425,16 +1750,17 @@ __rep_page_fail(dbenv, eid, rec)
 	 * If we allow dbrename/dbremove on the master while a client
 	 * is updating, then we'd have to verify the file's uid here too.
 	 */
-	MUTEX_LOCK(dbenv, rep->mtx_clientdb);
-	REP_SYSTEM_LOCK(dbenv);
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	REP_SYSTEM_LOCK(env);
 	/*
 	 * We should not ever be in internal init with a lease granted.
 	 */
-	DB_ASSERT(dbenv,
-	    !IS_USING_LEASES(dbenv) || __rep_islease_granted(dbenv) == 0);
+	DB_ASSERT(env,
+	    !IS_USING_LEASES(env) || __rep_islease_granted(env) == 0);
 
 	if (msgfp->filenum != rep->curfile) {
-		RPRINT(dbenv, (dbenv, "Msg file %d != curfile %d",
+		RPRINT(env, DB_VERB_REP_SYNC,
+		    (env, "Msg file %d != curfile %d",
 		    msgfp->filenum, rep->curfile));
 		goto out;
 	}
@@ -1447,7 +1773,7 @@ __rep_page_fail(dbenv, eid, rec)
 		 * may disappear, as well as at the end.  Use msgfp->pgno
 		 * to adjust accordingly.
 		 */
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "page_fail: BEFORE page %lu failed. ready %lu, max %lu, npages %d",
 		    (u_long)msgfp->pgno, (u_long)rep->ready_pg,
 		    (u_long)rfp->max_pgno, rep->npages));
@@ -1457,7 +1783,7 @@ __rep_page_fail(dbenv, eid, rec)
 			rep->ready_pg = msgfp->pgno + 1;
 			rep->npages = rep->ready_pg;
 		}
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "page_fail: AFTER page %lu failed. ready %lu, max %lu, npages %d",
 		    (u_long)msgfp->pgno, (u_long)rep->ready_pg,
 		    (u_long)rfp->max_pgno, rep->npages));
@@ -1470,11 +1796,11 @@ __rep_page_fail(dbenv, eid, rec)
 	 * all the pages expected and if so, set up for the next file and
 	 * send out a page request for the next file's pages.
 	 */
-	ret = __rep_filedone(dbenv, eid, rep, msgfp, REP_PAGE_FAIL);
+	ret = __rep_filedone(env, ip, eid, rep, msgfp, REP_PAGE_FAIL);
 out:
-	REP_SYSTEM_UNLOCK(dbenv);
-	MUTEX_UNLOCK(dbenv, rep->mtx_clientdb);
-	__os_free(dbenv, msgfp);
+	REP_SYSTEM_UNLOCK(env);
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
+	__os_free(env, msgfp);
 	return (ret);
 }
 
@@ -1483,11 +1809,16 @@ out:
  *	Write this page into a database.
  */
 static int
-__rep_write_page(dbenv, rep, msgfp)
-	DB_ENV *dbenv;
+__rep_write_page(env, ip, rep, msgfp)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	REP *rep;
 	__rep_fileinfo_args *msgfp;
 {
+	DB db;
+	DBT pgcookie;
+	DB_MPOOLFILE *mpf;
+	DB_PGINFO *pginfo;
 	__rep_fileinfo_args *rfp;
 	int ret;
 	void *dst;
@@ -1505,28 +1836,29 @@ __rep_write_page(dbenv, rep, msgfp)
 	 */
 	rfp = rep->curinfo;
 	if (rep->file_mpf == NULL) {
-		if (!F_ISSET(rfp, DB_AM_INMEM)) {
+		if (!FLD_ISSET(rfp->db_flags, DB_AM_INMEM)) {
 			/*
 			 * Recreate the file on disk.  We'll be putting
 			 * the data into the file via mpool.
 			 */
-			RPRINT(dbenv, (dbenv,
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
 			    "rep_write_page: Calling fop_create for %s",
 			    (char *)rfp->info.data));
-			if ((ret = __fop_create(dbenv, NULL, NULL,
-			    rfp->info.data, DB_APP_DATA,
-			    dbenv->db_mode, 0)) != 0)
+			if ((ret = __fop_create(env, NULL, NULL,
+			    rfp->info.data, NULL, DB_APP_DATA,
+			    env->db_mode, 0)) != 0)
 				goto err;
 		}
 
 		if ((ret =
-		    __rep_mpf_open(dbenv, &rep->file_mpf, rep->curinfo,
-		    F_ISSET(rfp, DB_AM_INMEM) ? DB_CREATE : 0)) != 0)
+		    __rep_mpf_open(env, &rep->file_mpf, rep->curinfo,
+		    FLD_ISSET(rfp->db_flags, DB_AM_INMEM) ?
+		    DB_CREATE : 0)) != 0)
 			goto err;
 	}
 	/*
 	 * Handle queue specially.  If we're a QUEUE database, we need to
-	 * use the __qam_fget/put calls.  We need to use rep->queue_dbp for
+	 * use the __qam_fget/put calls.  We need to use rep->queue_dbc for
 	 * that.  That dbp is opened after getting the metapage for the
 	 * queue database.  Since the meta-page is always in the queue file,
 	 * we'll use the normal path for that first page.  After that we
@@ -1534,29 +1866,64 @@ __rep_write_page(dbenv, rep, msgfp)
 	 */
 	if (msgfp->type == (u_int32_t)DB_QUEUE && msgfp->pgno != 0) {
 #ifdef HAVE_QUEUE
-		ret = __qam_fget(rep->queue_dbp, &msgfp->pgno, NULL,
+		ret = __qam_fget(rep->queue_dbc, &msgfp->pgno,
 		    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &dst);
 #else
 		/*
 		 * This always returns an error.
 		 */
-		ret = __db_no_queue_am(dbenv);
+		ret = __db_no_queue_am(env);
 #endif
 	} else
-		ret = __memp_fget(rep->file_mpf, &msgfp->pgno, NULL,
+		ret = __memp_fget(rep->file_mpf, &msgfp->pgno, ip, NULL,
 		    DB_MPOOL_CREATE | DB_MPOOL_DIRTY, &dst);
 
 	if (ret != 0)
 		goto err;
 
+	/*
+	 * Before writing this page into our local mpool, see if its byte order
+	 * needs to be swapped.  When in mpool the page should be in the native
+	 * byte order of our local environment.  But the page image we've
+	 * received may be in the opposite order (as indicated in finfo_flags).
+	 */
+	if ((F_ISSET(env, ENV_LITTLEENDIAN) &&
+	    !FLD_ISSET(msgfp->finfo_flags, REPINFO_PG_LITTLEENDIAN)) ||
+	    (!F_ISSET(env, ENV_LITTLEENDIAN) &&
+	    FLD_ISSET(msgfp->finfo_flags, REPINFO_PG_LITTLEENDIAN))) {
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
+		    "write_page: Page %d needs to be swapped", msgfp->pgno));
+		/*
+		 * Set up a dbp to pass into the swap functions.  We need
+		 * only a few things:  The environment and any special
+		 * dbp flags and some obvious basics like db type and
+		 * pagesize.  Those flags were set back in rep_mpf_open
+		 * and are available in the pgcookie set up with the
+		 * mpoolfile associated with this database.
+		 */
+		memset(&db, 0, sizeof(db));
+		db.env = env;
+		db.type = (DBTYPE)msgfp->type;
+		db.pgsize = msgfp->pgsize;
+		mpf = rep->file_mpf;
+		if ((ret = __memp_get_pgcookie(mpf, &pgcookie)) != 0)
+			goto err;
+		pginfo = (DB_PGINFO *)pgcookie.data;
+		db.flags = pginfo->flags;
+		if ((ret = __db_pageswap(&db, msgfp->info.data, msgfp->pgsize,
+		    NULL, 1)) != 0)
+			goto err;
+	}
+
 	memcpy(dst, msgfp->info.data, msgfp->pgsize);
 #ifdef HAVE_QUEUE
 	if (msgfp->type == (u_int32_t)DB_QUEUE && msgfp->pgno != 0)
-		ret = __qam_fput(rep->queue_dbp,
-		     msgfp->pgno, dst, rep->queue_dbp->priority);
+		ret = __qam_fput(rep->queue_dbc,
+		     msgfp->pgno, dst, rep->queue_dbc->priority);
 	else
 #endif
-		ret = __memp_fput(rep->file_mpf, dst, rep->file_dbp->priority);
+		ret = __memp_fput(rep->file_mpf,
+		    ip, dst, rep->file_dbp->priority);
 
 err:	return (ret);
 }
@@ -1567,21 +1934,22 @@ err:	return (ret);
  *	we have a page gap and whether we need to request pages.
  */
 static int
-__rep_page_gap(dbenv, rep, msgfp, type)
-	DB_ENV *dbenv;
+__rep_page_gap(env, rep, msgfp, type)
+	ENV *env;
 	REP *rep;
 	__rep_fileinfo_args *msgfp;
 	u_int32_t type;
 {
-	DB_LOG *dblp;
 	DBC *dbc;
 	DBT data, key;
+	DB_LOG *dblp;
+	DB_THREAD_INFO *ip;
 	LOG *lp;
 	__rep_fileinfo_args *rfp;
 	db_recno_t recno;
 	int ret, t_ret;
 
-	dblp = dbenv->lg_handle;
+	dblp = env->lg_handle;
 	lp = dblp->reginfo.primary;
 	ret = 0;
 	dbc = NULL;
@@ -1621,7 +1989,7 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 	 * We just want to return.
 	 */
 	if (msgfp->pgno < rep->ready_pg) {
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "PAGE_GAP: pgno %lu < ready %lu, waiting %lu",
 		    (u_long)msgfp->pgno, (u_long)rep->ready_pg,
 		    (u_long)rep->waiting_pg));
@@ -1634,7 +2002,7 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 	 * (earlier) the current waiting_pg.  There is nothing
 	 * to do but see if we need to request.
 	 */
-	RPRINT(dbenv, (dbenv,
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
     "PAGE_GAP: pgno %lu, max_pg %lu ready %lu, waiting %lu max_wait %lu",
 	    (u_long)msgfp->pgno, (u_long)rfp->max_pgno, (u_long)rep->ready_pg,
 	    (u_long)rep->waiting_pg, (u_long)rep->max_wait_pg));
@@ -1647,15 +2015,14 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 		 * We received the page we're expecting.
 		 */
 		rep->ready_pg++;
-		lp->rcvd_recs = 0;
+		__os_gettime(env, &lp->rcvd_ts, 1);
 		if (rep->ready_pg == rep->waiting_pg) {
 			/*
 			 * If we get here we know we just filled a gap.
 			 * Move the cursor to that place and then walk
 			 * forward looking for the next gap, if it exists.
 			 */
-			lp->wait_recs = 0;
-			lp->rcvd_recs = 0;
+			lp->wait_ts = rep->request_gap;
 			rep->max_wait_pg = PGNO_INVALID;
 			/*
 			 * We need to walk the recno database looking for the
@@ -1663,7 +2030,8 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 			 */
 			memset(&key, 0, sizeof(key));
 			memset(&data, 0, sizeof(data));
-			if ((ret = __db_cursor(rep->file_dbp, NULL,
+			ENV_GET_THREAD_INFO(env, ip);
+			if ((ret = __db_cursor(rep->file_dbp, ip, NULL,
 			    &dbc, 0)) != 0)
 				goto err;
 			/*
@@ -1681,7 +2049,7 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 			ret = __dbc_get(dbc, &key, &data, DB_SET);
 			if (ret != 0)
 				goto err;
-			RPRINT(dbenv, (dbenv,
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
 			    "PAGE_GAP: Set cursor for ready %lu, waiting %lu",
 			    (u_long)rep->ready_pg, (u_long)rep->waiting_pg));
 		}
@@ -1694,7 +2062,7 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 			 */
 			if (ret == DB_NOTFOUND || ret == DB_KEYEMPTY) {
 				rep->waiting_pg = PGNO_INVALID;
-				RPRINT(dbenv, (dbenv,
+				RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "PAGE_GAP: Next cursor No next - ready %lu, waiting %lu",
 				    (u_long)rep->ready_pg,
 				    (u_long)rep->waiting_pg));
@@ -1707,7 +2075,7 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 			 */
 			rep->waiting_pg = *(db_pgno_t *)key.data;
 			rep->waiting_pg--;
-			RPRINT(dbenv, (dbenv,
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "PAGE_GAP: Next cursor ready %lu, waiting %lu",
 			    (u_long)rep->ready_pg, (u_long)rep->waiting_pg));
 		}
@@ -1728,31 +2096,18 @@ __rep_page_gap(dbenv, rep, msgfp, type)
 	    rep->ready_pg != rep->waiting_pg) || type == REP_PAGE_MORE) {
 		/*
 		 * We got a page but we may still be waiting for more.
-		 */
-		if (lp->wait_recs == 0) {
-			/*
-			 * This is a new gap. Initialize the number of
-			 * records that we should wait before requesting
-			 * that it be resent.  We grab the limits out of
-			 * the rep without the mutex.
-			 */
-			lp->wait_recs = rep->request_gap;
-			lp->rcvd_recs = 0;
-			rep->max_wait_pg = PGNO_INVALID;
-		}
-		/*
 		 * If we got REP_PAGE_MORE we always want to ask for more.
 		 * We need to set rfp->pgno to the current page number
 		 * we will use to ask for more pages.
 		 */
 		if (type == REP_PAGE_MORE)
 			rfp->pgno = msgfp->pgno;
-		if ((__rep_check_doreq(dbenv, rep) || type == REP_PAGE_MORE) &&
-		    ((ret = __rep_pggap_req(dbenv, rep, rfp,
+		if ((__rep_check_doreq(env, rep) || type == REP_PAGE_MORE) &&
+		    ((ret = __rep_pggap_req(env, rep, rfp,
 		    (type == REP_PAGE_MORE) ? REP_GAP_FORCE : 0)) != 0))
 			goto err;
 	} else {
-		lp->wait_recs = 0;
+		lp->wait_ts = rep->request_gap;
 		rep->max_wait_pg = PGNO_INVALID;
 	}
 
@@ -1768,19 +2123,18 @@ err:
  *	Clean up internal initialization pieces.
  *
  * !!!
- * Caller must hold REP_SYSTEM_LOCK.
+ * Caller must hold client database mutex (mtx_clientdb) and REP_SYSTEM_LOCK.
  *
- * PUBLIC: int __rep_init_cleanup __P((DB_ENV *, REP *, int));
+ * PUBLIC: int __rep_init_cleanup __P((ENV *, REP *, int));
  */
 int
-__rep_init_cleanup(dbenv, rep, force)
-	DB_ENV *dbenv;
+__rep_init_cleanup(env, rep, force)
+	ENV *env;
 	REP *rep;
 	int force;
 {
-	DB_LOG *dblp;
-	LOG *lp;
-	int cleanup_failure, ret, t_ret;
+	DB *queue_dbp;
+	int ret, t_ret;
 
 	ret = 0;
 	/*
@@ -1797,81 +2151,165 @@ __rep_init_cleanup(dbenv, rep, force)
 	if (rep->file_dbp != NULL) {
 		t_ret = __db_close(rep->file_dbp, NULL, DB_NOSYNC);
 		rep->file_dbp = NULL;
-		if (t_ret != 0 && ret == 0)
+		if (ret == 0)
 			ret = t_ret;
 	}
-	if (force && rep->queue_dbp != NULL) {
-		t_ret = __db_close(rep->queue_dbp, NULL, DB_NOSYNC);
-		rep->queue_dbp = NULL;
-		if (t_ret != 0 && ret == 0)
+	if (force && rep->queue_dbc != NULL) {
+		queue_dbp = rep->queue_dbc->dbp;
+		if ((t_ret = __dbc_close(rep->queue_dbc)) != 0 && ret == 0)
+			ret = t_ret;
+		rep->queue_dbc = NULL;
+		if ((t_ret = __db_close(queue_dbp, NULL, DB_NOSYNC)) != 0 &&
+		    ret == 0)
 			ret = t_ret;
 	}
 	if (rep->curinfo != NULL) {
-		__os_free(dbenv, rep->curinfo);
+		__os_free(env, rep->curinfo);
 		rep->curinfo = NULL;
 	}
-	if (F_ISSET(rep, REP_F_INTERNAL_INIT_MASK) && force) {
-		/*
-		 * Clean up files involved in an interrupted internal init.
-		 *
-		 * 1. logs
-		 *   a) remove old log files
-		 *   b) set up initial log file #1
-		 * 2. database files
-		 * 3. the "init file"
-		 *
-		 * Steps 1 and 2 can be attempted independently.  Step 1b is
-		 * dependent on successful completion of 1a.  Step 3 must not be
-		 * done if anything fails along the way, because the init file's
-		 * raison d'etre is to show that some files remain to be cleaned
-		 * up.
-		 */
-		RPRINT(dbenv, (dbenv, "clean up interrupted internal init"));
-		cleanup_failure = 0;
-
-		if ((t_ret = __rep_remove_logs(dbenv)) == 0) {
-			/*
-			 * Since we have no logs, recover by making it look like
-			 * the case when a new client first starts up, namely we
-			 * have nothing but a fresh log file #1.  This is a
-			 * little wasteful, since we may soon remove this log
-			 * file again.  But that's OK, because this is the
-			 * unusual case of NEWMASTER during internal init, and
-			 * the rest of internal init doubtless dwarfs this.
-			 */
-			dblp = dbenv->lg_handle;
-			lp = dblp->reginfo.primary;
-
-			if ((t_ret = __rep_log_setup(dbenv,
-			    rep, 1, DB_LOGVERSION, &lp->ready_lsn)) != 0) {
-				cleanup_failure = 1;
-				if (ret == 0)
-					ret = t_ret;
-			}
-		} else {
-			cleanup_failure = 1;
-			if (ret == 0)
-				ret = t_ret;
-		}
-
-		if ((t_ret = __rep_remove_by_list(dbenv,
-		    rep->originfo, rep->nfiles)) != 0) {
-			cleanup_failure = 1;
-			if (ret == 0)
-				ret = t_ret;
-		}
-
-		if (!cleanup_failure &&
-		    (t_ret = __rep_remove_init_file(dbenv)) != 0) {
-			if (ret == 0)
-				ret = t_ret;
-		}
+	if (IN_INTERNAL_INIT(rep) && force) {
+		RPRINT(env, DB_VERB_REP_SYNC,
+		    (env, "clean up interrupted internal init"));
+		t_ret = F_ISSET(rep, REP_F_ABBREVIATED) ?
+		    __rep_cleanup_nimdbs(env) :
+		    __rep_clean_interrupted(env);
+		if (ret == 0)
+			ret = t_ret;
 
 		if (rep->originfo != NULL) {
-			__os_free(dbenv, rep->originfo);
+			__os_free(env, rep->originfo);
 			rep->originfo = NULL;
 		}
 	}
+
+	return (ret);
+}
+
+/*
+ * Remove NIMDBs that may have been fully or partially loaded during an
+ * abbreviated internal init, when the init gets interrupted.  At this point,
+ * we know that any databases we have processed are listed in originfo.
+ */
+static int
+__rep_cleanup_nimdbs(env)
+	ENV *env;
+{
+	REP *rep;
+	DB *dbp;
+	__rep_fileinfo_args *rfp;
+	u_int8_t *filelist, *new_fp;
+	char *namep;
+	u_int32_t count, filesz, version;
+	int ret, t_ret;
+
+	/* Use the saved file list from the original UPDATE message. */
+	rep = env->rep_handle->region;
+	version = rep->infoversion;
+	filelist = rep->originfo;
+	filesz = rep->originfolen;
+	count = rep->nfiles;
+
+	ret = 0;
+	rfp = NULL;
+	dbp = NULL;
+	while (count-- > 0) {
+		if ((ret = __rep_fileinfo_unmarshal(env, version,
+		    &rfp, filelist, filesz, &new_fp)) != 0)
+			goto out;
+		filesz -= (u_int32_t)(new_fp - filelist);
+		filelist = new_fp;
+
+		if (FLD_ISSET(rfp->db_flags, DB_AM_INMEM)) {
+			namep = rfp->info.data;
+
+			if ((ret = __db_create_internal(&dbp, env, 0)) != 0)
+				goto out;
+			MAKE_INMEM(dbp);
+			F_SET(dbp, DB_AM_RECOVER); /* Skirt locking. */
+
+			/*
+			 * Some of these "files" (actually NIMDBs) may not exist
+			 * yet, simply because the interrupted abbreviated
+			 * internal init had not yet progressed far enough to
+			 * retrieve them.  So ENOENT is an acceptable outcome.
+			 */
+			if ((ret = __db_inmem_remove(dbp, NULL, namep)) != 0 &&
+			    ret != ENOENT)
+				goto out;
+			ret = __db_close(dbp, NULL, DB_NOSYNC);
+			dbp = NULL;
+			if (ret != 0)
+				goto out;
+		}
+
+		__os_free(env, rfp);
+		rfp = NULL;
+	}
+
+out:
+	if (rfp != NULL)
+		__os_free(env, rfp);
+	if (dbp != NULL &&
+	    (t_ret = __db_close(dbp, NULL, DB_NOSYNC)) != 0 && ret == 0)
+		ret = t_ret;
+	return (ret);
+}
+
+/*
+ * Clean up files involved in an interrupted internal init.
+ */
+static int
+__rep_clean_interrupted(env)
+	ENV *env;
+{
+	REP *rep;
+	DB_LOG *dblp;
+	LOG *lp;
+	int ret, t_ret;
+
+	rep = env->rep_handle->region;
+
+	/*
+	 * 1. logs
+	 *   a) remove old log files
+	 *   b) set up initial log file #1
+	 * 2. database files
+	 * 3. the "init file"
+	 *
+	 * Steps 1 and 2 can be attempted independently.  Step 1b is
+	 * dependent on successful completion of 1a.
+	 */
+
+	/* Step 1a. */
+	if ((ret = __rep_remove_logs(env)) == 0) {
+		/*
+		 * Since we have no logs, recover by making it look like
+		 * the case when a new client first starts up, namely we
+		 * have nothing but a fresh log file #1.  This is a
+		 * little wasteful, since we may soon remove this log
+		 * file again.  But it's insignificant in the context of
+		 * interrupted internal init.
+		 */
+		dblp = env->lg_handle;
+		lp = dblp->reginfo.primary;
+
+		/* Step 1b. */
+		ret = __rep_log_setup(env,
+		    rep, 1, DB_LOGVERSION, &lp->ready_lsn);
+	}
+
+	/* Step 2. */
+	if ((t_ret = __rep_remove_by_list(env, rep->infoversion,
+	    rep->originfo, rep->originfolen, rep->nfiles)) != 0 && ret == 0)
+		ret = t_ret;
+
+	/*
+	 * Step 3 must not be done if anything fails along the way, because the
+	 * init file's raison d'etre is to show that some files remain to be
+	 * cleaned up.
+	 */
+	if (ret == 0)
+		ret = __rep_remove_init_file(env);
 
 	return (ret);
 }
@@ -1886,8 +2324,9 @@ __rep_init_cleanup(dbenv, rep, force)
  *	move to the REP_RECOVER_LOG state.
  */
 static int
-__rep_filedone(dbenv, eid, rep, msgfp, type)
-	DB_ENV *dbenv;
+__rep_filedone(env, ip, eid, rep, msgfp, type)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	int eid;
 	REP *rep;
 	__rep_fileinfo_args *msgfp;
@@ -1900,7 +2339,7 @@ __rep_filedone(dbenv, eid, rep, msgfp, type)
 	 * We've put our page, now we need to do any gap processing
 	 * that might be needed to re-request pages.
 	 */
-	ret = __rep_page_gap(dbenv, rep, msgfp, type);
+	ret = __rep_page_gap(env, rep, msgfp, type);
 	/*
 	 * The world changed while we were doing gap processing.
 	 * We're done here.
@@ -1913,7 +2352,8 @@ __rep_filedone(dbenv, eid, rep, msgfp, type)
 	 * max_pgno is 0-based and npages is 1-based, so we don't have
 	 * all the pages until npages is > max_pgno.
 	 */
-	RPRINT(dbenv, (dbenv, "FILEDONE: have %lu pages. Need %lu.",
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "FILEDONE: have %lu pages. Need %lu.",
 	    (u_long)rep->npages, (u_long)rfp->max_pgno + 1));
 	if (rep->npages <= rfp->max_pgno)
 		return (0);
@@ -1924,17 +2364,17 @@ __rep_filedone(dbenv, eid, rep, msgfp, type)
 	 * several stages.
 	 */
 	if (rfp->type == (u_int32_t)DB_QUEUE &&
-	    ((ret = __rep_queue_filedone(dbenv, rep, rfp)) !=
+	    ((ret = __rep_queue_filedone(env, ip, rep, rfp)) !=
 	    DB_REP_PAGEDONE))
 		return (ret);
 	/*
 	 * We have all the pages for this file.  Clean up.
 	 */
-	if ((ret = __rep_init_cleanup(dbenv, rep, 0)) != 0)
+	if ((ret = __rep_init_cleanup(env, rep, 0)) != 0)
 		goto err;
 
 	rep->curfile++;
-	ret = __rep_nextfile(dbenv, eid, rep);
+	ret = __rep_nextfile(env, eid, rep);
 err:
 	return (ret);
 }
@@ -1944,16 +2384,21 @@ err:
  * proceeds to the next stage: requesting logs.
  *
  * !!!
- * Called with REP_SYSTEM_LOCK held.
+ * Called with REP_SYSTEM_LOCK held or both clientdb_mutex and REP_SYSTEM,
+ * though we may drop REP_SYSTEM_LOCK momentarily in order to send
+ * a LOG_REQ (but not a PAGE_REQ).
  */
 static int
-__rep_nextfile(dbenv, eid, rep)
-	DB_ENV *dbenv;
+__rep_nextfile(env, eid, rep)
+	ENV *env;
 	int eid;
 	REP *rep;
 {
 	DBT dbt;
+	__rep_logreq_args lr_args;
 	int ret;
+	u_int8_t *buf, *info_ptr, lrbuf[__REP_LOGREQ_SIZE];
+	size_t len, msgsz;
 
 	/*
 	 * Always direct the next request to the master (at least nominally),
@@ -1962,68 +2407,167 @@ __rep_nextfile(dbenv, eid, rep)
 	 */
 	if (rep->master_id != DB_EID_INVALID)
 		eid = rep->master_id;
-	if (rep->curfile == rep->nfiles) {
-		RPRINT(dbenv, (dbenv,
-		    "NEXTFILE: have %d files.  RECOVER_LOG now", rep->nfiles));
-		/*
-		 * Move to REP_RECOVER_LOG state.
-		 * Request logs.
-		 */
-		/*
-		 * We need to do a sync here so that any later opens
-		 * can find the file and file id.  We need to do it
-		 * before we clear REP_F_RECOVER_PAGE so that we do not
-		 * try to flush the log.
-		 */
-		if ((ret = __memp_sync_int(dbenv, NULL, 0,
-		    DB_SYNC_CACHE | DB_SYNC_INTERRUPT_OK, NULL, NULL)) != 0)
+
+	while (rep->curfile < rep->nfiles) {
+		/* Set curinfo to next file and examine it. */
+		info_ptr = rep->nextinfo;
+		if ((ret = __rep_fileinfo_unmarshal(env,
+		    rep->infoversion, &rep->curinfo,
+		    info_ptr, rep->infolen, &rep->nextinfo)) != 0) {
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
+			    "NEXTINFO: Fileinfo read: %s", db_strerror(ret)));
 			return (ret);
-		F_CLR(rep, REP_F_RECOVER_PAGE);
-		F_SET(rep, REP_F_RECOVER_LOG);
+		}
+		rep->infolen -= (u_int32_t)(rep->nextinfo - info_ptr);
+
+		/* Skip over regular DB's in "abbreviated" internal inits. */
+		if (F_ISSET(rep, REP_F_ABBREVIATED) &&
+		    !FLD_ISSET(rep->curinfo->db_flags, DB_AM_INMEM)) {
+			RPRINT(env, DB_VERB_REP_SYNC, (env,
+			    "Skipping file %d in abbreviated internal init",
+			    rep->curinfo->filenum));
+			__os_free(env, rep->curinfo);
+			rep->curinfo = NULL;
+			rep->curfile++;
+			continue;
+		}
+
+		/* Request this file's pages. */
+		DB_ASSERT(env, rep->curinfo->pgno == 0);
+		rep->ready_pg = 0;
+		rep->npages = 0;
+		rep->waiting_pg = PGNO_INVALID;
+		rep->max_wait_pg = PGNO_INVALID;
 		memset(&dbt, 0, sizeof(dbt));
-		dbt.data = &rep->last_lsn;
-		dbt.size = sizeof(rep->last_lsn);
-		REP_SYSTEM_UNLOCK(dbenv);
-		if ((ret = __rep_log_setup(dbenv, rep,
-		    rep->first_lsn.file, rep->first_vers, NULL)) != 0)
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
+		    "Next file %d: pgsize %lu, maxpg %lu",
+		    rep->curinfo->filenum, (u_long)rep->curinfo->pgsize,
+		    (u_long)rep->curinfo->max_pgno));
+		msgsz = __REP_FILEINFO_SIZE +
+		    rep->curinfo->uid.size + rep->curinfo->info.size;
+		if ((ret = __os_calloc(env, 1, msgsz, &buf)) != 0)
 			return (ret);
-		RPRINT(dbenv, (dbenv,
-		    "NEXTFILE: LOG_REQ from LSN [%lu][%lu] to [%lu][%lu]",
-		    (u_long)rep->first_lsn.file, (u_long)rep->first_lsn.offset,
-		    (u_long)rep->last_lsn.file, (u_long)rep->last_lsn.offset));
-		(void)__rep_send_message(dbenv, eid,
-		    REP_LOG_REQ, &rep->first_lsn, &dbt,
-		    REPCTL_INIT, DB_REP_ANYWHERE);
-		REP_SYSTEM_LOCK(dbenv);
+		if ((ret = __rep_fileinfo_marshal(env, rep->infoversion,
+		    rep->curinfo, buf, msgsz, &len)) != 0)
+			return (ret);
+		DB_INIT_DBT(dbt, buf, len);
+		(void)__rep_send_message(env, eid, REP_PAGE_REQ,
+		    NULL, &dbt, 0, DB_REP_ANYWHERE);
+		__os_free(env, buf);
+
 		return (0);
 	}
 
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
+	    "NEXTFILE: have %d files.  RECOVER_LOG now", rep->nfiles));
 	/*
-	 * 4.  If not, set curinfo to next file and request its pages.
+	 * Move to REP_RECOVER_LOG state.
+	 * Request logs.
 	 */
-	rep->finfo = rep->nextinfo;
-	if ((ret = __rep_fileinfo_read(dbenv, rep->finfo, &rep->nextinfo,
-	    &rep->curinfo)) != 0) {
-		RPRINT(dbenv, (dbenv,
-		    "NEXTINFO: Fileinfo read: %s", db_strerror(ret)));
+	/*
+	 * We need to do a sync here so that any later opens
+	 * can find the file and file id.  We need to do it
+	 * before we clear REP_F_RECOVER_PAGE so that we do not
+	 * try to flush the log.
+	 */
+	if ((ret = __memp_sync_int(env, NULL, 0,
+	    DB_SYNC_CACHE | DB_SYNC_INTERRUPT_OK, NULL, NULL)) != 0)
 		return (ret);
-	}
-	DB_ASSERT(dbenv, rep->curinfo->pgno == 0);
-	rep->ready_pg = 0;
-	rep->npages = 0;
-	rep->waiting_pg = PGNO_INVALID;
-	rep->max_wait_pg = PGNO_INVALID;
+	F_CLR(rep, REP_F_RECOVER_PAGE);
+	F_SET(rep, REP_F_RECOVER_LOG);
 	memset(&dbt, 0, sizeof(dbt));
-	RPRINT(dbenv, (dbenv,
-	    "Next file %d: pgsize %lu, maxpg %lu", rep->curinfo->filenum,
-	    (u_long)rep->curinfo->pgsize, (u_long)rep->curinfo->max_pgno));
-	dbt.data = rep->finfo;
-	dbt.size =
-	    (u_int32_t)((u_int8_t *)rep->nextinfo - (u_int8_t *)rep->finfo);
-	(void)__rep_send_message(dbenv, eid, REP_PAGE_REQ,
-	    NULL, &dbt, 0, DB_REP_ANYWHERE);
+	lr_args.endlsn = rep->last_lsn;
+	if ((ret = __rep_logreq_marshal(env, &lr_args, lrbuf,
+	    __REP_LOGREQ_SIZE, &len)) != 0)
+		return (ret);
+	DB_INIT_DBT(dbt, lrbuf, len);
 
+	/*
+	 * Get the logging subsystem ready to receive the first log record we
+	 * are going to ask for.  In the case of a normal internal init, this is
+	 * pretty simple, since we only deal in whole log files.  In the
+	 * ABBREVIATED case we've already taken care of this, back when we
+	 * processed the UPDATE message, because we had to do it by rolling back
+	 * to a sync point at an arbitrary LSN.
+	 */
+	if (!F_ISSET(rep, REP_F_ABBREVIATED) &&
+	    (ret = __rep_log_setup(env, rep,
+	    rep->first_lsn.file, rep->first_vers, NULL)) != 0)
+		return (ret);
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
+	    "NEXTFILE: LOG_REQ from LSN [%lu][%lu] to [%lu][%lu]",
+	    (u_long)rep->first_lsn.file, (u_long)rep->first_lsn.offset,
+	    (u_long)rep->last_lsn.file, (u_long)rep->last_lsn.offset));
+	REP_SYSTEM_UNLOCK(env);
+	(void)__rep_send_message(env, eid,
+	    REP_LOG_REQ, &rep->first_lsn, &dbt, REPCTL_INIT, DB_REP_ANYWHERE);
+	REP_SYSTEM_LOCK(env);
 	return (0);
+}
+
+/*
+ * Run a recovery, for the purpose of rolling back the client environment to a
+ * specific sync point, in preparation for doing an abbreviated internal init
+ * (materializing only NIMDBs, when we already have the on-disk DBs).
+ *
+ * REP_SYSTEM_LOCK should be held on entry, and will be held on exit, but we
+ * drop it momentarily during the call.
+ */
+static int
+__rep_rollback(env, lsnp)
+	ENV *env;
+	DB_LSN *lsnp;
+{
+	DB_LOG *dblp;
+	DB_REP *db_rep;
+	LOG *lp;
+	REP *rep;
+	DB_THREAD_INFO *ip;
+	DB_LSN trunclsn;
+	int ret;
+	u_int32_t unused;
+
+	db_rep = env->rep_handle;
+	rep = db_rep->region;
+	dblp = env->lg_handle;
+	lp = dblp->reginfo.primary;
+	ENV_GET_THREAD_INFO(env, ip);
+
+	DB_ASSERT(env, F_ISSET(rep,
+	    REP_F_READY_API | REP_F_READY_MSG | REP_F_READY_OP));
+
+	REP_SYSTEM_UNLOCK(env);
+
+	if ((ret = __rep_dorecovery(env, lsnp, &trunclsn)) != 0)
+		goto errlock;
+
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	lp->ready_lsn = trunclsn;
+	ZERO_LSN(lp->waiting_lsn);
+	ZERO_LSN(lp->max_wait_lsn);
+	lp->max_perm_lsn = *lsnp;
+	lp->wait_ts = rep->request_gap;
+	__os_gettime(env, &lp->rcvd_ts, 1);
+	ZERO_LSN(lp->verify_lsn);
+
+	if (db_rep->rep_db == NULL &&
+	    (ret = __rep_client_dbinit(env, 0, REP_DB)) != 0) {
+		MUTEX_UNLOCK(env, rep->mtx_clientdb);
+		goto errlock;
+	}
+
+	F_SET(db_rep->rep_db, DB_AM_RECOVER);
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
+	ret = __db_truncate(db_rep->rep_db, ip, NULL, &unused);
+	MUTEX_LOCK(env, rep->mtx_clientdb);
+	F_CLR(db_rep->rep_db, DB_AM_RECOVER);
+	rep->stat.st_log_queued = 0;
+	MUTEX_UNLOCK(env, rep->mtx_clientdb);
+
+errlock:
+	REP_SYSTEM_LOCK(env);
+
+	return (ret);
 }
 
 /*
@@ -2032,8 +2576,8 @@ __rep_nextfile(dbenv, eid, rep)
  *	Used by both master and client to bring files into mpool.
  */
 static int
-__rep_mpf_open(dbenv, mpfp, rfp, flags)
-	DB_ENV *dbenv;
+__rep_mpf_open(env, mpfp, rfp, flags)
+	ENV *env;
 	DB_MPOOLFILE **mpfp;
 	__rep_fileinfo_args *rfp;
 	u_int32_t flags;
@@ -2041,24 +2585,40 @@ __rep_mpf_open(dbenv, mpfp, rfp, flags)
 	DB db;
 	int ret;
 
-	if ((ret = __memp_fcreate(dbenv, mpfp)) != 0)
+	if ((ret = __memp_fcreate(env, mpfp)) != 0)
 		return (ret);
 
 	/*
-	 * We need a dbp to pass into to __db_env_mpool.  Set up
+	 * We need a dbp to pass into to __env_mpool.  Set up
 	 * only the parts that it needs.
 	 */
-	db.dbenv = dbenv;
+	memset(&db, 0, sizeof(db));
+	db.env = env;
 	db.type = (DBTYPE)rfp->type;
 	db.pgsize = rfp->pgsize;
 	memcpy(db.fileid, rfp->uid.data, DB_FILE_ID_LEN);
-	db.flags = rfp->flags;
+	db.flags = rfp->db_flags;
 	/* We need to make sure the dbp isn't marked open. */
 	F_CLR(&db, DB_AM_OPEN_CALLED);
+	/*
+	 * The byte order of this database may be different from my local native
+	 * byte order.  If so, set the swap bit so that the necessary swapping
+	 * will be done during file I/O.
+	 */
+	if ((F_ISSET(env, ENV_LITTLEENDIAN) &&
+	    !FLD_ISSET(rfp->finfo_flags, REPINFO_DB_LITTLEENDIAN)) ||
+	    (!F_ISSET(env, ENV_LITTLEENDIAN) &&
+	    FLD_ISSET(rfp->finfo_flags, REPINFO_DB_LITTLEENDIAN))) {
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
+		    "rep_mpf_open: Different endian database.  Set swap bit."));
+		F_SET(&db, DB_AM_SWAP);
+	} else
+		F_CLR(&db, DB_AM_SWAP);
+
 	db.mpf = *mpfp;
 	if (F_ISSET(&db, DB_AM_INMEM))
 		(void)__memp_set_flags(db.mpf, DB_MPOOL_NOFILE, 1);
-	if ((ret = __db_env_mpool(&db, rfp->info.data, flags)) != 0) {
+	if ((ret = __env_mpool(&db, rfp->info.data, flags)) != 0) {
 		(void)__memp_fclose(db.mpf, 0);
 		*mpfp = NULL;
 	}
@@ -2069,21 +2629,22 @@ __rep_mpf_open(dbenv, mpfp, rfp, flags)
  * __rep_pggap_req -
  *	Request a page gap.  Assumes the caller holds the rep_mutex.
  *
- * PUBLIC: int __rep_pggap_req __P((DB_ENV *, REP *, __rep_fileinfo_args *,
- * PUBLIC:    u_int32_t));
+ * PUBLIC: int __rep_pggap_req __P((ENV *, REP *, __rep_fileinfo_args *,
+ * PUBLIC:     u_int32_t));
  */
 int
-__rep_pggap_req(dbenv, rep, reqfp, gapflags)
-	DB_ENV *dbenv;
+__rep_pggap_req(env, rep, reqfp, gapflags)
+	ENV *env;
 	REP *rep;
 	__rep_fileinfo_args *reqfp;
 	u_int32_t gapflags;
 {
 	DBT max_pg_dbt;
 	__rep_fileinfo_args *tmpfp, t;
-	size_t len;
+	size_t len, msgsz;
 	u_int32_t flags;
-	int alloc, ret;
+	int alloc, master, ret;
+	u_int8_t *buf;
 
 	ret = 0;
 	alloc = 0;
@@ -2098,7 +2659,7 @@ __rep_pggap_req(dbenv, rep, reqfp, gapflags)
 	if (rep->curinfo == NULL)
 		return (0);
 	if (reqfp == NULL) {
-		if ((ret = __rep_finfo_alloc(dbenv, rep->curinfo, &tmpfp)) != 0)
+		if ((ret = __rep_finfo_alloc(env, rep->curinfo, &tmpfp)) != 0)
 			return (ret);
 		alloc = 1;
 	} else {
@@ -2122,9 +2683,10 @@ __rep_pggap_req(dbenv, rep, reqfp, gapflags)
 		tmpfp->pgno++;
 	else
 		tmpfp->pgno = rep->ready_pg;
-	max_pg_dbt.data = rep->finfo;
-	max_pg_dbt.size =
-	    (u_int32_t)((u_int8_t *)rep->nextinfo - (u_int8_t *)rep->finfo);
+	msgsz = __REP_FILEINFO_SIZE +
+	    tmpfp->uid.size + tmpfp->info.size;
+	if ((ret = __os_calloc(env, 1, msgsz, &buf)) != 0)
+		goto err;
 	if (rep->max_wait_pg == PGNO_INVALID ||
 	    FLD_ISSET(gapflags, REP_GAP_FORCE | REP_GAP_REREQUEST)) {
 		/*
@@ -2168,7 +2730,7 @@ __rep_pggap_req(dbenv, rep, reqfp, gapflags)
 		 */
 		flags = DB_REP_REREQUEST;
 	}
-	if (rep->master_id != DB_EID_INVALID) {
+	if ((master = rep->master_id) != DB_EID_INVALID) {
 		STAT(rep->stat.st_pg_requested++);
 		/*
 		 * We need to request the pages, but we need to get the
@@ -2176,19 +2738,21 @@ __rep_pggap_req(dbenv, rep, reqfp, gapflags)
 		 * change.  The only thing this should do is change
 		 * the pgno field.  Everything else remains the same.
 		 */
-		ret = __rep_fileinfo_buf(rep->finfo, max_pg_dbt.size, &len,
-		    tmpfp->pgsize, tmpfp->pgno, tmpfp->max_pgno,
-		    tmpfp->filenum, tmpfp->id, tmpfp->type,
-		    tmpfp->flags, &tmpfp->uid, &tmpfp->info);
-		DB_ASSERT(dbenv, len == max_pg_dbt.size);
-		(void)__rep_send_message(dbenv, rep->master_id,
-		    REP_PAGE_REQ, NULL, &max_pg_dbt, 0, flags);
+		if ((ret = __rep_fileinfo_marshal(env, rep->infoversion,
+		    tmpfp, buf, msgsz, &len)) == 0) {
+			DB_INIT_DBT(max_pg_dbt, buf, len);
+			DB_ASSERT(env, len == max_pg_dbt.size);
+			(void)__rep_send_message(env, master,
+			    REP_PAGE_REQ, NULL, &max_pg_dbt, 0, flags);
+		}
 	} else
-		(void)__rep_send_message(dbenv, DB_EID_BROADCAST,
+		(void)__rep_send_message(env, DB_EID_BROADCAST,
 		    REP_MASTER_REQ, NULL, NULL, 0, 0);
 
+	__os_free(env, buf);
+err:
 	if (alloc)
-		__os_free(dbenv, tmpfp);
+		__os_free(env, tmpfp);
 	return (ret);
 }
 
@@ -2196,12 +2760,12 @@ __rep_pggap_req(dbenv, rep, reqfp, gapflags)
  * __rep_finfo_alloc -
  *	Allocate and initialize a fileinfo structure.
  *
- * PUBLIC: int __rep_finfo_alloc __P((DB_ENV *, __rep_fileinfo_args *,
- * PUBLIC:    __rep_fileinfo_args **));
+ * PUBLIC: int __rep_finfo_alloc __P((ENV *, __rep_fileinfo_args *,
+ * PUBLIC:     __rep_fileinfo_args **));
  */
 int
-__rep_finfo_alloc(dbenv, rfpsrc, rfpp)
-	DB_ENV *dbenv;
+__rep_finfo_alloc(env, rfpsrc, rfpp)
+	ENV *env;
 	__rep_fileinfo_args *rfpsrc, **rfpp;
 {
 	__rep_fileinfo_args *rfp;
@@ -2214,7 +2778,7 @@ __rep_finfo_alloc(dbenv, rfpsrc, rfpp)
 	 */
 	size = sizeof(__rep_fileinfo_args) + rfpsrc->uid.size +
 	    rfpsrc->info.size;
-	if ((ret = __os_malloc(dbenv, size, &rfp)) != 0)
+	if ((ret = __os_malloc(env, size, &rfp)) != 0)
 		return (ret);
 
 	/*
@@ -2239,8 +2803,8 @@ __rep_finfo_alloc(dbenv, rfpsrc, rfpp)
  *	to get our logs set up for the proper file.
  */
 static int
-__rep_log_setup(dbenv, rep, file, version, lsnp)
-	DB_ENV *dbenv;
+__rep_log_setup(env, rep, file, version, lsnp)
+	ENV *env;
 	REP *rep;
 	u_int32_t file;
 	u_int32_t version;
@@ -2253,20 +2817,20 @@ __rep_log_setup(dbenv, rep, file, version, lsnp)
 	LOG *lp;
 	int ret;
 
-	dblp = dbenv->lg_handle;
+	dblp = env->lg_handle;
 	lp = dblp->reginfo.primary;
-	mgr = dbenv->tx_handle;
+	mgr = env->tx_handle;
 	region = mgr->reginfo.primary;
 
 	/*
 	 * Set up the log starting at the file number of the first LSN we
 	 * need to get from the master.
 	 */
-	LOG_SYSTEM_LOCK(dbenv);
+	LOG_SYSTEM_LOCK(env);
 	if ((ret = __log_newfile(dblp, &lsn, file, version)) == 0 &&
 	    lsnp != NULL)
 		*lsnp = lsn;
-	LOG_SYSTEM_UNLOCK(dbenv);
+	LOG_SYSTEM_UNLOCK(env);
 
 	/*
 	 * We reset first_lsn to the lp->lsn.  We were given the LSN of
@@ -2275,9 +2839,9 @@ __rep_log_setup(dbenv, rep, file, version, lsnp)
 	 * in lp->lsn.
 	 */
 	rep->first_lsn = lp->lsn;
-	TXN_SYSTEM_LOCK(dbenv);
+	TXN_SYSTEM_LOCK(env);
 	ZERO_LSN(region->last_ckp);
-	TXN_SYSTEM_UNLOCK(dbenv);
+	TXN_SYSTEM_UNLOCK(env);
 	return (ret);
 }
 
@@ -2294,7 +2858,7 @@ __rep_log_setup(dbenv, rep, file, version, lsnp)
  *
  * This function can return several things:
  *	DB_REP_PAGEDONE - if we're done with this file.
- *	0 - if we're not doen with this file.
+ *	0 - if we're not done with this file.
  *	error - if we get an error doing some operations.
  *
  * This function will open a dbp handle to the queue file.  This is needed
@@ -2302,48 +2866,60 @@ __rep_log_setup(dbenv, rep, file, version, lsnp)
  * here and we'll close it whenever we decide we're done.
  */
 static int
-__rep_queue_filedone(dbenv, rep, rfp)
-	DB_ENV *dbenv;
+__rep_queue_filedone(env, ip, rep, rfp)
+	ENV *env;
+	DB_THREAD_INFO *ip;
 	REP *rep;
 	__rep_fileinfo_args *rfp;
 {
 #ifndef HAVE_QUEUE
+	COMPQUIET(ip, NULL);
 	COMPQUIET(rep, NULL);
 	COMPQUIET(rfp, NULL);
-	return (__db_no_queue_am(dbenv));
+	return (__db_no_queue_am(env));
 #else
+	DB *queue_dbp;
 	db_pgno_t first, last;
 	u_int32_t flags;
 	int empty, ret, t_ret;
 
 	ret = 0;
-	if (rep->queue_dbp == NULL) {
+	queue_dbp = NULL;
+	if (rep->queue_dbc == NULL) {
 		/*
 		 * We need to do a sync here so that the open
 		 * can find the file and file id.
 		 */
-		if ((ret = __memp_sync_int(dbenv, NULL, 0,
+		if ((ret = __memp_sync_int(env, NULL, 0,
 		    DB_SYNC_CACHE | DB_SYNC_INTERRUPT_OK, NULL, NULL)) != 0)
 			goto out;
 		if ((ret =
-		    __db_create_internal(&rep->queue_dbp, dbenv, 0)) != 0)
+		    __db_create_internal(&queue_dbp, env, 0)) != 0)
 			goto out;
 		flags = DB_NO_AUTO_COMMIT |
-		    (F_ISSET(dbenv, DB_ENV_THREAD) ? DB_THREAD : 0);
+		    (F_ISSET(env, ENV_THREAD) ? DB_THREAD : 0);
 		/*
 		 * We need to check whether this is in-memory so that we pass
 		 * the name correctly as either the file or the database name.
 		 */
-		if ((ret = __db_open(rep->queue_dbp, NULL,
-		    FLD_ISSET(rfp->flags, DB_AM_INMEM) ? NULL : rfp->info.data,
-		    FLD_ISSET(rfp->flags, DB_AM_INMEM) ? rfp->info.data : NULL,
+		if ((ret = __db_open(queue_dbp, ip, NULL,
+		    FLD_ISSET(rfp->db_flags, DB_AM_INMEM) ? NULL :
+			rfp->info.data,
+		    FLD_ISSET(rfp->db_flags, DB_AM_INMEM) ? rfp->info.data :
+			NULL,
 		    DB_QUEUE, flags, 0, PGNO_BASE_MD)) != 0)
 			goto out;
-	}
-	if ((ret = __queue_pageinfo(rep->queue_dbp,
+
+		if ((ret = __db_cursor(queue_dbp,
+		    ip, NULL, &rep->queue_dbc, 0)) != 0)
+			goto out;
+	} else
+		queue_dbp = rep->queue_dbc->dbp;
+
+	if ((ret = __queue_pageinfo(queue_dbp,
 	    &first, &last, &empty, 0, 0)) != 0)
 		goto out;
-	RPRINT(dbenv, (dbenv,
+	RPRINT(env, DB_VERB_REP_SYNC, (env,
 	    "Queue fileinfo: first %lu, last %lu, empty %d",
 	    (u_long)first, (u_long)last, empty));
 	/*
@@ -2363,10 +2939,10 @@ __rep_queue_filedone(dbenv, rep, rfp)
 			goto out;
 		if (first > last) {
 			rfp->max_pgno =
-			    QAM_RECNO_PAGE(rep->queue_dbp, UINT32_MAX);
+			    QAM_RECNO_PAGE(rep->queue_dbc->dbp, UINT32_MAX);
 		} else
 			rfp->max_pgno = last;
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Queue fileinfo: First req: first %lu, last %lu",
 		    (u_long)first, (u_long)rfp->max_pgno));
 		goto req;
@@ -2379,7 +2955,7 @@ __rep_queue_filedone(dbenv, rep, rfp)
 		 */
 		first = 1;
 		rfp->max_pgno = last;
-		RPRINT(dbenv, (dbenv,
+		RPRINT(env, DB_VERB_REP_SYNC, (env,
 		    "Queue fileinfo: Wrap req: first %lu, last %lu",
 		    (u_long)first, (u_long)last));
 req:
@@ -2392,7 +2968,7 @@ req:
 		rep->ready_pg = first;
 		rep->waiting_pg = rfp->max_pgno + 1;
 		rep->max_wait_pg = PGNO_INVALID;
-		ret = __rep_pggap_req(dbenv, rep, rfp, 0);
+		ret = __rep_pggap_req(env, rep, rfp, 0);
 		return (ret);
 	}
 	/*
@@ -2401,11 +2977,14 @@ req:
 	 * Close the dbp and return.
 	 */
 out:
-	if (rep->queue_dbp != NULL &&
-	    (t_ret = __db_close(rep->queue_dbp, NULL, DB_NOSYNC)) != 0 &&
-	    ret == 0)
+	if (rep->queue_dbc != NULL &&
+	    (t_ret = __dbc_close(rep->queue_dbc)) != 0 && ret == 0)
 		ret = t_ret;
-	rep->queue_dbp = NULL;
+	rep->queue_dbc = NULL;
+
+	if (queue_dbp != NULL &&
+	    (t_ret = __db_close(queue_dbp, NULL, DB_NOSYNC)) != 0 && ret == 0)
+		ret = t_ret;
 	if (ret == 0)
 		ret = DB_REP_PAGEDONE;
 	return (ret);
@@ -2413,20 +2992,36 @@ out:
 }
 
 /*
- * PUBLIC: int __rep_remove_init_file __P((DB_ENV *));
+ * PUBLIC: int __rep_remove_init_file __P((ENV *));
  */
 int
-__rep_remove_init_file(dbenv)
-	DB_ENV *dbenv;
+__rep_remove_init_file(env)
+	ENV *env;
 {
+	DB_REP *db_rep;
+	REP *rep;
 	int ret;
 	char *name;
 
-	if ((ret = __db_appname(
-	    dbenv, DB_APP_NONE, REP_INITNAME, 0, NULL, &name)) != 0)
+	db_rep = env->rep_handle;
+	rep = db_rep->region;
+
+	/*
+	 * If running in-memory replication, return without any file
+	 * operations.
+	 */
+	if (FLD_ISSET(rep->config, REP_C_INMEM))
+		return (0);
+
+	/* Abbreviated internal init doesn't use an init file. */
+	if (F_ISSET(rep, REP_F_ABBREVIATED))
+		return (0);
+
+	if ((ret = __db_appname(env,
+	    DB_APP_NONE, REP_INITNAME, NULL, &name)) != 0)
 		return (ret);
-	(void)__os_unlink(dbenv, name);
-	__os_free(dbenv, name);
+	(void)__os_unlink(env, name, 0);
+	__os_free(env, name);
 	return (0);
 }
 
@@ -2443,35 +3038,38 @@ __rep_remove_init_file(dbenv)
  * subsystems' code having been initialized, and it summarily deletes files "out
  * from under" them, which might disturb the subsystems if they were up.
  *
- * PUBLIC: int __rep_reset_init __P((DB_ENV *));
+ * PUBLIC: int __rep_reset_init __P((ENV *));
  */
 int
-__rep_reset_init(dbenv)
-	DB_ENV *dbenv;
+__rep_reset_init(env)
+	ENV *env;
 {
 	DB_FH *fhp;
 	__rep_update_args *rup;
 	DBT dbt;
 	char *allocated_dir, *dir, *init_name;
-	void *next;
+	size_t cnt;
+	u_int32_t dbtvers, fvers, zero;
+	u_int8_t *next;
 	int ret, t_ret;
 
 	allocated_dir = NULL;
 	rup = NULL;
 	dbt.data = NULL;
 
-	if ((ret = __db_appname(
-	    dbenv, DB_APP_NONE, REP_INITNAME, 0, NULL, &init_name)) != 0)
+	if ((ret = __db_appname(env,
+	    DB_APP_NONE, REP_INITNAME, NULL, &init_name)) != 0)
 		return (ret);
 
-	if ((ret = __os_open(dbenv, init_name, 0, DB_OSO_RDONLY,
-	    __db_omode(OWNER_RW), &fhp)) != 0) {
+	if ((ret = __os_open(
+	    env, init_name, 0, DB_OSO_RDONLY, DB_MODE_600, &fhp)) != 0) {
 		if (ret == ENOENT)
 			ret = 0;
 		goto out;
 	}
 
-	RPRINT(dbenv, (dbenv, "Cleaning up interrupted internal init"));
+	RPRINT(env, DB_VERB_REP_SYNC,
+	    (env, "Cleaning up interrupted internal init"));
 
 	/* There are a few possibilities:
 	 *   1. no init file, or less than 1 full file list
@@ -2484,10 +3082,35 @@ __rep_reset_init(dbenv)
 	 * have to do anything.)
 	 *
 	 * The __rep_get_file_list function takes care of folding these cases
-	 * into two simple outcomes:
+	 * into two simple outcomes.
+	 *
+	 * As of 4.7, the first 4 bytes are 0.  Read the first 4 bytes now.
+	 * If they are non-zero it means we have an old-style init file.
+	 * Otherwise, pass the file version in to rep_get_file_list.
 	 */
-	ret = __rep_get_file_list(dbenv, fhp, &dbt);
-	if ((t_ret = __os_closehandle(dbenv, fhp)) != 0 || ret != 0) {
+	if ((ret = __os_read(env, fhp, &zero, sizeof(zero), &cnt)) != 0)
+		goto out;
+	/*
+	 * If we read successfully, but not enough, then unlink the file.
+	 */
+	if (cnt != sizeof(zero))
+		goto rm;
+	if (zero != 0) {
+		/*
+		 * Old style file.  We have to set fvers to the 4.6
+		 * version of the file and also rewind the file so
+		 * that __rep_get_file_list can read out the length itself.
+		 */
+		if ((ret = __os_seek(env, fhp, 0, 0, 0)) != 0)
+			goto out;
+		fvers = REP_INITVERSION_46;
+	} else if ((ret = __os_read(env,
+	    fhp, &fvers, sizeof(fvers), &cnt)) != 0)
+		goto out;
+	else if (cnt != sizeof(fvers))
+		goto rm;
+	ret = __rep_get_file_list(env, fhp, fvers, &dbtvers, &dbt);
+	if ((t_ret = __os_closehandle(env, fhp)) != 0 || ret != 0) {
 		if (ret == 0)
 			ret = t_ret;
 		goto out;
@@ -2504,16 +3127,16 @@ __rep_reset_init(dbenv)
 	}
 
 	/* Remove all log files. */
-	if (dbenv->db_log_dir == NULL)
-		dir = dbenv->db_home;
+	if (env->dbenv->db_log_dir == NULL)
+		dir = env->db_home;
 	else {
-		if ((ret = __db_appname(dbenv, DB_APP_NONE,
-		    dbenv->db_log_dir, 0, NULL, &dir)) != 0)
+		if ((ret = __db_appname(env,
+		    DB_APP_NONE, env->dbenv->db_log_dir, NULL, &dir)) != 0)
 			goto out;
 		allocated_dir = dir;
 	}
 
-	if ((ret = __rep_remove_by_prefix(dbenv,
+	if ((ret = __rep_remove_by_prefix(env,
 	    dir, LFPREFIX, sizeof(LFPREFIX)-1, DB_APP_LOG)) != 0)
 		goto out;
 
@@ -2521,21 +3144,23 @@ __rep_reset_init(dbenv)
 	 * Remove databases according to the list, and queue extent files by
 	 * searching them out on a walk through the data_dir's.
 	 */
-	if ((ret = __rep_update_read(dbenv, dbt.data, &next, &rup)) != 0)
+	if ((ret = __rep_update_unmarshal(env, dbtvers,
+	    &rup, dbt.data, dbt.size, &next)) != 0)
 		goto out;
-	if ((ret = __rep_remove_by_list(dbenv, next, rup->num_files)) != 0)
+	if ((ret = __rep_unlink_by_list(env, dbtvers,
+	    next, dbt.size, rup->num_files)) != 0)
 		goto out;
 
 	/* Here, we've established that the file exists. */
-rm:	(void)__os_unlink(dbenv, init_name);
+rm:	(void)__os_unlink(env, init_name, 0);
 out:	if (rup != NULL)
-		__os_free(dbenv, rup);
+		__os_free(env, rup);
 	if (allocated_dir != NULL)
-		__os_free(dbenv, allocated_dir);
+		__os_free(env, allocated_dir);
 	if (dbt.data != NULL)
-		__os_free(dbenv, dbt.data);
+		__os_free(env, dbt.data);
 
-	__os_free(dbenv, init_name);
+	__os_free(env, init_name);
 	return (ret);
 }
 
@@ -2546,23 +3171,36 @@ out:	if (rup != NULL)
  * returned in allocated space, which becomes the responsibility of the caller.
  *
  * The file format is a u_int32_t buffer length, in native format, followed by
- * the file list itself, in the same format as in an UPDATE message (though many
- * parts of it in this case are meaningless).
+ * the file list itself, in the same format as in an UPDATE message (though
+ * many parts of it in this case are meaningless).
  */
 static int
-__rep_get_file_list(dbenv, fhp, dbt)
-	DB_ENV *dbenv;
+__rep_get_file_list(env, fhp, fvers, dbtvers, dbt)
+	ENV *env;
 	DB_FH *fhp;
+	u_int32_t fvers;
+	u_int32_t *dbtvers;
 	DBT *dbt;
 {
-	u_int32_t length;
+	u_int32_t length, mvers;
 	size_t cnt;
 	int i, ret;
 
 	/* At most 2 file lists: old and new. */
 	dbt->data = NULL;
+	mvers = DB_REPVERSION_46;
+	length = 0;
 	for (i = 1; i <= 2; i++) {
-		if ((ret = __os_read(dbenv,
+		if (fvers >= REP_INITVERSION_47) {
+			if ((ret = __os_read(env, fhp, &mvers,
+			    sizeof(mvers), &cnt)) != 0)
+				goto err;
+			if (cnt == 0 && dbt->data != NULL)
+				break;
+			if (cnt != sizeof(mvers))
+				goto err;
+		}
+		if ((ret = __os_read(env,
 		    fhp, &length, sizeof(length), &cnt)) != 0)
 			goto err;
 
@@ -2575,16 +3213,17 @@ __rep_get_file_list(dbenv, fhp, dbt)
 		if (cnt != sizeof(length))
 			goto err;
 
-		if ((ret = __os_realloc(dbenv,
+		if ((ret = __os_realloc(env,
 		    (size_t)length, &dbt->data)) != 0)
 			goto err;
 
 		if ((ret = __os_read(
-		    dbenv, fhp, dbt->data, length, &cnt)) != 0 ||
+		    env, fhp, dbt->data, length, &cnt)) != 0 ||
 		    cnt != (size_t)length)
 			goto err;
 	}
 
+	*dbtvers = mvers;
 	dbt->size = length;
 	return (0);
 
@@ -2595,7 +3234,7 @@ err:
 	 * caller that we don't have an intact list.
 	 */
 	if (dbt->data != NULL)
-		__os_free(dbenv, dbt->data);
+		__os_free(env, dbt->data);
 	dbt->data = NULL;
 	return (ret);
 }
@@ -2605,8 +3244,8 @@ err:
  * how similar this is to __rep_walk_dir.
  */
 static int
-__rep_remove_by_prefix(dbenv, dir, prefix, pref_len, appname)
-	DB_ENV *dbenv;
+__rep_remove_by_prefix(env, dir, prefix, pref_len, appname)
+	ENV *env;
 	const char *dir;
 	const char *prefix;
 	size_t pref_len;
@@ -2615,18 +3254,18 @@ __rep_remove_by_prefix(dbenv, dir, prefix, pref_len, appname)
 	char *namep, **names;
 	int cnt, i, ret;
 
-	if ((ret = __os_dirlist(dbenv, dir, &names, &cnt)) != 0)
+	if ((ret = __os_dirlist(env, dir, 0, &names, &cnt)) != 0)
 		return (ret);
 	for (i = 0; i < cnt; i++) {
 		if (strncmp(names[i], prefix, pref_len) == 0) {
-			if ((ret = __db_appname(dbenv,
-			    appname, names[i], 0, NULL, &namep)) != 0)
+			if ((ret = __db_appname(env,
+			    appname, names[i], NULL, &namep)) != 0)
 				goto out;
-			(void)__os_unlink(dbenv, namep);
-			__os_free(dbenv, namep);
+			(void)__os_unlink(env, namep, 0);
+			__os_free(env, namep);
 		}
 	}
-out:	__os_dirfree(dbenv, names, cnt);
+out:	__os_dirfree(env, names, cnt);
 	return (ret);
 }
 
@@ -2636,54 +3275,105 @@ out:	__os_dirfree(dbenv, names, cnt);
  * This function must support removal either during environment creation, or
  * when an internal init is reset in the middle.  This means it must work
  * regardless of whether underlying subsystems are initialized.  However, it may
- * assume that databases are not open.
+ * assume that databases are not open.  That means there is no REP!
  */
 static int
-__rep_remove_by_list(dbenv, filelist, count)
-	DB_ENV *dbenv;
-	void *filelist;
+__rep_unlink_by_list(env, version, filelist, filesz, count)
+	ENV *env;
+	u_int32_t version;
+	u_int8_t *filelist;
+	u_int32_t filesz;
 	u_int32_t count;
 {
-	__rep_fileinfo_args *file_argsp;
+	DB_ENV *dbenv;
+	__rep_fileinfo_args *rfp;
 	char **ddir, *dir, *namep;
+	u_int8_t *new_fp;
 	int ret;
 
+	dbenv = env->dbenv;
 	ret = 0;
-	file_argsp = NULL;
+	rfp = NULL;
 	while (count-- > 0) {
-		if ((ret = __rep_fileinfo_read(dbenv,
-		    filelist, &filelist, &file_argsp)) != 0)
+		if ((ret = __rep_fileinfo_unmarshal(env, version,
+		    &rfp, filelist, filesz, &new_fp)) != 0)
 			goto out;
-		if ((ret = __db_appname(dbenv,
-		    DB_APP_DATA, file_argsp->info.data, 0, NULL, &namep)) != 0)
+		filesz -= (u_int32_t)(new_fp - filelist);
+		filelist = new_fp;
+
+		if ((ret = __db_appname(env,
+		    DB_APP_DATA, rfp->info.data, NULL, &namep)) != 0)
 			goto out;
-		(void)__os_unlink(dbenv, namep);
-		__os_free(dbenv, namep);
-		__os_free(dbenv, file_argsp);
-		file_argsp = NULL;
+		(void)__os_unlink(env, namep, 0);
+		__os_free(env, namep);
+		__os_free(env, rfp);
+		rfp = NULL;
 	}
 
 	/* Notice how similar this code is to __rep_find_dbs. */
 	if (dbenv->db_data_dir == NULL)
-		ret = __rep_remove_by_prefix(dbenv, dbenv->db_home,
+		ret = __rep_remove_by_prefix(env, env->db_home,
 		    QUEUE_EXTENT_PREFIX, sizeof(QUEUE_EXTENT_PREFIX) - 1,
 		    DB_APP_DATA);
 	else {
 		for (ddir = dbenv->db_data_dir; *ddir != NULL; ++ddir) {
-			if ((ret = __db_appname(dbenv, DB_APP_NONE,
-			    *ddir, 0, NULL, &dir)) != 0)
+			if ((ret = __db_appname(env,
+			    DB_APP_NONE, *ddir, NULL, &dir)) != 0)
 				break;
-			ret = __rep_remove_by_prefix(dbenv, dir,
+			ret = __rep_remove_by_prefix(env, dir,
 			    QUEUE_EXTENT_PREFIX, sizeof(QUEUE_EXTENT_PREFIX)-1,
 			    DB_APP_DATA);
-			__os_free(dbenv, dir);
+			__os_free(env, dir);
 			if (ret != 0)
 				break;
 		}
 	}
 
 out:
-	if (file_argsp != NULL)
-		__os_free(dbenv, file_argsp);
+	if (rfp != NULL)
+		__os_free(env, rfp);
+	return (ret);
+}
+
+static int
+__rep_remove_by_list(env, version, filelist, filesz, count)
+	ENV *env;
+	u_int32_t version;
+	u_int8_t *filelist;
+	u_int32_t filesz;
+	u_int32_t count;
+{
+	__rep_fileinfo_args *rfp;
+	u_int8_t *new_fp;
+	int ret;
+
+	ret = 0;
+	rfp = NULL;
+	while (count-- > 0) {
+		if ((ret = __rep_fileinfo_unmarshal(env, version,
+		    &rfp, filelist, filesz, &new_fp)) != 0)
+			break;
+		filesz -= (u_int32_t)(new_fp - filelist);
+		filelist = new_fp;
+
+		if ((ret = __rep_remove_file(env, rfp->uid.data,
+		    rfp->info.data, rfp->type, rfp->db_flags)) != 0) {
+			/*
+			 * If the file already doesn't exist, that's perfectly
+			 * OK.  This can easily happen if we're cleaning up an
+			 * interrupted internal init, and we only got part-way
+			 * through the list of files.
+			 */
+			if (ret == ENOENT)
+				ret = 0;
+			else
+				break;
+		}
+		__os_free(env, rfp);
+		rfp = NULL;
+	}
+
+	if (rfp != NULL)
+		__os_free(env, rfp);
 	return (ret);
 }

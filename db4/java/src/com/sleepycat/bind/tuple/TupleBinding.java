@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: TupleBinding.java,v 12.7 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.tuple;
@@ -28,7 +28,7 @@ import com.sleepycat.db.DatabaseEntry;
  * </ul>
  *
  * <p>For key or data entries which are Java primitive classes (String,
- * Integer, etc) {@link #getPrimitiveBinding} may be used to return a builtin
+ * Integer, etc) {@link #getPrimitiveBinding} may be used to return a built in
  * tuple binding.  A custom tuple binding for these types is not needed.
  * <em>Note:</em> {@link #getPrimitiveBinding} returns bindings that do not
  * sort negative floating point numbers correctly by default.  See {@link
@@ -40,9 +40,12 @@ import com.sleepycat.db.DatabaseEntry;
  *
  * @author Mark Hayes
  */
-public abstract class TupleBinding extends TupleBase implements EntryBinding {
+public abstract class TupleBinding<E>
+    extends TupleBase<E>
+    implements EntryBinding<E> {
 
-    private static final Map primitives = new HashMap();
+    private static final Map<Class,TupleBinding> primitives =
+        new HashMap<Class,TupleBinding>();
     static {
         addPrimitive(String.class, String.class, new StringBinding());
         addPrimitive(Character.class, Character.TYPE, new CharacterBinding());
@@ -68,13 +71,13 @@ public abstract class TupleBinding extends TupleBase implements EntryBinding {
     }
 
     // javadoc is inherited
-    public Object entryToObject(DatabaseEntry entry) {
+    public E entryToObject(DatabaseEntry entry) {
 
         return entryToObject(entryToInput(entry));
     }
 
     // javadoc is inherited
-    public void objectToEntry(Object object, DatabaseEntry entry) {
+    public void objectToEntry(E object, DatabaseEntry entry) {
 
         TupleOutput output = getTupleOutput(object);
         objectToEntry(object, output);
@@ -88,7 +91,7 @@ public abstract class TupleBinding extends TupleBase implements EntryBinding {
      *
      * @return the key or data object constructed from the entry.
      */
-    public abstract Object entryToObject(TupleInput input);
+    public abstract E entryToObject(TupleInput input);
 
     /**
      * Converts a key or data object to a tuple entry.
@@ -98,7 +101,7 @@ public abstract class TupleBinding extends TupleBase implements EntryBinding {
      * @param output is the tuple entry to which the key or data should be
      * written.
      */
-    public abstract void objectToEntry(Object object, TupleOutput output);
+    public abstract void objectToEntry(E object, TupleOutput output);
 
     /**
      * Creates a tuple binding for a primitive Java class.  The following
@@ -125,8 +128,8 @@ public abstract class TupleBinding extends TupleBase implements EntryBinding {
      * @return a new binding for the primitive class or null if the cls
      * parameter is not one of the supported classes.
      */
-    public static TupleBinding getPrimitiveBinding(Class cls) {
+    public static <T> TupleBinding<T> getPrimitiveBinding(Class<T> cls) {
 
-        return (TupleBinding) primitives.get(cls);
+        return primitives.get(cls);
     }
 }

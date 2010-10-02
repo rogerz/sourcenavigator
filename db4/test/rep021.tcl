@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2001,2007 Oracle.  All rights reserved.
+# Copyright (c) 2001-2009 Oracle.  All rights reserved.
 #
-# $Id: rep021.tcl,v 12.13 2007/05/17 18:17:21 bostic Exp $
+# $Id$
 #
 # TEST	rep021
 # TEST	Replication and multiple environments.
@@ -16,6 +16,8 @@
 proc rep021 { method { nclients 3 } { tnum "021" } args } {
 
 	source ./include.tcl
+	global repfiles_in_memory
+
 	if { $is_windows9x_test == 1 } {
 		puts "Skipping replication test on Win 9x platform."
 		return
@@ -24,6 +26,27 @@ proc rep021 { method { nclients 3 } { tnum "021" } args } {
 	# Run for all access methods.
 	if { $checking_valid_methods } {
 		return "ALL"
+	}
+
+	# This test depends on copying logs, so can't be run with
+	# in-memory logging.
+	global mixed_mode_logging
+	if { $mixed_mode_logging > 0 } {
+		puts "Rep$tnum: Skipping for mixed-mode logging."
+		return
+	}
+
+	# This test closes its envs, so it's not appropriate for 
+	# testing of in-memory named databases.
+	global databases_in_memory
+	if { $databases_in_memory } { 
+		puts "Rep$tnum: Skipping for in-memory databases."
+		return
+	}
+
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
 	}
 
 	set args [convert_args $method $args]
@@ -38,8 +61,8 @@ proc rep021 { method { nclients 3 } { tnum "021" } args } {
 				    for in-memory logs with -recover."
 				continue
 			}
-			puts "Rep$tnum ($method $r):\
-			    Replication and $nclients recovered clients in sync."
+			puts "Rep$tnum ($method $r): Replication\
+			    and $nclients recovered clients in sync $msg2."
 			puts "Rep$tnum: Master logs are [lindex $l 0]"
 			for { set i 0 } { $i < $nclients } { incr i } {
 				puts "Rep$tnum: Client $i logs are\
@@ -53,11 +76,18 @@ proc rep021 { method { nclients 3 } { tnum "021" } args } {
 proc rep021_sub { method nclients tnum logset recargs largs } {
 	global testdir
 	global util_path
+	global repfiles_in_memory
 	global rep_verbose
+	global verbose_type
 
 	set verbargs ""
 	if { $rep_verbose == 1 } {
-		set verbargs " -verbose {rep on} "
+		set verbargs " -verbose {$verbose_type on} "
+	}
+
+	set repmemargs ""
+	if { $repfiles_in_memory } {
+		set repmemargs "-rep_inmem_files "
 	}
 
 	set orig_tdir $testdir
@@ -110,13 +140,13 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	# to sync up that client.  We should get a failure with
 	# one of the non-matching error messages:
 	#	"Too few log files to sync with master"
-	#	 "Client was never part of master's environment"
+	#	 REP_JOIN_FAILURE
 
 	# Open a 2nd master.  Make all the 2nd env ids >= 10.
 	# For the 2nd group, just have 1 master and 1 client.
 	repladd 10
 	set ma2_envcmd "berkdb_env_noerr -create $m_txnargs $verbargs \
-	    $m_logargs -home $masterdir2 \
+	    $m_logargs -home $masterdir2 $repmemargs \
 	    -rep_master -rep_transport \[list 10 replsend\]"
 	set menv2 [eval $ma2_envcmd $recargs]
 
@@ -130,7 +160,7 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	set id2 11
 	repladd $id2
 	set cl2_envcmd "berkdb_env_noerr -create $c_txnargs($id2) $verbargs \
-	    $c_logargs($id2) -home $clientdir2 \
+	    $c_logargs($id2) -home $clientdir2 $repmemargs \
 	    -rep_client -rep_transport \[list $id2 replsend\]"
 	set clenv2 [eval $cl2_envcmd $recargs]
 
@@ -161,9 +191,9 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	set e2phase3 [expr $e2phase2 + $niter + $offset]
 
 	puts "\tRep$tnum.a: Running rep_test in 2nd replicated env."
-	eval rep_test $method $menv2 $masterdb2 $niter $e2phase1 1 1 0 $largs
-	eval rep_test $method $menv2 $masterdb2 $niter $e2phase2 1 1 0 $largs
-	eval rep_test $method $menv2 $masterdb2 $niter $e2phase3 1 1 0 $largs
+	eval rep_test $method $menv2 $masterdb2 $niter $e2phase1 1 1 $largs
+	eval rep_test $method $menv2 $masterdb2 $niter $e2phase2 1 1 $largs
+	eval rep_test $method $menv2 $masterdb2 $niter $e2phase3 1 1 $largs
 	error_check_good mdb_cl [$masterdb2 close] 0
 	process_msgs $env2list
 
@@ -188,7 +218,7 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	# Open a master.
 	repladd 1
 	set ma_envcmd "berkdb_env_noerr -create $m_txnargs $verbargs \
-	    $m_logargs -home $masterdir \
+	    $m_logargs -home $masterdir $repmemargs \
 	    -rep_master -rep_transport \[list 1 replsend\]"
 	set menv [eval $ma_envcmd $recargs]
 
@@ -201,7 +231,7 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 		set id($i) [expr 2 + $i]
 		repladd $id($i)
 		set cl_envcmd($i) "berkdb_env_noerr -create $c_txnargs($i) \
-		    $c_logargs($i) -home $clientdir($i) \
+		    $c_logargs($i) -home $clientdir($i) $repmemargs \
 		    $verbargs \
 		    -rep_client -rep_transport \[list $id($i) replsend\]"
 		set clenv($i) [eval $cl_envcmd($i) $recargs]
@@ -221,9 +251,9 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 
 	# Run a modified test001 in the master (and update clients).
 	puts "\tRep$tnum.c: Running rep_test in primary replicated env."
-	eval rep_test $method $menv $masterdb $niter $e1phase1 1 1 0 $largs
-	eval rep_test $method $menv $masterdb $niter $e1phase2 1 1 0 $largs
-	eval rep_test $method $menv $masterdb $niter $e1phase3 1 1 0 $largs
+	eval rep_test $method $menv $masterdb $niter $e1phase1 1 1 $largs
+	eval rep_test $method $menv $masterdb $niter $e1phase2 1 1 $largs
+	eval rep_test $method $menv $masterdb $niter $e1phase3 1 1 $largs
 	error_check_good mdb_cl [$masterdb close] 0
 	# Process any close messages.
 	process_msgs $envlist
@@ -237,9 +267,15 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	set id($i) [expr 2 + $i]
 	repladd $id($i)
 	set cl_envcmd($i) "berkdb_env_noerr -create -txn nosync \
-	    -home $clientdir($i) $verbargs \
+	    -home $clientdir($i) $verbargs $repmemargs \
 	    -rep_client -rep_transport \[list $id($i) replsend\]"
 	set clenv($i) [eval $cl_envcmd($i) $recargs]
+	#
+	# We'll only catch an error if we turn on no-autoinit.
+	# Otherwise, the system will throw away everything on the
+	# client and resync.
+	#
+	$clenv($i) rep_config {noautoinit on}
 
 	lappend envlist "$clenv($i) $id($i)"
 
@@ -271,7 +307,7 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 		    [filecmp $clientdir($i)/prlog.orig $clientdir($i)/prlog] 0
 		puts "\tRep$tnum.g: Verify client error."
 		error_check_good errchk [is_substr $err \
-		    "Client was never part"] 1
+		    "REP_JOIN_FAILURE"] 1
 	} else {
 		puts "\tRep$tnum.f: Verify client log doesn't match original."
 		error_check_good log_cmp(orig,$i) \
@@ -291,5 +327,4 @@ proc rep021_sub { method nclients tnum logset recargs largs } {
 	set testdir $orig_tdir
 	return
 }
-
 

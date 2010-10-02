@@ -1,7 +1,7 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1996,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1996-2009 Oracle.  All rights reserved.
  */
 /*
  * Copyright (c) 1990, 1993, 1994, 1995, 1996
@@ -38,7 +38,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: bt_delete.c,v 12.25 2007/05/17 15:14:46 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -72,7 +72,7 @@ __bam_ditem(dbc, h, indx)
 	inp = P_INP(dbp, h);
 
 	/* The page should already have been dirtied by our caller. */
-	DB_ASSERT(dbp->dbenv, IS_DIRTY(h));
+	DB_ASSERT(dbp->env, IS_DIRTY(h));
 
 	switch (TYPE(h)) {
 	case P_IBTREE:
@@ -89,7 +89,7 @@ __bam_ditem(dbc, h, indx)
 				return (ret);
 			break;
 		default:
-			return (__db_pgfmt(dbp->dbenv, PGNO(h)));
+			return (__db_pgfmt(dbp->env, PGNO(h)));
 		}
 		break;
 	case P_IRECNO:
@@ -143,11 +143,11 @@ __bam_ditem(dbc, h, indx)
 			nbytes = BKEYDATA_SIZE(bk->len);
 			break;
 		default:
-			return (__db_pgfmt(dbp->dbenv, PGNO(h)));
+			return (__db_pgfmt(dbp->env, PGNO(h)));
 		}
 		break;
 	default:
-		return (__db_pgfmt(dbp->dbenv, PGNO(h)));
+		return (__db_pgfmt(dbp->env, PGNO(h)));
 	}
 
 	/* Delete the item and mark the page dirty. */
@@ -210,10 +210,10 @@ __bam_adjindx(dbc, h, indx, indx_copy, is_insert)
  * PUBLIC: int __bam_dpages __P((DBC *, int, int));
  */
 int
-__bam_dpages(dbc, use_top, update)
+__bam_dpages(dbc, use_top, flags)
 	DBC *dbc;
 	int use_top;
-	int update;
+	int flags;
 {
 	BINTERNAL *bi;
 	BTREE_CURSOR *cp;
@@ -261,8 +261,8 @@ __bam_dpages(dbc, use_top, update)
 	 * It will deadlock here.  Before we unlink the subtree, we relink the
 	 * leaf page chain.
 	 */
-	if (LEVEL(cp->csp->page) == 1 &&
-	    (ret = __bam_relink(dbc, cp->csp->page, PGNO_INVALID)) != 0)
+	if (LF_ISSET(BTD_RELINK) && LEVEL(cp->csp->page) == 1 &&
+	    (ret = __bam_relink(dbc, cp->csp->page, NULL, PGNO_INVALID)) != 0)
 		goto discard;
 
 	/*
@@ -274,14 +274,14 @@ __bam_dpages(dbc, use_top, update)
 	 * immediately.
 	 */
 	if ((ret = __memp_dirty(mpf,
-	    &epg->page, dbc->txn, dbc->priority, 0)) != 0)
+	    &epg->page, dbc->thread_info, dbc->txn, dbc->priority, 0)) != 0)
 		goto discard;
 	if ((ret = __bam_ditem(dbc, epg->page, epg->indx)) != 0)
 		goto discard;
 	if ((ret = __bam_ca_di(dbc, PGNO(epg->page), epg->indx, -1)) != 0)
 		goto discard;
 
-	if (update && epg->indx == 0) {
+	if (LF_ISSET(BTD_UPDATE) && epg->indx == 0) {
 		save_sp = cp->csp;
 		cp->csp = epg;
 		ret = __bam_pupdate(dbc, epg->page);
@@ -293,7 +293,8 @@ __bam_dpages(dbc, use_top, update)
 	pgno = PGNO(epg->page);
 	nitems = NUM_ENT(epg->page);
 
-	ret = __memp_fput(mpf, epg->page, dbc->priority);
+	ret = __memp_fput(mpf, dbc->thread_info, epg->page, dbc->priority);
+	epg->page = NULL;
 	if ((t_ret = __TLPUT(dbc, epg->lock)) != 0 && ret == 0)
 		ret = t_ret;
 	if (ret != 0)
@@ -301,7 +302,7 @@ __bam_dpages(dbc, use_top, update)
 
 	/* Then, discard any pages that we don't care about. */
 discard: for (epg = cp->sp; epg < stack_epg; ++epg) {
-		if ((t_ret = __memp_fput(mpf,
+		if ((t_ret = __memp_fput(mpf, dbc->thread_info,
 		     epg->page, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 		epg->page = NULL;
@@ -313,8 +314,8 @@ discard: for (epg = cp->sp; epg < stack_epg; ++epg) {
 
 	/* Free the rest of the pages in the stack. */
 	while (++epg <= cp->csp) {
-		if ((ret = __memp_dirty(mpf,
-		    &epg->page, dbc->txn, dbc->priority, 0)) != 0)
+		if ((ret = __memp_dirty(mpf, &epg->page,
+		    dbc->thread_info, dbc->txn, dbc->priority, 0)) != 0)
 			goto err;
 		/*
 		 * Delete page entries so they will be restored as part of
@@ -323,7 +324,7 @@ discard: for (epg = cp->sp; epg < stack_epg; ++epg) {
 		 * be referenced by a cursor.
 		 */
 		if (NUM_ENT(epg->page) != 0) {
-			DB_ASSERT(dbp->dbenv, LEVEL(epg->page) != 1);
+			DB_ASSERT(dbp->env, LEVEL(epg->page) != 1);
 
 			if ((ret = __bam_ditem(dbc, epg->page, epg->indx)) != 0)
 				goto err;
@@ -351,9 +352,11 @@ discard: for (epg = cp->sp; epg < stack_epg; ++epg) {
 	if (0) {
 err_inc:	++epg;
 err:		for (; epg <= cp->csp; ++epg) {
-			if (epg->page != NULL)
-				(void)__memp_fput(mpf,
+			if (epg->page != NULL) {
+				(void)__memp_fput(mpf, dbc->thread_info,
 				     epg->page, dbc->priority);
+				epg->page = NULL;
+			}
 			(void)__TLPUT(dbc, epg->lock);
 		}
 		BT_STK_CLR(cp);
@@ -382,7 +385,7 @@ err:		for (; epg <= cp->csp; ++epg) {
 		if ((ret =
 		    __db_lget(dbc, 0, pgno, DB_LOCK_WRITE, 0, &p_lock)) != 0)
 			goto stop;
-		if ((ret = __memp_fget(mpf, &pgno, dbc->txn,
+		if ((ret = __memp_fget(mpf, &pgno, dbc->thread_info, dbc->txn,
 		    DB_MPOOL_DIRTY, &parent)) != 0)
 			goto stop;
 
@@ -413,7 +416,7 @@ err:		for (; epg <= cp->csp; ++epg) {
 		if ((ret =
 		    __db_lget(dbc, 0, pgno, DB_LOCK_WRITE, 0, &c_lock)) != 0)
 			goto stop;
-		if ((ret = __memp_fget(mpf, &pgno, dbc->txn,
+		if ((ret = __memp_fget(mpf, &pgno, dbc->thread_info, dbc->txn,
 		    DB_MPOOL_DIRTY, &child)) != 0)
 			goto stop;
 
@@ -473,13 +476,13 @@ stop:			done = 1;
 		if ((t_ret = __TLPUT(dbc, p_lock)) != 0 && ret == 0)
 			ret = t_ret;
 		if (parent != NULL &&
-		    (t_ret = __memp_fput(mpf,
+		    (t_ret = __memp_fput(mpf, dbc->thread_info,
 		    parent, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 		if ((t_ret = __TLPUT(dbc, c_lock)) != 0 && ret == 0)
 			ret = t_ret;
 		if (child != NULL &&
-		    (t_ret = __memp_fput(mpf,
+		    (t_ret = __memp_fput(mpf, dbc->thread_info,
 		    child, dbc->priority)) != 0 && ret == 0)
 			ret = t_ret;
 	}
@@ -491,19 +494,21 @@ stop:			done = 1;
  * __bam_relink --
  *	Relink around a deleted page.
  *
- * PUBLIC: int __bam_relink __P((DBC *, PAGE *, db_pgno_t));
+ * PUBLIC: int __bam_relink __P((DBC *, PAGE *, PAGE *, db_pgno_t));
+ *	Otherp can be either the previous or the next page to use if
+ * the caller already holds that page.
  */
 int
-__bam_relink(dbc, pagep, new_pgno)
+__bam_relink(dbc, pagep, otherp, new_pgno)
 	DBC *dbc;
-	PAGE *pagep;
+	PAGE *pagep, *otherp;
 	db_pgno_t new_pgno;
 {
 	DB *dbp;
-	PAGE *np, *pp;
 	DB_LOCK npl, ppl;
 	DB_LSN *nlsnp, *plsnp, ret_lsn;
 	DB_MPOOLFILE *mpf;
+	PAGE *np, *pp;
 	int ret, t_ret;
 
 	dbp = dbc->dbp;
@@ -515,27 +520,26 @@ __bam_relink(dbc, pagep, new_pgno)
 	ret = 0;
 
 	/*
-	 * Retrieve and lock the one/two pages.  For a remove, we may need
+	 * Retrieve the one/two pages.  The caller must have them locked
+	 * because the parent is latched. For a remove, we may need
 	 * two pages (the before and after).  For an add, we only need one
 	 * because, the split took care of the prev.
 	 */
 	if (pagep->next_pgno != PGNO_INVALID) {
-		if ((ret = __db_lget(dbc,
-		    0, pagep->next_pgno, DB_LOCK_WRITE, 0, &npl)) != 0)
-			goto err;
-		if ((ret = __memp_fget(mpf, &pagep->next_pgno, dbc->txn,
-		    DB_MPOOL_DIRTY, &np)) != 0) {
+		if (((np = otherp) == NULL ||
+		    PGNO(otherp) != pagep->next_pgno) &&
+		    (ret = __memp_fget(mpf, &pagep->next_pgno,
+		    dbc->thread_info, dbc->txn, DB_MPOOL_DIRTY, &np)) != 0) {
 			ret = __db_pgerr(dbp, pagep->next_pgno, ret);
 			goto err;
 		}
 		nlsnp = &np->lsn;
 	}
 	if (pagep->prev_pgno != PGNO_INVALID) {
-		if ((ret = __db_lget(dbc,
-		    0, pagep->prev_pgno, DB_LOCK_WRITE, 0, &ppl)) != 0)
-			goto err;
-		if ((ret = __memp_fget(mpf, &pagep->prev_pgno,
-		    dbc->txn, DB_MPOOL_DIRTY, &pp)) != 0) {
+		if (((pp = otherp) == NULL ||
+		    PGNO(otherp) != pagep->prev_pgno) &&
+		    (ret = __memp_fget(mpf, &pagep->prev_pgno,
+		    dbc->thread_info, dbc->txn, DB_MPOOL_DIRTY, &pp)) != 0) {
 			ret = __db_pgerr(dbp, pagep->prev_pgno, ret);
 			goto err;
 		}
@@ -563,7 +567,9 @@ __bam_relink(dbc, pagep, new_pgno)
 			np->prev_pgno = pagep->prev_pgno;
 		else
 			np->prev_pgno = new_pgno;
-		ret = __memp_fput(mpf, np, dbc->priority);
+		if (np != otherp)
+			ret = __memp_fput(mpf,
+			    dbc->thread_info, np, dbc->priority);
 		if ((t_ret = __TLPUT(dbc, npl)) != 0 && ret == 0)
 			ret = t_ret;
 		if (ret != 0)
@@ -575,7 +581,9 @@ __bam_relink(dbc, pagep, new_pgno)
 			pp->next_pgno = pagep->next_pgno;
 		else
 			pp->next_pgno = new_pgno;
-		ret = __memp_fput(mpf, pp, dbc->priority);
+		if (pp != otherp)
+			ret = __memp_fput(mpf,
+			    dbc->thread_info, pp, dbc->priority);
 		if ((t_ret = __TLPUT(dbc, ppl)) != 0 && ret == 0)
 			ret = t_ret;
 		if (ret != 0)
@@ -583,12 +591,10 @@ __bam_relink(dbc, pagep, new_pgno)
 	}
 	return (0);
 
-err:	if (np != NULL)
-		(void)__memp_fput(mpf, np, dbc->priority);
-	(void)__TLPUT(dbc, npl);
-	if (pp != NULL)
-		(void)__memp_fput(mpf, pp, dbc->priority);
-	(void)__TLPUT(dbc, ppl);
+err:	if (np != NULL && np != otherp)
+		(void)__memp_fput(mpf, dbc->thread_info, np, dbc->priority);
+	if (pp != NULL && pp != otherp)
+		(void)__memp_fput(mpf, dbc->thread_info, pp, dbc->priority);
 	return (ret);
 }
 
@@ -604,11 +610,11 @@ __bam_pupdate(dbc, lpg)
 	PAGE *lpg;
 {
 	BTREE_CURSOR *cp;
-	DB_ENV *dbenv;
+	ENV *env;
 	EPG *epg;
 	int ret;
 
-	dbenv = dbc->dbp->dbenv;
+	env = dbc->env;
 	cp = (BTREE_CURSOR *)dbc->internal;
 	ret = 0;
 
@@ -619,23 +625,23 @@ __bam_pupdate(dbc, lpg)
 	 * pinsert is better.
 	 */
 	for (epg = &cp->csp[-1]; epg >= cp->sp; epg--) {
-		if ((ret = __memp_dirty(dbc->dbp->mpf,
-		    &epg->page, dbc->txn, dbc->priority, 0)) != 0)
-			return (ret);
-		if ((ret = __bam_ditem(dbc, epg->page, epg->indx)) != 0)
+		if ((ret = __memp_dirty(dbc->dbp->mpf, &epg->page,
+		    dbc->thread_info, dbc->txn, dbc->priority, 0)) != 0)
 			return (ret);
 		epg->indx--;
 		if ((ret = __bam_pinsert(dbc, epg, 0,
-		    lpg, epg[1].page, BPI_NORECNUM)) != 0) {
+		    lpg, epg[1].page, BPI_NORECNUM | BPI_REPLACE)) != 0) {
 			if (ret == DB_NEEDSPLIT) {
 				/* This should not happen. */
-				__db_errx(dbenv,
+				__db_errx(env,
 				     "Not enough room in parent: %s: page %lu",
 				     dbc->dbp->fname, (u_long)PGNO(epg->page));
-				ret = __db_panic(dbenv, EINVAL);
+				ret = __env_panic(env, EINVAL);
 			}
+			epg->indx++;
 			return (ret);
 		}
+		epg->indx++;
 	}
 	return (ret);
 }

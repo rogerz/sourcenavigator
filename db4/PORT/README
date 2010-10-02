@@ -1,0 +1,19 @@
+This is a stripped down version of the dist/ directory, meant to automatically
+build db4 under SN.
+
+We need the following files:
+
+Makefile.in
+config.guess
+config.hin
+config.status
+config.sub
+configure
+install-sh
+ltmain.sh
+
+Then adjust Makefile.in "install:" target to 
+
+install: all
+
+Finally remove all examples and docs subdirectories.

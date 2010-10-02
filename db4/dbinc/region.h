@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1998,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1998-2009 Oracle.  All rights reserved.
  *
- * $Id: region.h,v 12.14 2007/05/17 15:15:05 bostic Exp $
+ * $Id$
  */
 
 #ifndef _DB_REGION_H_
@@ -115,7 +115,6 @@ extern "C" {
 #define	DB_REGION_PREFIX	"__db"		/* DB file name prefix. */
 #define	DB_REGION_FMT		"__db.%03d"	/* Region file name format. */
 #define	DB_REGION_ENV		"__db.001"	/* Primary environment name. */
-#define	DB_REGION_NAME_LENGTH	8		/* Length of file names. */
 
 #define	INVALID_REGION_ID	0	/* Out-of-band region ID. */
 #define	REGION_ID_ENV		1	/* Primary environment ID. */
@@ -151,10 +150,10 @@ typedef struct __db_reg_env_ref {
 typedef struct __db_reg_env {
 	/*
 	 * !!!
-	 * The magic, panic, version and envid fields of the region are fixed
-	 * in size, the timestamp field is the first field which is variable
-	 * length.  These fields must never change in order, to guarantee we
-	 * can always read them, no matter what Berkeley DB release we have.
+	 * The magic, panic, version, envid and signature fields of the region
+	 * are fixed in size, the timestamp field is the first field which is
+	 * variable length.  These fields must never change in order, to
+	 * guarantee we can always read them, no matter what release we have.
 	 *
 	 * !!!
 	 * The magic and panic fields are NOT protected by any mutex, and for
@@ -168,6 +167,8 @@ typedef struct __db_reg_env {
 	u_int32_t patchver;		/* Patch DB version number. */
 
 	u_int32_t envid;		/* Unique environment ID. */
+
+	u_int32_t signature;		/* Structure signatures. */
 
 	time_t	  timestamp;		/* Creation time. */
 
@@ -201,7 +202,7 @@ typedef struct __db_reg_env {
 #define	DB_REGENV_TIMEOUT	30	/* Backup timeout. */
 	time_t	  op_timestamp;		/* Timestamp for operations. */
 	time_t	  rep_timestamp;	/* Timestamp for rep db handles. */
-
+	u_int32_t reg_panic;		/* DB_REGISTER triggered panic */
 	uintmax_t unused;		/* The ALLOC_LAYOUT structure follows
 					 * the REGENV structure in memory and
 					 * contains uintmax_t fields.  Force
@@ -214,8 +215,7 @@ typedef struct __db_region {
 	u_int32_t	id;		/* Region id. */
 	reg_type_t	type;		/* Region type. */
 
-	roff_t	size_orig;		/* Region size in bytes (original). */
-	roff_t	size;			/* Region size in bytes (adjusted). */
+	roff_t	size;			/* Region size in bytes. */
 
 	roff_t	primary;		/* Primary data structure offset. */
 
@@ -226,7 +226,7 @@ typedef struct __db_region {
  * Per-process/per-attachment information about a single region.
  */
 struct __db_reginfo_t {		/* __env_region_attach IN parameters. */
-	DB_ENV	   *dbenv;		/* Enclosing environment. */
+	ENV	   *env;		/* Enclosing environment. */
 	reg_type_t  type;		/* Region type. */
 	u_int32_t   id;			/* Region id. */
 
@@ -235,12 +235,13 @@ struct __db_reginfo_t {		/* __env_region_attach IN parameters. */
 
 	char	   *name;		/* Region file name. */
 
-	void	   *addr_orig;		/* Region address (original). */
-	void	   *addr;		/* Region address (adjusted). */
+	void	   *addr;		/* Region address. */
 	void	   *primary;		/* Primary data structure address. */
 
 	size_t	    max_alloc;		/* Maximum bytes allocated. */
 	size_t	    allocated;		/* Bytes allocated. */
+
+	db_mutex_t  mtx_alloc;		/* number of mutex for allocation. */
 
 #ifdef DB_WIN32
 	HANDLE	wnt_handle;		/* Win/NT HANDLE. */
@@ -257,24 +258,26 @@ struct __db_reginfo_t {		/* __env_region_attach IN parameters. */
  * R_OFFSET	Return a shared region offset for a per-process address.
  */
 #define	R_ADDR(reginfop, offset)					\
-	(F_ISSET((reginfop)->dbenv, DB_ENV_PRIVATE) ? (void *)(offset) :\
-	(void *)((u_int8_t *)((reginfop)->addr) + (offset)))
+	(F_ISSET((reginfop)->env, ENV_PRIVATE) ?			\
+	    (void *)(offset) :						\
+	    (void *)((u_int8_t *)((reginfop)->addr) + (offset)))
 #define	R_OFFSET(reginfop, p)						\
-	(F_ISSET((reginfop)->dbenv, DB_ENV_PRIVATE) ? (roff_t)(p) :	\
-	(roff_t)((u_int8_t *)(p) - (u_int8_t *)(reginfop)->addr))
+	(F_ISSET((reginfop)->env, ENV_PRIVATE) ?			\
+	    (roff_t)(p) :						\
+	    (roff_t)((u_int8_t *)(p) - (u_int8_t *)(reginfop)->addr))
 
 /*
  * PANIC_ISSET, PANIC_CHECK:
  *	Check to see if the DB environment is dead.
  */
-#define	PANIC_ISSET(dbenv)						\
-	((dbenv)->reginfo != NULL && ((REGENV *)			\
-	    ((REGINFO *)(dbenv)->reginfo)->primary)->panic != 0 &&	\
-	    !F_ISSET((dbenv), DB_ENV_NOPANIC))
+#define	PANIC_ISSET(env)						\
+	((env) != NULL && (env)->reginfo != NULL &&			\
+	    ((REGENV *)(env)->reginfo->primary)->panic != 0 &&		\
+	    !F_ISSET((env)->dbenv, DB_ENV_NOPANIC))
 
-#define	PANIC_CHECK(dbenv)						\
-	if (PANIC_ISSET(dbenv))						\
-		return (__db_panic_msg(dbenv));
+#define	PANIC_CHECK(env)						\
+	if (PANIC_ISSET(env))						\
+		return (__env_panic_msg(env));
 
 #if defined(__cplusplus)
 }

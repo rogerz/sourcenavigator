@@ -1,5 +1,5 @@
 @echo off
-::	$Id: winbuild.bat,v 1.6 2005/12/01 03:04:21 bostic Exp $
+::	$Id$
 ::	Helper script to build Berkeley DB libraries and executables
 ::	using MSDEV
 ::
@@ -8,6 +8,8 @@ cd build_windows
 
 :: One of these calls should find the desired batch file
 
+call :TryBat "c:\Program Files\Microsoft Visual Studio 8\Common7\Tools\vsvars32.bat" && goto BATFOUND0
+
 call :TryBat "c:\Program Files\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat" && goto BATFOUND1
 
 call :TryBat "c:\Program Files\Microsoft Visual Studio .NET\Common7\Tools\vsvars32.bat" && goto BATFOUND2
@@ -15,6 +17,10 @@ call :TryBat "c:\Program Files\Microsoft Visual Studio .NET\Common7\Tools\vsvars
 call :TryBat "c:\Program Files\Microsoft Visual Studio.NET\Common7\Tools\vsvars32.bat" && goto BATFOUND3
 
 goto BATNOTFOUND
+
+:BATFOUND0
+echo Using Visual Studio 2005
+goto BATFOUND
 
 :BATFOUND1
 echo Using Visual Studio .NET 2003
@@ -31,50 +37,28 @@ echo *********** CHECK: Make sure the binaries are built with the same system li
 goto BATFOUND
 
 :BATFOUND
-:CONVERSION
-start /wait devenv /useenv Berkeley_DB.dsw
-
-:: For some reason, the command doesn't wait, at least on XP.
-:: So we ask for input to continue.
-
-
-echo.
-echo ============================================================
-echo.
-echo    Converting the Berkeley DB Workspace to a .NET Solution.
-echo    This will run the IDE to interactively convert.
-echo.
-echo    When prompted during the conversion, say: Yes-to-All.
-echo    When finished with the conversion, do a Save-All and Exit.
-echo    Then hit ENTER to continue this script.
-echo.
-echo ============================================================
-set result=y
-set /P result="Continue? [y] "
-if %result% == n goto NSTOP
-
-if exist Berkeley_DB.sln goto ENDCONVERSION
-echo ************* Berkeley_DB.sln was not created ***********
-echo Trying the conversion again...
-goto CONVERSION
-:ENDCONVERSION
 
 ::intenv is used to set environment variables but this isn't used anymore
 ::devenv /useenv /build Release /project instenv ..\instenv\instenv.sln >> ..\winbld.out 2>&1
 ::if not %errorlevel% == 0 goto ERROR
 
 echo Building Berkeley DB
-devenv /useenv /build Debug /project build_all Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Debug" Berkeley_DB.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
-devenv /useenv /build Release /project build_all Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Release" Berkeley_DB.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
-devenv /useenv /build Debug /project db_java Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Debug" /project db_java Berkeley_DB.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
-devenv /useenv /build Release /project db_java Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Release" /project db_java Berkeley_DB.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
-devenv /useenv /build Debug /project db_tcl Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Debug" /project db_tcl Berkeley_DB.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
-devenv /useenv /build Release /project db_tcl Berkeley_DB.sln >> ..\winbld.out 2>&1
+devenv /useenv /build "Release" /project db_tcl Berkeley_DB.sln >> ..\winbld.out 2>&1
+if not %errorlevel% == 0 goto ERROR
+echo Building Berkeley DB CSharp API
+devenv /useenv /build "Debug" BDB_dotNet.sln >> ..\winbld.out 2>&1
+if not %errorlevel% == 0 goto ERROR
+devenv /useenv /build "Release" BDB_dotNet.sln >> ..\winbld.out 2>&1
 if not %errorlevel% == 0 goto ERROR
 
 

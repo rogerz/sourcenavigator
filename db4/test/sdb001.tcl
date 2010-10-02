@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1999,2007 Oracle.  All rights reserved.
+# Copyright (c) 1999-2009 Oracle.  All rights reserved.
 #
-# $Id: sdb001.tcl,v 12.5 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # TEST	sdb001	Tests mixing db and subdb operations
 # TEST	Tests mixing db and subdb operations
@@ -101,8 +101,8 @@ proc sdb001 { method args } {
 	    {$omethod $testfile $subdb}} db]
 	error_check_bad dbopen $ret 0
 
-	if { [is_queue $method] == 1 } {
-		puts "Subdb001: skipping remainder of test for method $method"
+	if { [is_queue $method] == 1 || [is_partitioned $args]} {
+		puts "Subdb001: skipping remainder of test for method $method $args"
 		return
 	}
 

@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: TupleSerialKeyCreator.java,v 12.6 2007/05/04 00:28:24 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.serial;
@@ -12,7 +12,7 @@ import com.sleepycat.bind.tuple.TupleBase;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.db.DatabaseEntry;
-import com.sleepycat.db.DatabaseException;
+import com.sleepycat.db.ForeignKeyNullifier;
 import com.sleepycat.db.SecondaryDatabase;
 import com.sleepycat.db.SecondaryKeyCreator;
 
@@ -26,13 +26,22 @@ import com.sleepycat.db.SecondaryKeyCreator;
  * <ul>
  * <li> {@link #createSecondaryKey(TupleInput,Object,TupleOutput)} </li>
  * </ul>
+ * <p>If {@link com.sleepycat.db.ForeignKeyDeleteAction#NULLIFY} was
+ * specified when opening the secondary database, the following method must be
+ * overridden to nullify the foreign index key.  If NULLIFY was not specified,
+ * this method need not be overridden.</p>
+ * <ul>
+ * <li> {@link #nullifyForeignKey(Object)} </li>
+ * </ul>
+ *
+ * @see <a href="SerialBinding.html#evolution">Class Evolution</a>
  *
  * @author Mark Hayes
  */
-public abstract class TupleSerialKeyCreator extends TupleBase
-    implements SecondaryKeyCreator {
+public abstract class TupleSerialKeyCreator<D> extends TupleBase
+    implements SecondaryKeyCreator, ForeignKeyNullifier {
 
-    protected SerialBinding dataBinding;
+    protected SerialBinding<D> dataBinding;
 
     /**
      * Creates a tuple-serial key creator.
@@ -42,9 +51,10 @@ public abstract class TupleSerialKeyCreator extends TupleBase
      *
      * @param dataClass is the data base class.
      */
-    public TupleSerialKeyCreator(ClassCatalog classCatalog, Class dataClass) {
+    public TupleSerialKeyCreator(ClassCatalog classCatalog,
+                                 Class<D> dataClass) {
 
-        this(new SerialBinding(classCatalog, dataClass));
+        this(new SerialBinding<D>(classCatalog, dataClass));
     }
 
     /**
@@ -52,7 +62,7 @@ public abstract class TupleSerialKeyCreator extends TupleBase
      *
      * @param dataBinding is the data binding.
      */
-    public TupleSerialKeyCreator(SerialBinding dataBinding) {
+    public TupleSerialKeyCreator(SerialBinding<D> dataBinding) {
 
         this.dataBinding = dataBinding;
     }
@@ -61,12 +71,10 @@ public abstract class TupleSerialKeyCreator extends TupleBase
     public boolean createSecondaryKey(SecondaryDatabase db,
                                       DatabaseEntry primaryKeyEntry,
                                       DatabaseEntry dataEntry,
-                                      DatabaseEntry indexKeyEntry)
-        throws DatabaseException {
-
+                                      DatabaseEntry indexKeyEntry) {
         TupleOutput output = getTupleOutput(null);
         TupleInput primaryKeyInput = entryToInput(primaryKeyEntry);
-        Object dataInput = dataBinding.entryToObject(dataEntry);
+        D dataInput = dataBinding.entryToObject(dataEntry);
         if (createSecondaryKey(primaryKeyInput, dataInput, output)) {
             outputToEntry(output, indexKeyEntry);
             return true;
@@ -77,10 +85,8 @@ public abstract class TupleSerialKeyCreator extends TupleBase
 
     // javadoc is inherited
     public boolean nullifyForeignKey(SecondaryDatabase db,
-                                     DatabaseEntry dataEntry)
-        throws DatabaseException {
-
-        Object data = dataBinding.entryToObject(dataEntry);
+                                     DatabaseEntry dataEntry) {
+        D data = dataBinding.entryToObject(dataEntry);
         data = nullifyForeignKey(data);
         if (data != null) {
             dataBinding.objectToEntry(data, dataEntry);
@@ -109,7 +115,7 @@ public abstract class TupleSerialKeyCreator extends TupleBase
      * not present.
      */
     public abstract boolean createSecondaryKey(TupleInput primaryKeyInput,
-                                               Object dataInput,
+                                               D dataInput,
                                                TupleOutput indexKeyOutput);
 
     /**
@@ -128,7 +134,7 @@ public abstract class TupleSerialKeyCreator extends TupleBase
      * be the same object passed as the data parameter or a newly created
      * object.
      */
-    public Object nullifyForeignKey(Object data) {
+    public D nullifyForeignKey(D data) {
 
         return null;
     }
