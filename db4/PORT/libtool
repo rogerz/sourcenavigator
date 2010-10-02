@@ -44,7 +44,7 @@ available_tags=""
 
 # ### BEGIN LIBTOOL CONFIG
 
-# Libtool was configured on host denupc420:
+# Libtool was configured on host lucy:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -82,13 +82,13 @@ AR="ar"
 AR_FLAGS="cru"
 
 # A C compiler.
-LTCC="gcc"
+LTCC="cc"
 
 # LTCC compiler flags.
-LTCFLAGS="-O2 -ffast-math -fomit-frame-pointer -march=i686 "
+LTCFLAGS="-O2 -march=i686 -ffast-math "
 
 # A language-specific compiler.
-CC="gcc"
+CC="cc"
 
 # Is the compiler the GNU C compiler?
 with_gcc=yes
@@ -328,7 +328,7 @@ link_all_deplibs=unknown
 sys_lib_search_path_spec=" /usr/lib/gcc/i386-redhat-linux/3.4.6/ /usr/lib/gcc/i386-redhat-linux/3.4.6/ /usr/lib/gcc/i386-redhat-linux/3.4.6/../../../../i386-redhat-linux/lib/i386-redhat-linux/3.4.6/ /usr/lib/gcc/i386-redhat-linux/3.4.6/../../../../i386-redhat-linux/lib/ /usr/lib/gcc/i386-redhat-linux/3.4.6/../../../i386-redhat-linux/3.4.6/ /usr/lib/gcc/i386-redhat-linux/3.4.6/../../../ /lib/i386-redhat-linux/3.4.6/ /lib/ /usr/lib/i386-redhat-linux/3.4.6/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/qt-3.3/lib /usr/X11R6/lib /opt/nessus//lib /opt/nessus/lib /usr/X11R6.4.6/lib /usr/local/svn-1.4.5/lib /usr/local/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/qt-3.3/lib /usr/X11R6/lib /usr/X11R6/lib /usr/local/svn/lib /usr/local/lib /opt/qt-4.4.3/lib /usr/lib/gcc/i386-redhat-linux/3.4.3 /usr/local/svn/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
