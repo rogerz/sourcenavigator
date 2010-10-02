@@ -34,6 +34,16 @@ else
 esac
 fi
 
+# set defaults
+db_cv_build_cryptography="no"
+db_cv_build_hash="yes"
+db_cv_build_queue="no"
+db_cv_build_replication="no"
+db_cv_build_statistics="no"
+db_cv_build_verify="no"
+db_cv_build_partition="no"
+db_cv_build_compression="no"
+db_cv_compat185="yes"
 
 as_nl='
 '
@@ -3440,6 +3450,18 @@ if test "$db_cv_smallbuild" = "yes"; then
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $db_cv_smallbuild" >&5
 $as_echo "$db_cv_smallbuild" >&6; }
+
+# set defaults again
+db_cv_build_cryptography="no"
+db_cv_build_hash="yes"
+db_cv_build_queue="no"
+db_cv_build_replication="no"
+db_cv_build_statistics="no"
+db_cv_build_verify="no"
+db_cv_build_partition="no"
+db_cv_build_compression="no"
+db_cv_compat185="yes"
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if --enable-stl option specified" >&5
 $as_echo_n "checking if --enable-stl option specified... " >&6; }
