@@ -12,8 +12,24 @@ configure
 install-sh
 ltmain.sh
 
+
 Then adjust Makefile.in "install:" target to 
 
 install: all
+
+
+To ensure the correct default build options, add the following into 
+configure, after the checks for smallbuild:
+
+db_cv_build_cryptography="no"
+db_cv_build_hash="yes"
+db_cv_build_queue="no"
+db_cv_build_replication="no"
+db_cv_build_statistics="no"
+db_cv_build_verify="no"
+db_cv_build_partition="no"
+db_cv_build_compression="no"
+db_cv_compat185="yes"
+
 
 Finally remove all examples and docs subdirectories.
