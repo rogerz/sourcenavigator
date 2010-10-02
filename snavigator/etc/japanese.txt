@@ -823,7 +823,7 @@ DatabaseFilesCouldNotBeDeleted,Source-Navigator ‚ÍŒÃ‚¢ƒf[ƒ^ƒx[ƒX ƒtƒ@ƒCƒ‹‚ğí
 WrongProjectName,ƒvƒƒWƒFƒNƒg–¼ '%s' ‚Í—LŒø‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
 WrongDatabaseDirectory,ƒf[ƒ^ƒx[ƒX ƒfƒBƒŒƒNƒgƒŠ–¼ '%s' ‚Í—LŒø‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
 SplashCopyrightText,Copyright (c) 2007-2010 Sourcenav NG Development Group
-SplashSubCopyrightText,(c) 2007 Oracle.\n(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
+SplashSubCopyrightText,(c) 1990-2009 Oracle.\n(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,Released under GPL.\nAll rights reserved. Source-NavigatorTM, the Source-NavigatorTM ƒƒS ‚¨‚æ‚Ñ Red Hat, Inc. ƒƒS‚Í•Ä‘ Cygnus Solutions Ğ‚Ì¤•W‚Å‚·B ‚»‚Ì‘¼‚Ì‚·‚×‚Ä‚Ì»•i–¼‚ÍAŠeĞ‚Ì¤•W‚Å‚·B
 SDK_UnknownRequest,Source-Navigator has received an unregistered request,\nplease verify if the request is authorized.\nThe command received:\n<%s>
 

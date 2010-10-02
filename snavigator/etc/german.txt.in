@@ -827,7 +827,7 @@ DatabaseFilesCouldNotBeDeleted,Source-Navigator kann die alten Projekt-Datenbank
 WrongProjectName,Falscher Projektname '%s'
 WrongDatabaseDirectory,Falsches Datenbankverzeichnis '%s'
 SplashCopyrightText,Copyright (c) 2007-2010 Sourcenav NG Development Group
-SplashSubCopyrightText,(c) 2007 Oracle.\n(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
+SplashSubCopyrightText,(c) 1990-2009 Oracle.\n(c) 1997-2000 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.
 SplashAllRightsReserved,Veröffentlicht unter den Bedingungen der GPL.\nAlle Rechte vorbehalten. Source-NavigatorTM und das Cygnus Solutions Logo sind Trademarks von Red Hat, Inc. Alle anderen Produktnamen sind Trademarks ihrer rechtmäßigen Inhaber.
 FileModifiedOutsideTitle,Datei geändert
 FileModifiedOutside,Datei %s wurde von außen geändert.\nMöchten Sie es jedenfalls überschreiben?
