@@ -29,7 +29,7 @@
 package require Itk
 
 proc sn_splash_dialog {type} {
-    global sn_options sn_product_version
+    global sn_options sn_product_version sn_bdb_version
     global sn_path sn_product_name sn_suite_name
     global tcl_platform sn_elix
 
@@ -73,6 +73,9 @@ proc sn_splash_dialog {type} {
     ${w}.text insert end ${sn_product_name} {center large}
     ${w}.text insert end "TM " {center super}
     ${w}.text insert end ${sn_product_version} {center large}
+    ${w}.text insert end "\n" {center large}
+    ${w}.text insert end "Berkeley DB version " {center large}
+    ${w}.text insert end ${sn_bdb_version} {center large}
     ${w}.text insert end "\n\n" {center large}
 
     ${w}.text insert end [get_indep String SplashCopyrightText] {center large}

@@ -61,6 +61,8 @@ MA 02111-1307, USA.
 #include "fileutils.h"
 #include "guitcl.h"
 
+#include "dbutils.h"
+
 /* Do we include EL/IX features or not? */
 static int sn_elix = SN_ELIX;
 
@@ -1105,6 +1107,12 @@ Sn_setup_Init(Tcl_Interp *interp)		/* Interpreter for application. */
 	 * Set also current Source-Navigator version
 	 */
 	Tcl_SetVar (interp, "sn_product_version", VERSION, TCL_GLOBAL_ONLY);
+
+	/*
+	 * Set Berkeley DB version
+	 */
+	Tcl_SetVar (interp, "sn_bdb_version", Paf_db_get_version(), TCL_GLOBAL_ONLY);
+
 	/*
 	 * set even a project version that is build with 5 numeric 
 	 * numbers, the number is built from the product version number
