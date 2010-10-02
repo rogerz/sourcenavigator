@@ -46,6 +46,7 @@ char * read_next_field (char *str, char *buf, int size, char sep);
 int read_next_int_field (char *str, char sep);
 void db_remove_file_xfer_using_keys(int softdel, char *key_files);
 void MacroReadFile(const char *pcFilename);
+char * Paf_db_get_version(void);
 
 #endif /* _DBUTILS_ */
 

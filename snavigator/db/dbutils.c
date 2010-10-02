@@ -104,6 +104,17 @@ char *SN_StrDup(char*);
 
 static  DB      *db_scopes;
 
+
+/* return db4 version
+ will look something like
+ Berkeley DB version Berkeley DB 4.8.30: (April  9, 2010)
+ */
+char * Paf_db_get_version(void)
+{
+	int _unused;
+	return db_version(&_unused, &_unused, &_unused);
+}
+
 /*
  * get database permission from an environment, set in the gui
  */
