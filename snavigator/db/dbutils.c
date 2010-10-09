@@ -105,10 +105,15 @@ char *SN_StrDup(char*);
 static  DB      *db_scopes;
 
 
-/* return db4 version
+/*
+ return db4 version
  will look something like
  Berkeley DB version Berkeley DB 4.8.30: (April  9, 2010)
+
+ we also need to do an ugly forward declaration here, because
+ we're in db-1.85 compat mode and don't have access to db4 functions
  */
+char * db_version(int *, int *, int *);
 char * Paf_db_get_version(void)
 {
 	int _unused;
