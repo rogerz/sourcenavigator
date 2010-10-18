@@ -69,10 +69,11 @@ int main(int ac, char **dc)
 	DB *db;
 	DB_COMPACT compactinfo;
 
-	int notused=0, flags=0, pass=1;
+	int notused=0, flags=0;
+	int pass=1, totalsteps=0, filenr=0;
 	char *version=NULL;
 
-        version=db_version(&notused, &notused, &notused);
+	version=db_version(&notused, &notused, &notused);
 	printf("dbcompact using %s\n", version);
 
 	if(ac == 1) {
@@ -80,30 +81,44 @@ int main(int ac, char **dc)
                 exit(2);
 	}
 
-	memset(&compactinfo, 0, sizeof(compactinfo));
+	/* # of files * 2 = total passes to be done */
+	totalsteps=(ac-1)*2;
 
-	if(db_create(&db, NULL, 0)) {
-		printf("error on db_create\n");
-                exit(1);
+	for(filenr=1; filenr < ac; filenr++) {
+		memset(&compactinfo, 0, sizeof(compactinfo));
+
+		if(db_create(&db, NULL, 0)) {
+			printf("error on db_create\n");
+			goto realout;
+		}
+
+		if(db->set_cachesize(db, 0, COMPACT_CACHESIZE, 1)) {
+			printf("error on ->set_cachesize()\n");
+			goto out;
+		}
+
+		if(db->open(db, NULL, dc[filenr], NULL, DB_UNKNOWN, 0, 0)) {
+			printf("error on db_open with %s\n", dc[filenr]);
+			goto out;
+		}
+
+		/* 1st pass */
+		do_compact(db, &compactinfo, DB_FREE_SPACE, pass);
+
+		/* 2nd pass */
+		pass++;
+		do_compact(db, &compactinfo, DB_FREE_SPACE, pass);
+
+		db->close(db, 0);
+		printf("pass %i of %i done\n", pass, totalsteps);
+		pass++;
 	}
-
-	if(db->set_cachesize(db, 0, COMPACT_CACHESIZE, 1)) {
-		printf("error on ->set_cachesize()\n");
-                exit(1);
-	}
-
-	if(db->open(db, NULL, dc[1], NULL, DB_UNKNOWN, 0, 0)) {
-		printf("error on db_open\n");
-                exit(1);
-	}
-
-	/* 1st pass */
-	do_compact(db, &compactinfo, DB_FREE_SPACE, pass++);
-
-	/* 2nd pass */
-	do_compact(db, &compactinfo, DB_FREE_SPACE, pass++);
-
-	db->close(db, 0);
 
 	exit(0);
+
+out:
+	db->close(db, 0);
+realout:
+	printf("BAILING OUT REALLY BAD\n");
+	exit(1);
 }
