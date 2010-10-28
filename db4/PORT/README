@@ -32,4 +32,5 @@ db_cv_build_compression="no"
 db_cv_compat185="yes"
 
 
-Finally remove all examples and docs subdirectories.
+Finally remove all examples/, docs/ and perl/ subdirectories, and for each
+removed directory place a REMOVED file in it.
