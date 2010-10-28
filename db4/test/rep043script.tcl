@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2005,2007 Oracle.  All rights reserved.
+# Copyright (c) 2005-2009 Oracle.  All rights reserved.
 #
-# $Id: rep043script.tcl,v 1.15 2007/07/09 19:34:35 carol Exp $
+# $Id$
 #
 # Rep043 script - constant writes to an env which may be
 # either a master or a client, or changing between the

@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: IOExceptionWrapper.java,v 12.6 2007/05/04 00:28:26 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.util;
@@ -17,6 +17,8 @@ import java.io.IOException;
  */
 public class IOExceptionWrapper
     extends IOException implements ExceptionWrapper {
+
+    private static final long serialVersionUID = 753416466L;
 
     private Throwable e;
 
@@ -34,6 +36,7 @@ public class IOExceptionWrapper
         return e;
     }
 
+    @Override
     public Throwable getCause() {
 
         return e;

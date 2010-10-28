@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: StoredClassCatalogTest.java,v 12.5 2007/05/04 00:28:29 mark Exp $
+ * $Id$
  */
 package com.sleepycat.collections.test.serial;
 
@@ -19,12 +19,12 @@ import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.TransactionRunner;
 import com.sleepycat.collections.TransactionWorker;
-import com.sleepycat.collections.test.DbTestUtil;
-import com.sleepycat.collections.test.TestEnv;
 import com.sleepycat.compat.DbCompat;
 import com.sleepycat.db.Database;
 import com.sleepycat.db.DatabaseConfig;
 import com.sleepycat.db.Environment;
+import com.sleepycat.util.test.SharedTestUtils;
+import com.sleepycat.util.test.TestEnv;
 
 /**
  * Runs part two of the StoredClassCatalogTest.  This part is run with the
@@ -41,9 +41,7 @@ public class StoredClassCatalogTest extends TestCase
     static final String CATALOG_FILE = "catalogtest-catalog.db";
     static final String STORE_FILE = "catalogtest-store.db";
 
-    public static void main(String[] args)
-        throws Exception {
-
+    public static void main(String[] args) {
         junit.framework.TestResult tr =
             junit.textui.TestRunner.run(suite());
         if (tr.errorCount() > 0 ||
@@ -54,9 +52,7 @@ public class StoredClassCatalogTest extends TestCase
         }
     }
 
-    public static Test suite()
-        throws Exception {
-
+    public static Test suite() {
         TestSuite suite = new TestSuite();
         for (int i = 0; i < TestEnv.ALL.length; i += 1) {
             suite.addTest(new StoredClassCatalogTest(TestEnv.ALL[i]));
@@ -82,10 +78,11 @@ public class StoredClassCatalogTest extends TestCase
         return "StoredClassCatalogTest-" + testEnv.getName();
     }
 
+    @Override
     public void setUp()
         throws Exception {
 
-        DbTestUtil.printTestName(getName());
+        SharedTestUtils.printTestName(getName());
         env = testEnv.open(makeTestName(testEnv), false);
         runner = new TransactionRunner(env);
 
@@ -109,9 +106,10 @@ public class StoredClassCatalogTest extends TestCase
         config.setTransactional(testEnv.isTxnMode());
         config.setAllowCreate(create);
 
-        return DbCompat.openDatabase(env, null, file, null, config);
+        return DbCompat.testOpenDatabase(env, null, file, null, config);
     }
 
+    @Override
     public void tearDown() {
 
         try {
@@ -143,6 +141,7 @@ public class StoredClassCatalogTest extends TestCase
         }
     }
 
+    @Override
     public void runTest()
         throws Exception {
 

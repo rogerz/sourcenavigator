@@ -1,289 +1,385 @@
 /*-
- * DO NOT EDIT: automatically built by dist/s_java_stat.
+ * Automatically built by dist/s_java_stat.
+ * Only the javadoc comments can be edited.
  *
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  */
 
 package com.sleepycat.db;
 
+import com.sleepycat.db.internal.DbConstants;
+
+/**
+Replication statistics for a database environment.
+*/
 public class ReplicationStats {
     // no public constructor
     /* package */ ReplicationStats() {}
+    /**
+    The environment is configured as a replication client, as reported by {@link #getStatus}.
+    */
+    public static final int REP_CLIENT = DbConstants.DB_REP_CLIENT;
 
-    private int st_log_queued;
-    public int getLogQueued() {
+    /**
+    The environment is configured as a replication master, as reported by {@link #getStatus}.
+    */
+    public static final int REP_MASTER = DbConstants.DB_REP_MASTER;
+
+    /**
+    Replication is not configured for this environment, as reported by {@link #getStatus}.
+    */
+    public static final int REP_NONE = 0;
+
+    private long st_log_queued;
+    /** TODO */
+    public long getLogQueued() {
         return st_log_queued;
     }
 
     private int st_startup_complete;
-    public int getStartupComplete() {
-        return st_startup_complete;
+    /** TODO */
+    public boolean getStartupComplete() {
+        return (st_startup_complete != 0);
     }
 
     private int st_status;
+    /** TODO */
     public int getStatus() {
         return st_status;
     }
 
     private LogSequenceNumber st_next_lsn;
+    /** TODO */
     public LogSequenceNumber getNextLsn() {
         return st_next_lsn;
     }
 
     private LogSequenceNumber st_waiting_lsn;
+    /** TODO */
     public LogSequenceNumber getWaitingLsn() {
         return st_waiting_lsn;
     }
 
+    private LogSequenceNumber st_max_perm_lsn;
+    /** TODO */
+    public LogSequenceNumber getMaxPermLsn() {
+        return st_max_perm_lsn;
+    }
+
     private int st_next_pg;
+    /** TODO */
     public int getNextPages() {
         return st_next_pg;
     }
 
     private int st_waiting_pg;
+    /** TODO */
     public int getWaitingPages() {
         return st_waiting_pg;
     }
 
     private int st_dupmasters;
+    /** TODO */
     public int getDupmasters() {
         return st_dupmasters;
     }
 
     private int st_env_id;
+    /** TODO */
     public int getEnvId() {
         return st_env_id;
     }
 
     private int st_env_priority;
+    /** TODO */
     public int getEnvPriority() {
         return st_env_priority;
     }
 
-    private int st_bulk_fills;
-    public int getBulkFills() {
+    private long st_bulk_fills;
+    /** TODO */
+    public long getBulkFills() {
         return st_bulk_fills;
     }
 
-    private int st_bulk_overflows;
-    public int getBulkOverflows() {
+    private long st_bulk_overflows;
+    /** TODO */
+    public long getBulkOverflows() {
         return st_bulk_overflows;
     }
 
-    private int st_bulk_records;
-    public int getBulkRecords() {
+    private long st_bulk_records;
+    /** TODO */
+    public long getBulkRecords() {
         return st_bulk_records;
     }
 
-    private int st_bulk_transfers;
-    public int getBulkTransfers() {
+    private long st_bulk_transfers;
+    /** TODO */
+    public long getBulkTransfers() {
         return st_bulk_transfers;
     }
 
-    private int st_client_rerequests;
-    public int getClientRerequests() {
+    private long st_client_rerequests;
+    /** TODO */
+    public long getClientRerequests() {
         return st_client_rerequests;
     }
 
-    private int st_client_svc_req;
-    public int getClientSvcReq() {
+    private long st_client_svc_req;
+    /** TODO */
+    public long getClientSvcReq() {
         return st_client_svc_req;
     }
 
-    private int st_client_svc_miss;
-    public int getClientSvcMiss() {
+    private long st_client_svc_miss;
+    /** TODO */
+    public long getClientSvcMiss() {
         return st_client_svc_miss;
     }
 
     private int st_gen;
+    /** TODO */
     public int getGen() {
         return st_gen;
     }
 
     private int st_egen;
+    /** TODO */
     public int getEgen() {
         return st_egen;
     }
 
-    private int st_log_duplicated;
-    public int getLogDuplicated() {
+    private long st_log_duplicated;
+    /** TODO */
+    public long getLogDuplicated() {
         return st_log_duplicated;
     }
 
-    private int st_log_queued_max;
-    public int getLogQueuedMax() {
+    private long st_log_queued_max;
+    /** TODO */
+    public long getLogQueuedMax() {
         return st_log_queued_max;
     }
 
-    private int st_log_queued_total;
-    public int getLogQueuedTotal() {
+    private long st_log_queued_total;
+    /** TODO */
+    public long getLogQueuedTotal() {
         return st_log_queued_total;
     }
 
-    private int st_log_records;
-    public int getLogRecords() {
+    private long st_log_records;
+    /** TODO */
+    public long getLogRecords() {
         return st_log_records;
     }
 
-    private int st_log_requested;
-    public int getLogRequested() {
+    private long st_log_requested;
+    /** TODO */
+    public long getLogRequested() {
         return st_log_requested;
     }
 
     private int st_master;
+    /** TODO */
     public int getMaster() {
         return st_master;
     }
 
-    private int st_master_changes;
-    public int getMasterChanges() {
+    private long st_master_changes;
+    /** TODO */
+    public long getMasterChanges() {
         return st_master_changes;
     }
 
-    private int st_msgs_badgen;
-    public int getMsgsBadgen() {
+    private long st_msgs_badgen;
+    /** TODO */
+    public long getMsgsBadgen() {
         return st_msgs_badgen;
     }
 
-    private int st_msgs_processed;
-    public int getMsgsProcessed() {
+    private long st_msgs_processed;
+    /** TODO */
+    public long getMsgsProcessed() {
         return st_msgs_processed;
     }
 
-    private int st_msgs_recover;
-    public int getMsgsRecover() {
+    private long st_msgs_recover;
+    /** TODO */
+    public long getMsgsRecover() {
         return st_msgs_recover;
     }
 
-    private int st_msgs_send_failures;
-    public int getMsgsSendFailures() {
+    private long st_msgs_send_failures;
+    /** TODO */
+    public long getMsgsSendFailures() {
         return st_msgs_send_failures;
     }
 
-    private int st_msgs_sent;
-    public int getMsgsSent() {
+    private long st_msgs_sent;
+    /** TODO */
+    public long getMsgsSent() {
         return st_msgs_sent;
     }
 
-    private int st_newsites;
-    public int getNewsites() {
+    private long st_newsites;
+    /** TODO */
+    public long getNewsites() {
         return st_newsites;
     }
 
     private int st_nsites;
+    /** TODO */
     public int getNumSites() {
         return st_nsites;
     }
 
-    private int st_nthrottles;
-    public int getNumThrottles() {
+    private long st_nthrottles;
+    /** TODO */
+    public long getNumThrottles() {
         return st_nthrottles;
     }
 
-    private int st_outdated;
-    public int getOutdated() {
+    private long st_outdated;
+    /** TODO */
+    public long getOutdated() {
         return st_outdated;
     }
 
-    private int st_pg_duplicated;
-    public int getPagesDuplicated() {
+    private long st_pg_duplicated;
+    /** TODO */
+    public long getPagesDuplicated() {
         return st_pg_duplicated;
     }
 
-    private int st_pg_records;
-    public int getPagesRecords() {
+    private long st_pg_records;
+    /** TODO */
+    public long getPagesRecords() {
         return st_pg_records;
     }
 
-    private int st_pg_requested;
-    public int getPagesRequested() {
+    private long st_pg_requested;
+    /** TODO */
+    public long getPagesRequested() {
         return st_pg_requested;
     }
 
-    private int st_txns_applied;
-    public int getTxnsApplied() {
+    private long st_txns_applied;
+    /** TODO */
+    public long getTxnsApplied() {
         return st_txns_applied;
     }
 
-    private int st_startsync_delayed;
-    public int getStartSyncDelayed() {
+    private long st_startsync_delayed;
+    /** TODO */
+    public long getStartSyncDelayed() {
         return st_startsync_delayed;
     }
 
-    private int st_elections;
-    public int getElections() {
+    private long st_elections;
+    /** TODO */
+    public long getElections() {
         return st_elections;
     }
 
-    private int st_elections_won;
-    public int getElectionsWon() {
+    private long st_elections_won;
+    /** TODO */
+    public long getElectionsWon() {
         return st_elections_won;
     }
 
     private int st_election_cur_winner;
+    /** TODO */
     public int getElectionCurWinner() {
         return st_election_cur_winner;
     }
 
     private int st_election_gen;
+    /** TODO */
     public int getElectionGen() {
         return st_election_gen;
     }
 
     private LogSequenceNumber st_election_lsn;
+    /** TODO */
     public LogSequenceNumber getElectionLsn() {
         return st_election_lsn;
     }
 
     private int st_election_nsites;
+    /** TODO */
     public int getElectionNumSites() {
         return st_election_nsites;
     }
 
     private int st_election_nvotes;
+    /** TODO */
     public int getElectionNumVotes() {
         return st_election_nvotes;
     }
 
     private int st_election_priority;
+    /** TODO */
     public int getElectionPriority() {
         return st_election_priority;
     }
 
     private int st_election_status;
+    /** TODO */
     public int getElectionStatus() {
         return st_election_status;
     }
 
     private int st_election_tiebreaker;
+    /** TODO */
     public int getElectionTiebreaker() {
         return st_election_tiebreaker;
     }
 
     private int st_election_votes;
+    /** TODO */
     public int getElectionVotes() {
         return st_election_votes;
     }
 
     private int st_election_sec;
+    /** TODO */
     public int getElectionSec() {
         return st_election_sec;
     }
 
     private int st_election_usec;
+    /** TODO */
     public int getElectionUsec() {
         return st_election_usec;
     }
 
+    private int st_max_lease_sec;
+    /** TODO */
+    public int getMaxLeaseSec() {
+        return st_max_lease_sec;
+    }
+
+    private int st_max_lease_usec;
+    /** TODO */
+    public int getMaxLeaseUsec() {
+        return st_max_lease_usec;
+    }
+
+    /**
+    For convenience, the ReplicationStats class has a toString method
+    that lists all the data fields.
+    */
     public String toString() {
         return "ReplicationStats:"
             + "\n  st_log_queued=" + st_log_queued
-            + "\n  st_startup_complete=" + st_startup_complete
+            + "\n  st_startup_complete=" + (st_startup_complete != 0)
             + "\n  st_status=" + st_status
             + "\n  st_next_lsn=" + st_next_lsn
             + "\n  st_waiting_lsn=" + st_waiting_lsn
+            + "\n  st_max_perm_lsn=" + st_max_perm_lsn
             + "\n  st_next_pg=" + st_next_pg
             + "\n  st_waiting_pg=" + st_waiting_pg
             + "\n  st_dupmasters=" + st_dupmasters
@@ -332,6 +428,8 @@ public class ReplicationStats {
             + "\n  st_election_votes=" + st_election_votes
             + "\n  st_election_sec=" + st_election_sec
             + "\n  st_election_usec=" + st_election_usec
+            + "\n  st_max_lease_sec=" + st_max_lease_sec
+            + "\n  st_max_lease_usec=" + st_max_lease_usec
             ;
     }
 }

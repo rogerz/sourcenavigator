@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1999,2007 Oracle.  All rights reserved.
+# Copyright (c) 1999-2009 Oracle.  All rights reserved.
 #
-# $Id: sdb008.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	sdb008
 # TEST	Tests explicit setting of lorders for subdatabases -- the

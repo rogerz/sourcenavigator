@@ -1,74 +1,82 @@
 /*-
- * DO NOT EDIT: automatically built by dist/s_java_stat.
+ * Automatically built by dist/s_java_stat.
+ * Only the javadoc comments can be edited.
  *
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  */
 
 package com.sleepycat.db;
 
 import com.sleepycat.db.internal.DbUtil;
 
-public class TransactionStats
-{
+/**
+Transaction statistics for a database environment.
+*/
+public class TransactionStats {
     // no public constructor
     /* package */ TransactionStats() {}
 
-    public static class Active {        // no public constructor
+    public static class Active {
+        // no public constructor
         /* package */ Active() {}
 
         private int txnid;
-        public int getTxnId() {
+        /** TODO */
+    public int getTxnId() {
             return txnid;
         }
 
         private int parentid;
-        public int getParentId() {
+        /** TODO */
+    public int getParentId() {
             return parentid;
         }
 
         private int pid;
-        public int getPid() {
+        /** TODO */
+    public int getPid() {
             return pid;
         }
 
         private LogSequenceNumber lsn;
-        public LogSequenceNumber getLsn() {
+        /** TODO */
+    public LogSequenceNumber getLsn() {
             return lsn;
         }
 
         private LogSequenceNumber read_lsn;
-        public LogSequenceNumber getReadLsn() {
+        /** TODO */
+    public LogSequenceNumber getReadLsn() {
             return read_lsn;
         }
 
         private int mvcc_ref;
-        public int getMultiversionRef() {
+        /** TODO */
+    public int getMultiversionRef() {
             return mvcc_ref;
         }
 
         private int status;
-        public int getStatus() {
+        /** TODO */
+    public int getStatus() {
             return status;
         }
 
-        private int xa_status;
-        public int getXaStatus() {
-            return xa_status;
-        }
-
-        private byte[] xid;
-        public byte[] getXId() {
-            return xid;
+        private byte[] gid;
+        public byte[] getGId() {
+            return gid;
         }
 
         private String name;
-        public String getName() {
+        /** TODO */
+    public String getName() {
             return name;
         }
 
-        public String toString() {
+        /** {@inheritDoc} */
+    public String toString() {
             return "Active:"
                 + "\n      txnid=" + txnid
                 + "\n      parentid=" + parentid
@@ -77,69 +85,80 @@ public class TransactionStats
                 + "\n      read_lsn=" + read_lsn
                 + "\n      mvcc_ref=" + mvcc_ref
                 + "\n      status=" + status
-                + "\n      xa_status=" + xa_status
-                + "\n      xid=" + DbUtil.byteArrayToString(xid)
+                + "\n      gid=" + DbUtil.byteArrayToString(gid)
                 + "\n      name=" + name
                 ;
         }
     };
 
     private int st_nrestores;
+    /** TODO */
     public int getNumRestores() {
         return st_nrestores;
     }
 
     private LogSequenceNumber st_last_ckp;
+    /** TODO */
     public LogSequenceNumber getLastCkp() {
         return st_last_ckp;
     }
 
     private long st_time_ckp;
+    /** TODO */
     public long getTimeCkp() {
         return st_time_ckp;
     }
 
     private int st_last_txnid;
+    /** TODO */
     public int getLastTxnId() {
         return st_last_txnid;
     }
 
     private int st_maxtxns;
+    /** TODO */
     public int getMaxTxns() {
         return st_maxtxns;
     }
 
-    private int st_naborts;
-    public int getNaborts() {
+    private long st_naborts;
+    /** TODO */
+    public long getNaborts() {
         return st_naborts;
     }
 
-    private int st_nbegins;
-    public int getNumBegins() {
+    private long st_nbegins;
+    /** TODO */
+    public long getNumBegins() {
         return st_nbegins;
     }
 
-    private int st_ncommits;
-    public int getNumCommits() {
+    private long st_ncommits;
+    /** TODO */
+    public long getNumCommits() {
         return st_ncommits;
     }
 
     private int st_nactive;
+    /** TODO */
     public int getNactive() {
         return st_nactive;
     }
 
     private int st_nsnapshot;
+    /** TODO */
     public int getNumSnapshot() {
         return st_nsnapshot;
     }
 
     private int st_maxnactive;
+    /** TODO */
     public int getMaxNactive() {
         return st_maxnactive;
     }
 
     private int st_maxnsnapshot;
+    /** TODO */
     public int getMaxNsnapshot() {
         return st_maxnsnapshot;
     }
@@ -149,21 +168,25 @@ public class TransactionStats
         return st_txnarray;
     }
 
-    private int st_region_wait;
-    public int getRegionWait() {
+    private long st_region_wait;
+    /** TODO */
+    public long getRegionWait() {
         return st_region_wait;
     }
 
-    private int st_region_nowait;
-    public int getRegionNowait() {
+    private long st_region_nowait;
+    /** TODO */
+    public long getRegionNowait() {
         return st_region_nowait;
     }
 
     private int st_regsize;
+    /** TODO */
     public int getRegSize() {
         return st_regsize;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         return "TransactionStats:"
             + "\n  st_nrestores=" + st_nrestores
@@ -185,4 +208,3 @@ public class TransactionStats
             ;
     }
 }
-// end of TransactionStats.java

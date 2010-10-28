@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: DbCompat.java,v 12.10 2007/05/17 15:15:41 bostic Exp $
+ * $Id$
  */
 
 package com.sleepycat.compat;
@@ -53,8 +53,14 @@ public class DbCompat {
     public static final boolean SECONDARIES = true;
     public static boolean TRANSACTION_RUNNER_PRINT_STACK_TRACES = true;
     public static final boolean DATABASE_COUNT = false;
+    public static final boolean NEW_JE_EXCEPTIONS = false;
+    public static final boolean POPULATE_ENFORCES_CONSTRAINTS = false;
 
     /* Methods used by the collections package. */
+
+    public static boolean getInitializeCache(EnvironmentConfig config) {
+        return config.getInitializeCache();
+    }
 
     public static boolean getInitializeLocking(EnvironmentConfig config) {
         return config.getInitializeLocking();
@@ -100,6 +106,10 @@ public class DbCompat {
         return dbConfig.getUnsortedDuplicates();
     }
 
+    public static boolean getDeferredWrite(DatabaseConfig dbConfig) {
+        return false;
+    }
+
     // XXX Remove this when DB and JE support CursorConfig.cloneConfig
     public static CursorConfig cloneCursorConfig(CursorConfig config) {
         CursorConfig newConfig = new CursorConfig();
@@ -134,6 +144,10 @@ public class DbCompat {
         throws DatabaseException {
 
         throw new UnsupportedOperationException();
+    }
+
+    public static void syncDeferredWrite(Database db, boolean flushLog)
+        throws DatabaseException {
     }
 
     public static OperationStatus getCurrentRecordNumber(Cursor cursor,
@@ -255,6 +269,9 @@ public class DbCompat {
         dbConfig.setUnsortedDuplicates(val);
     }
 
+    public static void setDeferredWrite(DatabaseConfig dbConfig, boolean val) {
+    }
+
     public static void setRecordLength(DatabaseConfig dbConfig, int val) {
         dbConfig.setRecordLength(val);
     }
@@ -263,23 +280,184 @@ public class DbCompat {
         dbConfig.setRecordPad(val);
     }
 
+    public static boolean databaseExists(Environment env,
+                                         String fileName,
+                                         String dbName) {
+        /* Currently we only support file names. */
+        assert fileName != null;
+        assert dbName == null;
+        try {
+            Database db = env.openDatabase(null, fileName, dbName, null);
+            db.close();
+            return true;
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
     public static Database openDatabase(Environment env,
                                         Transaction txn,
-                                        String file,
-                                        String name,
+                                        String fileName,
+                                        String dbName,
                                         DatabaseConfig config)
-        throws DatabaseException, FileNotFoundException {
-        return env.openDatabase(txn, file, name, config);
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert fileName != null;
+        assert dbName == null;
+        try {
+            return env.openDatabase(txn, fileName, dbName, config);
+        } catch (DatabaseException e) {
+            if (isFileExistsError(e)) {
+                return null;
+            }
+            throw e;
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+    public static SecondaryDatabase openSecondaryDatabase(
+                                        Environment env,
+                                        Transaction txn,
+                                        String fileName,
+                                        String dbName,
+                                        Database primaryDatabase,
+                                        SecondaryConfig config)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert fileName != null;
+        assert dbName == null;
+        try {
+            return env.openSecondaryDatabase
+                (txn, fileName, dbName, primaryDatabase, config);
+        } catch (DatabaseException e) {
+            if (isFileExistsError(e)) {
+                return null;
+            }
+            throw e;
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+    public static boolean truncateDatabase(Environment env,
+                                           Transaction txn,
+                                           String fileName,
+                                           String dbName)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert fileName != null;
+        assert dbName == null;
+        Database db;
+        try {
+            db = env.openDatabase(txn, fileName, dbName, null);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        try {
+            db.truncate(txn, false /*returnCount*/);
+            return true;
+        } finally {
+            db.close();
+        }
+    }
+
+    public static boolean removeDatabase(Environment env,
+                                         Transaction txn,
+                                         String fileName,
+                                         String dbName)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert fileName != null;
+        assert dbName == null;
+        try {
+            env.removeDatabase(txn, fileName, dbName);
+            return true;
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean renameDatabase(Environment env,
+                                         Transaction txn,
+                                         String oldFileName,
+                                         String oldDbName,
+                                         String newFileName,
+                                         String newDbName)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert oldFileName != null;
+        assert newFileName != null;
+        assert oldDbName == null;
+        assert newDbName == null;
+        try {
+            if (!oldFileName.equals(newFileName)) {
+                env.renameDatabase(txn, oldFileName, null, newFileName);
+            }
+            if (oldDbName != null && !oldDbName.equals(newDbName)) {
+                env.renameDatabase(txn, newFileName, oldDbName, newDbName);
+            }
+            return true;
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static Database testOpenDatabase(Environment env,
+                                            Transaction txn,
+                                            String file,
+                                            String name,
+                                            DatabaseConfig config)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert file != null;
+        assert name == null;
+        try {
+            return env.openDatabase(txn, file, name, config);
+        } catch (DatabaseException e) {
+            if (isFileExistsError(e)) {
+                assert false;
+                return null;
+            }
+            throw e;
+        } catch (FileNotFoundException e) {
+            assert false;
+            return null;
+        }
     }
 
     public static SecondaryDatabase
-                  openSecondaryDatabase(Environment env,
-                                        Transaction txn,
-                                        String file,
-                                        String name,
-                                        Database primary,
-                                        SecondaryConfig config)
-        throws DatabaseException, FileNotFoundException {
-        return env.openSecondaryDatabase(txn, file, name, primary, config);
+                  testOpenSecondaryDatabase(Environment env,
+                                            Transaction txn,
+                                            String file,
+                                            String name,
+                                            Database primary,
+                                            SecondaryConfig config)
+        throws DatabaseException {
+        /* Currently we only support file names. */
+        assert file != null;
+        assert name == null;
+        try {
+            return env.openSecondaryDatabase(txn, file, name, primary, config);
+        } catch (DatabaseException e) {
+            if (isFileExistsError(e)) {
+                assert false;
+                return null;
+            }
+            throw e;
+        } catch (FileNotFoundException e) {
+            assert false;
+            return null;
+        }
+    }
+
+    /**
+     * Would like to check for errno 17 (EEXIST) but the value may not be
+     * standard on all platforms.
+     */
+    private static boolean isFileExistsError(DatabaseException e) {
+        return e.getMessage().contains("File exists");
     }
 }

@@ -1,42 +1,55 @@
 /*-
- * DO NOT EDIT: automatically built by dist/s_java_stat.
+ * Automatically built by dist/s_java_stat.
+ * Only the javadoc comments can be edited.
  *
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  */
 
 package com.sleepycat.db;
 
+/**
+Replication Manager statistics for a database environment.
+*/
 public class ReplicationManagerStats {
     // no public constructor
     /* package */ ReplicationManagerStats() {}
 
-    private int st_perm_failed;
-    public int getPermFailed() {
+    private long st_perm_failed;
+    /** TODO */
+    public long getPermFailed() {
         return st_perm_failed;
     }
 
-    private int st_msgs_queued;
-    public int getMsgsQueued() {
+    private long st_msgs_queued;
+    /** TODO */
+    public long getMsgsQueued() {
         return st_msgs_queued;
     }
 
-    private int st_msgs_dropped;
-    public int getMsgsDropped() {
+    private long st_msgs_dropped;
+    /** TODO */
+    public long getMsgsDropped() {
         return st_msgs_dropped;
     }
 
-    private int st_connection_drop;
-    public int getConnectionDrop() {
+    private long st_connection_drop;
+    /** TODO */
+    public long getConnectionDrop() {
         return st_connection_drop;
     }
 
-    private int st_connect_fail;
-    public int getConnectFail() {
+    private long st_connect_fail;
+    /** TODO */
+    public long getConnectFail() {
         return st_connect_fail;
     }
 
+    /**
+    For convenience, the ReplicationManagerStats class has a toString method
+    that lists all the data fields.
+    */
     public String toString() {
         return "ReplicationManagerStats:"
             + "\n  st_perm_failed=" + st_perm_failed

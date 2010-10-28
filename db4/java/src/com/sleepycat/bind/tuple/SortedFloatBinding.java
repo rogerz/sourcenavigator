@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: SortedFloatBinding.java,v 12.4 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.tuple;
@@ -22,7 +22,7 @@ import com.sleepycat.db.DatabaseEntry;
  * <ul>
  * <li>The byte array (stored) formats used by {@link FloatBinding} and
  * {@link SortedFloatBinding} are different and incompatible.  They are not
- * interchangable once data has been stored.</li>
+ * interchangeable once data has been stored.</li>
  * <li>An instance of {@link FloatBinding}, not {@link SortedFloatBinding}, is
  * returned by {@link TupleBinding#getPrimitiveBinding} method.  Therefore, to
  * use {@link SortedFloatBinding}, {@link TupleBinding#getPrimitiveBinding}
@@ -38,22 +38,22 @@ import com.sleepycat.db.DatabaseEntry;
  * this class can be used with any stored collection.</li>
  * </ol>
  */
-public class SortedFloatBinding extends TupleBinding {
+public class SortedFloatBinding extends TupleBinding<Float> {
 
     /* javadoc is inherited */
-    public Object entryToObject(TupleInput input) {
+    public Float entryToObject(TupleInput input) {
 
-        return new Float(input.readSortedFloat());
+        return input.readSortedFloat();
     }
 
     /* javadoc is inherited */
-    public void objectToEntry(Object object, TupleOutput output) {
+    public void objectToEntry(Float object, TupleOutput output) {
 
-        output.writeSortedFloat(((Number) object).floatValue());
+        output.writeSortedFloat(object);
     }
 
     /* javadoc is inherited */
-    protected TupleOutput getTupleOutput(Object object) {
+    protected TupleOutput getTupleOutput(Float object) {
 
         return FloatBinding.sizedOutput();
     }

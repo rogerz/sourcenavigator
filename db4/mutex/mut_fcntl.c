@@ -1,29 +1,30 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1996,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1996-2009 Oracle.  All rights reserved.
  *
- * $Id: mut_fcntl.c,v 12.23 2007/05/17 15:15:45 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
 
 #include "db_int.h"
-#include "dbinc/mutex_int.h"
+
+static inline int __db_fcntl_mutex_lock_int __P((ENV *, db_mutex_t, int));
 
 /*
  * __db_fcntl_mutex_init --
  *	Initialize a fcntl mutex.
  *
- * PUBLIC: int __db_fcntl_mutex_init __P((DB_ENV *, db_mutex_t, u_int32_t));
+ * PUBLIC: int __db_fcntl_mutex_init __P((ENV *, db_mutex_t, u_int32_t));
  */
 int
-__db_fcntl_mutex_init(dbenv, mutex, flags)
-	DB_ENV *dbenv;
+__db_fcntl_mutex_init(env, mutex, flags)
+	ENV *env;
 	db_mutex_t mutex;
 	u_int32_t flags;
 {
-	COMPQUIET(dbenv, NULL);
+	COMPQUIET(env, NULL);
 	COMPQUIET(mutex, MUTEX_INVALID);
 	COMPQUIET(flags, 0);
 
@@ -31,28 +32,31 @@ __db_fcntl_mutex_init(dbenv, mutex, flags)
 }
 
 /*
- * __db_fcntl_mutex_lock
- *	Lock on a mutex, blocking if necessary.
- *
- * PUBLIC: int __db_fcntl_mutex_lock __P((DB_ENV *, db_mutex_t));
+ * __db_fcntl_mutex_lock_int
+ *	Internal function to lock a mutex, blocking only when requested
  */
-int
-__db_fcntl_mutex_lock(dbenv, mutex)
-	DB_ENV *dbenv;
+inline int
+__db_fcntl_mutex_lock_int(env, mutex, wait)
+	ENV *env;
 	db_mutex_t mutex;
+	int wait;
 {
+	DB_ENV *dbenv;
 	DB_MUTEX *mutexp;
 	DB_MUTEXMGR *mtxmgr;
-	DB_MUTEXREGION *mtxregion;
+	DB_THREAD_INFO *ip;
 	struct flock k_lock;
 	int locked, ms, ret;
 
-	if (!MUTEX_ON(dbenv) || F_ISSET(dbenv, DB_ENV_NOLOCKING))
+	dbenv = env->dbenv;
+
+	if (!MUTEX_ON(env) || F_ISSET(dbenv, DB_ENV_NOLOCKING))
 		return (0);
 
-	mtxmgr = dbenv->mutex_handle;
-	mtxregion = mtxmgr->reginfo.primary;
-	mutexp = MUTEXP_SET(mutex);
+	mtxmgr = env->mutex_handle;
+	mutexp = MUTEXP_SET(mtxmgr, mutex);
+
+	CHECK_MTX_THREAD(env, mutexp);
 
 #ifdef HAVE_STATISTICS
 	if (F_ISSET(mutexp, DB_MUTEX_LOCKED))
@@ -66,20 +70,38 @@ __db_fcntl_mutex_lock(dbenv, mutex)
 	k_lock.l_start = mutex;
 	k_lock.l_len = 1;
 
+	/*
+	 * Only check the thread state once, by initializing the thread
+	 * control block pointer to null.  If it is not the failchk
+	 * thread, then ip will have a valid value subsequent times
+	 * in the loop.
+	 */
+	ip = NULL;
+
 	for (locked = 0;;) {
 		/*
 		 * Wait for the lock to become available; wait 1ms initially,
 		 * up to 1 second.
 		 */
 		for (ms = 1; F_ISSET(mutexp, DB_MUTEX_LOCKED);) {
-			__os_sleep(NULL, 0, ms * US_PER_MS);
+			if (F_ISSET(dbenv, DB_ENV_FAILCHK) &&
+			    ip == NULL && dbenv->is_alive(dbenv,
+			    mutexp->pid, mutexp->tid, 0) == 0) {
+				ret = __env_set_state(env, &ip, THREAD_VERIFY);
+				if (ret != 0 ||
+				    ip->dbth_state == THREAD_FAILCHK)
+					return (DB_RUNRECOVERY);
+			}
+			if (!wait)
+				return (DB_LOCK_NOTGRANTED);
+			__os_yield(NULL, 0, ms * US_PER_MS);
 			if ((ms <<= 1) > MS_PER_SEC)
 				ms = MS_PER_SEC;
 		}
 
-		/* Acquire an exclusive kernel lock. */
+		/* Acquire an exclusive kernel lock on the byte. */
 		k_lock.l_type = F_WRLCK;
-		if (fcntl(dbenv->lockfhp->fd, F_SETLKW, &k_lock))
+		if (fcntl(env->lockfhp->fd, F_SETLKW, &k_lock))
 			goto err;
 
 		/* If the resource is still available, it's ours. */
@@ -88,12 +110,11 @@ __db_fcntl_mutex_lock(dbenv, mutex)
 
 			F_SET(mutexp, DB_MUTEX_LOCKED);
 			dbenv->thread_id(dbenv, &mutexp->pid, &mutexp->tid);
-			CHECK_MTX_THREAD(dbenv, mutexp);
 		}
 
 		/* Release the kernel lock. */
 		k_lock.l_type = F_UNLCK;
-		if (fcntl(dbenv->lockfhp->fd, F_SETLK, &k_lock))
+		if (fcntl(env->lockfhp->fd, F_SETLK, &k_lock))
 			goto err;
 
 		/*
@@ -115,41 +136,70 @@ __db_fcntl_mutex_lock(dbenv, mutex)
 	 * we get a mutex to ensure contention.
 	 */
 	if (F_ISSET(dbenv, DB_ENV_YIELDCPU))
-		__os_yield(dbenv);
+		__os_yield(env, 0, 0);
 #endif
 	return (0);
 
 err:	ret = __os_get_syserr();
-	__db_syserr(dbenv, ret, "fcntl lock failed");
-	return (__db_panic(dbenv, __os_posix_err(ret)));
+	__db_syserr(env, ret, "fcntl lock failed");
+	return (__env_panic(env, __os_posix_err(ret)));
+}
+
+/*
+ * __db_fcntl_mutex_lock
+ *	Lock a mutex, blocking if necessary.
+ *
+ * PUBLIC: int __db_fcntl_mutex_lock __P((ENV *, db_mutex_t));
+ */
+int
+__db_fcntl_mutex_lock(env, mutex)
+	ENV *env;
+	db_mutex_t mutex;
+{
+	return (__db_fcntl_mutex_lock_int(env, mutex, 1));
+}
+
+/*
+ * __db_fcntl_mutex_trylock
+ *	Try to lock a mutex, without blocking when it is busy.
+ *
+ * PUBLIC: int __db_fcntl_mutex_trylock __P((ENV *, db_mutex_t));
+ */
+int
+__db_fcntl_mutex_trylock(env, mutex)
+	ENV *env;
+	db_mutex_t mutex;
+{
+	return (__db_fcntl_mutex_lock_int(env, mutex, 0));
 }
 
 /*
  * __db_fcntl_mutex_unlock --
  *	Release a mutex.
  *
- * PUBLIC: int __db_fcntl_mutex_unlock __P((DB_ENV *, db_mutex_t));
+ * PUBLIC: int __db_fcntl_mutex_unlock __P((ENV *, db_mutex_t));
  */
 int
-__db_fcntl_mutex_unlock(dbenv, mutex)
-	DB_ENV *dbenv;
+__db_fcntl_mutex_unlock(env, mutex)
+	ENV *env;
 	db_mutex_t mutex;
 {
+	DB_ENV *dbenv;
 	DB_MUTEX *mutexp;
 	DB_MUTEXMGR *mtxmgr;
-	DB_MUTEXREGION *mtxregion;
 
-	if (!MUTEX_ON(dbenv) || F_ISSET(dbenv, DB_ENV_NOLOCKING))
+	dbenv = env->dbenv;
+
+	if (!MUTEX_ON(env) || F_ISSET(dbenv, DB_ENV_NOLOCKING))
 		return (0);
 
-	mtxmgr = dbenv->mutex_handle;
-	mtxregion = mtxmgr->reginfo.primary;
-	mutexp = MUTEXP_SET(mutex);
+	mtxmgr = env->mutex_handle;
+	mutexp = MUTEXP_SET(mtxmgr, mutex);
 
 #ifdef DIAGNOSTIC
 	if (!F_ISSET(mutexp, DB_MUTEX_LOCKED)) {
-		__db_errx(dbenv, "fcntl unlock failed: lock already unlocked");
-		return (__db_panic(dbenv, EACCES));
+		__db_errx(env, "fcntl unlock failed: lock already unlocked");
+		return (__env_panic(env, EACCES));
 	}
 #endif
 
@@ -168,14 +218,14 @@ __db_fcntl_mutex_unlock(dbenv, mutex)
  * __db_fcntl_mutex_destroy --
  *	Destroy a mutex.
  *
- * PUBLIC: int __db_fcntl_mutex_destroy __P((DB_ENV *, db_mutex_t));
+ * PUBLIC: int __db_fcntl_mutex_destroy __P((ENV *, db_mutex_t));
  */
 int
-__db_fcntl_mutex_destroy(dbenv, mutex)
-	DB_ENV *dbenv;
+__db_fcntl_mutex_destroy(env, mutex)
+	ENV *env;
 	db_mutex_t mutex;
 {
-	COMPQUIET(dbenv, NULL);
+	COMPQUIET(env, NULL);
 	COMPQUIET(mutex, MUTEX_INVALID);
 
 	return (0);

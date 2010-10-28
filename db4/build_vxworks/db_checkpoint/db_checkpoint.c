@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1996,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1996-2009 Oracle.  All rights reserved.
  *
- * $Id: db_checkpoint.c,v 12.18 2007/05/17 15:14:58 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -12,7 +12,7 @@
 
 #ifndef lint
 static const char copyright[] =
-    "Copyright (c) 1996,2007 Oracle.  All rights reserved.\n";
+    "Copyright (c) 1996-2009 Oracle.  All rights reserved.\n";
 #endif
 
 int	 db_checkpoint_main __P((int, char *[]));
@@ -154,9 +154,16 @@ db_checkpoint_main(argc, argv)
 
 	/*
 	 * If attaching to a pre-existing environment fails, create a
-	 * private one and try again.
+	 * private one and try again.  Turn on DB_THREAD in case a repmgr
+	 * application wants to do checkpointing using this utility: repmgr
+	 * requires DB_THREAD for all env handles.
 	 */
-	if ((ret = dbenv->open(dbenv, home, DB_USE_ENVIRON, 0)) != 0 &&
+#ifdef HAVE_REPLICATION_THREADS
+#define	ENV_FLAGS (DB_THREAD | DB_USE_ENVIRON)
+#else
+#define	ENV_FLAGS DB_USE_ENVIRON
+#endif
+	if ((ret = dbenv->open(dbenv, home, ENV_FLAGS, 0)) != 0 &&
 	    (!once || ret == DB_VERSION_MISMATCH ||
 	    (ret = dbenv->open(dbenv, home,
 	    DB_CREATE | DB_INIT_TXN | DB_PRIVATE | DB_USE_ENVIRON, 0)) != 0)) {
@@ -174,7 +181,7 @@ db_checkpoint_main(argc, argv)
 		if (verbose) {
 			(void)time(&now);
 			dbenv->errx(dbenv,
-		    "checkpoint begin: %s", __db_ctime(&now, time_buf));
+		    "checkpoint begin: %s", __os_ctime(&now, time_buf));
 		}
 
 		if ((ret = dbenv->txn_checkpoint(dbenv,
@@ -186,13 +193,13 @@ db_checkpoint_main(argc, argv)
 		if (verbose) {
 			(void)time(&now);
 			dbenv->errx(dbenv,
-		    "checkpoint complete: %s", __db_ctime(&now, time_buf));
+		    "checkpoint complete: %s", __os_ctime(&now, time_buf));
 		}
 
 		if (once)
 			break;
 
-		__os_sleep(dbenv, seconds, 0);
+		__os_yield(dbenv->env, seconds, 0);
 	}
 
 	if (0) {

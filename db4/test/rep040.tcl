@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2004,2007 Oracle.  All rights reserved.
+# Copyright (c) 2004-2009 Oracle.  All rights reserved.
 #
-# $Id: rep040.tcl,v 12.15 2007/05/17 18:17:21 bostic Exp $
+# $Id$
 #
 # TEST	rep040
 # TEST	Test of racing rep_start and transactions.
@@ -16,6 +16,9 @@
 proc rep040 { method { niter 200 } { tnum "040" } args } {
 
 	source ./include.tcl
+	global databases_in_memory
+	global repfiles_in_memory
+
 	if { $is_windows9x_test == 1 } {
 		puts "Skipping replication test on Win 9x platform."
 		return
@@ -29,6 +32,22 @@ proc rep040 { method { niter 200 } { tnum "040" } args } {
 	set args [convert_args $method $args]
 	set logsets [create_logsets 2]
 
+	# Set up for on-disk or in-memory databases.
+	set msg "using on-disk databases"
+	if { $databases_in_memory } {
+		set msg "using named in-memory databases"
+		if { [is_queueext $method] } { 
+			puts -nonewline "Skipping rep$tnum for method "
+			puts "$method with named in-memory databases."
+			return
+		}
+	}
+
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
+	}
+
 	# Run the body of the test with and without recovery,
 	# and with and without cleaning.  Skip recovery with in-memory
 	# logging - it doesn't make sense.
@@ -41,7 +60,7 @@ proc rep040 { method { niter 200 } { tnum "040" } args } {
 				continue
 			}
 			puts "Rep$tnum ($method $r $args):\
-			    Test of rep_start racing txns."
+			    Test of rep_start racing txns $msg $msg2."
 			puts "Rep$tnum: Master logs are [lindex $l 0]"
 			puts "Rep$tnum: Client logs are [lindex $l 1]"
 			rep040_sub $method $niter $tnum $l $r $args
@@ -53,11 +72,19 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 	source ./include.tcl
 	global testdir
 	global util_path
+	global databases_in_memory
+	global repfiles_in_memory
 	global rep_verbose
+	global verbose_type
 
 	set verbargs ""
 	if { $rep_verbose == 1 } {
-		set verbargs " -verbose {rep on} "
+		set verbargs " -verbose {$verbose_type on} "
+	}
+
+	set repmemargs ""
+	if { $repfiles_in_memory } {
+		set repmemargs "-rep_inmem_files "
 	}
 
 	env_cleanup $testdir
@@ -83,20 +110,27 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 	# Open a master.
 	repladd 1
 	set ma_envcmd "berkdb_env_noerr -create $m_txnargs $m_logargs \
-	    -errpfx MASTER \
+	    -errpfx MASTER $repmemargs \
 	    -home $masterdir $verbargs -rep_transport \[list 1 replsend\]"
 	set masterenv [eval $ma_envcmd $recargs -rep_master]
 
 	# Open a client
 	repladd 2
 	set cl_envcmd "berkdb_env_noerr -create $c_txnargs $c_logargs \
-	    -errpfx CLIENT \
+	    -errpfx CLIENT $repmemargs \
 	    -home $clientdir $verbargs -rep_transport \[list 2 replsend\]"
 	set clientenv [eval $cl_envcmd $recargs -rep_client]
 	error_check_good client_env [is_valid_env $clientenv] TRUE
 
-	set testfile "rep040.db"
-	set testfile1 "rep040A.db"
+	# Set up databases in-memory or on-disk.
+	if { $databases_in_memory } {
+		set testfile { "" "rep040.db" }
+		set testfile1 { "" "rep040A.db" }
+	} else { 
+		set testfile "rep040.db"
+		set testfile1 "rep040A.db"
+	} 
+
 	set db [eval {berkdb_open_noerr -env $masterenv -auto_commit -create \
 	    -mode 0644} $largs $omethod $testfile]
 	error_check_good rep_db [is_valid_db $db] TRUE
@@ -116,7 +150,7 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 
 	# Run rep_test in the master (and update client).
 	puts "\tRep$tnum.a: Running rep_test in replicated env."
-	eval rep_test $method $masterenv $db $niter 0 0 0 0 $largs
+	eval rep_test $method $masterenv $db $niter 0 0 0 $largs
 	process_msgs $envlist
 
 	# Get some data on a page
@@ -151,8 +185,7 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 	set outfile "$testdir/rep040script.log"
 	puts "\tRep$tnum.b: Fork master child process and sleep 90 seconds"
 	set pid [exec $tclsh_path $test_path/wrap.tcl \
-	    rep040script.tcl $outfile \
-	    $masterdir &]
+	    rep040script.tcl $outfile $masterdir $databases_in_memory &]
 
 	tclsleep 10
 	process_msgs $envlist
@@ -174,6 +207,12 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 	error_check_good dbclose [$db close] 0
 	error_check_good dbclose [$db1 close] 0
 	process_msgs $envlist
+ 
+	# Check that databases are in-memory or on-disk as expected.
+	check_db_location $masterenv $testfile
+	check_db_location $masterenv $testfile1
+	check_db_location $clientenv $testfile
+	check_db_location $clientenv $testfile1
 
 	check_log_location $masterenv
 	check_log_location $clientenv
@@ -182,14 +221,19 @@ proc rep040_sub { method niter tnum logset recargs largs } {
 	error_check_good clientenv_close [$clientenv close] 0
 
 	#
-	# Check we detected outstanding txn (t2)
-	#
-	puts "\tRep$tnum.d: Verify waiting and logs"
-	set ret [catch {open $outfile} ofid]
-	error_check_good open $ret 0
-	set contents [read $ofid]
-	error_check_good detect [is_substr $contents "Waiting for op_cnt"] 1
-	close $ofid
+	# Check we detected outstanding txn (t2).
+	# The message we check for is produced only if the build was 
+	# configured with --enable-diagnostic. 
+	set conf [berkdb getconfig]
+	if { [is_substr $conf "diagnostic"] == 1 } {
+		puts "\tRep$tnum.d: Verify waiting and logs"
+		set ret [catch {open $outfile} ofid]
+		error_check_good open $ret 0
+		set contents [read $ofid]
+		error_check_good \
+		    detect [is_substr $contents "Waiting for op_cnt"] 1
+		close $ofid
+	}
 
 	# Check that master and client logs and dbs are identical.
 	set stat [catch {eval exec $util_path/db_printlog \

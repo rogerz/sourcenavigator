@@ -15,10 +15,32 @@ typedef struct ___bam_split_args {
 	u_int32_t	indx;
 	db_pgno_t	npgno;
 	DB_LSN	nlsn;
+	db_pgno_t	ppgno;
+	DB_LSN	plsn;
+	u_int32_t	pindx;
+	DBT	pg;
+	DBT	pentry;
+	DBT	rentry;
+	u_int32_t	opflags;
+} __bam_split_args;
+
+#define	DB___bam_split_42	62
+typedef struct ___bam_split_42_args {
+	u_int32_t type;
+	DB_TXN *txnp;
+	DB_LSN prev_lsn;
+	int32_t	fileid;
+	db_pgno_t	left;
+	DB_LSN	llsn;
+	db_pgno_t	right;
+	DB_LSN	rlsn;
+	u_int32_t	indx;
+	db_pgno_t	npgno;
+	DB_LSN	nlsn;
 	db_pgno_t	root_pgno;
 	DBT	pg;
 	u_int32_t	opflags;
-} __bam_split_args;
+} __bam_split_42_args;
 
 #define	DB___bam_rsplit	63
 typedef struct ___bam_rsplit_args {
@@ -153,6 +175,21 @@ typedef struct ___bam_relink_args {
 	DB_LSN	lsn_next;
 } __bam_relink_args;
 
+#define	DB___bam_merge_44	148
+typedef struct ___bam_merge_44_args {
+	u_int32_t type;
+	DB_TXN *txnp;
+	DB_LSN prev_lsn;
+	int32_t	fileid;
+	db_pgno_t	pgno;
+	DB_LSN	lsn;
+	db_pgno_t	npgno;
+	DB_LSN	nlsn;
+	DBT	hdr;
+	DBT	data;
+	DBT	ind;
+} __bam_merge_44_args;
+
 #define	DB___bam_merge	148
 typedef struct ___bam_merge_args {
 	u_int32_t type;
@@ -165,7 +202,7 @@ typedef struct ___bam_merge_args {
 	DB_LSN	nlsn;
 	DBT	hdr;
 	DBT	data;
-	DBT	ind;
+	int32_t	pg_copy;
 } __bam_merge_args;
 
 #define	DB___bam_pgno	149

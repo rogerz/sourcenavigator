@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2003,2007 Oracle.  All rights reserved.
+# Copyright (c) 2003-2009 Oracle.  All rights reserved.
 #
-# $Id: fop006.tcl,v 12.13 2007/05/17 18:17:21 bostic Exp $
+# $Id$
 #
 # TEST	fop006
 # TEST	Test file system operations in multiple simultaneous

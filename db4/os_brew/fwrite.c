@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2006,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2006-2009 Oracle.  All rights reserved.
  *
- * $Id: fwrite.c,v 1.4 2007/05/17 15:15:47 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"

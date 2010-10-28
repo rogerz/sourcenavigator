@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2005,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2005-2009 Oracle.  All rights reserved.
  *
- * $Id: printf.c,v 1.7 2007/05/17 15:14:54 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"

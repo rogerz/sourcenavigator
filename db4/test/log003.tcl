@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1996,2007 Oracle.  All rights reserved.
+# Copyright (c) 1996-2009 Oracle.  All rights reserved.
 #
-# $Id: log003.tcl,v 12.5 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # TEST	log003
 # TEST	Verify that log_flush is flushing records correctly.

@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2002,2007 Oracle.  All rights reserved.
+# Copyright (c) 2002-2009 Oracle.  All rights reserved.
 #
-# $Id: test098.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test098
 # TEST	Test of DB_GET_RECNO and secondary indices.  Open a primary and

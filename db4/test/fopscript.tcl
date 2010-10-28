@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2003,2007 Oracle.  All rights reserved.
+# Copyright (c) 2003-2009 Oracle.  All rights reserved.
 #
-# $Id: fopscript.tcl,v 12.6 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # Fop006 script - test of fileops in multiple transactions
 # Usage: fopscript

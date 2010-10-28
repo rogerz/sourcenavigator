@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1999,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1999-2009 Oracle.  All rights reserved.
  *
- * $Id: db_method.c,v 12.40 2007/05/22 00:37:15 ubell Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -29,26 +29,39 @@
 static int  __db_get_byteswapped __P((DB *, int *));
 static int  __db_get_dbname __P((DB *, const char **, const char **));
 static DB_ENV *__db_get_env __P((DB *));
+static void __db_get_msgcall
+	      __P((DB *, void (**)(const DB_ENV *, const char *)));
 static DB_MPOOLFILE *__db_get_mpf __P((DB *));
 static int  __db_get_multiple __P((DB *));
 static int  __db_get_transactional __P((DB *));
 static int  __db_get_type __P((DB *, DBTYPE *dbtype));
 static int  __db_init __P((DB *, u_int32_t));
+static int  __db_get_alloc __P((DB *, void *(**)(size_t),
+		void *(**)(void *, size_t), void (**)(void *)));
 static int  __db_set_alloc __P((DB *, void *(*)(size_t),
 		void *(*)(void *, size_t), void (*)(void *)));
+static int  __db_get_append_recno __P((DB *,
+		int (**)(DB *, DBT *, db_recno_t)));
 static int  __db_set_append_recno __P((DB *, int (*)(DB *, DBT *, db_recno_t)));
 static int  __db_get_cachesize __P((DB *, u_int32_t *, u_int32_t *, int *));
 static int  __db_set_cachesize __P((DB *, u_int32_t, u_int32_t, int));
+static int  __db_get_create_dir __P((DB *, const char **));
+static int  __db_set_create_dir __P((DB *, const char *));
+static int  __db_get_dup_compare
+		__P((DB *, int (**)(DB *, const DBT *, const DBT *)));
 static int  __db_set_dup_compare
 		__P((DB *, int (*)(DB *, const DBT *, const DBT *)));
 static int  __db_get_encrypt_flags __P((DB *, u_int32_t *));
 static int  __db_set_encrypt __P((DB *, const char *, u_int32_t));
+static int  __db_get_feedback __P((DB *, void (**)(DB *, int, int)));
 static int  __db_set_feedback __P((DB *, void (*)(DB *, int, int)));
 static void __db_map_flags __P((DB *, u_int32_t *, u_int32_t *));
 static int  __db_get_pagesize __P((DB *, u_int32_t *));
 static int  __db_set_paniccall __P((DB *, void (*)(DB_ENV *, int)));
 static int  __db_set_priority __P((DB *, DB_CACHE_PRIORITY));
 static int  __db_get_priority __P((DB *, DB_CACHE_PRIORITY *));
+static void __db_get_errcall __P((DB *,
+	      void (**)(const DB_ENV *, const char *, const char *)));
 static void __db_set_errcall
 	      __P((DB *, void (*)(const DB_ENV *, const char *, const char *)));
 static void __db_get_errfile __P((DB *, FILE **));
@@ -75,38 +88,21 @@ db_create(dbpp, dbenv, flags)
 	u_int32_t flags;
 {
 	DB_THREAD_INFO *ip;
+	ENV *env;
 	int ret;
 
 	ip = NULL;
+	env = dbenv == NULL ? NULL : dbenv->env;
 
 	/* Check for invalid function flags. */
-	switch (flags) {
-	case 0:
-		break;
-	case DB_XA_CREATE:
-		if (dbenv != NULL) {
-			__db_errx(dbenv,
-		"XA applications may not specify an environment to db_create");
-			return (EINVAL);
-		}
+	if (flags != 0)
+		return (__db_ferr(env, "db_create", 0));
 
-		/*
-		 * If it's an XA database, open it within the XA environment,
-		 * taken from the global list of environments.  (When the XA
-		 * transaction manager called our xa_start() routine the
-		 * "current" environment was moved to the start of the list.
-		 */
-		dbenv = TAILQ_FIRST(&DB_GLOBAL(db_envq));
-		break;
-	default:
-		return (__db_ferr(dbenv, "db_create", 0));
-	}
-
-	if (dbenv != NULL)
-		ENV_ENTER(dbenv, ip);
-	ret = __db_create_internal(dbpp, dbenv, flags);
-	if (dbenv != NULL)
-		ENV_LEAVE(dbenv, ip);
+	if (env != NULL)
+		ENV_ENTER(env, ip);
+	ret = __db_create_internal(dbpp, env, flags);
+	if (env != NULL)
+		ENV_LEAVE(env, ip);
 
 	return (ret);
 }
@@ -115,57 +111,60 @@ db_create(dbpp, dbenv, flags)
  * __db_create_internal --
  *	DB constructor internal routine.
  *
- * PUBLIC: int __db_create_internal  __P((DB **, DB_ENV *, u_int32_t));
+ * PUBLIC: int __db_create_internal  __P((DB **, ENV *, u_int32_t));
  */
 int
-__db_create_internal(dbpp, dbenv, flags)
+__db_create_internal(dbpp, env, flags)
 	DB **dbpp;
-	DB_ENV *dbenv;
+	ENV *env;
 	u_int32_t flags;
 {
 	DB *dbp;
+	DB_ENV *dbenv;
 	DB_REP *db_rep;
 	int ret;
 
 	*dbpp = NULL;
 
 	/* If we don't have an environment yet, allocate a local one. */
-	if (dbenv == NULL) {
+	if (env == NULL) {
 		if ((ret = db_env_create(&dbenv, 0)) != 0)
 			return (ret);
-		F_SET(dbenv, DB_ENV_DBLOCAL);
-	}
+		env = dbenv->env;
+		F_SET(env, ENV_DBLOCAL);
+	} else
+		dbenv = env->dbenv;
 
 	/* Allocate and initialize the DB handle. */
-	if ((ret = __os_calloc(dbenv, 1, sizeof(*dbp), &dbp)) != 0)
+	if ((ret = __os_calloc(env, 1, sizeof(*dbp), &dbp)) != 0)
 		goto err;
 
-	dbp->dbenv = dbenv;
+	dbp->dbenv = env->dbenv;
+	dbp->env = env;
 	if ((ret = __db_init(dbp, flags)) != 0)
 		goto err;
 
-	MUTEX_LOCK(dbenv, dbenv->mtx_dblist);
-	++dbenv->db_ref;
-	MUTEX_UNLOCK(dbenv, dbenv->mtx_dblist);
+	MUTEX_LOCK(env, env->mtx_dblist);
+	++env->db_ref;
+	MUTEX_UNLOCK(env, env->mtx_dblist);
 
 	/*
 	 * Set the replication timestamp; it's 0 if we're not in a replicated
 	 * environment.  Don't acquire a lock to read the value, even though
 	 * it's opaque: all we check later is value equality, nothing else.
 	 */
-	dbp->timestamp = REP_ON(dbenv) ?
-	    ((REGENV *)((REGINFO *)dbenv->reginfo)->primary)->rep_timestamp : 0;
+	dbp->timestamp = REP_ON(env) ?
+	    ((REGENV *)env->reginfo->primary)->rep_timestamp : 0;
 	/*
 	 * Set the replication generation number for fid management; valid
 	 * replication generations start at 1.  Don't acquire a lock to
 	 * read the value.  All we check later is value equality.
 	 */
-	db_rep = dbenv->rep_handle;
-	dbp->fid_gen = REP_ON(dbenv) ? ((REP *)db_rep->region)->gen : 0;
+	db_rep = env->rep_handle;
+	dbp->fid_gen = REP_ON(env) ? ((REP *)db_rep->region)->gen : 0;
 
 	/* If not RPC, open a backing DB_MPOOLFILE handle in the memory pool. */
-	if (!RPC_ON(dbenv) &&
-	    (ret = __memp_fcreate(dbenv, &dbp->mpf)) != 0)
+	if (!RPC_ON(dbenv) && (ret = __memp_fcreate(env, &dbp->mpf)) != 0)
 		goto err;
 
 	dbp->type = DB_UNKNOWN;
@@ -176,11 +175,11 @@ __db_create_internal(dbpp, dbenv, flags)
 err:	if (dbp != NULL) {
 		if (dbp->mpf != NULL)
 			(void)__memp_fclose(dbp->mpf, 0);
-		__os_free(dbenv, dbp);
+		__os_free(env, dbp);
 	}
 
-	if (F_ISSET(dbenv, DB_ENV_DBLOCAL))
-		(void)__env_close(dbenv, 0);
+	if (F_ISSET(env, ENV_DBLOCAL))
+		(void)__env_close(dbp->dbenv, 0);
 
 	return (ret);
 }
@@ -209,6 +208,7 @@ __db_init(dbp, flags)
 
 	/* DB PUBLIC HANDLE LIST BEGIN */
 	dbp->associate = __db_associate_pp;
+	dbp->associate_foreign = __db_associate_foreign_pp;
 	dbp->close = __db_close_pp;
 	dbp->compact = __db_compact_pp;
 	dbp->cursor = __db_cursor_pp;
@@ -219,20 +219,31 @@ __db_init(dbp, flags)
 	dbp->exists = __db_exists;
 	dbp->fd = __db_fd_pp;
 	dbp->get = __db_get_pp;
+	dbp->get_alloc = __db_get_alloc;
+	dbp->get_append_recno = __db_get_append_recno;
 	dbp->get_byteswapped = __db_get_byteswapped;
 	dbp->get_cachesize = __db_get_cachesize;
+	dbp->get_create_dir = __db_get_create_dir;
 	dbp->get_dbname = __db_get_dbname;
+	dbp->get_dup_compare = __db_get_dup_compare;
 	dbp->get_encrypt_flags = __db_get_encrypt_flags;
 	dbp->get_env = __db_get_env;
+	dbp->get_errcall = __db_get_errcall;
 	dbp->get_errfile = __db_get_errfile;
 	dbp->get_errpfx = __db_get_errpfx;
+	dbp->get_feedback = __db_get_feedback;
 	dbp->get_flags = __db_get_flags;
 	dbp->get_lorder = __db_get_lorder;
 	dbp->get_mpf = __db_get_mpf;
+	dbp->get_msgcall = __db_get_msgcall;
 	dbp->get_msgfile = __db_get_msgfile;
 	dbp->get_multiple = __db_get_multiple;
 	dbp->get_open_flags = __db_get_open_flags;
+	dbp->get_partition_dirs = __partition_get_dirs;
+	dbp->get_partition_callback = __partition_get_callback;
+	dbp->get_partition_keys = __partition_get_keys;
 	dbp->get_pagesize = __db_get_pagesize;
+	dbp->get_priority = __db_get_priority;
 	dbp->get_transactional = __db_get_transactional;
 	dbp->get_type = __db_get_type;
 	dbp->join = __db_join_pp;
@@ -245,6 +256,7 @@ __db_init(dbp, flags)
 	dbp->set_alloc = __db_set_alloc;
 	dbp->set_append_recno = __db_set_append_recno;
 	dbp->set_cachesize = __db_set_cachesize;
+	dbp->set_create_dir = __db_set_create_dir;
 	dbp->set_dup_compare = __db_set_dup_compare;
 	dbp->set_encrypt = __db_set_encrypt;
 	dbp->set_errcall = __db_set_errcall;
@@ -257,8 +269,10 @@ __db_init(dbp, flags)
 	dbp->set_msgfile = __db_set_msgfile;
 	dbp->set_pagesize = __db_set_pagesize;
 	dbp->set_paniccall = __db_set_paniccall;
+	dbp->set_partition = __partition_set;
+	dbp->set_partition_dirs = __partition_set_dirs;
 	dbp->set_priority = __db_set_priority;
-	dbp->get_priority = __db_get_priority;
+	dbp->sort_multiple = __db_sort_multiple;
 	dbp->stat = __db_stat_pp;
 	dbp->stat_print = __db_stat_print_pp;
 	dbp->sync = __db_sync_pp;
@@ -273,13 +287,6 @@ __db_init(dbp, flags)
 	if ((ret = __ham_db_create(dbp)) != 0)
 		return (ret);
 	if ((ret = __qam_db_create(dbp)) != 0)
-		return (ret);
-
-	/*
-	 * XA specific: must be last, as we replace methods set by the
-	 * access methods.
-	 */
-	if (LF_ISSET(DB_XA_CREATE) && (ret = __db_xa_create(dbp)) != 0)
 		return (ret);
 
 #ifdef HAVE_RPC
@@ -298,6 +305,8 @@ __db_init(dbp, flags)
 		if ((ret = __dbcl_db_create(dbp, dbp->dbenv, flags)) != 0)
 			return (ret);
 	}
+#else
+	COMPQUIET(flags, 0);
 #endif
 
 	return (0);
@@ -327,7 +336,7 @@ __dbh_am_chk(dbp, flags)
 		return (0);
 	}
 
-	__db_errx(dbp->dbenv,
+	__db_errx(dbp->env,
     "call implies an access method which is inconsistent with previous calls");
 	return (EINVAL);
 }
@@ -474,6 +483,21 @@ __db_get_type(dbp, dbtype)
 }
 
 /*
+ * __db_get_append_recno --
+ *	Get record number append routine.
+ */
+static int
+__db_get_append_recno(dbp, funcp)
+	DB *dbp;
+	int (**funcp) __P((DB *, DBT *, db_recno_t));
+{
+	DB_ILLEGAL_METHOD(dbp, DB_OK_QUEUE | DB_OK_RECNO);
+	if (funcp)
+		*funcp = dbp->db_append_recno;
+
+	return (0);
+}
+/*
  * __db_set_append_recno --
  *	Set record number append routine.
  */
@@ -523,6 +547,64 @@ __db_set_cachesize(dbp, cache_gbytes, cache_bytes, ncache)
 	    dbp->dbenv, cache_gbytes, cache_bytes, ncache));
 }
 
+static int
+__db_set_create_dir(dbp, dir)
+	DB *dbp;
+	const char *dir;
+{
+	DB_ENV *dbenv;
+	int i;
+
+	dbenv = dbp->dbenv;
+
+	for (i = 0; i < dbenv->data_next; i++)
+		if (strcmp(dir, dbenv->db_data_dir[i]) == 0)
+			break;
+
+	if (i == dbenv->data_next) {
+		__db_errx(dbp->env,
+		     "Directory %s not in environment list.", dir);
+		return (EINVAL);
+	}
+
+	dbp->dirname = dbenv->db_data_dir[i];
+	return (0);
+}
+
+static int
+__db_get_create_dir(dbp, dirp)
+	DB *dbp;
+	const char **dirp;
+{
+	*dirp = dbp->dirname;
+	return (0);
+}
+
+/*
+ * __db_get_dup_compare --
+ *	Get duplicate comparison routine.
+ */
+static int
+__db_get_dup_compare(dbp, funcp)
+	DB *dbp;
+	int (**funcp) __P((DB *, const DBT *, const DBT *));
+{
+
+	DB_ILLEGAL_METHOD(dbp, DB_OK_BTREE | DB_OK_HASH);
+
+	if (funcp != NULL) {
+#ifdef HAVE_COMPRESSION
+		if (DB_IS_COMPRESSED(dbp)) {
+			*funcp =
+			     ((BTREE *)dbp->bt_internal)->compress_dup_compare;
+		} else
+#endif
+			*funcp = dbp->dup_compare;
+	}
+
+	return (0);
+}
+
 /*
  * __db_set_dup_compare --
  *	Set duplicate comparison routine.
@@ -534,13 +616,19 @@ __db_set_dup_compare(dbp, func)
 {
 	int ret;
 
-	DB_ILLEGAL_AFTER_OPEN(dbp, "DB->dup_compare");
+	DB_ILLEGAL_AFTER_OPEN(dbp, "DB->set_dup_compare");
 	DB_ILLEGAL_METHOD(dbp, DB_OK_BTREE | DB_OK_HASH);
 
 	if ((ret = __db_set_flags(dbp, DB_DUPSORT)) != 0)
 		return (ret);
 
-	dbp->dup_compare = func;
+#ifdef HAVE_COMPRESSION
+	if (DB_IS_COMPRESSED(dbp)) {
+		dbp->dup_compare = __bam_compress_dupcmp;
+		((BTREE *)dbp->bt_internal)->compress_dup_compare = func;
+	} else
+#endif
+		dbp->dup_compare = func;
 
 	return (0);
 }
@@ -581,12 +669,20 @@ __db_set_encrypt(dbp, passwd, flags)
 	 * In a real env, this gets initialized with the region.  In a local
 	 * env, we must do it here.
 	 */
-	db_cipher = (DB_CIPHER *)dbp->dbenv->crypto_handle;
+	db_cipher = dbp->env->crypto_handle;
 	if (!F_ISSET(db_cipher, CIPHER_ANY) &&
-	    (ret = db_cipher->init(dbp->dbenv, db_cipher)) != 0)
+	    (ret = db_cipher->init(dbp->env, db_cipher)) != 0)
 		return (ret);
 
 	return (__db_set_flags(dbp, DB_ENCRYPT));
+}
+
+static void
+__db_get_errcall(dbp, errcallp)
+	DB *dbp;
+	void (**errcallp) __P((const DB_ENV *, const char *, const char *));
+{
+	__env_get_errcall(dbp->dbenv, errcallp);
 }
 
 static void
@@ -627,6 +723,16 @@ __db_set_errpfx(dbp, errpfx)
 	const char *errpfx;
 {
 	__env_set_errpfx(dbp->dbenv, errpfx);
+}
+
+static int
+__db_get_feedback(dbp, feedbackp)
+	DB *dbp;
+	void (**feedbackp) __P((DB *, int, int));
+{
+	if (feedbackp != NULL)
+		*feedbackp = dbp->db_feedback;
+	return (0);
 }
 
 static int
@@ -702,7 +808,7 @@ __db_get_flags(dbp, flagsp)
 #ifdef HAVE_QUEUE
 		__qam_map_flags(dbp, &f, &mapped_flag);
 #endif
-		DB_ASSERT(dbp->dbenv, f == 0);
+		DB_ASSERT(dbp->env, f == 0);
 		if (F_ISSET(dbp, mapped_flag) == mapped_flag)
 			LF_SET(db_flags[i]);
 	}
@@ -722,19 +828,19 @@ __db_set_flags(dbp, flags)
 	DB *dbp;
 	u_int32_t flags;
 {
-	DB_ENV *dbenv;
+	ENV *env;
 	int ret;
 
-	dbenv = dbp->dbenv;
+	env = dbp->env;
 
-	if (LF_ISSET(DB_ENCRYPT) && !CRYPTO_ON(dbenv)) {
-		__db_errx(dbenv,
+	if (LF_ISSET(DB_ENCRYPT) && !CRYPTO_ON(env)) {
+		__db_errx(env,
 		    "Database environment not configured for encryption");
 		return (EINVAL);
 	}
 	if (LF_ISSET(DB_TXN_NOT_DURABLE))
-		ENV_REQUIRES_CONFIG(dbenv,
-		    dbenv->tx_handle, "DB_NOT_DURABLE", DB_INIT_TXN);
+		ENV_REQUIRES_CONFIG(env,
+		    env->tx_handle, "DB_NOT_DURABLE", DB_INIT_TXN);
 
 	__db_map_flags(dbp, &flags, &dbp->flags);
 
@@ -747,7 +853,7 @@ __db_set_flags(dbp, flags)
 		return (ret);
 #endif
 
-	return (flags == 0 ? 0 : __db_ferr(dbenv, "DB->set_flags", 0));
+	return (flags == 0 ? 0 : __db_ferr(env, "DB->set_flags", 0));
 }
 
 /*
@@ -764,7 +870,7 @@ __db_get_lorder(dbp, db_lorderp)
 	int ret;
 
 	/* Flag if the specified byte order requires swapping. */
-	switch (ret = __db_byteorder(dbp->dbenv, 1234)) {
+	switch (ret = __db_byteorder(dbp->env, 1234)) {
 	case 0:
 		*db_lorderp = F_ISSET(dbp, DB_AM_SWAP) ? 4321 : 1234;
 		break;
@@ -795,7 +901,7 @@ __db_set_lorder(dbp, db_lorder)
 	DB_ILLEGAL_AFTER_OPEN(dbp, "DB->set_lorder");
 
 	/* Flag if the specified byte order requires swapping. */
-	switch (ret = __db_byteorder(dbp->dbenv, db_lorder)) {
+	switch (ret = __db_byteorder(dbp->env, db_lorder)) {
 	case 0:
 		F_CLR(dbp, DB_AM_SWAP);
 		break;
@@ -810,6 +916,19 @@ __db_set_lorder(dbp, db_lorder)
 }
 
 static int
+__db_get_alloc(dbp, mal_funcp, real_funcp, free_funcp)
+	DB *dbp;
+	void *(**mal_funcp) __P((size_t));
+	void *(**real_funcp) __P((void *, size_t));
+	void (**free_funcp) __P((void *));
+{
+	DB_ILLEGAL_IN_ENV(dbp, "DB->get_alloc");
+
+	return (__env_get_alloc(dbp->dbenv, mal_funcp,
+	    real_funcp, free_funcp));
+}
+
+static int
 __db_set_alloc(dbp, mal_func, real_func, free_func)
 	DB *dbp;
 	void *(*mal_func) __P((size_t));
@@ -820,6 +939,14 @@ __db_set_alloc(dbp, mal_func, real_func, free_func)
 	DB_ILLEGAL_AFTER_OPEN(dbp, "DB->set_alloc");
 
 	return (__env_set_alloc(dbp->dbenv, mal_func, real_func, free_func));
+}
+
+static void
+__db_get_msgcall(dbp, msgcallp)
+	DB *dbp;
+	void (**msgcallp) __P((const DB_ENV *, const char *));
+{
+	__env_get_msgcall(dbp->dbenv, msgcallp);
 }
 
 static void
@@ -869,12 +996,12 @@ __db_set_pagesize(dbp, db_pagesize)
 	DB_ILLEGAL_AFTER_OPEN(dbp, "DB->set_pagesize");
 
 	if (db_pagesize < DB_MIN_PGSIZE) {
-		__db_errx(dbp->dbenv, "page sizes may not be smaller than %lu",
+		__db_errx(dbp->env, "page sizes may not be smaller than %lu",
 		    (u_long)DB_MIN_PGSIZE);
 		return (EINVAL);
 	}
 	if (db_pagesize > DB_MAX_PGSIZE) {
-		__db_errx(dbp->dbenv, "page sizes may not be larger than %lu",
+		__db_errx(dbp->env, "page sizes may not be larger than %lu",
 		    (u_long)DB_MAX_PGSIZE);
 		return (EINVAL);
 	}
@@ -884,7 +1011,7 @@ __db_set_pagesize(dbp, db_pagesize)
 	 * for alignment of various types on the pages.
 	 */
 	if (!POWER_OF_TWO(db_pagesize)) {
-		__db_errx(dbp->dbenv, "page sizes must be a power-of-2");
+		__db_errx(dbp->env, "page sizes must be a power-of-2");
 		return (EINVAL);
 	}
 

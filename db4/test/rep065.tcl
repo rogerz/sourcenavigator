@@ -1,22 +1,23 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2006,2007 Oracle.  All rights reserved.
+# Copyright (c) 2006-2009 Oracle.  All rights reserved.
 #
-# $Id: rep065.tcl,v 12.16 2007/07/06 00:24:16 sue Exp $
+# $Id$
 #
 # TEST	rep065
 # TEST	Tests replication running with different versions.
 # TEST	This capability is introduced with 4.5.
 # TEST
 # TEST	Start a replication group of 1 master and N sites, all
-# TEST	running some historical version greater than or equal to 4.2.
-# TEST	Take down a client and bring it up again running 4.5.  Run
-# TEST	some upgrades, make sure everything works.
+# TEST	running some historical version greater than or equal to 4.4.
+# TEST	Take down a client and bring it up again running current.
+# TEST	Run some upgrades, make sure everything works.
 # TEST
 # TEST	Each site runs the tcllib of its own version, but uses
-# TEST	the 4.5 tcl code (e.g. test.tcl).
+# TEST	the current tcl code (e.g. test.tcl).
 proc rep065 { method { nsites 3 } args } {
 	source ./include.tcl
+	global repfiles_in_memory
 	global noenv_messaging
 	set noenv_messaging 1
 
@@ -38,13 +39,18 @@ proc rep065 { method { nsites 3 } args } {
 		return
 	}
 
-	#
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
+	}
+
 	# Make the list of {method version} pairs to test.
 	#
 	set mvlist [method_version]
 	set mvlen [llength $mvlist]
 	puts "Rep065: Testing the following $mvlen method/version pairs:"
 	puts "Rep065: $mvlist"
+	puts "Rep065: $msg2"
 	set count 1
 	set total [llength $mvlist]
 	set slist [setup_sites $nsites]
@@ -114,7 +120,7 @@ proc rep065_sub { iter mv nsites slist } {
 		file mkdir $upgdir($sid)
 	}
 
-	# Open master env running 4.2.
+	# Open master env running 4.4.
 	#
 	# We know that slist has all sites starting in the histdir.
 	# So if we encounter an upgrade value, we upgrade that client
@@ -128,6 +134,7 @@ proc rep065_sub { iter mv nsites slist } {
 		# we don't find old data in there.
 		#
 		file delete -force $markerdir
+		file mkdir $markerdir
 		#
 		# Get the chosen master index from the list of sites.
 		#
@@ -299,7 +306,7 @@ proc upg_repdir { histdir upgdir } {
 	# Upgrade a site to the current version.  This entails:
 	# 1.  Removing any old files from the upgrade directory.
 	# 2.  Copy all old version files to upgrade directory.
-	# 3.  Remove any __db files from upgrade directory.
+	# 3.  Remove any __db files from upgrade directory except __db.rep*gen.
 	# 4.  Force checkpoint in new version.
 	file delete -force $upgdir
 
@@ -308,6 +315,10 @@ proc upg_repdir { histdir upgdir } {
 	file copy -force $histdir $upgdir
 	set dbfiles [glob -nocomplain $upgdir/__db*]
 	foreach d $dbfiles {
+		if { $d == "$upgdir/__db.rep.gen" ||
+		    $d == "$upgdir/__db.rep.egen" } {
+			continue
+		}
 		file delete -force $d
 	}
 	# Force current version checkpoint
@@ -368,7 +379,7 @@ proc method_version { } {
 	global valid_methods
 
 	set meth $valid_methods
-	set startmv { {hash db-4.2.52} {btree db-4.2.52} {hash db-4.5.20} }
+	set startmv { {btree db-4.4.20} {hash db-4.5.20} }
 
 	# Remove btree and hash from the method list, we're manually
 	# assigning those versions due to log/recovery record changes
@@ -378,30 +389,31 @@ proc method_version { } {
 	set midx [lsearch -exact $meth btree]
 	set meth [lreplace $meth $midx $midx]
 
-	#
-	# Since we're explicitly testing 4.2.52 weight testing the other
-	# versions a bit more.
-	set vers {db-4.2.52 db-4.3.29 db-4.4.20 db-4.5.20}
+	set vers {db-4.4.20 db-4.5.20 db-4.6.21 db-4.7.25}
 	set dbvlen [llength $vers]
 	#
 	# NOTE: The values in "vers_list" are indices into $vers above.
-	# Therefore, when you add a new version to $vers, you must
+	# Since we're explicitly testing 4.4.20 and 4.5.20 above,
+	# weight later versions more.
+	# When you add a new version to $vers, you must
 	# add some new items to $vers_list to choose that index.
 	# Also need to add an entry for 'vtest' below.
 	#
-	set vers_list { 0 0 1 1 1 2 2 2 3 3 3 }
+	set vers_list { 0 0 1 1 2 2 2 3 3 3 }
 	set vers_len [expr [llength $vers_list] - 1]
 
 	# Walk through the list of remaining methods and randomly
 	# assign a version to each one.
 	while { 1 } {
 		set mv $startmv
-		#
-		# Note that we've tested index 0, db-4.2.52.  And set the other
-		# index tests to 0.  We want to make sure we test each version.
+		# We want to make sure we test each version.
+		# 4.4.20
 		set vtest(0) 1
-		set vtest(1) 0
+		# 4.5.20
+		set vtest(1) 1
+		# 4.6.21
 		set vtest(2) 0
+		# 4.7.25
 		set vtest(3) 0
 		foreach m $meth {
 			# Index into distribution list.
@@ -425,7 +437,7 @@ proc method_version { } {
 		if { $all_vers == 1 } {
 			break
 		}
-		puts "Did not get all versions with $mv."
+#		puts "Did not get all versions with $mv."
 	}
 
 	return $mv

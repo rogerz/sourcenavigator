@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: RuntimeExceptionWrapper.java,v 12.6 2007/05/04 00:28:26 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.util;
@@ -15,6 +15,8 @@ package com.sleepycat.util;
  */
 public class RuntimeExceptionWrapper extends RuntimeException
     implements ExceptionWrapper {
+
+    private static final long serialVersionUID = 1106961350L;
 
     private Throwable e;
 
@@ -32,6 +34,7 @@ public class RuntimeExceptionWrapper extends RuntimeException
         return e;
     }
 
+    @Override
     public Throwable getCause() {
 
         return e;

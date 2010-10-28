@@ -120,6 +120,9 @@ SOURCE=..\btree\bt_compact.c
 SOURCE=..\btree\bt_compare.c
 # End Source File
 # Begin Source File
+SOURCE=..\btree\bt_compress.c
+# End Source File
+# Begin Source File
 SOURCE=..\btree\bt_conv.c
 # End Source File
 # Begin Source File
@@ -204,10 +207,16 @@ SOURCE=..\clib\strsep.c
 SOURCE=..\clib\strtol.c
 # End Source File
 # Begin Source File
+SOURCE=..\clib\time.c
+# End Source File
+# Begin Source File
 SOURCE=..\common\crypto_stub.c
 # End Source File
 # Begin Source File
 SOURCE=..\common\db_byteorder.c
+# End Source File
+# Begin Source File
+SOURCE=..\common\db_compint.c
 # End Source File
 # Begin Source File
 SOURCE=..\common\db_err.c
@@ -225,7 +234,13 @@ SOURCE=..\common\db_log2.c
 SOURCE=..\common\db_shash.c
 # End Source File
 # Begin Source File
+SOURCE=..\common\dbt.c
+# End Source File
+# Begin Source File
 SOURCE=..\common\mkpath.c
+# End Source File
+# Begin Source File
+SOURCE=..\common\zerofill.c
 # End Source File
 # Begin Source File
 SOURCE=..\db\crdel_auto.c
@@ -300,6 +315,9 @@ SOURCE=..\db\db_setid.c
 SOURCE=..\db\db_setlsn.c
 # End Source File
 # Begin Source File
+SOURCE=..\db\db_sort_multiple.c
+# End Source File
+# Begin Source File
 SOURCE=..\db\db_stati.c
 # End Source File
 # Begin Source File
@@ -355,6 +373,9 @@ SOURCE=..\env\env_region.c
 # End Source File
 # Begin Source File
 SOURCE=..\env\env_register.c
+# End Source File
+# Begin Source File
+SOURCE=..\env\env_sig.c
 # End Source File
 # Begin Source File
 SOURCE=..\env\env_stat.c
@@ -462,7 +483,7 @@ SOURCE=..\mutex\mut_stub.c
 SOURCE=..\os\os_alloc.c
 # End Source File
 # Begin Source File
-SOURCE=..\os\os_clock.c
+SOURCE=..\os\os_cpu.c
 # End Source File
 # Begin Source File
 SOURCE=..\os\os_fid.c
@@ -471,16 +492,10 @@ SOURCE=..\os\os_fid.c
 SOURCE=..\os\os_flock.c
 # End Source File
 # Begin Source File
-SOURCE=..\os\os_fzero.c
-# End Source File
-# Begin Source File
 SOURCE=..\os\os_getenv.c
 # End Source File
 # Begin Source File
 SOURCE=..\os\os_map.c
-# End Source File
-# Begin Source File
-SOURCE=..\os\os_region.c
 # End Source File
 # Begin Source File
 SOURCE=..\os\os_root.c
@@ -489,13 +504,13 @@ SOURCE=..\os\os_root.c
 SOURCE=..\os\os_rpath.c
 # End Source File
 # Begin Source File
+SOURCE=..\os\os_stack.c
+# End Source File
+# Begin Source File
 SOURCE=..\os\os_tmpdir.c
 # End Source File
 # Begin Source File
 SOURCE=..\os\os_uid.c
-# End Source File
-# Begin Source File
-SOURCE=..\os\os_yield.c
 # End Source File
 # Begin Source File
 SOURCE=..\os_brew\ctime.c
@@ -531,6 +546,9 @@ SOURCE=..\os_brew\os_abort.c
 SOURCE=..\os_brew\os_abs.c
 # End Source File
 # Begin Source File
+SOURCE=..\os_brew\os_clock.c
+# End Source File
+# Begin Source File
 SOURCE=..\os_brew\os_config.c
 # End Source File
 # Begin Source File
@@ -544,9 +562,6 @@ SOURCE=..\os_brew\os_handle.c
 # End Source File
 # Begin Source File
 SOURCE=..\os_brew\os_mkdir.c
-# End Source File
-# Begin Source File
-SOURCE=..\os_brew\os_oflags.c
 # End Source File
 # Begin Source File
 SOURCE=..\os_brew\os_open.c
@@ -564,9 +579,6 @@ SOURCE=..\os_brew\os_rw.c
 SOURCE=..\os_brew\os_seek.c
 # End Source File
 # Begin Source File
-SOURCE=..\os_brew\os_sleep.c
-# End Source File
-# Begin Source File
 SOURCE=..\os_brew\os_stat.c
 # End Source File
 # Begin Source File
@@ -576,7 +588,7 @@ SOURCE=..\os_brew\os_truncate.c
 SOURCE=..\os_brew\os_unlink.c
 # End Source File
 # Begin Source File
-SOURCE=..\os_brew\time.c
+SOURCE=..\os_brew\os_yield.c
 # End Source File
 # Begin Source File
 SOURCE=..\qam\qam_stub.c
@@ -616,9 +628,6 @@ SOURCE=..\txn\txn_stat.c
 # End Source File
 # Begin Source File
 SOURCE=..\txn\txn_util.c
-# End Source File
-# Begin Source File
-SOURCE=..\xa\xa_stub.c
 # End Source File
 # End Group
 # End Target

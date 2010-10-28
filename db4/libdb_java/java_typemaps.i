@@ -257,13 +257,13 @@ static void __dbj_dbt_release(
 		return $null; /* An exception will be pending. */
 	}%}
 
-/* Special cases for DBTs that may be null: DbEnv.rep_start and Db.compact */
+/* Special cases for DBTs that may be null: DbEnv.rep_start, Db.compact Db.set_partition */
 %typemap(in) DBT *data_or_null (DBT_LOCKED ldbt) %{
 	if (__dbj_dbt_copyin(jenv, &ldbt, &$1, $input, 1) != 0) {
 		return $null; /* An exception will be pending. */
 	}%}
 
-%apply DBT *data_or_null {DBT *cdata, DBT *start, DBT *stop, DBT *end};
+%apply DBT *data_or_null {DBT *cdata, DBT *start, DBT *stop, DBT *end, DBT *db_put_data, DBT *keys};
 
 %typemap(freearg) DBT * %{ __dbj_dbt_release(jenv, $input, $1, &ldbt$argnum); %}
 
@@ -348,7 +348,7 @@ JAVA_TYPEMAP(DBC **, Dbc[], jobjectArray)
 
 JAVA_TYPEMAP(u_int8_t *gid, byte[], jbyteArray)
 %typemap(check) u_int8_t *gid %{
-	if ((*jenv)->GetArrayLength(jenv, $input) < DB_XIDDATASIZE) {
+	if ((*jenv)->GetArrayLength(jenv, $input) < DB_GID_SIZE) {
 		__dbj_throw(jenv, EINVAL,
 		    "DbTxn.prepare gid array must be >= 128 bytes", NULL,
 		    TXN2JDBENV);
@@ -452,7 +452,7 @@ static int __dbj_verify_callback(void *handle, const void *str_arg) {
 	str = (char *)str_arg;
 	vd = (struct __dbj_verify_data *)handle;
 	jenv = vd->jenv;
-	len = strlen(str) + 1;
+	len = (int)strlen(str) + 1;
 	if (len > vd->nbytes) {
 		vd->nbytes = len;
 		if (vd->bytes != NULL)
@@ -521,10 +521,10 @@ JAVA_TYPEMAP(DB_LOCKREQ *, com.sleepycat.db.LockRequest[], jobjectArray)
 %native(DbEnv_lock_vec) void DbEnv_lock_vec(DB_ENV *dbenv, u_int32_t locker,
     u_int32_t flags, DB_LOCKREQ *list, int offset, int nlist);
 %{
-JNIEXPORT void JNICALL
+SWIGEXPORT void JNICALL
 Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
-    jclass jcls, jlong jdbenvp, jint locker, jint flags, jobjectArray list,
-    jint offset, jint count) {
+    jclass jcls, jlong jdbenvp, jobject jdbenv, jint locker, jint flags,
+    jobjectArray list, jint offset, jint count) {
 	DB_ENV *dbenv;
 	DB_LOCKREQ *lockreq;
 	DB_LOCKREQ *prereq;	/* preprocessed requests */
@@ -532,17 +532,27 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 	DB_LOCK *lockp;
 	DBT_LOCKED *locked_dbts;
 	DBT *obj;
+	ENV *env;
 	int err, alloc_err, i;
 	size_t bytesize, ldbtsize;
 	jobject jlockreq;
 	db_lockop_t op;
-	jobject jobj, jlock, jdbenv;
+	jobject jobj, jlock;
 	jlong jlockp;
 	int completed;
 
+	/*       
+	 * We can't easily #include "dbinc/db_ext.h" because of name
+	 * clashes, so we declare this explicitly.
+	 */     
+	extern int __dbt_usercopy __P((ENV *, DBT *));
+	extern void __dbt_userfree __P((ENV *, DBT *, DBT *, DBT *));
+
 	COMPQUIET(jcls, NULL);
 	dbenv = *(DB_ENV **)(void *)&jdbenvp;
-	jdbenv = (jobject)DB_ENV_INTERNAL(dbenv);
+	env = dbenv->env;
+	locked_dbts = NULL;
+	lockreq = NULL;
 
 	if (dbenv == NULL) {
 		__dbj_throw(jenv, EINVAL, "null object", NULL, jdbenv);
@@ -552,20 +562,20 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 	if ((*jenv)->GetArrayLength(jenv, list) < offset + count) {
 		__dbj_throw(jenv, EINVAL,
 		    "DbEnv.lock_vec array not large enough", NULL, jdbenv);
-		goto out0;
+		return;
 	}
 
 	bytesize = sizeof(DB_LOCKREQ) * count;
-	if ((err = __os_malloc(dbenv, bytesize, &lockreq)) != 0) {
+	if ((err = __os_malloc(env, bytesize, &lockreq)) != 0) {
 		__dbj_throw(jenv, err, NULL, NULL, jdbenv);
-		goto out0;
+		return;
 	}
 	memset(lockreq, 0, bytesize);
 
 	ldbtsize = sizeof(DBT_LOCKED) * count;
-	if ((err = __os_malloc(dbenv, ldbtsize, &locked_dbts)) != 0) {
+	if ((err = __os_malloc(env, ldbtsize, &locked_dbts)) != 0) {
 		__dbj_throw(jenv, err, NULL, NULL, jdbenv);
-		goto out1;
+		goto err;
 	}
 	memset(locked_dbts, 0, ldbtsize);
 	prereq = &lockreq[0];
@@ -577,30 +587,28 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 		if (jlockreq == NULL) {
 			__dbj_throw(jenv, EINVAL,
 			    "DbEnv.lock_vec list entry is null", NULL, jdbenv);
-			goto out2;
+			goto err;
 		}
-		op = (*jenv)->GetIntField(jenv, jlockreq, lockreq_op_fid);
+		op = (db_lockop_t)(*jenv)->GetIntField(
+                    jenv, jlockreq, lockreq_op_fid);
 		prereq->op = op;
 
 		switch (op) {
 		case DB_LOCK_GET_TIMEOUT:
 			/* Needed: mode, timeout, obj.  Returned: lock. */
-			prereq->op = (*jenv)->GetIntField(jenv, jlockreq,
-			    lockreq_timeout_fid);
+			prereq->op = (db_lockop_t)(*jenv)->GetIntField(
+			    jenv, jlockreq, lockreq_timeout_fid);
 			/* FALLTHROUGH */
 		case DB_LOCK_GET:
 			/* Needed: mode, obj.  Returned: lock. */
-			prereq->mode = (*jenv)->GetIntField(jenv, jlockreq,
-			    lockreq_modeflag_fid);
+			prereq->mode = (db_lockmode_t)(*jenv)->GetIntField(
+			    jenv, jlockreq, lockreq_modeflag_fid);
 			jobj = (*jenv)->GetObjectField(jenv, jlockreq,
 			    lockreq_obj_fid);
 			if ((err = __dbj_dbt_copyin(jenv,
 			    &locked_dbts[i], &obj, jobj, 0)) != 0 ||
-			    (err =
-			    __os_umalloc(dbenv, obj->size, &obj->data)) != 0 ||
-			    (err = __dbj_dbt_memcopy(obj, 0,
-				obj->data, obj->size, DB_USERCOPY_GETDATA)) != 0)
-				goto out2;
+			    (err = __dbt_usercopy(env, obj)) != 0)
+				goto err;
 			prereq->obj = obj;
 			break;
 		case DB_LOCK_PUT:
@@ -613,7 +621,7 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 				__dbj_throw(jenv, EINVAL,
 				    "LockRequest lock field is NULL", NULL,
 				    jdbenv);
-				goto out2;
+				goto err;
 			}
 			lockp = *(DB_LOCK **)(void *)&jlockp;
 			prereq->lock = *lockp;
@@ -628,17 +636,14 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 			    lockreq_obj_fid);
 			if ((err = __dbj_dbt_copyin(jenv,
 			    &locked_dbts[i], &obj, jobj, 0)) != 0 ||
-			    (err =
-			    __os_umalloc(dbenv, obj->size, &obj->data)) != 0 ||
-			    (err = __dbj_dbt_memcopy(obj, 0,
-				obj->data, obj->size, DB_USERCOPY_GETDATA)) != 0)
-				goto out2;
+			    (err = __dbt_usercopy(env, obj)) != 0)
+				goto err;
 			prereq->obj = obj;
 			break;
 		default:
 			__dbj_throw(jenv, EINVAL,
 			    "DbEnv.lock_vec bad op value", NULL, jdbenv);
-			goto out2;
+			goto err;
 		}
 	}
 
@@ -647,7 +652,7 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 	if (err == 0)
 		completed = count;
 	else
-		completed = failedreq - lockreq;
+		completed = (int)(failedreq - lockreq);
 
 	/* do post processing for any and all requests that completed */
 	for (i = 0; i < completed; i++) {
@@ -667,18 +672,17 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 			__os_free(NULL, lockp);
 			(*jenv)->SetLongField(jenv, jlock, lock_cptr_fid,
 			    (jlong)0);
-		}
-		else if (op == DB_LOCK_GET) {
+		} else if (op == DB_LOCK_GET_TIMEOUT || op == DB_LOCK_GET) {
 			/*
 			 * Store the lock that was obtained.  We need to create
 			 * storage for it since the lockreq array only exists
 			 * during this method call.
 			 */
 			if ((alloc_err =
-			    __os_malloc(dbenv, sizeof(DB_LOCK), &lockp)) != 0) {
+			    __os_malloc(env, sizeof(DB_LOCK), &lockp)) != 0) {
 				__dbj_throw(jenv, alloc_err, NULL, NULL,
 				    jdbenv);
-				goto out2;
+				goto err;
 			}
 
 			*lockp = lockreq[i].lock;
@@ -689,7 +693,7 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 			jlock = (*jenv)->NewObject(jenv, lock_class,
 			    lock_construct, jlockp, JNI_TRUE);
 			if (jlock == NULL)
-				goto out2; /* An exception is pending */
+				goto err; /* An exception is pending */
 			(*jenv)->SetLongField(jenv, jlock, lock_cptr_fid,
 			    jlockp);
 			(*jenv)->SetObjectField(jenv, jlockreq,
@@ -701,8 +705,7 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 	if (err == DB_LOCK_NOTGRANTED && i < count) {
 		jlockreq = (*jenv)->GetObjectArrayElement(jenv, list,
 		    i + offset);
-		jobj = (*jenv)->GetObjectField(jenv, jlockreq,
-		    lockreq_obj_fid);
+		jobj = (*jenv)->GetObjectField(jenv, jlockreq, lockreq_obj_fid);
 		jlock = (*jenv)->GetObjectField(jenv, jlockreq,
 		    lockreq_lock_fid);
 		(*jenv)->Throw(jenv,
@@ -712,44 +715,53 @@ Java_com_sleepycat_db_internal_db_1javaJNI_DbEnv_1lock_1vec(JNIEnv *jenv,
 	} else if (err != 0)
 		__dbj_throw(jenv, err, NULL, NULL, jdbenv);
 
-out2:	__os_free(dbenv, locked_dbts);
-out1:	for (i = 0, prereq = &lockreq[0]; i < count; i++, prereq++)
-		if ((prereq->op == DB_LOCK_GET || prereq->op == DB_LOCK_PUT) &&
-		    prereq->obj->data != NULL)
-			__os_ufree(dbenv, prereq->obj->data);
-	__os_free(dbenv, lockreq);
-out0:	return;
+err:	for (i = 0, prereq = &lockreq[0]; i < count; i++, prereq++)
+		if (prereq->op == DB_LOCK_GET_TIMEOUT ||
+		    prereq->op == DB_LOCK_GET ||
+		    prereq->op == DB_LOCK_PUT_OBJ) {
+			jlockreq = (*jenv)->GetObjectArrayElement(jenv,
+			    list, i + offset);
+			jobj = (*jenv)->GetObjectField(jenv,
+			    jlockreq, lockreq_obj_fid);
+			__dbt_userfree(env, prereq->obj, NULL, NULL);
+			__dbj_dbt_release(jenv, jobj, prereq->obj, &locked_dbts[i]);
+	}
+	if (locked_dbts != NULL)
+		__os_free(env, locked_dbts);
+	if (lockreq != NULL)
+		__os_free(env, lockreq);
 }
 %}
 
 JAVA_TYPEMAP(struct __db_repmgr_sites,
-    com.sleepycat.db.ReplicationHostAddress[], jobjectArray)
+    com.sleepycat.db.ReplicationManagerSiteInfo[], jobjectArray)
 %typemap(out) struct __db_repmgr_sites
 {
 	int i, len;
+	jobject jrep_addr, jrep_info;
 
 	len = $1.nsites;
-	$result = (*jenv)->NewObjectArray(jenv, (jsize)len, rephost_class,
+	$result = (*jenv)->NewObjectArray(jenv, (jsize)len, repmgr_siteinfo_class,
 	    NULL);
 	if ($result == NULL)
 		return $null; /* an exception is pending */
 	for (i = 0; i < len; i++) {
-		jobject jrep_addr = (*jenv)->NewObject(jenv,
-		    rephost_class, rephost_construct);
-
-		(*jenv)->SetObjectField(jenv, jrep_addr, rephost_host_fid,
-		    (*jenv)->NewStringUTF(jenv, $1.sites[i].host));
-		(*jenv)->SetIntField(jenv, jrep_addr, rephost_port_fid,
-		    $1.sites[i].port);
-		(*jenv)->SetIntField(jenv, jrep_addr, rephost_eid_fid,
-		    $1.sites[i].eid);
-		(*jenv)->SetIntField(jenv, jrep_addr, rephost_status_fid,
-		    $1.sites[i].status);
-
+		jstring addr_host = (*jenv)->NewStringUTF(jenv, $1.sites[i].host);
+		if (addr_host == NULL)
+			return $null; /* An exception is pending */
+		jrep_addr = (*jenv)->NewObject(jenv,
+		    rephost_class, rephost_construct, addr_host, $1.sites[i].port);
 		if (jrep_addr == NULL)
 			return $null; /* An exception is pending */
 
-		(*jenv)->SetObjectArrayElement(jenv, $result, i, jrep_addr);
+		jrep_info = (*jenv)->NewObject(jenv,
+		    repmgr_siteinfo_class, repmgr_siteinfo_construct, jrep_addr, $1.sites[i].eid);
+		(*jenv)->SetIntField(jenv, jrep_info, repmgr_siteinfo_status_fid,
+		    $1.sites[i].status);
+		if (jrep_info == NULL)
+			return $null; /* An exception is pending */
+
+		(*jenv)->SetObjectArrayElement(jenv, $result, i, jrep_info);
 	}
 	__os_ufree(NULL, $1.sites);
 }

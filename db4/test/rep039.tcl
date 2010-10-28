@@ -1,11 +1,11 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2004,2007 Oracle.  All rights reserved.
+# Copyright (c) 2004-2009 Oracle.  All rights reserved.
 #
-# $Id: rep039.tcl,v 1.24 2007/05/24 20:06:39 alanb Exp $
+# $Id$
 #
 # TEST	rep039
-# TEST	Test of interrupted internal initialization changes.  The
+# TEST	Test of interrupted internal initialization.  The
 # TEST	interruption is due to a changed master, or the client crashing,
 # TEST	or both.
 # TEST
@@ -23,6 +23,8 @@
 proc rep039 { method { niter 200 } { tnum "039" } args } {
 
 	source ./include.tcl
+	global databases_in_memory
+	global repfiles_in_memory
 
 	# Run for btree and queue methods only.
 	if { $checking_valid_methods } {
@@ -57,28 +59,66 @@ proc rep039 { method { niter 200 } { tnum "039" } args } {
 
 	set args [convert_args $method $args]
 
+	# Set up for on-disk or in-memory databases.
+	set msg "using on-disk databases"
+	if { $databases_in_memory } {
+		set msg "using named in-memory databases"
+		if { [is_queueext $method] } { 
+			puts -nonewline "Skipping rep$tnum for method "
+			puts "$method with named in-memory databases."
+			return
+		}
+	}
+
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
+	}
+
 	# Run the body of the test with and without recovery,
 	# and with and without cleaning.
 	set cleanopts { noclean clean }
 	set archopts { archive noarchive }
-	set nummsgs 5
-	set announce {puts "Rep$tnum ($method $r $clean $a $crash $args):\
-            Test of internal init. $i message iters."}
+	set nummsgs 4
+	set announce {puts "Rep$tnum ($method $r $clean $a $crash $l $args):\
+            Test of internal init. $i message iters. \
+	    Test $cnt of $maxtest tests $with recovery $msg $msg2."}
 	foreach r $test_recopts {
-		if { $r == "-recover" && ! $is_windows_test } {
+		if { $r == "-recover" && ! $is_windows_test && ! $is_hp_test } {
 			set crashopts { master_change client_crash both }
 		} else {
 			set crashopts { master_change }
 		}
+		# Only one of the three sites in the replication group needs to
+		# be tested with in-memory logs: the "client under test".
+		#
+		if { $r == "-recover" } {
+			set cl_logopts { on-disk }
+			set with "with"
+		} else {
+			set cl_logopts { on-disk in-memory }
+			set with "without"
+		}
+		set maxtest [expr [llength $crashopts] * \
+		    [llength $cleanopts] * \
+		    [llength $archopts] * \
+		    [llength $cl_logopts] * \
+		    [expr $nummsgs]]
+		set cnt 1
 		foreach crash $crashopts {
 			foreach clean $cleanopts {
 				foreach a $archopts {
-					for { set i 1 } \
-					    { $i < $nummsgs } { incr i } {
-						eval $announce
-						rep039_sub $method $niter \
-						    $tnum $r $clean $a $crash \
-						    $i $args
+					foreach l $cl_logopts {
+						for { set i 1 } \
+						    { $i <= $nummsgs } \
+						    { incr i } {
+							eval $announce
+							rep039_sub $method \
+							    $niter $tnum $r \
+							    $clean $a $crash \
+							    $l $i $args
+							incr cnt
+						}
 					}
 				}
 			}
@@ -86,14 +126,23 @@ proc rep039 { method { niter 200 } { tnum "039" } args } {
 	}
 }
 
-proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
+proc rep039_sub \
+    { method niter tnum recargs clean archive crash cl_logopt pmsgs largs } {
 	global testdir
 	global util_path
+	global databases_in_memory
+	global repfiles_in_memory
 	global rep_verbose
+	global verbose_type
 
 	set verbargs ""
 	if { $rep_verbose == 1 } {
-		set verbargs " -verbose {rep on} "
+		set verbargs " -verbose {$verbose_type on} "
+	}
+
+	set repmemargs ""
+	if { $repfiles_in_memory } {
+		set repmemargs "-rep_inmem_files "
 	}
 
 	set master_change false
@@ -152,21 +201,30 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 	# master.
 	#
 	repladd 1
-	set env_A_cmd "berkdb_env_noerr -create -txn nosync $verbargs \
+	set env_A_cmd "berkdb_env_noerr -create -txn nosync \
+	    $verbargs $repmemargs \
 	    -log_buffer $log_buf -log_max $log_max -errpfx SITE_A \
 	    -home $dirs(A) -rep_transport \[list 1 replsend\]"
 	set envs(A) [eval $env_A_cmd $recargs -rep_master]
 
 	# Open a client
 	repladd 2
-	set env_B_cmd "berkdb_env_noerr -create -txn nosync $verbargs \
-	    -log_buffer $log_buf -log_max $log_max -errpfx SITE_B \
+	set txn_arg [adjust_txnargs $cl_logopt]
+	set log_arg [adjust_logargs $cl_logopt]
+        if { $cl_logopt == "on-disk" } {
+		# Override in this case, because we want to specify log_buffer.
+		set log_arg "-log_buffer $log_buf"
+	}
+	set env_B_cmd "berkdb_env_noerr -create $txn_arg \
+	    $verbargs $repmemargs \
+	    $log_arg -log_max $log_max -errpfx SITE_B \
 	    -home $dirs(B) -rep_transport \[list 2 replsend\]"
 	set envs(B) [eval $env_B_cmd $recargs -rep_client]
 
 	# Open 2nd client
 	repladd 3
-	set env_C_cmd "berkdb_env_noerr -create -txn nosync $verbargs \
+	set env_C_cmd "berkdb_env_noerr -create -txn nosync \
+	    $verbargs $repmemargs \
 	    -log_buffer $log_buf -log_max $log_max -errpfx SITE_C \
 	    -home $dirs(C) -rep_transport \[list 3 replsend\]"
 	set envs(C) [eval $env_C_cmd $recargs -rep_client]
@@ -194,7 +252,7 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 
 	# Run rep_test in the master (and update client).
 	puts "\tRep$tnum.a: Running rep_test in replicated env."
-	eval rep_test $method $envs($master) NULL $niter 0 0 0 0 $largs
+	eval rep_test $method $envs($master) NULL $niter 0 0 0 $largs
 	process_msgs $envlist
 
 	puts "\tRep$tnum.b: Close client."
@@ -207,7 +265,7 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 	while { $stop == 0 } {
 		# Run rep_test in the master (don't update client).
 		puts "\tRep$tnum.c: Running rep_test in replicated env."
-		eval rep_test $method $envs($master) NULL $niter 0 0 0 0 $largs
+		eval rep_test $method $envs($master) NULL $niter 0 0 0 $largs
 		#
 		# Clear messages for first client.  We want that site
 		# to get far behind.
@@ -250,11 +308,23 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 
 	# Hold an open database handle while doing internal init, to make sure
 	# no back lock interactions are happening.  But only do so some of the
-	# time.
+	# time, and of course only if it's reasonable to expect the database to
+	# exist at this point.  (It won't, if we're using in-memory databases
+	# and we've just started the client with recovery, since recovery blows
+	# away the mpool.)  Set up database as in-memory or on-disk first.
 	#
-	if {$clean == "noclean" && [berkdb random_int 0 1] == 1} {
+	if { $databases_in_memory } {
+		set dbname { "" "test.db" }
+		set have_db [expr {$recargs != "-recover"}]
+	} else { 
+		set dbname "test.db"
+		set have_db true
+	} 
+
+	if {$clean == "noclean" && $have_db && [berkdb random_int 0 1] == 1} {
 		puts "\tRep$tnum.g: Hold open db handle from client app."
-		set cdb [eval {berkdb_open_noerr -env} $envs($test_client) "test.db"]
+		set cdb [eval\
+		    {berkdb_open_noerr -env} $envs($test_client) $dbname]
 		error_check_good dbopen [is_valid_db $cdb] TRUE
 		set ccur [$cdb cursor]
 		error_check_good curs [is_valid_cursor $ccur $cdb] TRUE
@@ -275,7 +345,7 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 	# records while an update is going on.
 	#
 	set entries 10
-	eval rep_test $method $envs($master) NULL $entries $niter 0 0 0 $largs
+	eval rep_test $method $envs($master) NULL $entries $niter 0 0 $largs
 	#
 	# We call proc_msgs_once N times to get us into page recovery:
 	# 1.  Send master messages and client finds master.
@@ -310,7 +380,9 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 
 	# Simulate a client crash: simply abandon the handle without closing it.
 	# Note that this doesn't work on Windows, because there you can't remove
-	# a file if anyone (including yourself) has it open.
+	# a file if anyone (including yourself) has it open.  This also does not
+	# work on HP-UX, because there you are not allowed to open a second 
+	# handle on an env. 
 	#
 	# Note that crashing only makes sense with "-recover".
 	#
@@ -342,7 +414,7 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 		set nproced 0
 		set start [expr $i * $entries]
 		eval rep_test $method $envs($master) NULL $entries $start \
-		    $start 0 0 $largs
+		    $start 0 $largs
 		incr nproced [proc_msgs_once $envlist]
 		error_check_bad nproced $nproced 0
 	}
@@ -370,7 +442,7 @@ proc rep039_sub { method niter tnum recargs clean archive crash pmsgs largs } {
 	puts "\tRep$tnum.i: Add more records and check again."
 	set entries 10
 	eval rep_test $method $envs($master) NULL $entries $start \
-	    $start 0 0 $largs
+	    $start 0 $largs
 	process_msgs $envlist 0 NONE err
 
 	# Check again that everyone is identical.

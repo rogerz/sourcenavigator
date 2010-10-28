@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1996,2007 Oracle.  All rights reserved.
+# Copyright (c) 1996-2009 Oracle.  All rights reserved.
 #
-# $Id: test024.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test024
 # TEST	Record number retrieval test.
@@ -17,8 +17,17 @@ proc test024 { method {nentries 10000} args} {
 
 	puts "Test024: $method ($args)"
 
+	# Btree with compression does not support -recnum.
+	if { [is_compressed $args] == 1 } {
+		puts "Test024 skipping for compressed btree with -recnum."
+		return
+	}
 	if { [string compare $omethod "-hash"] == 0 } {
 		puts "Test024 skipping for method HASH"
+		return
+	}
+	if { [is_partitioned $args] } {
+		puts "Test024 skipping for partitioned $omethod"
 		return
 	}
 

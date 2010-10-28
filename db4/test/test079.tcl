@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2000,2007 Oracle.  All rights reserved.
+# Copyright (c) 2000-2009 Oracle.  All rights reserved.
 #
-# $Id: test079.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test079
 # TEST	Test of deletes in large trees.  (test006 w/ sm. pagesize).

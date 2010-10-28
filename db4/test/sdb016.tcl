@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2004,2007 Oracle.  All rights reserved.
+# Copyright (c) 2004-2009 Oracle.  All rights reserved.
 #
-# $Id: sdb016.tcl,v 12.11 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	sdb016
 # TEST	Creates many in-memory named dbs and puts a small amount of

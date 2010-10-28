@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: JoinTest.java,v 12.7 2007/05/04 00:28:29 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.collections.test;
@@ -28,6 +28,8 @@ import com.sleepycat.db.DatabaseConfig;
 import com.sleepycat.db.Environment;
 import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryDatabase;
+import com.sleepycat.util.test.SharedTestUtils;
+import com.sleepycat.util.test.TestEnv;
 
 /**
  * @author Mark Hayes
@@ -39,9 +41,7 @@ public class JoinTest extends TestCase
     private static final String MATCH_KEY  = "k4"; // matches both keys = "yes"
     private static final String[] VALUES = {"yes", "yes"};
 
-    public static void main(String[] args)
-        throws Exception {
-
+    public static void main(String[] args) {
         junit.framework.TestResult tr =
             junit.textui.TestRunner.run(suite());
         if (tr.errorCount() > 0 ||
@@ -52,9 +52,7 @@ public class JoinTest extends TestCase
         }
     }
 
-    public static Test suite()
-        throws Exception {
-
+    public static Test suite() {
         return new JoinTest();
     }
 
@@ -74,15 +72,17 @@ public class JoinTest extends TestCase
         super("JoinTest");
     }
 
+    @Override
     public void setUp()
         throws Exception {
 
-        DbTestUtil.printTestName(getName());
+        SharedTestUtils.printTestName(getName());
         env = TestEnv.TXN.open(getName());
         runner = new TransactionRunner(env);
         createDatabase();
     }
 
+    @Override
     public void tearDown() {
 
         try {
@@ -118,15 +118,14 @@ public class JoinTest extends TestCase
         }
     }
 
+    @Override
     public void runTest()
         throws Exception {
 
         runner.run(this);
     }
 
-    public void doWork()
-        throws Exception {
-
+    public void doWork() {
         createViews();
         writeAndRead();
     }
@@ -151,7 +150,7 @@ public class JoinTest extends TestCase
         config.setTransactional(true);
         config.setAllowCreate(true);
 
-        return DbCompat.openDatabase(env, null, file, null, config);
+        return DbCompat.testOpenDatabase(env, null, file, null, config);
     }
 
     private SecondaryDatabase openSecondaryDb(Database primary,
@@ -167,14 +166,11 @@ public class JoinTest extends TestCase
         secConfig.setKeyCreator(factory.getKeyCreator(MarshalledObject.class,
                                                       keyName));
 
-        return DbCompat.openSecondaryDatabase(env, null,
-                                              file, null,
-                                              primary, secConfig);
+        return DbCompat.testOpenSecondaryDatabase
+            (env, null, file, null, primary, secConfig);
     }
 
-    private void createViews()
-        throws Exception {
-
+    private void createViews() {
         storeMap = factory.newMap(store, String.class,
                                          MarshalledObject.class, true);
         indexMap1 = factory.newMap(index1, String.class,
@@ -183,9 +179,7 @@ public class JoinTest extends TestCase
                                            MarshalledObject.class, true);
     }
 
-    private void writeAndRead()
-        throws Exception {
-
+    private void writeAndRead() {
         // write records: Data, PrimaryKey, IndexKey1, IndexKey2
         assertNull(storeMap.put(null,
             new MarshalledObject("d1", "k1", "no",  "yes")));
@@ -229,4 +223,3 @@ public class JoinTest extends TestCase
         } finally { i.close(); }
     }
 }
-

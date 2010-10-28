@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: KeyRangeException.java,v 1.4 2007/05/04 00:28:27 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.util.keyrange;
@@ -14,6 +14,8 @@ package com.sleepycat.util.keyrange;
  * @author Mark Hayes
  */
 public class KeyRangeException extends IllegalArgumentException {
+
+    private static final long serialVersionUID = 1048575489L;
 
     /**
      * Creates a key range exception.

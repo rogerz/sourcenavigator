@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1999,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1999-2009 Oracle.  All rights reserved.
  *
- * $Id: db_verify.h,v 12.11 2007/05/17 15:15:05 bostic Exp $
+ * $Id$
  */
 
 #ifndef _DB_VERIFY_H_
@@ -36,37 +36,17 @@ extern "C" {
 } while (0)
 
 /*
- * Note that 0 is, in general, a valid pgno, despite equalling PGNO_INVALID;
+ * Note that 0 is, in general, a valid pgno, despite equaling PGNO_INVALID;
  * we have to test it separately where it's not appropriate.
  */
 #define	IS_VALID_PGNO(x)	((x) <= vdp->last_pgno)
-
-/*
- * Flags understood by the btree structure checks (esp. __bam_vrfy_subtree).
- * These share the same space as the global flags to __db_verify, and must not
- * dip below 0x00010000.
- */
-#define	ST_DUPOK	0x00010000	/* Duplicates are acceptable. */
-#define	ST_DUPSET	0x00020000	/* Subtree is in a duplicate tree. */
-#define	ST_DUPSORT	0x00040000	/* Duplicates are sorted. */
-#define	ST_IS_RECNO	0x00080000	/* Subtree is a recno. */
-#define	ST_OVFL_LEAF	0x00100000	/* Overflow reffed from leaf page. */
-#define	ST_RECNUM	0x00200000	/* Subtree has record numbering on. */
-#define	ST_RELEN	0x00400000	/* Subtree has fixed-length records. */
-#define	ST_TOPLEVEL	0x00800000	/* Subtree == entire tree */
-
-/*
- * Flags understood by __bam_salvage and __db_salvage.  These need not share
- * the same space with the __bam_vrfy_subtree flags, but must share with
- * __db_verify.
- */
-#define	SA_SKIPFIRSTKEY	0x00080000
 
 /*
  * VRFY_DBINFO is the fundamental structure;  it either represents the database
  * of subdatabases, or the sole database if there are no subdatabases.
  */
 struct __vrfy_dbinfo {
+	DB_THREAD_INFO *thread_info;
 	/* Info about this database in particular. */
 	DBTYPE		type;
 
@@ -100,14 +80,16 @@ struct __vrfy_dbinfo {
 #define	SALVAGE_INVALID		0
 #define	SALVAGE_IGNORE		1
 #define	SALVAGE_LDUP		2
-#define	SALVAGE_LRECNODUP	3
+#define	SALVAGE_IBTREE		3
 #define	SALVAGE_OVERFLOW	4
 #define	SALVAGE_LBTREE		5
 #define	SALVAGE_HASH		6
 #define	SALVAGE_LRECNO		7
+#define	SALVAGE_LRECNODUP	8
 	DB *salvage_pages;
 
 	db_pgno_t	last_pgno;
+	db_pgno_t	meta_last_pgno;
 	db_pgno_t	pgs_remaining;	/* For dbp->db_feedback(). */
 
 	/*
@@ -133,8 +115,9 @@ struct __vrfy_dbinfo {
 #define	SALVAGE_PRINTABLE	0x01	/* Output printable chars literally. */
 #define	SALVAGE_PRINTHEADER	0x02	/* Print the unknown-key header. */
 #define	SALVAGE_PRINTFOOTER	0x04	/* Print the unknown-key footer. */
-#define	VRFY_LEAFCHAIN_BROKEN	0x08	/* Lost one or more Btree leaf pgs. */
-#define	VRFY_QMETA_SET		0x10    /* We've seen a QUEUE meta page and
+#define	SALVAGE_HASSUBDBS	0x08	/* There are subdatabases to salvage. */
+#define	VRFY_LEAFCHAIN_BROKEN	0x10	/* Lost one or more Btree leaf pgs. */
+#define	VRFY_QMETA_SET		0x20    /* We've seen a QUEUE meta page and
 					   set things up for it. */
 	u_int32_t	flags;
 }; /* VRFY_DBINFO */
@@ -181,14 +164,17 @@ struct __vrfy_pageinfo {
 #define	VRFY_HAS_CHKSUM		0x0002
 #define	VRFY_HAS_DUPS		0x0004
 #define	VRFY_HAS_DUPSORT	0x0008	/* Has the flag set. */
-#define	VRFY_HAS_RECNUMS	0x0010
-#define	VRFY_HAS_SUBDBS		0x0020
-#define	VRFY_INCOMPLETE		0x0040	/* Meta or item order checks incomp. */
-#define	VRFY_IS_ALLZEROES	0x0080	/* Hash page we haven't touched? */
-#define	VRFY_IS_FIXEDLEN	0x0100
-#define	VRFY_IS_RECNO		0x0200
-#define	VRFY_IS_RRECNO		0x0400
-#define	VRFY_OVFL_LEAFSEEN	0x0800
+#define	VRFY_HAS_PART_RANGE	0x0010	/* Has the flag set. */
+#define	VRFY_HAS_PART_CALLBACK	0x0020	/* Has the flag set. */
+#define	VRFY_HAS_RECNUMS	0x0040
+#define	VRFY_HAS_SUBDBS		0x0080
+#define	VRFY_INCOMPLETE		0x0100	/* Meta or item order checks incomp. */
+#define	VRFY_IS_ALLZEROES	0x0200	/* Hash page we haven't touched? */
+#define	VRFY_IS_FIXEDLEN	0x0400
+#define	VRFY_IS_RECNO		0x0800
+#define	VRFY_IS_RRECNO		0x1000
+#define	VRFY_OVFL_LEAFSEEN	0x2000
+#define	VRFY_HAS_COMPRESS	0x4000
 	u_int32_t	flags;
 
 	LIST_ENTRY(__vrfy_pageinfo) links;

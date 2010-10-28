@@ -1,14 +1,16 @@
-/*
+/*-
+ * See the file LICENSE for redistribution information.
+ *
+ * Copyright (c) 1999-2009 Oracle.  All rights reserved.
+ *
  * Standalone mutex tester for Berkeley DB mutexes.
  *
- * $Id: test_mutex.c,v 12.21 2007/06/21 16:02:29 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
 
 #include "db_int.h"
-
-#include <sys/wait.h>
 
 #ifdef DB_WIN32
 #define	MUTEX_THREAD_TEST	1
@@ -27,6 +29,8 @@ typedef HANDLE os_thread_t;
 #define	os_thread_self() GetCurrentThreadId()
 
 #else /* !DB_WIN32 */
+
+#include <sys/wait.h>
 
 typedef pid_t os_pid_t;
 
@@ -73,6 +77,7 @@ typedef struct {
 } TM;
 
 DB_ENV	*dbenv;					/* Backing environment */
+ENV	*env;
 size_t	 len;					/* Backing data chunk size. */
 
 u_int8_t *gm_addr;				/* Global mutex */
@@ -206,7 +211,7 @@ main(argc, argv)
 	 * environment separately and then calls the supporting function.
 	 */
 	if (rtype == LOCKER || rtype == WAKEUP) {
-		__os_sleep(dbenv, 3, 0);	/* Let everyone catch up. */
+		__os_yield(env, 3, 0);		/* Let everyone catch up. */
 						/* Initialize random numbers. */
 		srand((u_int)time(NULL) % (u_int)getpid());
 
@@ -294,12 +299,12 @@ main(argc, argv)
 
 		/* Signal wakeup process to exit. */
 		if ((err = __os_open(
-		    dbenv, MT_FILE_QUIT, 0, DB_OSO_CREATE, 0664, &fhp)) != 0) {
+		    env, MT_FILE_QUIT, 0, DB_OSO_CREATE, 0664, &fhp)) != 0) {
 			fprintf(stderr,
 			    "%s: open %s\n", progname, db_strerror(err));
 			goto fail;
 		}
-		(void)__os_closehandle(dbenv, fhp);
+		(void)__os_closehandle(env, fhp);
 
 		/* Wait for wakeup process/thread. */
 		if ((err = os_wait(&wakeup_pid, 1)) != 0) {
@@ -322,12 +327,12 @@ main(argc, argv)
 
 		/* Signal wakeup process to exit. */
 		if ((err = __os_open(
-		    dbenv, MT_FILE_QUIT, 0, DB_OSO_CREATE, 0664, &fhp)) != 0) {
+		    env, MT_FILE_QUIT, 0, DB_OSO_CREATE, 0664, &fhp)) != 0) {
 			fprintf(stderr,
 			    "%s: open %s\n", progname, db_strerror(err));
 			goto fail;
 		}
-		(void)__os_closehandle(dbenv, fhp);
+		(void)__os_closehandle(env, fhp);
 
 		/* Wait for wakeup thread. */
 		if (wakeup_wait() != 0)
@@ -408,7 +413,7 @@ run_lthread(arg)
 	u_int lock, nl;
 	int err, i;
 
-	id = (uintptr_t)arg;
+	id = (u_long)arg;
 #if defined(MUTEX_THREAD_TEST)
 	tid = (u_long)os_thread_self();
 #else
@@ -446,7 +451,7 @@ run_lthread(arg)
 		 * we still hold the mutex.
 		 */
 		for (i = 0; i < 3; ++i) {
-			__os_sleep(dbenv, 0, (u_long)rand() % 3);
+			__os_yield(env, 0, (u_long)rand() % 3);
 			if (mp->id != id) {
 				fprintf(stderr,
 			    "%s: RACE! (%03lu stole lock %d from %03lu)\n",
@@ -518,7 +523,7 @@ run_lthread(arg)
 			return ((void *)1);
 		}
 
-		if (--nl % 100 == 0)
+		if (--nl % 1000 == 0)
 			printf("%03lu: %d\n", id, nl);
 	}
 
@@ -577,9 +582,10 @@ run_wthread(arg)
 	TM *gp, *tp;
 	u_long id, tid;
 	u_int check_id;
-	int err;
+	int err, quitcheck;
 
-	id = (uintptr_t)arg;
+	id = (u_long)arg;
+	quitcheck = 0;
 #if defined(MUTEX_THREAD_TEST)
 	tid = (u_long)os_thread_self();
 #else
@@ -593,8 +599,11 @@ run_wthread(arg)
 	/* Loop, waking up sleepers and periodically sleeping ourselves. */
 	for (check_id = 0;; ++check_id) {
 		/* Check to see if the locking threads have finished. */
-		if (__os_exists(dbenv, MT_FILE_QUIT, NULL) == 0)
+		if (++quitcheck >= 100) {
+			quitcheck = 0;
+		if (__os_exists(env, MT_FILE_QUIT, NULL) == 0)
 			break;
+		}
 
 		/* Check for ID wraparound. */
 		if (check_id == nthreads * nprocs)
@@ -631,7 +640,7 @@ run_wthread(arg)
 			return ((void *)1);
 		}
 
-		__os_sleep(dbenv, 0, (u_long)rand() % 3);
+		__os_yield(env, 0, (u_long)rand() % 3);
 	}
 	return (NULL);
 }
@@ -655,6 +664,7 @@ tm_env_init()
 		fprintf(stderr, "%s: %s\n", progname, db_strerror(ret));
 		return (1);
 	}
+	env = dbenv->env;
 	dbenv->set_errfile(dbenv, stderr);
 	dbenv->set_errpfx(dbenv, progname);
 
@@ -809,13 +819,13 @@ tm_mutex_stats()
 {
 #ifdef HAVE_STATISTICS
 	TM *mp;
-	u_int32_t set_wait, set_nowait;
+	uintmax_t set_wait, set_nowait;
 	u_int i;
 
 	printf("Per-lock mutex statistics.\n");
 	for (i = 0; i < maxlocks; ++i) {
 		mp = (TM *)(lm_addr + i * sizeof(TM));
-		__mutex_set_wait_info(dbenv, mp->mutex, &set_wait, &set_nowait);
+		__mutex_set_wait_info(env, mp->mutex, &set_wait, &set_nowait);
 		printf("mutex %2d: wait: %lu; no wait %lu\n", i,
 		    (u_long)set_wait, (u_long)set_nowait);
 	}
@@ -845,7 +855,7 @@ data_on(gm_addrp, tm_addrp, lm_addrp, fhpp, init)
 	if (nprocs == 1) {
 		if (init) {
 			if ((err =
-			    __os_calloc(dbenv, (size_t)len, 1, &addr)) != 0)
+			    __os_calloc(env, (size_t)len, 1, &addr)) != 0)
 				exit(EXIT_FAILURE);
 		} else {
 			fprintf(stderr,
@@ -858,28 +868,28 @@ data_on(gm_addrp, tm_addrp, lm_addrp, fhpp, init)
 			if (verbose)
 				printf("Create the backing file.\n");
 
-			if ((err = __os_open(dbenv, MT_FILE, 0,
+			if ((err = __os_open(env, MT_FILE, 0,
 			    DB_OSO_CREATE | DB_OSO_TRUNC, 0666, &fhp)) == -1) {
 				fprintf(stderr, "%s: %s: open: %s\n",
 				    progname, MT_FILE, db_strerror(err));
 				exit(EXIT_FAILURE);
 			}
 
-			if ((err = __os_seek(dbenv, fhp, 0, 0, len)) != 0 ||
+			if ((err = 
+			    __os_seek(env, fhp, 0, 0, (u_int32_t)len)) != 0 ||
 			    (err =
-			    __os_write(dbenv, fhp, &err, 1, &nwrite)) != 0 ||
+			    __os_write(env, fhp, &err, 1, &nwrite)) != 0 ||
 			    nwrite != 1) {
 				fprintf(stderr, "%s: %s: seek/write: %s\n",
 				    progname, MT_FILE, db_strerror(err));
 				exit(EXIT_FAILURE);
 			}
 		} else
-			if ((err =
-			    __os_open(dbenv, MT_FILE, 0, 0, 0, &fhp)) != 0)
+			if ((err = __os_open(env, MT_FILE, 0, 0, 0, &fhp)) != 0)
 				exit(EXIT_FAILURE);
 
 		if ((err =
-		    __os_mapfile(dbenv, MT_FILE, fhp, len, 0, &addr)) != 0)
+		    __os_mapfile(env, MT_FILE, fhp, len, 0, &addr)) != 0)
 			exit(EXIT_FAILURE);
 	}
 
@@ -903,11 +913,11 @@ data_off(addr, fhp)
 	DB_FH *fhp;
 {
 	if (nprocs == 1)
-		__os_free(dbenv, addr);
+		__os_free(env, addr);
 	else {
-		if (__os_unmapfile(dbenv, addr, len) != 0)
+		if (__os_unmapfile(env, addr, len) != 0)
 			exit(EXIT_FAILURE);
-		if (__os_closehandle(dbenv, fhp) != 0)
+		if (__os_closehandle(env, fhp) != 0)
 			exit(EXIT_FAILURE);
 	}
 }
@@ -977,27 +987,27 @@ spawn_proc(id, tmpath, typearg)
 	u_long id;
 	char *tmpath, *typearg;
 {
-	char lbuf[16], nbuf[16], pbuf[16], tbuf[16], Tbuf[256];
 	char *const vbuf = verbose ?  "-v" : NULL;
-	char *args[] = { NULL /* tmpath */,
-	    "-l", NULL /* lbuf */, "-n", NULL /* nbuf */,
-	    "-p", NULL /* pbuf */, "-t", NULL /* tbuf */,
-	    "-T", NULL /* Tbuf */, NULL /* vbuf */,
-	    NULL
-	};
+	char *args[13], lbuf[16], nbuf[16], pbuf[16], tbuf[16], Tbuf[256];
 
 	args[0] = tmpath;
+	args[1] = "-l";
 	snprintf(lbuf, sizeof(lbuf),  "%d", maxlocks);
 	args[2] = lbuf;
+	args[3] = "-n";
 	snprintf(nbuf, sizeof(nbuf),  "%d", nlocks);
 	args[4] = nbuf;
+	args[5] = "-p";
 	snprintf(pbuf, sizeof(pbuf),  "%d", nprocs);
 	args[6] = pbuf;
+	args[7] = "-t";
 	snprintf(tbuf, sizeof(tbuf),  "%d", nthreads);
 	args[8] = tbuf;
+	args[9] = "-T";
 	snprintf(Tbuf, sizeof(Tbuf),  "%s=%lu", typearg, id);
 	args[10] = Tbuf;
 	args[11] = vbuf;
+	args[12] = NULL;
 
 	return (os_spawn(tmpath, args));
 }

@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2000,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2000-2009 Oracle.  All rights reserved.
  *
- * $Id: SortedDoubleBinding.java,v 12.4 2007/05/04 00:28:25 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.bind.tuple;
@@ -22,7 +22,7 @@ import com.sleepycat.db.DatabaseEntry;
  * <ul>
  * <li>The byte array (stored) formats used by {@link DoubleBinding} and
  * {@link SortedDoubleBinding} are different and incompatible.  They are not
- * interchangable once data has been stored.</li>
+ * interchangeable once data has been stored.</li>
  * <li>An instance of {@link DoubleBinding}, not {@link SortedDoubleBinding},
  * is returned by {@link TupleBinding#getPrimitiveBinding} method.  Therefore,
  * to use {@link SortedDoubleBinding}, {@link TupleBinding#getPrimitiveBinding}
@@ -38,22 +38,22 @@ import com.sleepycat.db.DatabaseEntry;
  * this class can be used with any stored collection.</li>
  * </ol>
  */
-public class SortedDoubleBinding extends TupleBinding {
+public class SortedDoubleBinding extends TupleBinding<Double> {
 
     /* javadoc is inherited */
-    public Object entryToObject(TupleInput input) {
+    public Double entryToObject(TupleInput input) {
 
-        return new Double(input.readSortedDouble());
+        return input.readSortedDouble();
     }
 
     /* javadoc is inherited */
-    public void objectToEntry(Object object, TupleOutput output) {
+    public void objectToEntry(Double object, TupleOutput output) {
 
-        output.writeSortedDouble(((Number) object).doubleValue());
+        output.writeSortedDouble(object);
     }
 
     /* javadoc is inherited */
-    protected TupleOutput getTupleOutput(Object object) {
+    protected TupleOutput getTupleOutput(Double object) {
 
         return DoubleBinding.sizedOutput();
     }

@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 1999,2007 Oracle.  All rights reserved.
+ * Copyright (c) 1999-2009 Oracle.  All rights reserved.
  *
- * $Id: tcl_internal.c,v 12.24 2007/05/17 17:18:05 bostic Exp $
+ * $Id$
  */
 
 #include "db_config.h"
@@ -150,20 +150,30 @@ _DeleteInfo(p)
 	}
 	if (p->i_errpfx != NULL)
 		__os_free(NULL, p->i_errpfx);
-	if (p->i_compare != NULL)
+	if (p->i_compare != NULL) {
 		Tcl_DecrRefCount(p->i_compare);
-	if (p->i_dupcompare != NULL)
+	}
+	if (p->i_dupcompare != NULL) {
 		Tcl_DecrRefCount(p->i_dupcompare);
-	if (p->i_hashproc != NULL)
+	}
+	if (p->i_hashproc != NULL) {
 		Tcl_DecrRefCount(p->i_hashproc);
-	if (p->i_second_call != NULL)
+	}
+	if (p->i_part_callback != NULL) {
+		Tcl_DecrRefCount(p->i_part_callback);
+	}
+	if (p->i_second_call != NULL) {
 		Tcl_DecrRefCount(p->i_second_call);
-	if (p->i_rep_eid != NULL)
+	}
+	if (p->i_rep_eid != NULL) {
 		Tcl_DecrRefCount(p->i_rep_eid);
-	if (p->i_rep_send != NULL)
+	}
+	if (p->i_rep_send != NULL) {
 		Tcl_DecrRefCount(p->i_rep_send);
-	if (p->i_event != NULL)
+	}
+	if (p->i_event != NULL) {
 		Tcl_DecrRefCount(p->i_event);
+	}
 	__os_free(NULL, p->i_name);
 	__os_free(NULL, p);
 
@@ -566,7 +576,7 @@ _EventFunc(dbenv, event, info)
 		    NewStringObj("write_failed", strlen("write_failed"));
 		break;
 	default:
-		__db_errx(dbenv, "Tcl unknown event %lu", (u_long)event);
+		__db_errx(dbenv->env, "Tcl unknown event %lu", (u_long)event);
 		return;
 	}
 
@@ -596,8 +606,8 @@ _EventFunc(dbenv, event, info)
 		 * just return or abort.
 		 * For now, abort.
 		 */
-		__db_errx(dbenv, "Tcl event failure");
-		__os_abort();
+		__db_errx(dbenv->env, "Tcl event failure");
+		__os_abort(dbenv->env);
 	}
 
 	Tcl_SetObjResult(interp, origobj);

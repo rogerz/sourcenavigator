@@ -1,9 +1,9 @@
 /*-
  * See the file LICENSE for redistribution information.
  *
- * Copyright (c) 2002,2007 Oracle.  All rights reserved.
+ * Copyright (c) 2002-2009 Oracle.  All rights reserved.
  *
- * $Id: ExceptionWrapperTest.java,v 12.6 2007/05/04 00:28:30 mark Exp $
+ * $Id$
  */
 
 package com.sleepycat.util.test;
@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.sleepycat.collections.test.DbTestUtil;
 import com.sleepycat.util.ExceptionUnwrapper;
 import com.sleepycat.util.IOExceptionWrapper;
 import com.sleepycat.util.RuntimeExceptionWrapper;
@@ -26,9 +25,7 @@ import com.sleepycat.util.RuntimeExceptionWrapper;
  */
 public class ExceptionWrapperTest extends TestCase {
 
-    public static void main(String[] args)
-        throws Exception {
-
+    public static void main(String[] args) {
         junit.framework.TestResult tr =
             junit.textui.TestRunner.run(suite());
         if (tr.errorCount() > 0 ||
@@ -39,9 +36,7 @@ public class ExceptionWrapperTest extends TestCase {
         }
     }
 
-    public static Test suite()
-        throws Exception {
-
+    public static Test suite() {
         TestSuite suite = new TestSuite(ExceptionWrapperTest.class);
         return suite;
     }
@@ -51,14 +46,13 @@ public class ExceptionWrapperTest extends TestCase {
         super(name);
     }
 
+    @Override
     public void setUp() {
 
-        DbTestUtil.printTestName("ExceptionWrapperTest." + getName());
+        SharedTestUtils.printTestName("ExceptionWrapperTest." + getName());
     }
 
-    public void testIOWrapper()
-        throws Exception {
-
+    public void testIOWrapper() {
         try {
             throw new IOExceptionWrapper(new RuntimeException("msg"));
         } catch (IOException e) {
@@ -72,9 +66,7 @@ public class ExceptionWrapperTest extends TestCase {
         }
     }
 
-    public void testRuntimeWrapper()
-        throws Exception {
-
+    public void testRuntimeWrapper() {
         try {
             throw new RuntimeExceptionWrapper(new IOException("msg"));
         } catch (RuntimeException e) {
@@ -88,9 +80,7 @@ public class ExceptionWrapperTest extends TestCase {
         }
     }
 
-    public void testErrorWrapper()
-        throws Exception {
-
+    public void testErrorWrapper() {
         try {
             throw new RuntimeExceptionWrapper(new Error("msg"));
         } catch (RuntimeException e) {

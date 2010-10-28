@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2003,2007 Oracle.  All rights reserved.
+# Copyright (c) 2003-2009 Oracle.  All rights reserved.
 #
-# $Id: rep018.tcl,v 12.14 2007/05/17 18:17:21 bostic Exp $
+# $Id$
 #
 # TEST	rep018
 # TEST	Replication with dbremove.
@@ -14,6 +14,8 @@
 proc rep018 { method { niter 10 } { tnum "018" } args } {
 
 	source ./include.tcl
+	global repfiles_in_memory
+
 	if { $is_windows9x_test == 1 } {
 		puts "Skipping replication test on Win 9x platform."
 		return
@@ -27,6 +29,11 @@ proc rep018 { method { niter 10 } { tnum "018" } args } {
 	set args [convert_args $method $args]
 	set logsets [create_logsets 2]
 
+	set msg2 "and on-disk replication files"
+	if { $repfiles_in_memory } {
+		set msg2 "and in-memory replication files"
+	}
+
 	# Run the body of the test with and without recovery.
 	foreach r $test_recopts {
 		foreach l $logsets {
@@ -36,7 +43,7 @@ proc rep018 { method { niter 10 } { tnum "018" } args } {
 				    for in-memory logs with -recover."
 				continue
 			}
-			puts "Rep$tnum ($method $r): Replication with dbremove."
+			puts "Rep$tnum ($method $r): Replication with dbremove $msg2."
 			puts "Rep$tnum: Master logs are [lindex $l 0]"
 			puts "Rep$tnum: Client logs are [lindex $l 1]"
 			rep018_sub $method $niter $tnum $l $r $args
@@ -46,11 +53,18 @@ proc rep018 { method { niter 10 } { tnum "018" } args } {
 
 proc rep018_sub { method niter tnum logset recargs largs } {
 	source ./include.tcl
+	global repfiles_in_memory
 	global rep_verbose
+	global verbose_type
 
 	set verbargs ""
 	if { $rep_verbose == 1 } {
-		set verbargs " -verbose {rep on} "
+		set verbargs " -verbose {$verbose_type on} "
+	}
+
+	set repmemargs ""
+	if { $repfiles_in_memory } {
+		set repmemargs "-rep_inmem_files "
 	}
 
 	env_cleanup $testdir
@@ -77,14 +91,14 @@ proc rep018_sub { method niter tnum logset recargs largs } {
 	# Open a master.
 	repladd 1
 	set env_cmd(M) "berkdb_env_noerr -create \
-	    -log_max 1000000 -home $masterdir $verbargs \
+	    -log_max 1000000 -home $masterdir $verbargs $repmemargs \
 	    $m_txnargs $m_logargs -rep_master -errpfx MASTER \
 	    -rep_transport \[list 1 replsend\]"
 	set masterenv [eval $env_cmd(M) $recargs]
 
 	# Open a client
 	repladd 2
-	set env_cmd(C) "berkdb_env_noerr -create -home $clientdir \
+	set env_cmd(C) "berkdb_env_noerr -create -home $clientdir $repmemargs \
 	    $c_txnargs $c_logargs -rep_client $verbargs -errpfx CLIENT \
 	    -rep_transport \[list 2 replsend\]"
 	set clientenv [eval $env_cmd(C) $recargs]
@@ -100,7 +114,7 @@ proc rep018_sub { method niter tnum logset recargs largs } {
 
 	puts "\tRep$tnum.b: Open database on master, propagate to client."
 	set dbname rep$tnum.db
-	set db [eval "berkdb_open -create $omethod -auto_commit \
+	set db [eval "berkdb_open_noerr -create $omethod -auto_commit \
 	    -env $masterenv $largs $dbname"]
 	set t [$masterenv txn]
 	for { set i 1 } { $i <= $niter } { incr i } {
@@ -112,8 +126,8 @@ proc rep018_sub { method niter tnum logset recargs largs } {
 
 	puts "\tRep$tnum.c: Spawn a child tclsh to do client work."
 	set pid [exec $tclsh_path $test_path/wrap.tcl \
-	    rep018script.tcl $testdir/rep018script.log \
-		   $clientdir $niter $dbname $method &]
+	    rep018script.tcl $testdir/rep018script.log $clientdir \
+	    $niter $dbname $method $rep_verbose $verbose_type &]
 
 	puts "\tRep$tnum.d: Close and remove database on master."
 	error_check_good close_master_db [$db close] 0
@@ -138,7 +152,7 @@ proc rep018_sub { method niter tnum logset recargs largs } {
 	error_check_good db_remove [$masterenv dbremove -auto_commit $dbname] 0
 
 	puts "\tRep$tnum.e: Create new database on master with the same name."
-	set db [eval "berkdb_open -create $omethod -auto_commit \
+	set db [eval "berkdb_open_noerr -create $omethod -auto_commit \
 	    -env $masterenv $largs $dbname"]
 	error_check_good new_db_open [is_valid_db $db] TRUE
 

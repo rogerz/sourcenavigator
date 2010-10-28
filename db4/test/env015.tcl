@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 2006,2007 Oracle.  All rights reserved.
+# Copyright (c) 2006-2009 Oracle.  All rights reserved.
 #
-# $Id: env015.tcl,v 12.7 2007/05/17 15:15:55 bostic Exp $
+# $Id$
 #
 # TEST	env015
 # TEST	Rename the underlying directory of an env, make sure everything
@@ -37,9 +37,11 @@ proc env015 { } {
 		# during the attempt to rename the directory.  As far as we
 		# can tell, Windows doesn't allow this (that is, Windows
 		# doesn't allow directories to be renamed when there is an
-		# open handle inside them).
+		# open handle inside them). For QNX, tclsh can not rename a 
+		# directory correctly while there are shared memory files in
+		# that directory.
 		puts "\tEnv015.b: Rename directory."
-		if { $is_windows_test } {
+		if { $is_windows_test || $is_qnx_test } {
 			file mkdir $newdir
 			eval file rename -force [glob $testdir/*] $newdir
 			fileremove -force $testdir

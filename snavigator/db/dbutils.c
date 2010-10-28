@@ -110,10 +110,11 @@ static  DB      *db_scopes;
  will look something like
  Berkeley DB version Berkeley DB 4.8.30: (April  9, 2010)
 
- we also need to do an ugly forward declaration here, because
- we're in db-1.85 compat mode and don't have access to db4 functions
+ we also need to do a forward declaration, because we don't
+ have access to "normal" db4 routines here (due to db185-compat mode)
+ via headers, but the final binary has access (due to linkage to db.a)
  */
-char * db_version(int *, int *, int *);
+extern char * db_version(int *, int *, int *);
 char * Paf_db_get_version(void)
 {
 	int _unused;

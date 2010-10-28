@@ -832,7 +832,7 @@ DatabaseFilesCouldNotBeDeleted,@PRODUCT_NAME@ was unable to delete older databas
 WrongProjectName,Invalid project name '%s'
 WrongDatabaseDirectory,Invalid database directory name '%s'
 SplashCopyrightText,Copyright (c) 2007-2010 Sourcenav NG Development Group
-SplashSubCopyrightText,(c) 2007 Oracle.\n(c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n
+SplashSubCopyrightText,(c) 1990-2009 Oracle.\n(c) 1997, 1998, 1999, 2000, 2001 Red Hat, Inc.\n(c) 1989-1994 The Regents of the University of California.\n(c) 1994 The Australian National University.\n(c) 1994-1997 Sun Microsystems, Inc.\n(c) 1993 AT&T Bell Laboratories.\n(c) 1998-1999 Scriptics, Inc.\n
 SplashAllRightsReserved,Released under GPL.\nAll rights reserved. Red Hat Embedded DevKit, Source-Navigator, and the "shadow man" logo are trademarks of Red Hat, Inc.. All other product names are trademarks or their respective owners.
 FileModifiedOutsideTitle,File Modified
 FileModifiedOutside,File %s has been modified outside.\nSave anyway?

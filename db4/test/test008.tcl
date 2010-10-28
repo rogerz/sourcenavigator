@@ -1,8 +1,8 @@
 # See the file LICENSE for redistribution information.
 #
-# Copyright (c) 1996,2007 Oracle.  All rights reserved.
+# Copyright (c) 1996-2009 Oracle.  All rights reserved.
 #
-# $Id: test008.tcl,v 12.5 2007/05/17 15:15:56 bostic Exp $
+# $Id$
 #
 # TEST	test008
 # TEST	Small keys/large data
