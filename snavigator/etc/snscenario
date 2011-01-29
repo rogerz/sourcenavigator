@@ -1,0 +1,53 @@
+package require eventutils
+package require snscenario
+
+# Name this interp so we can filter it out later
+tk appname snscenario
+
+# See if the user passed in a command line
+# argument of a file to start with.
+
+foreach f $argv {
+    if {[file exists $f]} {
+        set runner_file $f
+        break
+    }
+}
+
+
+
+# Create the safe interp where commands will be run
+init_sandbox
+
+# connect to the remote interp for the first time
+remote_connect
+
+# Start polling for toplevels in the remote interp
+refresh_toplevel_list
+set_toplevel_callback sandbox_toplevel_list_changed_callback
+
+# Give the user an option of what to do
+set sel [toplevel .main]
+
+set lab [label $sel.image -image company_image]
+set text [label $sel.text -text "Source-Navigator Scenario Builder"]
+
+set b1 [button $sel.b1 -text "Run Scenario" -command {
+    create_scenario_runner
+}]
+
+set b2 [button $sel.b2 -text "Create New Scenario" -command {
+    # create the builder window and start the toplevel query
+    create_scenario
+    set_toplevel_callback refresh_gui_toplevel_list
+}]
+
+grid $lab -row 0 -column 0
+grid $text -row 0 -column 1 -padx 10
+
+grid $b1 -row 2 -column 0 -columnspan 2 -sticky ew -pad 20
+grid $b2 -row 3 -column 0 -columnspan 2 -sticky ew -pad 20
+
+grid rowconfigure $sel 1 -minsize 20 -weight 1
+grid columnconfigure $sel 1 -weight 1
+

@@ -1,0 +1,314 @@
+
+
+
+<TITLE>Compound - Create multi-line compound images.</TITLE>
+<Center><H2>Compound - Create multi-line compound images.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>image create compound </B></I>?<I>name</I></B>? ?<I>options</I></B>?
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+Compound image types can be used to create images that consists of
+multiple horizontal lines; each line is composed of a series of items
+(texts, bitmaps, images or spaces) arranged from left to
+right. Compound images are mainly used to embed complex drawings into
+widgets that support the <B>-image</B></I> option. As shown in the EXAMPLE
+section below, a compound image can be used to display a bitmap and a
+text string simutaneously in a TK <B>button(n)</B></I> widget.
+</pre><H3>CREATING COMPOUND IMAGES</H3>
+<P>
+Like all images, compound images are created using the <B>image create</B></I>
+command. Compound images support the following <I>options</I></B>:
+<DL>
+<DT> <B>-background <I>color</I></B>
+</I></B>
+<DD> Specifies the background color of the compound image. This color is
+also used as the default background color for the bitmap items in the
+compound image.
+</DL>
+<DL>
+<DT> <B>-borderwidth <I>pixels</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating the width of the 3-D border
+drawn around the compound image.
+</DL>
+<DL>
+<DT> <B>-font <I>font</I></B>
+</I></B>
+<DD> Specifies the default font for the text items in the compound image.
+</DL>
+<DL>
+<DT> <B>-foreground <I>color</I></B>
+</I></B>
+<DD> Specifies the default foreground color for the bitmap and text items
+in the compound image.
+</DL>
+<DL>
+<DT> <B>-padx <I>value</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating how much extra space to
+request for the compound image in the X-direction. The <I>value</I></B> may
+have any of the forms acceptable to <B>Tk_GetPixels(3)</B></I>.
+</DL>
+<DL>
+<DT> <B>-pady <I>value</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating how much extra space to
+request for the compound image in the Y-direction.
+</DL>
+<DL>
+<DT> <B>-relief <I>value</I></B>
+</I></B>
+<DD> Specifies the 3-D effect desired for the background of the compound
+image. Acceptable values are <B>raised</B></I>, <B>sunken</B></I>, <B>flat</B></I>,
+<B>ridge</B></I>, and <B>groove</B></I>.
+</DL>
+<DL>
+<DT> <B>-showbackground <I>value</I></B>
+</I></B>
+<DD> Specifies whether the background and the 3D borders should be drawn.
+Must be a valid boolean value. By default the background is not drawn
+and the compound image appears to have a transparent background.
+</DL>
+<DL>
+<DT> <B>-window <I>pathName</I></B>
+</I></B>
+<DD> Specifies the window in which the compound image is displayed. One
+compound image can be displayed in only one window. When that window
+is destroyed, the compound image is automatically destroyed as well.
+This option must be specified when calling the <B>image create
+compound</B></I> command and cannot be changed by the <B>configure</B></I> image
+command.
+</DL>
+</pre><H3>IMAGE COMMAND</H3>
+<P>
+When a compound image is created, Tk also creates a new command whose
+name is the same as the image. This command may be used to invoke
+various operations on the image. It has the following general form:
+<pre>
+<I>imageName option </I></B>?<I>arg arg ...</I></B>?
+</pre>
+<I>Option</I></B> and the <I>arg</I></B>s
+determine the exact behavior of the command. The following
+commands are possible for compound images:
+<DL>
+<DT> <I>imageName <B>add line</B></I> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new line at the bottom of the compound image. Lines support
+the following <I>options</I></B>:
+</DL>
+<UL>
+<DL>
+<DT> <B>-anchor</B></I> value
+</I></B>
+<DD> Specifies how the line should be aligned along the horizontal axis.
+When the values are <B>w</B></I>, <B>sw</B></I> or <B>nw</B></I>, the line is aligned
+to the left. When the values are <B>c</B></I>, <B>s</B></I> or <B>n</B></I>, the line
+is aligned to the middle.  When the values are <B>e</B></I>, <B>se</B></I> or
+<B>ne</B></I>, the line is aligned to the right.
+</DL>
+<DL>
+<DT> <B>-padx <I>value</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating how much extra space to
+request for this line in the X-direction.
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>add <I>item-type</I></B> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new item of the type <I>item-type</I></B> at the end of the last
+line of the compound image. All types of items support
+these following common <I>options</I></B>:
+</DL>
+<UL>
+<DL>
+<DT> <B>-anchor</B></I> value
+</I></B>
+<DD> Specifies how the item should be aligned along the vertical axis. When
+the values are <B>n</B></I>, <B>nw</B></I> or <B>ne</B></I>, the item is aligned to
+the top of the line. When the values are <B>c</B></I>, <B>w</B></I> or <B>e</B></I>,
+the item is aligned to the middle of the line.  When the values are
+<B>s</B></I>, <B>se</B></I> or <B>sw</B></I>, the item is aligned to the bottom of
+the line.
+</DL>
+<DL>
+<DT> <B>-padx <I>value</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating how much extra space to
+request for this item in the X-direction.
+</DL>
+<DL>
+<DT> <B>-pady <I>value</I></B>
+</I></B>
+<DD> Specifies a non-negative value indicating how much extra space to
+request for this item in the Y-direction.
+</DL>
+<DL>
+<DT> <I>item-type</I></B> can be any of the following:
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>add bitmap</B></I> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new bitmap item of at the end of the last
+line of the compound image. Additional <I>options</I></B> accepted by the
+bitmap type are:
+</DL>
+<UL>
+<DL>
+<DT> <B>-background <I>color</I></B>
+</I></B>
+<DD> Specifies the background color of the bitmap item.
+</DL>
+<DL>
+<DT> <B>-bitmap <I>name</I></B>
+</I></B>
+<DD> Specifies a bitmap to display in this item, in any of the forms
+acceptable to <B>Tk_GetBitmap(3)</B></I>.
+</DL>
+<DL>
+<DT> <B>-foreground <I>color</I></B>
+</I></B>
+<DD> Specifies the foreground color of the bitmap item.
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>add image</B></I> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new image item of at the end of the last
+line of the compound image. Additional <I>options</I></B> accepted by the
+image type are:
+</DL>
+<UL>
+<DL>
+</DL>
+<DL>
+<DT> <B>-image <I>name</I></B>
+</I></B>
+<DD> Specifies an image to display in this item. <I>name</I></B> 
+must have been created with the <B>image create</B></I> command. 
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>add space</B></I> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new space item of at the end of the last line of the
+compound image. Space items do not display anything. They just acts as
+space holders that add additional spaces between items inside a
+compound image. Additional <I>options</I></B> accepted by the image type
+are:
+</DL>
+<UL>
+<DL>
+</DL>
+<DL>
+<DT> <B>-width <I>value</I></B>
+</I></B>
+<DD> Specifies the width of this space. The <I>value</I></B> may have any of the
+forms acceptable to <B>Tk_GetPixels(3)</B></I>.
+</DL>
+<DL>
+<DT> <B>-height <I>value</I></B>
+</I></B>
+<DD> Specifies the height of this space. The <I>value</I></B> may have any of
+the forms acceptable to <B>Tk_GetPixels(3)</B></I>.
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>add text</B></I> ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new text item of at the end of the last line of the compound
+image. Additional <I>options</I></B> accepted by the text type are:
+</DL>
+<UL>
+<DL>
+<DT> <B>-background <I>color</I></B>
+</I></B>
+<DD> Specifies the background color of the text item.
+</DL>
+<DL>
+<DT> <B>-font <I>name</I></B>
+</I></B>
+<DD> Specifies the font to be used for this text item.
+</DL>
+<DL>
+<DT> <B>-foreground <I>color</I></B>
+</I></B>
+<DD> Specifies the foreground color of the text item.
+</DL>
+<DL>
+<DT> <B>-justify</B></I> <I>value</I></B>
+</I></B>
+<DD> When there are multiple lines of text displayed in a text item, this
+option determines how the lines line up with each other. <I>value</I></B>
+must be one of <B>left</B></I>, <B>center</B></I>, or <B>right</B></I>.  <B>Left</B></I>
+right edges line up.
+</DL>
+<DL>
+<DT> <B>-text <I>string</I></B>
+</I></B>
+<DD> Specifies a text string to display in this text item.
+</DL>
+<DL>
+<DT> <B>-underline</B></I> <I>value</I></B>
+</I></B>
+<DD> Specifies the integer index of a character to underline in the text
+item. 0 corresponds to the first character of the text displayed in
+the text item, 1 to the next character, and so on.
+</DL>
+<DL>
+<DT> <B>-wraplength</B></I> <I>value</I></B>
+</I></B>
+<DD> This option specifies the maximum line length of the label string on
+this text item. If the line length of the label string exceeds this
+length, it is wrapped onto the next line, so that no line is longer
+than the specified length. The value may be specified in any of the
+standard forms for screen distances. If this value is less than or
+equal to 0 then no wrapping is done: lines will break only at newline
+characters in the text.
+</DL>
+</UL>
+<DL>
+<DT> <I>imageName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>image create compound</B></I> command.
+</DL>
+<DL>
+<DT> <I>imageName <B>configure</B></I> ?<I>option</I></B>? ?<I>value option value ...</I></B>? 
+</I></B>
+<DD> Query or modify the configuration options for the image. If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>imageName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given option(s) to have the given value(s); in this case
+the command returns an empty string. <I>Option</I></B> may have any of the
+values accepted by the <B>image create compound</B></I> command, except the
+<B>-window</B></I> option
+</DL>
+</pre><H3>EXAMPLE</H3>
+The following example creates a compound image with a bitmap and a
+text string and places this image into a Tk <B>bitton(n)</B></I>
+widget. Notice that the image must be created after the creation of
+the window that it resides in.
+<pre><code><code><code>
+ button .b
+ set img [image create compound -window .b]
+ $img add line
+ $img add bitmap -bitmap warning
+ $img add space -width 8
+ $img add text -text "Warning" -underline 0
+ .b config -image $img
+ pack .b
+</code></code></code></pre>
+</pre><H3>KEYWORDS</H3>
+image(n), Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:41 EST 1997 </i> --- 
+<i>Serial 853731307</i>

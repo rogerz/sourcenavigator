@@ -1,0 +1,172 @@
+
+
+
+<TITLE>tixwish -  Windowing shell for interpreting Tix commands.</TITLE>
+<Center><H2>tixwish -  Windowing shell for interpreting Tix commands.</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixwish</B></I> ?<I>fileName arg arg ...</I></B>?
+</pre><H3>OPTIONS</H3>
+<UL>
+<B>-display <I>display</I></B> <BR>
+Display (and screen) on which to display window.
+</UL>
+<UL>
+<B>-geometry <I>geometry</I></B> <BR>
+Initial geometry to use for window.  If this option is specified, its
+Tcl interpreter.
+</UL>
+<UL>
+<B>-name <I>name</I></B> <BR>
+Use <I>name</I></B> as the title to be displayed in the window, and
+as the name of the interpreter for <B>send</B></I> commands.
+</UL>
+<UL>
+<B>-sync</B></I> <BR>
+Execute all X server commands synchronously, so that errors are
+reported immediately. This will result in much slower execution, but
+it is useful for debugging.
+</UL>
+</pre><HR>
+
+</pre><H3>DESCRIPTION</H3>
+<P>
+<B>Tixwish</B></I> is a simple program consisting of the Tcl command
+language, the Tk toolkit, and a main program that reads commands from
+standard input or from a file.  It creates a main window and then
+processes Tcl commands.
+If <B>tixwish</B></I> is invoked with no arguments, or with a first
+interactively from standard input.
+It will continue processing commands until all windows have been
+deleted or until end-of-file is reached on standard input.  If there
+exists a file <B>.tixwishrc</B></I> in the home directory of the user,
+<B>tixwish</B></I> evaluates the file as a Tcl script just before reading
+the first command from standard input.
+<P>
+If <B>tixwish</B></I> is invoked with an initial <I>fileName</I></B> argument,
+then <I>fileName</I></B> is treated as the name of a script file.
+<B>Tixwish</B></I> will evaluate the script in <I>fileName</I></B> (which
+presumably creates a user interface), then it will respond to events
+until all windows have been deleted.  Commands will not be read from
+standard input.  There is no automatic evaluation of <B>.tixwishrc</B></I>
+in this case, but the script file can always <B>source</B></I> it if
+desired.
+
+</pre><H3>OPTIONS</H3>
+<P>
+<B>Tixwish</B></I> automatically processes all of the command-line options
+described in the <B>OPTIONS</B></I> summary above.  Any other command-line
+arguments besides these are passed through to the application using
+the <B>argc</B></I> and <B>argv</B></I> variables described later.
+
+</pre><H3>APPLICATION NAME AND CLASS</H3>
+<P>
+The name of the application, which is used for purposes such as
+<B>send</B></I> commands, is taken from the <B>-name</B></I> option,
+if it is specified;  otherwise it is taken from <I>fileName</I></B>,
+if it is specified, or from the command name by which
+character, then only the characters after the last slash are used
+as the application name.
+<P>
+The class of the application, which is used for purposes such as
+specifying options with a <B>RESOURCE_MANAGER</B></I> property or .Xdefaults
+file, is the same as its name except that the first letter is
+capitalized.
+
+</pre><H3>VARIABLES</H3>
+<P>
+<B>Tixwish</B></I> sets the following Tcl variables:
+<DL>
+<DT> <B>argc</B></I>
+</I></B>
+<DD> Contains a count of the number of <I>arg</I></B> arguments (0 if none),
+not including the options described above.
+</DL>
+<DL>
+<DT> <B>argv</B></I>
+</I></B>
+<DD> Contains a Tcl list whose elements are the <I>arg</I></B> arguments (not
+including the options described above), in order, or an empty string
+if there are no <I>arg</I></B> arguments.
+</DL>
+<DL>
+<DT> <B>argv0</B></I>
+</I></B>
+<DD> Contains <I>fileName</I></B> if it was specified.
+Otherwise, contains the name by which <B>tixwish</B></I> was invoked.
+</DL>
+<DL>
+<DT> <B>geometry</B></I>
+</I></B>
+<DD> If the <B>-geometry</B></I> option is specified, <B>tixwish</B></I> copies its
+value into this variable.  If the variable still exists after
+<I>fileName</I></B> has been evaluated, <B>tixwish</B></I> uses the value of
+the variable in a <B>wm geometry</B></I> command to set the main
+</DL>
+<DL>
+<DT> <B>tcl_interactive</B></I>
+</I></B>
+<DD> Contains 1 if <B>tixwish</B></I> is reading commands interactively
+(<B>fileName</B></I> was not specified and standard input is a
+terminal-like device), 0 otherwise.
+</DL>
+</pre><H3>X RESOURCES</H3>
+<B>Tixwish</B></I> makes use of several X Resources to determine the
+<B>Toolkit Options</B></I> for the Tix library. These X resources must be
+set using <B>RESOURCE_MANAGER</B></I> properties or .Xdefaults files
+<B>before</B></I> <B>tixwish</B></I> starts running. These resources must be
+associated with the main window of the <B>tixwish</B></I> application.
+These options include:
+<P>
+<pre><code><code><code>
+Name:		<B>tixScheme</B></I>
+Class:		<B>TixScheme</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the color scheme to use for the Tix application. Currently
+only these schemes are supported: Blue, Gray, SGIGray, TixGray, and
+TK.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tixFontSet</B></I>
+Class:		<B>TixFontSet</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the FontSet to use for the Tix application. A FontSet
+designates the fonts to use for different types of widgets. Currently
+only these FontSets are supported: 12Point, 14Point and TK.
+</UL>
+<P>
+For example, you may put these two lines in your .Xdefaults file
+<pre><code><code><code>
+    *tixwish.tixScheme: Gray
+    *tixwish.tixFontSet: 12Point
+</code></code></code></pre>
+</pre><H3>SCRIPT FILES</H3>
+<P>
+If you create a Tcl script in a file whose first line is
+<pre>
+<B>#!/usr/local/bin/tixwish</B></I>
+</pre>
+then you can invoke the script file directly from your shell if you
+mark it as executable.  This assumes that <B>tixwish</B></I> has been
+Many UNIX systems do not allow the <B>#!</B></I> line to exceed about 30
+characters in length, so be sure that the <B>tixwish</B></I> executable can be
+accessed with a short file name.
+
+</pre><H3>PROMPTS</H3>
+<P>
+When <B>tixwish</B></I> is invoked interactively it normally prompts for each
+variables <B>tcl_prompt1</B></I> and <B>tcl_prompt2</B></I>.  If variable
+<B>tcl_prompt1</B></I> exists then it must consist of a Tcl script to
+output a prompt; instead of outputting a prompt <B>tixwish</B></I> will
+evaluate the script in <B>tcl_prompt1</B></I>.  The variable
+<B>tcl_prompt2</B></I> is used in a similar way when a newline is typed but
+then no prompt is output for incomplete commands.
+
+</pre><H3>KEYWORDS</H3>
+shell, wish, Tk, toolkit
+<!Serial 851729152>
+<hr><i>Last modified Fri Jan 17 23:02:37 EST 1997 </i> --- 
+<i>Serial 853731308</i>

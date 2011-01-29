@@ -1,0 +1,307 @@
+
+
+
+<TITLE>tixSelect - Create and manipulate tixSelect widgets</TITLE>
+<Center><H2>tixSelect - Create and manipulate tixSelect widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixSelect<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixSelect</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and
+subwidgets of its super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The Select widget supports all the standard options of a frame widget.
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>allowZero</B></I>
+Class:		<B>AllowZero</B></I>
+Switch:		<B>-allowzero</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value that specifies whether the selection can be empty.
+When set to false, at least one button subwidget must be selected at
+any time.
+
+<B>Note</B></I>: When the Select widget is first constructed, the default
+selection is always empty, even if <B>-allowzero</B></I> is set to
+<B>false</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>buttonType</B></I>
+Class:		<B>ButtonType</B></I>
+Switch:		<B>-buttontype</B></I>
+</code></code></code></pre>
+<UL>
+The type of buttons to be used as subwidgets inside the Select widget.
+By default, the standard Tk <B>button</B></I> widget class is used.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the TCL command to be executed when the <B>-value</B></I> of the
+Select widget is changed. This command will be invoked with
+two arguments. The first is the name of the button subwidget that has
+toggled. The second is a boolean value indicating whether the button
+subwidget is selected. This command is executed only when the
+<B>-disableCallback</B></I> option is set to false.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the Select widget
+changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>orientation</B></I>
+Class:		<B>Orientation</B></I>
+Switch:		<B>-orientation</B></I>
+Alias:		<B>-orient</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the orientation of the button subwidgets. Only the values
+<B>horizontal</B></I> and <B>vertical</B></I> are recognized. This is a
+<I>static option</I></B> and it can only be assigned during the creation of
+the widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this Select widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the Select
+widget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padX</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-padx</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the horizontal padding between two neighboring button
+subwidgets. This is a <I>static option</I></B> and it can only be assigned
+during the creation of the widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padY</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-padx</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the vertical padding between two neighboring button
+subwidgets. This is a <I>static option</I></B> and it can only be assigned
+during the creation of the widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>radio</B></I>
+Class:		<B>Radio</B></I>
+Switch:		<B>-radio</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value that specifies whether the Select widget
+should act as a radio-box. When set to true, at most one button
+subwidget can be selected at any time. This is a <I>static option</I></B>
+and it can only be assigned during the creation of the widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectedBg</B></I>
+Class:		<B>SelectedBg</B></I>
+Switch:		<B>-selectedbg</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the background color of all the selected button subwidgets.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the state of all the buttons inside the Select widget.  Only
+the values <B>normal</B></I> and <B>disabled</B></I> are recognized. When the
+state is set to <B>disabled</B></I>, all user actions on this Select widget
+are ignore.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>validateCmd</B></I>
+Class:		<B>ValidateCmd</B></I>
+Switch:		<B>-validatecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the -value of the
+Select widget is about to change. This command is called with
+one parameter -- the new <B>-value</B></I> entered by the user. This
+command is to validate this new value by returning a value it deems
+valid.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+The value of a Select widget is a list of the names of the
+button subwidgets that have been selected by the user.
+
+When you assign the value of a Select widget using the "config -value"
+widget command, the TCL command specified by the <B>-command</B></I>
+option will be invoked if some button subwidgets are toggled.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>variable</B></I>
+Class:		<B>Variable</B></I>
+Switch:		<B>-variable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the global variable in which the value of the Select widget
+should be stored. The value of a Select widget is stored as a list of
+the names of the button subwidgets that have been selected by the
+user. The value of the Select widget will be automatically updated
+when this variable is changed.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label subwidget.
+</UL>
+<P>
+In addition, all the button subwidgets created as a result of the
+<B>add</B></I> widget command can be accessed by the <B>subwidget</B></I>
+command. They are identified by the <I>buttonName</I></B> parameter to the
+<B>add</B></I> widget command. Here is an example:
+<P>
+<pre><code><code><code>
+	tixSelect .s
+	pack .s
+	.s add eat   -text Eat
+	.s add sleep -text Sleep
+	.s subwidget eat   config -fg green
+	.s subwidget sleep config -fg red
+</code></code></code></pre>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixSelect</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a Select widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+Select widget such as its cursor and relief.
+
+The Select widget is a container of button subwidgets. It can
+be used to provide radio-box or check-box style of selection options
+for the user.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixSelect</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget.  It
+has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command.  The following commands
+are possible for Select widgets:
+<DL>
+<DT> <I>pathName <B>add<I> buttonName </I></B>?<I>option value ... </I></B>?
+</I></B>
+<DD> Adds a new button subwidget with the name </B></I>buttonName</B></I> into the
+Select widget. Additional configuration options can be given
+to configure the new button subwidget.
+</DL>
+<DL>
+<DT> <I>pathName <B>cget<I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixSelect</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>? 
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list). If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixSelect</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>invoke<I> buttonName</I></B>
+</I></B>
+<DD> Invokes the button subwidget with the name </B></I>buttonName</B></I>.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget<I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, returns the pathname of the subwidget of
+the specified name.
+
+When options are given, the widget command of the specified subwidget will
+be called with these options.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+When the user presses the left mouse button over the a button
+subwidget, it will be toggled and the <B>-value</B></I> option of the
+tixSelect widget will be changed.
+</pre><H3>EXAMPLE</H3>
+<P>
+The following example creates a radio-box style iconbar for the user
+to choose one value among <B>eat</B></I>, <B>work</B></I> or <B>sleep</B></I>.
+<P>
+<pre><code><code><code>
+	tixSelect .s -radio true -allowzero false
+	.s add eat   -bitmap [tix getbitmap eat]
+	.s add work  -bitmap [tix getbitmap work]
+	.s add sleep -bitmap [tix getbitmap sleep]
+</code></code></code></pre>
+</pre><H3>KEYWORDS</H3>
+Tix(n), Container Widget
+<hr><i>Last modified Sun Jan 19 22:34:38 EST 1997 </i> --- 
+<i>Serial 853731305</i>

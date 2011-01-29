@@ -1,0 +1,17 @@
+Building Tix plugin for Tcl plugin 1.1 on Unix.
+
+mkdir tcl7.7
+taz ~/wdev/linux/tcl7.7> mkdir generic
+taz ~/wdev/linux/tcl7.7> mkdir unix
+taz ~/wdev/linux/tcl7.7> cp ../tcl7.6/generic/*.h generic/
+taz ~/wdev/linux/tcl7.7> cp ../tcl7.6/unix/*.h unix/
+taz ~/wdev/linux/tcl7.7> cp ../tcl7.6/unix/*.sh unix/
+taz ~/wdev/linux/tcl7.7> emacs unix/*.sh &
+[3] 694
+taz ~/wdev/linux/tcl7.7> cd ..
+taz ~/wdev/linux> mkdir tk4.2
+mkdir: cannot make directory `tk4.2': File exists
+taz ~/wdev/linux> mkdir tk4.3
+taz ~/wdev/linux> cd tk4.3
+taz ~/wdev/linux/tk4.3> mkdir generic
+taz ~/wdev/linux/tk4.3> mkdir unix

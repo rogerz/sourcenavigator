@@ -1,0 +1,22 @@
+dnl This entire file is CYGNUS LOCAL.
+dnl Tix configure file.
+
+AC_INIT
+AC_CONFIG_SRCDIR([generic/tix.h])
+AC_CONFIG_AUX_DIR(..)
+AC_CANONICAL_HOST
+
+case "${host}" in
+*cygwin* | *mingw32* | *windows32*)
+  CONFIGDIR="win" ;;
+*)
+  CONFIGDIR="unix" ;;
+esac
+AC_SUBST(CONFIGDIR)
+
+AC_PROG_MAKE_SET
+
+AC_CONFIG_SUBDIRS($CONFIGDIR)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -1,0 +1,243 @@
+# $Header$
+
+function is_boolean( const x )	type_name(x) == "boolean"
+function is_byte( const x )	type_name(x) == "byte"
+function is_short( const x )	type_name(x) == "short"
+function is_integer( const x )	type_name(x) == "integer"
+function is_float( const x )	type_name(x) == "float"
+function is_double( const x )	type_name(x) == "double"
+function is_complex( const x )	type_name(x) == "complex"
+function is_dcomplex( const x )	type_name(x) == "dcomplex"
+function is_string( const x )	type_name(x) == "string"
+function is_record( const x )	type_name(x) == "record"
+function is_function( const x )	type_name(x) == "function"
+
+function is_agent( const x )
+	type_name(x) == "agent" || (is_record(x) && has_field(x, "*agent*"))
+
+function is_numeric( const x )
+	sum(type_name(x) ==
+		"boolean byte short integer float double complex dcomplex") > 0
+
+function min(...)		range(...)[1]
+function max(...)		range(...)[2]
+
+function abs(val x)
+	{
+	if ( is_complex(x) || is_dcomplex(x) )
+		return sqrt(real(x)^2 + imag(x)^2)
+
+	else
+		{
+		local mask := x < 0
+		x[mask] := -x[mask]
+		return x
+		}
+	}
+
+function conj(x)
+	{
+	if ( is_complex(x) || is_dcomplex(x) )
+		return complex(real(x), -imag(x))
+	else
+		return x
+	}
+		
+function arg(x)
+	{
+	if ( is_complex(x) || is_dcomplex(x) )
+		return atan(as_double(imag(x)) / as_double(real(x)))
+	else
+		return as_double(0)
+	}
+		
+function all(x) sum(!x) == 0
+function any(x) sum(as_boolean(x)) > 0
+
+len := length
+
+function ind(x) 1:len(x)
+
+function paste(...,sep=' ')
+	internal_paste(sep, ...)
+
+function spaste(...)
+	paste(...,sep='')
+
+function has_field( const x, const field )
+	{
+	if ( is_record(x) )
+		sum(field_names(x) == field) > 0
+	else
+		F
+	}
+
+function shell( ..., id=F, host=F, async=F, ping=F, suspend=F, input=F )
+ 	create_task( id, host, F, async, ping, suspend, input, ... )
+
+function client( ..., id=F, host=F, async=F, ping=F, suspend=F, input=F )
+ 	create_task( id, host, T, async, ping, suspend, input, ... )
+
+function full_type_name( const x )
+	{
+	if ( type_name(x) == "record" )
+		{
+		local f
+
+		local full_name := 'record ['
+		local first_field := field_names(x)[1]
+		for ( f in field_names(x) )
+			{
+			if ( f != first_field )
+				full_name := spaste(full_name, ', ')
+			full_name := spaste(full_name, f, "=",
+						full_type_name(x[f]))
+			}
+
+		spaste(full_name, "]")
+		}
+	else
+		{
+		if ( length(x) != 1 )
+			spaste(type_name(x), ' [', length(x), "]" )
+		else
+			type_name(x)
+		}
+	}
+
+function relay( src, src_name, ref dest, dest_name="*" )
+	{
+	if ( dest_name == "*" )
+		link src->[src_name] to dest->*
+	else
+		link src->[src_name] to dest->[dest_name]
+	}
+
+function relay_event( src, ref dest, name )
+	{
+	relay( src, name, dest, "*" )
+	}
+
+function relay_all( src, ref dest )
+	{
+	whenever src->* do
+		dest->[$name]( $value )
+	}
+
+function birelay_event( ref agent1, ref agent2, name )
+	{
+	relay( agent1, name, agent2 )
+	relay( agent2, name, agent1 )
+	}
+
+function birelay_all( ref agent1, ref agent2 )
+	{
+	relay_all( agent1, agent2 )
+	relay_all( agent2, agent1 )
+	}
+
+function sort(x)
+	{
+	if ( len(x) <= 1 )
+		return x
+	else
+		{
+		local pivot := x[1]
+		local below := x[x < pivot]
+		local equal := x[x == pivot]
+		local above := x[x > pivot]
+
+		return [sort(below), equal, sort(above)]
+		}
+	}
+
+function sort_pair(x, y)
+	{
+	if ( len(x) <= 1 )
+		return y
+	else
+		{
+		local pivot := x[1]
+		local below := x < pivot
+		local equal := x == pivot
+		local above := x > pivot
+
+		return [sort_pair(x[below], y[below]), y[equal],
+			sort_pair(x[above], y[above])]
+		}
+	}
+
+function order(x)	sort_pair(x, 1:len(x))
+
+function sync(ref c)	request c->["*sync*"]()
+
+function array(init, ...)
+	{
+	if ( num_args(...) == 0 )
+		return init
+
+	if ( length(init) <= 0 && ! is_string(init) )
+		{
+		print "bad initializer"
+		return F
+		}
+
+	if ( ! all(length(...) == 1) )
+		{
+		print "error non scalar parameter"
+		return F
+		}
+
+	if ( min(...) <= 0 )
+		{
+		print "error 0 or negative parameter"
+		return F
+		}
+
+	local p := prod(...)
+	local value := []
+
+	if ( length(init) > 0 )
+		{
+		if ( p % length(init) != 0 )
+			value := [rep(init, as_integer(p / length(init))),
+					init[1:(p % length(init))]]
+		else
+			value := rep(init, as_integer(p / length(init)))
+		}
+	else
+		value := rep(init, p);
+
+	if ( num_args(...) > 1 )
+		value::shape := [...]
+
+	return value
+	}
+
+
+# Given an ASCII table in "tbl" with the same number of columns in
+# each row, returns a record of arrays with the given names, each
+# array corresponding to a column in the table.
+func table_to_arrays(tbl, array_names)
+	{
+	local num_elements, num_arrays, arrays, mask, result, i
+
+	num_elements := len(tbl)
+	num_arrays := len(split(tbl[1]))
+
+	if ( num_arrays != len(array_names) )
+		{
+		print "mismatch between", len(array_names), "array names and",
+			num_arrays, "arrays in table_to_arrays()"
+		exit
+		}
+
+	arrays := as_double(split(tbl))
+	mask := seq(0, len(arrays)-1, num_arrays)
+	result := [=]
+
+	for ( i in 1:num_arrays )
+		result[array_names[i]] := arrays[mask + i]
+
+	return result
+	}

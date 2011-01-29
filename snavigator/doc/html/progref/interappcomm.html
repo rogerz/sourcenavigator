@@ -1,0 +1,128 @@
+<
+!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Interapplication Communication</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progrefIX.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996751"></A><BR>
+<A NAME="27061"></A>Interapplication Communication<DIV>
+<IMG SRC="line.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1002331"></A>This chapter addresses communication between <A NAME="marker-997470"></A>Source-Navigator and external applications, and provides examples of how to control Source-Navigator from other applications.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996760"></A>These examples use the Source-Navigator Tcl interpreter called <EM CLASS="Italics">
+hyper</EM>. To use the standard Tcl/Tk interpreter, replace the <KBD CLASS="Code">
+.../snavigator/bin/hyper</KBD>
+ string with the appropriate name; for example <KBD CLASS="Code">
+/usr/local/bin/wish</KBD>.
+</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001552"></A>After an external application connects to a Source-Navigator project, it may be controlled remotely using the Tk <KBD CLASS="Code">
+send</KBD>
+<A NAME="marker-1001555"></A> command. </P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996762"></A><A NAME="25810"></A>The Tk Send Command</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996763"></A>The communication between external applications and Source-Navigator can be achieved using the Tk <KBD CLASS="Code">
+send</KBD>
+ command. Communicating with <A NAME="marker-997471"></A>Source-Navigator from another application requires that the application know the name of the interpreter running Source-Navigator. The Tk command <KBD CLASS="Code">
+winfo interps</KBD>
+ is useful for determining the name of all the interpreters active on a host. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001592"></A>Further information on the Tk <KBD CLASS="Code">
+send</KBD>
+ command can be found in one of the Tcl/Tk texts mentioned in the introduction.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996767"></A><A NAME="marker-996766"></A>Multiple Source-Navigator Interpreters</H3>
+<P CLASS="Body">
+<A NAME="pgfId-997481"></A>An application may need to query every Source-Navigator <A NAME="marker-997480"></A>interpreter name in the network. The example below queries every Source-Navigator interpreter name and fetches the name of the Source-Navigator projects. Then if the string <KBD CLASS="Code">
+c++_demo</KBD>
+ is found, the project name reloads files specified in the command line.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1094687"></A>#!/bin/sh
+# REPLACE $HOME/snavigator/bin/hyper with the
+# Source-Navigator installation directory! &#92;
+exec $HOME/snavigator/bin/hyper &quot;$0&quot; &quot;$@&quot;
+#
+# Don't forget the backslash!
+#
+# This program instructs all Red Hat Source-Navigator applications
+# running on this host to reload the files specified on the
+# command line. The project currently opened by each
+# Source-Navigator application must contain the string
+# &quot;c++_demo&quot;. 
+# The C++ demo project, c++_demo.proj, is optionally generated
+# during the Source-Navigator installation process.
+# We don't need the top-level window for this program.
+wm withdraw .
+# Scan through all the Tcl-based interpreters on this system
+# and try and find running Source-Navigators.
+foreach interpreter [winfo interps] {
+  if {![string match &quot;*navigato*&quot; $interpreter]} {
+    continue ;# not S-N, keep looking.
+  } else {
+    set sn $interpreter ;# found one.
+  }
+  set msg &quot;&quot;
+  # Set the command that we're going to send to the
+  # application (using &quot;set&quot; on a temporary variable to
+  # examine the name of the currently opened project).
+  set cmd {set tmp sn_options(ProjectName)}
+  # Send the command to the other application and capture the
+  # results. 
+  catch {set result [send $sn $cmd]} msg
+  if {$msg != &quot;&quot;} {
+    puts $msg
+  }
+  # See if the project name contains the substring &quot;c++_demo&quot;.
+  # If so, then issue the command &quot;paf_parse_uptodate&quot; within
+  # the remote interpreter.
+  if {[string match &quot;*c++_demo*&quot; $result]} {
+    send $sn_parse_uptodate [list $argv]
+  }
+}
+
+# Force our way out of this event-driven shell.
+exit</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1103036"></A>If the script above is executable and the path to the interpreter is correct, the script will reparse and reload all files specified on the command line. If a listed file is being edited in a Source-Navigator editor window, the contents of the editor window will be updated.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-996809"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1103064"></A>File names have to be used relative to the project root directory if the file is in a subdirectory of the project; otherwise, the file names must be specified with absolute path names (<KBD CLASS="Code">./</KBD>
+ and  <KBD CLASS="Code">
+../</KBD>
+ cannot be used in file names).</P>
+<P CLASS="Note">
+<A NAME="pgfId-1168118"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="versctrl.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="progrefIX.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

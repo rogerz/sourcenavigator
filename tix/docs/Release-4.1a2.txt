@@ -1,0 +1,35 @@
+
+  TIX 4.1A2
+
+   Released on April 23, 1996
+
+Subject: [Announce] Tix version 4.1a2 is available
+
+   I am pleased to announce the availability of Tix version 4.1a2, the
+   second alpha release. This version of Tix supports the Microsoft
+   Windows platforms.
+
+  REQUIREMENT
+
+    Unix Platforms
+
+   Tix 4.1a2 works with the following combinations of Tcl/Tk/ITcl/ET:
+     * Tcl 7.4 + Tk 4.0
+     * Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     * Tcl 7.4 + Tk 4.0 + ET 1.5
+     * Tcl 7.5 + Tk 4.1 (final release only)
+
+    Windows Platforms
+
+   Tix 4.1a2 requires the final release of Tcl 7.5 and Tk 4.1 (no alpha
+   or beta versions).
+
+  GETTING THE TIX PACKAGE
+
+   You can obtain Tix from the following ftp site:
+   ftp://ftp.xpi.com/pub/Tix4.1a2.tar.gz
+
+     _________________________________________________________________
+
+   Last modified Fri Jan 17 22:52:55 EST 1997 --- Serial 853731292
+

@@ -1,0 +1,8 @@
+Please use the following prefixes for SVN commit toplevel msgs:
+
+TYPE - EXAMPLE 
+--------------
+(BUGFIX) - fix scrolling in grep pane
+(ENHANCE) - pretty up splash screen
+(DOCS) - add TODO file to list top-level goals
+(INTERNAL) - remove Makefile and other configure auto-generated files from repos

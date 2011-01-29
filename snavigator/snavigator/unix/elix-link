@@ -1,0 +1,61 @@
+#! /bin/sh
+
+# Usage: elix-link ARGS -- LINKER-ARGS
+
+pfx=
+output=
+mode=
+
+while test "$#" -gt 0; do
+   arg="$1"
+   shift
+
+   if test "$arg" = "--"; then
+      break
+   fi
+
+   case "$arg" in
+    --prefix)
+       pfx="$1"
+       shift
+       ;;
+
+    --output)
+       output="$1"
+       shift
+       ;;
+
+    --mode)
+       mode="--$1"
+       shift
+       ;;
+   esac
+done
+
+if test -z "$pfx" || test -z "$1" || test -z "$output"; then
+   echo "elix-link: required option not found" 1>&2
+   exit 1
+fi
+
+# The `.olix' file is the saved `.runcfg' file from the last time we
+# actually invoked config.pl.  It's rather ugly that we do this, but
+# it is easier to take this approach than it is to change the
+# Makefiles to do this explicitly.
+run_config=yes
+if test -f "$pfx.olix"; then
+   if cmp -s "$pfx.olix" "$pfx.runcfg" > /dev/null 2>&1; then
+      run_config=no
+   fi
+fi
+
+if test "$run_config" = yes; then
+   # Run config.pl and update
+   ${SHELL-/bin/sh} "$pfx.runcfg" || exit 1
+   cp "$pfx.runcfg" "$pfx.olix"
+fi
+
+# Run the actual link
+"$@" -o "$output" || exit 1
+
+# Clean up with link.pl.
+exec link.pl --app="$output" --elix-cfg="$pfx.elix" $mode

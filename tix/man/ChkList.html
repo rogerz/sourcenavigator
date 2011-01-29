@@ -1,0 +1,192 @@
+
+
+
+<TITLE>tixCheckList - Create and manipulate tixCheckList widgets</TITLE>
+<Center><H2>tixCheckList - Create and manipulate tixCheckList widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixCheckList<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixCheckList</B></I> class is derived from the <B>TixTree</B></I> class
+and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+<B>TixCheckList</B></I> supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>browseCmd</B></I>
+Class:		<B>BrowseCmd</B></I>
+Switch:		<B>-browsecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a command to call whenever the user browses on an entry
+(usually by single-clicking on the entry). The command is called with
+one argument, the pathname of the entry.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a command to call whenever the user activates an entry
+(usually by double-clicking on the entry). The command
+is called with one argument, the pathname of the entry.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>radio</B></I>
+Class:		<B>Radio</B></I>
+Switch:		<B>-radio</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value. If set to true, the user can select at most one item
+at a time; if set to false, the user can select as many items as
+possible.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>hlist</B></I>
+Class:		<B>TixHList</B></I>
+</code></code></code></pre>
+<UL>
+The hierarchical listbox that displays the CheckList.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>hsb</B></I>
+Class:		<B>Scrollbar</B></I>
+</code></code></code></pre>
+<UL>
+The horizontal scrollbar subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>vsb</B></I>
+Class:		<B>Scrollbar</B></I>
+</code></code></code></pre>
+<UL>
+The vertical scrollbar subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixCheckList</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a CheckList widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the CheckList
+widget such as its cursor and relief.
+
+The CheckList widget displays a list of items to be selected by the
+user. CheckList acts similarly to the Tk checkbutton or radiobutton
+widgets, except it is capable of handling many more items than
+checkbuttons or radiobuttons.
+
+The items are contained in the <B>hlist</B></I> subwidget.  Each item may
+be in one of the following status: <B>on</B></I> (indicated by a check
+bitmap), <B>off</B></I> (indicated by a cross bitmap) <B>default</B></I>
+(indicated by a gray box bitmap) or <B>none</B></I>, in which case the item
+will not be accompanied by a bitmap. The items whose status is
+<B>on</B></I>, <B>off</B></I> or <B>default</B></I> are called the <I>selectable</I></B>
+items and can be checked or crossed by the user. All selectable
+entries must be of the type <B>imagetext</B></I>.
+
+The items whose status is <B>none</B></I> cannot be checked or crossed by
+the user; usually they are included in the <B>hlist</B></I> subwidget only
+for explanation purposes or as separators.
+
+Initially, all the items have a <I>none</I></B> status. To make an item
+selectable, you can call the <B>setstatus</B></I> command to change its
+status (see below).
+
+Notice that CheckList is a subclass of the TixTree widget and thus is
+is capable of displaying a hierachy of selectable entries. When
+necessary, you can call the <B>setmode</B></I> method (see
+<B>TixTree(n)</B></I>) to define the hierachical structure of the
+selectable entries.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixCheckList</B></I> command creates a new Tcl command whose name is
+be used to invoke various operations on the widget. It has the
+following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for CheckList widgets:
+<DL>
+<DT> <I>pathName <B>getselection</B></I> ?<I>status</I></B>?
+</I></B>
+<DD> Returns a list of items whose status matches <I>status</I></B>. If
+<I>status</I></B> is not specified, the list of items in the "<B>on</B></I>"
+status will be returned.
+</DL>
+<DL>
+<DT> <I>pathName <B>getstatus</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns the current status of <I>entryPath</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>setstatus</B></I> <I>entryPath status</I></B> 
+</I></B>
+<DD> Sets the status of <I>entryPath</I></B> to be <I>status</I></B>. A bitmap will
+be displayed next to the entry its status is <B>on</B></I>, <B>off</B></I> or
+<B>default</B></I>.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>EXAMPLE</H3>
+<P>
+This example creates several choices for the user to select.
+<P>
+\fC
+<pre><code><code><code>
+ tixCheckList .c
+ .c subwidget hlist add choice1 -itemtype imagetext -text "Choice 1"
+ .c subwidget hlist add choice2 -itemtype imagetext -text "Choice 2"
+ .c subwidget hlist add choice3 -itemtype imagetext -text "Choice 3"
+ .c setstatus choice1 on
+ .c setstatus choice2 off
+ .c setstatus choice3 off
+ pack .c
+</code></code></code></pre>
+</B></I>
+</pre><H3>BINDINGS</H3>
+<P>
+The basic mouse and keyboard bindings of the CheckList widget are the
+same as the bindings of the TixTree widget.
+
+In addition, the status of the entries in the CheckList are toggled
+under the following conditions:
+<UL>
+[1] <BR>
+When the user press the mouse button over an entry.
+</UL>
+<UL>
+[2] <BR>
+When the user press the &lt;space&gt; key over an entry.
+</UL>
+<UL>
+[3] <BR>
+When the user press the &lt;Return&gt; key over an entry.
+</UL>
+</pre><H3>KEYWORDS</H3>
+Tix(n), tixHList(n), tixTree(n)
+<!Serial 851729142>
+<hr><i>Last modified Fri Jan 17 23:00:21 EST 1997 </i> --- 
+<i>Serial 853731295</i>

@@ -1,0 +1,262 @@
+
+
+
+<TITLE>tixFileEntry - Create and manipulate tixFileEntry widgets</TITLE>
+<Center><H2>tixFileEntry - Create and manipulate tixFileEntry widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixFileEntry<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixFileEntry</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and
+subwidgets of its super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The FileEntry widget supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>activateCmd</B></I>
+Class:		<B>ActivateCmd</B></I>
+Switch:		<B>-activatecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the user activates the
+<B>button</B></I> subwidget. This command is called before the file dialog
+is popped up and can be used to customize the file dialog (which may
+be shared by several FileEnt widget).
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the <B>-value</B></I> option of
+the FileEntry is changed. This usually happens when the user inputs a
+filename into the entry subwidget and hits the &lt;Return&gt; key. The
+command will be called with one arguments -- the new value of the
+FileEntry widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>dialogType</B></I>
+Class:		<B>DialogType</B></I>
+Switch:		<B>-dialogtype</B></I>
+</code></code></code></pre>
+<UL>
+Specifies which type of file selection dialog should be popped up when
+the user invokes the <B>button</B></I> subwidget. Current only two values
+are valid: <B>tixFileSelectDialog</B></I> or <B>tixExFileSelectDialog</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the FileEntry widget
+changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableForeground</B></I>
+Class:		<B>DisableForeground</B></I>
+Switch:		<B>-disableforeground</B></I>
+</code></code></code></pre>
+<UL>
+The foreground color to use for of the entry subwidget when the
+FileEntry widget is disabled.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>fileBitmap</B></I>
+Class:		<B>FileBitmap</B></I>
+Switch:		<B>-filebitmap</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the bitmap to display in side the <B>button</B></I> subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this FileEntry widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectMode</B></I>
+Class:		<B>SelectMode</B></I>
+Switch:		<B>-selectmode</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how the FileEntry widget should react to \fC&lt;KeyPress&gt;</B></I>
+events. When set to "immediate", any user keyboard inputs will
+immediately change the <B>-value</B></I> option. When set to "normal", the
+user keyboard inputs will be copied to the <B>-value</B></I> option only
+if the\fC &lt;Return&gt;</B></I> key is pressed or the keyboard focus is
+changed. The use of the immediate mode is discouraged. For effective
+use of the FileEntry widget, one should use the normal mode together
+with the <B>update</B></I> widget command (see below).
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the whether the FileEntry widget is normal or disabled. Only
+the values "normal" and "disabled" are recognized.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>validateCmd</B></I>
+Class:		<B>ValidateCmd</B></I>
+Switch:		<B>-validatecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the -value of the
+FileEntry widget is about to change. This command is called
+with one parameter -- the new <B>-value</B></I> entered by the user. This
+command is to validate this new value by returning a value it deems
+valid.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the value of the FileEntry.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>variable</B></I>
+Class:		<B>Variable</B></I>
+Switch:		<B>-variable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the global variable in which the value of the FileEntry
+should be stored. The value of the FileEntry will be automatically
+updated when this variable is changed.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>button</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The button subwidget next to the entry subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>entry</B></I>
+Class:		<B>Entry</B></I>
+</code></code></code></pre>
+<UL>
+The entry subwidget in which the user can type in a filename.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixFileEntry</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a FileEntry
+widget. Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+FileEntry such as its cursor and relief.
+<P>
+The FileEntry widget can be used to input a filename. The user can
+type in the filename manually. Alternatively, the user can press the
+button widget that sits next to the entry, which will bring up a file
+selection dialog of the type specified by the <B>-dialogtype</B></I> option.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixFileEntry</B></I> command creates a new Tcl command whose
+window. This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command. The following
+commands are possible for FileEntry widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixFileEntry</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixFileEntry</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>invoke</B></I> 
+</I></B>
+<DD> Forces the FileEntry widget to act as if the user has pressed the
+&lt;return&gt; key inside the entry subwidget.
+</DL>
+<DL>
+<DT> <I>pathName <B>filedialog</B></I> <I>?args?</I></B> 
+</I></B>
+<DD> When no additional arguments are given, this command returns the
+pathname of the file dialog box associated with this FileEnt
+widget. When additional arguments are given, the widget command of the
+file dialog will be called with these arguments.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I>name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name. When options are given, the widget
+command of the specified subwidget will be called with these options.
+</DL>
+<DL>
+<DT> <I>pathName <B>update</B></I>
+</I></B>
+<DD> If the user has modified the entry using keyboard inputs, the update
+command will <B>update</B></I> the <B>-value</B></I> of this FileEntry
+to "normal", one should call the <B>update</B></I> command on this widget
+before examining its <B>-value</B></I> option. This command has no effect
+in if the <B>-selectmode</B></I> option is set to "immediate".
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:25 EST 1997 </i> --- 
+<i>Serial 853731299</i>

@@ -1,0 +1,797 @@
+2004-10-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/Makefile.in: Add DESTDIR fix identified
+	in SN bug 951001.
+
+2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/Makefile.in:
+	* unix/tk8.3/Makefile.in: Add DESTDIR support.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/tk8.3/Makefile.in: Use CFLAGS passed
+	in from the configure script instead of
+	just hard coding -O.
+
+2003-04-01  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/tk8.3/configure: Regen.
+	* unix/tk8.3/configure.in: Don't set TIX_SAM_INSTALL
+	unless configured to build with sam. This keeps sam
+	from being built at install time. The sam feature
+	does not really work properly since it depends on
+	tclsh at build time.
+
+2003-03-28  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/Makefile.in: Use TCL_DBGX when setting
+	Tcl and Tk lib names to fix the build when
+	--enable-symbols flag is passed to configure.
+
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* unix/tk8.3/configure:
+	* win/configure: Regen to account for
+	--enable-symbols fix.
+
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure: Regen.
+	* win/configure.in: Set CC and CFLAGS when
+	compiling with VC++.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* win/configure: Regen.
+	* win/configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+
+2002-08-01  Keith Seitz  <keiths@redhat.com>
+
+	From Mo Dejong  <supermo@bayarea.net>
+	* unix/tk8.3/configure.in: Default the prefix and
+	exec_prefix to /usr/local if the user does not
+	pass --prefix explicitly. This avoids an error
+	during make install where the TCL_BIN_DIR
+	variable is set to NONE/bin.
+	* unix/tk8.3/configure: Regenerated.
+
+2002-01-11  Keith Seitz  <keiths@redhat.com>
+
+	* unix/tk8.3/Makefile.in (RUN_TCLSH): Update with
+	real name/location of tcl.
+	* unix/tk8.3/configure.in (TCL_BIN_DIR): Figure out
+	where tclsh is installed: it's needed by the install
+	target.
+	* unix/tk8.3/configure: Regenerated.
+
+2002-01-07  Phil Edwards <pedwards@disaster.jaj.com>
+
+	* unix/Makefile.in: When installing the tix
+	shared library check in the "tk8.1" and "tk8.3"
+	subdirectories for the library.
+
+2001-09-12  Ian Roxborough  <irox@redhat.com>
+
+	* win/Makefile.in: Remove hardcoded
+	version postfix from directory paths.
+	* configure: Regenerated.
+	* win/configure: Regenerated.
+
+2001-09-09  Ian Roxborough  <irox@redhat.com>
+
+	* win/configure: regenerated.
+	
+2001-08-11  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Don't generate a def file by
+	filtering the output of running nm over the object
+	files. Generate an import library as a side
+	effect of creating the dll. Avoid creating the dll
+	multiple times when building with gcc.
+
+2001-08-11  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Add console and tixwishres objects
+	to WISHOBJS variable.
+
+2001-08-11  Mo DeJong  <mdejong@cygnus.com>
+
+	* generic/tixForm.c:
+	* generic/tixGrFmt.c:
+	* generic/tixGrRC.c:
+	* generic/tixGrSel.c:
+	* generic/tixGrSort.c:
+	* generic/tixGrid.c:
+	* generic/tixItcl.c:
+	* generic/tixItcl.h:
+	* generic/tixMethod.c:
+	* unix/samAppInit.c: Define TCL_STORAGE_CLASS as
+	DLLEXPORT when BUILD_tix is define to fix dll export
+	declarations under Windows.
+
+2001-08-09  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Remove unused LD variable. Fix up
+	a couple of object rules so that the -c argument
+	is only passed to CC once.
+	* win/configure: Regen.
+	* win/configure.in: Use AC_CANONICAL_HOST and AC_CHECK_TOOL
+	macros to figure out cross tool name like NM instead of
+	just looking at environment variables.
+
+2001-08-09  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Add CYGWIN and GCC variables and use
+	them to support building with Cygwin, Mingw, and VC++.
+	Remove unused nmake variables. Use GCC instead of OBJEXT
+	to switch between gcc and VC++ style build rules. Don't
+	pass libraries that are added by default when linking
+	with CC instead of LD.
+	* win/configure: Regen.
+	* win/configure.in: Call AC_CYGWIN, define CYGWIN and
+	subst it into the Makefile. Subst GCC into the Makefile.
+
+2001-07-12  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Compile the tkConsole81.c file when
+	building tix for Tcl/Tk 8.3.
+
+2001-07-12  Mo DeJong  <mdejong@cygnus.com>
+
+	* configure:
+	* configure.in: Add support for mingw32 and windows32 hosts.
+
+2001-06-01  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: Add build targets to support Tcl/Tk 8.3.
+
+2001-03-27  Ian Roxborough  <irox@redhat.com>
+
+	* unix/tk8.3:  New directory for tcl/tk8.3 support.
+
+	* unix/tk8.3/Makefile.in
+	* unix/tk8.3/aclocal.m4
+	* unix/tk8.3/configure
+	* unix/tk8.3/configure.in
+	* unix/tk8.3/pkgIndex.tcl.in
+	* unix/tk8.3/tixAppInit.c: New files for tcl/tk8.3 support.
+
+2001-04-06  Christopher Faylor <cgf@redhat.com>
+
+	* configure.in: Add test for -mwin32 requirement switch when building
+	on cygwin.
+	* configure: Regenerate.
+	* win/Makefile.in (EXTRA_CFLAGS): Add a place to potentially put
+	-mwin32 flag.
+
+Tue Jun  6 22:09:02 2000  Christopher Faylor <cgf@cygnus.com>
+
+	* win/Makefile.in: Set up and use autoconf variables throughout to
+	allow overriding variables from the make command line.
+
+2000-01-26  DJ Delorie  <dj@cygnus.com>
+
+	* win/tixWCmpt.c (DllMain): Use _imp__ instead of __imp_
+
+1999-12-06  Mo DeJong  <mdejong@cygnus.com>
+
+	* win/Makefile.in: removed export of symbols that start with _real@.
+	this is needed for VC++ 6.0
+
+1999-09-22  DJ Delorie  <dj@cygnus.com>
+
+	* win/Makefile.in (LIB_DIR etc): change to @dir@ form
+
+Thu Aug 26 18:44:04 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	Changes necessary to avoid Windows install-time conflicts
+	with similarly named files in itcl/iwidgets docs:
+	* man/ComboBox.n: delete
+	* man/TixComboBox.n: newly renamed
+	* man/ComboBox.html: delete
+	* man/TixComboBox.html: newly renamed
+
+1999-05-28  Syd Polk  <spolk@cygnus.com>
+
+	* win/tkConsole81.c: Added. Initialized tcl correctly for 8.1.
+
+	* win/Makefile.in: Use correct console obj for tcl8.1.
+
+1999-04-22  Syd Polk  <spolk@cygnus.com>
+
+	* unix/Makefile.in: Don't create lib directory for install-libraries.
+
+1999-03-26  Martin Hunt  <hunt@cygnus.com>
+
+	* library/pref/TkWin.csc: Don't set scrollbar default
+	widths.  The scrollbar widget is native and Windows knows
+	how big it should be.
+
+1999-03-15  Ian Roxborough  <irox@cygnus.com>
+
+	* library/NoteBook.tcl: reduce notebook tab hight, looks
+	better on Unix and Windows.
+
+Fri Feb 26 15:38:56 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* configure.in: Change "cygwin32*" to "cygwin*"
+	* configure: Regenerate.
+
+1999-02-22  Syd Polk  <spolk@cygnus.com>
+    
+	* win/configure.in: Fixed TIX_LIB_FULL_PATH for Visual C++.
+	* win/configure: Regenerate.
+
+1999-02-09  Syd Polk  <spolk@cygnus.com>
+
+	* tixConfig.sh.in: Added TIX_LIB_FULL_PATH.
+	* unix/tk8.0/configure.in: Added TIX_LIB_FULL_PATH. Exported
+	TCL_LIB_FULL_PATH, TK_LIB_FULL_PATH and ITCL_LIB_FULL_PATH
+	for dependencies.
+	* unix/tk8.1/configure.in: Likewise.
+	* unix/tk8.0/configure: Regenerated.
+	* unix/tk8.1/oonfigure: Regenerated.
+	* unix/tk8.0/Makefile.in: Use TCL_LIB_FULL_PATH, TK_LIB_FULL_PATH,
+	and ITCL_LIB_FULL_PATH for dependencies.
+	* unix/tk8.1/Makefile.in: Likewise.
+
+1999-02-04  James Ingham  <jingham@cygnus.com>
+
+	* generic/tixInit.c: Use tcl_findLibrary for Tk 8.1b1 and beyond.
+	
+	* generic/tixInit.c (Tix_Init_Internal): make sure tix_library is
+	actually set before trying to fprintf it.
+	
+	* {unix,win}/tk{8.0,8.1}configure.in: Add TIX_BUILD_LOCATION
+ 	as a convenience, so you don't have to construct it from tcl
+ 	version...  * tixConfigure.sh.in: Add TIX_BUILD_LOCATION and
+ 	TIX_LIB_FILE.
+	* {unix,win}/tk{8.0,8.1}configure: regenerated.
+
+1999-02-02  James Ingham  <jingham@cygnus.com>
+
+	* library/Control.tcl: Calling doAdjustValue with the wrong
+	arguments.  Remove serial from the call.
+
+1998-01-26  Jim Ingham    jingham@cygnus.com
+
+	Merging changes from gdbtk-980810-branch onto trunk to support 
+        Itcl3.0.
+
+	* generic/tixItcl.c, generic/tixItcl.h: Added code to support 
+        Namespaces in Tcl8.0.  This should be used BOTH with Itcl3.0 & Tcl8.0.
+        * generic/tixMethod.c: Use the Tix_ItclSetGlobalNameSp function
+        everywhere, rather than doing it inline, which did not work with
+        Tcl 8.0.3.
+
+	* generic/tixInit.c: If we are in Tcl8.0.3, use tcl_findLibrary.
+
+Tue Jan 26 08:48:06 1999  Keith Seitz  <keiths@cygnus.com>
+
+	* library/Control.tcl (tixControl:SetBindings): Force the
+	non-autorepeat case to be a normal button with a -command.
+
+Wed Jan 13 12:22:04 1999  Keith Seitz  <keiths@cygnus.com>
+ 
+        * library/Control.tcl (tixControl:SetBindings): Pass the amount
+        of the change (-1 or +1) to StopRepeat, too.
+        (tixControl:config-state): When the state is set to normal,
+        call tixControl:SetBindings to reinstall the normal bindings.
+        If setting the state to disabled, also disable the button bindings.
+        (tixControl:StartRepeat): If autorepeat is disabled, do not set
+        the value of the widget with the buttonpress event. Let StopRepeat
+        do it.
+        (tixControl:doAdjustValue): New proc.
+        (tixControl:StopRepeat): Add "amount" argument. When autorepeat
+        is off, call doAdjustValue to set the value.
+
+1999-01-15  Syd Polk  <spolk@cygnus.com>
+
+	* Fix header files to work with tcl8.1b1.
+
+1999-01-01  Michael Meissner  <meissner@cygnus.com>
+
+	* unix/tk8.{0,1}/Makefile.in (_install_): Use $(INSTALL_PROGRAM)
+	instead of $(INSTALL_DATA) to install $(TIX_EXE_FILE).
+
+1998-11-06  Syd Polk  <spolk@cygnus.com>
+
+	* generic/tixCompat.c: strdup does not mix with the allocator that
+	Tcl uses on Windows. Always use tixStrDup.
+	* unix/tk4.2/configure.in: Get rid of test for strdup
+	* unix/tk4.2/configure: Regenerated.
+	* unix/tk8.0/configure.in: Get rid of test for strdup
+	* unix/tk8.0/configure: Regenerated
+	* unix/tk8.1/configure.in: Get rid of test for strdup
+	* unix/tk8.1/configure: Regenerated
+	* win/Makefile.in: Get rid of define of strdup
+
+Mon Nov  2 15:05:33 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	* configure.in: detect cygwin* instead of cygwin32*
+	* configure: regenerate
+
+1998-10-28  Syd Polk  <spolk@cygnus.com>
+
+	* win/Makefile.in: install-libraries needs to install the
+	tix dll.
+
+1998-10-27  Syd Polk  <spolk@cygnus.com>
+
+	* win/Makefile.in: Fix paths for the 8.1 build to point to
+	tcl8.1 and tk8.1.
+
+1998-10-26  Syd Polk  <spolk@cygnus.com>
+
+	* win/aclocal.m4: Added so that the macros to find tcl and tk are
+	standardized.
+	* win/configure.in: Use standard macros for finding tcl and tk
+	* win/configure: Regenerated.
+
+1998-10-20  Syd Polk  <spolk@cygnus.com>
+
+	* unix/aclocal.m4: Added so that the macros to find tcl and tk are
+	standardized.
+	* unix/configure.in: Use standard macros for finding tcl and tk.
+	* unix/configure: Regenerated
+	* unix/tk8.1/aclocal.m4: Likewise
+	* unix/tk8.1/configure.in: Likewise
+	* unix/tk8.1/configure: Regenerated
+
+1998-10-14  Syd Polk  <spolk@cygnus.com>
+
+	* win/Makefile.in: Fixed hard-wired library name.
+
+1998-10-05  Syd Polk  <spolk@cygnus.com>
+
+	* unix/configure: Regenerated with updated autoconf
+	* win/Makefile.in: Fixed link command lines to work with
+	MSVC build. Fixed to work with different tcl and tk DLL
+	names. Other misc. cleanup.
+	* win/configure.in: Generated TIX_BUILD_LIB_SPEC correctly
+	for Windows.
+	* win/configure: Regenerated.
+
+1998-09-29  Syd Polk  <spolk@cygnus.com>
+
+	* win/Makefile.in: Fixed to work with tcl 8.1.
+
+1998-09-28  Syd Polk  <spolk@cygnus.com>
+
+        * win/configure.in: Initial changes for Windows and Tcl8.1
+        * win/configure: Regenerated
+        * tcl8.1/dummy.dir: Added for tcl8.1
+
+Sun Sep 13 17:28:50 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	* unix/Makefile.in: correct typo in echoed install text
+	* win/Makefile.in: ditto
+
+1998-09-08  Syd Polk  <spolk@cygnus.com>
+
+	* tixConfig.sh.in: Added so that the location and name of the tix
+	library can be figured out by the clients the link them.
+	* unix/tk8.0/configure.in: Output tixConfig.sh.in
+	* unix/tk8.0/configure: Regenerate
+	* unix/tk8.1/configure.in: Output tixConfig.sh.in
+	* unix/tk8.1/configure: Regnerate
+
+Mon Aug 31 11:26:54 1998  Syd Polk  <spolk@cygnus.com>
+
+	* Makefile.in unix/Makefile.in: Updated to work with either
+	Tcl/Tk 8.0 or Tcl/Tk 8.1. 8.1 requires -fwritable-strings.
+	* unix/tk8.1/Makefile.in configure configure.in pkgIndex.tcl.in
+	tixAppInit.c: Added for Tcl/Tk 8.1 support.
+
+Sun Jul 12 22:30:13 1998  Michael Tiemann  <michael@impact.tiemann.org>
+
+	* unix/tk8.0/Makefile.in: Changed INSTALL_PROGRAM to INSTALL_DATA
+	where we're installing libraries, not programs.  INSTALL_PROGRAM
+	is used when we might strip things; INSTALL_DATA is when we want
+	to intall something w/o stripping it.
+
+Mon Jul  6 18:44:56 1998  Ian T Roxborough  <irox@cygnus.com>
+
+	* win/Makefile.in: Corrected a typo [($OBJEXT) should have been $(OBJEXT)],
+	to fix none MSVC builds. 
+
+1998-07-03  Ben Elliston  <bje@cygnus.com>
+
+	Patches from Ian T. Roxborough <irox@cygnus.com>.
+	* configure.in: Add AC_OBJEXT macro invocation.
+
+	* configure: Regenerate.
+
+	* src/Makefile.in: Support compiling on Win32 systems.
+
+	* win/tkConsole80b1.c: Add prototype for TkConsolePrint.
+
+Sun Jun 28 20:33:36 1998  Khamis Abuelkomboz  <khamis@cygnus.com>
+
+	* library/NoteBook.tcl (tixNoteBook:MouseUp): In some cases it
+	happens that the widget gets a mouse/release without a
+	mouse/pressed event, this cause an error
+	"data(w:down) invalid variable".
+	
+1998-06-18  Ben Elliston  <bje@cygnus.com>
+
+	* win/Makefile.gvc: Remove.
+
+Tue Jun  9 01:33:08 1998  Martin M. Hunt  <hunt@cygnus.com>
+
+	* library/Control.tcl (tixControl:SetBindings): Incr
+	and decr commands may take too long so bind the buttons
+	to an "after idle" command.
+
+Mon Jun  8 12:19:18 1998  Martin M. Hunt  <hunt@cygnus.com>
+
+	* library/Control.tcl (tixControl:incr): Don't call SetValue
+	just before we change it.
+	(tixControl:decr): Don't call SetValue just before we change it.	
+	(tixControl:StartRepeat): Set a local variable with the
+	value of data(serial) so a buttonrelease event doesn't
+	change it while in this function.  This fixes autorepeat problems.
+	(tixControl:Repeat): Use local variable "serial" instead of
+	data(serial) to eliminate race conditions.
+	
+Thu Apr 30 18:10:15 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	* win/Makefile.in: invoke gcc instead of ld when producing
+	dlls.  Pass the linker options down via args to -Wl options.
+
+Thu Apr 16 11:47:47 1998  Ian T. Roxborough  (irox@cygnus.com)
+
+	* win/Makefile.gvc: Changed absolute paths relative.
+
+Wed Apr 15 16:46:18 1998  Ian T. Roxborough  (irox@cygnus.com)
+
+	* win/Makefile.gvc: Hacked make script to compile tix with MSVC.
+
+Tue Mar 24 23:10:41 1998  Jeffrey A Law  (law@cygnus.com)
+
+	* generic/tixUtils.c (tix_strdup): Use "CONST", not "const" to avoid
+	losing with non-ANSI compilers.
+
+Tue Mar 24 17:30:22 1998  Stu Grossman  <grossman@bhuna.cygnus.co.uk>
+
+	* win/configure:  Regenerate with autoconf 2.12.1 to fix shell
+	issues for NT native builds.
+
+Wed Mar 11 14:51:59 1998  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/tixmkpref (tixInitOptionDatabase): Set .background
+	for TixScrolledText, TixScrolledWindow, TixScrolledListBox,
+	TixTree.
+	* library/pref/TkWin.csc: Rebuilt.
+
+Sat Mar 21 21:18:06 1998  Elena Zannoni  <ezannoni@kwikemart.cygnus.com>
+
+	Merged changes from Foundry:
+
+        - Martin M. Hunt  <hunt@cygnus.com>
+	* library/ComboBox.tcl (tixComboBox:Popup): Make sure
+	popups are always in the correct place for Windows and Unix.
+
+        - Tom Tromey  <tromey@cygnus.com>
+	* library/SText.tcl (tixScrolledText:ConstructWidget): Create
+	sizebox if requested.
+	* library/SListBox.tcl (tixScrolledListBox:ConstructWidget):
+	Create sizebox if requested.
+	* library/SHList.tcl (tixScrolledHList:ConstructWidget): Create
+	sizebox if requested.
+	* library/SWindow.tcl (tixScrolledWindow:ConstructWidget): Create
+	sizebox if requested.
+	* library/SWidget.tcl (tixScrolledWidget): New config option
+	-sizebox.
+	(tixScrolledWidget:config-scrollbar): If -sizebox set, then ignore
+	-scrollbar option.
+	(tixScrolledWidget:RepackHook): Place sizebox if requested.
+	(tixScrolledWidget:config-sizebox): New proc.
+	* library/pref/TkWin.csc: Rebuilt.
+	* library/pref/tixmkpref (tixInitOptionDatabase): Typo fix.
+	* library/ComboBox.tcl (tixComboBox:ConstructListShell): Set
+	-scrollbarspace here, not in class record.
+	* library/ComboBox.tcl: Set -scrollbarspace on scrolled listbox
+	subwidget.
+
+        - Ian Lance Taylor  <ian@cygnus.com>
+	* win/Makefile.in ($(TIXDLL)): Don't generate relocs for debugging
+	information.
+	* generic/tixUtils.c (tix_strdup): New function.
+	* win/Makefile.in (.c.o): Add -Dstrdup=tix_strdup.
+	($(TMPDIR)/%.o): Likewise.
+	* library/ComboBox.tcl (tixComboBoxBind): In <FocusIn> binding,
+	don't set the entry selection if there is no text in the entry.
+
+Fri Feb 13 12:56:19 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* unix/tk8.0/configure.in: Define and substitute TIX_RANLIB.
+	* unix/tk8.0/Makefile.in (TIX_RANLIB): New variable.
+	($(TIX_LIB_FILE)): Use $(TIX_RANLIB) rather than $(RANLIB).
+	($(TCL_SAM_FILE), $(TK_SAM_FILE), $(TIX_SAM_FILE)): Likewise.
+	* unix/tk8.0/configure: Rebuild.
+
+Tue Dec 23 16:35:29 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* win/Makefile.in ($(TIXDLL)): Don't generate relocs for debugging
+	information.
+
+Wed Nov 12 11:31:06 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* library/PanedWin.tcl (tixPanedWindow:AddSeparator): On Windows,
+	make the separator a 4 pixel ridge.
+	(tixPanedWindow:UpdateSizes): On Windows, make the separator 4
+	pixels thick.
+
+Tue Nov 11 15:59:43 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* library/PanedWin.tcl (tixPanedWindow:PlotHandles): Don't
+	separator buttons on Windows.
+
+Sun Nov  9 22:17:03 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* library/Event.tcl (tixBuiltInCmdErrorHandler): On Windows, use
+	bgerror rather than puts.
+
+Sun Nov  9 16:00:14 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/TkWin.csc: Rebuilt.
+	* library/pref/tixmkpref (tixInitOptionDatabase): Changed
+	background for HList and friends.
+
+Wed Nov  5 13:24:06 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/PanedWin.tcl (tixPanedWindow:setsize): Correctly
+	vertical orientation.
+
+Tue Nov  4 12:04:01 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/fs.tcl (tixFSIsNorm) [Windows version]: Accept C:\.
+
+Wed Oct 29 11:37:18 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* generic/tixInit.c: Fix some backslashes with following spaces.
+
+Tue Oct 28 17:05:41 1997  Martin M. Hunt  <hunt@cygnus.com>
+
+	* generic/tixInit.c: Fix tix initscript to allow
+	embedded whitespace in pathnames.
+
+Tue Oct 28 16:41:56 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* Makefile.in (install-minimal): New target.
+	* unix/Makefile.in (install-minimal): New target.
+	* win/Makefile.in (install-minimal): New target.
+
+Thu Oct 23 12:44:48 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/TkWin.csc: Rebuilt.
+	* library/pref/TkWin.fsc: Rebuilt.
+	* library/pref/TkWin.fs: Use correct font names.
+
+Tue Oct 21 13:11:51 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/tixmkpref (tixInitOptionDatabase): Choose better
+	colors for the combobox on Windows.
+
+Thu Oct 16 13:42:27 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/TkWin.csc: Rebuilt.
+	* library/pref/tixmkpref (tixInitOptionDatabase): Set handle
+	background to bg color.
+
+Sat Oct 11 18:09:33 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/TkWin.fs (tixSetFontset): Use windows-* fonts.
+
+Wed Oct  1 16:32:13 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	(tixUnixSam.o): Pass -I. to compile.
+
+	* unix/tk8.0/Makefile.in (tixUnixSam.o): Depend upon tixSamLib.c,
+	not $(UNIX_DIR)/tixSamLib.c.
+	(tixSamLib.c): Build in build directory, not source directory.
+	(sam_clean): Remove tixSamLib.c in build directory, not source
+	directory.
+
+	* unix/tk8.0/Makefile.in (TIX_LIBRARY): Change lib to share.
+
+	* generic/tixImgCmp.c (ImgCmpCreate): Take Tcl objects, rather
+	than strings, to match patch made to Tk.
+
+Tue Sep 23 16:02:04 1997  Michael Meissner  <meissner@cygnus.com>
+
+	* unix/tk8.0/configure.in: Disable broken code to automatically
+	rerun configure if config.cache was run on a different system.
+
+Tue Aug 26 15:30:11 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* unix/Makefile.in (install-binaries): Write "fi;" for bash.
+
+Mon Aug 25 03:41:57 1997  Martin M. Hunt  <hunt@pern.cygnus.com>
+
+	* library/pref/TkWin.fs: Set fixed_font to "fixedsys" so
+	TK can understand it.  DO NOT USE SystemFixed!
+
+Sun Aug 24 21:42:40 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* win/Makefile.in ($(TIXDLL)): Set base address to 0x66600000.
+
+Sat Aug 23 20:14:45 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/pref/TkWin.cs (tixSetScheme-color): Set input1_bg to
+	SystemWindow.
+	(tixSetScheme-mono): Set input1_bg to white.
+	* library/pref/TkWin.csc: Rebuilt.
+
+Sat Aug 23 17:43:21 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* library/pref/TkWin.fs (tixSetFontset): Set fixed_font to
+	"systemfixed".
+	* library/pref/TkWin.fsc: Rebuild.
+
+Sat Aug 23 14:00:17 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* library/ComboBox.tcl (tixComboBox:config-state): Correctly set
+	-selectforeground and -selectbackground on listbox and entry.
+
+	* library/pref/tixmkpref (tixInitOptionDatabase): Changed argument
+	to `isWin'; use it.
+	* library/pref/TkWin.csc, library/pref/TkWin.fsc: Rebuilt.
+
+Fri Aug 22 23:50:07 1997  Martin M. Hunt  <hunt@pern.cygnus.com>
+
+	* library/ComboBox.tcl (tixComboBox:Popup): Workaround to
+	fix problem where ComboBox popups are drawn in the wrong
+	place under NT.
+
+Fri Aug 22 12:23:56 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* generic/tixInit.c (TIX_DEF_SCHEME): Define as "TkWin" on Windows.
+	(TIX_DEF_FONTSET): Likewise.
+	* library/SText.tcl: Reverted earlier change.
+	* library/NoteBook.tcl: Reverted most of change of Aug 20;
+	inactive background on nbframe still unset.
+	* library/pref/TkWin.cs: New file.
+	* library/pref/TkWin.csc: New file.
+	* library/pref/TkWin.fsc: New file.
+	* library/pref/TkWin.fs: New file.
+	* library/pref/tixmkpref (tixInitOptionDatabase): Fixed typos.
+
+	* library/SText.tcl: Don't set colors by default.
+
+	* generic/tixInit.c (TIX_DEF_FONTSET): Default to "TK".
+	(TIX_DEF_SCHEME): Likewise.
+
+	* library/Tix.tcl (tixAppContext:config-fontset): Set fontset.
+	Reverts change of Aug 18.
+	(tixAppContext:config-scheme): Likewise.
+
+Wed Aug 20 12:00:04 1997  Tom Tromey  <tromey@sanguine.cygnus.com>
+
+	* library/NoteBook.tcl (tixNoteBook): Don't define default colors
+	or fonts.
+
+	* generic/tixDef.h (DEF_NOTEBOOKFRAME_INACTIVE_BG_COLOR): Define
+	as NORMAL_BG.
+	(DEF_NOTEBOOKFRAME_ACTIVE_BG_MONO): Define as WHITE.
+
+	* unix/tk8.0/Makefile.in (RUN_TCLSH): Find tclsh directly in
+	TCL_BIN_DIR.
+	(tixUnixSam.o): Pass -I. to compile.
+
+	* unix/tk8.0/configure: Rebuilt.
+	* unix/tk8.0/configure.in: Removed space in "not supported".
+
+Mon Aug 18 12:37:47 1997  Tom Tromey  <tromey@sanguine.cygnus.com>
+
+	* generic/tixGrid.h (DEF_GRID_FONT): Use Tk default font.
+	* generic/tixDiText.c (DEF_TEXTSTYLE_FONT): Use Tk default font.
+	* generic/tixDiITxt.c (DEF_IMAGETEXTSTYLE_FONT): Use Tk default
+	font.
+	* generic/tixDef.h (DEF_CMPIMAGE_FONT): Use Tk default font.
+	(DEF_HLIST_FONT): Likewise.
+	(DEF_NOTEBOOKFRAME_FONT): Likewise.
+	(DEF_TLIST_FONT): Likewise.
+	(CTL_FONT): Define if not deifned by default.h.
+
+Mon Aug 18 01:11:23 1997  Tom Tromey  <tromey@sanguine.cygnus.com>
+
+	* library/Tix.tcl (tixAppContext:CheckFontSets): Fonts never fail
+	on any Tk 8 platform.
+	(tixAppContext:config-fontset): Don't override Tk's defaults.
+	(tixAppContext:config-scheme): Likewise.
+
+Fri Aug 15 20:02:29 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* library/fs.tcl (tixFSIsNorm) [Windows version]: Handle UNC
+	(\\host\directory) paths.
+	(tixFSIsAbsPath) [Windows version]: Likewise.
+	(_tixNormalize) [Windows version]: Likewise.
+	(tixFSIsVPath) [Windows version]: Likewise.
+
+	* unix/tk8.0/Makefile.in (tixUnixSam.o): Depend upon tixSamLib.c,
+	not $(UNIX_DIR)/tixSamLib.c.
+	(tixSamLib.c): Build in build directory, not source directory.
+	(sam_clean): Remove tixSamLib.c in build directory, not source
+	directory.
+
+Thu Aug 14 13:19:07 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* unix/tk8.0/Makefile.in (TIX_LIBRARY): Change lib to share.
+
+Wed Aug 13 16:29:33 1997  Tom Tromey  <tromey@sanguine.cygnus.com>
+
+	* generic/tixInit.c (Tix_Init_Internal): Turn off xpm handling.
+
+Fri Aug  8 15:16:46 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* unix/Makefile.in (TIX_LIBRARY): Change lib to share.
+	* win/Makefile.in (TIX_LIBRARY): Likewise.
+
+	* win/Makefile.in: Add TCL_VER == 8.0 cases for the various name
+	definitions.
+
+Wed Aug  6 16:56:37 1997  Tom Tromey  <tromey@cygnus.com>
+
+	* unix/tk8.0/Makefile.in (VPATH, srcdir): Define.
+	(TCL_BIN_DIR): Define.
+	(RUN_TCLSH): Use $(TCL_BIN_DIR), not $(TCL_SRC_DIR).
+	(tixAppInit.o): Get tixAppInit.c from $(srcdir).
+	(Makefile): Depend upon config.status.
+
+	* unix/tk8.0/configure.in: Look in plain tcl for TCL_SRC_DIR.
+	Look in plain tk for TK_SRC_DIR.  Set TCL_BIN_DIR to object
+	directory, not using $(TCL_SRC_DIR).  Likewise for TK_BIN_DIR.
+	Set TIX_SRC_DIR based on ${srcdir}.
+
+Fri Aug  1 13:48:18 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* win/Makefile.in: Copy install handling from unix/Makefile.in.
+	* win/configure.in: Don't create the subdirectory if it exists.
+	Define and substitute SRC_DIR and TIX_VERSION.
+	* win/configure: Rebuild.
+
+	* win/Makefile.in (TIXDLLNAME): Define, in several variants.
+	($(TIXDLL)): Build into $(TIXDLLNAME), and then copy.
+	($(TIXLIB)): Use $(TIXDLLNAME) as the DLL name.
+	(clean): Remove $(TIXDLLNAME).
+
+Thu Jul 17 21:49:03 1997  Geoffrey Noer  <noer@cygnus.com>
+
+	* win/Makefile.in: add install install-info info installcheck rules
+
+Mon Jun 30 15:44:10 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* win/configure.in, win/Makefile.in: New files.
+	* win/configure: Build.
+	* generic/tix.h: If RC_INVOKED, just define a few macros.
+	* win/tixWCmpt.c (_impure_ptr, __imp_reent_data): Declare.
+	(DllMain): Initialize _impure_ptr.
+
+	* unix/tk4.2/Makefile.in (VPATH, srcdir): Define.
+	(TCL_BIN_DIR): Define.
+	(RUN_TCLSH): Use $(TCL_BIN_DIR), not $(TCL_SRC_DIR).
+	(tixAppInit.o): Get tixAppInit.c from $(srcdir).
+	(Makefile): Depend upon config.status.
+	(config.status): New target.
+	* unix/tk4.2/configure.in: Look in plain tcl for TCL_SRC_DIR.
+	Look in plain tk for TK_SRC_DIR.  Set TCL_BIN_DIR to object
+	directory, not using $(TCL_SRC_DIR).  Likewise for TK_BIN_DIR.
+	Set TIX_SRC_DIR based on ${srcdir}.
+
+	* unix/Makefile.in: Define standard targets.
+ 	(VPATH): Set to @SRC_DIR@/unix, not just @SRC_DIR@.
+	(SUBDIR): Define.
+	(Makefile): Depend upon config.status.
+	* unix/configure.in: Set SRC_DIR to `${srcdir}/..', not `..'.
+	Define and substitute SUBDIR.  Call AC_CONFIG_SUBDIRS.
+	* unix/configure: Rebuild.
+
+	* configure.in, Makefile.in: New files.
+	* configure: Build.
+
+	* ChangeLog: New file for Cygnus changes.

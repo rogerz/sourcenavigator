@@ -1,0 +1,14 @@
+This directory contains subdirectories of Glish clients contributed by
+Glish users but not supported (and in some cases not really working, serving
+more to inspire than to perform):
+
+	epics/		a Glish <-> EPICS client; only works for synchronous
+			channel access
+
+	perl/		a Glish <-> Perl 5.0 client, contributed by Darrell
+			Schiebel (drs@nrao.edu).  See perl/sample_client for
+			an example, and perl/ext/Glish/README for details and
+			copyright.
+
+	tkclient/	a Glish <-> Tcl/TK client; works well, but not
+			documented

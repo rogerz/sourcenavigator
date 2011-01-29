@@ -1,0 +1,49 @@
+This file outlines the commands that are available to
+a writer of a snscenario regression test script. The
+standard Tcl commands are available. In addition,
+a number of custom commands are provided. 
+
+You will also want to take a look at ../eventutils/API.txt
+for a listing of the event related APIs that are available.
+
+--------------------------------------------------
+
+next_toplevel
+
+This command takes no arguments and returns the
+next toplevel to appear in the Source-Navigator
+application. If no toplevel is currently visible
+or you have already retreived all the names of
+the current toplevels, the next_toplevel command
+will block until a new toplevel appears.
+
+FIXME: Add something about a timeout?
+
+
+Example: Query for next toplevel and then close it.
+
+set top [next_toplevel]
+close_toplevel $top
+
+--------------------------------------------------
+
+async { args }
+
+This commands takes any number of arguments and
+evaluates them as an asyncronous command. This
+is useful if the result of the command invocation
+would block the caller. If the remote interp
+blocks a remote command sent by the snscenario
+application, then no more events could be sent
+by snscenario because it would be waiting for
+the RPC to return. Source-Navigator uses lots
+of blocking dialog windows, so you would most
+likely use the async command with one of those.
+
+Example: Async button press
+
+set top [next_toplevel]
+set button $top.open
+async mouse_click $button
+
+--------------------------------------------------

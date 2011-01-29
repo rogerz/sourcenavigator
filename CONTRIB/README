@@ -1,0 +1,2 @@
+Header files for the win32 build.
+They should go into /usr/include/sys in the MinGW directory.

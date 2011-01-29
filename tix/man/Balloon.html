@@ -1,0 +1,174 @@
+
+
+
+<TITLE>tixBalloon - Create and manipulate tixBalloon widgets</TITLE>
+<Center><H2>tixBalloon - Create and manipulate tixBalloon widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixBalloon<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>tixBalloon</B></I> class is derived from the <B>TixShell</B></I>
+class and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The Balloon widget supports all the standard options of a frame widget.
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>initWait</B></I>
+Class:		<B>InitWait</B></I>
+Switch:		<B>-initwait</B></I>
+</code></code></code></pre>
+<UL>
+In milliseconds. Specifies how long the balloon should wait before
+popping up in a widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the which help message to display when the mouse pointer
+enters a widget associated with this balloon. Valid options are
+<B>both</B></I>: display both the balloon message and the status bar
+message, <B>balloon</B></I>: display only the balloon message,
+<B>status</B></I>: display only the status bar message and <B>none</B></I>:
+display no messages.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>statusBar</B></I>
+Class:		<B>statusBar</B></I>
+Switch:		<B>-statusbar</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the widget to use as the status bar of this balloon. This
+widget must have a "-text" option. Usually a label widget is used.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label widget that shows the little arrow bitmap in the pop-up
+balloon window.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>message</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The message widget that shows the descriptive message in the the pop-up
+balloon window.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixBalloon</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a Balloon widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+Balloon widget such as its cursor and relief.
+
+The Balloon widget can be used to show popped-up messages
+that describe the functions of the widgets in an application. A
+Balloon widget can be bound to a number of widgets. When the user
+moves the cursor inside a widget to which a Balloon widget has been
+bound, a small pop-up window with a descriptive message will be shown
+on the screen.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixBalloon</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It has
+the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for Balloon widgets:
+<DL>
+<DT> <I>pathName <B>bind</B></I> widget ?<I>option value ... </I></B>?
+</I></B>
+<DD> Binds the Balloon widget to the <I>widget</I></B>. The messages to be
+shown can be passed as extra arguments to this command in <I>option
+value</B></I> pairs. Possible options: <B>-balloonmsg</B></I> specifies the
+string to show on the pop-up balloon window; <B>-statusmsg</B></I>
+specifies the string to show on the status bar; <B>-msg</B></I> specifies a
+string to show on both the balloon window and the stats bar window.
+When used together, the <B>-msg</B></I> option has a lower precedence than
+the <B>-balloonmsg</B></I> and <B>-statusmsg</B></I> options.
+
+The <B>bind</B></I> command can also be used to change the messages after
+the initial bindings were set. Example:
+</DL>
+<P>
+<pre><code><code><code>
+	button .b
+	tixBalloon .bal
+
+	# Add balloon binding
+	.bal bind .b -msg "This is a button"
+
+	...
+
+	# Change the balloon binding
+	.bal bind .b -msg "This is a useful button"
+</code></code></code></pre>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixBalloon</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixBalloon</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>unbind<I> widget</I></B>
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+After a widget has be bound to a Balloon widget, when the user moves
+the cursor into this widget, the Balloon widget is activated: if the
+<B>-balloonmsg</B></I> option of this widget is set, the balloon window
+pops up; if the <B>-statusmsg</B></I> option of this widget is set, the
+message will be displayed in the status bar widget.
+<P>
+When the user moves the cursor out of the widget, the Balloon widget
+is de-activated: the balloon window is withdrawn and the status-bar
+message removed.
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:19 EST 1997 </i> --- 
+<i>Serial 853731294</i>

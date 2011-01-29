@@ -1,0 +1,492 @@
+
+
+
+<TITLE>tixComboBox - Create and manipulate tixComboBox widgets</TITLE>
+<Center><H2>tixComboBox - Create and manipulate tixComboBox widgets</H2></Center><hr>
+
+<P>
+</pre><H3>SYNOPSIS</H3>
+<B>tixComboBox<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixComboBox</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and subwidgets
+of its super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+<B>TixComboBox</B></I> supports all the standard options of a frame widget.
+See the options(n) manual entry for details on the standard options.
+<P>
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>anchor</B></I>
+Class:		<B>Anchor</B></I>
+Switch:		<B>-anchor</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how the string inside the entry subwidget should be aligned.
+Only the values "w" or "e" are allowed. When set the "w", the entry is
+aligned to its beginning. When set to "e", it is aligned to its end.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>arrowBitmap</B></I>
+Class:		<B>ArrowBitmap</B></I>
+Switch:		<B>-arrowbitmap</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the bitmap to be used in the arrow button beside the entry
+widget. The default is an downward arrow bitmap in the file
+$tix_library/bitmaps/cbxarrow
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>browseCmd</B></I>
+Class:		<B>BrowseCmd</B></I>
+Switch:		<B>-browsecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the user browses through the
+listbox. This command can be used to provide instant feedback when the
+user examines items in the listbox before committing a choice.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the ComboBox is invoked
+or when the <B>-value</B></I> of the ComboBox is changed.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>crossBitmap</B></I>
+Class:		<B>CrossBitmap</B></I>
+Switch:		<B>-crossbitmap</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the bitmap to be used in the "cross" button to the left of
+the entry widget. The default is a bitmap in the file
+$tix_library/bitmaps/cross
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the ComboBox.
+changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disabledforeground</B></I>
+Class:		<B>DisabledForeground</B></I>
+Switch:		<B>-disabledforeground</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the foreground color to be used when the ComboBox is disabled.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>dropdown</B></I>
+Class:		<B>Dropdown</B></I>
+Switch:		<B>-dropdown</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value specifying the style of the ComboBox. When set to
+"true", the listbox is only displayed temporarily when the arrow
+button is pressed. When set to "false", the listbox is always
+displayed.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>editable</B></I>
+Class:		<B>Editable</B></I>
+Switch:		<B>-editable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether the user is allowed to type into the entry subwidget of
+the ComboBox.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>fancy</B></I>
+Class:		<B>Fancy</B></I>
+Switch:		<B>-fancy</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value specifying whether the cross and tick button
+subwidgets should be shown.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>grab</B></I>
+Class:		<B>Grab</B></I>
+Switch:		<B>-grab</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the pointer grabbing policy when the listbox is popped up.
+Only values "global", "local" or "none" are allowed. By default global
+grab is used. However, when you are developing your application, you
+may want to use only local grabbing so that in the event of errors,
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>historyLimit</B></I>
+Class:		<B>historyLimit</B></I>
+Switch:		<B>-historylimit</B></I>
+Alias:		<B>-histlimit</B></I>
+</code></code></code></pre>
+<UL>
+Specifies how many previous user inputs can be stored in the history
+list.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>history</B></I>
+Class:		<B>History</B></I>
+Switch:		<B>-history</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value specifying whether previous user inputs should be
+stored in the history list.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this ComboBox widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>listCmd</B></I>
+Class:		<B>listCmd</B></I>
+Switch:		<B>-listcmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called every time when the listbox pops
+up. This option allows you to fill up the listbox on-demand. This
+option is ignored when the listbox is not in the <B>dropdown</B></I> style.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>listWidth</B></I>
+Class:		<B>listWidth</B></I>
+Switch:		<B>-listwidth</B></I>
+</code></code></code></pre>
+<UL>
+If set, this option controls the width of the listbox subwidget when
+it is popped up. The option is ignored when the listbox is not in the
+<B>dropdown</B></I> style.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>prunehistory</B></I>
+Class:		<B>PruneHistory</B></I>
+Switch:		<B>-prunehistory</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether duplicated previous user inputs should be pruned
+from the the history list. Only Boolean values are allowed.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selection</B></I>
+Class:		<B>Selection</B></I>
+Switch:		<B>-selection</B></I>
+</code></code></code></pre>
+<UL>
+Contains the selection in the ComboBox (the string displayed in the
+entry subwidget). Depending on the <B>-selectmode</B></I>, the selection
+of a ComboBox may be different than its <B>-value</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selection</B></I>
+Class:		<B>Selection</B></I>
+Switch:		<B>-selection</B></I>
+</code></code></code></pre>
+<UL>
+This option stores the temporary selection. When the user types in a
+text string inside the entry widget, that string is considered as a
+temporary input and is stored inside the <B>-selection</B></I> option. The
+<B>-value</B></I> option is updated only when the user presses the return
+key.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectMode</B></I>
+Class:		<B>SelectMode</B></I>
+Switch:		<B>-selectmode</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the how the combobox responds to the mouse button events in
+the listbox subwidget; can eithet be <B>"browse"</B></I> or
+<B>"immediate"</B></I>. The default <B>-selectmode</B></I> is "browse". See the
+<B>BINDINGS</B></I> section below.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the whether the ComboBox is normal or disabled.
+Only the values "normal" and "disabled" are recognized.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tickBitmap</B></I>
+Class:		<B>tickBitmap</B></I>
+Switch:		<B>-tickbitmap</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the bitmap to be used in the "tick" button to the left of
+the entry widget. The default is a bitmap in the file
+$tix_library/bitmaps/tick
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>validateCmd</B></I>
+Class:		<B>ValidateCmd</B></I>
+Switch:		<B>-validatecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be called when the <B>-value</B></I> of the
+ComboBox is about to change. This command is called with one parameter
+-- the new <B>-value</B></I> entered by the user. This command is to
+validate this new value by returning a value it deems valid.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to be displayed in the entry subwidget of the
+ComboBox. When queried, the returned value is the last value
+selected by the user. When the <B>-value</B></I> option is changed as a
+result of the <B>config -value</B></I> widget command, the TCL command
+specified by the <B>-command</B></I> option is called.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>variable</B></I>
+Class:		<B>Variable</B></I>
+Switch:		<B>-variable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the global variable in which the value of the
+ComboBox should be stored. The value of the ComboBox
+will be automatically updated when this variable is changed.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>arrow</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The down arrow button.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>cross</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The cross button. Available only when <B>-fancy</B></I> is set.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>entry</B></I>
+Class:		<B>Entry</B></I>
+</code></code></code></pre>
+<UL>
+The entry that shows the value of this <B>tixControl</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>listbox</B></I>
+Class:		<B>Listbox</B></I>
+</code></code></code></pre>
+<UL>
+The listbox that holds all the list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>slistbox</B></I>
+Class:		<B>TixScrolledListBox</B></I>
+</code></code></code></pre>
+<UL>
+The scrolled-listbox that provides the scrollbars.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>tick</B></I>
+Class:		<B>Button</B></I>
+</code></code></code></pre>
+<UL>
+The tick button. Available only when <B>-fancy</B></I> is set.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixComboBox</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a <B>tixComboBox</B></I> widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+ComboBox such as its cursor and relief.
+
+The Tix ComboBox widget is similar to the combo box control in
+MS Windows. The user can select a choice by either typing in the entry
+subwdget or selecting from the listbox subwidget.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixComboBox</B></I> command creates a new Tcl command whose name is the
+may be used to invoke various operations on the widget. It has the
+following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command.  The following commands
+are possible for ComboBox widgets:
+<DL>
+<DT> <I>pathName <B>addhistory<I> string </I></B>
+</I></B>
+<DD> Add the string to the beinning of the listbox.
+</DL>
+<DL>
+<DT> <I>pathName <B>appendhistory<I> string </I></B>
+</I></B>
+<DD> Append the string to the end of the listbox.
+</DL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>.  <I>Option</I></B> may have any of the values accepted by the
+<B>tixComboBox</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixComboBox</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>flash <I>index string</I></B>
+</I></B>
+<DD> Flashes the ComboBox. <B>flash</B></I> is usually called by a
+<I>-command</I></B> procedure to acknowledge to the user that he has
+selected a value for the ComboBox.
+</DL>
+<DL>
+<DT> <I>pathName <B>insert <I>index string</I></B>
+</I></B>
+<DD> Insert the <I> string</I></B> into the listbox at the specified index.
+<I>index</I></B> must be a valid listbox index.
+</DL>
+<DL>
+<DT> <I>pathName <B>pick <I>index</I></B> 
+</I></B>
+<DD> Set the (<I>index</I></B>)th item in the listbox to be the current value of
+the ComboBox. As a result, the <I>value</I></B> of the ComboBox is changed
+and the TCL command sepcified by the <I>-command</I></B> option will be
+called.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, returns the pathname of the subwidget of
+the specified name.
+
+When options are given, the widget command of the specified subwidget will
+be called with these options.
+</DL>
+<P>
+</pre><H3>BINDINGS</H3>
+<P>
+<UL>
+[1] <BR>
+If the <B>-selectmode</B></I> is "immediate", when the user enters a
+keystroke, clicks on an item or drags the mouse pointer in the
+listbox, the <B>-value</B></I> of the ComboBox will be immediately set to
+this item and the <B>-command</B></I> procedure will be called.
+</UL>
+<UL>
+[2] <BR>
+If the <B>-selectmode</B></I> is "browse", when the user enters a
+keystroke, clicks on an item or drags the mouse pointer in the
+listbox, the <B>-selection</B></I> of the ComboBox will be immediately set
+to the new content of the entry subwidget; also the <B>-browsecmd</B></I>
+procedure will be called. The <B>-value</B></I> option will be changed
+only when the user invokes the ComboBox (see [3] below). If the user
+presses the &lt;Escape&gt; key at any time, any new <B>-selection</B></I> will
+be ignored and the text inside the entry subwidget will be restored to
+the current <B>-value</B></I> of the ComboBox.
+</UL>
+<UL>
+[3] <BR>
+If the <B>-dropdown</B></I> option is true, the user can invoke the
+ComboBox by releasing the left mouse button over the desired item in
+the listbox. If the <B>-dropdown</B></I> option is false, the user can
+invoke the ComboBox by double-clicking over the desired item in the
+listbox. In both cases, the user can also invoke the listbox by
+pressing the &lt;Return&gt; or &lt;Tab&gt; key inside the entry subwidget, or
+switching the input focus to another widget inside the same toplevel
+widget
+</UL>
+<P>
+</pre><H3>BUGS</H3>
+<P>
+Starting from Tix vetsion 4.0, the default <B>-value</B></I> of the
+ComboBox is the empty string. If you want the ComboBox to show a
+string by default, you must configure its <B>-value</B></I> option
+explicitly.
+<P>
+</pre><H3>KEYWORDS</H3>
+Tix(n), ComboBox(n), listbox(n)
+<hr><i>Last modified Sun Jan 19 22:34:20 EST 1997 </i> --- 
+<i>Serial 853731296</i>

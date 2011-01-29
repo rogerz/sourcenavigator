@@ -1,0 +1,177 @@
+<TITLE>Building the Windows Binaries</TITLE>
+<Center><H1>Building the Windows Binaries</H1></Center>
+
+  To build Tix on Windows, you must have the following:<p>
+
+  <ul>
+
+    <li> Visual C++ 4.0 or later; or Borland C++ 4.5 or later. There
+    is not yet built-in support for Tix to work with other compilers.
+
+    <li> The sources of Tcl/Tk for Windows.
+
+    <li> The sources of Tix for Windows.
+
+  </ul>
+
+<h3> 1. Download the Tcl, Tk and Tix sources </h3>
+
+  You can download latest version of the Tcl7.5, 7.6 or 8.0 from <a
+  href="ftp://ftp.sunlabs.com/pub"> ftp://ftp.sunlabs.com/pub
+  </a>. There are detailed instructions that comes with these packages
+  about compiling them on Windows. Hopefully that will give you a good
+  exercise on setting up the environment for compiling Tcl-based
+  programs on the Windows platforms.<p>
+
+  You can then get the Tix source distribution at <a
+  href="ftp://ftp.xpi.com/pub/Tix41.zip">
+  ftp://ftp.xpi.com/pub/Tix41.zip </a>. This ZIP file contains files
+  with long file names and must be unzipped by an UNZIP program that
+  knows long filenames, such as <b>winzip.exe</b>. <p>
+
+  You should put the Tcl, Tk and Tix source packages in the same
+  directory. For example, my directories look like this: <p>
+
+      <blockquote><code><b>
+      C:\tcl7.6<br>
+      C:\tk4.2<br>
+      C:\Tix4.1<br>
+      </b></code></blockquote>
+
+<h3> 2. Compile Tcl and Tk </h3>
+
+  Follow the instructions that come with Tcl and Tk. If you can
+  compile successfully, you would get the following files: <p>
+
+      <blockquote><b><code>
+      C:\tcl7.6\win\tcl76.dll<br>
+      C:\tcl7.6\win\tclpip76.dll<br>
+      C:\tk4.2\win\tk42.dll<br>
+      </code></b></blockquote>
+
+  These are the files you need to run Tix on Windows.
+
+<h3> 3. Compile Tix </h3>
+
+  Change to the Tix4.1\Win subdirectory. Tix supports several versions
+  of Tcl. You choose the version of Tcl to compile Tix with by using
+  the <b>TCL_VER</b> variable:
+
+  <ul>
+    <li> Tcl 7.5: <b><code>nmake -f makefile.vc TCL_VER=7.5</code></b>
+    <li> Tcl 7.6: <b><code>nmake -f makefile.vc TCL_VER=7.6</code></b>
+    <li> Tcl 8.0: <b><code>nmake -f makefile.vc TCL_VER=8.0</code></b>
+    <li> Itcl 2.2: <b><code>nmake -f makefile.vc TCL_VER=2.2i</code></b>
+  </ul>
+
+  If you have BC++, use <b>make -f makefile.bc</b> instead. <p>
+
+  When <b>make</b> or <b>nmake</b> finishes, you will get Tix binaries
+  inside the build directories. For example, if you compile Tix for
+  Tcl 7.6, you will be the following files:
+
+      <blockquote><b><code>
+      C:\Tix4.1\win\tcl7.6\tix4176.dll<br>
+      C:\Tix4.1\win\tcl7.6\tix4176.exe<br>
+      </code></b></blockquote>
+
+  The executable file <b>tix4176.exe</b> contains Tcl, Tk and Tix. You
+  can use it to run an Tix script by:
+
+      <blockquote><b><code>
+      set TIX_LIBRARY=C:\Tix4.1\library
+      C:\Tix4.1\win\tcl7.6\tix4176.exe foo.tcl<br>
+      </code></b></blockquote>
+
+<h3> 4. Fixing DLL problems</h3>
+
+  You may run into certain problems related to DLL's when you execute
+  <b>tix4176.exe</b>. For example:
+  <ul>
+    <li> Windows complains that a DLL, usually tcl76.dll, is not found.
+    <li> Windows complains that a symbol is missing.
+    <li> Some weird things happen.
+  </ul>
+
+  When <b>tix4176.exe</b> starts up, it will load in the following DLL's
+  <ul>
+    <li><code><b>tcl76.dll</b></code>
+    <li><code><b>tclpip76.dll</b></code>
+    <li><code><b>tk42.dll</b></code>
+    <li><code><b>tix4176.dll</b></code>
+  </ul>
+
+  Windows searches for a DLL file by the following order:
+  <ol>
+    <li>Same directory as executable.
+    <li>Windows system directory.
+    <li>directories in the PATH environment variable.
+  </ol>
+  
+  To ensure that the correct DLLs are loaded, you can copy all the
+  DLL's used by tix4176.exe into the directory where tix4176.exe is. <p>
+
+<h3> 5. Installing Tix</h3>
+
+  You can install Tix into the Tcl installation directory so that you
+  can load Tix with the "package require" command and no longer need
+  to set the TIX_LIBRARY variable: <p>
+  <ol>
+
+    <li> Create a directory <b>tix4.1</b> under the Tcl installation
+    directory, usually in <b>C:\Program Files\Tcl7.6\lib</b>. <p>
+
+    <li> Copy all the files under <b>Tix4.1b1\library</b> into the
+    <b>C:\Program Files\Tcl7.6\lib\tix4.1</b> directory. <p>
+
+    <li> Copy the file <b>Tix4.1\win\pkgIndex.tcl</b> into the
+    <b>C:\Program Files\Tcl7.6\lib\tix4.1</b> directory. <p>
+	 
+  </ol>
+
+  Now you should be able to start up wish42.exe and execute the
+  following command to load in Tix.
+      <blockquote><b><code>
+      package require -exact Tix [tixBinVer 4.1] 
+      </code></b></blockquote>
+
+
+  Read the file <a href="Pkg.txt">Tix4.1\docs\Pkg.txt</a> for more
+  info about dynamically loading Tix.<p>
+
+<!---------------------------------------------------------------------->
+<hr>
+
+<h3> FAQ's for running Tix on Windows</h3>
+
+<DL>
+  <DT> <b>How do I set an environment variable.</b><p>
+  <DD>
+
+       You can set it in your DOS window by typing something like
+       "<b>set TIX_LIBRARY=C:\Tix4.1\win</b>". This will affect that
+       particular DOS window only. If you want the change to affect
+       the whole Windows environment (for example, you want launch
+       <b>txwish41.exe</b> by double-clicking on its icon), you must
+       put the commands in your <b>AUTOEXEC.BAT</b> file and then
+       reboot your machine. <p>
+
+  <DT> <b>I get an "out of environment space" error from DOS.</b><p>
+  <DD>
+
+        Edit your <b>CONFIG.SYS</b> file and add the switch
+        "<b>/E:1024</b>" to the <b>SHELL=COMMAND.COM</b>
+        line. Reboot. This should give you enough env space.<p>
+
+  <DT> <b>My C compiler says "unrecognized file format tk42.lib" or
+  something like that.</b><p>
+       
+  <DD>
+       You compiled <b>tk42.lib</b> with VC++ and are compiling Tix
+       with Borland C++, or vice verse. Use the same compiler to
+       compile all binaries.<p>
+</DL>
+
+<!Serial 851729141>
+<hr><i>Last modified Sat Feb 15 21:52:36 EST 1997 </i> --- 
+<i>Serial 856069650</i>

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Command Line Options</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+</P>
+</TH></TR>
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="progide.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="glossary.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998205"></A><A NAME="52333"></A><BR>
+Command Line Options<DIV>
+<IMG SRC="elixcmdline-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-998366"></A>Source-Navigator supports the following command 
+line options: </P>
+<P CLASS="Body">
+<A NAME="pgfId-998367"></A><KBD CLASS="Code">
+--batchmode</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998371"></A>This forces batch mode to create a new project. 
+If this is set, Source-Navigator will not launch. Instead the following 
+command line options will be used to create a new project.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998372"></A><KBD CLASS="Code">
+--projectname</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998373"></A>This command creates a project in the 
+current directory using the directory path. For example, if the current 
+directory is <KBD CLASS="Code">
+/home/foo</KBD>
+ and <KBD CLASS="Code">
+--projectname</KBD>
+ is run, the project name becomes <KBD CLASS="Code">
+/home/foo/foo.proj</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998374"></A><KBD CLASS="Code">
+--avail-options</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998375"></A>Sets preferences for an option used in project creation.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998376"></A><KBD CLASS="Code">
+--define &lt;option&gt;=&lt;value&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998377"></A>Lists options that can be set using <KBD CLASS="Code">
+--define</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998378"></A><KBD CLASS="Code">
+--databasedir &lt;directory&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998379"></A>(synonyms: <KBD CLASS="Code">
+-dbdir</KBD>, <KBD CLASS="Code">
+-database</KBD>, <KBD CLASS="Code">
+-db</KBD>)</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998380"></A>Defines the directory for the symbol 
+databases. Without this, the symbol databases are put in a directory 
+called <KBD CLASS="Code">
+SNDB4</KBD>
+ at the same level as the project file.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998381"></A><KBD CLASS="Code">
+--import &lt;file&gt;</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998382"></A>Specifies a text file with a list of all files 
+or directories to add to the project.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998383"></A><KBD CLASS="Code">
+--noxref</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998384"></A>This option prevents the creation of cross-references. 
+By default, Source-Navigator generates cross-reference information for the project.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998389"></A><KBD CLASS="Code">
+--create</KBD>
+</P>
+<P CLASS="BodyListFollow">
+<A NAME="pgfId-998390"></A>This option is used to start the Auto-Create dialog. 
+It is not normally used with <KBD CLASS="Code">
+--batchmode</KBD>. Source-Navigator prompts the user for information used 
+to create a project.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998395"></A>Example: <A NAME="marker-998394"></A>Creating a 
+new project in devo-files</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998396"></A>The following command creates a project 
+named <KBD CLASS="Code">
+/home/smith/devo.proj</KBD>
+ using the files listed in devo-files in batch mode. The database files are 
+stored in <KBD CLASS="Code">
+&#126;/db_files</KBD>. Source-Navigator returns when the project has been created.</P>
+<PRE CLASS="CodeExample">
+<A NAME="pgfId-998403"></A><KBD CLASS="Code">
+&#126;bin/snavigator --batchmode &#92;</KBD>
+&nbsp;&nbsp;<A NAME="pgfId-998404"></A><KBD CLASS="Code">--import devo-files &#92;</KBD>
+&nbsp;&nbsp;<A NAME="pgfId-998405"></A><KBD CLASS="Code">--databasedir &#126;/db_files &#92;</KBD>
+&nbsp;&nbsp;<A NAME="pgfId-998406"></A><KBD CLASS="Code">--project /home/smith/devo</KBD>
+</PRE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998407"></A>Example: Creating a new project in the current directory</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998408"></A>The following command creates a project in batch mode 
+using the current directory. It adds all of the files in the current directory 
+and in all of the subdirectories. The current working directory is <KBD CLASS="Code">
+/home/smith/devo/snavigator</KBD>. The generated project name is <KBD CLASS="Code">
+/home/smith/devo/snavigator/snavigator.proj</KBD>.</P>
+<PRE CLASS="CodeExample">
+<A NAME="pgfId-998421"></A><KBD CLASS="Code">
+&#126;bin/snavigator --batchmode</KBD>
+</PRE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-998423"></A>Example: <A NAME="marker-998422"></A>Auto-Create dialog</H4>
+<P CLASS="Body">
+<A NAME="pgfId-998424"></A>The following command displays the <SPAN CLASS="Bold">
+Auto-Create</SPAN>
+ dialog, initialized with the current directory, with <KBD CLASS="Code">
+foo.proj</KBD>
+ as the project name. To view the project, you must open Source-Navigator.</P>
+<PRE CLASS="CodeExample">
+<A NAME="pgfId-998431"></A><KBD CLASS="Code">
+&#126;bin/snavigator --projectname foo</KBD>
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-998197"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TH COLSPAN="3" ALIGN="center">
+<P CLASS="Gotos">
+</P>
+</TH></TR>
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="progide.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="glossary.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

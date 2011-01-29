@@ -1,0 +1,29 @@
+/* XPM */
+static char * type_un_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 7 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c yellow",
+"o	c #5f5f5f",
+"O	c blue",
+"+	c red",
+"@	c green",
+/* pixels */
+"       .        ",
+"      . .       ",
+" .............. ",
+" .XXXXXXXXXXXX. ",
+" .............. ",
+"                ",
+"  .     .     . ",
+"     .     .    ",
+"  o  .  o  .  o ",
+" oOo . o+o . o@o",
+"oOOOo.o+++o.o@@@",
+" oOo . o+o . o@o",
+"  o  .  o  .  o ",
+"     .     .    ",
+"                ",
+"                "};

@@ -1,0 +1,1087 @@
+
+
+
+<TITLE>tixHList - Create and manipulate Tix Hierarchial List widgets</TITLE>
+<Center><H2>tixHList - Create and manipulate Tix Hierarchial List widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixHList<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+None.
+</pre><H3>STANDARD OPTIONS</H3>
+<P>
+<pre><code><code><code>
+<B>background</B></I>	<B>borderWidth</B></I>	<B>cursor</B></I>	<B>foreground</B></I>
+<B>font</B></I>	<B>height</B></I>	<B>highlightColor <B>highlightThickness	
+<B>relief</B></I>	<B>selectBackground</B></I>	<B>selectForeground</B></I>
+<B>xScrollCommand</B></I>	<B>yScrollCommand</B></I>	<B>width</B></I>
+</code></code></code></pre>
+<P>
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>browsecmd</B></I>
+Class:		<B>BrowseCmd</B></I>
+Switch:		<B>-browsecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be executed when the user browses through the
+entries in the HList widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>columns</B></I>
+Class:		<B>Columns</B></I>
+Switch:		<B>-columns</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the number of columns in this HList widget. This option can
+only be set during the creation of the HList widget and cannot be
+changed subsequently.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the TCL command to be executed when the user invokes a list
+entry in the HList widget. Normally the user invokes a list
+entry by double-clicking it or pressing the Return key.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>drawBranch</B></I>
+Class:		<B>DrawBranch</B></I>
+Switch:		<B>-drawbranch</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value to specify whether branch line should be drawn to
+connect list entries to their parents.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>foreground</B></I>
+Class:		<B>Foreground</B></I>
+Switch:		<B>-foreground</B></I>
+Alias:		<B>-fg</B></I>
+</code></code></code></pre>
+<UL>
+<B>[OBSOLETE]</B></I> Specifies the default foreground color for the list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>gap</B></I>
+Class:		<B>Gap</B></I>
+Switch:		<B>-gap</B></I>
+</code></code></code></pre>
+<UL>
+<B>[OBSOLETE]</B></I> The default distance between the bitmap/image and the
+text in list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>header</B></I>
+Class:		<B>Header</B></I>
+Switch:		<B>-header</B></I>
+</code></code></code></pre>
+<UL>
+A Boolean value specifying whether headers should be displayed for
+this HList widget (see the <B>header</B></I> widget command below).
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>height</B></I>
+Class:		<B>Height</B></I>
+Switch:		<B>-height</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired height for the window in number of characters.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>indent</B></I>
+Class:		<B>Indent</B></I>
+Switch:		<B>-indent</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the amount of horizontal indentation between a list entry
+and its children. Must be a valid screen distance value.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>indicator</B></I>
+Class:		<B>Indicator</B></I>
+Switch:		<B>-indicator</B></I>
+</code></code></code></pre>
+<UL>
+Specifies whether the indicators should be displayed inside the HList
+widget. See the <B>indicator</B></I> widget command below.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>indicatorCmd</B></I>
+Class:		<B>IndicatorCmd</B></I>
+Switch:		<B>-indicatorcmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL command to be executed when the user manipulates the
+indicator of an HList entry. The <B>-indicatorcmd</B></I> is triggered
+when the user press or releases the mouse button over the indicator in
+an HList entry. By default the TCL command specified by
+<B>-indicatorcmd</B></I> is executed with one additional argument, the
+entryPath of the entry whose indicator has been triggered. Additional
+information about the event can be obtained by the <B>tixEvent</B></I>
+command.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>itemType</B></I>
+Class:		<B>ItemType</B></I>
+Switch:		<B>-itemtype</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the default type of display item for this HList widget. When
+you call the add and addchild widget commands, display items of this
+type will be created if the <B>-itemtype</B></I> option is not specified .
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padX</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-padx</B></I>
+</code></code></code></pre>
+<UL>
+<B>[OBSOLETE]</B></I> The default horizontal padding for list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padY</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-padx</B></I>
+</code></code></code></pre>
+<UL>
+<B>[OBSOLETE]</B></I> The default vertical padding for list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectBackground</B></I>
+Class:		<B>SelectBackground</B></I>
+Switch:		<B>-selectbackground</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the background color for the selected list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectBorderWidth</B></I>
+Class:		<B>BorderWidth</B></I>
+Switch:		<B>-selectborderwidth</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a non-negative value indicating the width of the 3-D border
+to draw around selected items.  The value may have any of the forms
+acceptable to <B>Tk_GetPixels</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectForeground</B></I>
+Class:		<B>SelectForeground</B></I>
+Switch:		<B>-selectforeground</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the foreground color for the selected list entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selectMode</B></I>
+Class:		<B>SelectMode</B></I>
+Switch:		<B>-selectmode</B></I>
+</code></code></code></pre>
+<UL>
+Specifies one of several styles for manipulating the selection.  The
+value of the option may be arbitrary, but the default bindings expect
+it to be either <B>single</B></I>, <B>browse</B></I>, <B>multiple</B></I>, or
+<B>extended</B></I>; the default value is <B>single</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>sizeCmd</B></I>
+Class:		<B>SizeCmd</B></I>
+Switch:		<B>-sizecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a TCL script to be called whenever the HList widget
+changes its size. This command can be useful to implement "user scroll
+bars when needed" features.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>separator</B></I>
+Class:		<B>Separator</B></I>
+Switch:		<B>-separator</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the character to used as the separator character when
+intepreting the path-names of list entries. By default the character
+"." is used.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>width</B></I>
+Class:		<B>Width</B></I>
+Switch:		<B>-width</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired width for the window in characters.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixHList</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a HList widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+HList widget such as its cursor and relief.
+<P>
+The HList widget can be used to display any data that have a
+hierarchical structure, for example, file system directory trees. The
+list entries are indented and connected by branch lines according to
+their places in the hierachy.
+<P>
+Each list entry is identified by an <B>entryPath</B></I>. The entryPath is a
+sequence of <B>entry names</B></I> separated by the separator charactor
+(specified by the <B>-separator</B></I> option). An <B>entry name</B></I> can be
+any string that does not contain the separator charactor, or it can be
+the a string that contains only one separator charactor.
+<P>
+For example, when "." is used as the separator charactor,
+"one.two.three" is the entryPath for a list entry whose parent is
+"one.two", whose parent is "one", which is a toplevel entry (has no
+parents).
+<P>
+Another examples: ".two.three" is the entryPath for a list entry whose
+parent is ".two", whose parent is ".", which is a toplevel entry.
+</pre><H3>DISPLAY ITEMS</H3>
+<P>
+Each list entry in an HList widget is associated with a <B>display
+item</B></I>.  The display item determines what visual information should
+be displayed for this list entry. Please see the <B>DItem(n)</B></I> manual
+page for a list of all display items.
+
+When a list entry is created by the <B>add</B></I> or <B>addchild</B></I> widget
+commands, the type of its display item is determined by the
+<B>-itemtype</B></I> option passed to these commands. If the
+<B>-itemtype</B></I> is omitted, then by default the type specified by
+</pre><H3>WIDGET COMMAND</H3>
+<P>
+The <B>tixHList</B></I> command creates a new Tcl command whose name is the
+may be used to invoke various operations on the widget.  It has the
+following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as
+determine the exact behavior of the command.  The following
+commands are possible for HList widgets:
+<DL>
+<DT> <I>pathName <B>add<I> entryPath </I></B>?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new list entry with the pathname <I>entryPath</I></B>. A list
+entry must be created after its parent is created (unless this entry
+is a top-level entry, which has no parent). This command returns the
+entryPath of the newly created list entry. The following
+configuration options can be given to configure the list entry:
+</DL>
+<UL>
+<DL>
+<DT> <B>-at<I> position</I></B>
+</I></B>
+<DD> Insert the new list at the position given by <I>position</I></B>.
+<I>position</I></B> must be a valid integer. the Position <B>0</B></I> indicates
+the first position, <B>1</B></I> indicates the second position, and so on.
+</DL>
+<DL>
+<DT> <B>-after<I> afterWhich</I></B>
+</I></B>
+<DD> Insert the new list entry after the entry identified by
+<I>afterWhich</I></B>. <I>afterWhich</I></B> must be a valid list entry and it
+mush have the same parent as the new list entry
+</DL>
+<DL>
+<DT> <B>-before<I> beforeWhich</I></B>
+</I></B>
+<DD> Insert the new list entry before the entry identified by
+<I>beforeWhich</I></B>. <I>beforeWhich</I></B> must be a valid list entry and it
+mush have the same parent as the new list entry
+</DL>
+<DL>
+<DT> <B>-data<I> string</I></B>
+</I></B>
+<DD> Specifies a string to associate with this list entry. This string can
+be queried by the <B>info</B></I> widget command. The application
+programmer can use the <B>-data</B></I> option to associate the list entry
+with the data it represents.
+</DL>
+<DL>
+<DT> <B>-itemtype<I> type</I></B>
+</I></B>
+<DD> Specifies the type of display item to be display for the new list
+entry. <B>type</B></I> must be a valid display item type. Currently the
+available display item types are <B>imagetext</B></I>, <B>text</B></I>, and
+<B>window</B></I>. If this option is not specified, then by default the
+</DL>
+<DL>
+<DT> <B>-state</B></I>
+</I></B>
+<DD> Specifies whether this entry can be selected or invoked by the user.
+Must be either <B>normal</B></I> or <B>disabled</B></I>.
+</DL>
+</UL>
+The <B>add</B></I> widget command accepts additional configuration options
+to configure the display item associated with this list entry. The set
+of additional configuration options depends on the type of the display
+item given by the <B>-itemtype</B></I> option. Please see the
+<B>DItem(n)</B></I> manual page for a list of the configuration options for
+each of the display item types.
+<DL>
+<DT> <I>pathName <B>addchild<I> parentPath </I></B>?<I>option value ... </I></B>?
+</I></B>
+<DD> Adds a new child entry to the children list of the list entry
+identified by <I>parentPath</I></B>. Or, if <I>parentPath</I></B> is set to be
+the empty string, then creates a new toplevel entry. The name of the
+new list entry will be a unique name automatically generated by the
+HList widget. Usually if <I>parentPath</I></B> is <B>foo</B></I>, then the
+entryPath of the new entry will be <B>foo.1</B></I>, <B>foo.2</B></I>, ... etc.
+This command returns the entryPath of the newly created list entry.
+<I>option</I></B> can be any option for the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>anchor set <I>entryPath</I></B>
+</I></B>
+<DD> Sets the anchor to the list entry identified by <I>entryPath</I></B>.  The
+anchor is the end of the selection that is fixed while the user is
+dragging out a selection with the mouse.
+</DL>
+<DL>
+<DT> <I>pathName <B>anchor clear</B></I>
+</I></B>
+<DD> Removes the anchor, if any, from this HList widget. This only
+removes the surrounding highlights of the anchor entry and does not
+affect its selection status.
+</DL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixHList</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>column width <I>col</I></B> ?<I>-char</I></B>? ?<I>width</I></B>? 
+</I></B>
+<DD> Querys or sets the width of a the column <I>col</I></B> in the HList
+widget. The value of <I>col</I></B> is zero-based: 0 stands for the first
+column, 1 stands for the second, and so on. If no further parameters
+are given, returns the current width of this column (in number of
+pixels). Additional parameters can be given to set the width of this
+column:
+</DL>
+<P>
+<UL>
+<DL>
+<DT> <I>pathName <B>column width <I>col</I></B> <B>{}</B></I>
+</I></B>
+<DD> An empty string indicates that the width of the column should be just
+wide enough to display the widest element in this column. In this
+case, the width of this column may change as a result of the elements
+in this column changing their sizes.
+</DL>
+<DL>
+<DT> <I>pathName <B>column width <I>col</I></B> <I>width</I></B> 
+</I></B>
+<DD> <I>width</I></B> must be in a form accepted by <B>Tk_GetPixels(3)</B></I>.
+</DL>
+<DL>
+<DT> <I>pathName <B>column width <I>col</I></B> <B>-char</B></I> <I>nChars</I></B> 
+</I></B>
+<DD> The width is set to be the average width occupied by <I>nChars</I></B>
+number of characters of the font specified by the <B>-font</B></I> option
+of this HList widget.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list). If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixHList</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>delete</B></I> <I>option</I></B> ?<I>entryPath</I></B>?
+</I></B>
+<DD> Delete one or more list entries. <I>option</I></B> may be one of the
+following:
+</DL>
+<UL>
+<DL>
+<DT> <B>all</B></I>
+</I></B>
+<DD> Delete all entries in the HList. In this case the <I>entryPath</I></B>
+does not need to be specified.
+</DL>
+<DL>
+<DT> <B>entry</B></I>
+</I></B>
+<DD> Delete the entry specified by <I>entryPath</I></B> and all its offsprings,
+if any.
+</DL>
+<DL>
+<DT> <B>offsprings</B></I>
+</I></B>
+<DD> Delete all the offsprings, if any, of the entry specified by
+<I>entryPath</I></B>. However, <I>entryPath</I></B> itself is not deleted.
+</DL>
+<DL>
+<DT> <B>siblings</B></I>
+</I></B>
+<DD> Delete all the list entries that share the same parent with the entry
+specified by <I>entryPath</I></B>. However, <I>entryPath</I></B> itself is not
+deleted.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>dragsite set <I>entryPath</I></B>
+</I></B>
+<DD> Sets the dragsite to the list entry identified by
+<I>entryPath</I></B>. The dragsite is used to indicate the source of a
+drag-and-drop action. Currently drag-and-drop functionality has not
+been implemented in Tix yet.
+</DL>
+<DL>
+<DT> <I>pathName <B>dragsite clear</B></I>
+</I></B>
+<DD> Remove the dragsite, if any, from the this HList widget. This only
+removes the surrounding highlights of the dragsite entry and does not
+affect its selection status.
+</DL>
+<DL>
+<DT> <I>pathName <B>dropsite set <I>entryPath</I></B>
+</I></B>
+<DD> Sets the dropsite to the list entry identified by <I>entryPath</I></B>. The
+dropsite is used to indicate the target of a grag-and-drop
+action. Currently drag-and-drop functionality has not been implemented
+in Tix yet.
+</DL>
+<DL>
+<DT> <I>pathName <B>dropsite clear</B></I>
+</I></B>
+<DD> Remove the dropsite, if any, from the this HList widget. This only
+removes the surrounding highlights of the dropsite entry and does not
+affect its selection status.
+</DL>
+<DL>
+<DT> <I>pathName <B>entrycget</B></I> <I> entryPath option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B> for the entry indentfied by <I>entryPath</I></B>. <I>Option</I></B>
+may have any of the values accepted by the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>entryconfigure<I> entryPath </I></B>?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the list entry indentfied
+by <I>entryPath</I></B>. If no <I>option</I></B> is specified, returns a list
+describing all of the available options for <I>entryPath</I></B> (see
+<B>Tk_ConfigureInfo</B></I> for information on the format of this list.) If
+<I>option</I></B> is specified with no <I>value</I></B>, then the command
+returns a list describing the one named option (this list will be
+identical to the corresponding sublist of the value returned if no
+<I>option</I></B> is specified). If one or more <I>option-value</I></B> pairs
+are specified, then the command modifies the given option(s) to have
+the given value(s); in this case the command returns an empty string.
+<I>Option</I></B> may have any of the values accepted by the <B>add</B></I> or
+<B>addchild</B></I> widget command. The exact set of options depends on the
+value of the <B>-itemtype</B></I> option passed to the the <B>add</B></I> or
+<B>addchild</B></I> widget command when this list entry is created.
+</DL>
+<DL>
+<DT> <I>pathName <B>header <I>option</I></B> <I>col</I></B> ?<I>args ...</I></B>?
+</I></B>
+<DD> Manipulates the header items of this HList widget. If the
+<B>-header</B></I> option of this HList widget is set to true, then a
+header item is displayed at the top of each column. The <I>col</I></B>
+argument for this command must be a valid integer. 0 indicates the
+first column, 1 the second column, ... and so on. This command
+supports the following options:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>header <B>cget</B></I> <I>col</I></B> <I>option</I></B>
+</I></B>
+<DD> If the <I>col</I></B>-th column has a header display item, returns the
+value of the specified <I>option</I></B> of the header item. If the header
+</DL>
+<DL>
+<DT> <I>pathName <B>header <B>configure</B></I> <I>col</I></B> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the header display item
+of the <I>col</I></B>-th column. The header item must exist, or an error
+will result.  If no <I>option</I></B> is specified, returns a list
+describing all of the available options for the header display item
+(see <B>Tk_ConfigureInfo(3)</B></I> for information on the format of this
+list.) If <I>option</I></B> is specified with no <I>value</I></B>, then the
+command returns a list describing the one named option (this list will
+be identical to the corresponding sublist of the value returned if no
+<I>option</I></B> is specified). If one or more <I>option-value</I></B> pairs
+are specified, then the command modifies the given option(s) to have
+the given value(s); in this case the command returns an empty
+string. <I>Option</I></B> may have any of the values accepted by the
+<B>header create</B></I> widget command. The exact set of options depends
+on the value of the <B>-itemtype</B></I> option passed to the the <B>header
+create</B></I> widget command when this display item was created.
+</DL>
+<DL>
+<DT> <I>pathName <B>header <B>create</B></I> <I>col</I></B> ?<I>-itemtype type</I></B>? ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new display item as the header for the <I>col</I></B>-th
+column. If an header display item already exists for this column, it
+will be replaced by the new item.  An optional parameter
+<I>-itemtype</I></B> can be used to specify what type of display item
+should be created. If the <I>-itemtype</I></B> is not given, then by
+option is used. Additional parameters, in <I>option-value</I></B> pairs,
+can be passed to configure the appearance of the display item. Each
+<I>option-value</I></B> pair must be a valid option for this type of
+display item or one of the following:
+</DL>
+<UL>
+<DL>
+<DT> <B>-borderwidth</B></I>
+</I></B>
+<DD> Specifies the border width of this header item.
+</DL>
+<DL>
+<DT> <B>-headerbackground</B></I>
+</I></B>
+<DD> Specifies the background color of this header item.
+</DL>
+<DL>
+<DT> <B>-relief</B></I>
+</I></B>
+<DD> Specifies the relief type of the border of this header item.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>header <B>delete <I>col</I></B>
+</I></B>
+<DD> Deletes the header display item for the <I>col</I></B>-th column.
+</DL>
+<DL>
+<DT> <I>pathName <B>header <B>exists <I>col</I></B>
+</I></B>
+<DD> Return true if an header display item exists for the <I>col</I></B>-th
+column; return false otherwise.
+</DL>
+<DL>
+<DT> <I>pathName <B>header <B>size <I>entryPath</I></B>
+</I></B>
+<DD> If an header display item exists for the <I>col</I></B>-th column , returns
+its size in a two element list of the form {<I>width height</I></B>};
+returns an error if the header display item does not exist.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>hide <I>option ?entryPath?</I></B>
+</I></B>
+<DD> Makes some of entries invisible invisible without deleting them.
+<I>Option</I></B> can be one of the following:
+</DL>
+<UL>
+<DL>
+<DT> <B>entry</B></I>
+</I></B>
+<DD> Hides the list entry identified by <I>entryPath</I></B>.
+</DL>
+<P>
+Currently only the <B>entry</B></I> option is supported. Other options will
+be added in the next release.
+</UL>
+<DL>
+<DT> <I>pathName <B>indicator <I>option</I></B> entryPath ?<I>args ...</I></B>?
+</I></B>
+<DD> Manipulates the indicator on the list entries. An indicator is usually
+a small display item (such as an image) that is displayed to the left
+to an entry to indicate the status of the entry. For example, it may
+be used to indicator whether a directory is opened or
+closed. <I>option</I></B> can be one of the following:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>indicator <B>cget</B></I> <I>entryPath</I></B> <I>option</I></B>
+</I></B>
+<DD> If the list entry given by <I>entryPath</I></B> has an indicator, returns
+the value of the specified <I>option</I></B> of the indicator. If the
+</DL>
+<DL>
+<DT> <I>pathName <B>indicator <B>configure</B></I> <I>entryPath</I></B> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the indicator display
+item of the entry specified by <I>entryPath</I></B>. The indicator item
+must exist, or an error will result.  If no <I>option</I></B> is specified,
+returns a list describing all of the available options for the
+indicator display item (see <B>Tk_ConfigureInfo(3)</B></I> for information
+on the format of this list). If <I>option</I></B> is specified with no
+<I>value</I></B>, then the command returns a list describing the one named
+option (this list will be identical to the corresponding sublist of
+the value returned if no <I>option</I></B> is specified). If one or more
+<I>option-value</I></B> pairs are specified, then the command modifies the
+given option(s) to have the given value(s); in this case the command
+returns an empty string.  <I>Option</I></B> may have any of the values
+accepted by the <B>indicator create</B></I> widget command. The exact set
+of options depends on the value of the <B>-itemtype</B></I> option passed
+to the the <B>indicator create</B></I> widget command when this display item
+was created.
+</DL>
+<DL>
+<DT> <I>pathName <B>indicator <B>create</B></I> <I>entryPath</I></B> ?<I>-itemtype type</I></B>? ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new display item as the indicator for the entry specified by
+<I>entryPath</I></B>. If an indicator display item already exists for this
+entry, it will be replaced by the new item.  An optional parameter
+<I>-itemtype</I></B> can be used to specify what type of display item
+should be created. If the <I>-itemtype</I></B> is not given, then by
+option is used. Additional parameters, in <I>option-value</I></B> pairs,
+can be passed to configure the appearance of the display item. Each
+<I>option-value</I></B> pair must be a valid option for this type of
+display item.
+</DL>
+<DL>
+<DT> <I>pathName <B>indicator <B>delete <I>entryPath</I></B>
+</I></B>
+<DD> Deletes the indicator display item for the entry given by <I>entryPath</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>indicator <B>exists <I>entryPath</I></B>
+</I></B>
+<DD> Return true if an indicator display item exists for the entry given by
+<I>entryPath</I></B>; return false otherwise.
+</DL>
+<DL>
+<DT> <I>pathName <B>indicator <B>size <I>entryPath</I></B>
+</I></B>
+<DD> If an indicator display item exists for the entry given by
+<I>entryPath</I></B>, returns its size in a two element list of the form
+{<I>width height</I></B>}; returns an error if the indicator display item
+does not exist.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>info <I>option</I></B> <I>arg ...</I></B>
+</I></B>
+<DD> Query information about the HList widget. <I>option</I></B> can be one
+of the following:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>info <B>anchor</B></I>
+</I></B>
+<DD> Returns the entryPath of the current anchor, if any, of the HList
+widget. If the anchor is not set, returns the empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info bbox</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns a list of four numbers describing the visible bounding box of
+the entry given <I>entryPath</I></B>. The first two elements of the list
+give the x and y coordinates of the upper-left corner of the screen
+area covered by the entry (specified in pixels relative to the widget)
+and the last two elements give the lower-right corner of the area, in
+pixels. If no part of the entry given by index is visible on the
+screen then the result is an empty string; if the entry is partially
+visible, the result gives the only the visible area of the entry.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>children</B></I> ?<I>entryPath</I></B>?
+</I></B>
+<DD> children entries. Otherwise returns a list of the toplevel
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>data</B></I> ?<I>entryPath</I></B>?
+</I></B>
+<DD> Returns the data associated with <I>entryPath</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>dragsite</B></I>
+</I></B>
+<DD> Returns the entryPath of the current dragsite, if any, of the HList
+widget. If the dragsite is not set, returns the empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>dropsite</B></I>
+</I></B>
+<DD> Returns the entryPath of the current dropsite, if any, of the HList
+widget. If the dropsite is not set, returns the empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>exists</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns a boolean value indicating whether the list entry
+<I>entrpyPath</I></B> exists.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>hidden</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns a boolean value indicating whether the list entry
+<B>entrpyPath</B></I> is hidden or not.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>next</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns the entryPath of the list entry, if any, immediately below
+this list entry. If this entry is already at the bottom of the HList
+widget, returns an empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>parent</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns the name of the parent of the list entry identified by
+<I>entrpyPath</I></B>. If <I>entrpyPath</I></B> is a toplevel list entry,
+returns the empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>prev</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Returns the entryPath of the list entry, if any, immediately above
+this list entry. If this entry is already at the top of the HList
+widget, returns an empty string.
+</DL>
+<DL>
+<DT> <I>pathName <B>info <B>selection</B></I>
+</I></B>
+<DD> Returns a list of selected entries in the HList widget. If no entries
+are selectd, returns an empty string.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>item <I>option</I></B> ?<I>args ...</I></B>?
+</I></B>
+<DD> Creates and configures the display items at individual columns the
+entries. The form of additional of arguments depends on the choice of
+<I>option</I></B>:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>item <B>cget <I>entryPath col option</I></B>
+</I></B>
+<DD> Returns the current value of the configure <I>option</I></B> of the display
+item at the column designated by <I>col</I></B> of the entry specified by
+<I>entryPath</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>item configure <I>entryPath col</I></B> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the display item at the
+column designated by <I>col</I></B> of the entry specified by
+<I>entryPath</I></B>. If no <I>option</I></B> is specified, returns a list
+describing all of the available options for <I>entryPath</I></B> (see
+<B>Tk_ConfigureInfo(3)</B></I> for information on the format of this
+list). If <I>option</I></B> is specified with no <I>value</I></B>, then the
+command returns a list describing the one named option (this list will
+be identical to the corresponding sublist of the value returned if no
+<I>option</I></B> is specified). If one or more <I>option-value</I></B> pairs
+are specified, then the command modifies the given option(s) to have
+the given value(s); in this case the command returns an empty string.
+<I>Option</I></B> may have any of the values accepted by the <B>item
+create</B></I> widget command. The exact set of options depends on the
+value of the <B>-itemtype</B></I> option passed to the the <B>item
+create</B></I> widget command when this display item was created.
+</DL>
+<DL>
+<DT> <I>pathName <B>item create <I>entryPath col</I></B> ?<I>-itemtype type</I></B>? ?<I>option value ...</I></B>?
+</I></B>
+<DD> Creates a new display item at the column designated by <I>col</I></B> of
+the entry specified by <I>entryPath</I></B>. An optional parameter
+<I>-itemtype</I></B> can be used to specify what type of display items
+should be created. If the <I>-itemtype</I></B> is not specified, then by
+option is used.  Additional parameters, in <I>option-value</I></B> pairs,
+can be passed to configure the appearance of the display item. Each
+<I>option- value</I></B> pair must be a valid option for this type of
+display item.
+</DL>
+<DL>
+<DT> <I>pathName <B>item delete <I>entryPath col</I></B>
+</I></B>
+<DD> Deletes the display item at the column designated by <I>col</I></B> of
+the entry specified by <I>entryPath</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>item exists <I>entryPath col</I></B>
+</I></B>
+<DD> Returns true if there is a display item at the column designated by
+<I>col</I></B> of the entry specified by <I>entryPath</I></B>; returns false
+otherwise.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>nearest <I>y</I></B>
+</I></B>
+<DD> Given a y-coordinate within the HList window, this command returns
+the entryPath of the (visible) HList element nearest to that
+y-coordinate.
+</DL>
+<DL>
+<DT> <I>pathName <B>see <I>entryPath</I></B>
+</I></B>
+<DD> Adjust the view in the HList so that the entry given by <I>entryPath</I></B> is
+visible. If the entry is already visible then the command has no
+effect; if the entry is near one edge of the window then the HList
+scrolls to bring the element into view at the edge; otherwise the
+HList widget scrolls to center the entry.
+</DL>
+<DL>
+<DT> <I>pathName <B>selection <I>option</I></B> <I>arg ...</I></B>
+</I></B>
+<DD> This command is used to adjust the selection within a HList widget. It
+has several forms, depending on <I>option</I></B>:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>selection clear </B></I>?<I>from</I></B>? ?<I>to</I></B>?
+</I></B>
+<DD> When no extra arguments are given, deselects all of the list entrie(s)
+in this HList widget. When only <I>from</I></B> is given, only the list
+entry identified by <I>from</I></B> is deselected. When both <I>from</I></B> and
+<I>to</I></B> are given, deselects all of the list entrie(s) between
+between <I>from</I></B> and <I>to</I></B>, inclusive, without affecting the
+selection state of entries outside that range.
+</DL>
+<DL>
+<DT> <I>pathName <B>selection get</B></I>
+</I></B>
+<DD> This is an alias for the <B>info selection</B></I> widget command.
+,
+</DL>
+<DL>
+<DT> <I>pathName <B>selection includes <I>entryPath</I></B>
+</I></B>
+<DD> Returns 1 if the list entry indicated by <I>entryPath</I></B> is currently
+selected; returns 0 otherwise.
+</DL>
+<DL>
+<DT> <I>pathName <B>selection set <I>from</I></B> ?<I>to</I></B>?
+</I></B>
+<DD> Selects all of the list entrie(s) between between <I>from</I></B> and
+<I>to</I></B>, inclusive, without affecting the selection state of entries
+outside that range. When only <I>from</I></B> is given, only the list entry
+identified by <I>from</I></B> is selected.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>show <I>option ?entryPath?</I></B>
+</I></B>
+<DD> Show the entries that are hidden by the <B>hide</B></I> command,
+<I>option</I></B> can be one of the following:
+</DL>
+<UL>
+<DL>
+<DT> <B>entry</B></I>
+</I></B>
+<DD> Shows the list entry identified by <I>entryPath</I></B>.
+</DL>
+<P>
+Currently only the <B>entry</B></I> option is supported. Other options will
+be added in future releases.
+</UL>
+<DL>
+<DT> <I>pathName <B>xview <I>args</I></B>
+</I></B>
+<DD> This command is used to query and change the horizontal position of the
+forms:
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>xview</B></I>
+</I></B>
+<DD> Returns a list containing two elements.  Each element is a real
+fraction between 0 and 1; together they describe the horizontal span
+that is visible in the window.  For example, if the first element is
+</DL>
+
+off-screen to the left, the middle 40% is visible in the window, and
+40% of the entry is off-screen to the right. These are the same values
+passed to scrollbars via the <B>-xscrollcommand</B></I> option.
+<DL>
+<DT> <I>pathName <B>xview</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Adjusts the view in the window so that the list entry identified by
+<I>entryPath</I></B> is aligned to the left edge of the window.
+</DL>
+<DL>
+<DT> <I>pathName <B>xview moveto<I> fraction</I></B>
+</I></B>
+<DD> Adjusts the view in the window so that <I>fraction</I></B> of the total
+width of the HList is off-screen to the left. <I>fraction</I></B> must be
+a fraction between 0 and 1.
+</DL>
+<DL>
+<DT> <I>pathName <B>xview scroll <I>number what</I></B>
+</I></B>
+<DD> This command shifts the view in the window left or right according to
+<I>number</I></B> and <I>what</I></B>. <I>Number</I></B> must be an integer.
+<I>What</I></B> must be either <B>units</B></I> or <B>pages</B></I> or an
+abbreviation of one of these. If <I>what</I></B> is <B>units</B></I>, the view
+adjusts left or right by <I>number</I></B> character units (the width of
+the <B>0</B></I> character) on the display; if it is <B>pages</B></I> then the
+view adjusts by <I>number</I></B> screenfuls. If <I>number</I></B> is negative
+then characters farther to the left become visible; if it is positive
+then characters farther to the right become visible.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>yview <I>?args</I></B>?
+</I></B>
+<DD> This command is used to query and change the vertical position of the
+</DL>
+<UL>
+<DL>
+<DT> <I>pathName <B>yview</B></I>
+</I></B>
+<DD> Returns a list containing two elements, both of which are real
+fractions between 0 and 1.  The first element gives the position of
+the list element at the top of the window, relative to the HList as a
+whole (0.5 means it is halfway through the HList, for example).  The
+second element gives the position of the list entry just after the
+last one in the window, relative to the HList as a whole.  These are
+the same values passed to scrollbars via the <B>-yscrollcommand</B></I>
+option.
+</DL>
+<DL>
+<DT> <I>pathName <B>yview</B></I> <I>entryPath</I></B>
+</I></B>
+<DD> Adjusts the view in the window so that the list entry given by
+<I>entryPath</I></B> is displayed at the top of the window.
+</DL>
+<DL>
+<DT> <I>pathName <B>yview moveto<I> fraction</I></B>
+</I></B>
+<DD> Adjusts the view in the window so that the list entry given by
+<I>fraction</I></B> appears at the top of the window. <I>Fraction</I></B> is a
+fraction between 0 and 1; 0 indicates the first entry in the
+HList, 0.33 indicates the entry one-third the way through the
+HList, and so on.
+</DL>
+<DL>
+<DT> <I>pathName <B>yview scroll <I>number what</I></B>
+</I></B>
+<DD> This command adjust the view in the window up or down according to
+<I>number</I></B> and <I>what</I></B>.  <I>Number</I></B> must be an integer.
+<I>What</I></B> must be either <B>units</B></I> or <B>pages</B></I>.  If <I>what</I></B>
+is <B>units</B></I>, the view adjusts up or down by <I>number</I></B> lines; if
+it is <B>pages</B></I> then the view adjusts by <I>number</I></B> screenfuls.
+If <I>number</I></B> is negative then earlier entries become visible; if
+it is positive then later entries become visible.
+</DL>
+</UL>
+</pre><H3>BINDINGS</H3>
+<P>
+<UL>
+[1] <BR>
+If the <B>-selectmode</B></I> is "browse", when the user drags the mouse
+pointer over the list entries, the entry under the pointer will be
+highlighted and the <B>-browsecmd</B></I> procedure will be called with
+one parameter, the entryPath of the highlighted entry. Only one entry
+can be highlighted at a time. The <B>-command</B></I> procedure will be
+called when the user double-clicks on a list entry.
+</UL>
+<UL>
+[2] <BR>
+If the <B>-selectmode</B></I> is "single", the entries will only be
+highlighted by mouse &lt;ButtonRelease-1&gt; events. When a new list entry
+is highlighted, the <B>-browsecmd</B></I> procedure will be called with
+one parameter indicating the highlighted list entry. The
+<B>-command</B></I> procedure will be called when the user double-clicks
+on a list entry.
+</UL>
+<UL>
+[3] <BR>
+If the <B>-selectmode</B></I> is "multiple", when the user drags the mouse
+pointer over the list entries, all the entries under the pointer will
+be highlighted. However, only a contiguous region of list entries can
+be selected. When the highlighted area is changed, the
+<B>-browsecmd</B></I> procedure will be called with an undefined
+parameter. It is the responsibility of the <B>-browsecmd</B></I> procedure
+to find out the exact highlighted selection in the HList. The
+<B>-command</B></I> procedure will be called when the user double-clicks
+on a list entry.
+</UL>
+<UL>
+[4] <BR>
+If the <B>-selectmode</B></I> is "extended", when the user drags the mouse
+pointer over the list entries, all the entries under the pointer will
+be highlighted. The user can also make disjointed selections using
+&lt;Control-ButtonPress-1&gt;. When the highlighted area is changed, the
+<B>-browsecmd</B></I> procedure will be called with an undefined
+parameter. It is the responsibility of the <B>-browsecmd</B></I> procedure
+to find out the exact highlighted selection in the HList. The
+<B>-command</B></I> procedure will be called when the user double-clicks
+on a list entry.
+</UL>
+<UL>
+[5] <BR>
+<B>Arrow key bindings:</B></I> &lt;Up&gt; arrow key moves the anchor point to the
+item right on top of the current anchor item. &lt;Down&gt; arrow key moves
+the anchor point to the item right below the current anchor item.
+&lt;Left&gt; arrow key moves the anchor to the parent item of the current
+anchor item. &lt;Right&gt; moves the anchor to the first child of the
+current anchor item. If the current anchor item does not have any
+children, moves the anchor to the item right below the current anchor
+item.
+</UL>
+</pre><H3>EXAMPLE</H3>
+<P>
+This example demonstrates how to use an HList to store a file
+<P>
+\fC
+<pre><code><code><code>
+ tixHList .h -separator "/" -browsecmd browse -selectmode single \\
+    -itemtype text
+ .h add /         -text /
+ .h add /home     -text /home
+ .h add /home/ioi -text /home/ioi
+ .h add /home/foo -text /home/foo
+ .h add /usr      -text /usr
+ .h add /usr/lib  -text /usr/lib
+ pack .h
+
+ proc browse {file} {
+     puts "$file browsed"
+ }
+</code></code></code></pre>
+</B></I>
+</pre><H3>BUGS</H3>
+The fact that the display item at column 0 is implicitly associated
+with the whole entry is probably a design bug. This was done for
+backward compatibility purposes. The result is that there is a large
+overlap between the <B>item</B></I> command and the <B>add</B></I>,
+<B>addchild</B></I>, <B>entrycget</B></I> and <B>entryconfigure</B></I>
+commands. Whenever multiple columns exist, the programmer should use
+ONLY the <B>item</B></I> command to create and configure the display items
+in each column; the <B>add</B></I>, <B>addchild</B></I>, <B>entrycget</B></I> and
+<B>entryconfigure</B></I> should be used ONLY to create and configure
+entries.
+</pre><H3>KEYWORDS</H3>
+Tix(n), Hierarchical Listbox
+<hr><i>Last modified Sun Jan 19 22:34:30 EST 1997 </i> --- 
+<i>Serial 853731301</i>

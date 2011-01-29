@@ -1,0 +1,98 @@
+dnl This whole file is CYGNUS LOCAL
+
+AC_INIT
+AC_CONFIG_SRCDIR([../generic/tixInit.c])
+AC_CONFIG_AUX_DIR(../..)
+
+# The combination of Cygwin, autoconf 2.13. and cl from VC++
+# needs extra hand holding.
+case "${host}" in
+*windows32*)
+        CC="cl"
+        CPP="cl -nologo -E"
+        CFLAGS="-Z7 -Od -MD -nologo"
+        ac_cv_exeext=".exe"
+        ;;
+esac
+
+AC_CANONICAL_HOST
+
+AC_PROG_CC
+AC_OBJEXT
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+  * )        CYGWIN=no;;
+esac
+
+AC_SUBST(CYGWIN)
+AC_SUBST(GCC)
+
+AC_CHECK_TOOL(RANLIB, ranlib, :)
+AC_CHECK_TOOL(NM, nm, :)
+AC_CHECK_TOOL(AS, as, :)
+AC_CHECK_TOOL(DLLTOOL, dlltool, :)
+AC_CHECK_TOOL(WINDRES, windres, :)
+
+AC_PROG_INSTALL
+
+# Check for Tcl and Tk.
+CYG_AC_PATH_TCLCONFIG
+CYG_AC_LOAD_TCLCONFIG
+CYG_AC_PATH_TKCONFIG
+CYG_AC_LOAD_TKCONFIG
+CYG_AC_PATH_TCLH
+# FIXME: consider only doing this if --with-x given.
+CYG_AC_PATH_TKH
+
+TCL_VER=${TCL_VERSION}
+AC_SUBST(TCL_VER)
+
+if test -d tcl${TCL_VERSION}; then
+  true
+else
+  mkdir tcl${TCL_VERSION}
+fi
+
+SRC_DIR=`cd ${srcdir}/..; pwd`
+AC_SUBST(SRC_DIR)
+
+TIX_VERSION=4.1
+AC_SUBST(TIX_VERSION)
+
+VERSION=${TIX_VERSION}.${TCL_VERSION}
+
+if test "$GCC" = yes; then
+    TIX_BUILD_LIB_SPEC="-L`pwd`/tcl${TCL_VERSION} -ltix`echo ${VERSION} | tr -d .`"
+    TIX_LIB_FULL_PATH="`pwd`/tcl${TCL_VERSION}/libtix`echo ${VERSION} | tr -d .`.a"
+    TIX_LIB_FILE="libtix`echo ${VERSION} | tr -d .`.a"
+    TIX_BUILD_LOCATION="`pwd`/tcl${TCL_VERSION}"
+else
+    tmp="`pwd`/libtix`echo ${VERSION} | tr -d .`.a"
+    TIX_LIB_FILE="libtix`echo ${VERSION} | tr -d .`.a"
+    tmp2="`cygpath --windows $tmp`"
+    TIX_BUILD_LIB_SPEC="`echo $tmp2 | sed -e s#\\\\\\\\#/#g`"
+    TIX_LIB_FULL_PATH=${TIX_BUILD_LIB_SPEC}
+    TIX_BUILD_LOCATION="`pwd`\\tcl${TCL_VERSION}"
+fi
+
+case "${host}" in
+*-*-cygwin*)
+	touch ac$$.c
+	if ${CC} -c -mwin32 ac$$.c >/dev/null 2>&1; then
+	    case "$EXTRA_CFLAGS" in
+		*-mwin32*) ;;
+		*) EXTRA_CFLAGS="-mwin32 $EXTRA_CFLAGS" ;;
+	    esac
+	fi
+	rm -f ac$$.o ac$$.c
+	;;
+esac
+AC_SUBST(EXTRA_CFLAGS)
+
+AC_SUBST(TIX_BUILD_LIB_SPEC)
+AC_SUBST(TIX_LIB_FILE)
+AC_SUBST(TIX_BUILD_LOCATION)
+AC_SUBST(TIX_LIB_FULL_PATH)
+
+AC_CONFIG_FILES([Makefile ../tixConfig.sh])
+AC_OUTPUT

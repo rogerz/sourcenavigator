@@ -1,0 +1,1157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Grep</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="retrvr.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="versctrl.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998204"></A><BR>
+<A NAME="21607"></A>Grep<DIV>
+<IMG SRC="grep-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-998211"></A>The Source-Navigator <SPAN CLASS="Bold">
+Grep</SPAN>
+<A NAME="marker-998209"></A> tool allows you to search 
+for <A NAME="marker-998210"></A>text patterns in source files 
+throughout the project. It is more powerful than using <KBD CLASS="Code">
+grep</KBD>
+ at the command line because it:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998213"></A>allows you to search multiple directories.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998214"></A>searches only the files in your project.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998215"></A>can be restricted to a subset of the files 
+in your project.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001723"></A>saves results of multiple searches, so you can 
+review them later.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1001724"></A>provides &quot;one-click&quot; <SPAN CLASS="Bold">
+Editor</SPAN>
+ access to the lines of code matching your search.</LI>
+</UL>
+<P CLASS="Body">To search for text patterns in the name of the symbols in the 
+database, use the <SPAN CLASS="Bold">Retriever</SPAN> tool. For more information,
+see <A HREF="retrvr.html">Retriever</A>.
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998217"></A><A NAME="12133"></A>Using Grep</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998218"></A>Start the <SPAN CLASS="Bold">
+Grep</SPAN>
+ tool from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu by selecting <SPAN CLASS="Bold">
+New View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Grep-Editor</SPAN>. This opens a <SPAN CLASS="Bold">
+Grep/Editor</SPAN>
+ split window (for more information on split 
+windows, see <A HREF="usingsn.html#23741" CLASS="XRef">Adding a Browser 
+to an Existing Window</A>). </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998222"></A>The Grep/Editor Window</P>
+<DIV>
+<IMG SRC="grep-2.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998233"></A>In the <SPAN CLASS="Bold">
+Pattern</SPAN>
+ text box, enter a regular expression then click the <SPAN CLASS="Bold">
+Search </SPAN>
+icon. For more information on regular expressions, 
+see <A HREF="grep.html#24033" CLASS="XRef">GNU Regular Expressions</A>. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998237"></A>You can use the <SPAN CLASS="Bold">
+Files</SPAN>
+ filter to limit your search; for example, entering <KBD CLASS="Code">
+*.c</KBD>
+ restricts the search to only C files. For a list of file extensions and their 
+associated languages see <A HREF="usingsn.html#40836" CLASS="XRef">File Types and 
+Associated Filename Extensions</A>. 
+<A HREF="grep.html#28392" CLASS="XRef">Sample Grep Search Results</A> shows the results 
+of a sample <A NAME="marker-998244"></A>Grep search.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-998253"></A><A NAME="28392"></A>Sample Grep Search Results</P>
+<DIV>
+<IMG SRC="grep-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-998258"></A>Clicking on an item in the <SPAN CLASS="Bold">
+Grep</SPAN>
+ window displays the appropriate file in the <SPAN CLASS="Bold">
+Editor</SPAN>
+<A NAME="marker-998257"></A>, with the cursor positioned at the selected line. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998259"></A>To step through the <SPAN CLASS="Bold">
+Grep</SPAN>
+ results, click the left or right black arrow keys in the toolbar. To filter 
+your <SPAN CLASS="Bold">
+Grep</SPAN>
+ results, use the <SPAN CLASS="Bold">
+Format</SPAN>
+ combo-box to select an option.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998262"></A><A NAME="24033"></A><A NAME="marker-998261"></A>GNU 
+Regular Expressions</H2>
+<P CLASS="Body">
+<A NAME="pgfId-998266"></A>A GNU regular 
+expression<A HREF="#pgfId-998265" CLASS="footnote"><SUP>1</SUP></A> <A NAME="fn1"></A>is 
+a pattern that describes a set of strings. Regular expressions are constructed like 
+arithmetic expressions: various operators combine smaller expressions to form 
+larger expressions. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998267"></A>Ordinary Characters</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998268"></A>An ordinary character is a simple regular expression 
+that matches a single character and nothing else. For example, <SPAN CLASS="Bold">
+f</SPAN>
+ matches <SPAN CLASS="Bold">
+f</SPAN>
+ and no other string. You can concatenate regular expressions together. For 
+example, <SPAN CLASS="Bold">
+foo</SPAN>
+ matches <SPAN CLASS="Bold">
+foo</SPAN>
+ and no other string.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998269"></A>Special Characters</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998270"></A>You can combine regular expressions with regular 
+expression operators, or <EM CLASS="Emphasis">
+metacharacters</EM>, to increase the versatility of regular expressions. 
+Traditional expression characters are enclosed by brackets <SPAN CLASS="Bold">
+[</SPAN> and <SPAN CLASS="Bold">]</SPAN>. </P>
+<P CLASS="Body">
+<A NAME="pgfId-998271"></A>For example, <SPAN CLASS="Bold">
+[Aa]pple</SPAN>
+ matches either <SPAN CLASS="Bold">
+Apple</SPAN>
+ or <SPAN CLASS="Bold">
+apple</SPAN>. A range of characters is indicated by a dash <SPAN CLASS="Bold">
+-</SPAN>. <SPAN CLASS="Bold">
+[a-z]</SPAN>
+ matches any lowercase letter and <SPAN CLASS="Bold">
+[0-9]</SPAN>
+ matches any digit string between 0 and 9. You can string groups together, 
+so that <SPAN CLASS="Bold">
+[a-zA-Z0-9]</SPAN>
+ matches any single alphanumeric character.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998273"></A>To represent the  <SPAN CLASS="Bold">
+-</SPAN>
+ dash itself, it must be the last character, directly succeeded by the <SPAN CLASS="Bold">
+]</SPAN>. To represent <SPAN CLASS="Bold">
+]</SPAN>
+ bracket, it must be the first character after the <SPAN CLASS="Bold">
+[</SPAN>
+ or the <SPAN CLASS="Bold">
+[^</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998342"></A><A HREF="grep.html#16603" CLASS="XRef">Special 
+Characters</A> lists special characters and examples of how to use them.</P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-998283"></A><A NAME="16603"></A>Special Characters </P>
+</CAPTION>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998289"></A>Symbol</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998291"></A>Definition</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998293"></A>Example</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998295"></A><SPAN CLASS="Bold">
+.</SPAN> (period) </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998297"></A>matches any single character except a new line</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998299"></A><SPAN CLASS="Bold">
+a.b<BR>
+</SPAN>
+matches any three-character string beginning with <SPAN CLASS="Bold">
+a</SPAN>
+ and ending with <SPAN CLASS="Bold">
+b</SPAN>
+ (such as <SPAN CLASS="Bold">
+acb</SPAN>, <SPAN CLASS="Bold">
+a6b</SPAN>, <SPAN CLASS="Bold">
+a#b</SPAN>)</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998301"></A><SPAN CLASS="Bold">
+[ ... ]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998303"></A>matches characters between the brackets.</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998305"></A><SPAN CLASS="Bold">
+[af]<BR>
+</SPAN>
+matches either one <SPAN CLASS="Bold">
+a</SPAN>
+ or one <SPAN CLASS="Bold">
+f<BR>
+[af]*<BR>
+</SPAN>
+matches any string composed of just <SPAN CLASS="Bold">
+a</SPAN>'s or <SPAN CLASS="Bold">
+f</SPAN>'s or the empty string</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998307"></A><SPAN CLASS="Bold">
+[^...]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998309"></A>matches any character except the ones specified</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998311"></A><SPAN CLASS="Bold">
+[^a-z]<BR>
+</SPAN>
+matches any characters except lower-case letters</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998313"></A><SPAN CLASS="Bold">
+^</SPAN>
+ (caret)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998315"></A>matches the empty string, but only at the 
+beginning of the line</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998317"></A><SPAN CLASS="Bold">
+^foo<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+foo</SPAN>
+ and <SPAN CLASS="Bold">
+food</SPAN>, but not <SPAN CLASS="Bold">
+ofoo</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998319"></A><SPAN CLASS="Bold">
+$</SPAN>
+ (dollar sign)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998321"></A>matches the empty string, but only at the end of the line</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998323"></A><SPAN CLASS="Bold">
+fo$<BR>
+</SPAN>
+matches a string ending in <SPAN CLASS="Bold">
+fo</SPAN>, but not <SPAN CLASS="Bold">
+foop</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998325"></A><SPAN CLASS="Bold">
+&#92;</SPAN>
+ (backslash)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998327"></A>escapes special characters (including &#92;)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998329"></A><SPAN CLASS="Bold">
+fo&#92;?<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+fo?</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998331"></A><SPAN CLASS="Bold">
+|</SPAN>
+ (pipe)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998333"></A>is used to designate OR</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998335"></A><SPAN CLASS="Bold">
+foo|bar<BR>
+</SPAN>
+matches either <SPAN CLASS="Bold">
+foo</SPAN>
+ or <SPAN CLASS="Bold">
+bar</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998337"></A><SPAN CLASS="Bold">
+( ... )</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998339"></A>is a grouping construct</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998341"></A><SPAN CLASS="Bold">
+foo(bar)*<BR>
+</SPAN>
+matches zero or more instances of bar with foo (such as <SPAN CLASS="Bold">
+foo</SPAN>, <SPAN CLASS="Bold">
+foobar</SPAN>, and <SPAN CLASS="Bold">
+foobarbar</SPAN>)</P>
+</TD>
+</TR>
+</TABLE>
+<H3 CLASS="Label">
+<A NAME="pgfId-998343"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-998344"></A>In the <SPAN CLASS="Bold">
+|</SPAN>
+ (pipe) example above, notice that <SPAN CLASS="Bold">
+foo|bar</SPAN>
+ is matching either <SPAN CLASS="Bold">
+foo</SPAN>
+ or <SPAN CLASS="Bold">
+bar</SPAN>. It's not matching <SPAN CLASS="Bold">
+o</SPAN>
+ or <SPAN CLASS="Bold">
+b</SPAN>, resulting with either <SPAN CLASS="Bold">
+fooar</SPAN>
+ or <SPAN CLASS="Bold">
+fobar</SPAN>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998345"></A>Predefined Sets of Characters</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998346"></A>Certain named classes of characters are predefined, 
+but can only be used within bracket expressions. </P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-998352"></A>Character Classes </P>
+</CAPTION>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998358"></A>Symbol</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998360"></A>Definition</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998362"></A>C-locale Equivalent</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998364"></A><SPAN CLASS="Bold">
+[:alnum:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998366"></A>alphanumeric characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998368"></A><SPAN CLASS="Bold">
+[a-zA-Z0-9]</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998370"></A><SPAN CLASS="Bold">
+[:alpha:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998372"></A>alphabetic characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998374"></A><SPAN CLASS="Bold">
+[a-zA-Z]</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998376"></A><SPAN CLASS="Bold">
+[:blank:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998378"></A>space and tab characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998380"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998382"></A><SPAN CLASS="Bold">
+[:cntrl:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998384"></A>control characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998386"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998388"></A><SPAN CLASS="Bold">
+[:digit:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998390"></A>numeric characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998392"></A><SPAN CLASS="Bold">
+[0-9]</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998394"></A><SPAN CLASS="Bold">
+[:graph:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998396"></A>characters that are printable and are also 
+visible (a tab is printable, but not visible, while an <SPAN CLASS="Bold">
+a</SPAN>
+ is both)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998398"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998400"></A><SPAN CLASS="Bold">
+[:lower:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998402"></A>lower-case alphabetic characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998404"></A><SPAN CLASS="Bold">
+[a-z]</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998406"></A><SPAN CLASS="Bold">
+[:print:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998408"></A>printable characters (ASCII 32 and above), 
+but not control characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998410"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998412"></A><SPAN CLASS="Bold">
+[:punct:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998414"></A>punctuation characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998416"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998418"></A><SPAN CLASS="Bold">
+[:space:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998420"></A>space characters (such as space, tab, newline, 
+and page eject)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998422"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998424"></A><SPAN CLASS="Bold">
+[:upper:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998426"></A>upper-case alphabetic characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998428"></A><SPAN CLASS="Bold">
+[A-Z]</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998430"></A><SPAN CLASS="Bold">
+[:xdigit:]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998432"></A>hexadecimal digit characters</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998434"></A><SPAN CLASS="Bold">
+[0-9a-fA-F]</SPAN>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-998435"></A>For example, <SPAN CLASS="Bold">
+[[:alnum:]]</SPAN>
+ means <SPAN CLASS="Bold">
+[0-9A-Za-z] </SPAN>
+in the C-locale, except the latter form is dependent upon the ASCII 
+character encoding, whereas the former is portable.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998436"></A>Repetition</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998437"></A>A regular expression matching a single character 
+may be followed by one of several repetition operator:</P>
+<TABLE BORDER=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-998443"></A>Interval Expressions </P>
+</CAPTION>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998449"></A>Symbol</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998451"></A>Description</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998453"></A>Example</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998455"></A><SPAN CLASS="Bold">
+*</SPAN>
+ (asterisk)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998457"></A>post-fix operator that matches an 
+expression 0 or more times</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998459"></A><SPAN CLASS="Bold">
+fo*<BR>
+</SPAN>
+matches a string starting with <SPAN CLASS="Bold">
+f</SPAN>
+ and ending with a repeating <SPAN CLASS="Bold">
+o</SPAN>
+ or no <SPAN CLASS="Bold">
+o</SPAN>'s (such as <SPAN CLASS="Bold">
+f</SPAN>, <SPAN CLASS="Bold">
+fo</SPAN>, <SPAN CLASS="Bold">
+foo</SPAN>)</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998461"></A><SPAN CLASS="Bold">
++</SPAN>
+ (plus)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998463"></A>post-fix operator that matches an 
+expression at least once</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998465"></A><SPAN CLASS="Bold">
+f+o<BR>
+</SPAN>
+matches a string starting with one or more <SPAN CLASS="Bold">
+f</SPAN>'s and ending with an <SPAN CLASS="Bold">
+o</SPAN>
+ (such as <SPAN CLASS="Bold">
+fo</SPAN>, <SPAN CLASS="Bold">
+ffo</SPAN>, and <SPAN CLASS="Bold">
+fffo</SPAN>)</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998467"></A><SPAN CLASS="Bold">
+?</SPAN>
+ (question mark)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998469"></A>post-fix operator that must match an 
+expression once or not at all</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998471"></A><SPAN CLASS="Bold">
+f?o<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+fo</SPAN>
+ or <SPAN CLASS="Bold">
+o</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998473"></A><SPAN CLASS="Bold">
+{n}</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998475"></A>preceding item is matched exactly <EM CLASS="Emphasis">
+n</EM>
+ times</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998477"></A><SPAN CLASS="Bold">
+fo{2}<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+foo</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998479"></A><SPAN CLASS="Bold">
+{n,}</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998481"></A>proceeding item is matched <EM CLASS="Emphasis">
+n</EM>
+ or more times</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998483"></A><SPAN CLASS="Bold">
+fo{2,}<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+foo</SPAN>
+ and <SPAN CLASS="Bold">
+fooo</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998485"></A><SPAN CLASS="Bold">
+{,m}</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998487"></A>proceeding item is optional and is matched 
+at most <EM CLASS="Emphasis">
+m</EM>
+ times</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998489"></A><SPAN CLASS="Bold">
+fo{,3}<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+f</SPAN>, <SPAN CLASS="Bold">
+fo</SPAN>, <SPAN CLASS="Bold">
+foo</SPAN>, and <SPAN CLASS="Bold">
+fooo</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998491"></A><SPAN CLASS="Bold">
+{n,m}</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998493"></A>proceeding item is matched at least <EM CLASS="Emphasis">
+n</EM>
+ times and at most <EM CLASS="Emphasis">
+m</EM>
+ times</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998495"></A><SPAN CLASS="Bold">
+fo{1,3}<BR>
+</SPAN>
+matches <SPAN CLASS="Bold">
+fo</SPAN>, <SPAN CLASS="Bold">
+foo</SPAN>, and <SPAN CLASS="Bold">
+fooo</SPAN>
+</P>
+</TD>
+</TR>
+</TABLE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998496"></A>Escape Sequences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-998497"></A>Some characters cannot be included literally in regular 
+expressions. You represent them instead with escape sequences, which are characters 
+beginning with a backslash (<SPAN CLASS="Bold">&#92;</SPAN>). A backslash is also 
+part of the representation of unprintable characters such as a tab or newline.</P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-998500"></A>Escape Sequences</P>
+</CAPTION>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998504"></A>Symbol</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-998506"></A>Description</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998508"></A><SPAN CLASS="Bold">
+&#92;&#92;</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998510"></A>a literal backslash</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998512"></A><SPAN CLASS="Bold">
+&#92;a</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998514"></A>alert</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998516"></A><SPAN CLASS="Bold">
+&#92;f</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998518"></A>formfeed</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998520"></A><SPAN CLASS="Bold">
+&#92;n</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998522"></A>newline</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998524"></A><SPAN CLASS="Bold">
+&#92;r</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998526"></A>return</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998528"></A><SPAN CLASS="Bold">
+&#92;t</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998530"></A>horizontal tab</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998532"></A><SPAN CLASS="Bold">
+&#92;v</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998534"></A>vertical tab</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998536"></A><SPAN CLASS="Bold">
+&#92;?</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998538"></A>question mark</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998540"></A><SPAN CLASS="Bold">
+&#92;(</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998542"></A>left parenthesis</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998544"></A><SPAN CLASS="Bold">
+&#92;)</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998546"></A>right parenthesis</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998548"></A><SPAN CLASS="Bold">
+&#92;[</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998550"></A>left bracket</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998552"></A><SPAN CLASS="Bold">
+&#92;]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-998554"></A>right bracket</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1001731"></A>Two regular expressions may be concatenated; 
+the resulting regular expression matches any string formed by concatenating 
+two substrings that respectively match the concatenated subexpression. For example:</P>
+<TABLE>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001734"></A><SPAN CLASS="Bold">
+[a-b]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001736"></A>matches either <SPAN CLASS="Bold">
+a</SPAN>
+ or <SPAN CLASS="Bold">
+b</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001738"></A><SPAN CLASS="Bold">
+[d-e]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001740"></A>matches either <SPAN CLASS="Bold">
+d</SPAN>
+ or <SPAN CLASS="Bold">
+e</SPAN>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001742"></A><SPAN CLASS="Bold">
+[a-c][d-e]</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1001744"></A>matches <SPAN CLASS="Bold">
+ad</SPAN>, <SPAN CLASS="Bold">
+bd</SPAN>, <SPAN CLASS="Bold">
+ae</SPAN>, or <SPAN CLASS="Bold">
+be</SPAN>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1001745"></A>The backreference <SPAN CLASS="Bold">
+&#92;n</SPAN>, where <SPAN CLASS="Bold">
+n</SPAN>
+ is a single digit, matches the substring previously matched by the nth 
+parenthesized subexpression of the regular expression. For example, <SPAN CLASS="Bold">
+&#92;(ab)c&#92;1</SPAN>
+ matches <SPAN CLASS="Bold">
+abbbcabbb</SPAN>, but not <SPAN CLASS="Bold">
+abbbcabb</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001746"></A>For additional information on regular expressions, 
+please refer to a reference text such as <STRONG CLASS="BoldEmphasis">Mastering
+Regular Expressions</EM><SUP><A HREF="#footnote2" CLASS="footnote">2</SUP></A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-998197"></A></P>
+<HR>
+<DIV CLASS="footnotes">
+<DIV CLASS="footnote">
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">
+1.</SPAN>
+<A NAME="pgfId-998265"></A>Richard Stallman and Karl Berry wrote the GNU regex 
+backtracking matcher. Copyright &#0169; 1989, 1991 Free Software Foundation, 
+Inc., 675 Massachusetts Avenue, Cambridge, MA 02139, USA. 
+<A HREF="#fn1">Return to text</A></P>
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">2.</SPAN>
+<A NAME="footnote2"></A>Friedl, Jeffrey E. F. 1997. <STRONG CLASS="BoldEmphasisFootnote">Mastering Regular Expressions</STRONG>. ISBN 1-56592-257-3.</P>
+</DIV>
+</DIV>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="retrvr.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="versctrl.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

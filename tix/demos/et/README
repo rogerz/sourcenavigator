@@ -1,0 +1,9 @@
+This directory is intended only for those who are already using ET and
+would like to use Tix in their ET-enabled applications.
+
+The file etdemo.et demonstrates how the stand-alone module of Tix can
+be used in an ET application. You should have et2c installed in your
+system and should know how to compile ET-enabled applications.
+
+For more information on ET, please see docs/ET.txt.
+For more information on stand-alone modules, see unix-sam/README.

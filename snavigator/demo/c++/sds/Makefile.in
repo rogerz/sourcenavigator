@@ -1,0 +1,193 @@
+# $Header$
+#
+# Makefile for sds C libraries.
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+RANLIB = @RANLIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+
+SHELL = /bin/sh
+
+RM = rm -f
+
+SRCDIR = ..
+HEADERDIR = $(SRCDIR)/include/Sds
+SDSINC = -I$(SRCDIR)/include
+
+ISTKPLACE = $(SRCDIR)/..
+ISTKLIBS = $(ISTKPLACE)/lib/$(ARCH)
+
+SOBJS = shm.o
+FOBJS = sds_fort.o sds_ftypes.o sds_fdb.o
+NODBOBJS = sdc.o sds.o uti.o sds_res.o sds_lin.o vax2ieee.o \
+	sds_load.o sds_map.o sds_dup.o sds_offil.o sds_record.o \
+	sds_incfile.o sds_glob.o version.o sds_v1.o sds_list.o \
+	sds_read.o sds_requests.o
+OBJS = $(NODBOBJS) sds_assem.o
+DBOBJS =  $(NODBOBJS) sds_db_assem.o
+
+SINC = $(HEADERDIR)/direc.h \
+	$(HEADERDIR)/sds_externs.h $(HEADERDIR)/sdsgen.h  $(HEADERDIR)/sds.h \
+	$(HEADERDIR)/sds_res.h \
+	$(HEADERDIR)/sds_mdep.h $(HEADERDIR)/syb_types.h \
+	$(HEADERDIR)/sds_record.h $(HEADERDIR)/sds_errors.h \
+	$(HEADERDIR)/sds_errstrings.h $(HEADERDIR)/sds_list.h \
+	$(HEADERDIR)/sds_lisd.h $(HEADERDIR)/sds_requests.h \
+	$(HEADERDIR)/sds_object.h $(HEADERDIR)/sds_reqd.h \
+	$(HEADERDIR)/sds_tree.h $(HEADERDIR)/sdsv1compat.h
+
+TAR_FILE = sds-csource.tar
+
+build:
+	@if [ -d $(ARCH) ]; then \
+		cd $(ARCH); $(MAKE) $(MFLAGS) -f ../Makefile libs; \
+		else $(MAKE) $(MFLAGS) -f ../Makefile libs; fi;
+
+libs: libsds.a libfsds.a libsdsdb.a
+
+libsds.a: $(SOBJS) $(OBJS)
+	$(RM) libsds.a
+	ar cru libsds.a $(SOBJS) $(OBJS)
+	$(RANLIB) libsds.a
+
+libsdsdb.a: $(SOBJS) $(DBOBJS)
+	$(RM) libsdsdb.a
+	ar cru libsdsdb.a $(SOBJS) $(DOBJS)
+	$(RANLIB) libsdsdb.a
+
+libfsds.a: $(FOBJS)
+	$(RM) libfsds.a
+	ar cru libfsds.a $(FOBJS)
+	$(RANLIB) libfsds.a
+
+$(ISTKLIBS)/libsds.a:libsds.a
+	$(INSTALL_DATA) libsds.a $(ISTKLIBS)
+	$(RANLIB) $(ISTKLIBS)/libsds.a
+
+$(ISTKLIBS)/libsdsdb.a:libsdsdb.a
+	$(INSTALL_DATA) libsdsdb.a $(ISTKLIBS)
+	$(RANLIB) $(ISTKLIBS)/libsdsdb.a
+
+$(ISTKLIBS)/libfsds.a: libfsds.a
+	$(INSTALL_DATA) libfsds.a $(ISTKLIBS)
+	$(RANLIB) $(ISTKLIBS)/libfsds.a
+
+install: $(ISTKLIBS)/libsds.a $(ISTKLIBS)/libfsds.a $(ISTKLIBS)/libsdsdb.a
+	@rm -f $(ISTKPLACE)/include/Sds/*.h
+	cp $(SINC) $(ISTKPLACE)/include/Sds
+
+install-all:
+	@if [ ! -d $(ARCH) ]; then mkdir $(ARCH); else exit 0; fi;
+	@echo Installing sds ...
+	@cd $(ARCH); $(MAKE) $(MFLAGS) -f ../Makefile install
+
+tar:
+	@rm -f $(TAR_FILE).Z tar-files
+	@$(MAKE) $(MFLAGS) tar-list >tar-files
+	tar cf $(TAR_FILE) -I tar-files
+	compress $(TAR_FILE)
+	@rm -f tar-files
+
+tar-list:
+	@echo sds >&2
+	@ls Makefile.in *.c include/Sds/*.h Doc/*
+
+rcsinfo:
+	@echo sds
+	@rlog -L RCS/*,v | sed -n -e 's/Working file://p' -e 's/locked by//p'
+	@echo sds/include/Sds
+	@cd include/Sds;rlog -L RCS/*,v | sed -n -e 's/Working file://p' -e 's/locked by//p'
+
+clean:
+	@if [ -d $(ARCH) ]; then cd $(ARCH); fi; \
+		$(RM) errs *.o *~* $(APPS) core a.out *.a ../$(TAR_FILE).Z
+
+clean-all:
+	@$(MAKE) $(MFLAGS) clean
+
+distclean: clean
+	rm -f config.status config.cache config.h
+
+testmain: $(SRCDIR)/testmain.c libsds.a
+	$(CC) $(CFLAGS) $(SDSINC) $(SRCDIR)/testmain.c libsds.a -o testmain
+
+sds_fort.o: $(SRCDIR)/sds_fort.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_fort.c
+
+sds_ftypes.o: $(SRCDIR)/sds_ftypes.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_ftypes.c
+
+sds_fdb.o: $(SRCDIR)/sds_fdb.c
+	$(CC)  $(SDSINC) $(CFLAGS) -c $(SRCDIR)/sds_fdb.c
+
+sds_list.o: $(SRCDIR)/sds_list.c
+	$(CC) $(SDSINC) $(CFLAGS) -c $(SRCDIR)/sds_list.c
+
+shm.o: $(SRCDIR)/shm.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/shm.c
+
+sdc.o: $(SRCDIR)/sdc.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sdc.c
+
+sds.o: $(SRCDIR)/sds.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds.c
+
+sds_assem.o: $(SRCDIR)/sds_assem.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_assem.c
+
+sds_dup.o: $(SRCDIR)/sds_dup.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_dup.c
+
+sds_read.o: $(SRCDIR)/sds_read.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_read.c
+
+sds_glob.o: $(SRCDIR)/sds_glob.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_glob.c
+
+sds_incfile.o: $(SRCDIR)/sds_incfile.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_incfile.c
+
+sds_load.o: $(SRCDIR)/sds_load.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_load.c
+
+sds_map.o: $(SRCDIR)/sds_map.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_map.c
+
+sds_obmap.o: $(SRCDIR)/sds_obmap.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_obmap.c
+
+sds_offil.o: $(SRCDIR)/sds_offil.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_offil.c
+
+sds_record.o: $(SRCDIR)/sds_record.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_record.c
+
+sds_tree.o: $(SRCDIR)/sds_tree.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_tree.c
+
+uti.o: $(SRCDIR)/uti.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/uti.c
+
+sds_requests.o: $(SRCDIR)/sds_requests.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_requests.c
+
+sds_res.o: $(SRCDIR)/sds_res.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_res.c
+
+sds_lin.o: $(SRCDIR)/sds_lin.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_lin.c
+
+sds_v1.o: $(SRCDIR)/sds_v1.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/sds_v1.c
+
+version.o: $(SRCDIR)/version.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/version.c
+
+vax2ieee.o: $(SRCDIR)/vax2ieee.c
+	$(CC) $(CFLAGS) $(SDSINC) -c $(SRCDIR)/vax2ieee.c
+
+sds_db_assem.o: $(SRCDIR)/sds_assem.c
+	$(CC) -c $(CFLAGS) $(SDSINC) -DSDSDB $(SRCDIR)/sds_assem.c -o sds_db_assem.o

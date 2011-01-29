@@ -1,0 +1,73 @@
+'\"
+'\" Copyright (c) 1996, Expert Interface Technologies
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\" 
+'\" The file man.macros and some of the macros used by this file are
+'\" copyrighted: (c) 1990 The Regents of the University of California.
+'\"              (c) 1994-1995 Sun Microsystems, Inc.
+'\" The license terms of the Tcl/Tk distrobution are in the file
+'\" license.tcl.
+.so man.macros
+.HS TixIntro tix 4.0
+.BS
+'
+'
+.SH NAME
+TixIntro \- Introduction to the Tix widget set
+.BE
+'
+'
+.SH DESCRIPTION
+'
+Tix is a set of mega widgets based on the standard Tk widgets. If you
+are planning only to use Tix with the standard Tk widget set, you can
+use the program \fBtixwish(1)\fR to interpret your TCL scripts.
+.PP
+To use Tix with other TCL extension packages, you have to call the
+function \fBTix_Init()\fR in your \fBTcl_AppInit()\fR function. Here
+is an example:
+.nf
+
+int Tcl_AppInit(interp)
+    Tcl_Interp *interp;
+{
+    Tk_Window main;
+
+    main = Tk_MainWindow(interp);
+
+    if (Tcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    if (Tk_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+
+    if (Tix_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    /*
+     * Call the init procedures for included packages. 
+     * Each call should look like this:
+     *
+     * if (Mod_Init(interp) == TCL_ERROR) {
+     *     return TCL_ERROR;
+     * }
+     *
+     * where "Mod" is the name of the module.
+     */
+}
+.fi
+'
+.SH Files
+'
+The release notes of this version of Tix is in the HTML file
+\fBTix4.0/README.html\fR. Plain text version of this file can be found
+as \fBTix4.0/README.txt\fR. Latest information about Tix can also be
+located on line at <URL:http://www.xpi.com/tix/>
+'
+'
+.SH KEYWORDS
+'
+Tix(n), compound widgets, Tix Intrinsics

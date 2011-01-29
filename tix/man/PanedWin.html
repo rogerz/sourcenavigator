@@ -1,0 +1,307 @@
+
+
+
+<TITLE>tixPanedWindow - Create and manipulate tixPanedWindow widgets</TITLE>
+<Center><H2>tixPanedWindow - Create and manipulate tixPanedWindow widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixPanedWindow<I> <I>pathName ?<I>options</I></B>?
+</pre><H3>STANDARD OPTIONS</H3>
+The PanedWindow widget supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to invoke when the panes change their sizes.
+This command is called with a list of integers that record the new
+sizes of the panes. The sizes of the panes are listed in the order of
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>dynamicGeometry</B></I>
+Class:		<B>DynamicGeometry</B></I>
+Switch:		<B>-dynamicgeometry</B></I>
+</code></code></code></pre>
+<UL>
+If set to true, the size of the PanedWindow will dynamically change
+if the size of any of its panes changes. Otherwise, the size of the
+PanedWindow will only increase when size of any of its panes changes
+and will not decrease. The default value is true.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>handleActiveBg</B></I>
+Class:		<B>HandleActiveBg</B></I>
+Switch:		<B>-handleactivebg</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the active background color of the resize handles. When the
+mouse cursor enters a resize handle, the resize handle will adopt
+the active background color.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>handleBg</B></I>
+Class:		<B>Background</B></I>
+Switch:		<B>-handlebg</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the normal background color of the resize handles.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>height</B></I>
+Class:		<B>Height</B></I>
+Switch:		<B>-height</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired height for the window.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>orientation</B></I>
+Class:		<B>Orientation</B></I>
+Switch:		<B>-orientation</B></I>
+Alias:		<B>-orient</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the orientation of the panes. Must be either <B>vertical</B></I>
+or <B>horizontal</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>paneBorderWidth</B></I>
+Class:		<B>PaneBorderWidth</B></I>
+Switch:		<B>-paneborderwidth</B></I>
+Alias:		<B>-panebd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the border width of the panes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>paneRelief</B></I>
+Class:		<B>PaneRelief</B></I>
+Switch:		<B>-panerelief</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the border relief of the panes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>separatorActiveBg</B></I>
+Class:		<B>SeparatorActiveBg</B></I>
+Switch:		<B>-separatoractivebg</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the active background color of the separators. When the user
+grabs a resize handle, the separators
+will adopt the active background color.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>separatorBg</B></I>
+Class:		<B>Background</B></I>
+Switch:		<B>-separatorbg</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the normal background color of the separators.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>width</B></I>
+Class:		<B>Width</B></I>
+Switch:		<B>-width</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the desired width for the window.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+All the pane subwidgets created as a result of the <B>add</B></I> command
+can be accessed by the <B>subwidget</B></I> command. They are identified by
+the <B>paneName</B></I> parameter to the <B>add</B></I> command.
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+
+<P>
+The <B>tixPanedWindow</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a PanedWindow widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+PanedWindow widget such as its cursor and relief.
+<P>
+The PanedWindow widget allows the user to interactively manipulate the
+sizes of several panes. The panes can be arranged either vertically or
+horizontally. Each individual pane may have upper and lower limits of
+its size. The user changes the sizes of the panes by dragging the
+resize handle between two panes.
+</pre><H3>WIDGET COMMAND</H3>
+<P>
+The <B>tixPanedWindow</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget.  It
+has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+the exact behavior of the command.  The following commands are
+possible for PanedWindow widgets:
+<DL>
+<DT> <I>pathName <B>add<I> paneName </I></B>?<I>option value ...</I></B>?
+</I></B>
+<DD> Adds a new pane subwidget with the name <I>paneName</I></B> into the
+PanedWindow widget. Additional configuration options can be
+given to configure the new button subwidget. Three configuration
+options are supported:
+</DL>
+<UL>
+<DL>
+<DT> <B>-after</B></I> <I>pane</I></B>
+</I></B>
+<DD> Specifies that the new pane should be placed after <I>pane</I></B> in the
+list of panes in this PanedWindow widget.
+<B>-at</B></I> <I>integer</I></B>
+Specifies the position of the new pane in the list of panes in this
+PanedWindow widget. <B>0</B></I> means the first position, <B>1</B></I> means
+the second, and so on. In addition, <B>end</B></I> means the end of the
+list.
+</DL>
+<DL>
+<DT> <B>-before</B></I> <I>pane</I></B>
+</I></B>
+<DD> Specifies that the new pane should be placed before <I>pane</I></B> in the
+list of panes in this PanedWindow widget.
+</DL>
+<DL>
+<DT> <B>-expand</B></I> <I>factor</I></B>
+</I></B>
+<DD> Specifies the <B>expand/shrink factor</B></I> of this pane. <I>Factor</I></B>
+must be a non-negative floating point number. The default value is
+0.0. The expand/shrink factor is used to calculate how much each pane
+should grow or shrink when the size of the PanedWindow main window is
+changed. When the main window expands/shrinks by <I>n</I></B> pixels, then
+pane <I>i</I></B> will grow/shrink by about <I>n * factor(i) /
+summation(factors)</B></I>, where <I>factor(i)</I></B> is the expand/shrink
+factor of pane i and <I>summation(factors)</I></B> is the summation of the
+expand/shrink factors of all the panes. If <I>summation(factors)</I></B> is
+0.0, however, only the last visible pane will be grown or shrunk.
+</DL>
+<DL>
+<DT> <B>-min</B></I> <I>integer</I></B>
+</I></B>
+<DD> Specifies the minimum size, in pixels, of the new pane; the default is 0.
+</DL>
+<DL>
+<DT> <B>-max</B></I> <I>integer</I></B>
+</I></B>
+<DD> Specifies the maximum size, in pixels, of the new pane; the default is 10000.
+</DL>
+<DL>
+<DT> <B>-size</B></I> <I>integer</I></B>
+</I></B>
+<DD> Specifies the size, in pixels, of the new pane; if the <B>-size</B></I>
+option is not given, or set to the empty string, the PanedWindow
+widget will use the natural size of the pane subwidget.
+</DL>
+</UL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may be <B>-min</B></I>, <B>-max</B></I> and/or
+<B>-size</B></I>, or any option accepted by the Tk frame widget.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string. <I>Option</I></B> may be any
+of the non-static options of the PanedWindow widget.
+</DL>
+<DL>
+<DT> <I>pathName <B>delete</B></I> <I>paneName</I></B>
+</I></B>
+<DD> Removes the pane given by <I>paneName</I></B> and deletes its contents.
+</DL>
+<DL>
+<DT> <I>pathName <B>forget</B></I> <I>paneName</I></B>
+</I></B>
+<DD> Removes the pane given by <I>paneName</I></B> but does not delete its
+contents. This pane can be later added back to the PanedWindow widget
+by the <B>manage</B></I> method.
+</DL>
+<DL>
+<DT> <I>pathName <B>manage</B></I> <I>paneName </I></B>?<I>option value ...</I></B>?
+</I></B>
+<DD> Adds the pane given by <I>paneName</I></B> back to the PanedWindow widget.
+<I>PaneName</I></B> must be already forgotten by the <B>forget</B></I>
+method. Additional <I>option-value</I></B> pairs, same as those accepted by
+the <B>add</B></I> method, can be given to control the appearance and
+position of the pane.
+</DL>
+<DL>
+<DT> <I>pathName <B>panecget</B></I> <I>paneName option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B> in the pane given by <I>paneName</I></B>. <I>Option</I></B> may
+have any of the values accepted by the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>paneconfigure<I> paneName ?<I>option</I></B>? <I>?value ...</I></B>?
+</I></B>
+<DD> When no option is given, prints out the values of all options of this
+pane. If <I>option</I></B> is specified with no <I>value</I></B>, then the
+command returns the current value of that option. If one or more
+<I>option-value</I></B> pairs are specified, then the command modifies the
+command returns an empty string. <I>Option</I></B> may be <B>-min</B></I>,
+<B>-max</B></I> and/or <B>-size</B></I>, or any option accepted by the Tk
+frame widget. The sizes of the panes may be changed as a result of
+calling the <B>paneconfigure</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>panes</B></I>
+</I></B>
+<DD> Returns a list of the names of all panes.
+</DL>
+<DL>
+<DT> <I>pathName <B>setsize</B></I> <I>paneName newSize</I></B> ?<I>direction</I></B>?
+</I></B>
+<DD> Sets the size of the pane specified by <I>paneName</I></B> to
+<I>newSize</I></B>. The <I>direction</I></B> parameter specifies in which
+direction the pane should grow/shrink. Possible values are <B>next</B></I>:
+the pane will grow or shrink by moving the boundary between itself and
+the pane to its right or bottom; <B>prev</B></I>: the pane will grow or
+shrink by moving the boundary between itself and the pane to its left
+or top.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, returns the pathname of the subwidget of
+the specified name.
+
+When options are given, the widget command of the specified subwidget will
+be called with these options.
+</DL>
+</pre><H3>BINDINGS</H3>
+<B>-max</B></I> and <B>-size</B></I> options of the panes.
+</pre><H3>KEYWORDS</H3>
+TIX, Container Widget
+<hr><i>Last modified Sun Jan 19 22:34:35 EST 1997 </i> --- 
+<i>Serial 853731303</i>

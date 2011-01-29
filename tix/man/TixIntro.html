@@ -1,0 +1,55 @@
+
+
+
+<TITLE>TixIntro - Introduction to the Tix widget set</TITLE>
+<Center><H2>TixIntro - Introduction to the Tix widget set</H2></Center><hr>
+
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+Tix is a set of mega widgets based on the standard Tk widgets. If you
+are planning only to use Tix with the standard Tk widget set, you can
+use the program <B>tixwish(1)</B></I> to interpret your TCL scripts.
+<P>
+To use Tix with other TCL extension packages, you have to call the
+function <B>Tix_Init()</B></I> in your <B>Tcl_AppInit()</B></I> function. Here
+is an example:
+<pre><code><code><code>
+
+int Tcl_AppInit(interp)
+    Tcl_Interp *interp;
+{
+    Tk_Window main;
+
+    main = Tk_MainWindow(interp);
+
+    if (Tcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    if (Tk_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+
+    if (Tix_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    /*
+     * Call the init procedures for included packages. 
+     * Each call should look like this:
+     *
+     * if (Mod_Init(interp) == TCL_ERROR) {
+     *     return TCL_ERROR;
+     * }
+     *
+     * where "Mod" is the name of the module.
+     */
+}
+</code></code></code></pre>
+</pre><H3>Files</H3>
+The release notes of this version of Tix is in the HTML file
+<B>Tix4.0/README.html</B></I>. Plain text version of this file can be found
+as <B>Tix4.0/README.txt</B></I>. Latest information about Tix can also be
+located on line at &lt;URL:http://www.xpi.com/tix/&gt;
+</pre><H3>KEYWORDS</H3>
+Tix(n), compound widgets, Tix Intrinsics
+<hr><i>Last modified Sun Jan 19 22:34:39 EST 1997 </i> --- 
+<i>Serial 853731306</i>

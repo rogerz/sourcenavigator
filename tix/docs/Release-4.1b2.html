@@ -1,0 +1,187 @@
+<h3>Tix 4.1b2</h3>
+<i> Released on December 28, 1996</i> <p>
+
+<pre>
+
+Subject: [Announce] Tix version 4.1b2 is available
+
+</pre>
+
+   I am pleased to announce the availability of Tix version 4.1b2, the
+   first beta release. This version of Tix supports the Unix and
+   Microsoft Windows platforms. <p>
+
+   The Tix library has by far the greatest collection of widgets for
+   programming with Tcl/Tk. Highlights include: Hierarchical Listbox,
+   Directory List/Tree View, SpreadSheet, Tabular Listbox, ComboBox,
+   Motif style FileSelectBox, MS Windows style FileSelectBox,
+   PanedWindow, NoteBook, Spin Control widget .... and many more. With
+   these new widgets, your Tcl/Tk applications will look great and
+   interact with your users in intuitive ways. <p>
+
+   For more info about Tix, visit the Tix home page at <a
+   href="http://www.xpi.com/tix/"> http://www.xpi.com/tix/ </a>. <p>
+
+   This version of Tix is released under licensing terms similar to
+   those of Tcl/Tk. Please read the file license.terms carefully
+   before proceeding. <p>
+
+<h3>Requirement</h3>
+
+<h4>Unix Platforms</h4>
+   
+   Tix 4.1b2 works with the following combinations of Tcl/Tk/ITcl:
+   <ul>
+     <li> Tcl 7.4 + Tk 4.0 
+     <li> Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     <li> Tcl 7.5 + Tk 4.1
+     <li> Tcl 7.5 + Tk 4.1 + ITcl 2.1
+     <li> Tcl 7.6 + Tk 4.2
+   </ul>
+
+<h4>Windows Platforms</h4>
+
+   Tix 4.1b2 requires the final release of Tcl 7.5 or Tcl 7.6.
+
+<h3>Getting The Tix Package</h3>
+
+   Tix 4.1b2 sources are available at
+   <ul>
+     <li> <a href="ftp://ftp.xpi.com/pub/Tix4.1b2.tar.gz">
+	  ftp://ftp.xpi.com/pub/Tix4.1b2.tar.gz</a>: Unix source tar file.
+
+     <li> <a href="ftp://ftp.xpi.com/pub/windows/tix41b2.zip">
+	  ftp://ftp.xpi.com/pub/windows/tix41b2.zip</a>: Same as
+	  Tix4.1b2.tar.gz, but in Windows/DOS ZIP format.
+   </ul>
+
+<h3>What's New Since Tix 4.1a3 (the last release)</h3>
+
+
+<h4>10/13/96</h4>
+
+  <b>New feature:</b> Now XPM image works on Windows. <p>
+
+<h4>10/18/96</h4>
+
+  <b>New feature:</b> New options -editnotifycmd and -editdonecmd for
+  the Grid widget to support editing of the entries. <p>
+
+  <b>New feature:</b> New widget <b>TixFloatEntry</b> to support
+  editing of DItems. <p>
+
+<h4>10/27/96</h4>
+
+  <b>Feature Change:</b> The following changes are made to the
+  configuration and installation of Tix:
+  <ul>
+
+    <li> <b>Naming convention of binaries</b>: The binaries for the
+	 Tk 4.0 target are called tixwish and libtix.a. For Tk 4.1 and
+	 later, the executable is be called tixwish[Tix version].[Tk version]
+	 and the library is called libtix[Tix version].[Tk
+	 version].[lib extension]. For example, tixwish4.1.4.1 and
+	 libtix4.1.4.2.so. On platforms that do not allow the dot
+	 character in the names of shared libraries, the dot character
+	 will be omitted. E.g., libtix4142.so.
+
+    <li> <b>Shared vs static linking</b>: The static binary will be
+	 created only if the -enable-[tkversion]-shared flag is
+	 disabled. If you want to create both shared and static
+	 binaries, configure and compile Tix twice.
+
+    <li> ET support is replaced by SAM (stand-alone module)
+	 support.
+
+    <li> The following options are removed from configure:
+	 <ul>
+	   <li> -enable-tk40_et
+	   <li> -enable-tk41_et
+	   <li> -enable-tk41_shared
+	 </ul>	 
+
+    <li> The new options are added to configure:
+	 <ul>
+	   <li> -enable-tk40-sam
+	   <li> -enable-tk41-sam
+	   <li> -enable-tk42-sam
+	   <li> -enable-tk41-shared
+	   <li> -enable-tk42-shared
+	 </ul>	 
+  </ul>
+
+
+<h4>11/1/96</h4>
+
+  <b>New feature:</b> XPM code has been rewritten. The code is now cleanly
+  separated into three modules: generic, windows specific and Unix specific.
+  <p>
+
+  
+<h4>11/17/96</h4>
+
+  <b>New feature:</b> Tix classes can be defined before their
+  superclasses are defined. However, a class <b>cannot</b> be
+  instantiated before all of its superclasses are defined. This
+  feature makes it possible to load the Tix scripts into the SAM in
+  any order, without having to worry about loading the superclasses
+  before the subclasses. <p>
+  
+  <b>New feature:</b> Tix is initialized by calling the command
+  <b>__tixInit</b>, not by sourcing <b>Init.tcl</b>. <p>
+  
+<h4>11/29/96</h4>
+
+  <b>Bug Fixed:</b> tixTmpLine now correctly works on multiple X
+  displays. <p>
+
+<h4>11/30/96</h4>
+
+  <b>Feature Change</b>: DisplayStyle now uses a hash table to store
+  the items associated with it (previously a link list was used). This
+  speeds up the delete operations when a lot (1000 or more) of items
+  are associated with the same style. <b>Possible Incompatibility:</b>
+  widgets that use DItems must be recompiled. <p>
+
+  <b>Bug Fixed:</b> Tix no longer tempers with the way Tk handles
+  errors, unless the environment variable TIX_DEBUG_INTERACTIVE is
+  set. If this variable is set, all error messages will be printed to
+  the standard output. This may be convenient for debugging
+  purposes. Use this feature with discretion, and during program
+  development only. <p>
+
+<h4>12/2/96</h4>
+
+  <b>Bug Fixed:</b>Dotted anchor lines (HList, TList, Grid) and
+  rubber-band lines (PanedWindow, ResizeHandle) are implemented on Windows.<p>
+
+  <b>New feature:</b> Tcl 7.6 support is complete for the Windows
+  platform. makefile.vc and makefile.bc have been modified such that
+  the Tcl version can be chosen at compile time by, e.g., "<b>make
+  TCL_VER=7.5 -f makefile.bc</b>". <p>
+  
+<h4>12/2/96</h4>
+  
+  <b>Bug Fixed:</b> Display items are correctly clipped. E.g., if a
+  text item is wider than the width of a column in an HList, the item
+  will be clipped.<p>
+
+<h4>12/20/96</h4>
+
+  <b>New feature:</b> New sample file demos/samples/EditGrid.tcl that
+  demonstrates the use of an editable grid widget. <p>
+
+<h4>12/21/96</h4>
+  
+  <b>Bug Fixed:</b> Tix works with multiple interpreters under tk4.1
+  and 4.2 (see test/general/minterp.tcl). However, minterp.tcl still
+  core dumps under Itcl 2.1. It is not clear to me whether this is a
+  problem of Tix or Itcl. <p>
+
+  <b>Bug Fixed:</b> Now when an interpreter is deleted, all Tix class
+  informations associated with this interpreter are freed. (No memory
+  leak is recorded by purify when running Tix against the complete
+  test suite.) <p>
+<!Serial 851749997>
+<hr><i>Last modified Fri Jan 17 22:52:59 EST 1997 </i> --- 
+<i>Serial 853731294</i>

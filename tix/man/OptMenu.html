@@ -1,0 +1,232 @@
+
+
+
+<TITLE>tixOptionMenu - Create and manipulate tixOptionMenu widgets</TITLE>
+<Center><H2>tixOptionMenu - Create and manipulate tixOptionMenu widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixOptionMenu<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixOptionMenu</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and
+subwidgets of its super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The OptionMenu widget supports all the standard Tix widget
+options. See the <B>Tix-Options(n)</B></I> manual entry for details on the
+standard Tix widget options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to be called when the <B>-value</B></I> option of
+the OptionMenu is changed. The command will be called with one
+arguments -- the new value of the OptionMenu widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the OptionMenu widget
+changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>dynamicGeometry</B></I>
+Class:		<B>DynamicGeometry</B></I>
+Switch:		<B>-dynamicgeometry</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether the size of the <B>menubutton</B></I>
+subwidget should change dynamically to match the width of the
+currently selected menu entry. If set to false (the default), the the
+size of the menubutton subwidget will be wide enough to display every
+menu entry fully and does not change when the user selects different
+entries.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this OptionMenu widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the whether the OptionMenu widget is normal or disabled. Only
+the values "normal" and "disabled" are recognized.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the value of the OptionMenu. The value of the OptionMenu
+widget is the name of the item currently displayed by its
+<B>menubutton</B></I> subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>variable</B></I>
+Class:		<B>Variable</B></I>
+Switch:		<B>-variable</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the global variable in which the value of the OptionMenu
+should be stored. The value of the OptionMenu will be automatically
+updated when this variable is changed.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>menu</B></I>
+Class:		<B>Menu</B></I>
+</code></code></code></pre>
+<UL>
+The menu subwidget, which is popped up when the user press the
+<B>menubutton</B></I> subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>menubutton</B></I>
+Class:		<B>Menubutton</B></I>
+</code></code></code></pre>
+<UL>
+The menubutton subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixOptionMenu</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a OptionMenu
+widget. Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+OptionMenu such as its cursor and relief.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixOptionMenu</B></I> command creates a new Tcl command whose
+window. This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command. The following
+commands are possible for OptionMenu widgets:
+<DL>
+<DT> <I>pathName <B>add</B></I> <I>type name </I></B>?<I>option value ...</I></B>?
+</I></B>
+<DD> Adds a new item into the OptionMenu widget. <I>type</I></B> must be either
+<B>command</B></I> or <B>separator</B></I>. The <I>options</I></B> may be any of the
+valid options for the <B>command</B></I> or <B>separator</B></I> menu entry
+types for the TK <B>menu</B></I> widget class, except <B>-command</B></I>.
+</DL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixOptionMenu</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string. <I>Option</I></B> may have
+any of the values accepted by the <B>tixOptionMenu</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>delete</B></I> <I>name</I></B>
+</I></B>
+<DD> Deletes the menu entry identified by <I>name</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>disable</B></I> <I>name</I></B>
+</I></B>
+<DD> Disables the menu entry identified by <I>name</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>enable</B></I> <I>name</I></B>
+</I></B>
+<DD> Enables the menu entry identified by <I>name</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>entrycget</B></I> <I>name option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B> in the menu entry identified by <I>name</I></B>. <I>Option</I></B>
+may have any of the values accepted by the <B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>entryconfigure<I> name</I></B> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the menu entry identified
+by <I>name</I></B>. If no <I>option</I></B> is specified, returns a list
+describing all of the available options for the menu entry (see
+<B>Tk_ConfigureInfo</B></I> for information on the format of this list).
+If <I>option</I></B> is specified with no <I>value</I></B>, then the command
+returns a list describing the one named option (this list will be
+identical to the corresponding sublist of the value returned if no
+<I>option</I></B> is specified). If one or more <I>option-value</I></B> pairs
+are specified, then the command modifies the given option(s) to
+have the given value(s); in this case the command returns an empty
+string. <I>Option</I></B> may have any of the values accepted by the
+<B>add</B></I> widget command.
+</DL>
+<DL>
+<DT> <I>pathName <B>entries</B></I>
+</I></B>
+<DD> Returns the names of all the entries currently in the OptionMenu
+widget.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I>name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:34 EST 1997 </i> --- 
+<i>Serial 853731303</i>

@@ -1,0 +1,656 @@
+# This file is CYGNUS LOCAL.  It is a copy of makefile.vc modified for
+# GNU make.  Only the support for tcl 7.6 is finished.
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+VPATH = @srcdir@:@srcdir@/../generic
+srcdir = @srcdir@
+libdir=@libdir@
+bindir=@bindir@
+includedir=@includedir@
+mandir=@mandir@
+datadir=@datadir@
+host_alias=@host_alias@
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+EXTRA_CFLAGS = @EXTRA_CFLAGS@
+TIX_CFLAGS = $(CFLAGS) $(EXTRA_CFLAGS)
+NM = @NM@
+AS = @AS@
+DLLTOOL = @DLLTOOL@
+WINDRES = @WINDRES@
+OBJEXT = @OBJEXT@
+CYGWIN = @CYGWIN@
+GCC = @GCC@
+TCL_DBGX = @TCL_DBGX@
+
+# makefile.vc --
+#
+#	Visual C++ 4.x makefile for Tix.
+#
+# Copyright (c) 1996, Expert Interface Technologies
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+# 
+
+#----------------------------------------------------------------------
+# Environment setting
+#
+# You can set the following variables in your DOS environment. This
+# way you don't need to change this file. E.g.:
+#
+#	set TCL_VER=7.5
+#	nmake -f makefile.vc
+#
+# You can also set these variables in the command line to nmake. E.g.:
+#
+#	nmake TCL_VER=7.5 -f makefile.vc
+#
+# TOOLS32     = location of VC++ 32-bit development tools.
+# TIX_DEBUG   = Compile Tix with debug information.
+# TCL_VER     = version of Tcl to compile with. Should be either 7.5
+#               or 7.6
+#----------------------------------------------------------------------
+
+#!IFNDEF TOOLS32
+#TOOLS32	= C:\msdev
+#!ENDIF
+
+#!IFNDEF TIX_DEBUG
+#NODEBUG=1
+#!ENDIF
+
+#!IFNDEF TCL_VER
+#TCL_VER = 7.6
+#!ENDIF
+
+TCL_VER = @TCL_VER@
+
+ifeq ($(TCL_VER),7.5)
+
+TMPDIR	= tcl7.5
+TCLDIR	= ../../tcl7.5
+TKDIR	= ../../tk4.1
+TCLLIB  = tcl75.lib
+TCLDLL  = tcl75.dll
+TKLIB   = tk41.lib
+TKDLL   = tk41.dll
+TIXLIB  = $(TMPDIR)/tix4175.lib
+TIXLIBNAME = tix4175.lib
+TIXDLL  = $(TMPDIR)/tix4175.dll
+TIXDLLNAME = tix4175.dll
+TIXWISH = $(TMPDIR)/tix4175.exe
+TIXWISHNAME = tix4175.exe
+
+CONSOLE_OBJ = tkConsole41.$(OBJEXT)
+
+endif
+
+ifeq ($(TCL_VER),7.6)
+
+TMPDIR	= tcl7.6
+TCLDIR	= ../../tcl
+TCLSRCDIR = $(srcdir)/../../tcl
+TKDIR	= ../../tk
+TKSRCDIR = $(srcdir)/../../tk
+TCLLIB  = libtcl76.a
+TCLDLL  = cygtcl76.dll
+TKLIB   = libtk42.a
+TKDLL   = cygtk42.dll
+TIXLIB  = $(TMPDIR)/libtix4176.a
+TIXLIBNAME = libtix4176.a
+TIXDLL  = $(TMPDIR)/tix4176.dll
+TIXDLLNAME = tix4176.dll
+TIXWISH = $(TMPDIR)/tix4176.exe
+TIXWISHNAME = tix4176.exe
+
+CONSOLE_OBJ = tkConsole42.$(OBJEXT)
+
+endif
+
+ifeq ($(TCL_VER),8.0a1)
+
+TMPDIR	= tcl8.0
+TCLDIR	= ../../tcl8.0a1
+TKDIR	= ../../tk8.0a1
+TCLLIB  = tcl80.lib
+TCLDLL  = tcl80.dll
+TKLIB   = tk80.lib
+TKDLL   = tk80.dll
+TIXLIB  = $(TMPDIR)/tix4180.lib
+TIXLIBNAME = tix4180.lib
+TIXDLL  = $(TMPDIR)/tix4180.dll
+TIXDLLNAME = tix4180.dll
+TIXWISH = $(TMPDIR)/tix4180.exe
+TIXWISHNAME = tix4180.exe
+
+CONSOLE_OBJ = tkConsole80a1.$(OBJEXT)
+
+endif
+
+ifeq ($(TCL_VER),8.0b1)
+
+TMPDIR	= tcl8.0
+TCLDIR	= ../../tcl8.0b1
+TKDIR	= ../../tk8.0b1
+TCLLIB  = tcl80.lib
+TCLDLL  = tcl80.dll
+TKLIB   = tk80.lib
+TKDLL   = tk80.dll
+TIXLIB  = $(TMPDIR)/tix4180.lib
+TIXLIBNAME = tix4180.lib
+TIXDLL  = $(TMPDIR)/tix4180.dll
+TIXDLLNAME = tix4180.dll
+TIXWISH = $(TMPDIR)/tix4180.exe
+TIXWISHNAME = tix4180.exe
+
+CONSOLE_OBJ = tkConsole80b1.$(OBJEXT)
+
+endif
+
+ifeq ($(TCL_VER),8.0)
+
+TMPDIR	= tcl8.0
+TCLDIR	= ../../tcl
+TCLSRCDIR = $(srcdir)/../../tcl
+TKDIR	= ../../tk
+TKSRCDIR = $(srcdir)/../../tk
+TCLLIB  = libtcl80.a
+ifeq ($(OBJEXT),obj)
+TCLDLL	= sntcl80.dll
+else
+TCLDLL  = cygtcl80.dll
+endif
+TKLIB   = libtk80.a
+ifeq ($(OBJEXT),obj)
+TKDLL	= sntk80.dll
+else
+TKDLL   = cygtk80.dll
+endif
+TIXRAWLIBNAME = $(TMPDIR)/tix4180.lib
+TIXLIB  = $(TMPDIR)/libtix4180.a
+TIXLIBNAME = libtix4180.a
+TIXDLL  = $(TMPDIR)/tix4180.dll
+TIXDLLNAME = tix4180.dll
+TIXWISH = $(TMPDIR)/tix4180.exe
+TIXWISHNAME = tix4180.exe
+
+CONSOLE_OBJ = tkConsole80b1.$(OBJEXT)
+
+endif
+
+ifeq ($(TCL_VER),8.1)
+
+TMPDIR	= tcl8.1
+TCLDIR	= ../../tcl8.1
+TCLSRCDIR = $(srcdir)/../../tcl8.1
+TKDIR	= ../../tk8.1
+TKSRCDIR = $(srcdir)/../../tk8.1
+TCLLIB  = libtcl81.a
+ifeq ($(OBJEXT),obj)
+TCLDLL	= sntcl81.dll
+else
+TCLDLL  = cygtcl81.dll
+endif
+TKLIB   = libtk81.a
+ifeq ($(OBJEXT),obj)
+TKDLL	= sntk81.dll
+else
+TKDLL   = cygtk81.dll
+endif
+TIXRAWLIBNAME = $(TMPDIR)/tix4181.lib
+TIXLIB  = $(TMPDIR)/libtix4181.a
+TIXLIBNAME = libtix4181.a
+TIXDLL  = $(TMPDIR)/tix4181.dll
+TIXDLLNAME = tix4181.dll
+TIXWISH = $(TMPDIR)/tix4181.exe
+TIXWISHNAME = tix4181.exe
+
+CONSOLE_OBJ = tkConsole81.$(OBJEXT)
+
+endif
+
+
+ifeq ($(TCL_VER),8.3)
+
+TMPDIR	= tcl8.3
+TCLDIR	= ../../tcl
+TCLSRCDIR = $(srcdir)/../../tcl
+TKDIR	= ../../tk
+TKSRCDIR = $(srcdir)/../../tk
+
+ifeq ($(CYGWIN),yes)
+TCLLIB  = libcygtcl83.a
+TKLIB   = libcygtk83.a
+TIXLIB  = $(TMPDIR)/libtix4183.a
+TIXLIBNAME = libtix4183.a
+TIXDLL  = $(TMPDIR)/cygtix4183.dll
+TIXDLLNAME = cygtix4183.dll
+else
+ifeq ($(GCC),yes)
+TCLLIB  = librhtcl83$(TCL_DBGX).a
+TKLIB   = librhtk83$(TCL_DBGX).a
+TIXLIB  = $(TMPDIR)/libtix4183.a
+TIXLIBNAME = libtix4183.a
+TIXDLL  = $(TMPDIR)/tix4183.dll
+TIXDLLNAME = tix4183.dll
+else
+TCLLIB  = rhtcl83$(TCL_DBGX).lib
+TKLIB   = rhtk83$(TCL_DBGX).lib
+TIXRAWLIBNAME = $(TMPDIR)/tix4183.lib
+TIXLIB  = $(TMPDIR)/libtix4183.a
+TIXLIBNAME = libtix4183.a
+TIXDLL  = $(TMPDIR)/tix4183.dll
+TIXDLLNAME = tix4183.dll
+endif
+endif
+
+TIXWISH = $(TMPDIR)/tix4183.exe
+TIXWISHNAME = tix4183.exe
+
+CONSOLE_OBJ = tkConsole81.$(OBJEXT)
+
+endif
+
+
+ifeq ($(TCL_VER),2.2i)
+
+TMPDIR	= itcl2.2
+ITCL_DIR = ../../itcl2.2
+TCLDIR	= $(ITCL_DIR)/tcl7.6
+TKDIR	= $(ITCL_DIR)/tk4.2
+TCLLIB  = tcl76i.lib
+TCLDLL  = tcl76i.dll
+TKLIB   = tk42i.lib
+TKDLL   = tk42i.dll
+TIXLIB  = $(TMPDIR)/tix41761.lib
+TIXLIBNAME = tix41761.lib
+TIXDLL  = $(TMPDIR)/tix41761.dll
+TIXDLLNAME = tix41761.dll
+TIXWISH = $(TMPDIR)/tix41761.exe
+TIXWISHNAME = tix41761.exe
+
+CONSOLE_OBJ = tkConsole42.$(OBJEXT)
+
+ITCL_LIBS   = $(ITCL_DIR)\itcl\win\itcl22.lib $(ITCL_DIR)\itk\win\itk22.lib 
+ITCL_CFLAGS = -DITCL_2 -I$(ITCL_DIR)\itcl\generic -I$(ITCL_DIR)\itk\generic
+
+endif
+
+#!IFNDEF TCLDIR
+#!ERROR "Unsupported Tcl version $(TCL_VER)"
+#!ENDIF
+
+ifeq ($(OBJEXT),obj)
+TMPDIR=.
+endif
+
+# Project directories
+#
+# ROOT = top of source tree
+# TMPDIR = location where .o files should be stored during build
+# TCLDIR = location of top of Tcl source heirarchy
+#
+
+ROOT	= ..
+
+# uncomment the following two lines to compile with TCL_MEM_DEBUG
+#DEBUGDEFINES	=-DTCL_MEM_DEBUG
+
+TCLLIBDIR       = $(TCLDIR)/win
+TKLIBDIR	= $(TKDIR)/win
+WINDIR		= $(ROOT)/win
+GENERICDIR	= $(ROOT)/generic
+XLIBDIR		= $(ROOT)/xlib
+
+#----------------------------------------------------------------------
+# You shouldn't normally modify anything below this line
+#----------------------------------------------------------------------
+
+X_TK_INCLUDES = -I$(srcdir) -I$(srcdir)/../generic \
+	-I$(TKSRCDIR)/generic -I$(TKSRCDIR)/win -I$(TKSRCDIR)/xlib \
+	-I$(TCLSRCDIR)/generic
+
+TK_INCLUDES = -D_Windows $(X_TK_INCLUDES)
+
+TK_DEFINES = \
+	-nologo $(DEBUGDEFINES)
+
+WISHOBJS = \
+	$(TMPDIR)/tixWinMain.$(OBJEXT) \
+	$(TMPDIR)/$(CONSOLE_OBJ) \
+	$(TMPDIR)/tixwishres.$(OBJEXT)
+
+TIXOBJS = \
+	$(TMPDIR)/tixClass.$(OBJEXT)    \
+	$(TMPDIR)/tixCmds.$(OBJEXT)     \
+	$(TMPDIR)/tixCompat.$(OBJEXT)   \
+	$(TMPDIR)/tixDiImg.$(OBJEXT)    \
+	$(TMPDIR)/tixDiITxt.$(OBJEXT)   \
+	$(TMPDIR)/tixDiStyle.$(OBJEXT)  \
+	$(TMPDIR)/tixDItem.$(OBJEXT)    \
+	$(TMPDIR)/tixDiText.$(OBJEXT)   \
+	$(TMPDIR)/tixDiWin.$(OBJEXT)    \
+	$(TMPDIR)/tixError.$(OBJEXT)    \
+	$(TMPDIR)/tixForm.$(OBJEXT)     \
+	$(TMPDIR)/tixFormMisc.$(OBJEXT) \
+	$(TMPDIR)/tixGeometry.$(OBJEXT) \
+	$(TMPDIR)/tixHLCol.$(OBJEXT)    \
+	$(TMPDIR)/tixHLHdr.$(OBJEXT)    \
+	$(TMPDIR)/tixHLInd.$(OBJEXT)    \
+	$(TMPDIR)/tixImgCmp.$(OBJEXT)   \
+	$(TMPDIR)/tixHList.$(OBJEXT)    \
+	$(TMPDIR)/tixList.$(OBJEXT)     \
+	$(TMPDIR)/tixMethod.$(OBJEXT)   \
+	$(TMPDIR)/tixOption.$(OBJEXT)   \
+	$(TMPDIR)/tixSmpLs.$(OBJEXT)    \
+	$(TMPDIR)/tixWidget.$(OBJEXT)   \
+	$(TMPDIR)/tixInit.$(OBJEXT)     \
+	$(TMPDIR)/tixItcl.$(OBJEXT)     \
+	$(TMPDIR)/tixUtils.$(OBJEXT)    \
+	$(TMPDIR)/tixImgXpm.$(OBJEXT)   \
+	$(TMPDIR)/tixNBFrame.$(OBJEXT)  \
+	$(TMPDIR)/tixTList.$(OBJEXT)    \
+	$(TMPDIR)/tixGrid.$(OBJEXT)     \
+	$(TMPDIR)/tixGrData.$(OBJEXT)   \
+	$(TMPDIR)/tixGrRC.$(OBJEXT)     \
+	$(TMPDIR)/tixGrFmt.$(OBJEXT)    \
+	$(TMPDIR)/tixGrSel.$(OBJEXT)    \
+	$(TMPDIR)/tixGrUtl.$(OBJEXT)    \
+	$(TMPDIR)/tixScroll.$(OBJEXT)   \
+	$(TMPDIR)/tixWCmpt.$(OBJEXT)    \
+	$(TMPDIR)/tixWinDraw.$(OBJEXT)  \
+	$(TMPDIR)/tixWinXpm.$(OBJEXT)   \
+	$(TMPDIR)/tixWinWm.$(OBJEXT)
+
+CP = copy
+
+#!include    <ntwin32.mak>
+
+all:    $(TIXDLL) $(TIXWISH)
+
+# USE THESE IF YOU DO NOT WANT TO LINK TO ON MSVCRT.DLL
+#XGUILIBS = $(guilibs)
+#XCVARS   = $(cvars)
+
+XGUILIBS = $(guilibsdll)
+XCVARS   = $(cvarsdll)
+
+# (ToDo) $(TIXDLL) doesn't have resources to define its icon, etc.
+#
+
+ifeq ($(GCC),yes)
+
+$(TIXDLL): $(TIXOBJS)
+	$(CC) -shared -s -o $(TIXDLLNAME) $(TIXOBJS) \
+	$(TKLIBDIR)/$(TKLIB) $(TCLLIBDIR)/$(TCLLIB) -lgdi32 \
+	-mwindows -e _DllMain@12 -Wl,--image-base,0x66600000 \
+	-Wl,--out-implib,$(TIXLIB)
+	cp $(TIXDLLNAME) $(TIXDLL)
+
+$(TIXLIB): $(TIXDLL)
+
+$(TIXWISH): $(WISHOBJS) $(TIXLIB)
+	$(CC) -mwindows $(WISHOBJS) $(TIXLIB) \
+		$(TKLIBDIR)/$(TKLIB) $(TCLLIBDIR)/$(TCLLIB) \
+		-o $(TIXWISH)
+else
+
+$(TIXDLL): $(TIXOBJS)
+	link -debug -dll -out:$(TIXDLL) $(TKLIBDIR)/$(TKLIB) \
+	$(TCLLIBDIR)/$(TCLLIB) $(TIXOBJS) \
+	gdi32.lib user32.lib
+	mv $(TIXRAWLIBNAME) $(TIXLIB)
+
+$(TIXLIB): $(TIXDLL)
+
+$(TIXWISH): $(WISHOBJS) $(TIXLIB)
+	link -DEBUG $(WISHOBJS) $(TIXLIB) \
+		$(TKLIBDIR)/$(TKLIB) $(TCLLIBDIR)/$(TCLLIB) \
+		-OUT:$(TIXWISH) user32.lib
+endif
+
+
+#
+# Special case object file targets
+#
+
+$(TMPDIR)/testMain.$(OBJEXT): $(ROOT)/win/tixWinMain.c
+	$(CC) -c $(TK_INCLUDES) -DSTATIC_BUILD -DTK_TEST $(TIX_CFLAGS) -o $@ $?
+
+$(TMPDIR)/tixWinMain.$(OBJEXT): $(ROOT)/win/tixWinMain.c
+	$(CC) -c $(TK_INCLUDES) -DSTATIC_BUILD $(TIX_CFLAGS) -o $@ $?
+
+ifeq ($(GCC),yes)
+
+$(TMPDIR)/tixwishres.$(OBJEXT): $(ROOT)/win/rc/tixwish.rc
+	$(WINDRES) --include $(srcdir)/rc --include $(srcdir)/../generic --define VS_VERSION_INFO=1 $(srcdir)/rc/tixwish.rc $(TMPDIR)/tixwishres.$(OBJEXT)
+
+else
+
+$(TMPDIR)/tixwishres.$(OBJEXT): $(ROOT)/win/rc/tixwish.rc
+	rc -i$(srcdir)/rc -i$(srcdir)/../generic -dVS_VERSION_INFO=1 -fo$(TMPDIR)/tixwishres.$(OBJEXT) $(srcdir)/rc/tixwish.rc 
+
+endif
+#
+# Implicit rules
+#
+
+.c.$(OBJEXT):
+	$(CC) -c $(TIX_CFLAGS) -DDLL_BUILD -DBUILD_tix $(TK_INCLUDES) -c -o $@ $<
+
+$(TMPDIR)/%.$(OBJEXT): %.c
+	$(CC) -c $(TIX_CFLAGS) -DDLL_BUILD -DBUILD_tix $(TK_INCLUDES) -c -o $@ $<
+
+clean:
+	rm -f $(TMPDIR)/*.$(OBJEXT) $(TMPDIR)/*.exp 
+	rm -f $(TIXLIB) $(TIXDLL) $(TIXDLLNAME) $(TIXWISH)
+
+Makefile: $(srcdir)/Makefile.in config.status
+	$(SHELL) config.status
+
+config.status: $(srcdir)/configure
+	./config.status --recheck
+
+#----------------------------------------------------------------------
+#
+#			Installation
+#
+#----------------------------------------------------------------------
+
+TIX_VERSION = @TIX_VERSION@
+
+# Directory in which to install the library of Tix scripts and demos
+# (note: you can set the TIX_LIBRARY environment variable at run-time to
+# override the compiled-in location):
+TIX_LIBRARY =	$(datadir)/tix$(TIX_VERSION)
+
+# CYGNUS LOCAL: dj - change to autoconf'd directories
+
+# Directory in which to install the archive libtix.a:
+LIB_DIR =	$(libdir)
+
+# Directory in which to install the program wish:
+BIN_DIR =	$(bindir)
+
+# Directory in which to install the include file tix.h:
+INCLUDE_DIR =	$(includedir)
+
+# Top-level directory for manual entries:
+MAN_DIR =	$(mandir)
+
+# Directory in which to install manual entry for wish:
+MAN1_DIR =	$(MAN_DIR)/man1
+
+# Directory in which to install manual entries for Tix's C library
+# procedures:
+MAN3_DIR =	$(MAN_DIR)/man3
+
+# Directory in which to install manual entries for the built-in
+# Tcl commands implemented by Tix:
+MANN_DIR =	$(MAN_DIR)/mann
+
+INSTALL		=	@SRC_DIR@/install.sh -c
+INSTALL_PROGRAM =	@INSTALL_PROGRAM@
+INSTALL_DATA	=	@INSTALL_DATA@
+SRC_DIR		=	@SRC_DIR@
+INC_DIR		=	@SRC_DIR@/generic
+UNIX_DIR	=	@SRC_DIR@/unix
+LIBRARY_DIR	=	@SRC_DIR@/library
+DEMOS_DIR	=	@SRC_DIR@/demos
+DEMO_PROGS	=	widget
+TOOLS_DIR	=	@SRC_DIR@/tools
+MANUAL_DIR	=	@SRC_DIR@/man
+
+install:: install-basic install-binaries
+	@echo done
+
+install-binaries::
+	@for i in $(LIB_DIR) $(BIN_DIR) ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@echo "Installing $(TIXLIB) as $(LIB_DIR)/$(TIXLIBNAME)"
+	@$(INSTALL_DATA) $(TIXLIB) $(LIB_DIR)/$(TIXLIBNAME)
+	@echo "Installing $(TIXWISH) as $(BIN_DIR)/$(TIXWISHNAME)"
+	@$(INSTALL_PROGRAM) $(TIXWISH) $(BIN_DIR)/$(TIXWISHNAME)
+	@echo "Installing $(TIXDLL) as $(BIN_DIR)/$(TIXDLLNAME)"
+	@$(INSTALL_PROGRAM) $(TIXDLL) $(BIN_DIR)/$(TIXDLLNAME)
+
+#
+# Basic installtion
+#
+install-basic:: install-libraries install-headers install-tools 
+
+install-tools:
+	@for i in $(BIN_DIR) ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@echo "installing the tixindex program for building tclIndex for Tix scripts"
+	@cd $(TOOLS_DIR); $(INSTALL_PROGRAM) tixindex $(BIN_DIR)/tixindex
+
+install-headers:
+	@for i in $(INCLUDE_DIR); \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@for i in $(INC_DIR)/tix.h; \
+	    do \
+	    echo "Installing $$i"; \
+	    $(INSTALL_DATA) $$i $(INCLUDE_DIR); \
+	    done;
+
+install-libraries:
+	@for i in $(BIN_DIR) $(prefix)/lib $(TIX_LIBRARY) $(TIX_LIBRARY)/bitmaps $(TIX_LIBRARY)/pref; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@echo "Installing $(TIXDLL) as $(BIN_DIR)/$(TIXDLLNAME)"
+	@$(INSTALL_PROGRAM) $(TIXDLL) $(BIN_DIR)/$(TIXDLLNAME)
+	@for i in $(LIBRARY_DIR)/*.tcl $(LIBRARY_DIR)/tclIndex; \
+	    do \
+	    echo "Installing $$i"; \
+	    $(INSTALL_DATA) $$i $(TIX_LIBRARY); \
+	    done;
+	@for i in $(LIBRARY_DIR)/bitmaps/*; \
+	    do \
+	    if [ -f $$i ] ; then \
+		echo "Installing $$i"; \
+		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/bitmaps; \
+		fi; \
+	    done;
+	@for i in $(LIBRARY_DIR)/pref/*; \
+	    do \
+	    if [ -f $$i ] ; then \
+		echo "Installing $$i"; \
+		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/pref; \
+		fi; \
+	    done;
+	@echo "Installing pkgIndex.tcl"
+	@$(INSTALL_DATA) $(srcdir)/pkgIndex.tcl $(TIX_LIBRARY)
+
+install-demos:
+	@for i in $(prefix)/lib $(TIX_LIBRARY) $(TIX_LIBRARY)/demos \
+		$(TIX_LIBRARY)/demos/bitmaps $(TIX_LIBRARY)/demos/samples ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@cd $(DEMOS_DIR); for i in *; \
+	    do \
+	    if [ -f $$i ] ; then \
+		echo "Installing demos/$$i"; \
+		sed -e '1 s|/usr/local/bin/tixwish|$(BIN_DIR)/tixwish|' \
+			$$i > $(TIX_LIBRARY)/demos/$$i; \
+	    fi; \
+	    done;
+	@for i in $(DEMO_PROGS); \
+	    do \
+	    chmod 755 $(TIX_LIBRARY)/demos/$$i; \
+	    done;
+	@for i in $(DEMOS_DIR)/bitmaps/*; \
+	    do \
+	    if [ -f $$i ] ; then \
+		echo "Installing $$i"; \
+		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/demos/bitmaps; \
+		fi; \
+	    done;
+	@for i in $(DEMOS_DIR)/samples/*; \
+	    do \
+	    if [ -f $$i ] ; then \
+		echo "Installing $$i"; \
+		$(INSTALL_DATA) $$i $(TIX_LIBRARY)/demos/samples; \
+		fi; \
+	    done;
+
+install-man:
+	@for i in $(MAN_DIR) $(MAN1_DIR) $(MAN3_DIR) $(MANN_DIR) ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@cd $(MANUAL_DIR); for i in *.n *.1; \
+	    do \
+	    echo "Installing doc/$$i"; \
+	    rm -f $(MANN_DIR)/$$i; \
+	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
+		    $$i > $(MANN_DIR)/$$i; \
+	    chmod 444 $(MANN_DIR)/$$i; \
+	    done;
+
+install-info info installcheck:
+
+install-minimal: install-libraries
+	@echo "Installing $(TIXDLL) as $(BIN_DIR)/$(TIXDLLNAME)"
+	@$(INSTALL_PROGRAM) $(TIXDLL) $(BIN_DIR)/$(TIXDLLNAME)

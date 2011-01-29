@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Retriever</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="inclbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="grep.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996755"></A><A NAME="40079"></A><BR>
+<A NAME="marker-996751"></A>Retriever<DIV>
+<IMG SRC="retrvr-1.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-996756"></A><SPAN CLASS="Bold">
+Retriever</SPAN> allows you to <A NAME="marker-1002864"></A>search for text patterns 
+in the names of <A NAME="marker-997077"></A>symbols in the database. To search for 
+text patterns in source files, use the <SPAN CLASS="Bold">
+Grep</SPAN>
+ tool in Source-Navigator. For more information about the <SPAN CLASS="Bold">
+Grep</SPAN>
+ tool, see <A HREF="grep.html#21607" CLASS="XRef">Grep</A>. </P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1002693"></A><A NAME="16035"></A>Using the Retriever</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1046075"></A>To find a symbol, enter its search pattern surrounded 
+by asterisks (for example <KBD CLASS="Code">*agent*</KBD>) in the <SPAN CLASS="Bold">
+Pattern</SPAN>
+<A NAME="marker-1002696"></A> text box and click <SPAN CLASS="Bold">
+Search</SPAN>. The <KBD CLASS="CodeOutput">
+*</KBD>, <KBD CLASS="CodeOutput">
+?</KBD>, <KBD CLASS="CodeOutput">
+[</KBD>, and <KBD CLASS="CodeOutput">
+]</KBD>
+ wildcard characters are supported. </P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1002683"></A>Retriever Window </P>
+<DIV>
+<IMG SRC="retrvr-2.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1122718"></A>The <SPAN CLASS="Bold">
+Retriever</SPAN>
+ displays all the symbols it found containing the pattern being searched.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1122727"></A>Retriever <A NAME="marker-1122726"></A>Window Showing 
+Search Results</P>
+<DIV>
+<IMG SRC="retrvr-3.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1002820"></A>Double-clicking an item in the list opens 
+the <SPAN CLASS="Bold">
+Editor</SPAN>
+ showing the symbol in context in the source code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1002821"></A>For more information on reusing windows for multiple 
+searches, see <A HREF="usingsn.html#30929" CLASS="XRef">Reusing Windows</A>.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1129090"></A><A NAME="filter"></A>Retriever Filter</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1129171"></A>Click the <SPAN CLASS="Bold">
+Filter</SPAN>
+ button to bring up the <SPAN CLASS="Bold">
+Retriever</SPAN>
+ filter. The symbols displayed by <SPAN CLASS="Bold">
+Retriever</SPAN>
+ are included or excluded based upon these settings. </P>
+<DIV>
+<IMG SRC="retrvr-4.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1154044"></A>All<BR>
+<P CLASS="BodyHang1">
+Selects all items except <SPAN CLASS="Bold">
+Unions</SPAN>
+ and <SPAN CLASS="Bold">
+Files</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1154045"></A>None<BR>
+<P CLASS="BodyHang1">
+Clears all selections.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1154050"></A>Executive Search<BR>
+<P CLASS="BodyHang1">
+If the <SPAN CLASS="Bold">
+Exclusive Search </SPAN>
+box is selected, you may choose one symbol type to search for; if it's deselected, 
+you may combine symbol types for more complex searches.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1129177"></A><A NAME="27059"></A>Retriever with the Cross-Reference 
+Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1129179"></A>If you're looking at a unique symbol in 
+the <SPAN CLASS="Bold">
+Editor</SPAN>
+ and you click the <SPAN CLASS="Bold">
+Xref</SPAN>
+ tab to see its cross-references, the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window appears.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1129871"></A>However, if you're looking at a symbol that is 
+not unique (there's more than one symbol with that name in the database), 
+the <SPAN CLASS="Bold">
+Retriever</SPAN>
+ displays a message dialog notifying you that it has found multiple matches 
+and requests that you choose the correct one to display.</P>
+<DIV>
+<IMG SRC="retrvr-5.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1129895"></A>If you don't want to see this warning in the future, 
+but want to go straight to the <SPAN CLASS="Bold">
+Retriever</SPAN>, click the check box in the dialog. This can also be changed in the <SPAN CLASS="Bold">
+Others</SPAN>
+ tab of the<SPAN CLASS="Bold">
+ Preferences</SPAN>
+ dialog (see <A HREF="customsn.html#25936" CLASS="XRef">Others tab</A>). </P>
+<DIV>
+<IMG SRC="retrvr-6.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1002759"></A>In the <SPAN CLASS="Bold">
+Xref Retriever</SPAN>
+ window, double-click on the symbol for which you want cross-reference information, 
+and the <SPAN CLASS="Bold">
+Cross-Reference Browser</SPAN>
+ window appears (see <A HREF="crossref.html#35957" CLASS="XRef">Cross-Reference 
+Browser</A> for more information).</P>
+<A NAME="pgfId-1122752"></A><HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="inclbrws.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="grep.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

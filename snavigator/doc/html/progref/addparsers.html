@@ -1,0 +1,1541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Adding Parsers</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="langspecs.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="dbaseAPI.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+</TD>
+</TR>
+</TABLE>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-998863"></A><BR>
+<A NAME="18979"></A>Adding Parsers<DIV>
+<IMG SRC="line.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1004742"></A>Each parser in Source-Navigator is capable of 
+understanding source files written in a specific programming language. In 
+the Source-Navigator suite, parsers are stand-alone executables which adhere 
+to a consistent command line interface. This interface allows Source-Navigator 
+to control the parser's behavior through command line switches that the parser 
+is expected to observe.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1214517"></A>The Source-Navigator <A NAME="marker-1214516"></A>Software 
+Development Kit (SDK) provides a C-based application programming 
+interface (<A NAME="marker-1214518"></A>API) which enables parsers to insert 
+information into a project database.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1237740"></A></P>
+<DIV>
+<IMG SRC="addparsers-2.gif">
+</DIV>
+<P CLASS="Body">
+<A NAME="pgfId-1113370"></A>All files listed 
+in <A HREF="addparsers.html#25436" CLASS="XRef">SDK-Related Files</A> can be found 
+in the <KBD CLASS="Code">
+.../share/sdk</KBD>
+ directory.  </P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-1127297"></A><A NAME="marker-1127296"></A><A NAME="25436"></A>SDK-Related 
+Files</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1127303"></A>Subdirectory</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1127305"></A>Files</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1127307"></A>Description</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127309"></A><KBD CLASS="Code">
+/include/</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127311"></A><KBD CLASS="Code">
+sn.h<BR>
+snptools.h</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127313"></A>Include files</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127315"></A><KBD CLASS="Code">
+/lib/</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127317"></A><KBD CLASS="Code">
+libdbutils.a<BR>
+libdb.a<BR>
+libsnptools.a<BR>
+libtcl8.1.a</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127319"></A>
+Source-Navigator library files</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127321"></A><KBD CLASS="Code">
+/parsers/examples/assembly</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127323"></A><KBD CLASS="Code">
+Makefile<BR>
+README<BR>
+a.c</BR>
+<A NAME="pgfId-1127324"></A>abrowser.l.in<BR>
+b.c<BR>
+build-macros<BR>
+linux-i486-elf.m4<BR>
+solaris-sparc.m4<BR>
+toolbox.m4</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127326"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127328"></A><KBD CLASS="Code">
+/parsers/examples/elf</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127330"></A><KBD CLASS="Code">
+Makefile<BR>
+README<BR>
+blobsql.elf<BR>
+ebrowser.l</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1127332"></A>Makefile for ebrowser.l<BR>
+The latest release information<BR>
+Example source<BR>
+Parser (<EM CLASS="Emphasis">lex</EM>)</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1005809"></A>Parsers may be implemented in any programming language. 
+Naturally, the task of writing a parser is significantly simpler when using compiler 
+generation tools such as GNU flex. All of the examples provided with Source-Navigator 
+are written using GNU flex.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004869"></A>A sample parser for the <A NAME="marker-1004868"></A>Elf 
+language (an embedded SQL-like language) is provided with the SDK. To experiment with 
+this parser, change to the <KBD CLASS="Code">
+.../share/sdk/parsers</KBD>
+ directory and type </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1004870"></A>make test </PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1004871"></A>This will compile the parser and then parse a number 
+of Elf source files, placing items of interest into a project database. </P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-998966"></A><A NAME="25359"></A>The Parser Toolbox Library</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1004938"></A>A library, implemented above the API, simplifies the 
+task of writing new parsers. This library, known as the <EM CLASS="Emphasis">
+parser toolbox</EM><A NAME="marker-1004939"></A>, allows programmers to 
+focus on the issues of parsing source files in their chosen language and 
+then storing the relevant information in the database.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1004940"></A>The toolbox provides a number of C functions that 
+can help you write your parser with less effort. These functions can be 
+grouped as follows:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998968"></A>functions to maintain line and column counts in 
+your source files. Whenever the parser encounters an interesting symbol in 
+the source program, it must know where in the source file the symbol occurred.
+<P CLASS="Body">
+<A NAME="pgfId-998988"></A>That is, the function <KBD CLASS="Code">
+sn_advance_line()</KBD>
+ will increment a line counter maintained internally by the toolbox library. 
+This function would be called along with other actions that the parser 
+might perform when it encounters a newline character in the source text.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998989"></A>a function to determine the name of the source 
+file currently being parsed.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998971"></A>miscellaneous text processing functions for counting 
+the number of lines and columns consumed by a given block of text and so on.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-998972"></A>an entry point, called <KBD CLASS="Code">
+sn_main</KBD>, which manages all of the details of interfacing with 
+Source-Navigator and parsing each source file. In most circumstances, 
+it is sufficient for the parser to call <KBD CLASS="Code">
+sn_main</KBD>
+ and allow this function to call back to your actual parsing function 
+when required.<P>
+<A NAME="pgfId-998973"></A><P CLASS="Body">This introduces a number of important concepts best 
+explained with an example:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1150836"></A>int sn_main(int argc, char *argv[], char *lang_string,
+    FILE **infile_ref, int(*parse)(), void(*reset)());
+char group[] = &quot;java&quot;;
+int main(int argc, char *argv[])
+{
+  return sn_main(argc, argv, group, &#038;yyin, yylex, reset);
+}</PRE>
+<P CLASS="Body"><A NAME="pgfId-1003496"></A>When calling <KBD CLASS="Code">
+sn_main</KBD>, it is necessary to pass:</P>
+<UL>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-999002"></A>the <KBD CLASS="Code">
+argc</KBD>
+ and <KBD CLASS="Code">
+argv</KBD>
+ variables as passed into your <KBD CLASS="Code">
+main()</KBD>
+ function. This allows the library to access the command line options 
+given by Source-Navigator.</LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-999006"></A>a pointer to a string identifying the language. 
+In the example above, the string is called <KBD CLASS="Code">
+group</KBD>.</LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-1005828"></A>a pointer to a <KBD CLASS="Code">
+FILE *</KBD>
+ stream variable. You must pass the address of this variable as the library 
+will manipulate the stream when opening new source files. If you are 
+using GNU flex/bison, then pass a pointer to the global variable <KBD CLASS="Code">
+yyin</KBD>.</LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-999238"></A>A pointer to a function which takes no arguments 
+and returns an <KBD CLASS="Code">
+int</KBD>. This is a pointer to your actual parsing function. If you are 
+using GNU flex/bison, then pass <KBD CLASS="Code">
+yylex</KBD>
+ or <KBD CLASS="Code">
+yyparse</KBD>.</LI>
+<LI CLASS="Bullet2"><P CLASS="Body">
+<A NAME="pgfId-999243"></A>A pointer to a function which takes no arguments 
+and returns <KBD CLASS="Code">
+void</KBD>. This function is expected to perform any actions prior to 
+processing the next source file. Typically this function might look like:<P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999248"></A>void reset()
+{
+  sn_reset_line(); /* reset line count */
+  sn_reset_column(); /* reset column count */
+}</PRE></LI></UL></UL>
+<P CLASS="Body">
+<A NAME="pgfId-999422"></A>A detailed description of the functions available 
+in the parser toolbox library can be found in <KBD CLASS="Code">
+.../share/sdk/include/snptools.h</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999425"></A>Unless the parser has to do something out of the ordinary, 
+it should be possible to create a new parser by following these steps:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-999427"></A><KBD CLASS="Code">
+#include snptools.h</KBD>
+ in your program (or within the verbatim section of your lex specification).</LI>
+<LI CLASS="NumberedNext">
+<A NAME="pgfId-999431"></A>Define a <KBD CLASS="Code">
+main</KBD>
+ function which calls <KBD CLASS="Code">
+sn_main</KBD>
+ with the appropriate arguments and returns the result of <KBD CLASS="Code">
+sn_main</KBD>
+ to the host environment.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-999434"></A>Utilize the parser toolbox routines to simplify your 
+work within the parser. For example, <KBD CLASS="Code">
+sn_message</KBD>
+ may be called to display messages in a dialog box that is shown to the user 
+during the parsing process.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-999438"></A>When your parser recognizes important language 
+constructs such as comments, function declarations, or function invocations, 
+call the appropriate <KBD CLASS="Code">
+sn_insert</KBD>
+ function to insert this information into the project database.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1000173"></A>Link your final program with the <KBD CLASS="Code">
+sntools</KBD>
+ library. A typical command line for linking a parser can be found in the Makefile 
+given in the <KBD CLASS="Code">
+.../share/sdk/parsers/examples/elf</KBD>
+ directory.</LI>
+</OL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1000174"></A>Project database calls</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1000175"></A>The toolbox library provides a number of 
+functions for inserting information into the database that the parser 
+will encounter in the source text. Each of these functions return an <KBD CLASS="Code">
+int</KBD>
+ with two possible return values:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1000178"></A>  0</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1000180"></A>success</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1000182"></A>-1</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1000184"></A>failure</P>
+</TD>
+</TR>
+</TABLE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1000165"></A><A NAME="marker-1113441"></A>sn_insert_symbol</H3>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999560"></A>int sn_insert_symbol(int id_type, char *classname, 
+  char *identifier, char *filename, int start_lineno, 
+  int startCol, int endLine, int endCol, unsigned long attrib,
+  char *returnType, char *argTypes, char *argNames, 
+  char *comment, int highStartLine, int highStartCol, 
+  int highEndLine, int highEndCol);</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1000923"></A><KBD CLASS="CodeOutput">
+sn_insert_symbol</KBD>
+ inserts a symbol into the project database.</P>
+<P CLASS="BodyHang2">
+<A NAME="pgfId-1107303"></A><KBD CLASS="CodeOutput">
+type</KBD>
+ determines the type of the symbol. Possible values are:</P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107167"></A><KBD CLASS="Code">
+   SN_TYPE_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107169"></A>type definitions (e.g. a C <KBD CLASS="Code">
+typedef</KBD>
+)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107171"></A><KBD CLASS="Code">
+   SN_CLASS_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107173"></A>class definition (particularly for object-oriented 
+languages)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107175"></A><KBD CLASS="Code">
+   SN_MBR_FUNC_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107177"></A>member functions</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107179"></A><KBD CLASS="Code">
+   SN_MBR_VAR_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107181"></A>member variables</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107183"></A><KBD CLASS="Code">
+   SN_ENUM_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107185"></A>enumerations</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107187"></A><KBD CLASS="Code">
+   SN_CONS_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107189"></A>constants</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107191"></A><KBD CLASS="Code">
+   SN_MACRO_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107193"></A>macros</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107195"></A><KBD CLASS="Code">
+   SN_FUNC_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107197"></A>functions</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107199"></A><KBD CLASS="Code">
+   SN_SUBR_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107201"></A>subroutines</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107203"></A><KBD CLASS="Code">
+   SN_GLOB_VAR_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107205"></A>global variables</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107207"></A><KBD CLASS="Code">
+   SN_COMMON_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107209"></A>common blocks</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107211"></A><KBD CLASS="Code">
+   SN_COMMON_MBR_VAR_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107213"></A>member variables within a common block</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107215"></A><KBD CLASS="Code">
+   SN_CLASS_INHERIT</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107217"></A>class inheritance</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107219"></A><KBD CLASS="Code">
+   SN_MBR_FUNC_DCL</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107221"></A>member function declarations</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113545"></A><KBD CLASS="Code">
+   SN_FUNC_DCL</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113543"></A>functions</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107223"></A><KBD CLASS="Code">
+   SN_ENUM_CONST_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107225"></A>enumeration constant</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107227"></A><KBD CLASS="Code">
+   SN_UNION_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107229"></A>definitions of unions or variant records</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113571"></A><KBD CLASS="Code">
+   SN_FRIEND_DCL</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113553"></A>friends (for C++)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113577"></A><KBD CLASS="Code">
+   SN_NAMESPACE_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113557"></A>name spaces</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113583"></A><KBD CLASS="Code">
+   SN_EXCEPTION_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113561"></A>exceptions</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107231"></A><KBD CLASS="Code">
+   SN_LOCAL_VAR_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107233"></A>local variables</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113593"></A><KBD CLASS="Code">
+   SN_VAR_DCL</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113591"></A>variables</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107235"></A><KBD CLASS="Code">
+   SN_INCLUDE_DEF</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107237"></A>include files</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113637"></A><KBD CLASS="Code">
+   SN_REF_UNDEFINED</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113605"></A>reference to undefined symbols</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107240"></A><KBD CLASS="CodeOutput">
+classname</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107242"></A>the name of the class, structure or common 
+block of the symbol if the symbol's type is one of <KBD CLASS="Code">
+SN_MBR_FUNC_DEF</KBD>, <KBD CLASS="Code">
+SN_MBR_VAR_DEF</KBD>, <KBD CLASS="Code">
+SN_COMMON_MBR_VAR_DEF</KBD>, or <KBD CLASS="Code">
+SN_CLASS_INHERIT</KBD>. Otherwise, <KBD CLASS="Code">
+classname</KBD>
+ must be a NULL pointer. If the symbol's type is <KBD CLASS="Code">
+SN_CLASS_INHERIT</KBD>, <KBD CLASS="Code">
+classname</KBD>
+ contains the name of the base class.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107244"></A><KBD CLASS="CodeOutput">
+identifier</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107246"></A>the name of the symbol to be inserted into the project 
+database.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107248"></A><KBD CLASS="CodeOutput">
+filename</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107250"></A>the name of the source file in which this symbol was 
+encountered.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107252"></A><KBD CLASS="CodeOutput">
+start_lineno</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107254"></A>the line number of the position where the symbol starts.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107256"></A><KBD CLASS="CodeOutput">
+startCol</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107258"></A>the column number of the position where the symbol starts.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107260"></A><KBD CLASS="CodeOutput">
+endLine</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107262"></A>the line number of the position where the symbol ends.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107264"></A><KBD CLASS="CodeOutput">
+endCol</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107266"></A>the column number of the position where the symbol ends.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107268"></A><KBD CLASS="CodeOutput">
+attrib</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107270"></A>contains attributes of the symbol 
+definitions (see <KBD CLASS="Code">sn.h</KBD>).</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107272"></A><KBD CLASS="CodeOutput">
+returnType</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107274"></A>a string describing the return type of the function, 
+subroutine or method. If the symbol is not one of these types, pass a NULL pointer.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107276"></A><KBD CLASS="CodeOutput">
+argTypes</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107278"></A>a string containing a comma-separated list of argument 
+types for the argument list of functions, subroutines or methods. If the symbol 
+is not one of these types, pass a NULL pointer.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107280"></A><KBD CLASS="CodeOutput">
+argNames</KBD>
+ </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107282"></A>a string containing a comma-separated list of argument 
+names for the argument list of functions, subroutines or methods. If the symbol is 
+not one of these types, pass a NULL pointer.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107284"></A><KBD CLASS="CodeOutput">
+comment</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107286"></A>a string containing the comment that often occurs 
+after a definition in the source text. Note that 8-bit characters including
+ <KBD CLASS="Code">'&#92;n'</KBD>
+ may be used in the string. If there is no comment, pass a NULL pointer.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107288"></A><KBD CLASS="CodeOutput">
+highStartLine</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107290"></A>the line number of the position where the 
+highlighting of the symbol starts.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107292"></A><KBD CLASS="CodeOutput">
+highStartCol</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107294"></A>the column number of the position where the 
+highlighting of the symbol starts.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107296"></A><KBD CLASS="CodeOutput">
+highEndLine</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107298"></A>the line number of the position where the 
+highlighting of the symbol ends.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107300"></A><KBD CLASS="CodeOutput">
+highEndCol</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107302"></A>the column number of the position where the highlighting 
+of the symbol ends.</P>
+</TD>
+</TR>
+</TABLE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1107305"></A>Examples</H4>
+<P CLASS="Body">
+<A NAME="pgfId-999663"></A>The following example inserts a class definition:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1107347"></A>sn_insert_symbol(SN_CLASS_DEF, NULL, classname,
+  sn_current_file(), sn_line(), sn_column(), sn_line(),
+  sn_column() + strlen(classname), 0L, NULL, NULL,
+  NULL, NULL, sn_line(), sn_column(), sn_line(),
+  sn_column() + strlen(classname));</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-999672"></A>The following example inserts a method definition:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999674"></A>sn_insert_symbol(SN_MBR_FUNC_DEF, classname, methodname,
+  sn_current_file(), sn_line(), sn_column(), sn_line(),
+  sn_column() + strlen(methodname), 0L, NULL, NULL, 
+  NULL, NULL, sn_line(), sn_column(), sn_line(), 
+  sn_column() + strlen(methodname));</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-999680"></A>For a C function with the following prototype:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999683"></A>int transform(struct coord * p, int x, int y, unsigned att);</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1004971"></A>the following example inserts the definition into the 
+database:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999685"></A>sn_insert_symbol(SN_FUNC_DEF, NULL, &quot;transform&quot;,
+  sn_current_file(), sn_line(), sn_column(), sn_line(),
+  sn_column + len, 0L, &quot;int&quot;, &quot;struct coord *, int, int,
+  unsigned&quot;, &quot;p,x,y,att&quot;, NULL, NULL, sn_line(), sn_column(),
+  sn_line(), sn_column() + len);</PRE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-999693"></A>sn_insert_xref</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1000661"></A><KBD CLASS="CodeOutput">
+sn_insert_xref</KBD>
+ inserts cross-referencing information.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999696"></A>One of the most useful aspects of Source-Navigator 
+is its cross-referencing capabilities. For instance, it is possible to see which 
+functions are used by other functions or which functions modify a particular 
+global variable.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999701"></A>Where possible, a parser should attempt to collect 
+information of this nature and insert it into the project database. In a 
+language with a flat namespace such as C, this can be achieved by noting 
+the name of the current function within the parser. If a function invocation 
+is encountered in the source text, then the cross-referencing can be inferred 
+based on the current function's name and the function being called.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999709"></A>Cross-referencing information is added using:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999710"></A>int sn_insert_xref(int type, int scope_type, int scope_level,
+  char *classname, char *funcname, char *argtypes, 
+  char *refclass, char *refsymbol, char *ref_arg_types, 
+  char *filename, int lineno, int acc);</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1107959"></A></P>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107606"></A><KBD CLASS="CodeOutput">
+type</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107608"></A>describes the type of the referenced symbol. 
+It must be one of the following:</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107611"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107613"></A><KBD CLASS="Code">
+   SN_REF_TO_TYPEDEF</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107615"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107617"></A><KBD CLASS="Code">
+   SN_REF_TO_DEFINE</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107619"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107621"></A><KBD CLASS="Code">
+   SN_REF_TO_ENUM</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113665"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113669"></A><KBD CLASS="Code">
+   SN_REF_TO_STRUCT</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107623"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107625"></A><KBD CLASS="Code">
+   SN_REF_TO_UNION</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107627"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107629"></A><KBD CLASS="Code">
+   SN_REF_TO_CLASS</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107631"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107633"></A><KBD CLASS="Code">
+   SN_REF_TO_FUNCTION</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107635"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107637"></A><KBD CLASS="Code">
+   SN_REF_TO_MBR_FUNC</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107639"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107641"></A><KBD CLASS="Code">
+   SN_REF_TO_MBR_VAR</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107643"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107645"></A><KBD CLASS="Code">
+   SN_REF_TO_COMM_VAR</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107647"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107649"></A><KBD CLASS="Code">
+   SN_REF_TO_CONSTANT</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107651"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107653"></A><KBD CLASS="Code">
+   SN_REF_TO_SUBROUTINE</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107655"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107657"></A><KBD CLASS="Code">
+   SN_REF_TO_GLOB_VAR</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107659"></A><KBD CLASS="Code">
+</KBD>
+&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107661"></A><KBD CLASS="Code">
+   SN_REF_TO_LOCAL_VAR</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113687"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113689"></A><KBD CLASS="Code">
+   SN_REF_TO_TEMPLATE</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113683"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113685"></A><KBD CLASS="Code">
+   SN_REF_TO_NAMESPACE</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113679"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113681"></A><KBD CLASS="Code">
+   SN_REF_TO_EXCEPTION</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113675"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1113677"></A><KBD CLASS="Code">
+   SN_REF_TO_LABEL</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107771"></A><KBD CLASS="CodeOutput">
+scope_type</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1107773"></A>describes the type of the location where 
+the cross-reference information is reported. It must be one of the following:</P>
+<A NAME="pgfId-1107777"></A><KBD CLASS="Code">SN_FUNC_DEF</KBD><BR>
+<A NAME="pgfId-1107754"></A><KBD CLASS="Code">SN_MBR_FUNC_DEF</KBD><BR>
+<KBD CLASS="Code">SN_SUBR_DEF</KBD><BR>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108053"></A><KBD CLASS="CodeOutput">
+scope_level</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108055"></A>describes the scope level of the referenced 
+symbol. It must be one of:</P>
+<A NAME="pgfId-1108079"></A><KBD CLASS="Code">SN_REF_SCOPE_LOCAL</KBD><BR>
+<A NAME="pgfId-1108059"></A><KBD CLASS="Code">SN_REF_SCOPE_GLOBAL</KBD><BR>
+</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108147"></A><KBD CLASS="CodeOutput">
+classname</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108149"></A>a string containing the class name of the 
+method if <KBD CLASS="Code">
+scope_type</KBD>
+ is <KBD CLASS="Code">
+SN_MBR_FUNC_DEF</KBD>; otherwise, it must be a NULL pointer.</P>
+</TD>
+</TR>
+<TR VALING="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108151"></A><KBD CLASS="CodeOutput">
+funcname</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108153"></A>a string containing the function, 
+method or subroutine name in which the reference information is reported.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108155"></A><KBD CLASS="CodeOutput">
+argtypes</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108157"></A>a string containing a comma-separated list of 
+argument types for the argument list of functions, subroutines or methods. 
+Pass NULL if there are no arguments.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108159"></A><KBD CLASS="CodeOutput">
+refclass</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108161"></A>a string containing the class, structure 
+or common block name of the referred symbol. If the symbol is not within 
+a namespace, pass a NULL pointer.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108163"></A><KBD CLASS="CodeOutput">
+refsymbol</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108165"></A>the name of the referred symbol.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108167"></A><KBD CLASS="CodeOutput">
+ref_arg_types</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108169"></A>a string containing a comma-separated list of 
+argument types if the referred symbol's type is a method, subroutine or function. 
+Pass NULL if there are no arguments or the referred symbol is not one of these types.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108171"></A><KBD CLASS="CodeOutput">
+filename</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108173"></A>the name of the source file in which the reference 
+information is reported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108175"></A><KBD CLASS="CodeOutput">
+lineno</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108177"></A>the line number of the source file in 
+which the reference information is reported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108231"></A><KBD CLASS="CodeOutput">
+acc</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108233"></A>the level of access to the referenced symbol and is one of:</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TR>
+<TD>&nbsp;</TD></TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108235"></A><KBD CLASS="Code">
+   SN_REF_READ</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108237"></A>symbol is read (e.g. if <KBD CLASS="Code">
+(x) { ... }</KBD>)</P>
+</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD></TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108239"></A><KBD CLASS="Code">
+   SN_REF_WRITE</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108241"></A>symbol is modified (e.g. <KBD CLASS="Code">
+x = 10</KBD>
+)</P>
+</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD></TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108243"></A><KBD CLASS="Code">
+   SN_REF_PASS</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108245"></A>variable is passed to a subroutine/function</P>
+</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD></TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108247"></A><KBD CLASS="Code">
+   SN_REF_UNUSED</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108249"></A>symbol is never used</P>
+</TD>
+</TR>
+</TABLE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-999801"></A>Examples</H4>
+<P CLASS="Body">
+<A NAME="pgfId-999803"></A>The following example inserts cross-referencing 
+information for a function that is called from another function.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999806"></A>sn_insert_xref(SN_REF_TO_FUNCTION, SN_FUNC_DEF,
+  SN_REF_SCOPE_GLOBAL, NULL, currentFunction, NULL, NULL,
+  calledFunction, NULL, sn_current_file(), sn_line(),
+  SN_REF_PASS);</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-999811"></A>The following example inserts cross-referencing 
+information for a function that is called from a member function 
+called <KBD CLASS="Code">
+insert</KBD>
+ which belongs to a C++ class called <KBD CLASS="Code">
+Stack</KBD>.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999815"></A>sn_insert_xref(SN_REF_TO_MBR_VAR, SN_MBR_FUNC_DEF,
+  SN_REF_SCOPE_GLOBAL, &quot;Stack&quot;, &quot;insert&quot;, NULL, &quot;Stack&quot;, 
+  &quot;i&quot;, NULL, sn_current_file(), sn_line(), SN_REF_READ);</PRE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-999820"></A>sn_insert_comment</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1001197"></A><KBD CLASS="CodeOutput">
+sn_insert_comment</KBD>
+ inserts comments into the project database.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999823"></A>When comments are encountered in the source text, 
+the parser should call <KBD CLASS="Code">
+sn_insert_comment</KBD>
+ to add these comments to the project database. In some Source-Navigator 
+projects, the user will choose to not include comments, but the parser 
+should call this function regardless. The library function will decide 
+whether or not to actually store the information in the database.</P>
+<P CLASS="Body">
+<A NAME="pgfId-999830"></A>Comments are added to the database using:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-999832"></A>int sn_insert_comment(char *classname, char *funcname, 
+  char *filename, char *comment, int beg_line, int beg_col);</PRE>
+<TABLE>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108380"></A><KBD CLASS="CodeOutput">
+classname</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108382"></A>a string containing the name of the class 
+or method where the comment was found or NULL.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108384"></A><KBD CLASS="CodeOutput">
+funcname</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108386"></A>a string containing the name of the function or 
+method in which the comment was found, or NULL if the comment is outside any 
+function or method scope.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108388"></A><KBD CLASS="CodeOutput">
+filename</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108390"></A>a string containing the name of the current 
+file being parsed.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108392"></A><KBD CLASS="CodeOutput">
+comment</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108394"></A>a string containing the comment without the 
+comment separators. For example, in Tcl this would exclude the 
+leading &quot;<KBD CLASS="Code">#</KBD>&quot; character.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108396"></A><KBD CLASS="CodeOutput">
+beg_line</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108398"></A>the line number of the source file 
+where the comment begins.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108400"></A><KBD CLASS="CodeOutput">
+beg_col</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1108402"></A>the column number of the source file where the comment begins.</P>
+</TD>
+</TR>
+</TABLE>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-999864"></A>Integration with Source-Navigator</H2>
+<P CLASS="Body">
+<A NAME="pgfId-999868"></A>A completed parser can be integrated into Source-Navigator by following these steps:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-999871"></A>Copy the parser executable into the <KBD CLASS="Code">
+.../bin</KBD>
+ directory.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-999873"></A>Edit <KBD CLASS="Code">
+sn_prop.cfg</KBD>
+ in the directory <KBD CLASS="Code">
+.../share/etc</KBD>. The Tcl procedure <KBD CLASS="Code">
+sn_add_parser</KBD>
+ is used to add parsers to the configuration. The following example shows how to include support for Java:<P>
+<KBD CLASS="Code"><A NAME="pgfId-999878"></A>sn_add_parser java -suffix {*.java} &#92;<BR>
+&nbsp;&nbsp;-brow_cmd $odd_path(bindir)/jbrowser &#92;<BR>
+&nbsp;&nbsp;-high_cmd $odd_path(bindir)/jbrowser &#92;<BR>
+&nbsp;&nbsp;-high_switch &quot;-h&quot; </KBD></LI></OL>
+<P CLASS="Body">
+<A NAME="pgfId-1004989"></A>When Source-Navigator is restarted, support for the new language becomes available. When creating a project, the <SPAN CLASS="Bold">
+Parsers</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Project</SPAN>
+ <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog shows the new language and its associated filename extensions. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1005893"></A>This is all that is required to add new language support to Source-Navigator. If a project is created which contains files with any of the specified filename extensions, the new parser is invoked to process those files as a part of the overall parsing process. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1231883"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="langspecs.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="dbaseAPI.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

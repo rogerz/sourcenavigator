@@ -1,0 +1,572 @@
+source testutil.tcl
+
+# ---------------------------------------------
+# The first series of token tests check to make
+# sure the browser is properly splitting the
+# text input into tokens and dumping them
+# to a file in a known format.
+# ---------------------------------------------
+
+tcltest::test tokens-1.0 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+var = 1;
+}]
+} {0 SOMEWORD "var" 2.0 2.3
+1 ASSIGNMENT_OPERATOR "" 2.4 2.5
+2 LITERAL "1" 2.6 2.7
+3 SEMICOLON "" 2.7 2.8}
+
+tcltest::test tokens-1.1 { CRLF -> LF translation } {
+    set fd [open f.exl w]
+    fconfigure $fd -translation binary -encoding binary
+    puts -nonewline $fd "\r\nvar = 1;\r\n"
+    close $fd
+    browse_tokens f.exl
+} {0 SOMEWORD "var" 2.0 2.3
+1 ASSIGNMENT_OPERATOR "" 2.4 2.5
+2 LITERAL "1" 2.6 2.7
+3 SEMICOLON "" 2.7 2.8}
+
+tcltest::test tokens-1.2 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+var = "my string";
+}]
+} {0 SOMEWORD "var" 2.0 2.3
+1 ASSIGNMENT_OPERATOR "" 2.4 2.5
+2 DOUBLE_QUOTED_STRING "my string" 2.6 2.17
+3 SEMICOLON "" 2.17 2.18}
+
+tcltest::test tokens-1.3 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+ret_val = myfunc();
+}]
+} {0 SOMEWORD "ret_val" 2.0 2.7
+1 ASSIGNMENT_OPERATOR "" 2.8 2.9
+2 SOMEWORD "myfunc" 2.10 2.16
+3 OPEN_PAREN "" 2.16 2.17
+4 CLOSE_PAREN "" 2.17 2.18
+5 SEMICOLON "" 2.18 2.19}
+
+tcltest::test tokens-1.4 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+declare myfunc() {}
+}]
+} {0 DECLARE_KEYWORD "" 2.0 2.7
+1 SOMEWORD "myfunc" 2.8 2.14
+2 OPEN_PAREN "" 2.14 2.15
+3 CLOSE_PAREN "" 2.15 2.16
+4 OPEN_BRACE "" 2.17 2.18
+5 CLOSE_BRACE "" 2.18 2.19}
+
+tcltest::test tokens-1.5 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+global var;
+}]
+} {0 GLOBAL_KEYWORD "" 2.0 2.6
+1 SOMEWORD "var" 2.7 2.10
+2 SEMICOLON "" 2.10 2.11}
+
+tcltest::test tokens-1.6 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+return
+}]
+} {0 KEYWORD "return" 2.0 2.6}
+
+tcltest::test tokens-2.0 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+/* A multi line
+   comment */
+}]
+} {0 COMMENT " A multi line\n   comment " 2.0 3.13}
+
+tcltest::test tokens-2.1 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+var = 0;
+}]
+} {0 SOMEWORD "var" 2.0 2.3
+1 ASSIGNMENT_OPERATOR "" 2.4 2.5
+2 LITERAL "0" 2.6 2.7
+3 SEMICOLON "" 2.7 2.8}
+
+tcltest::test tokens-2.2 { parse into tokens } {
+    browse_tokens [save_file f.exl {
+var ? HELLO;
+}]
+} {0 SOMEWORD "var" 2.0 2.3
+1 UNKNOWN "?" 2.4 2.5
+2 SOMEWORD "HELLO" 2.6 2.11
+3 SEMICOLON "" 2.11 2.12}
+
+
+# ---------------------------------------------
+# These next tests check the highlighter function
+# of a browser. When invoked with the -h and -s
+# options, a browser will emit a file that
+# contains text tags and file locations that
+# will be used by the editor to highlight text.
+# ---------------------------------------------
+
+tcltest::test highlight-1.0 { highlight } {
+    browse_highlights [save_file f.exl {
+/* Comment */
+}]
+} {1 rem 2.0 2.13}
+
+tcltest::test highlight-1.1 { highlight } {
+    browse_highlights [save_file f.exl {
+"String"
+}]
+} {1 str 2.0 2.8}
+
+tcltest::test highlight-1.2 { highlight } {
+    browse_highlights [save_file f.exl {
+return
+}]
+} {1 key 2.0 2.6}
+
+tcltest::test highlight-1.3 { highlight } {
+    browse_highlights [save_file f.exl {
+declare myfunc() {}
+}]
+} {1 key 2.0 2.7}
+
+tcltest::test highlight-1.4 { highlight } {
+    browse_highlights [save_file f.exl {
+global
+}]
+} {}
+
+# FIXME: Not sure if this should be highlighted as a keyword or syntax error?
+tcltest::test highlight-1.5 { highlight } {
+    browse_highlights [save_file f.exl {
+global myvar;
+}]
+} {1 key 2.0 2.6}
+
+tcltest::test highlight-1.6 { highlight } {
+    browse_highlights [save_file f.exl {
+declare myfunc() {
+    global ag;
+}
+}]
+} {1 key 2.0 2.7
+2 key 3.4 3.10
+3 gv 3.11 3.13}
+
+tcltest::test highlight-1.7 { highlight } {
+    browse_highlights [save_file f.exl {
+var = 1;
+}]
+} {1 gv 2.0 2.3}
+
+
+
+# ---------------------------------------------
+# The rest of the tests check for output that
+# can be understood by dbimp. Generated tokens
+# are processed and matched to known constructs
+# like function and variable assignments.
+# ---------------------------------------------
+
+
+tcltest::test mode-1.0 { EXAMPLE to STRING mode } {
+    browse [save_file f.exl {
+var = "strval";
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test mode-1.2 { EXAMPLE mode } {
+    browse [save_file f.exl {
+declare foo() {}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;2.16<>2.8<>2.11<>{}
+}
+
+tcltest::test mode-1.3 { EXAMPLE mode } {
+    browse [save_file f.exl {
+var="strval"; var=0; declare foo() {}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.029<>f.exl;2.32<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.021<>#<>foo<>fu;2.37<>2.29<>2.32<>{}
+}
+
+tcltest::test mode-1.4 { EOF in DQSTRING mode } {
+    browse [save_file f.exl {
+var="A string
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test mode-1.5 { EOF in COMMENT mode } {
+    browse [save_file f.exl {
+/* A Comment
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test mode-1.6 { EOF in COMMENT mode } {
+    browse_xref [save_file f.exl {
+/*
+}] {-r}
+} [format {PAF_COMMENT_DEF;f.exl<>000002.002<>#<>#;%s%s} \xFF \n]
+
+
+
+
+
+tcltest::test var-1.0 { var write } {
+    browse [save_file f.exl {
+var=1;
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test var-1.1 { var read } {
+    browse [save_file f.exl {
+var2=var1;
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test var-1.2 { var write } {
+    browse [save_file f.exl {
+declare foo() {
+global var;
+var = 1;
+}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;5.1<>2.8<>2.11<>{}
+}
+
+tcltest::test var-2.0 { var write xref } {
+    browse_xref [save_file f.exl {
+var=1;
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.exl;<>UNDECLARED
+}
+
+tcltest::test var-2.1 { var read xref } {
+    browse_xref [save_file f.exl {
+var
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.exl;<>UNDECLARED
+}
+
+tcltest::test var-2.2 { global statement is not a var read } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    global var;
+}
+}]
+} {}
+
+tcltest::test var-2.3 { global var write xref } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    global var;
+    var = 1;
+}
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>w<>000004<>f.exl;<>UNDECLARED
+}
+
+tcltest::test var-2.4 { global var read xref } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    global var;
+    var;
+}
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>gv<>r<>000004<>f.exl;<>UNDECLARED
+}
+
+tcltest::test var-2.5 { no local var xref by default } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    var=0;
+}
+}]
+} {}
+
+tcltest::test var-2.6 { local var write xref } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    var=1;
+}
+}] {-l}
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>w<>000003<>f.exl;<>UNDECLARED
+}
+
+tcltest::test var-2.7 { no local var xref by default } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    var;
+}
+}]
+} {}
+
+tcltest::test var-2.8 { local var read xref } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    var;
+}
+}] {-l}
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>var<>lv<>r<>000003<>f.exl;<>UNDECLARED
+}
+
+
+
+
+tcltest::test comment-1.0 { comment } {
+    browse [save_file f.exl {
+/*var=0;*/
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+}
+
+tcltest::test comment-1.1 { insert comment xref } {
+    browse_xref [save_file f.exl {
+/*var=0;*/
+}] {-r}
+} {PAF_COMMENT_DEF;f.exl<>000002.002<>#<>#;var=0;
+}
+
+tcltest::test comment-1.2 { insert comment xref } {
+    browse_xref [save_file f.exl {
+/*
+var=0;
+*/
+}] {-r}
+} "PAF_COMMENT_DEF;f.exl<>000002.002<>#<>#;\xFFvar=0;\xFF\n"
+
+tcltest::test comment-1.3 { insert comment xref } {
+    browse_xref [save_file f.exl {
+/*
+ * Comments *
+ * With * //* Stuff in them
+ * are tricky */
+}] {-r}
+} "PAF_COMMENT_DEF;f.exl<>000002.002<>#<>#;\xFF * Comments *\xFF * With * //* Stuff in them\xFF * are tricky \n"
+
+tcltest::test comment-1.4 { double quotes in comment } {
+    browse_xref [save_file f.exl {
+/*Comment "Text"*/
+}] {-r}
+} {PAF_COMMENT_DEF;f.exl<>000002.002<>#<>#;Comment "Text"
+}
+
+tcltest::test comment-2.0 { function with a comment } {
+    browse [save_file f.exl {
+declare foo() { /* no-op */ }
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;2.29<>2.8<>2.11<>{}
+}
+
+tcltest::test comment-2.1 { insert comment xref in a function } {
+    browse_xref [save_file f.exl {
+declare foo() {
+/*no-op*/
+    return;
+}
+}] {-r}
+} {PAF_COMMENT_DEF;f.exl<>000003.002<>#<>#;no-op
+}
+
+
+
+
+
+tcltest::test string-1.0 { string tokens } {
+    browse_tokens [save_file f.exl {
+""
+}]
+} {0 DOUBLE_QUOTED_STRING "" 2.0 2.2}
+
+tcltest::test string-1.1 { string tokens } {
+    browse_tokens [save_file f.exl {
+"value"
+}]
+} {0 DOUBLE_QUOTED_STRING "value" 2.0 2.7}
+
+tcltest::test string-1.2 { string tokens } {
+    browse_tokens [save_file f.exl {
+"value"
+"value"
+}]
+} {0 DOUBLE_QUOTED_STRING "value" 2.0 2.7
+1 DOUBLE_QUOTED_STRING "value" 3.0 3.7}
+
+tcltest::test string-1.3 { string tokens } {
+    browse_tokens [save_file f.exl {
+"\""
+    "\""
+""
+}]
+} {0 DOUBLE_QUOTED_STRING "\\\"" 2.0 2.4
+1 DOUBLE_QUOTED_STRING "\\\"" 3.4 3.8
+2 DOUBLE_QUOTED_STRING "" 4.0 4.2}
+
+tcltest::test string-1.4 { string tokens } {
+    browse_tokens [save_file f.exl {
+"HELLO
+THERE"
+}]
+} {0 DOUBLE_QUOTED_STRING "HELLO\nTHERE" 2.0 3.6}
+
+tcltest::test string-2.0 { string tokens } {
+    browse_tokens [save_file f.exl {
+"val\n"
+}]
+} {0 DOUBLE_QUOTED_STRING "val\\n" 2.0 2.7}
+
+
+
+
+
+tcltest::test function-1.0 { function definition } {
+    browse [save_file f.exl {
+declare foo() {}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;2.16<>2.8<>2.11<>{}
+}
+
+tcltest::test function-1.1 { function definition } {
+    browse [save_file f.exl {
+declare foo() {
+}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;3.1<>2.8<>2.11<>{}
+}
+
+tcltest::test function-1.2 { function definition } {
+    browse [save_file f.exl {
+declare
+    foo() {
+}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000003.004<>f.exl;3.7<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;4.1<>3.4<>3.7<>{}
+}
+
+tcltest::test function-1.3 { function definition } {
+    browse [save_file f.exl {
+	declare	foo()		{}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.009<>f.exl;2.12<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.001<>#<>foo<>fu;2.18<>2.9<>2.12<>{}
+}
+
+tcltest::test function-1.4 { function definition } {
+    browse [save_file f.exl {
+declare foo() {
+    {}
+}
+}]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;4.1<>2.8<>2.11<>{}
+}
+
+
+tcltest::test function-2.0 { xref to function in function } {
+    browse_xref [save_file f.exl {
+declare foo() {
+    bar();
+}
+}]
+} {PAF_CROSS_REF;#<>foo<>fu<>#<>bar<>fu<>p<>000003<>f.exl;<>
+}
+
+tcltest::test function-2.1 { xref to function in function } {
+    browse_xref [save_file f.exl {
+declare foo_one() {bar();}
+bar();
+declare foo_two() {bar ();}
+}]
+} {PAF_CROSS_REF;#<>foo_one<>fu<>#<>bar<>fu<>p<>000002<>f.exl;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000003<>f.exl;<>
+PAF_CROSS_REF;#<>foo_two<>fu<>#<>bar<>fu<>p<>000004<>f.exl;<>
+}
+
+tcltest::test function-2.2 { function result as function argument } {
+    browse_xref [save_file f.exl {
+bar(
+    bar());
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000002<>f.exl;<>
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>bar<>fu<>p<>000003<>f.exl;<>
+}
+
+
+tcltest::test function-3.0 { function not finished at EOF } {
+    browse [save_file f.exl "
+declare foo() \{
+"]
+} {Status: Parsing: f.exl
+PAF_FILE;f.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.exl<>000002.000<>#<>foo<>fu;3.0<>2.8<>2.11<>{}
+}
+
+tcltest::test function-3.1 { function not finished at EOF } {
+    save_file f1.exl "
+declare foo() \{
+"
+    save_file f2.exl {
+declare bar() {}
+}
+
+    save_file files {
+f1.exl
+f2.exl
+}
+
+    set results [browse .exl {-y files}]
+    file delete files f1.exl f2.exl
+    set results
+} {Status: Parsing: f1.exl
+PAF_FILE;f1.exl;exl<>
+PAF_FUNC_DEF;foo<>000002.008<>f1.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f1.exl<>000002.000<>#<>foo<>fu;3.0<>2.8<>2.11<>{}
+Status: Parsing: f2.exl
+PAF_FILE;f2.exl;exl<>
+PAF_FUNC_DEF;bar<>000002.008<>f2.exl;2.11<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f2.exl<>000002.000<>#<>bar<>fu;2.16<>2.8<>2.11<>{}
+}
+
+# cleanup
+file delete f.exl
+file delete xout
+file delete tout
+file delete hout
+::tcltest::cleanupTests
+return

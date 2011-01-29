@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# find SN base installation directory
+snbindir=`dirname $0`
+snbasedir=`cd $snbindir/.. ; pwd`
+startup=hyper
+script=snavigator
+
+# find the main "hyper" executable
+for dir in libexec/snavigator libexec bin; do
+	try="$snbasedir/$dir/$startup"
+  	run=""
+	
+	#echo "testing for: $try"
+	if test -f "$try"; then
+		run="$try"
+		break
+	fi
+done
+#echo "debug: found $startup at $run"
+
+
+# find the desired script
+for dir in share/snavigator/etc share/snavigator share/etc; do
+	try="$snbasedir/$dir/$script"
+  	runscript=""
+
+	#echo "testing for: $try"
+	if test -f "$try"; then
+		runscript="$try"
+		break
+	fi
+done              	
+#echo "debug: found $script at $runscript"
+
+
+# and run it
+exec "$run" --home "$snbasedir" -file "$runscript" ${1+"$@"}

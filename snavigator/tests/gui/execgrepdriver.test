@@ -1,0 +1,163 @@
+package require tcltest
+
+if {![sourcenav::ExecGrepDriver::isAvailable]} {
+    puts "ExecGrepDriver not available, skipping tests"
+    return
+}
+
+tcltest::test simple-1 {two input files} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {int TWO;} f2.c
+    $d start int {f1.c f2.c} 0 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int ONE\;\nf2.c:1:int TWO\;\n"
+
+tcltest::test simple-2 {one input file} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    $d start int f1.c 0 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int ONE\;\n"
+
+tcltest::test highlight-1 {check highlighting} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {int TWO;} f2.c
+    $d start int {f1.c f2.c} 0 10
+    $d finish
+    $t tag ranges grep
+} {1.7 1.10 2.7 2.10}
+
+tcltest::test multi-1 {more than 1 exec invocation} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+
+    set files [list]
+    tcltest::makeFile {int I1;} f1.c
+    lappend files f1.c
+    for {set i 2} {$i < 100} {incr i} {
+        tcltest::makeFile {char C;} f$i.c
+        lappend files f$i.c
+    }
+    tcltest::makeFile {int I100;} f100.c
+    lappend files f100.c
+
+    $d start int $files 0 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int I1;\nf100.c:1:int I100;\n"
+
+tcltest::test nocase-1 {check case insensitivity} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    if {[winfo exists .t]} {
+        destroy .t
+    }
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    tcltest::makeFile {int ONE;} f1.c
+    tcltest::makeFile {INT TWO;} f2.c
+    $d start int {f1.c f2.c} 1 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:int ONE\;\nf2.c:1:INT TWO\;\n"
+
+tcltest::test dash-1 {a pattern that starts with - is ok} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    destroy .t
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    set data    "hi there\n"
+    append data "-hi there\n"
+    tcltest::makeFile $data f1.c
+    $d start "-hi" f1.c 0 10
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:2:-hi there\n"
+
+tcltest::test maxmatch-1 {exactly max matches} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    destroy .t
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    set data    "HELLO 1\n"
+    append data "HELLO 2\n"
+    append data "HELLO 3\n"
+    tcltest::makeFile $data f1.c
+    $d start HELLO f1.c 0 3
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:HELLO 1\nf1.c:2:HELLO 2\nf1.c:3:HELLO 3\n"
+
+tcltest::test maxmatch-2 {max+1 matches} {
+    if {[llength [itcl::find object egd]]} {
+        itcl::delete object egd
+    }
+    destroy .t
+    set d [sourcenav::ExecGrepDriver egd]
+    set t [text .t]
+    $d setTextWidget $t
+    set data    "HELLO 1\n"
+    append data "HELLO 2\n"
+    append data "HELLO 3\n"
+    append data "HELLO 4\n"
+    tcltest::makeFile $data f1.c
+    $d start HELLO f1.c 0 3
+    $d finish
+    $t get 1.0 {end - 1 char}
+} "f1.c:1:HELLO 1\nf1.c:2:HELLO 2\nf1.c:3:HELLO 3\n*** TRUNCATED ***\n"
+
+
+
+# Cleanup
+
+if {[llength [itcl::find object egd]]} {
+    itcl::delete object egd
+}
+if {[winfo exists .t]} {
+    destroy .t
+}
+
+eval {file delete} [glob f*.c]

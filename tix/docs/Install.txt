@@ -1,0 +1,25 @@
+
+                            TIX INSTALLATION GUIDE
+
+   This version of Tix supports both Unix and Windows platforms. We
+   provide binary distribution for Windows and popular Unix platforms
+   (SunOS 4.x, Solaris 2.x and Linux) for hassle-free installation.
+
+   If you use other platforms, you have to download the Tix source and
+   build it yourself. The following documents guide you through the
+   process of building Tix step by step. There are automatic
+   configuration tools to aid you in building Tix. If you have built
+   Tcl/Tk or Tcl extensions before, building Tix should be straight
+   forward.
+
+     * Installing Tix from the binary distribution.
+     * Building Tix for Unix platforms.
+     * Building Tix for Windows platforms.
+
+     _________________________________________________________________
+
+   Back to the Tix Documentation Master Index 
+     _________________________________________________________________
+
+   Last modified Wed Feb 12 15:12:59 EST 1997 --- Serial 856069649
+

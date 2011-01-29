@@ -1,0 +1,117 @@
+# The "target manager" is the dialog that shows a list of
+# selectable build targets. One can select a build target
+# from this list and edit it, to change things like
+# the build flags and that sort of thing.
+
+
+# SNIPPED from projsel.sns
+
+# Create files to be imported into the project.
+
+file delete -force /tmp/foo
+file mkdir /tmp/foo
+writefile /tmp/foo/f1.c {int func1(int i) { return 0; }}
+writefile /tmp/foo/f2.c {
+int func2(int i) { return func1(0); }
+
+int main() { func2(0); }
+}
+
+set top [next_toplevel]
+set new $top.btns.new
+async mouse_click $new
+
+
+set top [next_toplevel]
+
+set prjname_leb $top.dirs.prjname
+#$prjname_leb configure -value /tmp/foo/foo.proj
+enter_text [$prjname_leb component entry] "/tmp/foo/foo.proj"
+
+set prjdir_leb $top.dirs.dir-1
+#$prjdir_leb configure -value /tmp/foo
+enter_text [$prjdir_leb component entry] "/tmp/foo"
+
+# Press the Ok button
+set ok $top.button0
+async mouse_click $ok
+
+
+# END OF SNIP
+
+
+# Wait until the symbol browser window pops up!
+pause 10000
+
+
+
+# Get the toplevel window, it should be the symbol browser.
+
+set top [next_toplevel]
+
+if {[winfo class $top] != "SymBr&"} {
+  error "not symbol browser"
+}
+
+# Bring up the regular tools window by pressing F5.
+
+keyevent $top F5
+
+
+# Get the tool toplevel
+
+set top [next_toplevel]
+
+set menu $top.menu.tools
+
+# Bring up the menu (make it visible on the screen)
+$menu post 0 0
+
+# Select the 10th (5th for symb) menu item
+
+set cmd [$menu entrycget 9 -command]
+$menu unpost
+async $cmd
+
+
+# Now the build taget window should be visible.
+
+set top [next_toplevel]
+
+# Add a new build target
+
+set entry [$top component entry]
+
+enter_text $entry "native"
+
+set createbutton [$top component create]
+
+async mouse_click $createbutton
+
+
+
+set targetedit [next_toplevel]
+
+set cancel $targetedit.cancel
+mouse_click $cancel
+
+
+# Use the target manager again, it is still in $top
+# Get the listbox widget and the edit button
+# Select the item in the listbox and then
+# press the edit button to open up the
+# target editor.
+
+set listbox [$top component tmlist]
+set editbutton [$top component edit]
+
+listbox_select_index $listbox 0
+
+async mouse_click $editbutton
+
+
+
+# Now the target editor should appear
+# run the tests for the target editor
+
+source targetedit.sns

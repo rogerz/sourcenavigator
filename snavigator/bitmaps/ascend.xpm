@@ -1,0 +1,30 @@
+/* XPM */
+static char * ascend_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"25 20 4 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	c lightgray",
+"X	c #aaaaaa",
+"o	c black",
+/* pixels */
+"                    .... ",
+"                    Xooo ",
+"                    Xooo ",
+"                    Xooo ",
+"                    Xooo ",
+"               .... Xooo ",
+"               Xooo Xooo ",
+"               Xooo Xooo ",
+"               Xooo Xooo ",
+"          .... Xooo Xooo ",
+"          Xooo Xooo Xooo ",
+"          Xooo Xooo Xooo ",
+"          Xooo Xooo Xooo ",
+"     .... Xooo Xooo Xooo ",
+"     Xooo Xooo Xooo Xooo ",
+"     Xooo Xooo Xooo Xooo ",
+".... Xooo Xooo Xooo Xooo ",
+"Xooo Xooo Xooo Xooo Xooo ",
+"Xooo Xooo Xooo Xooo Xooo ",
+"Xooo Xooo Xooo Xooo Xooo "};

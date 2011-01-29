@@ -1,0 +1,12 @@
+These PowerPC 601 EABI assembly language source files were translated
+from the C source code to the GNU gzip utility using the GCC C
+compiler and the following command line:
+
+	powerpc-eabi-gcc -S *.c
+
+An additional call to an external C function called "cfunc" has been inserted
+into the subroutine called "reset_switches" in gzip.s.  This illustrates
+Source-Navigator's cross-language project capabilities.
+
+These files can be parsed using the assembly parser that is shipped
+with Source-Navigator.

@@ -1,0 +1,153 @@
+# GNU Pro ToolChain.
+
+set tc2 [snToolChain GNUPro]
+${tc2} SetLongName "GNUPro (native)"
+${tc2} SetIsEmbedded 0
+${tc2} SetDebuggerName insight
+${tc2} AddRule CC .c.o gcc "-c $<"
+${tc2} AddRuleInfo CC "C" "Compile a C file"
+
+#DEBUG FLAGS
+${tc2} AddRuleFlagSet CC Debug "" DBG_DEFAULT
+${tc2} AddRuleFlagSet CC Debug "" DBG_NONE
+${tc2} AddRuleFlagSet CC Debug "-g" DBG_STD
+#$tc2 AddRuleFlagSet CC Debug "-Z7" DBG_OLD
+
+#OPRIMIZATION FLAGS
+${tc2} AddRuleFlagSet CC Optimize "" OPT_DEFAULT
+${tc2} AddRuleFlagSet CC Optimize "-O0" OPT_NONE
+${tc2} AddRuleFlagSet CC Optimize "-Os" OPT_SIZE
+${tc2} AddRuleFlagSet CC Optimize "-O1" OPT_L1
+${tc2} AddRuleFlagSet CC Optimize "-O2" OPT_L2
+${tc2} AddRuleFlagSet CC Optimize "-O3" OPT_L3
+
+#CODE GENERATION FLAGS
+${tc2} AddRuleFlagSet CC CodeGen "" CG_DEFAULT
+${tc2} AddRuleFlagSet CC CodeGen "-fpic" CG_PIC
+${tc2} AddRuleFlagSet CC CodeGen "-fshared-data" CG_SHAREDATA
+${tc2} AddRuleFlagSet CC CodeGen "-fshort-enums" CG_SHORTENUMS
+#WARNING FLAGS
+${tc2} AddRuleFlagSet CC Warning "" WN_DEFAULT
+${tc2} AddRuleFlagSet CC Warning "-w" WN_NONE
+${tc2} AddRuleFlagSet CC Warning "-pedantic" WN_ANSI
+${tc2} AddRuleFlagSet CC Warning "-W" WN_STD
+${tc2} AddRuleFlagSet CC Warning "-Wall" WN_ALL
+${tc2} AddRuleFlagSet CC Warning "-Werror" WN_ERR
+
+proc GNUProcessIncludePaths {includepaths} {
+    set includeflags ""
+
+    set includepaths [lsort ${includepaths}]
+    set includepaths [lunique ${includepaths}]
+
+    foreach includepath ${includepaths} {
+        set includeflag "-I${includepath}"
+        set includeflags [concat ${includeflags} ${includeflag}]
+    }
+
+    return ${includeflags}
+}
+
+proc GNUProcessDefines {defines} {
+    set defineflags ""
+
+    set defines [lsort ${defines}]
+    set defines [lunique ${defines}]
+
+    foreach defined ${defines} {
+        set defineflag "-D${defined}"
+        set defineflags [concat ${defineflags} ${defineflag}]
+    }
+
+    return ${defineflags}
+}
+
+
+
+${tc2} SetDefinesSpecProc CC GNUProcessDefines
+${tc2} SetIncludeSpecProc CC GNUProcessIncludePaths
+
+${tc2} AddRule CPP .cpp.o "g++" "-c $<"
+${tc2} AddRuleInfo CPP "C++" "Compile a C++ file"
+${tc2} AddRuleSuffix CPP .C.o
+${tc2} AddRuleSuffix CPP .cc.o
+${tc2} AddRuleSuffix CPP .cxx.o
+
+#DEBUG FLAGS
+${tc2} AddRuleFlagSet CPP Debug "" DBG_DEFAULT
+${tc2} AddRuleFlagSet CPP Debug "-g" DBG_STD
+#$tc2 AddRuleFlagSet CPP Debug "-g2" DBG_OLD
+
+#OPRIMIZATION FLAGS
+${tc2} AddRuleFlagSet CPP Optimize "" OPT_DEFAULT
+${tc2} AddRuleFlagSet CPP Optimize "-O0" OPT_NONE
+${tc2} AddRuleFlagSet CPP Optimize "-Os" OPT_SIZE
+${tc2} AddRuleFlagSet CPP Optimize "-O1" OPT_L1
+${tc2} AddRuleFlagSet CPP Optimize "-O2" OPT_L2
+${tc2} AddRuleFlagSet CPP Optimize "-O3" OPT_L3
+
+#CODE GENERATION FLAGS
+${tc2} AddRuleFlagSet CPP CodeGen "" CG_DEFAULT
+${tc2} AddRuleFlagSet CPP CodeGen "-fnonnull-objects" CG_NONULL
+${tc2} AddRuleFlagSet CPP CodeGen "-fpic" CG_PIC
+${tc2} AddRuleFlagSet CPP CodeGen "-finline-functions" CG_INLINE
+
+#WARNING FLAGS
+${tc2} AddRuleFlagSet CPP Warning "" WN_DEFAULT
+${tc2} AddRuleFlagSet CPP Warning "-w" WN_NONE
+${tc2} AddRuleFlagSet CPP Warning "-pedantic" WN_ANSI
+${tc2} AddRuleFlagSet CPP Warning "-W" WN_STD
+${tc2} AddRuleFlagSet CPP Warning "-Wall" WN_ALL
+${tc2} AddRuleFlagSet CPP Warning "-Werror" WN_ERR
+
+${tc2} SetDefinesSpecProc CPP GNUProcessDefines
+${tc2} SetIncludeSpecProc CPP GNUProcessIncludePaths
+
+proc DummyCreateToolChain_spec {} {
+    # make sure this file is sourced
+}
+
+${tc2} AddExeLinkerTool gcc
+${tc2} AddExeLinkerRule "-o"
+
+${tc2} AddLibLinkerTool ar
+${tc2} AddLibLinkerRule "-r"
+
+${tc2} AddRule JAVA .java.o "gcj" "-c $<"
+${tc2} AddRuleInfo JAVA "Java" "Compile a Java file"
+
+${tc2} AddExeLinkerEntryPointFlag JAVA "--main="
+${tc2} AddRuleSuffix JAVA .class
+
+${tc2} SetDefinesSpecProc JAVA GNUProcessDefines
+${tc2} SetIncludeSpecProc JAVA GNUProcessIncludePaths
+
+#DEBUG FLAGS
+${tc2} AddRuleFlagSet JAVA Debug "" DBG_DEFAULT
+${tc2} AddRuleFlagSet JAVA Debug "-g" DBG_STD
+
+
+#OPRIMIZATION FLAGS
+${tc2} AddRuleFlagSet JAVA Optimize "" OPT_DEFAULT
+${tc2} AddRuleFlagSet JAVA Optimize "-O0" OPT_NONE
+${tc2} AddRuleFlagSet JAVA Optimize "-Os" OPT_SIZE
+${tc2} AddRuleFlagSet JAVA Optimize "-O1" OPT_L1
+${tc2} AddRuleFlagSet JAVA Optimize "-O2" OPT_L2
+${tc2} AddRuleFlagSet JAVA Optimize "-O3" OPT_L3
+
+#CODE GENERATION FLAGS
+${tc2} AddRuleFlagSet JAVA CodeGen "" CG_DEFAULT
+${tc2} AddRuleFlagSet JAVA CodeGen "-fnonnull-objects" CG_NONULL
+${tc2} AddRuleFlagSet JAVA CodeGen "-fpic" CG_PIC
+${tc2} AddRuleFlagSet JAVA CodeGen "-finline-functions" CG_INLINE
+${tc2} AddRuleFlagSet JAVA CodeGen "-fno-bounds-check" CG_NOBOUND
+
+#WARNING FLAGS
+${tc2} AddRuleFlagSet JAVA Warning "" WN_DEFAULT
+${tc2} AddRuleFlagSet JAVA Warning "-w" WN_NONE
+${tc2} AddRuleFlagSet JAVA Warning "-pedantic" WN_ANSI
+${tc2} AddRuleFlagSet JAVA Warning "-W" WN_STD
+${tc2} AddRuleFlagSet JAVA Warning "-Wall" WN_ALL
+${tc2} AddRuleFlagSet JAVA Warning "-Werror" WN_ERR
+${tc2} AddRuleFlagSet JAVA Warning "-Wredundant-modifiers\
+  -Wunsupported-jdk11" WN_STRICT_JAVA

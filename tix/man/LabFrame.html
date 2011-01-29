@@ -1,0 +1,155 @@
+
+
+
+<TITLE>tixLabelFrame - Create and manipulate tixLabelFrame widgets</TITLE>
+<Center><H2>tixLabelFrame - Create and manipulate tixLabelFrame widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixLabelFrame<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>TixLabelFrame</B></I> class is derived from the <B>TixLabelWidget</B></I>
+class and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The LabelFrame widget supports all the standard options of a frame
+widget. See the <B>options(n)</B></I> manual entry for details on the
+standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+Switch:		<B>-label</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the string to display as the label of this LabelFrame widget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>labelSide</B></I>
+Class:		<B>LabelSide</B></I>
+Switch:		<B>-labelside</B></I>
+</code></code></code></pre>
+<UL>
+Specifies where the label should be displayed relative to the entry
+subwidget. Valid options are: <B>top</B></I>, <B>left</B></I>, <B>right</B></I>,
+<B>bottom</B></I>, <B>none</B></I> or <B>acrosstop</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padX</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-padx</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the amount of the horizontal padding around the <B>frame</B></I>
+subwidget. Must be a valid non-negative integer number.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>padY</B></I>
+Class:		<B>Pad</B></I>
+Switch:		<B>-pady</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the amount of the vertical padding around the <B>frame</B></I>
+subwidget.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>frame</B></I>
+Class:		<B>Frame</B></I>
+</code></code></code></pre>
+<UL>
+The frame subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>label</B></I>
+Class:		<B>Label</B></I>
+</code></code></code></pre>
+<UL>
+The label subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixLabelFrame</B></I> command creates a new window (given by
+the <I>pathName</I></B> argument) and makes it into a LabelFrame
+widget. Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+LabelFrame such as its cursor and relief.
+</pre><H3>CREATING WIDGETS INSIDE A LABELFRAME</H3>
+<P>
+The LabelFrame widget packages a frame widget and a label into one
+mega widget. To create widgets inside a LabelFrame widget, one must
+create the new widgets relative to the <B>frame</B></I> subwidget and
+manage them inside the <B>frame</B></I> subwidget. An error will be
+generated if one tries to create widgets as immediate children of the
+LabelFrame. For example: the following is correct code, which creates
+new widgets inside the frame subwidget:
+<P>
+<pre><code><code><code>
+    tixLabelFrame .f
+    set f [.f subwidget frame]
+    button $f.b -text hi
+    pack $f.b
+</code></code></code></pre>
+<P>
+The following example code is <I>incorrect</I></B> because it tries to
+create immediate children of the LabelFrame <B>\.f</B></I>:
+<P>
+<pre><code><code><code>
+    tixLabelFrame .f
+    button .f.b -text hi
+    pack .f.b
+</code></code></code></pre>
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixLabelFrame</B></I> command creates a new Tcl command whose
+window. This command may be used to invoke various operations on the
+widget. It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command. The following
+commands are possible for LabelFrame widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixLabelFrame</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixLabelFrame</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I>name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:31 EST 1997 </i> --- 
+<i>Serial 853731301</i>

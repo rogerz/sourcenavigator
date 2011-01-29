@@ -1,0 +1,104 @@
+<h3>Tix 4.1a3</h3>
+<i> Released on April 23, 1996</i> <p>
+
+<pre>
+
+Subject: [Announce] Tix version 4.1a3 is available
+
+</pre>
+
+   I am pleased to announce the availability of Tix version 4.1a3, the
+   third alpha release. This version of Tix supports the Unix and
+   Microsoft Windows platforms. <p>
+
+   Tix 4.1 is the commercial version of Tix 4.0. It contains more
+   widgets and works under MS Windows. Please read the file
+   license.terms first inside the distribution tar file or from the
+   WWW at <a href="http://www.xpi.com/tix/license.terms.41a3.txt">
+   http://www.xpi.com/tix/license.terms.41a3.txt </a> <p>
+
+<h3>Requirement</h3>
+
+<h4>Unix Platforms</h4>
+   
+   Tix 4.1a3 works with the following combinations of Tcl/Tk/ITcl/ET:
+   <ul>
+     <li> Tcl 7.4 + Tk 4.0 
+     <li> Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     <li> Tcl 7.4 + Tk 4.0 + ET 1.5
+     <li> Tcl 7.5 + Tk 4.1 (final release only)
+   </ul>
+
+<h4>Windows Platforms</h4>
+
+   Tix 4.1a3 requires the final release of Tcl 7.5 and Tk 4.1 (no
+   alpha or beta versions). Many things currently does not work under
+   Windows, including:
+   <ul>
+     <li> FileSelectDialog (ExFileSelectDialog does work, though)
+     <li> The top-left corner of the Grid (aka spreadsheet) widget
+     <li> XPM images
+   </ul>
+
+<h3>Getting The Tix Package</h3>
+
+   Tix 4.1a3 is available at
+   <ul>
+     <li> <a href="ftp://ftp.xpi.com/pub/Tix4.1a3.tar.gz">
+	  ftp://ftp.xpi.com/pub/Tix4.1a3.tar.gz</a>: Unix source tar file.
+
+     <li> <a href="ftp://ftp.xpi.com/pub/windows/tix41a3.zip">
+	  ftp://ftp.xpi.com/pub/windows/tix41a3.zip</a>: Same as
+	  Tix4.1a3.tar.gz, but in Windows/DOS ZIP format.
+
+     <li> <a href="ftp://ftp.xpi.com/pub/windows/tix41bin.zip">
+	  ftp://ftp.xpi.com/pub/windows/tix41bin.zip</a>: Windows binaries.
+   </ul>
+       
+
+       
+<h3>What's New Since Tix 4.1a2 (the last release)</h3>
+
+<h4>5/5/96</h4>
+
+  <b>New feature:</b> New tool unix-et-tk4.0/makescript.tcl. It
+  includes the Tix script library into a ET application in the correct
+  order. If A.tcl depends on B.tcl, then B.tcl is loaded first.<p>
+
+<h4>5/6/96</h4>
+
+  <b>New feature:</b> Now the -default option of the Tix mega widget
+  classes are inherited from their superclasses.<p>
+
+  <b>New feature:</b> New option -expand for the panes in PanedWindow<p>
+
+  <b>Bug Fixed:</b> ScrolledHList didn't calculate the size of the
+  hlist subwidget correctly, resulting in scrollbars not appearing
+  even if the hlist widget is not big enough to display all of its
+  contents.<p>
+
+<h4>5/8/96</h4>
+
+  <b>New feature:</b> New method setsize for PanedWindow.<p>
+
+<h4>5/10/96</h4>
+
+  <b>New feature:</b> New widget tixMeter, can be used to display the
+  progress of work.<p>
+
+  <b>Bug Fixed:</b> HList multiple and extended selectMode now work
+  with TixTree.<p>
+
+<h4>5/11/96</h4>
+
+  <b>Bug Fixed:</b> HList "see" method sometimes doesn't display the
+  specified element correctly.<p>
+
+  <b>New widgets:</b> New widgets CheckList, Grid, ScrolledGrid, TList
+  and ScrolledTList added to the Tix 4.1 distribution.<p>
+
+  <b>New feature:</b> New option -postcmd for PopupMenu widget.<p>
+   
+<!Serial 851729140>
+<hr><i>Last modified Fri Jan 17 22:52:55 EST 1997 </i> --- 
+<i>Serial 853731293</i>

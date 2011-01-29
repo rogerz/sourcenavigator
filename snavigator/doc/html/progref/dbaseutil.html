@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Database Utilities</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="dbaseAPI.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="versctrl.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996751"></A><BR>
+Database Utilities<DIV>
+<IMG SRC="line.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-996752"></A>The Source-Navigator utilities <KBD CLASS="Code">
+dbdump</KBD>, <KBD CLASS="Code">
+dbcp</KBD>, and <KBD CLASS="Code">
+dbimp</KBD>
+ access and maintain databases that can be started from user shells or 
+applications. These utilities are located in the <KBD CLASS="Code">
+.../bin</KBD>
+ directory.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1168193"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1168194"></A>The scripts in this chapter are written to work under the UNIX operating system. When running under DOS, the scripts must be changed.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996755"></A><A NAME="marker-996754"></A>dbdump</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996756"></A>The <KBD CLASS="Code">
+dbdump</KBD>
+ utility provides a complete listing, or a dump, of the contents of a <A NAME="marker-997221"></A>database table. Its usage is:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996757"></A>dbdump ?-separator char? file</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996758"></A><KBD CLASS="Code">
+dbdump</KBD>
+ separates the key and data parts with a semicolon 
+(<KBD CLASS="Code">;</KBD>). The hash character (<KBD CLASS="Code">#</KBD>) 
+and brackets (<KBD CLASS="Code">{}</KBD>) indicate an empty field. 
+The shell script below lists the name and locations of the project class.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1168187"></A>#!/bin/sh
+
+dbdump=$HOME/snavigator/bin/dbdump
+project=tmp
+
+$dbdump -s ' ' $project.cl | awk '{printf
+    &quot;%s,%s,%s&#92;n&quot;,$1,$3,$2}'</PRE>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996766"></A><A NAME="marker-996765"></A><A NAME="33334"></A>dbcp</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996767"></A>The <KBD CLASS="Code">
+dbcp</KBD>
+ utility copies and compacts the <A NAME="marker-997222"></A>database. Space freed up by deleting key/data pairs from <KBD CLASS="Code">
+btree</KBD>
+ tables is never reclaimed, although it is normally made available for reuse. When copying a database with <KBD CLASS="Code">
+dbcp</KBD>, deleted records are not copied, resulting in a much better page-fill factor and reduced disk space requirements. Its usage is:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996768"></A>dbcp input_table output_table</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996769"></A>The following shell script compresses the tables of a Source-Navigator project.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1103999"></A>#!/bin/sh
+
+execdir=$HOME/snavigator/bin
+dbcp=$execdir/dbcp
+
+project=TEST
+cd .paf
+
+for i in $project.[a-z]*
+do
+  $dbcp $i $$.tmp
+  mv $$.tmp $i
+done</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996783"></A>You can use this script even for currently-running Source-Navigator projects because compressing database tables does not affect performance. Hash tables may also be copied with <KBD CLASS="Code">
+dbcp</KBD>, but there will be no space savings. </P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996785"></A><A NAME="marker-996784"></A>dbimp</H2>
+<P CLASS="Body">
+<A NAME="pgfId-996786"></A>The <KBD CLASS="Code">
+dbimp</KBD>
+ utility inserts, updates, and deletes records in a <A NAME="marker-997225"></A>project database. It reads commands from its standard input.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1168235"></A>Its usage is:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996787"></A>dbimp ?-c cache_size? ?-C cross_cache_size?
+          ?-l? ?-f file? db_prefix</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996789"></A>References to local variables are stored only if the <KBD CLASS="Code">
+-l</KBD>
+ flag is specified.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996790"></A><KBD CLASS="Code">
+db_prefix</KBD>
+ contains the name of the database directory, for example, <KBD CLASS="Code">
+.sn</KBD>
+ and the base name of the project file. If the project file is called <KBD CLASS="Code">
+test.proj</KBD>, <KBD CLASS="Code">
+db_prefix</KBD>
+ could be called <KBD CLASS="Code">
+SNDB4/test</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996792"></A>The format of the commands (read from standard input) must follow this syntax:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996793"></A>COMMAND;KEY;DATA</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996794"></A>If <KBD CLASS="Code">
+COMMAND</KBD>
+ is greater than or equal to 0, <KBD CLASS="Code">
+dbimp</KBD>
+ inserts KEY/DATA pairs. The value of <KBD CLASS="Code">
+COMMAND</KBD>
+ must be between <KBD CLASS="Code">
+PAF_FILE</KBD>
+ and <KBD CLASS="Code">
+PAF_COMMENT_DEF</KBD>, inclusive. (For the numerical values see <KBD CLASS="Code">
+sn.h</KBD>.) </P>
+<P CLASS="Body">
+<A NAME="pgfId-996795"></A>The following example inserts a <A NAME="marker-997228"></A>function 
+(<KBD CLASS="Code">strcopy</KBD>) definition.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996796"></A>8;strcopy 000001.004 x.c;4.1 0x0 {int} {} {} {}</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996797"></A>The following example inserts a <A NAME="marker-997227"></A>method definition 
+(<KBD CLASS="Code">pro3</KBD>) of the class <KBD CLASS="Code">
+xharom</KBD>.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996798"></A>17;xharom pro3 000036.005 x.C;36.11 0x2 {int} {} {} {}</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996799"></A>The instructions below insert 
+<A NAME="marker-997226"></A>cross-references 
+(<EM CLASS="Emphasis">Refers-to</EM>
+ and <EM CLASS="Emphasis">
+Referred-by</EM>) into the project database. The ? symbol represents the <KBD CLASS="Code">
+sn_sep</KBD>
+ separator character in the instructions below.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996800"></A>16;#?abc?fu?abc?var?lv?w?000004?x.c;#
+15;abc?var?lv?#?abc?fu?w?000004?x.c;#
+16;#?abc?fu?#?hello?fu?p?000005?x.c;#
+15;#?hello?fu?#?abc?fu?p?000005?x.c;#</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-996804"></A>See <A HREF="dbaseAPI.html#38112" CLASS="XRef">Database Table Structures</A> for information on the structure of the Source-Navigator database tables.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996805"></A>If <KBD CLASS="Code">
+COMMAND</KBD>
+ is 0, <KBD CLASS="Code">
+KEY</KBD>
+ must contain a known source file name of the project, and <KBD CLASS="Code">
+dbimp</KBD>
+ deletes the definitions of, but not cross-references to, the file.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996806"></A>If <KBD CLASS="Code">
+COMMAND</KBD>
+ is -1, <KBD CLASS="Code">
+KEY</KBD>
+ must be 0 and <KBD CLASS="Code">
+DATA</KBD>
+ must contain a known source file name of the project, and <KBD CLASS="Code">
+dbimp</KBD>
+ deletes the definitions of, but not cross-references to, the file.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996807"></A>If <KBD CLASS="Code">
+COMMAND</KBD>
+ is -2, <KBD CLASS="Code">
+KEY</KBD>
+ must be 0 and <KBD CLASS="Code">
+DATA</KBD>
+ must contain a known source file name of the project, and <KBD CLASS="Code">
+dbimp</KBD>
+ deletes the cross-references to, but not definitions of, the file.</LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-996808"></A>The following example deletes the cross-reference information for the file <KBD CLASS="Code">
+x.c</KBD>:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-996809"></A>-2;0;x.c</PRE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-996810"></A>Limitations</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1002739"></A>Undefined results occur if the <KBD CLASS="Code">
+COMMAND</KBD>
+ does not have a legal value.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996811"></A>In the commands, you may use only single blank spaces and no tabs.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996747"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="dbaseAPI.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="versctrl.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

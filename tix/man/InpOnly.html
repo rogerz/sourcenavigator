@@ -1,0 +1,77 @@
+
+
+
+<TITLE>tixInputOnly - Create and manipulate TIX <B>InputOnly</B></I> widgets</TITLE>
+<Center><H2>tixInputOnly - Create and manipulate TIX <B>InputOnly</B></I> widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixInputOnly<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+None
+</pre><H3>STANDARD OPTIONS</H3>
+Only the following three standard options are supported by
+<B>TixInputOnly</B></I>:
+<P>
+<pre><code><code><code>
+<B>
+cursor width	height
+</B></I>
+</code></code></code></pre>
+<P>
+See the "options(n)" manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<B>TixInputOnly</B></I> does not have any widget specific options.
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixInputOnly</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a <B>tixInputOnly</B></I>
+widget.  Additional options, described above, may be specified on the
+command line or in the option database to configure aspects of the
+<B>tixInputOnly</B></I> such as its cursor or width.
+<P>
+<B>TixInputOnly</B></I> widgets are not visible to the user. The only
+purpose of <B>TixInputOnly</B></I> widgets are to accept inputs from the
+user, which can be done with the <B>bind</B></I> command.
+</pre><H3>WIDGET COMMAND</H3>
+<P>
+The <B>tixInputOnly</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It
+has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+the exact behavior of the command.  The following commands are
+possible for <B>tixInputOnly</B></I> widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixInputOnly</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If
+no <I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixInputOnly</B></I> command.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+<B>tixInputOnly</B></I> widgets have no default bindings.
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:30 EST 1997 </i> --- 
+<i>Serial 853731301</i>

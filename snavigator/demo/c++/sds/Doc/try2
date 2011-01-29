@@ -1,0 +1,84 @@
+
+
+The entities that the sds system concerns itself with are data objects.
+What a data object is can be discussed by referring to the semantics of the
+'C' language. At root, C understands a number of primitive data objects and
+describes them in statements such as
+
+	int icount;
+
+This statement requests space in memory for an object and details
+some decriptive information and a mechanism by which the memory can be
+accessed. 'int' determines the amount of space needed
+(usually two or four byte) and where the space should be aligned in the
+computer address space. Depending on the stringency of the compiler, this
+part of the statement may also restict the use of this data object as far
+as it can be determined at compile time, and in an extension of C where
+'overloading' is available, may go as far as directing the object to code
+which will interpret the bits in memory as an integer quantity as opposed
+to, for instance, a floating point value or a character string. Thus, 'int'
+is a declaration of generic properties to be associated with this memory.
+'icount' by contrast refers to a particular instance of this generic data
+type.
+
+Space for a number of primitive objects may be requested by declaring a
+multiplicity:
+
+	float value[200];
+
+and C allows this multiplicity to be determined at run time via the memory
+allocation routines:
+
+	double *bigval;
+	unsigned multiplicity = 200;
+		 .
+		 .
+		 .
+  bigval = (double *)calloc(multiplicity, sizeof(double));
+
+We then expand to compound data types, where associations of named
+primitive types are grouped for ease of manipulation and to allow
+compile-time checking:
+
+	struct mystruct {
+		float offset;
+		float scale;
+		short data[1024]
+	} DataChannel;
+
+Here, some generic names are introduced: every instance of the structure
+'mystruct' will have a field called 'scale'; in this case it may be
+accessed by 'DataChannel.scale'.
+In the case that a particular data space may contain more than one sort of
+data type, we may use the 'union':
+
+	union data {
+		struct mystruct DataChannel;
+		char   comment_field[64];
+	} DataRecord;
+
+and here the compiler will be able to work out the space which must be
+allocated (enough to contain the largest component of the union) and the
+relevant alignment.
+
+These mechanisms of expressing data constructs are extremely powerful, and
+the use of pointers and run time allocation allows highly complex data
+objects to be constructed at runtime; within a given program the compiler
+can guard against many errors in data access and manipulation, and
+debuggers using the symbol table can track faults that appear at
+runtime. However, almost all the information in these source statements is
+lost to the program at runtime.
+
+It is the primary aim of SDS to encapsulate all this information so that,
+when data is moved out of the realm of a single compiled program the
+convenience and safety of the data structuring and naming is available
+without further - potentially buggy - effort. A step on the way is made
+with systems such as RPC but the price paid here is that each program using
+the shared data must have specific stubs compiled in; flexibility is lost
+and a change in the data structure that a source produces may have large
+maintenence costs. The downside of the SDS approach is the extra space
+overhead needed to contain the added information; with memdium to large
+blocks of scientific data, which tend to be highly repetitive in their
+structuring, this burden is often slight. Even with small data packets the
+gain in portability, security and flexibility may be worth it especially
+with the current generations of cheap memory high cpu machines. 

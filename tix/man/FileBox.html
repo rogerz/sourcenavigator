@@ -1,0 +1,216 @@
+
+
+
+<TITLE>tixFileSelectBox - Create and manipulate Tix FileSelectBox widgets</TITLE>
+<Center><H2>tixFileSelectBox - Create and manipulate Tix FileSelectBox widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixFileSelectBox<I> <I>pathName ?<I>options</I></B>?
+</pre><H3>STANDARD OPTIONS</H3>
+The FileSelectBox widget supports all the standard options of a frame
+widget.  See the <B>options(n)</B></I> manual entry for details on the standard
+options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>browsecmd</B></I>
+Class:		<B>browseCmd</B></I>
+Switch:		<B>-browsecmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to execute when the user browses through the
+files. By default, if the <B>-browsecmd</B></I> is specified, the browse
+command will be executed when the user clicks on a filename in the
+<I>Files</I></B> listbox.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>command</B></I>
+Class:		<B>Command</B></I>
+Switch:		<B>-command</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the command to execute when the FileSelectBox is
+invoked. This command is executed with one parameter : the filename
+selected by the user.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>directory</B></I>
+Class:		<B>Directory</B></I>
+Switch:		<B>-directory</B></I>
+Alias:		<B>-dir</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the directory to look for files. By default this will be the
+current working directory of the program and will be changed as the
+user browses through the directories.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>disableCallback</B></I>
+Class:		<B>DisableCallback</B></I>
+Switch:		<B>-disablecallback</B></I>
+</code></code></code></pre>
+<UL>
+A boolean value indicating whether callbacks should be disabled. When
+set to true, the TCL command specified by the <B>-command</B></I> option
+is not executed when the <B>-value</B></I> of the ExFileSelectBox
+widget changes.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>pattern</B></I>
+Class:		<B>Pattern</B></I>
+Switch:		<B>-pattern</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the matching pattern of the file names that should be listed in
+the <I>Files</I></B> listbox. For example "*.c" matches all the filenames that
+end with ".c". If this option is set to the empty string, the default
+pattern "*" will be used.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+Alias:		<B>-selection</B></I>
+</code></code></code></pre>
+<UL>
+Specifies the name of the filename currently selected by the user.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>dirlist</B></I>
+Class:		<B>TixScrolledListBox</B></I>
+</code></code></code></pre>
+<UL>
+The scrolled listbox that shows the directories.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>filelist</B></I>
+Class:		<B>TixScrolledListBox</B></I>
+</code></code></code></pre>
+<UL>
+The scrolled listbox that shows the files.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>filter</B></I>
+Class:		<B>TixComboBox</B></I>
+</code></code></code></pre>
+<UL>
+The ComboBox listbox that shows the filter string.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>selection</B></I>
+Class:		<B>TixComboBox</B></I>
+</code></code></code></pre>
+<UL>
+The ComboBox listbox that shows the file selection.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixFileSelectBox</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a FileSelectBox widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+FileSelectBox such as its cursor and relief.
+<P>
+The FileSelectBox is similar to the standard Motif(TM) file-selection
+box. It is generally used for the user to choose a file. FileSelectBox
+stores the files mostly recently selected into a ComboBox widget so
+that they can be quickly selected again. The <B>tixFileSelectDialog</B></I>
+widget is a combination of the FileSelectBox widget and a dialog
+widget.
+</pre><H3>WIDGET COMMAND</H3>
+<P>
+The <B>tixFileSelectBox</B></I> command creates a new Tcl command whose
+This command may be used to invoke various operations on the widget.
+It has the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+<I>arg</I></B>s determine the exact behavior of the command.  The following
+commands are possible for FileSelectBox widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixFileSelectBox</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixFileSelectBox</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>filter</B></I>
+</I></B>
+<DD> Updates the files listed in the FileSelectBox according to the
+filtering pattern sepcified in the <B>filter</B></I> subwidget.
+</DL>
+<DL>
+<DT> <I>pathName <B>invoke</B></I>
+</I></B>
+<DD> Execute the command specified by the <B>-command</B></I> option with the
+filename stored in the <B>selection</B></I> subwidget.
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>DEFAULT BINDINGS</H3>
+TIX automatically creates class bindings for FileSelectBoxes that give them
+the following default behavior:
+<UL>
+[1] <BR>
+Mouse button 1 in the <I>Directory</I></B> listbox will change the filter
+string to the selected directory.
+</UL>
+<UL>
+[2] <BR>
+Mouse button 1 in the <I>Files</I></B> listbox will change the filename
+that appears in the <I>Selection</I></B> entry. It will also trigger the
+<B>-browsecmd</B></I> if the option has been specified.
+</UL>
+<UL>
+[3] <BR>
+The current directory will be changed by (1) double clicking the
+<I>Directory</I></B> listbox or (2) invoking the <I>Filter</I></B> ComboBox.
+Please refer to the man page of <B>tixComboBox</B></I> for the default
+bindings of the ComboBoxes and how they can be invoked.
+</UL>
+<UL>
+[4] <BR>
+The command specified by the option -command will be invoked by (1)
+double clicking the <I>Files</I></B> listbox or (2) invoking
+<I>Selection</I></B> ComboBox.
+</UL>
+</pre><H3>KEYWORDS</H3>
+tixFileSelectBox, tixComboBox, tixFileSelectDialog, Tix(n), 
+<hr><i>Last modified Sun Jan 19 22:34:24 EST 1997 </i> --- 
+<i>Serial 853731298</i>

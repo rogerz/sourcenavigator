@@ -1,0 +1,333 @@
+<TITLE>Changes Made to Tix</TITLE>
+<Center><H1>Changes Made to Tix</H1></Center>
+
+<ul>
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.0.4+>Changes Since Tix 4.0.4</h3><ul>
+
+<h4>5/5/96</h4>
+
+  <li><b>New feature:</b> New tool unix-et-tk4.0/makescript.tcl. It
+  includes the Tix script library into a ET application in the correct
+  order. If A.tcl depends on B.tcl, then B.tcl is loaded first.<p>
+
+<h4>5/6/96</h4>
+
+  <li><b>New feature:</b> Now the -default option of the Tix mega widget
+  classes are inherited from their superclasses.<p>
+
+  <li><b>New feature:</b> New option -expand for the panes in PanedWindow<p>
+
+  <li><b>Bug Fixed:</b> ScrolledHList didn't calculate the size of the
+  hlist subwidget correctly, resulting in scrollbars not appearing
+  even if the hlist widget is not big enough to display all of its
+  contents.<p>
+
+<h4>5/8/96</h4>
+
+  <li><b>New feature:</b> New method setsize for PanedWindow.<p>
+
+<h4>5/10/96</h4>
+
+  <li><b>New feature:</b> New widget tixMeter, can be used to display the
+  progress of work.<p>
+
+  <li><b>Bug Fixed:</b> HList multiple and extended selectMode now work
+  with TixTree.<p>
+
+<h4>5/11/96</h4>
+
+  <li><b>Bug Fixed:</b> HList "see" method sometimes doesn't display the
+  specified element correctly.<p>
+
+  <li><b>New widgets:</b> New widgets CheckList, Grid, ScrolledGrid, TList
+  and ScrolledTList added to the Tix 4.1 distribution.<p>
+
+  <li><b>New feature:</b> New option -postcmd for PopupMenu widget.<p>
+
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.1a3+>Changes Since Tix 4.1a3<ul></h3>
+
+<h4>7/14/96</h4>
+
+  <li><b>New feature:</b> Supports ET+TK4.1. --enable-tk41_et flag for
+  configure script.<p>
+
+  <li><b>New feature:</b> Supports ITCL 2.1. --enable-itcl21 flag for
+  configure script.<p>
+
+  <li><b>New feature:</b> Default color schemes and fontset can be set
+  when Tix is compiled: --with-fontset= and --with-scheme= flags for
+  configure script.<p>
+
+  <li><b>Incompatibility:</b> All the "::" qualifiers in Tix class methods
+  have been replaced by ":", so that the Tix classes can be loaded
+  into Itcl without patching Itcl. If you have written your own Tix
+  classes, you need to modify the source files to use the ":"
+  qualifier instead. <p>
+
+  The program tools/setcolon.sh helps you port your code from the "::"
+  convention to the ":" convention. Execute the program without
+  argument for usage syntax. It may modify your code in unexpected
+  ways. Use with caution. <p>
+
+<h4>7/15/96</h4>
+  
+  <li><b>New feature:</b> New function Tix_SetRcFileName() and new macros
+  TCL_7_5_OR_LATER, TK_4_1_OR_LATER to provide better support for both
+  Tcl7.4/Tk4.0 and Tcl7.5+/Tk4.1+. <p>
+
+  <li><b>Bug Fixed:</b> <code>entrycget</code> method of OptionMenu didn't
+  work as expected. <p>
+
+<h4>7/17/96</h4>
+
+  The demos-c subdirectory has been moved to demos/c-code. <p>
+
+<h4>7/24/96</h4>
+
+  <li><b>Bug Fixed:</b> tixMwm now deletes information about a toplevel
+  when the toplevel is destroyed.<p>
+
+<h4>8/22/96</h4>
+
+  <li><b>New feature:</b> New command "tixConsoleInit" available with Tcl
+  7.5/Tk 4.1. Create console window that runs in a separate
+  interpreter. <p>
+
+  <li><b>New feature:</b> Now Tix works under multiple interpreters. <p>
+
+<h4>8/23/96</h4>
+
+  <li><b>New feature:</b> Now ListNoteBook uses a PanedWindow to manage
+  the HList and the pages.<p>
+
+  <li><b>New feature:</b> New option -dynamicgeometry for PanedWindow.<p>
+
+<h4>8/24/96</h4>
+
+  <li><b>New feature:</b> New command "tixStrEq" compares the equality of
+  two strings.<p>
+
+<h4>9/12/96</h4>
+
+  <li><b>New feature:</b> Tix provides emulation for strcasecmp() for
+  platforms that do not support this function.<p>
+
+<h4>9/14/96</h4>
+
+  <li><b>New feature:</b> New widget command <code>selection get</code>
+  for HList. This is just an alias for <code>info
+  selection</code>. It's added so that the API is similar to the TK
+  API.<p>
+
+  <li><b>New feature:</b> New widget command <code>info bbox</code>
+  for HList. Used mainly in regression tests. <p>
+
+<h4>9/17/96</h4>
+
+  <li><b>New feature:</b> Orientation of the <b>pane</b> subwidget in
+  <li><b>TixListNoteBook</b> now configureable via the <b>-options</b>
+  switch during creation. <p>
+
+<h4>9/22/96</h4>
+
+  <li><b>New feature:</b> Now the default fontset and color scheme are
+  configurable in the setup.tcl program as well as in the configure
+  script. <p>
+
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.1b1+>Changes Since Tix 4.1b1<ul></h3>
+
+<h4>10/13/96</h4>
+
+  <li><b>New feature:</b> Now XPM image works on Windows. <p>
+
+<h4>10/18/96</h4>
+
+  <li><b>New feature:</b> New options -editablecmd and -editcmd for the
+  Grid widget to support editing of the entries. <p>
+
+  <li><b>New feature:</b> New options -editablecmd and -editcmd for the
+  Grid widget to support editing of the entries. <p>
+
+  <li><b>New feature:</b> New widget <b>TixFloatEntry</b> to support
+  editing of DItems. <p>
+
+<h4>10/27/96</h4>
+
+  <li><b>Feature Change:</b> The following changes are made to the
+  configuration and installation of Tix:
+  <ul>
+
+    <li> <b>Naming convention of binaries</b>: The binaries for the
+	 Tk 4.0 target are called tixwish and libtix.a. For Tk 4.1 and
+	 later, the executable is be called tixwish[Tix version].[Tk version]
+	 and the library is called libtix[Tix version].[Tk
+	 version].[lib extension]. For example, tixwish4.1.4.1 and
+	 libtix4.1.4.2.so. On platforms that do not allow the dot
+	 character in the names of shared libraries, the dot character
+	 will be omitted. E.g., libtix4142.so.
+
+    <li> <b>Shared vs static linking</b>: The static binary will be
+	 created only if the -enable-[tkversion]-shared flag is
+	 disabled. If you want to create both shared and static
+	 binaries, configure and compile Tix twice.
+
+    <li> ET support is replaced by SAM (stand-alone module)
+	 support.
+
+    <li> The following options are removed from configure:
+	 <ul>
+	   <li> -enable-tk40_et
+	   <li> -enable-tk41_et
+	   <li> -enable-tk41_shared
+	 </ul>	 
+
+    <li> The new options are added to configure:
+	 <ul>
+	   <li> -enable-tk40-sam
+	   <li> -enable-tk41-sam
+	   <li> -enable-tk42-sam
+	   <li> -enable-tk41-shared
+	   <li> -enable-tk42-shared
+	 </ul>	 
+  </ul>
+
+
+<h4>11/1/96</h4>
+
+  <li><b>New feature:</b> XPM code has been rewritten. The code is now cleanly
+  separated into three modules: generic, windows specific and Unix specific.
+  <p>
+
+  
+<h4>11/17/96</h4>
+
+  <li><b>New feature:</b> Tix classes can be defined before their
+  superclasses are defined. However, a class <b>cannot</b> be
+  instantiated before all of its superclasses are defined. This
+  feature makes it possible to load the Tix scripts into the SAM in
+  any order, without having to worry about loading the superclasses
+  before the subclasses. <p>
+  
+  <li><b>New feature:</b> Tix is initialized by calling the command
+  <li><b>__tixInit</b>, not by sourcing <b>Init.tcl</b>. <p>
+  
+<h4>11/29/96</h4>
+
+  <li><b>Bug Fixed:</b> tixTmpLine now correctly works on multiple X
+  displays. <p>
+
+<h4>11/30/96</h4>
+
+  <li><b>Feature Change</b>: DisplayStyle now uses a hash table to store
+  the items associated with it (previously a link list was used). This
+  speeds up the delete operations when a lot (1000 or more) of items
+  are associated with the same style. <b>Possible Incompatibility:</b>
+  widgets that use DItems must be recompiled. <p>
+
+  <li><b>Bug Fixed:</b> Tix no longer tempers with the way Tk handles
+  errors, unless the environment variable TIX_DEBUG_INTERACTIVE is
+  set. If this variable is set, all error messages will be printed to
+  the standard output. This may be convenient for debugging
+  purposes. Use this feature with discretion, and during program
+  development only. <p>
+
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.1b1+>Changes Since Tix 4.1b2<ul></h3>
+       
+<h4>12/2/96</h4>
+
+  <li><b>Bug Fixed:</b>Dotted anchor lines (HList, TList, Grid) and
+  rubber-band lines (PanedWindow, ResizeHandle) are implemented on Windows.<p>
+
+  <li><b>New feature:</b> Tcl 7.6 support is complete for the Windows
+  platform. makefile.vc and makefile.bc have been modified such that
+  the Tcl version can be chosen at compile time by, e.g., "<b>make
+  TCL_VER=7.5 -f makefile.bc</b>". <p>
+  
+<h4>12/2/96</h4>
+  
+  <li><b>Bug Fixed:</b> Display items are correctly clipped. E.g., if a
+  text item is wider than the width of a column in an HList, the item
+  will be clipped.<p>
+
+<h4>12/20/96</h4>
+
+  <li><b>New feature:</b> New sample file demos/samples/EditGrid.tcl that
+  demonstrates the use of an editable grid widget. <p>
+
+<h4>12/21/96</h4>
+  
+  <li><b>Bug Fixed:</b> Tix works with multiple interpreters under tk4.1
+  and 4.2 (see test/general/minterp.tcl). However, minterp.tcl still
+  core dumps under Itcl 2.1. It is not clear to me whether this is a
+  problem of Tix or Itcl. <p>
+
+  <li><b>Bug Fixed:</b> Now when an interpreter is deleted, all Tix class
+  informations associated with this interpreter are freed. (No memory
+  leak is recorded by purify when running Tix against the complete
+  test suite.) <p>
+
+<h4>1/17/96</h4>
+
+  <li><b>Feature Change:</b> The old monolithic configure script is now
+  split into one script per version of Tk/Itcl (tk 4.0, 4.1, 4.2, 4.3,
+  8.0 and itcl 2.0, 2.1, 2.1). This makes the maintainence of the
+  configure scripts easier. The eight configure scripts and theisr
+  associated Makefile.in are generated by the programs
+  tools/doconfig.tcl and tools/domakefile.tcl. <p>
+
+  <li><b>Feature Change:</b> The Unix binary build directories have been
+  moved from <b>unix-tk4.x</b> into <b>unix/tk4.x</b>. The test
+  directory has been renamed into <b>tests</b>.<p>
+       
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.1b1+>Changes Since Tix 4.1b3<ul></h3>
+
+<h4>2/14/96</h4>
+
+  <li><b>Feature Change:</b> Tix can be loaded using the "package
+  require" command. The "binary version" associated with Tix binaries
+  has been changed from 4.1.${TK_VERSION} to 4.1.${TCL_VERSION} (or
+  4.1.${TCL_VERSION}.1 for Itcl). See <a
+  href="Pkg.txt">docs/Pkg.txt</a> for details.
+
+<!---------------------------------------------------------------------->
+<hr>
+</ul><h3><a name=4.1.0+>Changes Since Tix 4.1.0<ul></h3>
+
+<h4>4/7/97</h4>
+
+  <li>New global Tcl variable tix_release that indicates a "release"
+  of Tix. This makes it possible to identify frequent patch release of
+  Tix without modifying the tix_version and tix_patchLevel variables. <p>
+
+  <li> The missing "info selection" command is added to TList. Thanks
+  to David Sundstrom for the patch. <p>
+       
+  <li> New "index" command for TList. <p>
+       
+  <li> The Itcl-enabled tixwish is installed as tixwish4.1.x.x.1 on Unix --
+       with a .1 suffix similar to the shared library. <p>
+       
+<i>New patch release 4.1.0.001 uploaded to
+ftp.xpi.com/pub/Tix4.1.0.tar.gz </i> <p>
+
+<h4>6/17/97</h4>
+
+  <li> New "info size" command for TList. <p>
+       
+<h4>6/27/97</h4>
+
+  <li> New "see" command for TList. <p>
+
+  <li> SAM works with Tk 8.0 and Itcl 2.2. (Only tixsam?.so is
+  supported, no satixwish support.) <p>
+       

@@ -1,0 +1,225 @@
+<!-- Copyright (c) 1996, Expert Interface Technologies
+
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+
+The file man.macros and some of the macros used by this file are
+copyrighted: (c) 1990 The Regents of the University of California.
+(c) 1994-1995 Sun Microsystems, Inc.
+The license terms of the Tcl/Tk distrobution are in the file
+license.tcl.>
+<Title> tixGrid</Title>
+<h1>tixGrid </h1> <blockquote>Create and manipulate Tix Grid widgets.</blockquote><p>
+<p><hr>
+<h1> Standard Options </h1><p>
+<blockquote>
+<TABLE ALIGN=ABSCENTER BORDER=1 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD><code><b>background</b></code></TD>
+<TD><code><b>borderWidth</b></code></TD>
+<TD><code><b>cursor</b></code></TD>
+<TD><code><b>font</b></code><br></TD>
+</TR>
+<TR>
+<TD><code><b>foreground</b></code></TD>
+<TD><code><b>height</b></code></TD>
+<TD><code><b>highlightColor</b></code></TD>
+<TD><code><b>highlightThickness</b></code><br></TD>
+</TR>
+<TR>
+<TD><code><b>relief</b></code></TD>
+<TD><code><b>selectBackground</b></code></TD>
+<TD><code><b>selectForeground</b></code></TD>
+<TD><code><b>width</b></code><br></TD>
+</TR>
+<TR>
+<TD><code><b>xScrollCommand</b></code></TD>
+<TD><code><b>yScrollCommand</b></code></TD>
+<TD><code><b></b></code></TD>
+<TD><code><b></b></code><br></TD>
+</TR>
+</TABLE>
+<p>See the <b>options(n)</b> manual entry for details on the standard options.<p>
+</blockquote>
+<p> <h1>Widget Specific Options</h1> <p>
+<DL>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>editDoneCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>EditDoneCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-editdonecmd</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>If non-empty, gives a Tcl command to be executed when the user has edited grid cell. When this command is called, it is passed with two additional parameters: <i>x</i> <i>y</i>, where (<i>x</i>,<i>y</i>) is the location of the cell that has just been edited.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>editNotifyCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>EditNotifyCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-editnotifycmd</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>If non-empty, gives a Tcl command to be executed when the user tries to edit a grid cell. When this command is called, it is passed with two additional parameters: <i>x</i> <i>y</i>, where (<i>x</i>,<i>y</i>,) is the location of the cell. This command should return a boolean value: <b>true</b> indicates that the cells is editable and <b>false</b> otherwise.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>formatCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>FormatCmd</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-formatcmd</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>If non-empty, gives a Tcl command to be executed when the grid cells need to be formatted on the screen. Normally, this command calls the <b>format</b> widget command (see below). When this command is called, it is passed with five additional parameters: <i>type</i> <i>x1</i> <i>y1</i> <i>x2</i> <i>y2</i>. <i>type</i> gives the logical type of the region in the grid. It may be one of the following. <b>x-region</b>: the horizontal margin; <b>y-region</b>: the vertical margin; <b>s-region</b>, the area where the the horizontal and vertical margins are joined; <b>main</b>: all the cells that do not fall into the above three types.  <i>x1</i> <i>y1</i> <i>x2</i> <i>y2</i> gives the extent of the region that needs formatting.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>leftMargin</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>LeftMargin</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-leftmargin</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>In the number of cells, gives the width of vertical margin. A zero indicates that no vertical should be drawn.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>selectMode</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>SelectMode</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-selectmode</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>Specifies one of several styles for manipulating the selection. The value of the option may be arbitrary, but the default bindings expect it to be either <b>single</b>, <b>browse</b>, <b>multiple</b>, or <b>extended</b>; the default value is <b>single</b>.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>selectUnit</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>SelectUnit</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-selectunit</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>Specifies the selection unit. Valid values are <b>cell</b>, <b>column</b> or <b>row</b>.<p>
+<DT>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4>
+<TR>
+<TD>Name:</TD>
+<TD><code><b>topMargin</b></code><br></TD>
+</TR>
+<TR>
+<TD>Class:</TD>
+<TD><code><b>TopMargin</b></code><br></TD>
+</TR>
+<TR>
+<TD>Command-line switch:</TD>
+<TD><code><b>-topmargin</b></code><br></TD>
+</TR>
+</TABLE>
+<DD><p>In the number of cells, gives the height of horizontal margin. A zero indicates that no horizontal should be drawn.<p>
+</DL>
+<p>
+<p><hr>
+<h1>Description</h1><p>
+The <b>tixGrid</b> command creates a new window (given by the <i>pathName</i> argument) and makes it into a <b>tixGrid</b> widget.  Additional options, described above, may be specified on the command line or in the option database to configure aspects of the <b>tixGrid</b> widget such as its cursor and relief. <p> A Grid widget displays its contents in a two dimensional grid of cells. Each cell may contain one Tix <b>display</b> <b>item</b>, which may be in text, graphics or other formats. See the <b>tixItemType(n)</b> manual page for more information about Tix display items. Individual cells, or groups of cells, can be formatted with a wide range of attributes, such as its color, relief and border.</p>
+<h2> Widget Command</h2><p>
+The <b>tixGrid</b> command creates a new Tcl command whose name is the same as the path name of the <b>tixGrid</b> widget's window. This command may be used to invoke various operations on the widget. It has the following general form:
+<blockquote>
+<code><i>pathName option</i> </code>?<code><i>arg arg ...</i></code>?
+</blockquote>
+<i>PathName</i> is the name of the command, which is the same as the <b>tixGrid</b> widget's path name. <i>Option</i> and the <i>arg</i>s determine the exact behavior of the command. The following commands are possible for <b>tixGrid</b> widgets: <p>
+<DL>
+<DT>
+<i>pathName</i> <b>anchor</b> <i>option</i> ?<i>args</i> <i>...</i>?
+<DD>Manipulates the <b>anchor cell</b> of the <b>tixGrid</b> widget. The anchor cell is the end of the selection that is fixed while the user is dragging out a selection with the mouse. <p>
+<DT>
+<i>pathName</i> <b>bdtype</b>
+<DD> <p>
+<DT>
+<i>pathName</i> <b>cget</b> <i>option</i>
+<DD>Returns the current value of the configuration option given by <i>option</i>. <i>Option</i> may have any of the values accepted by the <b>tixGrid</b> command. <p>
+<DT>
+<i>pathName</i> <b>configure</b> ?<i>option</i>? ?<i>value</i> <i>option</i> <i>value</i> <i>...</i>?
+<DD>Query or modify the configuration options of the widget.  If no <i>option</i> is specified, returns a list describing all of the available options for <i>pathName</i> (see <b>Tk_ConfigureInfo(n)</b> for information on the format of this list.) If <i>option</i> is specified with no <i>value</i>, then the command returns a list describing the one named option (this list will be identical to the corresponding sublist of the value returned if no <i>option</i> is specified). If one or more <i>option-value</i> pairs are specified, then the command modifies the given widget option(s) to have the given value(s); in this case the command returns an empty string. <i>Option</i> may have any of the values accepted by the <b>tixGrid</b> command. <p>
+<DT>
+<i>pathName</i> <b>delete</b> <i>dim</i> <i>from</i> ?<i>to</i>?
+<DD><i>Dim</i> may be <b>row</b> or <b>column</b>. If <i>to</i> is not given, deletes a single row (or column) at the position <i>from</i>. If <i>to</i> is given, deletes the range of rows (or columns) from position <i>from</i> through <i>to</i>. <p>
+<DT>
+<i>pathName</i> <b>edit apply</b>
+<DD>If any cell is being edited, de-highlight the cell and applies the changes. <p>
+<DT>
+<i>pathName</i> <b>edit set</b> <i>x</i> <i>y</i>
+<DD>Highlights the cell at (<i>x</i>,<i>y</i>) for editing, if the <b>-editnotify</b> command returns true for this cell. <p>
+<DT>
+<i>pathName</i> <b>entrycget</b> <i>x</i> <i>y</i> <i>option</i>
+<DD>Returns the current value of the configuration option given by <i>option</i> of the cell at (<i>x</i>,<i>y</i>). <i>Option</i> may have any of the values accepted by the <b>set</b> widget command. <p>
+<DT>
+<i>pathName</i> <b>entryconfigure</b> <i>x</i> <i>y</i> ?<i>option</i>? ?<i>value</i> <i>option</i> <i>value</i> <i>...</i>?
+<DD>Query or modify the configuration options of the cell at (<i>x</i>,<i>y</i>).  If no <i>option</i> is specified, returns a list describing all of the available options for the cell (see <b>Tk_ConfigureInfo(n)</b> for information on the format of this list.)  If <i>option</i> is specified with no <i>value</i>, then the command returns a list describing the one named option (this list will be identical to the corresponding sublist of the value returned if no <i>option</i> is specified.) If one or more <i>option-value</i> pairs are specified, then the command modifies the given widget option(s) to have the given value(s); in this case the command returns an empty string.  <i>Option</i> may have any of the values accepted by the <b>set</b> widget command. <p>
+<DT>
+<i>pathName</i> <b>format</b>
+<DD> <p>
+<DT>
+<i>pathName</i> <b>index</b>
+<DD> <p>
+<DT>
+<i>pathName</i> <b>move</b> <i>dim</i> <i>from</i> <i>to</i> <i>offset</i>
+<DD><i>Dim</i> may be <b>row</b> or <b>column</b>. Moves the the range of rows (or columns) from position <i>from</i> through <i>to</i> by the distance indicated by <i>offset</i>. For example, <b>move</b> <b>row</b> <b>2</b> <b>4</b> <b>1</b> moves the rows 2,3,4 to rows 3,4,5. <p>
+<DT>
+<i>pathName</i> <b>set</b> <i>x</i> <i>y</i> ?<i><b>-itemtype</b></i> <i>type</i>? ?<i>option</i> <i>value...</i>?
+<DD>Creates a new display item at the cell at (<i>x</i>,<i>y</i>). The optional <b>-itemtype</b> parameter gives the type of the display item. An additional list of <i>option-value</i> pairs specify options of the display item. If a display item already exists at this cell, the old item will be deleted automatically. <p>
+<DT>
+<i>pathName</i> <b>size</b> <i>dim</i> <i>index</i> ?<i>option</i> <i>value</i> <i>...</i>?
+<DD>Queries or sets the size of the row or column given by <i>dim</i> and <i>index</i>. <i>Dim</i> may be <b>row</b> or <b>column</b>.  <i>Index</i> may be any non-negative integer that gives the position of a given row (or column). <i>Index</i> can also be the string <b>default</b>; in this case, this command queries or sets the default size of all rows (or columns). <p> When no <i>option</i>-<i>value</i> pair is given, this command returns a list containing the current size setting of the given row (or column). When <i>option</i>-<i>value</i> pairs are given, the corresponding options of the size setting of the given row are changed. <i>Option</i> may be one of the follwing: <p><DL><DT><b>-pad0</b> <i>pixels</i><DD>Specifies the paddings to the left or a column or the top of a row.<p><DT><b>-pad1</b> <i>pixels</i><DD>Specifies the paddings to the right or a column or the bottom of a row.<p><DT><b>-size</b> <i>val</i><DD>Specifies the width of a column or the height of a row. <i>Val</i> may be: <b>auto</b> -- the width of the column is set the the widest cell in the column; a valid Tk screen distance unit (see <b>Tk_GetPixels(n)</b>); or a real number following by the word <b>chars</b> (e.g. <b>3.4chars</b>) that sets the width of the column to the given number of characters.<p></DL> <p>
+<DT>
+<i>pathName</i> <b>unset</b> <i>x</i> <i>y</i>
+<DD>Clears the cell at (<i>x</i>,<i>y</i>) by removing its display item. <p>
+<DT>
+<i>pathName</i> <b>xview</b>
+<DD> <p>
+<DT>
+<i>pathName</i> <b>yview</b>
+<DD> <p>
+</DL>
+
+<!Serial 851729152>
+<hr><i>Last modified Fri Jan 17 23:01:07 EST 1997 </i> --- 
+<i>Serial 853731300</i>

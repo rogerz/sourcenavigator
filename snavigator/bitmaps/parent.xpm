@@ -1,0 +1,34 @@
+/* XPM */
+static char * parent_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"24 24 4 1",
+/* colors */
+" 	s background	c None",
+".	c black",
+"X	c yellow",
+"o	c white",
+/* pixels */
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"      .....             ",
+"     .XoXoX.            ",
+"    ..............      ",
+"    .oXoXoXoXoXoXo.     ",
+"    .XoXo.oXoXoXoX.     ",
+"    .oXo...oXoXoXo.     ",
+"    .Xo.....oXoXoX.     ",
+"    .oXoX.XoXoXoXo.     ",
+"    .XoXo.oXoXoXoX.     ",
+"    .oXoX......oXo.     ",
+"    .XoXoXoXoXoXoX.     ",
+"    .oXoXoXoXoXoXo.     ",
+"    ...............     ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        ",
+"                        "};

@@ -1,0 +1,1336 @@
+2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	Remove old build system files. It is not clear why
+	these files were not removed during the Itcl 3.0
+	to 3.2 transition.
+	
+	* itcl/unix/Makefile.in:
+	* itcl/unix/configure:
+	* itcl/unix/configure.in:
+	* itcl/unix/pkgIndex.tcl.in:
+	* itcl/win/Makefile.in:
+	* itcl/win/configure:
+	* itcl/win/configure.in:
+	* itcl/win/itcl.rc:
+	* itcl/win/itclsh.rc:
+	* itcl/win/makefile.bc:
+	* itcl/win/makefile.vc:
+	* itcl/win/pkgIndex.tcl:
+	* itcl/win/rc/itcl.rc:
+	* itk/unix/Makefile.in:
+	* itk/unix/configure:
+	* itk/unix/configure.in:
+	* itk/unix/pkgIndex.tcl.in:
+	* itk/win/Makefile.in:
+	* itk/win/Makefile.in_first:
+	* itk/win/configure:
+	* itk/win/configure.in:
+	* itk/win/makefile.bc:
+	* itk/win/makefile.vc:
+	* itk/win/pkgIndex.tcl:
+	* itk/win/winMain.c:
+	* itk/win/rc/cursor00.cur:
+	* itk/win/rc/cursor02.cur:
+	* itk/win/rc/cursor04.cur:
+	* itk/win/rc/cursor06.cur:
+	* itk/win/rc/cursor08.cur:
+	* itk/win/rc/cursor0a.cur:
+	* itk/win/rc/cursor0c.cur:
+	* itk/win/rc/cursor0e.cur:
+	* itk/win/rc/cursor10.cur:
+	* itk/win/rc/cursor12.cur:
+	* itk/win/rc/cursor14.cur:
+	* itk/win/rc/cursor16.cur:
+	* itk/win/rc/cursor18.cur:
+	* itk/win/rc/cursor1a.cur:
+	* itk/win/rc/cursor1c.cur:
+	* itk/win/rc/cursor1e.cur:
+	* itk/win/rc/cursor20.cur:
+	* itk/win/rc/cursor22.cur:
+	* itk/win/rc/cursor24.cur:
+	* itk/win/rc/cursor26.cur:
+	* itk/win/rc/cursor28.cur:
+	* itk/win/rc/cursor2a.cur:
+	* itk/win/rc/cursor2c.cur:
+	* itk/win/rc/cursor2e.cur:
+	* itk/win/rc/cursor30.cur:
+	* itk/win/rc/cursor32.cur:
+	* itk/win/rc/cursor34.cur:
+	* itk/win/rc/cursor36.cur:
+	* itk/win/rc/cursor38.cur:
+	* itk/win/rc/cursor3a.cur:
+	* itk/win/rc/cursor3c.cur:
+	* itk/win/rc/cursor3e.cur:
+	* itk/win/rc/cursor40.cur:
+	* itk/win/rc/cursor42.cur:
+	* itk/win/rc/cursor44.cur:
+	* itk/win/rc/cursor46.cur:
+	* itk/win/rc/cursor48.cur:
+	* itk/win/rc/cursor4a.cur:
+	* itk/win/rc/cursor4c.cur:
+	* itk/win/rc/cursor4e.cur:
+	* itk/win/rc/cursor50.cur:
+	* itk/win/rc/cursor52.cur:
+	* itk/win/rc/cursor54.cur:
+	* itk/win/rc/cursor54.cur:
+	* itk/win/rc/cursor56.cur:
+	* itk/win/rc/cursor58.cur:
+	* itk/win/rc/cursor5a.cur:
+	* itk/win/rc/cursor5c.cur:
+	* itk/win/rc/cursor5e.cur:
+	* itk/win/rc/cursor60.cur:
+	* itk/win/rc/cursor62.cur:
+	* itk/win/rc/cursor64.cur:
+	* itk/win/rc/cursor66.cur:
+	* itk/win/rc/cursor68.cur:
+	* itk/win/rc/cursor6a.cur:
+	* itk/win/rc/cursor6c.cur:
+	* itk/win/rc/cursor6e.cur:
+	* itk/win/rc/cursor70.cur:
+	* itk/win/rc/cursor72.cur:
+	* itk/win/rc/cursor74.cur:
+	* itk/win/rc/cursor76.cur:
+	* itk/win/rc/cursor78.cur:
+	* itk/win/rc/cursor7a.cur:
+	* itk/win/rc/cursor7c.cur:
+	* itk/win/rc/cursor7e.cur:
+	* itk/win/rc/cursor80.cur:
+	* itk/win/rc/cursor82.cur:
+	* itk/win/rc/cursor84.cur:
+	* itk/win/rc/cursor86.cur:
+	* itk/win/rc/cursor88.cur:
+	* itk/win/rc/cursor8a.cur:
+	* itk/win/rc/cursor8c.cur:
+	* itk/win/rc/cursor8e.cur:
+	* itk/win/rc/cursor90.cur:
+	* itk/win/rc/cursor92.cur:
+	* itk/win/rc/cursor94.cur:
+	* itk/win/rc/cursor96.cur:
+	* itk/win/rc/cursor98.cur;
+	* itk/win/rc/itk.ico:
+	* itk/win/rc/itk.rc:
+	* itk/win/rc/itkwish.rc:
+
+2004-03-16  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/Makefile.in: Install .a lib after installing .dll.
+	Don't run ranlib under Win32.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Define library prefix and suffix
+	under Windows so that install target works properly
+	for mingw.
+	* itk/Makefile.in: Install .a lib after installing .dll.
+	Don't run ranlib under Win32.
+	* itk/configure: Regen.
+	* itk/configure.in: Define library prefix and suffix
+	under Windows so that install target works properly
+	for mingw.
+
+2004-01-27  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/Makefile.in:
+	* itcl/unix/Makefile.in:
+	* itk/Makefile.in:
+	* itk/unix/Makefile.in:
+	* iwidgets3.0.0/Makefile.in: Add DESTDIR support
+	for "make install" into temp location.
+
+2003-12-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in:
+	* itk/configure: Regen.
+	* itk/configure.in: Add LDFLAGS_OPTIMIZE and
+	LDFLAGS_DEBUG to list of vars that are
+	included in AC_SUBST list. This is needed
+	to fix the build because the change on
+	2003-11-29 changed how the variables
+	were substituted.
+
+2003-11-29  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* configure: Regen.
+	* tcl.m4 (SC_ENABLE_SYMBOLS): Update
+	macro to support passing --enable-symbols=mem
+	on the configure command line.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+
+2003-08-10  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in:
+	* itk/configure: Regen.
+	* itk/configure.in: Include user set CFLAGS
+	in the CFLAGS passed to the compiler.
+
+2003-07-23  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/Makefile.in: Add installdirs to deps
+	for the install-libraries rule so that
+	the itcl dir is created before files are
+	copied into it. This will keep the itcl.tcl
+	file from being installed as a file named
+	share/itcl3.2.
+
+2003-02-17  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itk/library/Toplevel.itk (destructor):
+	* itk/library/Widget.itk (destructor): Protect
+	against case where one external component destroy
+	destroys another componet widget.
+	* itk/tests/toplevel.test:
+	* itk/tests/widget.test: Test for bug where one
+	external component deletes another during the
+	itk destructor.
+
+2003-02-15  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itk/configure: Regen to account for
+	--enable-symbols fix.
+
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in: Set CC and CFLAGS when
+	compiling with VC++. Call AC_CANONICAL_HOST.
+	* itk/configure: Regen.
+	* itk/configure.in: Set CC and CFLAGS when
+	compiling with VC++. Call AC_CANONICAL_HOST.
+
+2003-02-14  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* tcl.m4 (SC_MAKE_LIB): Split up library link
+	lines based on $host instead of $CC.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+
+2003-02-11  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in: Set the c preprocessor and
+	executable extensions to work around problems
+	that autoconf 2.13 has with VC++.
+	* itk/configure: Regen.
+	* itk/configure.in: Ditto.
+
+2003-02-07  Mo DeJong  <mdejong@users.sourceforge.net>
+
+	* iwidgets3.0.0/configure: Regenerate to fix timestamp
+	that was messed up by the import from sources.
+
+2002-09-05  Keith Seitz  <keiths@redhat.com>
+
+	* itk/Makefile.in (distclean): Remove pkgIndex.tcl and
+	itkConfig.sh
+	* itcl/Makefile.in (distclean): Remove pkgIndex.tcl and
+	itclConfig.sh
+	* iwidgets3.0.0/Makefile.in (distclean): Remove pkgIndex.tcl and
+	iwidgets.tcl.
+	* configure.in (subdirs): New variable. Don't put AC_CONFIG_SUBDIRS
+	macro into configure.in twice: it confuses autoconf. Instead use
+	the variable to hold the subdirs to be configured.
+	* configure: Regenerated.
+
+2002-09-04 Keith Seitz  <keiths@redhat.com> 
+
+	From Chris Drexler  <ckolumbus@users.sourceforge.net>:
+	* iwidgets3.0.0/doc/tk2html.perl:
+	Change hard coded path name of perl so that
+	rpm will not complain at install time.
+
+2002-08-06  Keith Seitz  <keiths@redhat.com>
+
+	From Mo Dejong  <supermo@bayarea.net>:
+	* iwidgets3.0.0/Makefile.in: Don't create a symlink
+	from $(SCRIPT_INSTALL_DIR) to $(LIB_INSTALL_DIR)/iwidgets.
+	Remove LN_S and LIB_INSTALL_DIR variables.
+
+2002-08-06  Keith Seitz  <keiths@redhat.com>
+
+	From Mo Dejong  <supermo@bayarea.net>:
+	* configure.in: Don't configure iwidgets when building
+	Source-Navigator.
+	* configure: Regenerated.
+
+2002-06-03  Keith Seitz  <keiths@redhat.com>
+
+	From Mo Dejong  <supermo@bayarea.net>:
+	 * itk/generic/itk_archetype.c (ArchComponent, Itk_ArchCompDeleteCmd,
+	Itk_CreateArchComponent, Itk_DelArchComponent): Save a copy
+	of the window path name in the ArchComponent struct and use
+	it in the Itk_ArchCompDeleteCmd method. The old code was
+	invoking Tk_PathName(tkwin) on a Tk_Window which lead to
+	a memory access on memory that has already been free'd
+	when the widget was destroyed.
+	* itk/library/itk.tcl (itk::remove_destroy_hook): Don't attempt
+	to remove the widget binding if the widget has already been
+	destroyed.
+
+2002-04-17  Keith Seitz  <keiths@redhat.com>
+
+	From investigative work by Ton van Overbeek <tvoverbe@cistron.nl>:
+	* iwidgets3.0.0/generic/scrolledhtml.itk (_defUnknownImg): Add
+	global namespace qualifier to "image" command, since a parent
+	class now defines an image method.
+	(::iwidgets::scrolledhtml::destructor): Likewise.
+	(::iwidgets::Scrolledhtml::unknownimage): Likewise.
+	(::iwidgets::scrolledhtml::clear): Likewise.
+	(::iwidgets::scrolledhtml::_entity_img): Likewise.
+	
+2002-04-01  Keith Seitz  <keiths@redhat.com>
+
+	* iwidgets3.0.0/generic/feedback.itk: Import version 1.5.
+	(iwidgets::Feedback): Define new option, "-fraction".
+	(fraction): New configbody.
+	(step): Cap the step increment at the total number of
+	requested steps.
+
+2002-02-21  Mo DeJong  <supermo@bayarea.net>
+
+        * itk/library/Toplevel.itk (destructor):
+        * itk/library/Widget.itk (destructor): Remove the
+        hull component after destroying the hull.
+        Destroy any component that still exists after
+        destroying the hull since it must have been
+        created outside the hull.
+        * itk/tests/toplevel.test:
+        * itk/tests/widget.test: Test that a component
+        outside the hull is destroyed when the mega-widget
+        is destroyed.
+
+2002-01-15  Keith Seitz  <keiths@redhat.com>
+
+        * itcl/library/itcl.tcl: Add recognition for "class", "body",
+        "ensemble", and "configbody" without the "itcl::" namespace
+        qualifier.
+        (auto_mkindex_parser::command public): If given an argument
+        list of just one item, re-eval it again so that the whole
+        thing is not interpreted as one humongous command.
+
+2002-01-11  Keith Seitz  <keiths@redhat.com>
+
+	* iwidgets3.0.0/Makefile.in (install-libraries): Don't install
+	$(GENERIC_DIR)/*.tcl: there are no such files.
+
+2001-10-12  Christopher Faylor  <cgf@redhat.com>
+
+	* itcl/win/Makefile.in: Fix typo in cygitcl.res build.
+
+2001-08-08  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Update from Tcl.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+
+2001-08-06  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Update from Tcl.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+	This update pulls in the library name changes so Itcl
+	uses the "rh" or "cyg" vendor prefix if set.
+
+2001-08-01  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Update from Tcl.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Use TCL_TOOL_SHARED_LIB_LONGNAME
+	and TCL_TOOL_STATIC_LIB_LONGNAME to generate lib names.
+	* itk/configure: Regen.
+	* itk/configure.in: Use TCL_TOOL_SHARED_LIB_LONGNAME
+	and TCL_TOOL_STATIC_LIB_LONGNAME to generate lib names.
+
+2001-07-12  Mo DeJong  <mdejong@redhat.com>
+
+	* tcl.m4 (SC_MAKE_LIB): Add support for building with gcc
+	under Windows. Add POST_MAKE_LIB and POST_MAKE_STATIC_LIB
+	substitutions to deal with ranlib issues.
+	* itcl/Makefile.in: Subst POST_MAKE_LIB and POST_MAKE_STATIC_LIB
+	into lib and stub lib targets.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Set ITCL_LIB_FILE to the static import lib
+	name when building a shared lib under Windows. Set itcl_LIB_FILE
+	to the dll name when building under Windows. Use unquoted
+	TCL_BUILD_STUB_LIB_SPEC in SHLIB_LD_LIBS.
+	* itk/Makefile.in: Subst POST_MAKE_LIB and POST_MAKE_STATIC_LIB
+	into lib and stub lib targets.
+	* itk/configure: Regen.
+	* itk/configure.in: Set ITK_LIB_FILE to the static import lib
+	name when building a shared lib under Windows. Set itk_LIB_FILE
+	to the dll name when building under Windows. Use unquoted
+	TCL_BUILD_STUB_LIB_SPEC in SHLIB_LD_LIBS.
+
+2001-07-11  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Update from Tcl.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Use AC_CHECK_PROG to set CYGPATH
+	so that cross compiling works correctly.
+	* itk/configure: Regen.
+	* itk/configure.in: Use AC_CHECK_PROG to set CYGPATH
+	so that cross compiling works correctly.
+
+2001-07-11  Mo DeJong  <mdejong@redhat.com>
+
+	* Makefile.in: If an error is returned by the make
+	in a subdirectory exit from the parent make instead
+	of processing the next subdirectory.
+
+2001-06-22  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Update from Tcl.
+	* tcl.m4: Use $host to determine system type
+	instead of invoking uname. Add support for
+	mingw32 and windows32 host identifiers.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Ditto.
+	* itk/configure: Regen.
+	* itk/configure.in: Ditto.
+
+2001-06-20  Mo DeJong  <mdejong@redhat.com>
+
+	* tcl.m4 (SC_ENABLE_GCC, SC_CONFIG_CFLAGS, SC_SERIAL_PORT,
+	SC_MISSING_POSIX_HEADERS, SC_PATH_X, SC_BLOCKING_STYLE,
+	SC_HAVE_VFORK, SC_TIME_HANLDER, SC_BUGGY_STRTOD,
+	SC_TCL_LINK_LIBS, SC_LIB_SPEC, SC_PUBLIC_TCL_HEADERS,
+	SC_PUBLIC_TK_HEADERS, SC_SIMPLE_EXEEXT, SC_PROG_TCLSH,
+	SC_PROG_WISH):
+	Remove unused macros. The Itcl version of tcl.m4 has
+	already diverged from the Tcl one. Since we need to
+	maintain this Itcl version separately, it should be
+	as simple as possible.
+
+2001-06-11  Mo DeJong  <mdejong@redhat.com>
+
+	* tcl.m4 (SC_ENABLE_SHARED): Configure with shared library
+	support when building under Windows.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+
+2001-06-06  Mo DeJong  <mdejong@redhat.com>
+
+	* itk/aclocal.m4: Pull in ../../config/acinclude.m4
+	so we can use the CYG_AC_PATH_ITCLCONFIG and
+	CYG_AC_LOAD_ITCLCONFIG macros.
+	* itk/configure: Regen.
+	* itk/configure.in: Call CYG_AC_PATH_ITCLCONFIG
+	and CYG_AC_LOAD_ITCLCONFIG to load the itclConfig.sh
+	config file. The existing configure script would
+	try to figure out lib file names by hand.
+
+2001-06-06  Mo DeJong  <mdejong@redhat.com>
+
+	* itk/configure: Regen.
+	* itk/configure.in: Use TCL_BUILD_STUB_LIB_SPEC in place
+	of TCL_BUILD_STUB_LIB_PATH. Use TK_BUILD_STUB_LIB_SPEC
+	in place of TK_STUB_LIB_SPEC since the tk stub lib
+	would not have been installed yet.
+
+2001-06-05  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in: Use TCL_BUILD_STUB_LIB_PATH instead
+	of TCL_STUB_LIB_PATH since Tcl is not install yet.
+	* itk/configure: Regen.
+	* itk/configure.in: Use TCL_BUILD_STUB_LIB_PATH instead
+	of TCL_STUB_LIB_PATH since Tcl is not install yet.
+
+2001-06-05  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4:
+	* itcl/configure:
+	* itk/configure: Update from Tcl.
+
+2001-06-01  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4:
+	* itcl/configure:
+	* itk/configure: Update from Tcl.
+
+2001-06-01  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in: Define ITCL_LIB_FILE and ITCL_STUB_LIB_FILE
+	before using them.
+	* itk/configure: Regen.
+	* itk/configure.in: Define ITK_LIB_FILE and ITK_STUB_LIB_FILE
+	before using them.
+	* itk/itkConfig.sh.in: Add ITK_STUB_LIB_FILE, ITK_BUILD_STUB_LIB_SPEC,
+	ITK_STUB_LIB_SPEC, and ITK_STUB_LIB_FULL_PATH variables.
+
+2001-05-31  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/win/dllEntryPoint.c: Add #endif that was
+	accidently left out during the Itcl 3.0 -> 3.2
+	merge process.
+
+2001-05-30  Mo DeJong  <mdejong@redhat.com>
+
+	* configure: Regen.
+	* tcl.m4 (SC_PATH_TCLCONFIG, SC_PATH_TKCONFIG): Check
+	in win subdirectory in addition to unix subdirectory for
+	tclConfig.sh and tkConfig.sh files.
+	* itcl/configure:
+	* itk/configure: Regen.
+	* iwidgets3.0.0/configure: Regen.
+
+2001-05-30  Mo DeJong  <mdejong@redhat.com>
+
+	* configure: Regen.
+	* tcl.m4 (SC_PATH_TCLCONFIG, SC_PATH_TKCONFIG): Generate
+	an error instead of a warning when config files cannot be found.
+	* itcl/configure:
+	* itk/configure: Regen.
+	* iwidgets3.0.0/configure: Regen.
+
+2001-05-29  Mo DeJong  <mdejong@redhat.com>
+
+	* cygtcl.m4: Add from tcl module.
+	* itcl/aclocal.m4: Include cygtcl.m4.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Fix --prefix variable. Use TCL_TOOL macros
+	to deal with path name portibility issues.
+	* itcl/itclConfig.sh.in: Add full path and stub lib vars.
+	* itk/aclocal.m4: Include cygtcl.m4.
+	* itk/configure: Regen.
+	* itk/configure.in: Fix --prefix variable. Use TCL_TOOL macros
+	to deal with path name portibility issues.
+	* iwidgets3.0.0/aclocal.m4: Include cygtcl.m4.
+	* iwidgets3.0.0/configure: Regen.
+
+2001-05-29  Mo DeJong  <mdejong@redhat.com>
+
+	* itk/configure: Regen.
+	* itk/configure.in: Adjust AC_CONFIG_AUX_DIR()
+	and fix --prefix and --exec-prefix variables.
+
+2001-05-25  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/itcl/Makefile.in:
+	* itk/Makefile.in:
+	* iwidgets3.0.0/Makefile.in: Install cross
+	platform itk and itk files in @datadir@ (share).
+
+2001-05-24  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/configure: Regen.
+	* itcl/configure.in:
+	Use fully qualified srcdir, add ITCL_SRC_DIR_NATIVE variable.
+	Don't call the SC_PROG_TCLSH macro since it does not bootstrap.
+	Add itclConfig.sh back to configure.in, it was lost at some point.
+	* itk/configure: Regen.
+	* itk/configure.in:
+	Use fully qualified srcdir, add ITK_SRC_DIR_NATIVE variable.
+	Don't call SC_PROG_TCLSH or SC_PROG_WISH macros since they
+	do not bootstrap.
+	Add itkConfig.sh back to configure.in, it was lost at some point.
+	* iwidgets3.0.0/configure: Regen.
+	* iwidgets3.0.0/configure.in:
+	Don't call the SC_PROG_TCLSH macro since it does not bootstrap.
+
+2001-05-24  Mo DeJong  <mdejong@redhat.com>
+
+	* tcl.m4 (SC_LIB_SPEC): Add note about broken
+	SC_LIB_SPEC macro. It does not effect us since
+	we only build static libs.
+	* itcl/configure: Regen.
+	* itcl/configure.in: Call AC_PROG_CC and not
+	SC_ENABLE_GCC since it break cross compiling.
+	* itk/configure: Regen.
+	* itk/configure.in: Ditto.
+
+2001-05-23  Mo DeJong  <mdejong@redhat.com>
+
+	* configure: Regen.
+	* tcl.m4: Default to building an unshared
+	version of the Itcl library.
+	* itcl/configure: Regen.
+	* itk/configure: Regen.
+	* iwidgets3.0.0/configure: Regen.
+
+2001-05-23  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/unix/aclocal.m4:
+	* itcl/unix/tcl.m4:
+	* itcl/win/aclocal.m4:
+	* itcl/win/tcl.m4:
+	* itk/unix/aclocal.m4:
+	* itk/unix/tcl.m4:
+	* itk/win/aclocal.m4:
+	* itk/win/tcl.m4:
+	Remove old autoconf files, they should
+	have been removed as part of the 3.0 -> 3.2
+	transition.
+
+2001-05-23  Mo DeJong  <mdejong@redhat.com>
+
+	* config/installFile.tcl: Removed ill conceived
+	Tcl install script since it does not bootstrap.
+	* itcl/Makefile.in:
+	* itk/Makefile.in:
+	* iwidgets3.0.0/Makefile.in: Use @INSTALL@ instead
+	of installFile.tcl.
+	Don't remove man pages or html files before
+	installing. Don't chmod the installed files
+	since that will make a second call to make install
+	fail.
+
+2001-05-17  Mo DeJong  <mdejong@redhat.com>
+
+	Upgrade Itcl from 3.0 to 3.2.
+
+	* Makefile.in:
+	* aclocal.m4: Removed:
+	* configure:
+	* configure.in:
+	* license.terms:
+	* makefile.vc:
+	* tcl.m4: Added.
+	* config/install-sh:
+	* config/installFile.tcl: Added.
+	* itcl/Makefile.in: Added.
+	* itcl/aclocal.m4: Added.
+	* itcl/configure: Added.
+	* itcl/configure.in: Added.
+	* itcl/pkgIndex.tcl: Added.
+	* itcl/pkgIndex.tcl.in: Added.
+	* itcl/doc/Resolvers.3: Removed.
+	* itcl/doc/find.n:
+	* itcl/doc/itcl_info.n:
+	* itcl/doc/itclvars.n:
+	* itcl/doc/scope.n:
+	* itcl/generic/itcl.decls: Added.
+	* itcl/generic/itcl.h:
+	* itcl/generic/itclDecls.h: Added.
+	* itcl/generic/itclInt.decls: Added.
+	* itcl/generic/itclInt.h:
+	* itcl/generic/itclIntDecls.h: Added.
+	* itcl/generic/itclStubInit.c: Added.
+	* itcl/generic/itclStubLib.c: Added.
+	* itcl/generic/itcl_bicmds.c:
+	* itcl/generic/itcl_class.c:
+	* itcl/generic/itcl_cmds.c:
+	* itcl/generic/itcl_ensemble.c:
+	* itcl/generic/itcl_linkage.c:
+	* itcl/generic/itcl_methods.c:
+	* itcl/generic/itcl_migrate.c:
+	* itcl/generic/itcl_objects.c:
+	* itcl/generic/itcl_obsolete.c:
+	* itcl/generic/itcl_parse.c:
+	* itcl/generic/itcl_util.c:
+	* itcl/library/itcl.tcl:
+	* itcl/mac/MW_ItclHeader.pch: Added
+	* itcl/mac/itclMacLibrary.r:
+	* itcl/mac/pkgIndex.tcl:
+	* itcl/tests/all:
+	* itcl/tests/all.tcl: Added.
+	* itcl/tests/basic.test:
+	* itcl/tests/body.test:
+	* itcl/tests/chain.test:
+	* itcl/tests/defs:
+	* itcl/tests/delete.test:
+	* itcl/tests/ensemble.test:
+	* itcl/tests/import.test:
+	* itcl/tests/info.test:
+	* itcl/tests/inherit.test:
+	* itcl/tests/interp.test:
+	* itcl/tests/local.test:
+	* itcl/tests/methods.test:
+	* itcl/tests/mkindex.itcl:
+	* itcl/tests/mkindex.test:
+	* itcl/tests/namespace.test:
+	* itcl/tests/protection.test:
+	* itcl/tests/scope.test:
+	* itcl/tests/old/AAA.test:
+	* itcl/tests/old/Bar.tcl:
+	* itcl/tests/old/BarFoo.tcl:
+	* itcl/tests/old/Baz.tcl:
+	* itcl/tests/old/Foo.tcl:
+	* itcl/tests/old/FooBar.tcl:
+	* itcl/tests/old/Geek.tcl:
+	* itcl/tests/old/Mongrel.tcl:
+	* itcl/tests/old/VirtualErr.tcl:
+	* itcl/tests/old/all:
+	* itcl/tests/old/basic.test:
+	* itcl/tests/old/inherit.test:
+	* itcl/tests/old/testlib.tcl:
+	* itcl/tests/old/toaster.test:
+	* itcl/tests/old/uplevel.test:
+	* itcl/tests/old/upvar.test:
+	* itcl/tests/old/toasters/Appliance.tcl:
+	* itcl/tests/old/toasters/Hazard.tcl:
+	* itcl/tests/old/toasters/Outlet.tcl:
+	* itcl/tests/old/toasters/SmartToaster.tcl:
+	* itcl/tests/old/toasters/Toaster.tcl:
+	* itcl/tests/old/toasters/usualway.tcl:
+	* itcl/unix/Makefile.in: Removed.
+	* itcl/unix/confdefs.h: Removed.
+	* itcl/unix/config.log: Removed.
+	* itcl/unix/configure: Removed.
+	* itcl/unix/configure.in: Removed.
+	* itcl/unix/pkgIndex.tcl.in: Removed.
+	* itcl/win/Makefile.in: Removed.
+	* itcl/win/configure: Removed.
+	* itcl/win/configure.in: Removed.
+	* itcl/win/dllEntryPoint.c:
+	* itcl/win/itcl.rc:
+	* itcl/win/itclsh.rc:
+	* itcl/win/makefile.vc:
+	* itcl/win/pkgIndex.tcl:
+	* itk/Makefile.in: Added.
+	* itk/aclocal.m4: Added.
+	* itk/configure: Added.
+	* itk/configure.in: Added.
+	* itk/pkgIndex.tcl: Added.
+	* itk/pkgIndex.tcl.in: Added.
+	* itk/doc/Archetype.n:
+	* itk/doc/Toplevel.n:
+	* itk/doc/Widget.n:
+	* itk/doc/itk.n:
+	* itk/doc/itkvars.n:
+	* itk/doc/itkwish.1:
+	* itk/doc/usual.n:
+	* itk/generic/itk.decls: Added.
+	* itk/generic/itk.h:
+	* itk/generic/itkDecls.h: Added.
+	* itk/generic/itkStubInit.c: Added.
+	* itk/generic/itkStubLib.c: Added.
+	* itk/generic/itk_archetype.c:
+	* itk/generic/itk_cmds.c:
+	* itk/generic/itk_option.c:
+	* itk/generic/itk_util.c:
+	* itk/library/Archetype.itk:
+	* itk/library/Toplevel.itk:
+	* itk/library/Widget.itk:
+	* itk/library/itk.tcl:
+	* itk/mac/itkMacLibrary.r:
+	* itk/mac/pkgIndex.tcl:
+	* itk/tests/all:
+	* itk/tests/all.tcl: Added.
+	* itk/tests/defs:
+	* itk/tests/interp.test:
+	* itk/tests/option.test:
+	* itk/tests/privacy.test:
+	* itk/tests/public.test:
+	* itk/tests/toplevel.test:
+	* itk/tests/widget.test:
+	* itk/unix/Makefile.in: Removed.
+	* itk/unix/configure: Removed.
+	* itk/unix/configure.in: Removed.
+	* itk/unix/pkgIndex.tcl.in: Removed.
+	* itk/win/Makefile.in: Removed.
+	* itk/win/Makefile.in_first: Removed.
+	* itk/win/configure: Removed.
+	* itk/win/configure.in: Removed.
+	* itk/win/dllEntryPoint.c:
+	* itk/win/makefile.bc:
+	* itk/win/makefile.vc:
+	* itk/win/pkgIndex.tcl:
+	* itk/win/winMain.c:
+	* itk/win/rc/itk.rc:
+	* itk/win/rc/itkwish.rc:
+	* iwidgets3.0.0/CHANGES:
+	* iwidgets3.0.0/Makefile.in: Added.
+	* iwidgets3.0.0/README:
+	* iwidgets3.0.0/aclocal.m4: Added.
+	* iwidgets3.0.0/catalog: Removed.
+	* iwidgets3.0.0/configure: Added.
+	* iwidgets3.0.0/configure.in: Added.
+	* iwidgets3.0.0/iwidgets.tcl: Added.
+	* iwidgets3.0.0/iwidgets.tcl.in: Added.
+	* iwidgets3.0.0/pkgIndex.tcl: Added.
+	* iwidgets3.0.0/pkgIndex.tcl.in: Added.
+	* iwidgets3.0.0/demos/canvasprintbox: Added.
+	* iwidgets3.0.0/demos/catalog: Added.
+	* iwidgets3.0.0/demos/feedback:
+	* iwidgets3.0.0/demos/mainwindow:
+	* iwidgets3.0.0/demos/scopedobject: Added.
+	* iwidgets3.0.0/demos/shell: Added.
+	* iwidgets3.0.0/demos/watch:
+	* iwidgets3.0.0/demos/html/buttonbox.n.html:
+	* iwidgets3.0.0/demos/html/calendar.n.html: Added.
+	* iwidgets3.0.0/demos/html/canvasprintbox.n.html:
+	* iwidgets3.0.0/demos/html/canvasprintdialog.n.html:
+	* iwidgets3.0.0/demos/html/checkbox.n.html: Added.
+	* iwidgets3.0.0/demos/html/combobox.n.html:
+	* iwidgets3.0.0/demos/html/dateentry.n.html: Added.
+	* iwidgets3.0.0/demos/html/datefield.n.html: Added.
+	* iwidgets3.0.0/demos/html/dialog.n.html:
+	* iwidgets3.0.0/demos/html/dialogshell.n.html:
+	* iwidgets3.0.0/demos/html/disjointlistbox.n.html: Added.
+	* iwidgets3.0.0/demos/html/entryfield.n.html:
+	* iwidgets3.0.0/demos/html/extfileselectionbox.n.html: Added.
+	* iwidgets3.0.0/demos/html/extfileselectiondialog.n.html: Added.
+	* iwidgets3.0.0/demos/html/feedback.n.html:
+	* iwidgets3.0.0/demos/html/fileselectionbox.n.html:
+	* iwidgets3.0.0/demos/html/fileselectiondialog.n.html:
+	* iwidgets3.0.0/demos/html/finddialog.n.html: Added.
+	* iwidgets3.0.0/demos/html/hierarchy.n.html: Added.
+	* iwidgets3.0.0/demos/html/hyperhelp.n.html:
+	* iwidgets3.0.0/demos/html/iwidgets2.2.0UserCmds.html: Removed.
+	* iwidgets3.0.0/demos/html/iwidgets3.0.0UserCmds.html: Added.
+	* iwidgets3.0.0/demos/html/labeledframe.n.html: Added.
+	* iwidgets3.0.0/demos/html/labeledwidget.n.html:
+	* iwidgets3.0.0/demos/html/mainwindow.n.html: Added.
+	* iwidgets3.0.0/demos/html/menubar.n.html:
+	* iwidgets3.0.0/demos/html/messagebox.n.html: Added.
+	* iwidgets3.0.0/demos/html/messagedialog.n.html:
+	* iwidgets3.0.0/demos/html/notebook.n.html:
+	* iwidgets3.0.0/demos/html/optionmenu.n.html:
+	* iwidgets3.0.0/demos/html/panedwindow.n.html:
+	* iwidgets3.0.0/demos/html/promptdialog.n.html:
+	* iwidgets3.0.0/demos/html/pushbutton.n.html:
+	* iwidgets3.0.0/demos/html/radiobox.n.html:
+	* iwidgets3.0.0/demos/html/scopedobject.n.html: Added.
+	* iwidgets3.0.0/demos/html/scrolledcanvas.n.html:
+	* iwidgets3.0.0/demos/html/scrolledframe.n.html:
+	* iwidgets3.0.0/demos/html/scrolledhtml.n.html:
+	* iwidgets3.0.0/demos/html/scrolledlistbox.n.html:
+	* iwidgets3.0.0/demos/html/scrolledtext.n.html:
+	* iwidgets3.0.0/demos/html/selectionbox.n.html:
+	* iwidgets3.0.0/demos/html/selectiondialog.n.html:
+	* iwidgets3.0.0/demos/html/shell.n.html:
+	* iwidgets3.0.0/demos/html/spindate.n.html:
+	* iwidgets3.0.0/demos/html/spinint.n.html:
+	* iwidgets3.0.0/demos/html/spinner.n.html:
+	* iwidgets3.0.0/demos/html/spintime.n.html:
+	* iwidgets3.0.0/demos/html/tabnotebook.n.html:
+	* iwidgets3.0.0/demos/html/tabset.n.html:
+	* iwidgets3.0.0/demos/html/timeentry.n.html: Added.
+	* iwidgets3.0.0/demos/html/timefield.n.html: Added.
+	* iwidgets3.0.0/demos/html/toolbar.n.html:
+	* iwidgets3.0.0/demos/html/watch.n.html: Added.
+	* iwidgets3.0.0/doc/checkbox.n:
+	* iwidgets3.0.0/doc/entryfield.n:
+	* iwidgets3.0.0/doc/generateHtml.sh: Added.
+	* iwidgets3.0.0/doc/hierarchy.n:
+	* iwidgets3.0.0/doc/radiobox.n:
+	* iwidgets3.0.0/doc/scrolledlistbox.n:
+	* iwidgets3.0.0/doc/scrolledtext.n:
+	* iwidgets3.0.0/doc/toolbar.n:
+	* iwidgets3.0.0/generic/buttonbox.itk:
+	* iwidgets3.0.0/generic/calendar.itk:
+	* iwidgets3.0.0/generic/canvasprintbox.itk:
+	* iwidgets3.0.0/generic/checkbox.itk:
+	* iwidgets3.0.0/generic/colors.itcl:
+	* iwidgets3.0.0/generic/combobox.itk:
+	* iwidgets3.0.0/generic/dateentry.itk:
+	* iwidgets3.0.0/generic/datefield.itk:
+	* iwidgets3.0.0/generic/dialog.itk:
+	* iwidgets3.0.0/generic/dialogshell.itk:
+	* iwidgets3.0.0/generic/disjointlistbox.itk:
+	* iwidgets3.0.0/generic/entryfield.itk:
+	* iwidgets3.0.0/generic/extfileselectionbox.itk:
+	* iwidgets3.0.0/generic/extfileselectiondialog.itk:
+	* iwidgets3.0.0/generic/feedback.itk:
+	* iwidgets3.0.0/generic/fileselectionbox.itk:
+	* iwidgets3.0.0/generic/fileselectiondialog.itk:
+	* iwidgets3.0.0/generic/finddialog.itk:
+	* iwidgets3.0.0/generic/hierarchy.itk:
+	* iwidgets3.0.0/generic/hyperhelp.itk:
+	* iwidgets3.0.0/generic/labeledframe.itk:
+	* iwidgets3.0.0/generic/labeledwidget.itk:
+	* iwidgets3.0.0/generic/mainwindow.itk:
+	* iwidgets3.0.0/generic/menubar.itk:
+	* iwidgets3.0.0/generic/messagebox.itk:
+	* iwidgets3.0.0/generic/messagedialog.itk:
+	* iwidgets3.0.0/generic/notebook.itk:
+	* iwidgets3.0.0/generic/optionmenu.itk:
+	* iwidgets3.0.0/generic/pane.itk:
+	* iwidgets3.0.0/generic/panedwindow.itk:
+	* iwidgets3.0.0/generic/promptdialog.itk:
+	* iwidgets3.0.0/generic/pushbutton.itk:
+	* iwidgets3.0.0/generic/radiobox.itk:
+	* iwidgets3.0.0/generic/scrolledcanvas.itk:
+	* iwidgets3.0.0/generic/scrolledframe.itk:
+	* iwidgets3.0.0/generic/scrolledhtml.itk:
+	* iwidgets3.0.0/generic/scrolledlistbox.itk:
+	* iwidgets3.0.0/generic/scrolledtext.itk:
+	* iwidgets3.0.0/generic/scrolledwidget.itk:
+	* iwidgets3.0.0/generic/selectionbox.itk:
+	* iwidgets3.0.0/generic/selectiondialog.itk:
+	* iwidgets3.0.0/generic/shell.itk:
+	* iwidgets3.0.0/generic/spindate.itk:
+	* iwidgets3.0.0/generic/spinint.itk:
+	* iwidgets3.0.0/generic/spinner.itk:
+	* iwidgets3.0.0/generic/spintime.itk:
+	* iwidgets3.0.0/generic/tabnotebook.itk:
+	* iwidgets3.0.0/generic/tabset.itk:
+	* iwidgets3.0.0/generic/timeentry.itk:
+	* iwidgets3.0.0/generic/timefield.itk:
+	* iwidgets3.0.0/generic/toolbar.itk:
+	* iwidgets3.0.0/generic/watch.itk:
+	* iwidgets3.0.0/tests/all:
+	* iwidgets3.0.0/tests/all.tcl: Added.
+	* iwidgets3.0.0/tests/buttonbox.test:
+	* iwidgets3.0.0/tests/calendar.test:
+	* iwidgets3.0.0/tests/canvasprintbox.test:
+	* iwidgets3.0.0/tests/canvasprintdialog.test:
+	* iwidgets3.0.0/tests/checkbox.test:
+	* iwidgets3.0.0/tests/combobox.test:
+	* iwidgets3.0.0/tests/dateentry.test:
+	* iwidgets3.0.0/tests/datefield.test:
+	* iwidgets3.0.0/tests/defs:
+	* iwidgets3.0.0/tests/dialog.test:
+	* iwidgets3.0.0/tests/dialogshell.test:
+	* iwidgets3.0.0/tests/disjointlistbox.test:
+	* iwidgets3.0.0/tests/entryfield.test:
+	* iwidgets3.0.0/tests/extfileselectionbox.test:
+	* iwidgets3.0.0/tests/extfileselectiondialog.test:
+	* iwidgets3.0.0/tests/feedback.test:
+	* iwidgets3.0.0/tests/fileselectionbox.test:
+	* iwidgets3.0.0/tests/fileselectiondialog.test:
+	* iwidgets3.0.0/tests/finddialog.test:
+	* iwidgets3.0.0/tests/hierarchy.test:
+	* iwidgets3.0.0/tests/hyperhelp.test:
+	* iwidgets3.0.0/tests/labeledframe.test:
+	* iwidgets3.0.0/tests/labeledwidget.test:
+	* iwidgets3.0.0/tests/menubar.test:
+	* iwidgets3.0.0/tests/messagebox.test:
+	* iwidgets3.0.0/tests/messagedialog.test:
+	* iwidgets3.0.0/tests/notebook.test:
+	* iwidgets3.0.0/tests/optionmenu.test:
+	* iwidgets3.0.0/tests/panedwindow.test:
+	* iwidgets3.0.0/tests/promptdialog.test:
+	* iwidgets3.0.0/tests/pushbutton.test:
+	* iwidgets3.0.0/tests/radiobox.test:
+	* iwidgets3.0.0/tests/regexpfield.test:
+	* iwidgets3.0.0/tests/scrolledcanvas.test:
+	* iwidgets3.0.0/tests/scrolledframe.test:
+	* iwidgets3.0.0/tests/scrolledhtml.test:
+	* iwidgets3.0.0/tests/scrolledlistbox.test:
+	* iwidgets3.0.0/tests/scrolledtext.test:
+	* iwidgets3.0.0/tests/selectionbox.test:
+	* iwidgets3.0.0/tests/selectiondialog.test:
+	* iwidgets3.0.0/tests/shell.test:
+	* iwidgets3.0.0/tests/spindate.test:
+	* iwidgets3.0.0/tests/spinint.test:
+	* iwidgets3.0.0/tests/spinner.test:
+	* iwidgets3.0.0/tests/spintime.test:
+	* iwidgets3.0.0/tests/tabnotebook.test:
+	* iwidgets3.0.0/tests/tabset.test:
+	* iwidgets3.0.0/tests/timeentry.test:
+	* iwidgets3.0.0/tests/timefield.test:
+	* iwidgets3.0.0/tests/toolbar.test:
+	* iwidgets3.0.0/tests/usual.test:
+	* iwidgets3.0.0/tests/watch.test:
+	* iwidgets3.0.0/unix/Makefile.in: Removed.
+	* iwidgets3.0.0/unix/configure: Removed.
+	* iwidgets3.0.0/unix/configure.in: Removed.
+	* iwidgets3.0.0/unix/iwidgets.tcl.in: Removed.
+	* iwidgets3.0.0/unix/pkgIndex.tcl.in: Removed.
+	* iwidgets3.0.0/win/iwidgets.tcl: Added.
+	* iwidgets3.0.0/win/makefile.vc: Added.
+	* iwidgets3.0.0/win/pkgIndex.tcl: Added.
+
+2001-04-09  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/unix/aclocal.m4: Include tcl.m4.
+	* itcl/unix/configure: Regen.
+	* itcl/unix/configure.in: Call TCL_TOOL_PATH
+	to match use in win version.
+	* itcl/unix/tcl.m4: Add from tcl/unix.
+	* itcl/win/aclocal.m4: Include tcl.m4.
+	* itcl/win/configure: Regen.
+	* itcl/win/configure.in: Call TCL_TOOL_PATH for
+	TCL_BIN_DIR, TCL_SRC_DIR, TCL_BUILD_LIB_SPEC.
+	* itcl/win/tcl.m4: Add from tcl/win.
+	* itk/unix/aclocal.m4: Include tcl.m4.
+	* itk/unix/configure: Regen.
+	* itk/unix/configure.in: Call TCL_TOOL_PATH
+	to match use in win version. Remove
+	--with-cflags option.
+	* itk/unix/tcl.m4: Add from tcl/unix.
+	* itk/win/aclocal.m4: Include tcl.m4.
+	* itk/win/configure: Regen.
+	* itk/win/configure.in: Call TCL_TOOL_PATH for
+	ITK_SRC_DIR, TCL_BIN_DIR, TCL_SRC_DIR, TCL_BUILD_LIB_SPEC,
+	TCL_BUILD_STUB_LIB_SPEC, TK_BIN_DIR, TK_SRC_DIR, TK_BUILD_LIB_SPEC,
+	and ITCL_BIN_DIR. Remove --with-cflags option.
+	* itk/win/tcl.m4: Add from tcl/win.
+
+2001-04-05  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/win/Makefile.in:
+	* itk/win/Makefile.in: Remove code that depends on dumpexts.exe
+	since it was removed from Tcl. Building a .dll no longer
+	requires a .def file.
+
+2001-04-05  Mo DeJong  <mdejong@redhat.com>
+
+	* configure.in: Don't build iwidgets under Windows since there
+	is no build system in the win subdirectory.
+	* itcl/win/configure.in:
+	* itk/win/configure.in: Don't look for tclConfig.sh in the
+	../unix directory, look in the win/ subdirectory instead.
+	Fix copy and paste error in --with argument. Add subst
+	of the TCL_BUILD_STUB_LIB_SPEC variable.
+	* configure:
+	* itcl/win/configure:
+	* itk/win/configure: Regen.
+
+2001-04-05  Mo DeJong  <mdejong@redhat.com>
+
+	* itk/win/winMain.c: Replace calls
+	to TkConsoleCreate and TkConsoleInit
+	with call to Tk_CreateConsoleWindow.
+	The old methods were removed in
+	Tk 8.3 and replaced with a public API.
+
+2001-03-27  Ian Roxborough  <irox@redhat.com>
+
+	* itcl/generic/itcl_cmds.c
+	* itcl/generic/itcl_ensemble.c
+	* itcl/generic/itcl_methods.c
+	* itcl/generic/itcl_obsolete.c
+	* itcl/generic/itcl_parse.c
+	* itcl/generic/itk_archetype.c: Tcl/Tk 8.3 support.
+	Call Tcl_EvalObj with only two parameter for Tcl8.3.
+
+2000-12-20  Syd Polk  <spolk@redhat.com>
+
+	* itcl/itcl/itclConfig.sh.in: Added new line at end of file.
+
+2000-10-27  Syd Polk  <spolk@redhat.com>
+
+	* itk/win/Makefile.in: Install itk dll when installing libraries.
+
+2000-10-13  Mo DeJong  <mdejong@redhat.com>
+
+	* itcl/generic/itcl_objects.c (Itcl_CreateObject):
+	Add code to check for an object that deletes itself
+	inside its own constructor. We need to avoid adding
+	this object to the global object list.
+
+2000-06-22  Syd Polk  <spolk@redhat.com>
+
+	* itcl/win/Makefile.in: Added target install-shared-libraries.
+	Make install-binaries and install-libraries both install it.
+	* itk/win/Makefile.in: Likewise.
+
+	* iwidgets3.0.0/unix/Makefile.in: Add dummy target 
+	install-binaries.
+	
+2000-06-19  Syd Polk  <spolk@redhat.com>
+
+	* itcl/win/Makefile.in: Install ITCLLIB instead of CYGITCLLIB
+	when installing the finished binaries.
+
+2000-06-15  Jonathan Larmour  <jlarmour@redhat.co.uk>
+
+	* iwidgets3.0.0/unix/configure.in: Use config scripts from build
+	tree before exec_prefix
+	* iwidgets3.0.0/unix/configure: regenerate
+
+Tue Jun  6 22:09:02 2000  Christopher Faylor <cgf@cygnus.com>
+
+	* itcl/win/Makefile.in: Set up and use autoconf variables throughout to
+	allow overriding variables from the make command line.
+	* itk/win/Makefile.in: Ditto.
+	* itcl/iwidgets3.0.0/unix/Makefile.in: Ditto.
+
+2000-05-03  Syd Polk  <spolk@redhat.com>
+
+	* Makefile.in (check test): Call "make test" explicitly when
+	running toplevel "make check" or "make test".
+
+2000-04-29  Andreas Jaeger  <aj@suse.de>
+
+	* Makefile.in (check): Handle make check like make test.
+
+Wed Apr 19 13:58:32 2000  Andrew Cagney  <cagney@b1.cygnus.com>
+
+	* itcl/unix/config.log, itcl/unix/confdefs.h: Delete generated
+ 	files.
+
+2000-01-26  DJ Delorie  <dj@cygnus.com>
+
+	* itcl/win/dllEntryPoint.c (DllMain): Use _imp__ instead of __imp_
+	* itk/win/dllEntryPoint.c (DllMain): ditto
+	* itcl/generic/itcl_methods.c (tclByteCodeType): ditto, but unused
+
+1999-12-21  Mo DeJong  <mdejong@cygnus.com>
+
+	* itcl/generic/itcl_parse.c: Applied patch to fix
+	crash when tearing down the itcl::parser namespace.
+
+1999-09-23  Ben Elliston  <bje@cygnus.com>
+
+	* itcl/unix/configure.in: Quoting fix for AC_EGREP_CPP.
+	* itcl/win/configure.in: Likewise.
+	* itk/unix/configure.in: Likewise.
+	* itk/win/configure.in: Likewise.
+	* itcl/unix/configure: Regenerate.
+	* itcl/win/configure: Likewise.
+	* itk/unix/configure: Likewise.
+	* itk/win/configure: Likewise.
+
+1999-09-22  DJ Delorie  <dj@cygnus.com>
+
+	* itcl/win/Makefile.in (ITCL_LIB_DIR etc): use @dir@ form
+	* itk/win/Makefile.in (INSTALL_LIB_DIR etc): ditto
+
+1999-07-13  Jonathan Larmour  <jlarmour@cygnus.co.uk>
+
+	* itcl/unix/configure.in: Workaround bug in autoconf 2.13 by adding
+	an extra AC_PROG_CPP before AC_EGREP_CPP
+	* itcl/win/configure.in: Likewise
+	* itk/unix/configure.in: Likewise
+	* itk/win/configure.in: Likewise
+	* itcl/unix/configure: regenerated
+	* itcl/win/configure: regenerated
+	* itk/unix/configure: regenerated
+	* itk/win/configure: regenerated
+
+1999-06-16  Keith Seitz  <keiths@cygnus.com>
+
+	* itk/win/Makefile.in (install-man): Don't install *.3 -- there
+	are no manpages in this section.
+
+1999-03-26  Martin Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/scrolledwidget.itk 
+	(iwidgets::Scrolledwidget::sbwidth): The default width of 15
+	was incompatible with Windows.  Change the default to "" and
+	only actually change the scrollbar width if someone changes
+	it to something else.
+
+1999-03-22  James Ingham  <jingham@cygnus.com>
+
+	* itcl/unix/configure.in: Leave the LD_SEARCH_PATH off of
+	MAKE_LIBS.  This loses on OSF with --enable-shared.
+	* itcl/unix/configure: regenerated
+	* itk/unix/configure.in: Leave the LD_SEARCH_PATH off of
+	MAKE_LIBS.  This lses on OSF with --enable-shared.
+	* itk/unix/configure: regenerated
+
+1999-03-18  Keith Seitz  <keiths@cygnus.com>
+
+	* iwidgets3.0.0/unix/Makefile.in (install-libraries): Don't bother with
+	making symlinks for other versions of iwidgets -- we don't use them.	
+
+1999-03-03  James Ingham  <jingham@cygnus.com>
+
+	* iwidgets3.0.0/generic/labeledframe.itk (_reconfigure): Make sure 
+	that the widget has not been destroyed while in the update
+	idletasks.  FIXME - see if we can eliminate the need for this
+	update. 
+
+	* iwidgets3.0.0/generic/labeledframe.itk (clientHandlesConfigure): 
+	Added method to allow the user of the labeled frame to do the
+	reconfigure, so this can be batched up and reduce flashing.
+
+1999-03-02  DJ Delorie  <dj@cygnus.com>
+
+	* itk/win/configure.in: support cross compiling, fix syntax error
+	in BASELIBS.
+	* itk/win/configure: regenerate
+
+1999-03-02  Syd Polk  <spolk@cygnus.com>
+
+	* itk/win/configure.in: Generated incorrect library name for cygwin
+	build.
+	* itk/win/configure: Regenerate.
+
+Fri Feb 26 12:48:01 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* configure.in: Change "cygwin32*" check to "cygwin*".
+	* configure: Regenerate.
+	* itcl/win/configure.in: Change "cygwin32*" check to "cygwin*".
+	* itcl/win/configure: Regenerate.
+	* itk/win/configure.in: Change "cygwin32*" check to "cygwin*".
+	* itk/win/configure: Regenerate.
+
+1999-02-24  James Ingham  <jingham@cygnus.com>
+
+	* iwidgets3.0.0/generic/labeledframe.itk: Make it derive from Widget
+	not Archetype (which was a BAD idea).  Add an interposing frame so 
+	you didn't have to much with the highlightthickness of the
+	MegaWidget itself.  Doing this allows you to actually use the
+	labeledframe in derived classes.
+	* iwidgets3.0.0/generic/scrolledwidget.itk: Derive from labeledframe,
+	not labeledwidget.  This way you can add a relief around the
+	label, which looks better for scrolled text, scrolled listboxes
+	and scrolled canvases.
+	* iwidgets3.0.0/generic scrolledcanvas.itk, scrolledlistbox.itk,
+	scrolledtext.itk: Pushed throught the changes needed to get the
+	derivation from labeledframe to work.
+
+1999-02-22  Syd Polk  <spolk@cygnus.com>
+
+	* itcl/win/configure.in: Export ITCL_SH.
+	* itcl/win/configure: Regenerate.
+
+	* itk/win/configure.in: Set all of the build components based on cygwin
+	vs. Visual C++.
+	Fix ITK_BUILD_LIB_SPEC, ITK_LIB_SPEC, ITK_LIB_FULL_PATH.
+	* itk/win/configure: Regenerate.
+
+1999-02-19  Syd Polk  <spolk@cygnus.com>
+
+	* itk/win/rc/itk.rc: Fixed problem in .rc file that winres did not
+	like.
+
+1999-02-18  Syd Polk  <spolk@cygnus.com>
+
+	* itcl/unix/Makefile.in: "make install" was failing
+	with itclConfig.sh.
+
+	* itcl/win/configure.in: Export ITCL_BUILD_LIB_SPEC and
+	ITCL_LIB_FULL_PATH.
+	* itcl/win/configure: Regnerate.
+	* itcl/win/Makefile.in: Minor corrections to dependencies.
+
+	* itk/generic/itk_cmds.c: Fixed newline in constant.
+
+	* itk/win/configure.in: Added AC_OBJEXT.
+	* itk/win/configure: Regenerated.
+
+	* itk/win/Makefile.in: Added OBJEXT. Overhauled for MSVC
+	build.
+
+1999-02-18  James Ingham  <jingham@cygnus.com>
+
+	* itcl/unix/Makefile.in itk/unix/Makefile.in: fix the install
+	target so it points to itclConfig.sh in the itcl or itk, rather
+	than in the itcl/unix or itk/unix directories.
+	* itcl/win/configure.in: use the ITCLCYGRC & ITCLCYGSHRC variables 
+	in the name of the windres output file.
+	* itcl.rc: For some reason, windres is choking on STRINGIFY of the 
+	Itcl version numbers.  Some day we should figure out why.  For
+	now, I just put in the version numbers by hand.
+
+1999-02-10  Syd Polk  <spolk@cygnus.com>
+
+	* Makefile.in: Propogate make errors from subdirectories
+	back to the top level.
+
+	* itcl/win/configure.in: Moved itclConfig.sh. Fixed problems
+	finding tclConfig.sh and tkConfig.sh.
+	Figure out all of the appropriate directories at this level
+	so that cygwin and msvc differences can be accounted for.
+	* itcl/win/configure: Regenerate.
+	* itcl/win/Makefile.in: Use OBJEXT.
+	Set build directories correctly.
+	Set -DDLL_BUILD, -DSTATIC_BUILD, and -DBUILD_itcl correctly.
+
+	* itk/win/configure.in: Moved itkConfig.sh. Look for itclConfig.sh
+	in new place. Fixed problems finding tclConfig.sh and tkConfig.sh.
+	* itk/win/configure: Regnerate.
+
+	* itcl/generic/itcl_cmds.c (initScript): Fixed broken new line.
+
+	* itcl/win/dllEntryPoint.c: DllMain was not setup correctly for
+	Microsoft.
+
+1999-02-09  James Ingham  <jingham@cygnus.com>
+
+	* itcl/itcl/unix/configure.in: 
+	* itcl/itk/unix/configure.in:
+ 	LD_SEARCH_FLAGS should NOT be passed to the library build line.
+
+	* itcl/itcl/unix/configure:
+	* itcl/itk/unix/configure:
+	regenerate.
+
+	* itcl/itk/generic/itk_archetype.c: Put a few CYGNUS LOCAL markers 
+	in around the 8.1 Fixups that I had left out.
+		
+1992-02-08  Syd Polk  <spolk@cygnus.com>
+
+	* itcl/itcl/unix/configure.in: Moved itclConfig.sh.in up a level
+	so that building on Windows will work.
+	Added exporting of itclsh so that other parts of the build
+	tree can call it.
+	Added exporting of TCL_CFLAGS.
+	Added exporting of TCL_LIB_FULL_PATH.
+	Generate and export ITCL_LIB_FULL_PATH.
+	* itcl/itcl/unix/configure: Regenerated
+	* itcl/itcl/unix/Makefile.in: Use TCL_CFLAGS so that
+	-fwritable-strings is enabled.
+	Add dependency for TCL_LIB_FULL_PATH.
+	* itcl/itclConfig.sh.in: Moved from lower directory.
+	* itcl/itk/unix/configure.in: Moved itkConfig.sh.in up a level.
+	Added export of TCL_CFLAGS.
+	Added export of TCL_LIB_FULL_PATH, TK_LIB_FULL_PATH,
+	ITCL_LIB_FULL_PATH, and ITK_LIB_FULL_PATH.
+	* itcl/itk/unix/Makefile.in: Use TCL_CFLAGS so that
+	-fwritable-strings is enabled.
+	Add dependencies for TCL_LIB_FULL_PATH and TK_LIB_FULL_PATH.
+	* itcl/itk/unix/configure: Regenerated.
+	* itcl/itkConfig.sh.in: Moved from a lwoer directory.
+	* itcl/iwidgets3.0.0/configure.in: Look for itclConfig.sh and
+	itkConfig.sh in different places.
+
+1999-02-05  James Ingham  <jingham@cygnus.com>
+
+	* itcl/itk/generic/itk_archetype.c (Itk_ArchCompAddCmd): 
+	* itcl/itcl/generic/itcl_cmds.c (Itcl_ProtectionCmd):
+	  itcl/itcl/generic/itcl_ensemble.c (Itcl_EnsembleCmd):
+	  itcl/itcl/generic/itcl_methods.c (Itcl_EvalMemberCode):
+	                                   (Itcl_ConstructBase):
+	  itcl/itcl/generic/itcl_obsolete.c (ItclOldClassCmd):
+	  itcl/itcl/generic/itcl_parse.c (Itcl_ClassCmd):
+	                                 (Itcl_ClassProtectionCmd):
+	Fix up calls to Tcl_EvalObj for Tcl8.1.
+
+	* itcl/itcl/unix/configure.in:
+	* itcl/itk/unix/configure.in:
+	Pick up CFLAGS from AC_PROG_CC rather than hard coding them.
+	* itcl/itcl/unix/configure:
+	* itcl/itk/unix/configure:
+	regenerate.
+	
+1999-01-30  Brendan Kehoe  <brendan@cygnus.com>
+
+	* Makefile.in (install-info info install-check): Add these null
+	rules, for the standard build process to work..
+
+1999-01-28  James Ingham  <jingham@cygnus.com>
+
+	* itcl/itcl/unix/configure.in: Check the TCL_LIB_VERSIONS_OK
+	variable, and strip out dots if it is nodots.
+	* itcl/itk/unix/configure.in: Check the TCL_LIB_VERSIONS_OK
+	variable, and strip out dots if it is nodots.
+	* itcl/itcl/unix/configure: regenerate.
+	* itcl/itk/unix/configure: regenerate.	
+
+1999-01-21  James Ingham  <jingham@cygnus.com>
+
+	* itcl/library/init.tcl (auto_import): Comment out this function.
+	It does not work, because it can not populate the source
+	namespace's export list.  There is no easy way to fix this, and
+	since it is just an optimization over the original Tcl proc, we
+	will just use Tcl one for now.
+
+1999-01-20  James Ingham  <jingham@cygnus.com>
+
+	* itcl/library/init.tcl: updated to Itcl 3.0.1.  Does not force
+	the addition of class to the auto_mkindex_parser namespace, but
+	uses the namespace import instead.
+
+1998-12-15  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Reverted back to original
+	distribution. The new panedwindow widget is now in libgui. 
+
+	* iwidgets3.0.0/generic/pane.itk: Reverted.
+	
+1998-12-11  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Major changes to
+	support panes that are fixed (non-resizable). This allows
+ 	the panedwindow to be used as a more general purpose
+	container widget where individual parts may or may not be
+	resizable.
+	
+	* iwidgets3.0.0/generic/pane.itk (iwidgets::Pane): Added
+	-resizable option to support non-resizable panes.
+
+1998-12-08  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Major changes to 
+	the default look and resizing method to be more modern, more
+	windows-like, and work better when widgets are placed in childsites.
+

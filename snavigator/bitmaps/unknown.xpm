@@ -1,0 +1,18 @@
+/* XPM */
+static char * unknown_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"9 9 3 1",
+/* colors */
+" 	c #707070",
+".	c #C0C0C0",
+"X	c black",
+/* pixels */
+"         ",
+" ....... ",
+" ...X... ",
+" ...X... ",
+" .XXXXX. ",
+" ...X... ",
+" ...X... ",
+" ....... ",
+"         "};

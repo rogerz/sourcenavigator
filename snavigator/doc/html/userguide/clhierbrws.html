@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Hierarchy Browser</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="editor.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="clbrws.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-996755"></A><A NAME="Hierarchy Browser"></A>
+<A NAME="marker-1171507"></A>Hierarchy Browser&nbsp;&nbsp;<IMG SRC="clhierbrws-1.gif">
+<DIV>
+<IMG SRC="clhierbrws-2.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-996757"></A><EM CLASS="Emphasis">
+Inheritance</EM><A NAME="marker-997120"></A>, a type of relationship between objects, 
+allows one object to share behavior with one or more other objects. Inheritance 
+provides a basic mechanism for the reuse of code. Sharing with more than one is known 
+as <EM CLASS="Emphasis">
+multiple</EM>
+ <EM CLASS="Italics">
+inheritance</EM><A NAME="marker-997121"></A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1179734"></A>The <A NAME="marker-1171504"></A><SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ can display the entire class hierarchy, including 
+the <A NAME="marker-1184040"></A>superclasses and <A NAME="marker-1184045"></A>subclasses 
+of a selected class. This helps you understand class hierarchy trees, which in turn 
+helps you to reuse existing code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1179739"></A>A baseclass is a top-level class in the class hierarchy. 
+It does not inherit from any other class; other classes inherit from it.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1179740"></A>A class <SPAN CLASS="Bold">
+a</SPAN>
+ is said to be a superclass of class <SPAN CLASS="Bold">
+b</SPAN>
+ when class <SPAN CLASS="Bold">
+b</SPAN>
+ inherits from <SPAN CLASS="Bold">
+a</SPAN>
+ or another class that inherits from <SPAN CLASS="Bold">
+a</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1179741"></A>A class <SPAN CLASS="Bold">
+a</SPAN>
+ is said to be a subclass of class <SPAN CLASS="Bold">
+b</SPAN>
+ when class <SPAN CLASS="Bold">
+a</SPAN>
+ inherits from <SPAN CLASS="Bold">
+b</SPAN>
+ or another class that inherits from <SPAN CLASS="Bold">
+b</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1179742"></A>If class <SPAN CLASS="Bold">
+a</SPAN>
+ is a superclass of class <SPAN CLASS="Bold">
+b</SPAN>, then class <SPAN CLASS="Bold">
+b</SPAN>
+ is a subclass of class <SPAN CLASS="Bold">
+a</SPAN>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1152137"></A><A NAME="29822"></A>Using the Hierarchy Browser</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1152139"></A>Start the <A NAME="marker-1152138"></A><SPAN CLASS="Bold">
+Hierarchy Browser </SPAN>
+in one of the following ways:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1162427"></A>from the <SPAN CLASS="Bold">
+Windows</SPAN>
+ menu, select <SPAN CLASS="Bold">
+New View </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Hierarchy</SPAN>.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1162428"></A>click the <SPAN CLASS="Bold">
+Hierarchy</SPAN>
+ toolbar button.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1162431"></A>choose the <SPAN CLASS="Bold">
+Hierarchy</SPAN>
+ tab in the <SPAN CLASS="Bold">
+Editor</SPAN>.</LI>
+</UL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001340"></A><A NAME="24371"></A><A NAME="marker-1042098"></A>Hierarchy 
+Browser Window</P>
+<DIV>
+<IMG SRC="clhierbrws-3.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1001351"></A><A NAME="marker-1001350"></A>Tools Menu</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1001360"></A>The <SPAN CLASS="Bold">
+Hierarchy</SPAN>
+ menu, accessed from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, contains the following items, which control how the class hierarchies are 
+displayed.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001352"></A>Show Superclasses<BR>
+<P CLASS="BodyHang1">
+Limits the <A NAME="marker-1001353"></A>hierarchy to the superclasses (and their 
+subclasses) of the selected class. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001354"></A>Show Subclasses<BR>
+<P CLASS="BodyHang1">
+Limits the hierarchy to the subclasses of the selected class. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001355"></A>Show All<BR>
+<P CLASS="BodyHang1">
+This is the default for this menu.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1171245"></A>Display file names<BR>
+<P CLASS="BodyHang1">
+Displays the file names of the superclasses and subclasses.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1152151"></A><A NAME="29305"></A>Class/Hierarchy 
+<A NAME="marker-1171510"></A>Preferences</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1152152"></A>Many of the settings that control how 
+the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ window functions are located in the <SPAN CLASS="Bold">
+Class/Hierarchy</SPAN>
+ tab of the <SPAN CLASS="Bold">
+Preferences</SPAN>
+ dialog. To find this dialog:</P>
+<OL>
+<LI CLASS="Numbered"><P CLASS="Body">
+<A NAME="pgfId-1067161"></A>In the <SPAN CLASS="Bold">
+Symbol Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. In the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+View Preferences</SPAN>.</LI>
+<LI CLASS="NumberedNext"><P CLASS="Body">
+<A NAME="pgfId-1067170"></A>Choose the <SPAN CLASS="Bold">
+Class/Hierarchy</SPAN>
+ tab.</LI>
+</OL>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1001264"></A><A NAME="56758"></A>Class/Hierarchy Tab of the 
+Preferences Dialog<A NAME="40031"></A> </P>
+<DIV>
+<IMG SRC="clhierbrws-4.gif">
+</DIV>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1001239"></A>Class</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1118698"></A>Go To<BR>
+<P CLASS="BodyHang1">
+Select <A NAME="marker-1179438"></A><SPAN CLASS="Bold">
+Declaration</SPAN>
+ if you want the <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ to display the prototype of the function; select <SPAN CLASS="Bold">
+Implementation</SPAN>
+ if you want to see the actual code.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1118699"></A>Orientation<BR>
+<P CLASS="BodyHang1">
+Select <SPAN CLASS="Bold">
+Horizontal</SPAN>
+ to have the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ appear below the <SPAN CLASS="Bold">
+Class Browser</SPAN>; select <SPAN CLASS="Bold">
+Vertical</SPAN>
+ to have the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ appear to the right of the <SPAN CLASS="Bold">
+Class Browser</SPAN>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001242"></A>Display members<BR>
+<P CLASS="BodyHang1">
+Select <SPAN CLASS="Bold">
+First</SPAN>
+ to cause instance variables to appear before methods in the <SPAN CLASS="Bold">
+Class Browser</SPAN>; select <SPAN CLASS="Bold">
+Second</SPAN>
+ to cause methods to appear first, with the instance variables after them. </P>
+<H5 CLASS="Heading4">
+<A NAME="pgfId-1001243"></A>Hierarchy Layout</H5>
+<P CLASS="Body">
+<A NAME="pgfId-1001244"></A>Display order:<BR>
+<P CLASS="BodyHang1">
+<SPAN CLASS="Bold">
+Left to right</SPAN>
+ displays the hierarchy from left to right in the main window; <SPAN CLASS="Bold">
+Top to Bottom</SPAN>
+ displays the hierarchy from top to bottom.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1001245"></A>Display layout style:<BR>
+<P CLASS="BodyHang1">
+Select <SPAN CLASS="Bold">
+Tree</SPAN>
+ to display the hierarchy in tree layout; select <SPAN CLASS="Bold">
+ISI</SPAN>
+ to display the hierarchy in ISI layout. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001246"></A>Vertical space:<BR>
+<P CLASS="BodyHang1">
+Enter the number of vertical pixels between symbols in the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ window. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1001247"></A>Horizontal space:<BR>
+<P CLASS="BodyHang1">
+Enter the number horizontal pixels between symbols in the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>
+ window.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1169469"></A><A NAME="marker-1169467"></A><A NAME="41826"></A>Hierarchy 
+Browser Shortcut Keys</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1171101"></A>This shortcut key is available for use with 
+the <SPAN CLASS="Bold">
+Hierarchy Browser</SPAN>.</P>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="2">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179713"></A><STRONG CLASS="BoldEmphasis">
+Key Combination</STRONG>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179717"></A><STRONG CLASS="BoldEmphasis">
+Function</STRONG>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179719"></A><EM CLASS="Emphasis">
+UNIX</EM>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179721"></A><EM CLASS="Emphasis">
+Windows</EM>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179723"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179725"></A><SPAN CLASS="Bold">
+Meta+B</SPAN> (or <SPAN CLASS="Bold">
+Alt+B</SPAN>)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179727"></A><SPAN CLASS="Bold">
+Alt+B</SPAN>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1179729"></A>Starts the <SPAN CLASS="Bold">
+Class Browser</SPAN>
+ for the marked class.</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1169748"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="editor.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="clbrws.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

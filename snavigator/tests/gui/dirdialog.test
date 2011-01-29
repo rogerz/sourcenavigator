@@ -1,0 +1,205 @@
+package require tcltest
+package require eventutils
+
+tcltest::test dirdialog-error-1 { Invalid data to ctor } {
+    list [catch {sourcenav::DirDialog foo} err] $err
+} {1 {bad window path name "foo"}}
+
+tcltest::test dirdialog-destroy-1 { Destroy the object } {
+    set d [sourcenav::DirDialog .d]
+    list [catch {itcl::delete object $d} err] $err
+} {0 {}}
+
+tcltest::test dirdialog-destroy-2 { Destroy the object while waiting
+        inside a call to activate } {
+    set d [sourcenav::DirDialog .d]
+    delay {itcl::delete object $d}
+    $d activate
+} ""
+
+tcltest::test dirdialog-destroy-3 { Destroy the widget while waiting
+        inside a call to activate } {
+    set d [sourcenav::DirDialog .d]
+    delay {destroy $d}
+    $d activate
+} ""
+
+tcltest::test dirdialog-cancel-1 { User clicks on cancel button } {
+    set d [sourcenav::DirDialog .d]
+    delay {mouse_click [$d component cancel]}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} ""
+
+tcltest::test dirdialog-cancel-2 { User hits Escape to cancel } {
+    set d [sourcenav::DirDialog .d]
+    delay {keyevent $d Escape}
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} ""
+
+tcltest::test dirdialog-selectdir-1 { User clicks ok button } {
+    set d [sourcenav::DirDialog .d]
+    delay "mouse_click [$d component ok]"
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} /
+
+tcltest::test dirdialog-selectdir-2 { Pass in a -initialdir value and hit ok } {
+    set d [sourcenav::DirDialog .d -initialdir /tmp]
+    delay "mouse_click [$d component ok]"
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} /tmp
+
+tcltest::test dirdialog-selectdir-3 { Pass in a -initialdir value and hit ok } {
+    set d [sourcenav::DirDialog .d -initialdir ~]
+    delay "mouse_click [$d component ok]"
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} $env(HOME)
+
+
+
+# Save the current working directory. We will need to reset it
+# later once we are done with tests that cd around on the filesystem.
+
+set cwd [pwd]
+set tmp_test /tmp/test
+set tmp_fullpath [cd /tmp ; pwd]
+
+tcltest::test dirdialog-selectdir-4 { Pass in a -initialdir value and hit ok, note
+        that we need to compare to [cd /tmp ; pwd] in case /tmp is a symlink } {
+    cd
+    file delete -force $tmp_test
+    file mkdir $tmp_test
+    cd $tmp_test
+
+    set d [sourcenav::DirDialog .d -initialdir ..]
+
+    delay "mouse_click [$d component ok]"
+
+    set result [$d activate]
+    itcl::delete object $d
+    set result
+} $tmp_fullpath
+
+
+# First, click to expand then click to contract the toggle thingy.
+
+# Get the widget, x and y coords of the little toggle thingy in
+# the tree class. Pass in an index or use the currently
+# selected index if none is passed in.
+
+proc get_toggle_center { treew index} {
+    set bbox [$treew bbox $index]
+    # No, the tree widget does not implement bbox correctly! {x y width height}
+    foreach {x1 y1 x2 y2} $bbox break
+
+    set half_height [expr {($y2 - $y1) / 2}]
+    set y_mid [expr {$y1 + $half_height}]
+    set x_mid [expr {$x1 + ($half_height / 2)}]
+
+    return [list $x_mid $y_mid]
+}
+
+proc toggle_index { treew index } {
+    foreach {x y} [get_toggle_center $treew $index] break
+    mouse_click $treew -x $x -y $y
+}
+
+tcltest::test dirdialog-expansion-1 { clicking on the little + icon should
+        expand a directory, the size should increase by one directory } {
+    cd
+    file delete -force $tmp_test
+    file mkdir $tmp_test
+    cd $tmp_test
+    file mkdir one/two
+    
+    set d [sourcenav::DirDialog .d -initialdir .]
+
+    # Initially, the test directory would be expanded.
+    # Expand the tests/one directory now, the number
+    # items should increase by one.
+
+    set treew [$d component treew]
+    set size [$treew size]
+    set sel [$treew curselection]
+    set next [expr {$sel + 1}]
+
+    delay "
+        toggle_index $treew $next
+        pause
+        toggle_index $treew $sel
+        pause
+        set newsize \[$treew size\]
+        mouse_click [$d component cancel]
+    "
+
+    delay 5 {
+        if {[itcl::find object $d] == $d} {
+            $d deactivate TIMEOUT
+        }
+    }
+
+    set result [$d activate]
+    itcl::delete object $d
+    list $result [expr {$newsize - $size}]
+} {{} 1}
+
+
+# Now test out the multiple expansion bug by clicking to the
+# left of the +.
+
+proc toggle_leftof_index { treew index } {
+    foreach {x y} [get_toggle_center $treew $index] break
+    mouse_click $treew -x 1 -y $y
+}
+
+tcltest::test dirdialog-expansion-2 { clicking on the little + icon should
+        expand a directory, the size should increase by one directory } {
+    cd
+    file delete -force $tmp_test
+    file mkdir $tmp_test
+    cd $tmp_test
+    file mkdir one/two
+    
+    set d [sourcenav::DirDialog .d -initialdir .]
+
+    # Initially, the test directory would be expanded.
+    # Expand the tests/one directory now, the number
+    # items should increase by one.
+
+    set treew [$d component treew]
+    set size [$treew size]
+    set sel [$treew curselection]
+
+    delay "
+        toggle_leftof_index $treew $sel
+        pause
+        toggle_leftof_index $treew $sel
+        pause
+        set newsize \[$treew size\]
+        mouse_click [$d component cancel]
+    "
+
+    delay 5 {
+        if {[itcl::find object $d] == $d} {
+            $d deactivate TIMEOUT
+        }
+    }
+
+    set result [$d activate]
+    itcl::delete object $d
+    list $result [expr {$newsize - $size}]
+} {{} 0}
+
+
+# Now that we are done with tests that cd around, reset the old cwd
+cd $cwd
+file delete -force $tmp_test

@@ -1,0 +1,16 @@
+# This is an example Makefile that demonstrates how to link Tix into
+# an ET-enabled wish. You need to modify this file to suit the
+# configuration on your system
+#
+
+# etwish+tix:		an ET-enabled wish executable that includes Tix
+#
+# etdemo.et		an ET initialization file that includes Tix
+#			It should be translated into C code by et2c
+#			and then compiled into etdemo.o
+#
+# et42.o		compiled from et42.c that came with ET.
+#
+
+etwish+tix:
+	ld etdemo.o libtixsam4.1.7.6.so et42.o -ltcl -ltk -o etwish+tix

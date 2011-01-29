@@ -1,0 +1,46 @@
+<i> The following notes are contributed from Tix users on various
+platforms. I have no access to these platforms and cannot verify that
+their settings are correct. Also, the settings may only work with a
+specific versions of Tix on a specific version of the O/S.
+</i>
+
+<pre>
+<b>From:</b>	 	Andrew Fitzhugh (fitz@hplaef.hpl.hp.com) about
+<b>Version:</b>	Tix 4.0a5
+<b>Platform:</b>	HPUX 9.05
+
+1.  Throw ANSI flag on the compiler (I set PROTO_FLAGS = -Ae)
+2.  Change the X11 directories to -I/usr/include/X11R5 and -L/usr/lib/X11R5
+3.  This might affect other systems: the Makefile included -lX11 before
+    -ltk and -ltcl, so I switched the order.  (Obviously a bug, since
+    there is a comment right above it that told me what to do :-).
+</pre>
+
+<pre>
+<b>From:</b>	 	mohan kannapareddy <mokannap@grail.cba.csuohio.edu>
+<b>Version:</b>	Tix 4.0a7
+<b>Platform:</b>	Solaris2.4
+
+
+> With Tix4.0a7 (and also with Tix4.0a6) on Solaris 2.4, when running
+> the widget demo, in tixFileSelectBox, in the two scolling lists (for
+> Files and Directories), some of the file and directory names have
+> their first 2 letters chopped off. And some files are repeated.
+> Anyone else seeing this?
+
+   The above is a very common problem with Solaris2.4, I am pretty
+   sure when you are creating your _tixwish_, its picking up the UCB
+   library, that is you must be having /usr/ucblib/ or whatever in
+   your LD_LIBRARY_PATH or LD_RUN_PATH, REMOVE it OR make sure that
+   the standard libraries or before the ucblibs..  Now, its strange
+   that it shows up, because I don't think the tix fileselect box has
+   been implemented in "C", so it should not have shown up??
+
+   You might have to recompile your tcl/tk libraries with the
+   offending libraries out of the way..because I use a Solaris2.4
+   machine and I have no problem at all!!..  Cheers, Mohan
+</pre>
+
+<!Serial 851729140>
+<hr><i>Last modified Fri Jan 17 22:52:54 EST 1997 </i> --- 
+<i>Serial 853731293</i>

@@ -1,0 +1,177 @@
+
+
+
+<TITLE>tixPopupMenu - Create and manipulate tixPopupMenu widgets</TITLE>
+<Center><H2>tixPopupMenu - Create and manipulate tixPopupMenu widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixPopupMenu<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+The <B>tixPopupMenu</B></I> class is derived from the <B>TixShell</B></I>
+class and inherits all the commands, options and subwidgets of its
+super-class.
+</pre><H3>STANDARD OPTIONS</H3>
+The PopupMenu widget supports all the standard options of a frame widget.
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+</pre><H3>WIDGET-SPECIFIC OPTIONS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>buttons</B></I>
+Class:		<B>Buttons</B></I>
+Switch:		<B>-buttons</B></I>
+</code></code></code></pre>
+<UL>
+A TCL list that specifies the mouse button(s) and key modifier(s) that
+bring up the popup menu. Each element of this list is in turn a list
+that contains two elements: the first element is an integer that
+indicates the
+mouse button that brings up the popup menu; the second element
+specifies the key modifiers that should be used in conjunction with
+the mouse button. For example, the value <B>{{1 {Control Meta}} {3
+{Any}}}</B></I> specifies that the popup menu can be popped up by (a)
+pressing mouse button 1 with either the Control or the Meta key or (b)
+pressing mouse button 3 with any key modifier. The default value is
+<B>{{3 {Any}}}</B></I>: only mouse button 3 brings up the popup menu.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>postCmd</B></I>
+Class:		<B>PostCmd</B></I>
+Switch:		<B>-postcmd</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a command to be evaluated just before the menu is about to
+pop-up. This command is called with two default arguments: the root
+x-y coordinates where the user has pressed the mouse button. This
+command must return a boolean value: a false indicates that the menu
+should be popped up. This option can be used to find out where the
+user has pressed the mouse-button and optionally disable the popup
+menu over certain screen areas.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>spring</B></I>
+Class:		<B>Spring</B></I>
+Switch:		<B>-spring</B></I>
+</code></code></code></pre>
+<UL>
+When set to <B>true</B></I>, the menu will be automatically popped down if
+the user releases the mouse button outside of the menu and no menu
+commands will be invoked. This makes it easy for the user to cancel
+the popup menu without pressing the Escape key. The default value is
+<B>true</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>state</B></I>
+Class:		<B>State</B></I>
+Switch:		<B>-state</B></I>
+</code></code></code></pre>
+<UL>
+Must be either <B>disabled</B></I> or <B>normal</B></I>. The PopupMenu widget will not
+pop up unless its <B>-state</B></I> is set to <B>normal</B></I>.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>title</B></I>
+Class:		<B>Title</B></I>
+Switch:		<B>-title</B></I>
+</code></code></code></pre>
+<UL>
+Specifies a text string to display inside the <B>menubutton</B></I>
+subwidget, as the title of this PopupMenu.
+</UL>
+</pre><H3>SUBWIDGETS</H3>
+<P>
+<pre><code><code><code>
+Name:		<B>menu</B></I>
+Class:		<B>Menu</B></I>
+</code></code></code></pre>
+<UL>
+The menu subwidget.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>menubutton</B></I>
+Class:		<B>Menubutton</B></I>
+</code></code></code></pre>
+<UL>
+The menubutton subwidget.
+</UL>
+</pre><HR>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixPopupMenu</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a PopupMenu widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+PopupMenu widget such as its cursor and relief.
+
+The Tix PopupMenu widget can be used as a replacement of the
+<B>tk_popup</B></I> command. The advantage of the Tix PopupMenu widget is
+it requires less application code to manipulate. Also, it provides a
+title for the popup menu, which is not available from <B>tk_popup</B></I>.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixPopupMenu</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It has
+the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for PopupMenu widgets:
+<DL>
+<DT> <I>pathName <B>bind <I>widget </I></B>?<I>widget ...</I></B>?
+</I></B>
+<DD> Binds this PopupMenu to one or more <I>widgets</I></B>. The PopupMenu
+will be activated when the user presses the right mouse button over
+these <I>widgets</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixPopupMenu</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixPopupMenu</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>post <I>widget x y</I></B>
+</I></B>
+<DD> Posts the PopupMenu inside the <I>widget</I></B> at the coordinate
+<I>x</I></B>,<I>y</I></B>.
+</DL>
+<DL>
+<DT> <I>pathName <B>unbind <I>widget </I></B>?<I>widget ...</I></B>?
+</DL>
+<DL>
+<DT> <I>pathName <B>subwidget <I> name ?args?</I></B> 
+</I></B>
+<DD> When no options are given, this command returns the pathname of the
+subwidget of the specified name.
+
+When options are given, the widget command of the specified subwidget
+will be called with these options.
+</DL>
+</pre><H3>KEYWORDS</H3>
+Tix(n)
+<hr><i>Last modified Sun Jan 19 22:34:35 EST 1997 </i> --- 
+<i>Serial 853731303</i>

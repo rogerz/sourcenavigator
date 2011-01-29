@@ -1,0 +1,152 @@
+<h3>Tix 4.1b1</h3>
+<i> Released on September 30, 1996</i> <p>
+
+<pre>
+
+Subject: [Announce] Tix version 4.1b1 is available
+
+</pre>
+
+   I am pleased to announce the availability of Tix version 4.1b1, the
+   first beta release. This version of Tix supports the Unix and
+   Microsoft Windows platforms. <p>
+
+   This version of Tix is released under licensing terms similar to
+   those of Tcl/Tk. Please read the file license.terms carefully
+   before proceeding. <p>
+
+<h3>Requirement</h3>
+
+<h4>Unix Platforms</h4>
+   
+   Tix 4.1b1 works with the following combinations of Tcl/Tk/ITcl/ET:
+   <ul>
+     <li> Tcl 7.4 + Tk 4.0 
+     <li> Tcl 7.4 + Tk 4.0 + ITcl 2.0
+     <li> Tcl 7.4 + Tk 4.0 + ET 1.5
+     <li> Tcl 7.5 + Tk 4.1 (final release only)
+     <li> Tcl 7.5 + Tk 4.1 + ITcl 2.1
+     <li> Tcl 7.5 + Tk 4.1 + ET 1.6
+   </ul>
+
+<h4>Windows Platforms</h4>
+
+   Tix 4.1b1 requires the final release of Tcl 7.5 and Tk 4.1 (no
+   alpha or beta versions). Many things currently does not work under
+   Windows, including:
+   <ul>
+     <li> FileSelectDialog (ExFileSelectDialog does work, though)
+     <li> XPM images
+   </ul>
+
+<h3>Getting The Tix Package</h3>
+
+   Tix 4.1b1 sources are available at
+   <ul>
+     <li> <a href="ftp://ftp.xpi.com/pub/Tix4.1b1.tar.gz">
+	  ftp://ftp.xpi.com/pub/Tix4.1b1.tar.gz</a>: Unix source tar file.
+
+     <li> <a href="ftp://ftp.xpi.com/pub/windows/tix41b1.zip">
+	  ftp://ftp.xpi.com/pub/windows/tix41b1.zip</a>: Same as
+	  Tix4.1b1.tar.gz, but in Windows/DOS ZIP format.
+   </ul>
+
+
+   We'll also release binary distributions of Tix. They will be
+   available in a few days for all Windows 32 bit platforms (Win32s,
+   Win95, WinNT 3.5 and 4.0) as well as the following Unix platforms:
+   Solaris 2.5, SunOs 4.1, HPUX 9.x, IRIX 5.x and Linux. <p>
+       
+<h3>What's New Since Tix 4.1a3 (the last release)</h3>
+
+<h4>7/14/96</h4>
+
+  <b>New feature:</b> Supports ET+TK4.1. --enable-tk41_et flag for
+  configure script.<p>
+
+  <b>New feature:</b> Supports ITCL 2.1. --enable-itcl21 flag for
+  configure script.<p>
+
+  <b>New feature:</b> Default color schemes and fontset can be set
+  when Tix is compiled: --with-fontset= and --with-scheme= flags for
+  configure script.<p>
+
+  <b>Incompatibility:</b> All the "::" qualifiers in Tix class methods
+  have been replaced by ":", so that the Tix classes can be loaded
+  into Itcl without patching Itcl. If you have written your own Tix
+  classes, you need to modify the source files to use the ":"
+  qualifier instead. <p>
+
+  The program tools/setcolon.sh helps you port your code from the "::"
+  convention to the ":" convention. Execute the program without
+  argument for usage syntax. It may modify your code in unexpected
+  ways. Use with caution. <p>
+
+<h4>7/15/96</h4>
+  
+  <b>New feature:</b> New function Tix_SetRcFileName() and new macros
+  TCL_7_5_OR_LATER, TK_4_1_OR_LATER to provide better support for both
+  Tcl7.4/Tk4.0 and Tcl7.5+/Tk4.1+. <p>
+
+  <b>Bug Fixed:</b> <code>entrycget</code> method of OptionMenu didn't
+  work as expected. <p>
+
+<h4>7/17/96</h4>
+
+  The demos-c subdirectory has been moved to demos/c-code. <p>
+
+<h4>7/24/96</h4>
+
+  <b>Bug Fixed:</b> tixMwm now deletes information about a toplevel
+  when the toplevel is destroyed.<p>
+
+<h4>8/22/96</h4>
+
+  <b>New feature:</b> New command "tixConsoleInit" available with Tcl
+  7.5/Tk 4.1. Create console window that runs in a separate
+  interpreter. <p>
+
+  <b>New feature:</b> Now Tix works under multiple interpreters. <p>
+
+<h4>8/23/96</h4>
+
+  <b>New feature:</b> Now ListNoteBook uses a PanedWindow to manage
+  the HList and the pages.<p>
+
+  <b>New feature:</b> New option -dynamicgeometry for PanedWindow.<p>
+
+<h4>8/24/96</h4>
+
+  <b>New feature:</b> New command "tixStrEq" compares the equality of
+  two strings.<p>
+
+<h4>9/12/96</h4>
+
+  <b>New feature:</b> Tix provides emulation for strcasecmp() for
+  platforms that do not support this function.<p>
+
+<h4>9/14/96</h4>
+
+  <b>New feature:</b> New widget command <code>selection get</code>
+  for HList. This is just an alias for <code>info
+  selection</code>. It's added so that the API is similar to the TK
+  API.<p>
+
+  <b>New feature:</b> New widget command <code>info bbox</code>
+  for HList. Used mainly in regression tests. <p>
+
+<h4>9/17/96</h4>
+
+  <b>New feature:</b> Orientation of the <b>pane</b> subwidget in
+  <b>TixListNoteBook</b> now configureable via the <b>-options</b>
+  switch during creation. <p>
+
+<h4>9/22/96</h4>
+
+  <b>New feature:</b> Now the default fontset and color scheme are
+  configurable in the setup.tcl program as well as in the configure
+  script. <p>
+
+<!Serial 851729141>
+<hr><i>Last modified Fri Jan 17 22:52:57 EST 1997 </i> --- 
+<i>Serial 853731293</i>

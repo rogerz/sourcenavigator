@@ -1,0 +1,209 @@
+#!/usr/bin/perl
+##
+## Glish module supplies:
+## 	nextevent	postevent 
+##      waitingevent	standalone
+##	reply		addfds
+##
+##	TYPE_ERROR	TYPE_BOOL
+##	TYPE_BYTE	TYPE_SHORT
+##	TYPE_INT	TYPE_FLOAT
+##	TYPE_DOUBLE	TYPE_STRING
+##	TYPE_RECORD	TYPE_COMPLEX
+##	TYPE_DCOMPLEX
+##
+##
+## Usage:
+##	($key,$val,$attr) = nextevent();
+##	($key,$val,$attr) = nextevent($val_type);
+##	($key,$val,$attr) = nextevent($val_type,$isrequest);
+##
+##	postevent($name,$value);
+##	postevent($name,$value,$type);
+##	postevent($name,$value,$type,$attr);
+##
+##	reply($value);
+##	reply($value,$type);
+##	reply($value,$type,$attr);
+##
+##	if ( waitingevent() ) {}
+##	if ( standalone() ) {}
+##
+##	$vec = '';
+##	addfds($vec);
+##	addfds($vec,$offset);
+##
+##	&TYPE_ERROR
+##	&TYPE_INT
+##	etc.
+##
+
+use Glish;
+
+##
+## Test "standalone()" package function
+##
+print STDERR "Glish client started";
+if ( standalone() ) {
+    print STDERR " in stand alone mode.\n";
+    exit(1);
+} else {
+    print STDERR ".\n";
+}
+
+##
+## Test "waitingevent()" package function
+##
+$cnt = 0;
+while ( ! waitingevent() ) {
+    if ( $cnt++ % 15 == 0 ) {
+	postevent("tick",$cnt);
+    }
+    sleep 1;
+}
+##
+## Test "nextevent()" package function
+##
+($key,$val,$attr) = nextevent($type,$isrequest);
+while ( $key ) {
+    print "Got $key($type):\n";
+    outval($val,"\t");
+    if ($attr) {
+	print "with attribute:\n";
+	outval($attr,"\t");
+    }
+    ##
+    ## Test "postevent()" & "reply()" package function, 
+    ## with implicit (glish_type) typing
+    ##
+    if ( $key =~ /^x_/ ) {
+	if ($isrequest) {
+	    reply($val);
+	} else {
+	    postevent($key,$val);
+	}
+    } 
+
+    ##
+    ## Test "addfds()" package function
+    ##
+    elsif ( $key =~ /^addfds$/ ) {
+	$foo = '';
+	$retstr = '';
+	$fd_num = addfds($foo);
+	$fd_cnt = 0;
+	for ($cur=0;$cur<length($foo)*8 && $fd_cnt < $fd_num;++$cur) {
+	    if (vec($foo,$cur,1)) {
+		$retstr .= '1';
+		++$fd_cnt;
+	    } else {
+		$retstr .= '0';
+	    }
+	}
+	$retstr .= '0*' if $fd_cnt;
+	if ($isrequest) {
+	    reply($retstr);
+	} else {
+	    postevent($key,$retstr);
+	}
+    } 
+
+    ##
+    ## do something neat
+    ##
+    elsif ( $key =~ /^eval$/ ) {
+	if ( ref($val) eq  "ARRAY" ) {
+	    $eval_str = join(' ',@$val);
+	} elsif ( ref($val) eq "HASH" ) {
+	    postevent("error","record passed to $0.eval");
+	    next;
+	} else {
+	    $eval_str = $val;
+	}
+	$ret = &eval_($eval_str,$key,$type,$isrequest);
+	if ( $@ ) {
+	    postevent("error",$@);
+	} else {
+	    if ($isrequest) {
+		reply($ret);
+	    } else {
+		postevent("eval_result",$ret);
+	    }
+	}
+    } 
+
+    ##
+    ## Test the "glish_type" macros
+    ##
+    elsif ( $key =~ /^types$/ ) {
+	print "TYPE_ERROR ->\t",&TYPE_ERROR,"\n";
+	print "TYPE_BOOL ->\t",&TYPE_BOOL,"\n";
+	print "TYPE_BYTE ->\t",&TYPE_BYTE,"\n";
+	print "TYPE_SHORT ->\t",&TYPE_SHORT,"\n";
+	print "TYPE_INT ->\t",&TYPE_INT,"\n";
+	print "TYPE_FLOAT ->\t",&TYPE_FLOAT,"\n";
+	print "TYPE_DOUBLE ->\t",&TYPE_DOUBLE,"\n";
+	print "TYPE_STRING ->\t",&TYPE_STRING,"\n";
+	print "TYPE_RECORD ->\t",&TYPE_RECORD,"\n";
+	print "TYPE_COMPLEX ->\t",&TYPE_COMPLEX,"\n";
+	print "TYPE_DCOMPLEX->\t",&TYPE_DCOMPLEX,"\n";
+	if ($isrequest) {
+	    reply($type);
+	} else {
+	    postevent($key,$type);
+	}
+    }
+
+    ##
+    ## Test "postevent()" & "reply()" package function, 
+    ## with explicit (glish_type) typing and with any
+    ## attribute
+    ##
+    else {
+	if ($isrequest) {
+	    reply($val,$type,$attr);
+	} else {
+	    postevent($key,$val,$type,$attr);
+	}
+    }
+
+} continue {
+    ($key,$val,$attr) = nextevent($type,$isrequest); ## within "continue" so "next" works...
+}
+
+##
+## Output values
+##
+sub outval {
+    my($val) = @_[0];
+    my($tab) = @_[1];
+    if ( ref($val) eq "HASH") {
+	foreach $i (keys %$val) {
+	    if ( ref($$val{$i}) ) {
+		print "$tab$i ->\n";
+		outval($$val{$i},$tab."\t");
+	    } else {
+		print "$tab$i -> ",$$val{$i},"\n";
+	    }
+	}
+    } elsif ( ref($val) eq "ARRAY") {
+	foreach $i (@$val) {
+	    print "$tab$i\n";
+	}
+    } else {
+	print "$tab$val\n";
+    }
+}
+
+##
+## Wrap the "eval()" up in a package to prevent
+## accidental contamination of "main".
+##
+sub eval_ {
+    package TRY_EVAL_;
+    $val = @_[0];
+    $key = @_[1];
+    $type = @_[2];
+    $isrequest = @_[3];
+    eval($val);
+}

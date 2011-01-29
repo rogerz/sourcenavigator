@@ -1,0 +1,96 @@
+
+
+
+<TITLE>tixMeter - Create and manipulate Tix Meter widgets</TITLE>
+<Center><H2>tixMeter - Create and manipulate Tix Meter widgets</H2></Center><hr>
+
+</pre><H3>SYNOPSIS</H3>
+<B>tixMeter<I> <I>pathName ?<I>options</I></B>?
+<P>
+</pre><H3>SUPER-CLASS</H3>
+None.
+</pre><H3>STANDARD OPTIONS</H3>
+The Balloon widget supports all the standard options of a frame widget.
+See the <B>options(n)</B></I> manual entry for details on the standard options.
+<P>
+<pre><code><code><code>
+Name:		<B>foreground</B></I>
+Class:		<B>Foreground</B></I>
+Switch:		<B>-foreground</B></I>
+</code></code></code></pre>
+<UL>
+The color of the progress bar.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>text</B></I>
+Class:		<B>Text</B></I>
+Switch:		<B>-text</B></I>
+</code></code></code></pre>
+<UL>
+The text string to place inside the progress bar. If not specified,
+then the text string will be the percentage value specified by the
+<B>-value</B></I> option.
+</UL>
+<P>
+<pre><code><code><code>
+Name:		<B>value</B></I>
+Class:		<B>Value</B></I>
+Switch:		<B>-value</B></I>
+</code></code></code></pre>
+<UL>
+A real value that specifies the progress. Must be between 0.0 to 1.0.
+</UL>
+</pre><H3>DESCRIPTION</H3>
+<P>
+The <B>tixMeter</B></I> command creates a new window (given by the
+<I>pathName</I></B> argument) and makes it into a Meter widget.
+Additional options, described above, may be specified on the command
+line or in the option database to configure aspects of the
+Meter widget such as its cursor and relief.
+
+The Meter widget can be used to show the pregress of a background job
+which may take a long time to execute.
+</pre><H3>WIDGET COMMANDS</H3>
+<P>
+The <B>tixMeter</B></I> command creates a new Tcl command whose name is
+command may be used to invoke various operations on the widget. It has
+the following general form:
+<pre>
+<I>pathName option </I></B>?<I>arg arg ...</I></B>?
+<P>
+</pre>
+<I>PathName</I></B> is the name of the command, which is the same as the
+determine the exact behavior of the command. The following commands
+are possible for Meter widgets:
+<DL>
+<DT> <I>pathName <B>cget</B></I> <I>option</I></B>
+</I></B>
+<DD> Returns the current value of the configuration option given by
+<I>option</I></B>. <I>Option</I></B> may have any of the values accepted by the
+<B>tixMeter</B></I> command.
+</DL>
+<DL>
+<DT> <I>pathName <B>configure</B></I> ?<I>option</I></B>? <I>?value option value ...</I></B>?
+</I></B>
+<DD> Query or modify the configuration options of the widget.  If no
+<I>option</I></B> is specified, returns a list describing all of the
+available options for <I>pathName</I></B> (see <B>Tk_ConfigureInfo</B></I> for
+information on the format of this list).  If <I>option</I></B> is specified
+with no <I>value</I></B>, then the command returns a list describing the
+one named option (this list will be identical to the corresponding
+sublist of the value returned if no <I>option</I></B> is specified).  If
+one or more <I>option-value</I></B> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in
+this case the command returns an empty string.  <I>Option</I></B> may have
+any of the values accepted by the <B>tixMeter</B></I> command.
+</DL>
+</pre><H3>BINDINGS</H3>
+<P>
+There is no bindings for the Meter widget.
+</pre><H3>KEYWORDS</H3>
+Tix(n), Meter Widget
+
+<!Serial 851729147>
+<hr><i>Last modified Fri Jan 17 23:01:36 EST 1997 </i> --- 
+<i>Serial 853731302</i>

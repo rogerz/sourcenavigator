@@ -1,0 +1,26 @@
+/* XPM */
+static char * play_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"16 16 4 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	c black",
+"X	c lightgray",
+"o	c white",
+/* pixels */
+"                ",
+"   .            ",
+"   ...          ",
+"   .XX..        ",
+"   .XoXX..      ",
+"   .XoooXX..    ",
+"   .XoooooXX..  ",
+"   .XoooooooXX. ",
+"   .Xooooooooo. ",
+"   .Xooooooo..X ",
+"   .Xooooo..XX  ",
+"   .Xooo..XX    ",
+"   .Xo..XX      ",
+"   ...XX        ",
+"   .XX          ",
+"   X            "};

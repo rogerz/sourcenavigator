@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Introduction</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usrguideLOF.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="tutorial.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="IntroTitle">
+<A NAME="pgfId-1065645"></A><A NAME="33630"></A>Introduction<DIV>
+<IMG SRC="usrguide_intro.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1065649"></A>Red Hat Source-Navigator<SUP>
+TM</SUP>
+ is a powerful code analysis and comprehention tool that provides a graphic framework for understanding and reengineering large or complex software projects. Source-Navigator's cross-platform nature also makes it an invaluable code porting tool.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1065902"></A>Source-Navigator parsers scan through source code, 
+extracting information from existing C, C++, Java, Tcl, <KBD CLASS="Code">
+[incr tcl]</KBD>, FORTRAN, COBOL, and assembly programs and then use this 
+information to build a <EM CLASS="Emphasis">
+project database</EM>. The database represents internal program structures, 
+locations of function declarations, contents of class declarations, and 
+relationships between program components. Source-Navigator graphical 
+browsing tools use this database to query symbols (such as functions and 
+global variables) and the relationships between them. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1065906"></A>In addition to the languages supported in the 
+standard distribution, you can use the Source-Navigator Software Development Kit 
+(SDK) to add new parsers and extend Source-Navigator functionality to other 
+languages. For more information, refer 
+to <A HREF="../progref/progref_intro.html">Introduction</A>
+in the <STRONG CLASS="BoldEmphasis">
+Programmer's Reference Guide</STRONG>.</P>
+<P CLASS="Body">For information on licensing and redistribution
+terms, see <A HREF="appendixa.html">GNU General Public License</A>.</P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-1065926"></A>Managing Projects</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1065932"></A>A <A NAME="marker-1065927"></A>Source-Navigator <A NAME="marker-1065931"></A>project is an entity containing references to source code files. A project describes where files are located and how to operate on them. Once a project is defined, developers can:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065933"></A>identify, locate, access, modify, and analyze program components, including symbol definitions and usage of classes in object-oriented languages.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065934"></A>prevent parallel modifications on the same code and manage different versions of sources by way of an interface to external version control systems such as ClearCase and CVS.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065935"></A>create views of pertinent information while hiding information not relevant for the current view.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1065936"></A>Navigational Tools</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1065941"></A>All Source-Navigator tools are organized around the <A NAME="marker-1065940"></A>project database that holds all project-specific symbols. The name and location of the project files, symbols extracted from the source code, and the relationships between symbols all reside in the project database. File structure may not be pertinent when visualizing code relationships, so Source-Navigator allows you to view and understand software structure regardless of which file contains what information.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1065948"></A>The <A NAME="marker-1065945"></A><SPAN CLASS="Bold">
+Symbol Browser</SPAN>, the <SPAN CLASS="Bold">
+Editor</SPAN><A NAME="marker-1065946"></A>, and the <A NAME="marker-1065947"></A><SPAN CLASS="Bold">
+Cross-Referencer</SPAN>
+ are the basic tools for working with source code in a project.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065949"></A>The <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ operates on the project database and helps you learn the existing 
+program structure. The <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ list can be sorted and filtered in different ways, showing you how and 
+where symbols are used. The <SPAN CLASS="Bold">
+Symbol Browser</SPAN>
+ answers the question &quot;What is in this project?&quot;<P>
+<A NAME="pgfId-1065953"></A>See <A HREF="symbrws.html#16805" CLASS="XRef">Symbol Browser</A> for more information.</LI>
+<P><LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065957"></A>The <SPAN CLASS="Bold">
+Editor</SPAN>, the main Source-Navigator window, combines navigating with browsing. It allows you to navigate through actual program text and shows the location of that text in the source code. The <SPAN CLASS="Bold">
+Editor</SPAN>
+ highlights the basic syntax of all supported programming languages and updates the project database when files are modified and saved. This means that the project database is always up-to-date with your changes during the development cycle. The <SPAN CLASS="Bold">
+Editor</SPAN>
+ answers the question &quot;How is this project structured?&quot;<P>
+<A NAME="pgfId-1065961"></A>See <A HREF="editor.html#40005" CLASS="XRef">Editor</A> for 
+more information.</LI>
+<P><LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1065962"></A>The <SPAN CLASS="Bold">
+Cross-Referencer</SPAN>
+ shows, for a given symbol, all the other symbols it refers to, and all the symbols that refer to it. These are known as <EM CLASS="Italics">
+Refers-to</EM>
+ and <EM CLASS="Italics">
+Referred-by</EM>
+ relationships, respectively. The <SPAN CLASS="Bold">
+Cross-Referencer</SPAN>
+ answers the question &quot;How do the parts of this project work together?&quot;<P>
+<A NAME="pgfId-1065966"></A>See 
+<A HREF="crossref.html#35957" CLASS="XRef">Cross-Reference Browser</A> for more 
+information.</LI></UL>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-857195"></A><A NAME="10308"></A>About this Guide</H2>
+<P CLASS="Body">
+<A NAME="pgfId-884185"></A>This document serves as a reference to Source-Navigator menus, tools, and functionality.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-886167"></A>Document Conventions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-857408"></A>This documentation uses the following general <A NAME="marker-886449"></A>conventions:</P>
+<P CLASS="Body">
+<A NAME="pgfId-886989"></A><EM CLASS="Emphasis">
+Italic Font</EM><BR>
+<P CLASS="BodyHang1">Indicates a new term that will be defined in the text and items called out for special emphasis.</P>
+<P CLASS="Body">
+<A NAME="pgfId-886990"></A><SPAN CLASS="Bold">
+Bold Font<BR>
+</SPAN>
+<P CLASS="BodyHang1">Represents menus, window names, and tool buttons. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1065751"></A><STRONG CLASS="BoldEmphasis">
+Bold Italic Font<BR>
+</STRONG>
+<P CLASS="BodyHang1">Denotes book titles, both hardcopy and electronic.</P>
+<P CLASS="Body">
+<A NAME="pgfId-857411"></A><KBD CLASS="Code">
+Plain Typewriter Font<BR>
+</KBD>
+<P CLASS="BodyHang1">Denotes code fragments, command lines, contents of files, and command names; also indicates directory, file, and project names where they appear in body text.</P>
+<P CLASS="Body">
+<A NAME="pgfId-887052"></A><KBD CLASS="CodeVariant">
+Italic Typewriter Font<BR>
+</KBD>
+<P CLASS="BodyHang1">Represents a variable for which an actual value should be substituted.</P>
+<P CLASS="Body">
+<A NAME="pgfId-885350"></A>Menu names and their submenus 
+are separated by an arrow (<EM CLASS="Arrow">-></EM>). For example, <SPAN CLASS="Bold">
+File </SPAN>
+<EM CLASS="Arrow">
+-></EM>
+<SPAN CLASS="Bold">
+ Open</SPAN>
+ means from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Open</SPAN>
+ from its submenu.</P>
+<P CLASS="Body">
+<A NAME="pgfId-894130"></A>Paths are written in UNIX notation (forward slashes) throughout; <KBD CLASS="Code">
+.../bin</KBD>
+ means the directory Source-Navigator is installed into, subdirectory <KBD CLASS="Code">
+bin</KBD>. </P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-887938"></A><A NAME="20859"></A>Mouse Conventions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-887969"></A>The following are conventions for using the mouse with Source-Navigator: </P>
+<TABLE BORDER=1>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887942"></A>Click</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887944"></A>Place the cursor on a specified object and press the left mouse button. Double-click means to click the left mouse button twice in rapid succession without moving the mouse.<BR>
+<A NAME="pgfId-1010121"></A>The term &quot;click&quot; alone always means left-click.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887946"></A>Ctrl+click</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887948"></A>Depress and hold the <B CLASS="BoldTable">
+Ctrl</B>
+ key, simultaneously clicking with the left mouse button.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887950"></A>Shift+click</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887952"></A>Depress and hold the <B CLASS="BoldTable">
+Shift</B>
+ key, simultaneously clicking with the left mouse button.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887954"></A>Right+click</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887956"></A>Place the cursor on a specific object and click the right mouse button. </P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887958"></A>Select Text</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887960"></A>Click and drag cursor through text (or code) to be selected. Selected text is highlighted.</P>
+</TD>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887962"></A>Select Entries</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-887964"></A>Clicking a line selects it. To indicate the end 
+of the selection, hold down the <B CLASS="BoldTable">
+Shift</B>
+ key and click the desired line.</P>
+</TD>
+</TR>
+</TABLE>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1035330"></A><A NAME="marker-1035326"></A>Keyboard Conventions</H3>
+<P CLASS="Body">
+<A NAME="pgfId-889428"></A>You can use the <A NAME="marker-889427"></A>keyboard to activate many of the functions displayed on the toolbar and in the menus.</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-889434"></A>Holding down the <SPAN CLASS="Bold">
+Alt</SPAN>
+ key while pressing <SPAN CLASS="Bold">
+S</SPAN>
+ is represented as <SPAN CLASS="Bold">
+Alt+S</SPAN>. </LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-889435"></A>To open a command in the menu bar, press the <SPAN CLASS="Bold">
+Alt</SPAN>
+ key plus the first letter of the menu. If a letter in the menu item is underlined, press the underlined letter to open the submenu. </LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-938107"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_ug.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="usrguideLOF.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="tutorial.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

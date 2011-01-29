@@ -1,0 +1,266 @@
+# sn_prop.cfg
+# Copyright (C) 1997 Cygnus Solutions, Inc.
+#
+# Description:
+# This is a Tcl source file that is read by Source-Navigator at startup.  By
+# modifying this file, it is possible to reconfigure Source-Navigator.
+#
+# The most common reason for modifying this file is to integrate revision
+# control software packages or new language parsers into Source-Navigator.
+# Refer to the Programmer's Reference Guide for more detailed information.
+#
+# 15 April, 2007 - E M Thornber
+# Update Clearcase integration
+
+
+# Version control system configuration
+# To integrate a new third-party version control system 
+# use the Tcl command "sn_add_version_control_system"
+
+# GNU Revision Control System (RCS)
+sn_add_version_control_system rcs -default yes \
+	-checkin "ci -u" \
+	-checkin-comment-via stdin \
+	-checkin-exclusive "ci -l" \
+	-checkout "co -f" \
+	-checkout-exclusive "co -f -l" \
+	-checkout-individual "co -f -r" \
+	-checkout-individual-to-stdout "co -p" \
+	-checkout-with-lock yes \
+	-delete-revision "rcs -o" \
+	-discard "unco" \
+	-history "rlog" \
+	-history-pattern { {"^-----" "^====="} } \
+	-history-individual "rlog -r" \
+	-history-individual-pattern { {"^-----" "^====="} } \
+	-history-replacements { {"[ \t]+" " "} } \
+	-ignore-dirs RCS \
+	-lock "rcs -l" \
+	-lock-individual "rcs -l" \
+	-revision-number-pattern "^revision (\[0-9.\]+)" \
+	-symbolic-tags-pattern { {"^symbolic names" "^keyword"} } \
+	-symbolic-tags-replacements { {"\t" ""} } \
+	-unlock "rcs -u" \
+	-unlock-individual "rcs -u"
+
+# Concurrent Versions System (CVS)
+# This configuration provides lazy locking as described in the CVS
+# documentation.  Files are checked out with read/write permissions.
+sn_add_version_control_system cvs \
+	-checkin "cvs commit -F " \
+	-checkin-comment-via file \
+	-checkout "cvs update -r" \
+	-checkout-individual "cvs update -r" \
+	-checkout-individual-to-stdout "cvs update -p -r" \
+	-checkout-with-lock no \
+	-delete-revision "cvs admin -o" \
+	-discard {} \
+	-history "cvs log" \
+	-history-pattern { {"^-----" "^====="} } \
+	-history-individual "cvs log -r" \
+	-history-individual-pattern { {"^-----" "^====="} } \
+	-history-replacements { {"[ \t]+" " "} } \
+	-ignore-dirs CVS \
+	-revision-number-pattern "^revision (\[0-9.\]+)" \
+	-symbolic-tags-pattern { {"^symbolic names" "^keyword"} } \
+	-symbolic-tags-replacements { {"\t" ""} } \
+	-use-relative-path 1
+
+# AT&T Source Code Control System (SCCS)
+# The configuration uses the "sccs" command front-end to the SCCS utilities.
+# On some systems, failing to do some may cause conflicts with other
+# similiarly named utilities in the path (e.g. "get").  Using the front-end
+# also insulates Source-Navigator from implementation details and potential
+# changes to a vendor's implementation of SCCS.
+sn_add_version_control_system sccs \
+	-checkin "sccs delget" \
+	-checkin-comment-via stdin \
+	-checkout "sccs get -r" \
+	-checkout-exclusive "sccs edit" \
+	-checkout-individual "sccs get -r" \
+	-checkout-individual-to-stdout "sccs get -p -r" \
+	-checkout-with-lock yes \
+	-delete-revision "sccs rmdel -r" \
+	-discard "sccs unget" \
+	-history "sccs prs" \
+	-history-pattern { {"^D" end} } \
+	-history-individual "sccs prs -r" \
+	-history-individual-pattern { {"^D" end} } \
+	-ignore-dirs SCCS \
+	-lock "sccs get -g -e" \
+	-lock-individual "sccs get -g -e -r" \
+	-revision-number-pattern "^D (\[0-9\.\]+)" \
+	-unlock-individual "sccs unget -n" \
+	-unlock-individual "sccs unget -n -r"
+
+# IBM's (ex Rational's) ClearCase configuration management system (version 4.x)
+# This configuration uses the command line driven ClearCase diff tool to
+# produce UNIX-compatible diff output on stdout.  Then we use Source-
+# Navigator's built-in diff tool to view the results.
+# Use impedance matching scripts -EMT 070415
+sn_add_version_control_system ccase \
+	-checkin "cleartool checkin -cq " \
+	-checkin-comment-via stdin \
+	-checkout "$sn_path(scriptsdir)/ccase-checkout.sh " \
+	-checkout-exclusive "$sn_path(scriptsdir)/ccase-checkout-exclusive.sh " \
+	-checkout-individual "$sn_path(scriptsdir)/ccase-checkout-individual.sh " \
+	-checkout-individual-to-stdout "$sn_path(scriptsdir)/ccase-checkout-individual-to-stdout.sh " \
+	-checkout-with-lock no \
+	-diff-command "cleartool diff -diff_format " \
+	-diff-ignore-case "" \
+	-diff-ignore-whitespace "-opt -blank_ignore" \
+	-discard "cleartool uncheckout -keep " \
+	-history "$sn_path(scriptsdir)/ccase-history.sh " \
+	-history-pattern { {start end} } \
+	-history-individual "$sn_path(scriptsdir)/ccase-history-individual.sh " \
+	-history-individual-pattern { {start end} } \
+	-ignore-dirs lost+found \
+	-lock "cleartool reserve -nc " \
+	-lock-individual "$sn_path(scriptsdir)/ccase-lock-individual.sh " \
+	-revision-number-pattern "^Version:(/.*/\[0-9\])$" \
+	-symbolic-tags-pattern "^Labels:(.*)$" \
+	-title ClearCase4.1 \
+	-unlock "cleartool unreserve -nc " \
+	-unlock-individual "$sn_path(scriptsdir)/ccase-unlock-individual.sh "
+
+
+# Parser configuration
+# To add a parser, insert additional procedure calls to "sn_add_parser"
+# here. Refer to the Programmer's Reference Guide for further details.
+# Possible arguments to the function:
+# -suffix              :suffixes for the supported language files
+# -brow_cmd            :parser program
+# -high_cmd            :highlighting program
+# -editor              :external editor
+# -brow_switch         :parser switches
+# -high_switch         :switches used by highlighting program
+# -case        (1, 0)  :turn case sensitive on/of
+# -macros      (-m, ""):parser understand macros
+
+# FORTRAN
+sn_add_parser fortran \
+	-suffix {*.f *.for *.FOR} \
+	-brow_cmd $sn_path(parserdir)/fbrowser \
+	-high_cmd $sn_path(parserdir)/fbrowser \
+	-high_switch "-h" \
+	-case 1
+
+# ELF
+#sn_add_parser elf \
+	-suffix {*.elf} \
+	-brow_cmd $sn_path(parserdir)/ebrowser \
+	-high_cmd $sn_path(parserdir)/ebrowser \
+	-high_switch "-h"
+
+# ELF (using ApplixWare macro editor)
+#sn_add_parser elf \
+	-suffix {*.elf} \
+	-brow_cmd $sn_path(parserdir)/ebrowser \
+	-high_cmd $sn_path(parserdir)/ebrowser \
+	-brow_switch "$asterx_home_dir/applix -macro sn_imporp -pass" \
+	-high_switch "-h"
+
+# COBOL
+sn_add_parser cobol \
+	-suffix {*.cbl *.cob} \
+	-brow_cmd $sn_path(parserdir)/obrowser \
+	-high_cmd $sn_path(parserdir)/obrowser \
+	-high_switch "-h" \
+	-case 0
+
+# C++
+if {$tcl_platform(platform) == "windows"} {
+	#windows file dialog box doesn't understand with '[]' grouped extensions
+	set cpp_ext {*.h *.H *.c *.C *.cxx *.hxx *.cpp *.c++ *.hpp *.cc *.hh *.CXX *.HXX *.CPP *.HPP *.CC *.HH}
+} else {
+	set cpp_ext {*.[hHcC] *.[ch]xx *.[ch]pp *.c++ *.cc *.hh *.[CH]XX *.[CH]PP *.CC *.HH}
+}
+sn_add_parser c++ \
+	-suffix $cpp_ext \
+	-brow_cmd $sn_path(parserdir)/cbrowser \
+	-macros "-m"
+
+# C
+#sn_add_parser c \
+	-suffix {*.ec *.ep *.sc *.cpc} \
+	-brow_cmd $sn_path(parserdir)/cbrowser \
+	-brow_switch "-C"
+
+# Java
+sn_add_parser java \
+	-suffix {*.java} \
+	-brow_cmd $sn_path(parserdir)/@JAVAEXE@
+
+# Tcl/Tk and [incr Tcl]
+sn_add_parser tcl \
+	-suffix {*.tcl *.itcl *.itk *.tk *.test}\
+	-brow_cmd $sn_path(parserdir)/tbrowser
+
+# Intel 8085 assembly language
+sn_add_parser 8085 \
+	-suffix {*.src *.SRC}\
+	-brow_cmd $sn_path(parserdir)/ibrowser
+
+# PowerPC 601 assembly language
+sn_add_parser asm \
+	-suffix {*.asm *.s *.S}\
+	-brow_cmd $sn_path(parserdir)/abrowser
+
+# CCITT High Level Language (CHILL)
+#sn_add_parser chill \
+	-suffix {*.ch} \
+	-brow_cmd $sn_path(parserdir)/chbrowser
+
+# Python
+sn_add_parser python \
+	-suffix {*.py *.pyw} \
+	-brow_cmd $sn_path(parserdir)/pybrowser
+
+# M4 + autoconf files
+sn_add_parser m4 \
+        -suffix {*.m4 *.ac configure.in} \
+        -brow_cmd $sn_path(parserdir)/m4browser \
+        -high_cmd $sn_path(parserdir)/m4browser \
+	-high_switch "-h"
+
+# PHP files
+sn_add_parser php \
+	-suffix {*.php *.php3 *.php4} \
+	-brow_cmd $sn_path(parserdir)/phpbrowser \
+	-high_cmd $sn_path(parserdir)/phpbrowser \
+	-high_switch "-h"
+
+# Example files
+sn_add_parser exl \
+	-suffix {*.exl} \
+	-brow_cmd $sn_path(parserdir)/exlbrowser \
+	-high_cmd $sn_path(parserdir)/exlbrowser \
+	-high_switch "-h"
+
+# Files without a parser
+if {$tcl_platform(platform) == "windows"} {
+	#windows file dialog box doesn't understand with '[]' grouped extensions
+	set other_ext {*.l *.y *Makefile *makefile *Iakefile *.txt *.am *.in}
+} else {
+	set other_ext {*.[ly] *[IMm]akefile *.txt *.am *.in}
+}
+sn_add_parser others -suffix $other_ext
+
+
+# Additional build rules
+# A Build rule for Yacc files.
+sn_add_simple_ide_rule YACC \
+	-suffix-list {.y.c} \
+	-action "$<" \
+	-tool bison \
+	-description "Process a yacc file." \
+	-file-type Yacc
+
+# A Build rule for Lex files
+sn_add_simple_ide_rule LEX \
+	-suffix-list {.l.c} \
+	-action "-t $< > $@" \
+	-tool flex \
+	-description "Process a lex file." \
+	-file-type Lex
+	

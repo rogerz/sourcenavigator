@@ -1,0 +1,4 @@
+# Name the main interp, so we can keep them straight.
+tk appname snpdbg
+snpdbg_session
+

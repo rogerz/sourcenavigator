@@ -1,0 +1,89 @@
+		   ===============================
+   	             Stand-alone Tix Applications
+                   ================================
+
+INTRODUCTION
+
+  Traditionally, Tcl/Tk and its extensions require an extensive set of
+  run-time scripts. These scripts are usually stored as
+  /usr/local/lib/<package>/*.tcl. When a Tcl/Tk executable starts up,
+  it looks for the scripts in the /usr/local directory, or as defined
+  by enviornment variables such as TCL_LIBRARY or TIX_LIBRARY.
+
+  The need of an external script library sometimes causes problems
+  because users may need to keep track of their TCL_LIBRARY environment
+  variables. Also, it is quite difficult to distribute a Tcl
+  executable to a customer's site if the customer's machines don't
+  already have Tcl installed.
+
+  One solution of this problem is to compile stand-alone versions
+  Tcl/Tk application. The scripts can be compiled into into the
+  application executable, or into shared libraries which are linked
+  into the executable. The distrution of a monolithic executable, or
+  one executable with several shared libraries, is substantially
+  easier than the distribution of many Tcl scripts scattered around in
+  differenr directories.
+
+COMPILING STAND-ALONE TIX
+
+  Currently Tix supports standalone modules only for Tcl version 7.5
+  and 7.6 on Unix. Read the file docs/UnixInst.html first before
+  reading the rest of this section.
+
+  To exable Tix stand-alone module, change into a Unix build directory
+  and run the configure script with the --enable-sam option. Then, run
+  "make". When "make" finishes, you will get several libraries and
+  executables (the names may vary depending on the version of Tcl and
+  the Unix platform):
+
+	libtix4.1.7.6.so	Standard Tix shared library.
+	tixwish			Standard Tix shell.
+
+	libtixsam4.1.7.6.so	Tix SAM library.
+	libtksam4.2.so		Tk Sam library.
+	libtclsam7.6.so		Tcl Sam library.
+	satixwish		Stand-alone Tix shell
+	sawish			Stand-alone Tk shell
+	satclsh			Stand-alone Tcl shell	
+
+
+DISTRIBUTING satixwish
+
+   satixwish is linked to the following libraries
+	libtixsam		Tix c code and scripts
+	libtksam		Tk scripts.
+	libtk			Tk c code
+	libtclsam		Tcl scripts
+	libtcl			Tcl c code.
+
+   If you would like to distribute satixwish, you should include the
+   satixwish executable, the five shared libraries and your
+   application's Tcl scripts. There is no need to include the Tcl, Tk
+   and Tix script libraries.
+
+DYNAMICALLY LOADING TIX SAM
+
+   You can also dynamically load libtixsam into a running wish. If you
+   have properly installed Tix, you can execute the command
+
+	package require -exact Tixsam [tixBinVer 4.1]
+
+   If Tix has not been installed in your system, you can still use the
+   "load" command to dynamically load Tixsam:
+
+	load [file join $dir \
+	    libtixsam[tixBinVer 4.1][info sharedlibextension]] \
+	    Tixsam
+
+   See the file docs/Pkg.txt for discussions on the tixBinVer
+   procedure and dynamic loading of Tix.
+
+USING TIX WITH EMBEDDED TK
+
+  Embedded Tk (ET) is another popular package for creating stand-alone
+  Tcl/Tk applications. Older versions of Tix used to support
+  ET. However, the scripts of this version of Tix cannot be compiled
+  by the et2c program. If you want to use Tix in an ET-enabled
+  application, you should link libtixsam with your application and
+  call Tixsam_Init() to initialize the stand-alone Tix module. See the
+  directory demos/et for an example.

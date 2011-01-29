@@ -1,0 +1,33 @@
+/* XPM */
+static char * addall_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"24 24 3 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	c gray",
+"X	c black",
+/* pixels */
+"                        ",
+"                        ",
+".           .           ",
+"X.          X.          ",
+"XX.         XX.         ",
+"XXX.        XXX.        ",
+"XXXX.       XXXX.       ",
+"XXXXX.      XXXXX.      ",
+"XXXXXX.     XXXXXX.     ",
+"XXXXXXX.    XXXXXXX.    ",
+"XXXXXXXX.   XXXXXXXX.   ",
+"XXXXXXXXX.  XXXXXXXXX.  ",
+"XXXXXXXXXX. XXXXXXXXXX. ",
+"XXXXXXXXXX  XXXXXXXXXX  ",
+"XXXXXXXXX   XXXXXXXXX   ",
+"XXXXXXXX    XXXXXXXX    ",
+"XXXXXXX     XXXXXXX     ",
+"XXXXXX      XXXXXX      ",
+"XXXXX       XXXXX       ",
+"XXXX        XXXX        ",
+"XXX         XXX         ",
+"XX          XX          ",
+"X           X           ",
+"                        "};

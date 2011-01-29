@@ -1,0 +1,620 @@
+source testutil.tcl
+
+
+tcltest::test var-1.0 { var write } {
+    browse [save_file f.m4 {
+var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test var-2.1 { var write xref } {
+    browse_xref [save_file f.m4 {
+var=value
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-2.2 { var write xref } {
+    browse_xref [save_file f.m4 {
+var=1
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-2.3 { var write xref } {
+    browse_xref [save_file f.m4 {
+var="two"
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-2.4 { var write xref } {
+    browse_xref [save_file f.m4 {
+var=
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-3.0 { var read } {
+    # Parser generates only a read xref
+    # when a global variable is read.
+    browse [save_file f.m4 {
+$var
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test var-4.0 { var read xref } {
+    browse_xref [save_file f.m4 {
+$var
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.1 { not a var read } {
+    browse_xref [save_file f.m4 {
+\$var
+}]
+} {}
+
+tcltest::test var-4.2 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.3 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var-default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.4 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:-default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.5 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var+default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.6 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:+default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.7 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var?error}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.8 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var:?error}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.9 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var#sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.10 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var##sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.11 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var%sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.12 { var read xref } {
+    browse_xref [save_file f.m4 {
+${var%%sub}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.13 { var read xref for string length operation } {
+    browse_xref [save_file f.m4 {
+${#var}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.14 { var read/write xref } {
+    browse_xref [save_file f.m4 {
+${var=default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-4.15 { var read/write xref } {
+    browse_xref [save_file f.m4 {
+${var:=default}
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-5.0 { var read xref in macro } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO], $var)
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var<>gv<>r<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-5.1 { var write xref in macro } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO], var=2)
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-5.2 { var read xref in macro } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO], $var1)
+$var2
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var1<>gv<>r<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var2<>gv<>r<>000003<>f.m4;<>UNDECLARED
+}
+
+tcltest::test var-5.3 { var read xref in macro } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO], var1=1)
+var2=2
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>var1<>gv<>w<>000002<>f.m4;<>UNDECLARED
+PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>var2<>gv<>w<>000003<>f.m4;<>UNDECLARED
+}
+
+
+
+
+tcltest::test macro-1.0 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN([MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.21<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-1.1 { macro definition } {
+    browse [save_file f.m4 {
+AU_DEFUN([MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.21<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-1.2 { macro definition } {
+    browse [save_file f.m4 {
+m4_define([MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
+}
+
+tcltest::test macro-1.3 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN(MACRO, [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.009<>f.m4;2.14<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.19<>2.9<>2.14<>{}
+}
+
+tcltest::test macro-1.4 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN( MACRO, [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.20<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-1.5 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN( [MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
+}
+
+tcltest::test macro-1.6 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN(MACRO , [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.009<>f.m4;2.14<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.20<>2.9<>2.14<>{}
+}
+
+tcltest::test macro-1.7 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN([MACRO] , [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-1.8 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN(	[MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.011<>f.m4;2.16<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.11<>2.16<>{}
+}
+
+tcltest::test macro-1.9 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN([MACRO]	, [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;2.22<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-1.10 { macro definition } {
+    browse [save_file f.m4 {
+AC_DEFUN([MACRO], [
+    ANOTHER_MACRO()
+])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+PAF_FUNC_DEF;MACRO<>000002.010<>f.m4;2.15<>0x0<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.m4<>000002.000<>#<>MACRO<>fu;4.2<>2.10<>2.15<>{}
+}
+
+tcltest::test macro-2.0 { macro invocation } {
+    # Parser generates only a call xref
+    # when a macro is invoked
+
+    browse [save_file f.m4 {
+MACRO()
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test macro-2.1 { macro invocation xref } {
+    browse_xref [save_file f.m4 {
+MACRO()
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>MACRO<>fu<>p<>000002<>f.m4;<>
+}
+
+tcltest::test macro-2.2 { macro invocation xref } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO1] , [MACRO2()])
+}]
+} {PAF_CROSS_REF;#<>MACRO1<>fu<>#<>MACRO2<>fu<>p<>000002<>f.m4;<>
+}
+
+tcltest::test macro-2.3 { macro invocation xref } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO1] , [
+    MACRO2()
+])
+}]
+} {PAF_CROSS_REF;#<>MACRO1<>fu<>#<>MACRO2<>fu<>p<>000003<>f.m4;<>
+}
+
+tcltest::test macro-2.4 { macro invocation xref } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO] , [
+    MACRO1()
+    MACRO2()
+])
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>MACRO1<>fu<>p<>000003<>f.m4;<>
+PAF_CROSS_REF;#<>MACRO<>fu<>#<>MACRO2<>fu<>p<>000004<>f.m4;<>
+}
+
+tcltest::test macro-3.0 { macro invocation xref via AC_REQUIRE } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO] , [
+    AC_REQUIRE([MACRO1])
+])
+}]
+} {PAF_CROSS_REF;#<>MACRO<>fu<>#<>AC_REQUIRE<>fu<>p<>000003<>f.m4;<>
+PAF_CROSS_REF;#<>MACRO<>fu<>#<>MACRO1<>fu<>p<>000003<>f.m4;<>
+}
+
+tcltest::test macro-3.1 { assumed to be a macro invocation } {
+    browse_xref [save_file f.m4 {
+MACRO
+}]
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>MACRO<>fu<>p<>000002<>f.m4;<>
+}
+
+
+tcltest::test comment-1.0 { comment } {
+    browse [save_file f.m4 {
+#var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test comment-1.1 { comment } {
+    browse [save_file f.m4 {
+# var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test comment-1.2 { comment } {
+    browse [save_file f.m4 {
+#	var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test comment-1.3 { comment } {
+    browse [save_file f.m4 {
+#AC_DEFUN([MACRO], [])
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+
+tcltest::test comment-2.0 { comment } {
+    browse [save_file f.m4 {
+dnl var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test comment-2.1 { comment } {
+    browse [save_file f.m4 {
+dnl	var=1
+}]
+} {Status: Parsing: f.m4
+PAF_FILE;f.m4;m4<>
+}
+
+tcltest::test comment-2.2 { not a comment } {
+    browse_xref [save_file f.m4 {
+dnlvar=1
+}]
+
+} {PAF_CROSS_REF;#<>GLOBAL<>fu<>#<>dnlvar<>gv<>w<>000002<>f.m4;<>UNDECLARED
+}
+
+tcltest::test comment-3.0 { comment xref } {
+    browse_xref [save_file f.m4 {
+dnl TEXT
+}] {-r}
+} {PAF_COMMENT_DEF;f.m4<>000002.004<>#<>#;TEXT
+}
+
+tcltest::test comment-3.1 { comment xref } {
+    browse_xref [save_file f.m4 {
+  #	my_comment()
+}] {-r}
+} {PAF_COMMENT_DEF;f.m4<>000002.004<>#<>#;my_comment()
+}
+
+tcltest::test comment-3.2 { comment in macro xref } {
+    browse_xref [save_file f.m4 {
+AC_DEFUN([MACRO] , [
+    #Comment
+])
+}] {-r}
+} {PAF_COMMENT_DEF;f.m4<>000003.005<>#<>#;Comment
+}
+
+
+
+
+tcltest::test highlight-1.0 { highlight } {
+    browse_highlights [save_file f.m4 {
+# Comment
+}]
+} {1 rem 2.0 2.9}
+
+tcltest::test highlight-1.1 { highlight } {
+    browse_highlights [save_file f.m4 {
+ # Comment
+}]
+} {1 rem 2.1 2.10}
+
+tcltest::test highlight-1.2 { highlight } {
+    browse_highlights [save_file f.m4 {
+	dnl Comment
+}]
+} {1 rem 2.1 2.12}
+
+
+tcltest::test highlight-2.0 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+HI=1
+}]
+} {1 gv 2.0 2.2}
+
+tcltest::test highlight-2.1 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+echo $HI
+}]
+} {1 gv 2.5 2.8}
+
+tcltest::test highlight-2.2 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+echo $1
+}]
+} {}
+
+tcltest::test highlight-2.3 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+_var=1
+}]
+} {1 gv 2.0 2.4}
+
+tcltest::test highlight-2.4 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+$_var
+}]
+} {1 gv 2.0 2.5}
+
+tcltest::test highlight-2.5 { highlight vars } {
+    browse_highlights [save_file f.m4 {
+${var}
+}]
+} {1 gv 2.0 2.6}
+
+tcltest::test highlight-3.0 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${#VAR}
+}]
+} {1 gv 2.3 2.6}
+
+tcltest::test highlight-3.1 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR+set}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.2 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:=set}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.3 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR#}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.4 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR##/*/}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.5 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:11}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.6 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR:11}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-3.7 { highlight special var syntax } {
+    browse_highlights [save_file f.m4 {
+${VAR/word/sub}
+}]
+} {1 gv 2.2 2.5}
+
+tcltest::test highlight-4.0 { highlight function xref } {
+    browse_highlights [save_file f.m4 {
+foo();
+}]
+} {1 fu 2.0 2.3}
+
+tcltest::test highlight-4.1 { highlight function keyword } {
+    browse_highlights [save_file f.m4 {
+AC_DEFUN([MACRO], [])
+}]
+} {1 key 2.0 2.8}
+
+tcltest::test highlight-4.2 { highlight AC_REQUIRE statement } {
+    browse_highlights [save_file f.m4 {
+AC_REQUIRE([MACRO1])
+}]
+} {1 fu 2.0 2.10
+2 fu 2.12 2.18}
+
+tcltest::test highlight-4.3 { highlight assumed macro invocation } {
+    browse_highlights [save_file f.m4 {
+MACRO
+}]
+} {1 fu 2.0 2.5}
+
+tcltest::test highlight-4.4 { highlight assumed macro invocation } {
+    browse_highlights [save_file f.m4 {
+MACRO_45
+}]
+} {1 fu 2.0 2.8}
+
+tcltest::test highlight-5.0 { CRLF -> LF translation } {
+    set fd [open f.m4 w]
+    fconfigure $fd -translation binary -encoding binary
+    puts -nonewline $fd "\r\nMACRO()\r\n"
+    close $fd
+    browse_highlights f.m4
+} {1 fu 2.0 2.5}
+
+
+# FIXME: Add support for sh heredoc style string
+# No subst should be done in the strings.
+# cat <<_ATEOF
+# ............
+# _ATEOF
+
+# AC_SUBST(RANLIB) should register a read xref for RANLIB var
+# A Makefile.am or Makefile.in parser that could also
+# register a read there could also be handy.
+
+# Special variables that include variable are broken!
+# install_sh=${install_sh-"$am_aux_dir/install-sh"}
+
+# Add m4 include relatioship for : builtin(include,tcl.m4)
+# Also for sinclude() and so on.
+
+# cleanup
+file delete f.m4
+file delete xout
+file delete hout
+::tcltest::cleanupTests
+return

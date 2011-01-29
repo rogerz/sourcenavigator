@@ -1,0 +1,31 @@
+dnl This file is used as input to autoconf to generate configure.
+dnl The only reason we need this is that the Tcl directory structure
+dnl changed in 7.5, and this change lets us avoid changing the
+dnl configuration superstructure.
+dnl Tom Tromey <tromey@cygnus.com>
+
+AC_PREREQ(2.61)
+
+AC_INIT
+AC_CONFIG_SRCDIR([generic/tcl.h])
+
+AC_CANONICAL_HOST
+
+case "${host}" in
+*cygwin*)
+	AC_SUBST(CONFIGDIR, "win")
+	AC_SUBST(CONFIGDIR2, "cygwin")
+	;;
+*mingw32* | *windows32*)
+	AC_SUBST(CONFIGDIR, "win")
+	;;
+*)
+	AC_SUBST(CONFIGDIR, "unix")
+	AC_CONFIG_AUX_DIR([$CONFIGDIR])	
+	;;
+esac
+
+AC_PROG_MAKE_SET
+AC_CONFIG_SUBDIRS([$CONFIGDIR $CONFIGDIR2])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

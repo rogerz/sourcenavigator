@@ -1,0 +1,127 @@
+	                -------------------
+		        Dynamic Loading Tix
+			-------------------
+
+   In this text, the phrase "a version of Tcl" stands for a version of
+   Tcl from the standard Sun distribution or the ITcl distribution.
+
+BINARY VERSION
+==============
+
+    Tix can be built to work with different versions of Tcl.  A Tix
+    dynamic library built for a particular version of Tcl works only
+    with that version. To make it possible to install Tix binaries
+    that support multiple versions of Tcl, and prevent the loading of
+    Tix binaries into incompatible versions of Tcl, Tix uses a special
+    "binary versioning" system:
+
+
+    BINARY VERSION FOR STANDARD TCL DISTRIBUTION
+
+        If you use Tix version a.b and build a Tix binary file for Tcl
+        version x.y, the "binary version" of this Tix binary file will
+        be a.b.x.y. For example, if you build the Tix 4.1 shared
+        library for Tcl 7.6, the binary version is 4.1.7.6.
+    
+    BINARY VERSION FOR ITCL DISTRIBUTION
+
+	If you use Tix version a.b and build a Tix binary file for an
+	ITcl distribution which contains Tcl version x.y., the "binary
+	version" of this Tix binary file will be a.b.x.y.1. For
+	example, if you build the Tix 4.1 shared library for Itcl 2.2
+	(which contains Tcl 7.6), the binary version is 4.1.7.6.1.
+
+    In short, the extra ".1" version number indicates whether a Tix
+    binary is compile for standard Tcl or Itcl.
+
+    Naming of shared libraries
+    ==========================
+
+        A Tix shared library compiled for a standard Tcl distribution
+        is named libtix${BIN_VERSION}${SHLIB_SUFFIX}. For example,
+        with Tix version 4.1 and Tcl version 7.6:
+
+		libtix4.1.7.6.so
+	
+        With Tix version 4.1 and ITcl version 2.1 (which includes Tcl
+        version 7.5):
+
+		libtix4.1.7.5.1.so
+
+    Naming of executable files
+    ==========================
+
+	The Tix executable (which contains Tcl, Tk and Tix) is called
+        "tixwish${BIN_VERSION}". For example, the executables for the shared
+        libraries mentioned above are
+
+		tixwish4.1.7.6
+		tixwish4.1.7.5.1
+
+GENERATING A TIX BINARY VERSION
+===============================
+
+    The following Tcl procedure can be used to generate a Tix binary
+    version for a particular version combination of Tix and Tcl:
+
+	proc tixBinVer {tixVer} {
+	    global tcl_version
+
+	    if {[string compare [info command @scope] ""]} {
+	        # We are running inside Itcl
+		return $tixVer.$tcl_version.1
+	    } else {
+		return $tixVer.$tcl_version
+	    }
+	}
+	
+LOADING TIX WITH THE "load" COMMAND
+===================================
+
+    To dynamic load Tix with the "load" command, you can use the
+    tixBinVer procedure to generate a Tix binary version number. If
+    the Tix 4.1 shared library is located in the directory $dir, it
+    can be loaded by
+
+      load [file join $dir libtix[tixBinVer 4.1][info sharedlibextension]] Tix
+
+    The above command may not work on platforms that do not support
+    the "." character inside shared library names. For example, on
+    SunOS, the command must be modified as:
+
+      set ver [tixBinVer 4.1]
+      regsub -all {[.]} $ver "" ver
+      load [file join $dir libtix$ver[info sharedlibextension].1] Tix
+
+    To avoid the need of platform specific code and having to hard
+    code the location of the shared into your scripts, it's
+    recommended you use instead the "package require" command to load
+    a Tix dynamic library, as outlined below.
+
+LOADING TIX WITH THE "package require" COMMAND
+==============================================
+
+    If you have properly installed Tix in your system, you can
+    dynamically load Tix with the following command:
+
+	package require -exact Tix [tixBinVer 4.1] 
+
+    Note that the "-exact" switch must be used so that only a
+    Tix shared library compatible with the given version of Tcl is
+    loaded. (If you omit the -exact switch, "package require" may load
+    in Tix 4.1.7.6 even the correct version should be 4.1.7.5.1.)
+
+LOADING TIX SAM WITH THE "package require" COMMAND
+==================================================
+
+    The Tix StandAlone Module (SAM), when properly installed, can also
+    be loaded using the "package require" command:
+
+	package require -exact Tixsam [tixBinVer 4.1] 
+
+    Note: when you load it the "Tixsam" package, the Tix package will
+    be loaded automatically. You need not, and must not, "package
+    require" the Tix package at the same time.
+
+    Read the file docs/SAModules.txt for more details on StandAlone
+    Modules.

@@ -1,0 +1,50 @@
+source testutil.tcl
+
+# The Tcl parser seems to include a file name in the PAF_FILE
+# part, this does not match the other parsers and makes it
+# impossible to write tests since the tmp file name changes.
+if 0 {
+tcltest::test namespace-1.0 { crash in namespace parsing } {
+    browse [save_file f.tcl {
+proc foo {} {}
+}]
+} {Status: Parsing: f.tcl
+PAF_FILE;f.tcl;tcl<>
+}
+}
+
+tcltest::test namespace-1.1 { test used to crash in put_cross_ref
+        because of an abort that has been removed. The test will
+        still generate output to stderr, but this output is ignored
+        by the IDE } {
+
+    catch {
+    browse_xref [save_file f.tcl {
+proc foo {} {
+    namespace eval :: {}
+    namespace eval :: {}
+}
+    }]
+    } err
+    string match "*must not be NULL*" $err
+} 1
+
+tcltest::test namespace-1.2 { crash in var resolution } {
+    browse [save_file f.tcl {
+namespace eval test_ns_1 {
+    namespace eval test_ns_2 {
+        variable x 1111
+        variable ::test_ns_1::test_ns_2::x 2222
+    }
+}
+}]
+} {Status: Parsing: f.tcl
+PAF_FILE;f.tcl;tcl<>
+PAF_CLASS_DEF;test_ns_1<>000002.015<>f.tcl;2.24<>0x4<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.tcl<>000002.015<>#<>test_ns_1<>cl;7.1<>2.15<>2.24<>{}
+PAF_CLASS_DEF;test_ns_2<>000003.019<>f.tcl;3.28<>0x4<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.tcl<>000003.019<>#<>test_ns_2<>cl;6.5<>3.19<>3.28<>{}
+PAF_MBR_VAR_DEF;test_ns_2<>x<>000004.017<>f.tcl;4.18<>0x4<>{}<>{}<>{}<>{}
+PAF_FILE_SYMBOLS;f.tcl<>000004.017<>test_ns_2<>x<>iv;4.18<>4.17<>4.18<>{}
+}
+

@@ -1,0 +1,924 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="../cygnus.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE>Customization</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<DIV>
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="progref_intro.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="langspecs.html">Next</A></P></TD>
+</TR></TABLE><HR ALIGN="center">
+</DIV>
+<H1 CLASS="ChapterTitle">
+<A NAME="pgfId-1134763"></A><BR>
+<A NAME="marker-1134764"></A><A NAME="14563"></A>Customization<DIV>
+<IMG SRC="line.gif">
+</DIV>
+</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1278379"></A>This chapter describes how to change the 
+start-up and runtime behaviors of Source-Navigator. You can also customize 
+menu items and keyboard shortcuts for the <SPAN CLASS="Bold">Editor</SPAN>; 
+for more information 
+see <A HREF="../usergiude/editor.html#40005" CLASS="XRef">Editor</A> 
+of the <STRONG CLASS="BoldEmphasis">
+ User's Guide</STRONG>. </P>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996790"></A>The <A NAME="26229"></A>profile File</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1006722"></A>A general configuration file, <KBD CLASS="Code">
+.../share/etc/profile</KBD>, is a system-wide configuration file 
+for GUI language and database 
+cache size. These form the default values that all users inherit for 
+all the tools.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1006723"></A>If you would like to customize 
+Source-Navigator for a specific user, you may create a file 
+called <KBD CLASS="Code">
+%USERPROFILE%/.sn/profile</KBD>
+ (on Windows) or <KBD CLASS="Code">
+$HOME/.sn/profile</KBD>
+ (on UNIX) to contain the configuration for that user's preferences.</P>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998339"></A>Configurable Settings</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1004907"></A>The settings that may be customized are <KBD CLASS="Code">
+sn_language </KBD>
+and<KBD CLASS="Code">
+ encoding</KBD>, which designates the language of the GUI, and <KBD CLASS="Code">
+sn_mailhost</KBD>, which tells Source-Navigator how to connect to your mailer. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1005837"></A>The format for a user's <KBD CLASS="Code">
+profile</KBD>
+ file is <KBD CLASS="Code">
+setting name:value</KBD>, one entry per line. </P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-1278126"></A>User-Specific Settings </P>
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1278132"></A>Setting Name</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1278134"></A>Default</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1278136"></A>Possible Values</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278138"></A><KBD CLASS="Code">
+sn_language</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278140"></A><KBD CLASS="Code">
+english</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278142"></A><KBD CLASS="Code">
+english</KBD>, <KBD CLASS="Code">
+german</KBD>, or <KBD CLASS="Code">
+japanese</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278227"></A><KBD CLASS="code">encoding</KBD></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278229"></A><KBD CLASS="Code">ISO8859-1</KBD></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278231"></A>see the character set encoding combo-box 
+in the <SPAN CLASS="Bold">Project Preferences</SPAN> dialog</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278144"></A><KBD CLASS="Code">
+sn_mailhost</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278146"></A><KBD CLASS="Code">
+mailhost</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278148"></A><KBD CLASS="Code">
+mailhost</KBD>, DNS name, or IP address of mailhost</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-996791"></A>An example <KBD CLASS="Code">
+profile</KBD>
+ file for the German user interface is:</P>
+<KBD CLASS="Code"><A NAME="pgfId-996792"></A>language:german<BR>
+sn_mailhost:mailhost</KBD>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-996838"></A>The <A NAME="38435"></A>rc.tcl Start-up File</H2>
+<P CLASS="Body">
+<A NAME="pgfId-997364"></A>The information in the following section assumes 
+that you are conversant with Tcl, which is used by Source-Navigator for 
+program configuration tasks. </P>
+<P CLASS="Body">
+<A NAME="pgfId-997365"></A>You can create a file 
+called <A NAME="marker-996840"></A><KBD CLASS="Code">
+rc.tcl</KBD>, which will be automatically loaded when Source-Navigator 
+starts. If you have either a <KBD CLASS="Code">
+.../share/etc/rc.tcl </KBD>
+or a <KBD CLASS="Code">
+$HOME/.sn/rc.tcl</KBD>
+ file, Source-Navigator reads and executes the file with the Tcl <KBD CLASS="Code">
+source</KBD>
+ command. The system-wide configuration file is read first; a user's own 
+configuration file is read afterwards and can override the site-local defaults.</P>
+<P CLASS="Body">
+<A NAME="pgfId-996842"></A>When a Source-Navigator project opens, a Tcl 
+procedure called <KBD CLASS="Code">
+sn_rc</KBD>
+ (if it exists) is called with no input parameters. This enables you to:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996843"></A>install additional <A NAME="marker-997816"></A>Tcl 
+programs.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996846"></A>customize <A NAME="marker-996844"></A>keyboard 
+shortcuts.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996847"></A>launch specific <A NAME="marker-997817"></A>applications 
+at start-up.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1004946"></A><A NAME="33682"></A>Adding Events to the rc.tcl File</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1005690"></A>Many events in Source-Navigator have a 
+corresponding Tcl procedure that is called when the event occurs. 
+This provides the facility to control the appearance and behavior 
+of each tool. You can choose whether or not to implement each of these 
+Tcl procedures in <KBD CLASS="Code">
+rc.tcl</KBD>; it is not mandatory to do so.</P>
+<A NAME="pgfId-1241751"></A>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-1005026"></A><A NAME="21894"></A>Events and Corresponding 
+Tcl Procedures </P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1005030"></A>Event</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1005032"></A>Procedure called (with parameters)</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005034"></A>A new symbol browser is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005036"></A><KBD CLASS="Code">
+sn_rc_symbolbrowser{window menu}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005038"></A>A new window is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005040"></A><KBD CLASS="Code">
+sn_rc_mainwindow{window menu}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005042"></A>A new editor view is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005044"></A><KBD CLASS="Code">
+sn_rc_editor{view text}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005046"></A>A new class view is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005048"></A><KBD CLASS="Code">
+sn_rc_classbrowser{view canvas}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005050"></A>A new grep window is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005052"></A><KBD CLASS="Code">
+sn_rc_grep{view list}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005054"></A>A new include view is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005056"></A><KBD CLASS="Code">
+sn_rc_include{view canvas}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005058"></A>A new make window is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005060"></A><KBD CLASS="Code">
+sn_rc_make{view list}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005062"></A>A new retriever view is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005064"></A><KBD CLASS="Code">
+sn_rc_retriever{view list}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005066"></A>A new cross-reference view is created</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005068"></A><KBD CLASS="Code">
+sn_rc_xref{view canvas}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005070"></A>The preferences dialog is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005072"></A><KBD CLASS="Code">
+sn_rc_preferences{win}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005409"></A>The project editor dialog is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005411"></A><KBD CLASS="Code">
+sn_rc_projecteditor{win menu}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005405"></A>A project is opened</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005407"></A><KBD CLASS="Code">
+sn_rc_project_open{projectdb}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005401"></A>The debugger is started</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005403"></A><KBD CLASS="Code">
+sn_rc_debugger{win debugwin}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005397"></A>The version control browser is started</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005399"></A><KBD CLASS="Code">
+sn_rc_project_editor{win list}</KBD>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005393"></A>The retriever is started</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005395"></A><KBD CLASS="Code">
+sn_rc_retrieve{win list}</KBD>
+</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1193040"></A></P>
+<TABLE border=1>
+<CAPTION>
+<P CLASS="TableTitle">
+<A NAME="pgfId-1005700"></A>Parameters for Tcl Event Procedures</P>
+</CAPTION>
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1005704"></A>Parameter</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellHeading">
+<A NAME="pgfId-1005706"></A>Description</P>
+</TH>
+</TR>
+<TR VALIGN="top">
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005748"></A><KBD CLASS="Code">
+win</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005750"></A>The name of the Tk window widget. 
+Referencing <KBD CLASS="Code">
+$win.exp</KBD>
+ returns the name of the Tk toolbar widget, and <KBD CLASS="Code">
+$win.menu</KBD>
+ returns the name of the Tk menu widget.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005756"></A><KBD CLASS="Code">
+view</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005758"></A>The name of the current view.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005760"></A><KBD CLASS="Code">
+list</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005762"></A>A window-specific list of data (for example, 
+a list of filenames.)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005764"></A><KBD CLASS="Code">
+canvas</KBD>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1005766"></A>The name of the Tk canvas widget used to draw 
+graphs in those tools where it is applicable.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278005"></A><KBD CLASS="Code">menu</KBD></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-1278007"></A>The path to the menus.</P>
+</TD>
+</TR>
+</TABLE>
+<P CLASS="Body">
+<A NAME="pgfId-1004944"></A>When a Symbol Browser window is created, a Tcl 
+procedure called <KBD CLASS="Code">
+sn_rc_symbolbrowser</KBD>
+<A NAME="marker-997818"></A> (if it exists) is called with the following 
+input parameters:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1278162"></A>the name of the Symbol Browser window.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-1278163"></A>the path of the menu.</LI>
+</UL>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1278164"></A>Changing Functionality Within the Symbol Browser</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1004876"></A>The following example script lists the names 
+of the button widgets of a Symbol Browser <A NAME="marker-1151540"></A>toolbar:</P>
+<PRE CLASS="Code"><A NAME="pgfId-996853"></A>proc sn_rc_symbolbrowser {top menu} {
+    set toolbar_frame $top.exp
+    puts stdout [join [winfo children &#92;
+    $toolbar_frame] &quot;&#92;n&quot;]
+}</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1003203"></A>which, when using the default toolbar, provides 
+output similar to: </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1122763"></A><KBD CLASS="CodeOutput">.multisymbr-1.exp.tree
+.multisymbr-1.exp.class
+.multisymbr-1.exp.xref
+.multisymbr-1.exp.inc
+.multisymbr-1.exp.space
+.multisymbr-1.exp.retrfr
+</KBD></PRE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1150980"></A><A NAME="marker-1151000"></A>Example: adding an xterm 
+or DOS shell toolbar button</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1122765"></A>The following example code adds a new button that 
+starts a DOS shell under Windows and an <KBD CLASS="Code">
+xterm</KBD>
+ application under UNIX:</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1285629"></A>proc sn_rc_symbolbrowser {top menu} {
+  global tcl_platform
+
+  set tool_frame $top.exp
+
+  # Set a variable that identifies the text widget on
+  # the status bar.
+  set info $top.msg.msg
+
+  # Create a new button on the toolbar. Note that the
+  # button's command invokes the command line tool
+  # in the background so that Source-Navigator is not
+  # blocked while the tool is running. On Win32, we emulate
+  # `xterm' with `cmd'.
+
+  if {!$tcl_platform(platform) != &quot;windows&quot;} {
+    set cmdline &quot;exec xterm -T {Source-Navigator} &#038;&quot;
+    set description xterm
+  } else {
+    set cmdline &quot;exec cmd /c start cmd&quot;
+    set description shell
+  }
+  button $tool_frame.xterm -text $description &#92;
+      -command $cmdline
+
+  # Set the main window's status bar to read &quot;xterm&quot;
+  # or &quot;shell&quot; when the mouse pointer is over the region 
+  # of the button.
+  balloon_bind_info $tool_frame.xterm &#92;
+      &quot;Starts a new $description&quot;
+  bind $tool_frame.xterm &lt;Leave&gt; &quot;set $top.msg {}&quot;
+
+  # Pack this button onto the toolbar.
+  pack $tool_frame.xterm -side left
+}</PRE>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1285921"></A>Adding a new toolbar button</P>
+<DIV>
+<IMG SRC="custom-2.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-1285642"></A>Adding <A NAME="marker-1285641"></A>Menus and Submenus</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1285643"></A>You can use the <KBD CLASS="Code">rc.tcl</KBD> file to add new menus to the 
+menu bar or new menu items to existing menus.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1150995"></A><A NAME="marker-1151001"></A>Example: adding an Extras menu </H4>
+<P CLASS="Body">
+<A NAME="pgfId-1150990"></A>The following example shows how to add a 
+new menu with two submenus. The first procedure creates the menu and 
+submenu items, and the next two are the procedures that each of the 
+submenu items actually execute. </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1272495"></A>proc sn_rc_symbolbrowser {win menu} {
+  # Abbreviate the name of the menu to &quot;extras&quot;.
+  set extras $menu.extras
+  # Create a new menu called &quot;Extras&quot;.
+  menu $extras -tearoff 0
+  # Add a menu item to the menu. The second character is
+  # the designated hot key. Place this menu fourth in
+  # the menu bar.
+  $menu insert 3 cascade -label Extras -underline 1 &#92;
+    -menu $extras
+  # Add two items to the menu.
+  $extras add command -label Functions -command &#92;
+    &quot;custom_show_symbols Functions&quot; -underline 0
+  $extras add command -label Methods -command &#92;
+    &quot;custom_show_symbols Methods&quot; -underline 0
+}
+
+proc custom_show_symbols {symboltype} {
+  # Set the scope appropriately.
+  switch -- $symboltype {
+    &quot;Methods&quot; {
+      set scope &quot;md&quot;
+    }
+    default {
+      set scope &quot;fu&quot;
+    }
+  }
+
+  if {[info commands paf_db_$scope] == &quot;&quot;} {
+    sn_error_dialog &#92;
+     &quot;No symbols of the type &lt;$scope&gt; are available in the project.&quot;
+     return
+  }
+
+  # Generate a unique name for our new top-level window
+  # widget.
+  set w .custom_win_$scope
+  # See if the window already exists.
+  if {![info exists $w]} {
+    # Create a new top-level window with a unique name.
+    toplevel $w
+    # Change its title.
+    wm title $w &quot;[sn_read_option project-name] ($symboltype)&quot; 
+    # Put a frame around this window and add scrollbars
+    # that scroll through a listbox.
+    frame $w.frm
+    scrollbar $w.frm.scrollx -orient horizontal &#92;
+      -relief sunken -command &quot;$w.frm.symlist xview&quot;
+    scrollbar $w.frm.scrolly -relief sunken &#92;
+      -command &quot;$w.frm.symlist yview&quot;
+    # Create a listbox to hold the symbol names.
+    listbox $w.frm.symlist -height 20 -width 40 &#92;
+      -xscrollcommand &quot;$w.frm.scrollx set&quot; &#92;
+      -yscrollcommand &quot;$w.frm.scrolly set&quot;
+    # If the user double-clicks in the list box, find
+    # the nearest entry in the list and pass the name of
+    # the symbol to custom_edit_file. This will launch
+    # us into the source file where that symbol is
+    # defined.
+    bind $w.frm.symlist &lt;Double-1&gt; {
+      custom_edit_file [%W get [%W nearest %y]]
+    }
+    # Pack the widgets onto our new window.
+    pack $w.frm.scrolly -side right -fill y
+    pack $w.frm.scrollx -side bottom -fill x
+    pack $w.frm.symlist -expand y -fill both
+    pack $w.frm -fill both -expand y
+  } else {
+    # The window already exists, so just delete
+    # everything from the listbox and we'll re-insert
+    # the current items in the next step.
+    $w.frm.symlist delete 0 end
+  }
+  # Put all of the database keys into the list.
+  eval $w.frm.symlist insert end &#92;
+    [paf_db_$scope seq -data]
+}
+proc custom_edit_file {key} {
+  # We have been passed the key of a record from either
+  # the function or method database tables. We need to
+  # determine the filename and line number for the
+  # editor to jump into the source code.
+  # The key of a record takes the form:
+  # { name, start_position, filename }
+  if {[llength $key] == 3} {
+    set pos [lindex $key 1]
+    set filename [lindex $key 2]
+  } else {
+    set pos [lindex $key 2]
+    set filename [lindex $key 3]
+  }
+  sn_edit_file {} $filename $pos
+}</PRE>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1265540"></A>Adding a Menu Item to the Menu Bar</P>
+<DIV>
+<IMG SRC="custom-3.gif">
+</DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-998362"></A>Changing Functionality Within the Editor</H3>
+<P CLASS="Body">
+<A NAME="pgfId-996998"></A>All Source-Navigator <SPAN CLASS="Bold">
+Editor</SPAN>
+<A NAME="marker-996996"></A> windows execute a Tcl procedure called <KBD CLASS="Code">
+sn_rc_editor </KBD>
+<A NAME="marker-996997"></A>(if it exists) at start-up. You can implement 
+this procedure in the file <KBD CLASS="Code">
+rc.tcl</KBD>
+<A NAME="marker-997821"></A> as described in the 
+section <A HREF="custom.html#33682" CLASS="XRef">Adding Events to the 
+rc.tcl File</A>. The input parameters of this procedure are as follows:</P>
+<UL>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-996999"></A>the name of the view.</LI>
+<LI CLASS="Bullet"><P CLASS="Body">
+<A NAME="pgfId-997002"></A>the name of the text widget.</LI>
+</UL>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-997004"></A><A NAME="32438"></A>Example: <A NAME="marker-1151530"></A>adding or 
+changing Editor keyboard shortcuts</H4>
+<P CLASS="Body">
+<A NAME="pgfId-997005"></A>You can add or change keyboard shortcuts 
+for the <SPAN CLASS="Bold">
+Editor</SPAN>
+<A NAME="marker-997822"></A> using commands shown in the following 
+example <KBD CLASS="Code">
+rc.tcl</KBD>
+ file. This example demonstrates how the built-in Editor can be 
+customized to emulate other popular editors.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1151193"></A>Note that the <A NAME="marker-1151194"></A><KBD CLASS="Code">
+bind</KBD>
+ command assigns the key bindings <SPAN CLASS="Bold">
+Ctrl+A</SPAN>
+ and <SPAN CLASS="Bold">
+Ctrl+E</SPAN>
+ to move the cursor to the beginning and end of a line, respectively. </P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1137435"></A>proc sn_rc_editor {view text} {
+  set top [winfo toplevel $view]
+  set menu_frame $top.menu
+  set tool_frame $top.exp
+
+  # Bind Control-a to jump to the start of the line
+  # (like emacs).
+  bind $text &lt;Control-a&gt; {
+    %W mark set insert &quot;insert linestart&quot;
+    %W yview -pickplace insert
+    break
+  }
+  # Bind Control-e to jump to the end of the line 
+  # (like emacs).
+  bind $text &lt;Control-e&gt; {
+    %W mark set insert &quot;insert lineend&quot;
+    %W yview -pickplace insert
+    break
+  }
+}</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1278234"></A>For more information about bindings, 
+see <EM CLASS="Emphasis">
+Practical Programming in Tcl and Tk</EM>
+ by Brent B. Welch, page 285.</P>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1151515"></A><A NAME="marker-1151544"></A>Example: 
+changing behavior of Editor toolbar buttons</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1151516"></A>The following example shows how to change 
+the behavior of the <SPAN CLASS="Bold">
+Compile</SPAN>
+ button so it compiles the current source file using the Java bytecode 
+compiler rather than <KBD CLASS="Code">
+gcc</KBD>.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1151517"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1151518"></A>This example only works when the extended 
+toolbar buttons are enabled. To enable them, from the <SPAN CLASS="Bold">
+File</SPAN>
+ menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. Select the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab and click the <SPAN CLASS="Bold">
+Extended toolbar buttons</SPAN>
+ checkbox.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1277737"></A>proc sn_rc_editor {view text} {
+  set top [winfo toplevel $view]
+  set menu_frame $top.menu
+  set tool_frame $top.exp.editfr
+
+# MAKE SURE THAT THE EXTENDED TOOLBAR BUTTONS ARE ENABLED.
+
+  # Reassign the command associated with the &quot;compile&quot; button.
+  if {[winfo exists $tool_frame.compile]} {
+    $tool_frame.compile config &#92;
+      -command &quot;custom_compile $view&quot;
+  }
+}
+proc custom_compile {view} {
+
+  # Save the preconfigured &quot;make&quot; command line; we need
+  # to tamper with it in this procedure.
+  set temp [sn_read_option make-command]
+  # Extract the filename.
+  set file [$view cget -filename]
+  # Set the &quot;make&quot; command line appropriately.
+  if {[string match {*.jav*} $file]} {
+    sn_modify_option make-command &quot;javac &#92;&quot;$file&#92;&quot;&quot;
+  }
+
+  # Byte-compile the source file.
+  sn_make
+
+  # Restore the &quot;make&quot; command line.
+  sn_modify_option make-command $temp
+}</PRE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1277740"></A><A NAME="marker-1277739"></A>Example: adding 
+a button to the Editor's extended toolbar</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1151432"></A>The following example shows how the Windows 
+Notepad editor or the UNIX <KBD CLASS="Code">
+vi</KBD>
+ editor can be integrated into Editor's toolbar as an auxiliary editor.</P>
+<H3 CLASS="Label">
+<A NAME="pgfId-1151387"></A>Note</H3>
+<P CLASS="Note">
+<A NAME="pgfId-1151388"></A>This example only works when the extended 
+toolbar buttons are enabled. To enable them, from the <SPAN CLASS="Bold">
+File </SPAN>
+menu, select <SPAN CLASS="Bold">
+Project Preferences</SPAN>. Select the <SPAN CLASS="Bold">
+Edit</SPAN>
+ tab and click the <SPAN CLASS="Bold">
+Extended toolbar buttons</SPAN>
+ checkbox.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1151380"></A>proc sn_rc_editor {view text} {
+  global tcl_platform
+
+  set topw [winfo toplevel $view]
+  set tool_frame $topw.exp
+  # On Windows call Notepad to edit a file.
+  if {$tcl_platform(platform) == &quot;windows&quot;} {
+    # Create a new button to edit the file using Notepad.
+    button $tool_frame.vi -text Notepad &#92;
+      -command &quot;exec notepad &#92;[$view getfilename&#92;]&quot;
+      balloon_bind_info $tool_frame.vi &#92;
+        &quot;Edit current file using the Notepad editor.&quot;
+  } else {
+    # Create a new button to edit the file using vi
+    button $tool_frame.vi -text vi &#92;
+      -command &quot;exec xterm -T vi -e vi &#92;[$view getfilename&#92;]&quot;
+    balloon_bind_info $tool_frame.vi &#92;
+      &quot;Edit current file using vi&quot;
+  }
+  # Pack this button onto the toolbar.
+  pack $tool_frame.vi -side left
+}</PRE>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-1151697"></A><A NAME="marker-1151921"></A>Example: generating 
+an HTML file of the project database</H4>
+<P CLASS="Body">
+<A NAME="pgfId-1151722"></A>This example shows how you can display project 
+database information in a format that is different from what Source-Navigator 
+usually provides.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1151701"></A>proc html_doc {topw} {
+  set actview [$topw ActiveWidget]
+  set ed [MultiWindow&#038; @@ list_find_editor $actview]
+  if {$ed == &quot;&quot;} {
+    bell; return
+  }
+  doc_start [list [$ed getfilename]]
+}
+proc sn_rc_editor {view editor} {
+  # main window
+  set topw [winfo toplevel $view]
+  # add a menu entry for the html documentation
+  set mn $topw.menu
+  $mn.tools add command &#92;
+      -label &quot;HTML Documentation&quot; &#92;
+      -command &quot;html_doc $topw&quot;
+}</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-1277787"></A>In the <SPAN CLASS="Bold">
+Editor</SPAN>, from the <SPAN CLASS="Bold">
+Tools</SPAN>
+ menu, select <SPAN CLASS="Bold">
+HTML Documentation</SPAN>, and Source-Navigator brings up a browser 
+window containing definitions and cross-references of the symbols in your project.</P>
+<P CLASS="FigureTitle">
+<A NAME="pgfId-1151699"></A>Generating an HTML Representation of 
+the Project Database</P>
+<DIV>
+<IMG SRC="custom-4.gif">
+</DIV>
+<H2 CLASS="Heading1">
+<A NAME="pgfId-997051"></A><A NAME="16949"></A>Error Formats</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1004901"></A>Source-Navigator can receive and act upon 
+messages from external tools such as a <A NAME="marker-1004902"></A>compiler 
+or <A NAME="marker-1004903"></A>debugger through use of a 
+configurable <A NAME="marker-1004904"></A>error format file that 
+can be found in <KBD CLASS="Code">
+.../share/etc/sn_cmp_g.pat</KBD>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1285191"></A>The contents of this error-format file 
+is as follows; the comment above each regular expression illustrates 
+the kind of text that the given expression can handle. More information 
+on regular expressions can be found in 
+the <A HREF="../usergiude/grep.html#21607" CLASS="XRef">Grep</A> of 
+the <STRONG CLASS="BoldEmphasis">User's Guide</STRONG>.</P>
+<PRE CLASS="CodeExample"><A NAME="pgfId-1285202"></A># Source-Navigator regular expressions for compiler, 
+# debugger and grep patterns.
+
+# Source-Navigator supports also blanks, so the patterns
+# must be so defined that blanks could be a part of the filename
+
+# &quot;filename.c&quot;, line 789
+&quot;([^&quot; ]+)&quot;,[ ]+line[ ]+([0-9]+)
+
+# filename.c, line 789
+([^ ]+),[ ]+line[ ]+([0-9]+)
+
+# line 789, filename.c,
+line[ ]+([0-9]+),[ ]+([^, ]+)
+
+# [filename.c:789]
+&#92;[([^&#92;[: ]+):([0-9]+)&#92;]
+
+# filename.c:789
+([^: ]+):[ ]*([0-9]+)
+
+# filename.c(789)
+([^ ]+&#92;.[^ ]+)&#92;(([0-9]+)&#92;)
+
+# filename.c(789,11) or filename.c(789.11)
+([^ ]+&#92;.[^ ]+)&#92;(([0-9]+[,.][ ]*[0-9]+)&#92;)
+
+# /dir/filename.c, 789
+([^/ ]+),[ ]+([0-9]+)</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-997084"></A>The lines beginning with the hash <KBD CLASS="Code">
+#</KBD>
+ symbol are comments showing matching patterns; 
+the <A NAME="marker-1278269"></A>GNU regular expression describes 
+the expressions. Every expression must contain two expressions 
+enclosed in parentheses (for the file name and line number). </P>
+<P CLASS="Body">
+<A NAME="pgfId-1278003"></A></P>
+<HR ALIGN="center">
+<TABLE CLASS="TABLE" WIDTH="100" BORDER="0" ALIGN="center" CELLPADDING="1">
+<TR><TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="index_pr.html">Contents</A>
+</P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos"><A HREF="progref_intro.html">Previous</A></P></TD>
+<TD ALIGN="center">
+<P CLASS="Gotos">
+<A HREF="langspecs.html">Next</A></P></TD>
+</TR></TABLE>
+</BODY>
+</HTML>
