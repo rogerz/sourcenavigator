@@ -34,7 +34,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-libexec_PROGRAMS = dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT)
+libexec_PROGRAMS = dbcp$(EXEEXT) dbdump$(EXEEXT) dbimp$(EXEEXT) \
+	dbcompact$(EXEEXT)
 subdir = db
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -63,6 +64,8 @@ am_libdbutils_a_OBJECTS = dbutils.$(OBJEXT)
 libdbutils_a_OBJECTS = $(am_libdbutils_a_OBJECTS)
 libexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(libexec_PROGRAMS)
+am_dbcompact_OBJECTS = dbcompact.$(OBJEXT)
+dbcompact_OBJECTS = $(am_dbcompact_OBJECTS)
 am_dbcp_OBJECTS = dbcp.$(OBJEXT)
 dbcp_OBJECTS = $(am_dbcp_OBJECTS)
 am_dbdump_OBJECTS = dbdump.$(OBJEXT)
@@ -76,8 +79,8 @@ am__depfiles_maybe =
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-SOURCES = $(libdbutils_a_SOURCES) $(dbcp_SOURCES) $(dbdump_SOURCES) \
-	$(dbimp_SOURCES)
+SOURCES = $(libdbutils_a_SOURCES) $(dbcompact_SOURCES) $(dbcp_SOURCES) \
+	$(dbdump_SOURCES) $(dbimp_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 ACLOCAL = @ACLOCAL@
@@ -311,6 +314,9 @@ dbimp_SOURCES = dbimp.c
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
 
+dbcompact_SOURCES = dbcompact.c
+dbcompact_LDADD = $(DB_LIBDIR)/libdb.a
+dbcompact_DEPENDENCIES = $(DB_LIBDIR)/libdb.a
 libdbutils_a_SOURCES = dbutils.c dbutils.h
 all: all-am
 
@@ -401,6 +407,9 @@ uninstall-libexecPROGRAMS:
 
 clean-libexecPROGRAMS:
 	-test -z "$(libexec_PROGRAMS)" || rm -f $(libexec_PROGRAMS)
+dbcompact$(EXEEXT): $(dbcompact_OBJECTS) $(dbcompact_DEPENDENCIES) 
+	@rm -f dbcompact$(EXEEXT)
+	$(LINK) $(dbcompact_OBJECTS) $(dbcompact_LDADD) $(LIBS)
 dbcp$(EXEEXT): $(dbcp_OBJECTS) $(dbcp_DEPENDENCIES) 
 	@rm -f dbcp$(EXEEXT)
 	$(LINK) $(dbcp_OBJECTS) $(dbcp_LDADD) $(LIBS)

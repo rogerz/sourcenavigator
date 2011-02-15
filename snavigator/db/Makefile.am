@@ -32,7 +32,7 @@ endif
 
 sdkdir = @SN_SDK_EXEC_PREFIX@/lib
 
-libexec_PROGRAMS = dbcp dbdump dbimp
+libexec_PROGRAMS = dbcp dbdump dbimp dbcompact
 sdk_LIBRARIES = libdbutils.a
 
 install-data-local:
@@ -61,5 +61,9 @@ dbimp_LDADD = -L. -ldbutils -L$(DB_LIBDIR) -ldb \
 endif
 dbimp_DEPENDENCIES = libdbutils.a $(DB_LIBDIR)/libdb.a \
 		$(top_builddir)/misc/libutils/libutils.a
+
+dbcompact_SOURCES = dbcompact.c
+dbcompact_LDADD = $(DB_LIBDIR)/libdb.a
+dbcompact_DEPENDENCIES = $(DB_LIBDIR)/libdb.a
 
 libdbutils_a_SOURCES = dbutils.c dbutils.h
