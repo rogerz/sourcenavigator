@@ -23,7 +23,11 @@
  dbcompact will try to optimize a db file via a call to DB->compact()
  According to the docs we need to call compact() twice to fully
  exploit the tree/page reorganization.
-*/
+
+ line protocol for communicating with SN
+ Status: Optimizing (1/32): /path/to/file1
+ Status: Optimizing (3/32): /path/to/file2
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,21 +48,18 @@ static void ci_print(DB_COMPACT *ci)
 }
 
 
-static int do_compact(DB *db, DB_COMPACT *compactinfo, int flags, int pass)
+static int do_compact(DB *db, DB_COMPACT *compactinfo, int flags)
 {
 	int ret;
 	const char *filename;
 	const char *dbname;
 
         db->get_dbname(db, &filename, &dbname);
-	printf("-- starting pass %i with flags %i on %s\n", pass, flags, filename);
 	if((ret=db->compact(db, NULL, NULL, NULL, compactinfo, flags, NULL))) {
-		db->err(db, ret, "error while compacting db, exiting");
+		db->err(db, ret, "error while compacting db, next");
 		db->close(db, 0);
-                exit(1);
+                return ret;
 	}
-        ci_print(compactinfo);
-	printf("-- finished pass %i on %s\n", pass, filename);
 
 	return(ret);
 }
@@ -71,10 +72,7 @@ int main(int ac, char **dc)
 
 	int notused=0, flags=0;
 	int pass=1, totalsteps=0, filenr=0;
-	char *version=NULL;
-
-	version=db_version(&notused, &notused, &notused);
-	printf("dbcompact using %s\n", version);
+        int opt_truncated_pages=0;
 
 	if(ac == 1) {
 		printf("usage: db_compact db_file\n");
@@ -85,6 +83,7 @@ int main(int ac, char **dc)
 	totalsteps=(ac-1)*2;
 
 	for(filenr=1; filenr < ac; filenr++) {
+                opt_truncated_pages=0;
 		memset(&compactinfo, 0, sizeof(compactinfo));
 
 		if(db_create(&db, NULL, 0)) {
@@ -102,15 +101,20 @@ int main(int ac, char **dc)
 			goto out;
 		}
 
+
 		/* 1st pass */
-		do_compact(db, &compactinfo, DB_FREE_SPACE, pass);
+		printf("Status: Compacting(%i/%i) %s\n", pass, totalsteps, dc[filenr]);
+		do_compact(db, &compactinfo, DB_FREE_SPACE);
+                opt_truncated_pages += compactinfo.compact_pages_truncated;
 
 		/* 2nd pass */
 		pass++;
-		do_compact(db, &compactinfo, DB_FREE_SPACE, pass);
+		printf("Status: Compacting(%i/%i) %s\n", pass, totalsteps, dc[filenr]);
+		do_compact(db, &compactinfo, DB_FREE_SPACE);
+		opt_truncated_pages += compactinfo.compact_pages_truncated;
 
 		db->close(db, 0);
-		printf("pass %i of %i done\n", pass, totalsteps);
+		printf("Result: %d pages truncated\n", opt_truncated_pages);
 		pass++;
 	}
 
