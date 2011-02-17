@@ -1,3 +1,23 @@
+Release NG4.3 (Thu Feb 17 21:26:54 CET 2011)
+
+(ENHANCE) Merge https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4.2-db_4.8.30_import, r784:785
+(ENHANCE) Install dbcompact programm to SN/libexec/snavigator/dbcompact
+(BUGFIX) Merge 785-789 of https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4.2-db_4.8.30_import for dbcompact
+(INTERNAL) Remove unneeded "SN engineering outline" html file
+(BUGFIX) Fix greppane to edit jump, when line contains multiple ":"
+(ENHANCE) Merge 769:780 of https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4.2-db_4.8.30_import for upgrade to db-4.8.30
+(ENHANCE) Add function Paf_db_get_version() so db4 version can be queried II
+(INTERNAL) Remove unneeded examples_* directories from db4/
+(ENHANCE) Show Berkeley DB version in splash screen
+(ENHANCE) Add function Paf_db_get_version() so db4 version can be queried
+(BUGFIX) Fix snpdbg startup on win32
+(BUGFIX) Fix missing maximize buttons in SN
+(ENHANCE) Sort startup project selection list alphanumerically
+(BUGFIX) Fix startup with gdb for snpdbg startup script
+(BUGFIX) Move CONTRIB headers for win32 into sys/ subdir
+(BUGFIX) Add CONTRIB/ directory and win32 related, missing headers
+
+
 Release NG4.2 (Mon Mar 29 19:37:20 CEST 2010)
 
 (INTERNAL) Add Ray Minnerly to CONTRIBUTORS
