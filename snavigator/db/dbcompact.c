@@ -65,6 +65,19 @@ static int do_compact(DB *db, DB_COMPACT *compactinfo, int flags)
 }
 
 
+static void usage()
+{
+        int _unused;
+
+	printf("dbcompact - db4 compaction utility. Released under GPLv2, no warranties\n"
+	       "Part of Source Navigator - %s\n\n"
+	       "Usage: db_compact db_file [db_file...]\n",
+	       db_version(&_unused, &_unused, &_unused)
+	      );
+
+}
+
+
 int main(int ac, char **dc)
 {
 	DB *db;
@@ -75,8 +88,8 @@ int main(int ac, char **dc)
         int opt_truncated_pages=0;
 
 	if(ac == 1) {
-		printf("usage: db_compact db_file\n");
-                exit(2);
+                usage();
+		exit(2);
 	}
 
 	/* # of files * 2 = total passes to be done */
