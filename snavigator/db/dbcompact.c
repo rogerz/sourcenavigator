@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /* dbcompact uses the native db4 mode when talking to libdb4 */
 #include "db.h"
@@ -71,7 +72,8 @@ static void usage()
 
 	printf("dbcompact - db4 compaction utility. Released under GPLv2, no warranties\n"
 	       "Part of Source Navigator - %s\n\n"
-	       "Usage: db_compact db_file [db_file...]\n",
+	       "Usage: db_compact db_file [db_file...]\n"
+	       "    -c db_cache_size        set db4's cache size, in MB\n",
 	       db_version(&_unused, &_unused, &_unused)
 	      );
 
@@ -83,19 +85,36 @@ int main(int ac, char **dc)
 	DB *db;
 	DB_COMPACT compactinfo;
 
+        int option;
+
 	int notused=0, flags=0;
 	int pass=1, totalsteps=0, filenr=0;
         int opt_truncated_pages=0;
+        int db_cache=COMPACT_CACHESIZE;
 
 	if(ac == 1) {
                 usage();
 		exit(2);
 	}
 
-	/* # of files * 2 = total passes to be done */
-	totalsteps=(ac-1)*2;
 
-	for(filenr=1; filenr < ac; filenr++) {
+	while((option=getopt(ac, dc, "c:h")) != EOF) {
+		switch(option) {
+		case 'c':
+			db_cache=atoi(optarg)*1024*1024;
+			break;
+
+		case '?':
+		case 'h':
+			usage();
+                        exit(0);
+		}
+	}
+
+	/* # of files * 2 = total passes to be done */
+	totalsteps=(ac-optind)*2;
+
+	for(filenr=optind; filenr < ac; filenr++) {
                 opt_truncated_pages=0;
 		memset(&compactinfo, 0, sizeof(compactinfo));
 
