@@ -1,28 +1,28 @@
 This is a stripped down version of the dist/ directory, meant to automatically
 build db4 under SN.
 
-We need the following files:
+We need the following files from db4/dist:
 
 Makefile.in
+aclocal/*
+aclocal_java/*
 config.guess
-config.hin
-config.status
 config.sub
-configure
+configure.ac (as configure.in)
 install-sh
 ltmain.sh
-
+s_config
 
 Then adjust Makefile.in "install:" target to 
 
 install: all
 
+Next rename aclocal/options.m4 to aclocal/snavoptions.m4
+and update the default build options.
 
-To ensure the correct default build options, add the following into 
-configure, after the checks for smallbuild:
+The changed options are :-
 
 db_cv_build_cryptography="no"
-db_cv_build_hash="yes"
 db_cv_build_queue="no"
 db_cv_build_replication="no"
 db_cv_build_statistics="no"
@@ -31,6 +31,30 @@ db_cv_build_partition="no"
 db_cv_build_compression="no"
 db_cv_compat185="yes"
 
+The code for an option that defaults to "yes" :-
+<quote>
+AC_MSG_CHECKING(if --disable-<opt> option specified)
+AC_ARG_ENABLE(hash,
+	AC_HELP_STRING([--disable-<opt>],
+	    [Do not build <opt> support.]),, enableval="yes")
+db_cv_build_<opt>="$enableval"
+case "$enableval" in
+ no) AC_MSG_RESULT(yes);;
+yes) AC_MSG_RESULT(no);;
+esac
+</quote>
+
+The code for an option that defaults to "no" :-
+<quote>
+AC_MSG_CHECKING(if --enable-<opt> option specified)
+AC_ARG_ENABLE(partition,
+	[AC_HELP_STRING([--enable-<opt>],
+	    [Build <opt> support.])],
+	[db_cv_build_<opt>="$enable_<opt>"], [db_cv_build_<opt>="no"])
+AC_MSG_RESULT($db_cv_build_<opt>)
+</quote>
+
+Once all changes have been done to aclocal/snavoptions.m4 then run ./s_config to create configure and config.hin
 
 Finally remove all examples/, docs/ and perl/ subdirectories, and for each
 removed directory place a REMOVED file in it.
