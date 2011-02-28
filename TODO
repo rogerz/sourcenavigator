@@ -1,5 +1,6 @@
 general performance enhancements
-o check Berkeley DB4 porting for performance and robustness
+o check NATIVE Berkeley DB4 API porting
+o win32 GUI feedback is slow (refresh, reparse, ...)
 
 usability improvements
 
