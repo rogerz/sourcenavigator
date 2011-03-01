@@ -73,8 +73,9 @@ static void usage()
 	printf("dbcompact - db4 compaction utility. Released under GPLv2, no warranties\n"
 	       "Part of Source Navigator - %s\n\n"
 	       "Usage: db_compact db_file [db_file...]\n"
-	       "    -c db_cache_size        set db4's cache size, in MB\n",
-	       db_version(&_unused, &_unused, &_unused)
+	       "    -c db_cache_size        set db4's cache size, in MB (default: %i)\n",
+	       db_version(&_unused, &_unused, &_unused),
+               COMPACT_CACHESIZE/1024/1024
 	      );
 
 }
