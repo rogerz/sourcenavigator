@@ -189,7 +189,8 @@ osf*)	CPPFLAGS="$CPPFLAGS -pthread";;
 	AC_DEFINE(HAVE_QNX)
 	AH_TEMPLATE(HAVE_QNX, [Define to 1 if building on QNX.]);;
 solaris*)
-	CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS ";;
+	CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS "
+	LIBSO_LIBS="$LIBSO_LIBS -lrt";;
 esac
 
 # If the user wants a debugging environment, change any compiler optimization
