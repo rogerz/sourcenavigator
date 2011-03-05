@@ -3775,7 +3775,7 @@ _ACEOF
 ;;
 solaris*)
 	CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS "
-	LIBSO_LIBS="$LIBSO_LIBS -lrt";;
+	LDFLAGS="$LDFLAGS -lrt";;
 esac
 
 # If the user wants a debugging environment, change any compiler optimization
