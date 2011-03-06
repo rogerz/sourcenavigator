@@ -4973,7 +4973,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ide_cv_os_cygwin32=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 { echo "$as_me:$LINENO: result: $ide_cv_os_cygwin32" >&5
@@ -5001,7 +5001,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   sn_cv_os_msvc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 { echo "$as_me:$LINENO: result: $sn_cv_os_msvc" >&5
@@ -5029,7 +5029,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   sn_cv_os_mingw32=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 { echo "$as_me:$LINENO: result: $sn_cv_os_mingw32" >&5
@@ -5734,7 +5734,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ac_cv_header_stdc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 
@@ -5755,7 +5755,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ac_cv_header_stdc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 
@@ -6153,7 +6153,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   tk_ok=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -6170,7 +6170,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   tk_ok=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -6187,7 +6187,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   tk_ok=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 if test $tk_ok = no; then
 
@@ -6830,7 +6830,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   sn_cv_lib_glibc=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 { echo "$as_me:$LINENO: result: $sn_cv_lib_glibc" >&5
@@ -6859,7 +6859,179 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
-rm -f conftest*
+rm -f -r conftest*
+
+
+# The yield function on Solaris is almost certainly pthread_yield (LWP threads
+# or POSIX pthreads), or thr_yield (UI threads).  There's an outside chance it
+# is sched_yield() though, only available in -lrt on Solaris.
+{ echo "$as_me:$LINENO: checking for library containing sched_yield" >&5
+echo $ECHO_N "checking for library containing sched_yield... $ECHO_C" >&6; }
+if test "${ac_cv_search_sched_yield+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sched_yield ();
+int
+main ()
+{
+return sched_yield ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' rt; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_search_sched_yield=$ac_res
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext
+  if test "${ac_cv_search_sched_yield+set}" = set; then
+  break
+fi
+done
+if test "${ac_cv_search_sched_yield+set}" = set; then
+  :
+else
+  ac_cv_search_sched_yield=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_sched_yield" >&5
+echo "${ECHO_T}$ac_cv_search_sched_yield" >&6; }
+ac_res=$ac_cv_search_sched_yield
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+
+# The Berkeley DB library calls fdatasync, only available in -lrt on Solaris.
+{ echo "$as_me:$LINENO: checking for library containing fdatasync" >&5
+echo $ECHO_N "checking for library containing fdatasync... $ECHO_C" >&6; }
+if test "${ac_cv_search_fdatasync+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char fdatasync ();
+int
+main ()
+{
+return fdatasync ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' rt; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_search_fdatasync=$ac_res
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext
+  if test "${ac_cv_search_fdatasync+set}" = set; then
+  break
+fi
+done
+if test "${ac_cv_search_fdatasync+set}" = set; then
+  :
+else
+  ac_cv_search_fdatasync=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_search_fdatasync" >&5
+echo "${ECHO_T}$ac_cv_search_fdatasync" >&6; }
+ac_res=$ac_cv_search_fdatasync
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
 
 
 # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
@@ -7040,7 +7212,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 else
   ac_cv_os_cray=no
 fi
-rm -f conftest*
+rm -f -r conftest*
 
 fi
 { echo "$as_me:$LINENO: result: $ac_cv_os_cray" >&5
