@@ -66,8 +66,9 @@ http://sourceforge.net/project/showfiles.php?group_id=2435
 Install BOTH MSYS and MinGW and then start the msys shell.
 You can then run the configure script in the normal way from inside 
 the shell.
+Using the cache-file (option -C) is recommended to improve speed on win32.
 
-% ./configure --prefix=/opt/sourcenav --enable-mingw
+% ./configure --prefix=/opt/sourcenav --enable-mingw -C
   (the --enable-mingw is for db4)
 % make
 % make install
