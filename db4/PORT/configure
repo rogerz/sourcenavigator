@@ -2256,7 +2256,7 @@ DB_VERSION_MINOR="8"
 
 DB_VERSION_PATCH="30"
 
-DB_VERSION_STRING='"Berkeley DB 4.8.30: (February 27, 2011)"'
+DB_VERSION_STRING='"Berkeley DB 4.8.30: (March  6, 2011)"'
 
 
 # Process all options before using them.

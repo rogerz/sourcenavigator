@@ -6,7 +6,7 @@ AC_CONFIG_SRCDIR([hyper/sninit.c])
 AC_PREREQ(2.61)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(..)
-AM_INIT_AUTOMAKE(snavigator,NG4.3)
+AM_INIT_AUTOMAKE(sourcenavigator,NG4.3)
 AM_MAINTAINER_MODE
 
 # The combination of Cygwin, autoconf 2.13. and cl from VC++
@@ -351,6 +351,14 @@ dnl situations we might need to declare it.  We check for that case
 dnl here.
 AC_EGREP_CPP(strncasecmp, [#include <string.h>],
   AC_DEFINE(HAVE_STRNCASECMP_DECL,,[Define this if <string.h> declares strncasecmp().]))
+
+# The yield function on Solaris is almost certainly pthread_yield (LWP threads
+# or POSIX pthreads), or thr_yield (UI threads).  There's an outside chance it
+# is sched_yield() though, only available in -lrt on Solaris.
+AC_SEARCH_LIBS(sched_yield, rt)
+
+# The Berkeley DB library calls fdatasync, only available in -lrt on Solaris.
+AC_SEARCH_LIBS(fdatasync, rt)
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA
