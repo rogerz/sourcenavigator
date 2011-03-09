@@ -1,0 +1,5 @@
+asdf MUX
+counter_id = asiRead16_lookup(MUX_DEMUX_ARRAY_BASE:5, $session_id:16, VIRTUAL_HANDLE:1, 0:2)
+asiWrite32_lookup(MUX_DEMUX_ARRAY_BASE:5, DEMUX_SESSION_ID_11:16, VIRTUAL_HANDLE:1, 0:2, MUX_DEMUX_VIRT_11:32)
+vbnm MUX
+

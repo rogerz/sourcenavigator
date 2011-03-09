@@ -1,0 +1,8 @@
+Examples of code that makes SN break.
+
+not fixed
+java:		missing enums, declarations / segfault
+fortran:	token space runs out
+
+fixed
+text:		jump to line was broken
