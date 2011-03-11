@@ -590,6 +590,14 @@ run_application(int argc,char *argv[])
 		else if (strcmp (argv[i], "--batchmode") == 0 || strcmp (argv[i], "-b") == 0)
 		{
 			batchmode = 1;
+			/*
+			 FIXME Freek 2011-03-11 FIXME
+			 Even if batchmode is given SN will try fully init tcl/tk
+			 which requires a DISPLAY (see tk/generic/tkWindow.c::369)
+			 As such we work around that by adding a DISPLAY to env,
+			 with overwrite set to 0.
+                         */
+			setenv("DISPLAY", ":0.0", 0);
 		}
 		else
 		{
