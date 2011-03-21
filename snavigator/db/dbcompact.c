@@ -39,6 +39,7 @@
 
 /* use a db cache size of 8MB */
 #define COMPACT_CACHESIZE (8*1024*1024)
+#define COUNTER_SKIP_PASS(cnt) (cnt += 2)
 
 static void ci_print(DB_COMPACT *ci)
 {
@@ -130,13 +131,21 @@ int main(int ac, char **dc)
 
 		if(db->open(db, NULL, dc[filenr], NULL, DB_UNKNOWN, 0, 0)) {
 			printf("error on db_open with %s\n", dc[filenr]);
-			goto out;
+                        COUNTER_SKIP_PASS(pass);
+			goto next;
 		}
 
 
-		/* 1st pass */
+		/*
+		 1st pass
+                 if 1st pass fails, don't bother with the 2nd
+		 */
 		printf("Status: Compacting(%i/%i) %s\n", pass, totalsteps, dc[filenr]);
-		do_compact(db, &compactinfo, DB_FREE_SPACE);
+		if(do_compact(db, &compactinfo, DB_FREE_SPACE)) {
+                        printf("FIXUP\n");
+			COUNTER_SKIP_PASS(pass);
+                        goto next;
+		}
                 opt_truncated_pages += compactinfo.compact_pages_truncated;
 
 		/* 2nd pass */
@@ -145,9 +154,10 @@ int main(int ac, char **dc)
 		do_compact(db, &compactinfo, DB_FREE_SPACE);
 		opt_truncated_pages += compactinfo.compact_pages_truncated;
 
+		pass++;
+	next:
 		db->close(db, 0);
 		printf("Result: %d pages truncated\n", opt_truncated_pages);
-		pass++;
 	}
 
 	exit(0);
