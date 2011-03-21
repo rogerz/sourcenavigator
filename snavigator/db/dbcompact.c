@@ -58,7 +58,6 @@ static int do_compact(DB *db, DB_COMPACT *compactinfo, int flags)
         db->get_dbname(db, &filename, &dbname);
 	if((ret=db->compact(db, NULL, NULL, NULL, compactinfo, flags, NULL))) {
 		db->err(db, ret, "error while compacting db, next");
-		db->close(db, 0);
                 return ret;
 	}
 
