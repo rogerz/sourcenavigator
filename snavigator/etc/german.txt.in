@@ -351,11 +351,13 @@ Topdown,Von oben nach unten
 LeftRight,Von links nach rechts
 ISI,ISI
 Tree,Baum
-CrfRefTo,Refers [to
+CrfRefTo,Refers [To
 CrfRefToINFO,Zeigt references to
+CrfRemRefTo,Remove Refers T[o
 CrfRemRefToINFO,Remove references
-CrfRefBy,Refered [by
+CrfRefBy,Referred [By
 CrfRefByINFO,Zeigt referenced by
+CrfRemRefBy,Remove Referred B[y
 CrfRemRefByINFO,Remove referenced-by
 CrfRemSubN,Entfernt Subnodes
 Symbols,[Symbole

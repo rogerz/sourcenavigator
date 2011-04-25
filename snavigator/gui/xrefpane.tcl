@@ -83,7 +83,11 @@ itcl::class XRef& {
               -underline [get_indep Pos CrfRefBy] -command " ${this}\
               references by " -state disabled
             $itk_option(-menu) add command -label [get_indep String CrfRemSubN]\
-              -underline [get_indep Pos CrfRemSubN] -command "${this} remove" -state disabled
+              -underline [get_indep Pos CrfRemSubN] -command "${this} remove both" -state disabled
+            $itk_option(-menu) add command -label [get_indep String CrfRemRefTo]\
+              -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to" -state disabled
+            $itk_option(-menu) add command -label [get_indep String CrfRemRefBy]\
+              -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by" -state disabled
             $itk_option(-menu) add separator
             $itk_option(-menu) add command -label [get_indep String XRefFilter]\
               -underline [get_indep Pos XRefFilter] -command "[info class]::xref_filter"
