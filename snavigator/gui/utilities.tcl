@@ -248,6 +248,7 @@ proc sn_load_pixmaps {} {
         image create ${pixmap} grep_image -file ${bitd}/grep.${xpm}
         image create ${pixmap} include_image -file ${bitd}/include.${xpm}
         image create ${pixmap} left_image -file ${bitd}/left.${xpm}
+        image create ${pixmap} del_left_image -file ${bitd}/tilda_left.${xpm}
         image create ${pixmap} method_image -file ${bitd}/method.${xpm}
         image create ${pixmap} new_image -file ${bitd}/new.${xpm}
         image create ${pixmap} next_image -file ${bitd}/next.${xpm}
@@ -256,6 +257,7 @@ proc sn_load_pixmaps {} {
         image create ${pixmap} print_image -file ${bitd}/print.${xpm}
         image create ${pixmap} rebuild_image -file ${bitd}/build.${xpm}
         image create ${pixmap} right_image -file ${bitd}/right.${xpm}
+        image create ${pixmap} del_right_image -file ${bitd}/tilda_right.${xpm}
         image create ${pixmap} save_image -file ${bitd}/save.${xpm}
         image create ${pixmap} search_image -file ${bitd}/search.${xpm}
         image create ${pixmap} sign_image -file ${bitd}/sign.${xpm}

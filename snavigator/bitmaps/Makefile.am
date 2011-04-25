@@ -33,11 +33,11 @@ file.xbm files.xpm find.xpm folder.xbm function.xpm \
 go.xpm goto.xpm grep.xpm \
 info.xpm insert.xpm \
 join.xpm \
-left.xpm \
+left.xpm tilda_left.xpm \
 method.xpm minus.xbm move.xpm new.xpm next.xpm \
 open.xpm paste.xpm plus.xbm print.xpm project.xpm \
 question.xpm \
-rarrow.xpm rebuild.xpm right.xpm \
+rarrow.xpm rebuild.xpm right.xpm tilda_right.xpm \
 save.xpm search.xpm sign.xpm stop.xpm stree.xpm \
 trace.xpm tree.xpm \
 undef.xbm undo.xpm up.xpm \

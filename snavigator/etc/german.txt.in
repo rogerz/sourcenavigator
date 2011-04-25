@@ -353,8 +353,10 @@ ISI,ISI
 Tree,Baum
 CrfRefTo,Refers [to
 CrfRefToINFO,Zeigt references to
+CrfRemRefToINFO,Remove references
 CrfRefBy,Refered [by
 CrfRefByINFO,Zeigt referenced by
+CrfRemRefByINFO,Remove referenced-by
 CrfRemSubN,Entfernt Subnodes
 Symbols,[Symbole
 SymbolicTags,Symbolische Tags

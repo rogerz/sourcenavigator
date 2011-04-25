@@ -108,15 +108,30 @@ itcl::class XRef& {
         if {$itk_option(-toolbar) != ""} {
             set exp $itk_option(-toolbar).xref
             frame ${exp}
+	    
+            button ${exp}.rem_ref_to -takefocus 0 -image del_right_image -command\
+              " ${this} remove to " -state disabled
+            balloon_bind_info ${exp}.rem_ref_to [get_indep String CrfRemRefToINFO]
+            pack ${exp}.rem_ref_to -side left
+
             button ${exp}.ref_to -takefocus 0 -image right_image -command\
               " ${this} references to " -state disabled
             balloon_bind_info ${exp}.ref_to [get_indep String CrfRefToINFO]
             pack ${exp}.ref_to -side left
 
+            button ${exp}.remove -image waste_image -takefocus 0 -command "${this} remove both" -state disabled
+            balloon_bind_info ${exp}.remove [get_indep String CrfRemSubN]
+            pack ${exp}.remove -side left
+
             button ${exp}.ref_by -takefocus 0 -image left_image -command\
               " ${this} references by " -state disabled
             balloon_bind_info ${exp}.ref_by [get_indep String CrfRefByINFO]
             pack ${exp}.ref_by -side left
+
+            button ${exp}.rem_ref_by -takefocus 0 -image del_left_image -command\
+              " ${this} remove by " -state disabled
+            balloon_bind_info ${exp}.rem_ref_by [get_indep String CrfRemRefByINFO]
+            pack ${exp}.rem_ref_by -side left
 
             if {0} {
                 #DO WE NEED THIS BUTTONS IN THE TOOLBAR????????
@@ -137,10 +152,6 @@ itcl::class XRef& {
                   PafCrossByDetail]
                 pack ${exp}.xbrowse_by -side left
             }
-
-            button ${exp}.remove -image waste_image -takefocus 0 -command "${this} remove" -state disabled
-            balloon_bind_info ${exp}.remove [get_indep String CrfRemSubN]
-            pack ${exp}.remove -side left
 
             #WE NEED A FILTER BUTTON IN THE TOOLBAR
 	    button ${exp}.filter -text [get_indep String Mixer]\
@@ -712,7 +723,8 @@ itcl::class XRef& {
     }
 
     # This methods deletes the subnodes of a node.
-    method remove {{id ""} {skip ""}} {
+    # TODO - Use type parameter to selectively remove subnodes
+    method remove { type {id ""} {skip ""}} {
         if {${id} == ""} {
             set id [${can} select item]
             if {${id} == ""} {
