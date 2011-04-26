@@ -257,7 +257,11 @@ itcl::class XRef& {
         ${can}.menu add command -label [get_indep String PafCrossByDetail]\
           -state disabled -underline [get_indep Pos PafCrossByDetail] -command "${this} xbrowse by"
         ${can}.menu add command -label [get_indep String CrfRemSubN]\
-          -state disabled -underline [get_indep Pos CrfRemSubN] -command "${this} remove"
+          -state disabled -underline [get_indep Pos CrfRemSubN] -command "${this} remove both"
+	${can}.menu add command -label [get_indep String CrfRemRefTo]\
+	  -state disabled -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
+	${can}.menu add command -label [get_indep String CrfRemRefBy]\
+	  -state disabled -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
         ${can}.menu add separator
         ${can}.menu add command -label [get_indep String TakeRoot]\
           -state disabled -underline [get_indep Pos TakeRoot] -command "${this} make_selection_to_root"
