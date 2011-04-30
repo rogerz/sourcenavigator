@@ -155,6 +155,10 @@ Unused,未使用
 DrawProjTree,プロジェクト ツリー描画中...
 Statistics,統計
 StatisticsINFO,選択したファイルの統計を表示
+Optimizer,Optimi[ze DB (J)
+OptimizerINFO,Optimize the Project Database (Japanese)
+OptimizerConfirm,Are you sure you want to Optimize the Project Database (Japanese)
+WaitForOptimizer,Project Database is being optimized. Please Wait. (Japanese)
 HTMLDoc,HTML ドキュメント([H)
 HTMLDocAll,プロジェクト HTML ドキュメント([O)
 Languages,言語

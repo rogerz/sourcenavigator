@@ -157,6 +157,10 @@ DrawProjTree,Drawing project tree ...
 WaitForStatistics,Statistics are being calculated. Please Wait.
 Statistics,[Statistics
 StatisticsINFO,Display Statistics for selected files
+Optimizer,Optimi[ze DB
+OptimizerINFO,Optimize the Project Database
+OptimizerConfirm,Are you sure you want to Optimize the Project Database
+WaitForOptimizer,Project Database is being optimized. Please Wait.
 HTMLDoc,[HTML Documentation
 HTMLDocAll,Pr[oject HTML Documentation
 Languages,Languages

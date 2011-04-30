@@ -141,7 +141,13 @@ itcl::class Project& {
                 ${this} disp_file_statistic \[${treew} curselection\]"
         balloon_bind_info ${filefr}.stat [get_indep String StatisticsINFO]
 
-        foreach button {view hide unload stat} {
+        #optimize button
+        button ${filefr}.optim -text [get_indep String Optimizer]\
+          -underline [get_indep Pos Optimizer] -state disabled -command "
+                ${this} optimize_database"
+        balloon_bind_info ${filefr}.optim [get_indep String OptimizerINFO]
+
+        foreach button {view hide unload stat optim} {
             pack ${filefr}.${button} -side top -pady 3 -anchor nw -fill x
         }
 
@@ -370,6 +376,7 @@ itcl::class Project& {
         set hide_state normal
         set rename_state normal
         set statistic_state disabled
+	set optimizer_state disabled
         if {${sels} != ""} {
             set rootname [${treew} rootname [lindex ${sels} 0]]
             set rootname2 [${treew} rootname [lindex ${sels} end]]
@@ -381,6 +388,7 @@ itcl::class Project& {
             if {${rootname} == [get_indep String ProjectFiles]} {
                 set view_state disabled
                 set statistic_state normal
+		set optimizer_state enabled
             }\
             elseif {${rootname} == [get_indep String UnloadedFiles]} {
                 set unload_state disabled
@@ -397,11 +405,13 @@ itcl::class Project& {
             #no hide by new projects
             set hide_state disabled
             set statistic_state disabled
+	    set optimizer_state disabled
         }
         ${filefr}.view configure -state ${view_state}
         ${filefr}.hide configure -state ${hide_state}
         ${filefr}.unload configure -state ${unload_state}
         ${filefr}.stat configure -state ${statistic_state}
+        ${filefr}.optim configure -state ${optimizer_state}
     }
 
     method control_buttons {} {
@@ -547,7 +557,7 @@ itcl::class Project& {
     }
 
     method disp_file_statistic {sel} {
-        #verify if the first item is selected (hole project)
+        #verify if the first item is selected (whole project)
         if {[lindex ${sel} 0] == "0"} {
             set sel ""
         }
@@ -556,6 +566,16 @@ itcl::class Project& {
         } else {
             #call it for all project
             sn_statistic
+        }
+    }
+
+    method optimize_database {} {
+        set answer [tk_dialog auto [get_indep String Optimizer] \
+            "[get_indep String OptimizerConfirm]" question_image 0\
+            [get_indep String Yes] [get_indep String Cancel]]
+        if {${answer} != 0} {
+	    sn_optimize
+            return
         }
     }
 

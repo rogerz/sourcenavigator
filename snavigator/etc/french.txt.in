@@ -158,6 +158,10 @@ DrawProjTree,Affichage de l'arbre du projet...
 WaitForStatistics,Calcul des statistiques. Veuillez patienter.
 Statistics,[Statistiques
 StatisticsINFO,Afficher les statistiques pour les fichiers sélectionnés
+Optimizer,Optimi[ze DB (Fr)
+OptimizerINFO,Optimize the Project Database (French)
+OptimizerConfirm,Are you sure you want to Optimize the Project Database (Fr)
+WaitForOptimizer,Project Database is being optimized. Please Wait. (Fr)
 HTMLDoc,Documentation [HTML
 HTMLDocAll,Documentation HTML du Pr[ojet
 Languages,Langues

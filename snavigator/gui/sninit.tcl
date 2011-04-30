@@ -281,6 +281,7 @@ proc sn_init_globals {} {
         set ProcessingCancelled 0
         set tkeWinNumber 0
         set sn_statistic_run 0
+        set sn_optimizedb_run 0
         if {${sn_debug}} {
             set env(SN_DBIMP) 1
         }

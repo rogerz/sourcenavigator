@@ -384,6 +384,10 @@ Comment,Kommentar:
 WaitForStatistics,Statistiken werden berechnet. Bitte warten.
 Statistics,Statistik
 DrawProjTree,Projekt-Baum ...
+Optimizer,Optimi[ze DB (Ger)
+OptimizerINFO,Optimize the Project Database (German)
+OptimizerConfirm,Are you sure you want to Optimize the Project Database (German)
+WaitForOptimizer,Project Database is being optimized. Please Wait. (German)
 HTMLDoc,[HTML Dokumentation
 HTMLDocAll,HTML [Projekt-Dokumentation
 CacheSize,Datenbank-Cache Größe
