@@ -1,4 +1,6 @@
-# Copyright (C) 2010 Enchanted Systems Limited
+#  SVN Info: "$Id$"
+#
+# Copyright (C) 2010-2011 Enchanted Systems Limited
 # 
 # This file is part of Source-Navigator.
 # 
@@ -19,6 +21,13 @@
 # 
 # optimizedb.tcl - Routines for optimizing project database.
 #
+# SVN Information
+#   $HeadURL$
+#   $Revision$
+#   $Date$
+#
+
+
 
 #proc sn_update_optimize {} {
 #    set lst [sn_create_optimize]
