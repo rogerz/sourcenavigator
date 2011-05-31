@@ -747,25 +747,9 @@ itcl::class XRef& {
 	if { ${type} == "to" } {
 	        set children_ids [${can} find withtag "to%${id}"]
         	eval lappend children_ids [${can} find withtag "browse_to%${id}"]
-
-		# and also remove all children of all found starter nodes
-		foreach d ${children_ids} {
-			all_children ${can} ${d} children_children_ids ${skip}
-			eval graph ${can} remove ${children_children_ids}
-        		eval ${can} delete ${children_children_ids}
-		}
-
 	} elseif { ${type} == "by" } {
 	        set children_ids [${can} find withtag "by%${id}"]
         	eval lappend children_ids [${can} find withtag "browse_by%${id}"]
-
-		# and also remove all children of all found starter nodes
-		foreach d ${children_ids} {
-			all_children ${can} ${d} children_children_ids ${skip}
-			eval graph ${can} remove ${children_children_ids}
-        		eval ${can} delete ${children_children_ids}
-		}
-
 	} else {
     		# type is "both" or something else
 	        all_children ${can} ${id} children_ids ${skip}
@@ -785,7 +769,12 @@ itcl::class XRef& {
                 ${frm}.sel delete
 
                 destroy ${frm}
-            }
+	    }
+	    
+	    # and also remove all children of all found starter nodes
+	    all_children ${can} ${c} children_children_ids ${skip}
+	    eval graph ${can} remove ${children_children_ids}
+            eval ${can} delete ${children_children_ids}
         }
         
 	eval graph ${can} remove ${children_ids}
