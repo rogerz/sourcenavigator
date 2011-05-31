@@ -83,7 +83,11 @@ itcl::class XRef& {
               -underline [get_indep Pos CrfRefBy] -command " ${this}\
               references by " -state disabled
             $itk_option(-menu) add command -label [get_indep String CrfRemSubN]\
-              -underline [get_indep Pos CrfRemSubN] -command "${this} remove" -state disabled
+              -underline [get_indep Pos CrfRemSubN] -command "${this} remove both" -state disabled
+            $itk_option(-menu) add command -label [get_indep String CrfRemRefTo]\
+              -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
+            $itk_option(-menu) add command -label [get_indep String CrfRemRefBy]\
+              -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
             $itk_option(-menu) add separator
             $itk_option(-menu) add command -label [get_indep String XRefFilter]\
               -underline [get_indep Pos XRefFilter] -command "[info class]::xref_filter"
@@ -108,15 +112,30 @@ itcl::class XRef& {
         if {$itk_option(-toolbar) != ""} {
             set exp $itk_option(-toolbar).xref
             frame ${exp}
+	    
+            button ${exp}.rem_ref_to -takefocus 0 -image del_right_image -command\
+              " ${this} remove to "
+            balloon_bind_info ${exp}.rem_ref_to [get_indep String CrfRemRefToINFO]
+            pack ${exp}.rem_ref_to -side left
+
             button ${exp}.ref_to -takefocus 0 -image right_image -command\
               " ${this} references to " -state disabled
             balloon_bind_info ${exp}.ref_to [get_indep String CrfRefToINFO]
             pack ${exp}.ref_to -side left
 
+            button ${exp}.remove -image waste_image -takefocus 0 -command "${this} remove both" -state disabled
+            balloon_bind_info ${exp}.remove [get_indep String CrfRemSubN]
+            pack ${exp}.remove -side left
+
             button ${exp}.ref_by -takefocus 0 -image left_image -command\
               " ${this} references by " -state disabled
             balloon_bind_info ${exp}.ref_by [get_indep String CrfRefByINFO]
             pack ${exp}.ref_by -side left
+
+            button ${exp}.rem_ref_by -takefocus 0 -image del_left_image -command\
+              " ${this} remove by "
+            balloon_bind_info ${exp}.rem_ref_by [get_indep String CrfRemRefByINFO]
+            pack ${exp}.rem_ref_by -side left
 
             if {0} {
                 #DO WE NEED THIS BUTTONS IN THE TOOLBAR????????
@@ -137,10 +156,6 @@ itcl::class XRef& {
                   PafCrossByDetail]
                 pack ${exp}.xbrowse_by -side left
             }
-
-            button ${exp}.remove -image waste_image -takefocus 0 -command "${this} remove" -state disabled
-            balloon_bind_info ${exp}.remove [get_indep String CrfRemSubN]
-            pack ${exp}.remove -side left
 
             #WE NEED A FILTER BUTTON IN THE TOOLBAR
 	    button ${exp}.filter -text [get_indep String Mixer]\
@@ -242,7 +257,11 @@ itcl::class XRef& {
         ${can}.menu add command -label [get_indep String PafCrossByDetail]\
           -state disabled -underline [get_indep Pos PafCrossByDetail] -command "${this} xbrowse by"
         ${can}.menu add command -label [get_indep String CrfRemSubN]\
-          -state disabled -underline [get_indep Pos CrfRemSubN] -command "${this} remove"
+          -state disabled -underline [get_indep Pos CrfRemSubN] -command "${this} remove both"
+	${can}.menu add command -label [get_indep String CrfRemRefTo]\
+	  -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
+	${can}.menu add command -label [get_indep String CrfRemRefBy]\
+	  -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
         ${can}.menu add separator
         ${can}.menu add command -label [get_indep String TakeRoot]\
           -state disabled -underline [get_indep Pos TakeRoot] -command "${this} make_selection_to_root"
@@ -711,8 +730,8 @@ itcl::class XRef& {
         ${can} itemconfig ${id} -width ${w} -height ${h}
     }
 
-    # This methods deletes the subnodes of a node.
-    method remove {{id ""} {skip ""}} {
+    # This methods deletes the subnodes of a node, based on their type
+    method remove { type {id ""} {skip ""}} {
         if {${id} == ""} {
             set id [${can} select item]
             if {${id} == ""} {
@@ -720,33 +739,49 @@ itcl::class XRef& {
                 return
             }
         }
-        set children_ids ""
-        all_children ${can} ${id} children_ids ${skip}
 
-        if {${children_ids} == ""} {
-            return
+	set children_ids ""
+        set children_children_ids ""
+	
+	# only search for type'd ids
+	if { ${type} == "to" } {
+	        set children_ids [${can} find withtag "to%${id}"]
+        	eval lappend children_ids [${can} find withtag "browse_to%${id}"]
+	} elseif { ${type} == "by" } {
+	        set children_ids [${can} find withtag "by%${id}"]
+        	eval lappend children_ids [${can} find withtag "browse_by%${id}"]
+	} else {
+    		# type is "both" or something else
+	        all_children ${can} ${id} children_ids ${skip}
+        }
+        
+	if {${children_ids} == ""} {
+	    return
         }
 
         foreach c ${children_ids} {
 
             #delete depeneded variables or array entries
             catch {unset xinfos(${c})}
-
-            if {[${can} type ${c}] == "window"} {
+	    
+	    if {[${can} type ${c}] == "window"} {
                 set frm [${can} itemcget ${c} -window]
-
                 ${frm}.sel delete
 
                 destroy ${frm}
-            }
+	    }
+	    
+	    # and also remove all children of all found starter nodes
+	    all_children ${can} ${c} children_children_ids ${skip}
+	    eval graph ${can} remove ${children_children_ids}
+            eval ${can} delete ${children_children_ids}
         }
-        eval graph ${can} remove ${children_ids}
+        
+	eval graph ${can} remove ${children_ids}
         eval ${can} delete ${children_ids}
 
         graph_new_layout 1
-
         control_buttons
-
         see_item ${id}
     }
 

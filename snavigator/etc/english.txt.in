@@ -464,10 +464,14 @@ Topdown,[Top to Bottom
 LeftRight,[Left to right
 ISI,[ISI
 Tree,Tr[ee
-CrfRefTo,Refers [to
+CrfRefTo,Refers [To
 CrfRefToINFO,Show references
+CrfRemRefTo,Remove Refers T[o
+CrfRemRefToINFO,Remove references
 CrfRefBy,Referred [By
 CrfRefByINFO,Show referenced-by
+CrfRemRefBy,Remove Referred B[y
+CrfRemRefByINFO,Remove referenced-by
 CrfRemSubN,[Remove Subnodes
 XRefLocalVars,[Generate references to local variables
 Subr,Sub[routines

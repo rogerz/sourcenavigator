@@ -467,8 +467,12 @@ ISI,[ISI
 Tree,Arbr[e
 CrfRefTo,Réfère [à
 CrfRefToINFO,Affiche les références
+CrfRemRefTo,Remove Refers T[o
+CrfRemRefToINFO,Remove references
 CrfRefBy,Référencé [par
 CrfRefByINFO,Affiche les éléments qui référencent
+CrfRemRefBy,Remove Referred B[y
+CrfRemRefByINFO,Remove referenced-by
 CrfRemSubN,[Enlever les sous-noeuds
 XRefLocalVars,[Générer les références aux variables locales
 Subr,Sous-[programmes

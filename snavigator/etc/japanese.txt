@@ -462,8 +462,12 @@ ISI,ISI([I)
 Tree,ツリー([E)
 CrfRefTo,参照先([T)
 CrfRefToINFO,参照を表示
+CrfRemRefTo,Remove Refers T[o
+CrfRemRefToINFO,Remove references
 CrfRefBy,参照元([B)
 CrfRefByINFO,参照元を表示
+CrfRemRefBy,Remove Referred B[y
+CrfRemRefByINFO,Remove referenced-by
 CrfRemSubN,サブノードを削除([R)
 XRefLocalVars,ローカル変数への参照を生成([G)
 Subr,サブルーチン([R)
