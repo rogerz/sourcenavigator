@@ -730,8 +730,7 @@ itcl::class XRef& {
         ${can} itemconfig ${id} -width ${w} -height ${h}
     }
 
-    # This methods deletes the subnodes of a node.
-    # TODO - Use type parameter to selectively remove subnodes
+    # This methods deletes the subnodes of a node, based on their type
     method remove { type {id ""} {skip ""}} {
         if {${id} == ""} {
             set id [${can} select item]
@@ -740,39 +739,28 @@ itcl::class XRef& {
                 return
             }
         }
-        
-	sn_log "xref::remove entered with type ${type} id ${id} skip ${skip}"
+
 	set children_ids ""
         set children_children_ids ""
 	
 	# only search for type'd ids
-	#set ids [${can} find withtag "to%${i}"]
-        #eval lappend ids [${can} find withtag "by%${i}"]
-        #eval lappend ids [${can} find withtag "browse_to%${i}"]
-        #eval lappend ids [${can} find withtag "browse_by%${i}"]
 	if { ${type} == "to" } {
-		sn_log "xref::remove removing to ${id}"
 	        set children_ids [${can} find withtag "to%${id}"]
         	eval lappend children_ids [${can} find withtag "browse_to%${id}"]
 
 		# and also remove all children of all found starter nodes
 		foreach d ${children_ids} {
-			sn_log "xref::remove children_children, removing all childs of ${d}"
-
 			all_children ${can} ${d} children_children_ids ${skip}
 			eval graph ${can} remove ${children_children_ids}
         		eval ${can} delete ${children_children_ids}
 		}
 
 	} elseif { ${type} == "by" } {
-		sn_log "xref::remove removing by ${id}"
 	        set children_ids [${can} find withtag "by%${id}"]
         	eval lappend children_ids [${can} find withtag "browse_by%${id}"]
 
 		# and also remove all children of all found starter nodes
 		foreach d ${children_ids} {
-			sn_log "xref::remove children_children, removing all childs of ${d}"
-
 			all_children ${can} ${d} children_children_ids ${skip}
 			eval graph ${can} remove ${children_children_ids}
         		eval ${can} delete ${children_children_ids}
@@ -780,12 +768,10 @@ itcl::class XRef& {
 
 	} else {
     		# type is "both" or something else
-		sn_log "xref::remove removing all children for ${id}"
 	        all_children ${can} ${id} children_ids ${skip}
         }
         
 	if {${children_ids} == ""} {
-            sn_log "xref::remove with type ${type} didnt find any children, returning"
 	    return
         }
 
@@ -793,12 +779,9 @@ itcl::class XRef& {
 
             #delete depeneded variables or array entries
             catch {unset xinfos(${c})}
-
-            sn_log "xref::remove operating on ${c}"
 	    
 	    if {[${can} type ${c}] == "window"} {
                 set frm [${can} itemcget ${c} -window]
-		sn_log "xref::remove type is window, operating on ${c}, frm is ${frm}"
                 ${frm}.sel delete
 
                 destroy ${frm}
@@ -809,9 +792,7 @@ itcl::class XRef& {
         eval ${can} delete ${children_ids}
 
         graph_new_layout 1
-
         control_buttons
-
         see_item ${id}
     }
 
