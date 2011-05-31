@@ -85,9 +85,9 @@ itcl::class XRef& {
             $itk_option(-menu) add command -label [get_indep String CrfRemSubN]\
               -underline [get_indep Pos CrfRemSubN] -command "${this} remove both" -state disabled
             $itk_option(-menu) add command -label [get_indep String CrfRemRefTo]\
-              -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to" -state disabled
+              -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
             $itk_option(-menu) add command -label [get_indep String CrfRemRefBy]\
-              -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by" -state disabled
+              -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
             $itk_option(-menu) add separator
             $itk_option(-menu) add command -label [get_indep String XRefFilter]\
               -underline [get_indep Pos XRefFilter] -command "[info class]::xref_filter"
@@ -114,7 +114,7 @@ itcl::class XRef& {
             frame ${exp}
 	    
             button ${exp}.rem_ref_to -takefocus 0 -image del_right_image -command\
-              " ${this} remove to " -state disabled
+              " ${this} remove to "
             balloon_bind_info ${exp}.rem_ref_to [get_indep String CrfRemRefToINFO]
             pack ${exp}.rem_ref_to -side left
 
@@ -133,7 +133,7 @@ itcl::class XRef& {
             pack ${exp}.ref_by -side left
 
             button ${exp}.rem_ref_by -takefocus 0 -image del_left_image -command\
-              " ${this} remove by " -state disabled
+              " ${this} remove by "
             balloon_bind_info ${exp}.rem_ref_by [get_indep String CrfRemRefByINFO]
             pack ${exp}.rem_ref_by -side left
 
@@ -259,9 +259,9 @@ itcl::class XRef& {
         ${can}.menu add command -label [get_indep String CrfRemSubN]\
           -state disabled -underline [get_indep Pos CrfRemSubN] -command "${this} remove both"
 	${can}.menu add command -label [get_indep String CrfRemRefTo]\
-	  -state disabled -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
+	  -underline [get_indep Pos CrfRemRefTo] -command "${this} remove to"
 	${can}.menu add command -label [get_indep String CrfRemRefBy]\
-	  -state disabled -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
+	  -underline [get_indep Pos CrfRemRefBy] -command "${this} remove by"
         ${can}.menu add separator
         ${can}.menu add command -label [get_indep String TakeRoot]\
           -state disabled -underline [get_indep Pos TakeRoot] -command "${this} make_selection_to_root"
