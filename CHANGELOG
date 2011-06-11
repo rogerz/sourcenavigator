@@ -1,3 +1,22 @@
+Release NG4.4 (Sat Jun 11 21:01:24 CEST 2011)
+
+(ENHANCE) Make "Remove References" and "Remove Referenced-by" icons nicer
+(BUGFIX) Fix frizzy edges of splashsn2.gif for more awesome arrows
+(INTERNAL) Merge https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4.3-xrefpane-enhancements, r819-829
+(INTERNAL) Remove unneeded itcl/iwidgets3.0.0 from source
+(BUGFIX) Fix dbcompact to deal with invalid DB files, part II
+(BUGFIX) Fix dbcompact to deal with invalid DB files
+(BUGFIX) REVERT-Fix batchmode to work around missing DISPLAY env variables
+(INTERNAL) Add Montaseri to CONTRIBUTORS
+(BUGFIX) Fix batchmode to work around missing DISPLAY env variables
+(INTERNAL) Add testcases for know bad behaviour
+(BUGFIX) Alter win32 building instructions to include -C for configure
+(BUGFIX) Display default cache size (8MB) in dbcompact's help output
+(INTERNAL) Update TODO issues
+(INTERNAL) Merge remote-tracking branch 'refs/remotes/SN-NG4.2-autoconf' into trunk
+(ENHANCE) Add cmdline switch for db4 cache size to dbcompact
+
+
 Release NG4.3 (Thu Feb 17 21:26:54 CET 2011)
 
 (ENHANCE) Merge https://svn.berlios.de/svnroot/repos/sourcenav/branches/SN-NG4.2-db_4.8.30_import, r784:785
