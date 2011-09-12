@@ -68,6 +68,7 @@ though.  This lets you access the command bindings that this mode overrides."
   (define-key sn-keymap "\C-c.h" 'sn-classtree)
   (define-key sn-keymap "\C-c.r" 'sn-retrieve)
   (define-key sn-keymap "\C-c.x" 'sn-xref)
+  (define-key sn-keymap "\C-c.i" 'sn-retrieve-implementation)
   (cond (sn-is-xemacs
 	 (define-key sn-keymap '(meta control ?.) 'sn-tag-unimplemented))
 	;; GNU Emacs.
@@ -133,6 +134,17 @@ several they are listed in a pop-up where you can select one to edit."
                         (find-tag-default)
                         'sn-history-list))))
   (sn-send (concat "sn_retrieve_symbol " (sn-tcl-quote pattern) " all")))
+
+;; Similar to retrieve, but prefer implementation to definition.
+(defun sn-retrieve-implementation (pattern)
+  "Like find-tag, but use Source Navigator to look up name."
+  (interactive
+   (progn
+     (require 'etags)
+     (list (read-string "Find implementation: "
+			(find-tag-default)
+			'sn-history-list))))
+  (sn-send (concat "sn_retrieve_symbol " (sn-tcl-quote pattern) " {fu mi}")))
 
 (defun sn-xref (symbol)
   "Look up a symbol in the Source Navigator cross-referencer."
