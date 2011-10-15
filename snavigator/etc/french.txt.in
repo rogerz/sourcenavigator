@@ -553,6 +553,7 @@ SearchDefinition,Trouver la dé[claration
 SearchImplementation,Trouver l'[implémentation
 SearchGrep,[Recherche élaborée...
 SearchFindSelectionINFO,Rechercher la sélection ou le motif suivant
+SearchHighlightAll,[Surbrillance toutes les allumettes
 
 WindowsClose,[Fermer
 WindowsNew,[Editeur

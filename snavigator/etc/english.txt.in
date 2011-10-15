@@ -552,6 +552,7 @@ SearchDefinition,Find De[claration
 SearchImplementation,Find [Implementation
 SearchGrep,[Grep...
 SearchFindSelectionINFO,Find selection or next pattern
+SearchHighlightAll,[Highlight All Matches
 
 WindowsClose,[Close
 WindowsNew,[Editor

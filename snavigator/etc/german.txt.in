@@ -510,6 +510,7 @@ ProjectMenu,[Projekt
 MultiMisc,[Verschiedenes
 SearchGoto,[Gehe zu...
 SearchFind,[Suche...
+SearchHighlightAll,Alle Uebereinstimmungen [highlighten
 AskForNewView,Der angegebene View ist nicht vorhanden.\nMöchten Sie einen neuen View definieren?
 TkINFO,Verwende Tk Look&Feel
 PrefMake,[Make

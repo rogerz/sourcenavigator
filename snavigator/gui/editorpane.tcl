@@ -644,6 +644,14 @@ itcl::class Editor& {
 	    -command "Editor&::search_implementation ${cls} [list ${string}]" \
 	    -state ${findstate}
 
+	#${m} add separator
+
+	${m} add command \
+	    -label "[get_indep String SearchHighlightAll]${lbl}" \
+	    -underline [get_indep Pos SearchHighlightAll] \
+	    -command "Editor&::search_highlight_all ${cls} [list ${string}]" \
+	    -state ${findstate}
+
 	${m} add separator
 
 	set vw ""
@@ -1990,6 +1998,29 @@ itcl::class Editor& {
 	}
 	catch {unset looking_list}
 	catch {unset looking_arr}
+    }
+
+    # highlight all occurences of a string
+    proc search_highlight_all {cls {string ""}} {
+	global sn_options
+	set cls [namespace tail $cls]
+	set w [${cls} editor]
+	${w} tag delete highlight
+	${w} tag configure highlight \
+	    -background $sn_options(def,select-bg) \
+	    -foreground $sn_options(def,select-fg)
+
+	set pos end
+	while {${pos} != ""} {
+	    set pos [eval ${w} search -exact "" \
+	        -backwards -count len \
+		-- [list ${string}] [list ${pos}] 1.0]
+	    if {${pos} != ""} {
+		${w} tag add highlight ${pos} "${pos} + ${len} char"
+	    }
+	}
+
+	${w} see insert
     }
 
     method RetrieveObject {} {

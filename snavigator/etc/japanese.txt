@@ -544,6 +544,7 @@ SearchDefinition,宣言を検索([C)
 SearchImplementation,実装を検索([I)
 SearchGrep,[Grep...
 SearchFindSelectionINFO,選択部分または次のパターンを検索
+SearchHighlightAll,[Highlight all matches
 
 WindowsClose,閉じる([C)
 WindowsNew,エディタ([E)
