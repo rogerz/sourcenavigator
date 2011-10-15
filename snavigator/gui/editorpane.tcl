@@ -862,13 +862,14 @@ itcl::class Editor& {
 	# verify if the default external editor is not empty
 	if {${external_editor} == ""} {
 	    set external_editor $sn_options(def,edit-external-editor)
-	    # deal with whitespace
-	    if {[regexp " " ${external_editor}]} {
-	        set external_editor "\"$external_editor\""
-	    }
 	}
 
 	set external_editor [sn_filecmd format -internal ${external_editor}]
+
+	# deal with whitespace
+	if {[regexp " " ${external_editor}]} {
+		set external_editor "\"$external_editor\""
+	}
 	
 	# use external editor
 	if {${external_editor} != ""} {
