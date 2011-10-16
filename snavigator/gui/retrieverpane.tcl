@@ -118,6 +118,7 @@ itcl::class Retr& {
         entry $itk_component(hull).pattern.e -textvariable ${this}-pattern -width 5\
           -exportselection n
         bind $itk_component(hull).pattern.e <Return> "${searchbtn} invoke; break"
+        bind $itk_component(hull).pattern.e <KeyRelease> "after idle [list ${this} start_search fuzzy]"
         pack $itk_component(hull).pattern.e -side left -fill both -expand y
 
         #Filter button
@@ -149,6 +150,9 @@ itcl::class Retr& {
         pack $itk_component(hull).list -side bottom -fill both -expand y
         set tree [$itk_component(hull).list tree]
 
+        #	focus first row in tree when press down in entry
+        bind $itk_component(hull).pattern.e <Down> "focus $tree; event generate $tree <Control-Home>"
+
         $itk_component(hull).list treebind <Double-1> "edit_symbol %W"
 
 # FIXME: all these bindings on the tree class are ugly, we need a new tree class.
@@ -170,6 +174,7 @@ itcl::class Retr& {
         if {${mode} != "retr" || [catch {set str [string trim\
           [selection get]]}]} {
             set str "*"
+            $itk_component(hull).pattern.e selection range 0 end
         }
         set ${this}-pattern ${str}
 
@@ -186,6 +191,7 @@ itcl::class Retr& {
         control_buttons
 
         focus $itk_component(hull).pattern.e
+        $itk_component(hull).pattern.e selection range 0 end
 
         #call user defined function
         catch {sn_rc_retriever $itk_component(hull) $itk_component(hull).list}
@@ -452,7 +458,7 @@ itcl::class Retr& {
         update idletasks
     }
 
-    method start_search {} {
+    method start_search {{mode normal}} {
         upvar #0 ${this}-pattern ptrn
 
         #verify if a fetch is already active
@@ -460,6 +466,9 @@ itcl::class Retr& {
             bell
             return
         }
+
+        #don't do fuzzy search if there's only one character
+        if {${mode} == "fuzzy" && [string length ${ptrn}] < 2} {return}
 
         if {${ptrn} == ""} {
             set ptrn "*"
@@ -559,9 +568,13 @@ itcl::class Retr& {
             ${this}.list toggle_column 4 "" 1
         }
 
-        display_contents ${this}.list [read_matched_from_db ${this}.list\
-          ${scopes} -glob ${pat}]
-
+        if {${mode} == "fuzzy"} {
+            display_contents ${this}.list [read_matched_from_db ${this}.list\
+              ${scopes} -glob "*${pat}*"]
+        } else {
+            display_contents ${this}.list [read_matched_from_db ${this}.list\
+              ${scopes} -glob ${pat}]
+        }
         ${this}.list sort_refresh
 
         #delete cancel button, if availiable
@@ -703,6 +716,8 @@ itcl::class Retr& {
         if {$itk_option(-toolbar) != ""} {
             pack $itk_option(-toolbar).retrfr -side left
         }
+        focus $itk_component(hull).pattern.e
+        $itk_component(hull).pattern.e selection range 0 end
     }
 
     method deactivate {} {
@@ -780,7 +795,8 @@ itcl::class Retr& {
     }
 
     method Focus {} {
-        focus ${tree}
+        focus $itk_component(hull).pattern.e
+        $itk_component(hull).pattern.e selection range 0 end
     }
 
     #refresh retriever, only by exclusive mode
