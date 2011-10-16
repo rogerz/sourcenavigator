@@ -118,7 +118,8 @@ itcl::class Retr& {
         entry $itk_component(hull).pattern.e -textvariable ${this}-pattern -width 5\
           -exportselection n
         bind $itk_component(hull).pattern.e <Return> "${searchbtn} invoke; break"
-        bind $itk_component(hull).pattern.e <KeyRelease> "after idle [list ${this} start_search fuzzy]"
+        #To avoid query flood, fuzzy search is locked for 300ms after key press
+        bind $itk_component(hull).pattern.e <KeyPress> "after 300 [list ${this} fuzzy_search]; $this lock_fuzzy_search;"
         pack $itk_component(hull).pattern.e -side left -fill both -expand y
 
         #Filter button
@@ -436,6 +437,7 @@ itcl::class Retr& {
     protected variable with_type "md mi iv fr fd fu con ec su gv t cov files"
     protected variable with_param "fr md mi fr fd fu"
     protected variable SearchActive 0
+    protected variable FuzzySearchLock 0
 
     method cancel_fetching {} {
         ${searchbtn} config -command "  " -state disabled
@@ -458,6 +460,20 @@ itcl::class Retr& {
         update idletasks
     }
 
+    method fuzzy_search {} {
+        incr FuzzySearchLock -1
+
+        upvar #0 ${this}-pattern ptrn
+
+        if {$FuzzySearchLock == 0 && [string length ${ptrn}] >= 2} {
+            start_search fuzzy
+        }
+    }
+
+    method lock_fuzzy_search {} {
+        incr FuzzySearchLock
+    }
+
     method start_search {{mode normal}} {
         upvar #0 ${this}-pattern ptrn
 
@@ -466,9 +482,6 @@ itcl::class Retr& {
             bell
             return
         }
-
-        #don't do fuzzy search if there's only one character
-        if {${mode} == "fuzzy" && [string length ${ptrn}] < 2} {return}
 
         if {${ptrn} == ""} {
             set ptrn "*"
