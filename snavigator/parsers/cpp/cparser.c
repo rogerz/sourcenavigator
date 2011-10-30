@@ -154,7 +154,7 @@ struct sDeclaration  /* struct for declaration */
    int s_bool;
    int s_void;
    LongString type_name;   /* space for typedef_name or class_name to message */
-   int type_of_type_name;  /* SN_CLASS or SN_STRUCT or SN_UNION or SN_ENUM or SN_INTERFACE */
+   int type_of_type_name;  /* SN_CLASS or SN_STRUCT or SN_UNION or SN_ENUM or SN_INTERFACE or SN_NAMESPACE */
    LongString complete_class_name;  /* space for complete_class_name */
    int lineno_beg;
    int charno_beg;
@@ -528,7 +528,7 @@ extern int _declaration( Declaration_t Declaration )
    {
    case SN_ASM      : iRetval = asm_declaration     ( &sDeclaration ); break;
    case SN_TEMPLATE : iRetval = template_declaration( &sDeclaration ); break;
-   case SN_NAMESPACE: iRetval = namespace_definition( &sDeclaration ); break;
+   /*case SN_NAMESPACE: iRetval = namespace_definition( &sDeclaration ); break;*/
    case SN_USING    : iRetval = using               ( &sDeclaration ); break;
    case SN_EXTERN   : iRetval = extern_declaration  ( &sDeclaration ); break;
    default          : iRetval = obj_declaration     ( &sDeclaration ); break;
@@ -808,6 +808,7 @@ extern int obj_declaration( Declaration_t Declaration )
       case SN_CLASS      :
       case SN_STRUCT     :
       case SN_UNION      :
+      case SN_NAMESPACE  :
          if( ! f_class( Declaration, &Declaration->sClass ))
          {
             Restore_d();
@@ -1679,6 +1680,12 @@ extern int f_class( Declaration_t Declaration, Class_t Class )
       if( Declaration ) Declaration->type_of_type_name = SN_UNION;
       Class->access = SN_PUBLIC;
       paf  = PAF_UNION_DEF ;
+      attr = 0 ;
+      break;
+   case SN_NAMESPACE:
+      if( Declaration ) Declaration->type_of_type_name = SN_NAMESPACE;
+      Class->access = SN_PUBLIC;
+      paf  = PAF_NAMESPACE_DEF ;
       attr = 0 ;
       break;
    }
@@ -5926,6 +5933,10 @@ extern void create_type( LongString *type, Declaration_t Declaration, Declarator
          LongStringMyAppend( type, ANONYM );
          empty = False;
          break;
+      case SN_NAMESPACE:
+         LongStringMyAppend( type, ANONYM );
+         empty = False;
+         break;
       }
       bType = True;
    }
@@ -6080,6 +6091,10 @@ extern void create_type_argument_list( LongString *type, Declaration_t Declarati
          empty = False;
          break;
       case SN_ENUM:
+         LongStringMyAppend( type, ANONYM );
+         empty = False;
+         break;
+      case SN_NAMESPACE:
          LongStringMyAppend( type, ANONYM );
          empty = False;
          break;
