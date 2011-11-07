@@ -185,8 +185,6 @@ itcl_class Tree {
         grid rowconfigure $lframe 1 -weight 1
         grid columnconfigure $lframe 0 -weight 1
 
-	focus $tree
-	
 	if {$tabsize > -1} {
 	    ::bind $lframe.x <B1-ButtonRelease> "$this replace_buttons"
 	
